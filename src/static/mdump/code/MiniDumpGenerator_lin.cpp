@@ -23,11 +23,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>
 #include <cstdio>
 #include <cstring>
 #include <cstdlib>
-#ifdef BUILD_WITH_CMAKE
-  #include <google_breakpad/exception_handler.h>
-#else
-  #include "client/linux/handler/exception_handler.h"
-#endif
+#include "client/linux/handler/exception_handler.h"
 
 google_breakpad::ExceptionHandler* MiniDumpGenerator::s_pExceptionHandler = NULL;
 
