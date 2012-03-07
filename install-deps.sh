@@ -1,6 +1,10 @@
 #!/bin/sh
 # Determine the Linux distribution that is being run and install the build dependencies for it.
 
+if [ "$(whoami)" != "root" ]; then
+	echo "Run this as root! sudo should do the trick."
+	exit
+
 echo "NOTE: It'd be a good idea in general to read the contents of this script if you haven't already."
 # Sounds scary, just to catch attention. Thanks for reading!
 
