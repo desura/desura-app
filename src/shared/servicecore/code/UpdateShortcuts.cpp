@@ -40,12 +40,12 @@ void UpdateShortCuts()
 	gcWString folder = UTIL::OS::getConfigValue("HKEY_LOCAL_MACHINE\\SOFTWARE\\Desura\\DesuraApp\\StartMenuFolder");
 
 	if (folder == L"")
-		folder == L"Desura";
+		folder = PRODUCT_NAME;
 
 	gcString startFolder = UTIL::OS::getStartMenuProgramsPath(folder);
 
-	gcString spOne = startFolder + "\\Desura.lnk";
-	gcString spTwo = startFolder + "\\Desura (force update).lnk";
+	gcString spOne = startFolder + "\\" PRODUCT_NAME ".lnk";
+	gcString spTwo = startFolder + "\\" PRODUCT_NAME " (force update).lnk";
 
 	OS_VERSION ver = UTIL::WIN::getOSId();
 

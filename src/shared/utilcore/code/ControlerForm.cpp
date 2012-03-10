@@ -74,7 +74,7 @@ bool ControllerForm::init(int argc, wxCmdLineArgsArray &argv)
 
 	if (formList["-uninstall"] == true)
 	{
-		if (!setUpSIC(L"Desura UnInstaller"))
+		if (!setUpSIC(PRODUCT_NAME L" UnInstaller"))
 			return false;
 
 		if (!setUpUserCore())
@@ -118,7 +118,7 @@ bool ControllerForm::init(int argc, wxCmdLineArgsArray &argv)
 	}
 	else if (formList["-setcachedir"] && formList["-dir"])
 	{
-		if (!setUpSIC(L"Desura Utility"))
+		if (!setUpSIC(PRODUCT_NAME L" Utility"))
 			return false;
 
 		gcString dir;

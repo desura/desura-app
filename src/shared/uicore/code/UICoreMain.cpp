@@ -444,7 +444,7 @@ public:
 		}
 		else
 		{
-			wxMessageBox(wxT("Another instance is all ready running."), wxT("Desura Error"));
+			wxMessageBox(wxT("Another instance is all ready running."), wxT(PRODUCT_NAME " Error"));
 			return false;
 		}
 #endif

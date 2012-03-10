@@ -70,7 +70,7 @@ void MainApp::onInternalStrLink(gcString &link)
 {
 	if (isOffline())
 	{
-		gcMessageBox(this->getMainWindow(), Managers::GetString(L"#MF_OFFLINEWARN"), wxT("Desura Error"));
+		gcMessageBox(this->getMainWindow(), Managers::GetString(L"#MF_OFFLINEWARN"), wxT(PRODUCT_NAME " Error"));
 		return;
 	}
 
