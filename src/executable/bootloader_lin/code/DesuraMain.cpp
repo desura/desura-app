@@ -34,8 +34,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>
 #include "DesuraMain.h"
 #include "UtilFile.h"
 #include "util/UtilLinux.h"
+#include <branding/branding.h>
 
-#ifdef DESURA_NONGPL_BUILD
+#ifdef DESURA_OFFICAL_BUILD
 	int DownloadFilesForTest();
 	int InstallFilesForTest();
 	bool CheckForUpdate(bool force, bool skip);

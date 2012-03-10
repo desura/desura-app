@@ -30,6 +30,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>
 #include "ChangeDirForm.h"
 #include "ToolInstallForm.h"
 
+#include <branding/branding.h>
+
 #ifdef DEBUG
 //#include "BrowserTest.h"
 #include "FlashDebug.h"
@@ -171,7 +173,7 @@ bool ControllerForm::setUpUserCore()
 		m_pUser->logOut();
 		safe_delete(m_pUser);
 		
-		gcErrorBox(this, "Desura", "Failed to load item information!", e);
+		gcErrorBox(this, PRODUCT_NAME, "Failed to load item information!", e);
 		SetExitCode(-1);
 		return false;
 	}
