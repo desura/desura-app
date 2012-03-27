@@ -5,18 +5,27 @@ Desurium is a gaming client that allows users to one click download and install 
 For more information, visit http://www.moddb.com/groups/desura/forum/thread/open-sourcing-desura
 
 
+<<<<<<< HEAD
 Build Desurium Windows
 ===================
 
 To build Desurium you will need Visual Studio 2008 and also Visual Studio 2010
 
+=======
+Build Desura
+===================
+
+>>>>>>> 33e201d... Merged README.cmake in to README.
 Download and install:
  * TortoiseSvn http://tortoisesvn.net/downloads.html. Make sure to install command line tools
  * TortoiseGit http://code.google.com/p/tortoisegit/downloads/list
  * Windows Sdk 7.1 http://www.microsoft.com/download/en/details.aspx?id=8279
+  (If applicable)
  * Python 2.7 http://www.python.org/getit/
  * SCons http://www.scons.org/download.php
+ * CMake 2.8 http://www.cmake.org/
 
+<<<<<<< HEAD
 Check Out git repo
 Launch visual studio 2010 command prompt and cd into the desura/src/third_party
 Run SVNCheckOut.bat
@@ -60,13 +69,25 @@ Build Desurium Linux
 ===================
 
 Following commands must be invoked in the root of source tree.
+=======
+Run ./build_cmake.sh
+>>>>>>> 33e201d... Merged README.cmake in to README.
 
-The script "install-deps.sh" will install building dependecies on major Linux distros. For now it supports Arch, Debian and it's derivatives like Ubuntu and Mint, Red Hat and it's derivatives like Fedora.
-If your distro is not supported yet, read this script and install corresponding packages for it. In case of succes, please send us a patch.
-To run the script, enter the following line in a command line and press enter.
+In order to make use of multiple CPU cores while compiling, run
+./build_cmake.sh -j8
+which will invoke "make -j8" so the build is speeded up extremely
+only 7 mins on my machine (intel core i7 2635QM)
+"8" will be the number of compile-thread to run at a time
 
-./install-deps.sh
+Required dependencies (can be installed by package manager or install-deps.sh):
+boost
+c-ares
+gtk2
+OpenSSL
+tinyxml
+v8
 
+<<<<<<< HEAD
 We don't want to use Desurium branding, so invoke:
 cp -r src/branding_default src/branding
 
@@ -126,5 +147,13 @@ cd build_lin
 
 Run Desurium Linux
 ===================
+=======
+Optional dependencies (will be built by cmake if not existing):
+bzip2
+sqlite
 
-If you built the debug build (default) you should be able to run ./test.sh in the build_lin folder to test or ./desura in the build_out/debug_lin folder
+cef is needed from official distribution see #5
+Just copy required libs to install/lib
+>>>>>>> 33e201d... Merged README.cmake in to README.
+
+Finally run Desura using ./run_desura.sh
