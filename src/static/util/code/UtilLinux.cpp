@@ -37,7 +37,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>
 
 inline const wchar_t* CONFIG_DB(void)
 {
-	return UTIL::LIN::getAppDataPath(L"linux_registry.sqlite").c_str();
+	return UTIL::OS::getAppDataPath(L"linux_registry.sqlite").c_str();
 }
 
 #define COUNT_CONFIGTABLE_STRING "SELECT count(*) FROM sqlite_master WHERE name='config_string';"
@@ -253,12 +253,6 @@ std::wstring getAppPath(std::wstring extra)
 	}
 
 	return wresult;
-}
-
-std::wstring getAppDataPath(std::wstring extra)
-{
-	// Extra includes the slash.
-	return gcWString("{0}/desura{1}", getenv("XDG_CONFIG_HOME"), extra);
 }
 
 void setConfigValue(const std::string &configKey, const std::string &value)
@@ -848,62 +842,7 @@ bool setupXDGVars()
 		cacheDirString = cacheDir;
 	}
 	
-	if (getenv("XDG_RUNTIME_DIR") == 0)
-	{
-		printf("$XDG_RUNTIME_DIR not set, falling back to $XDG_CACHE_HOME.");
-		
-		if (setenv("XDG_RUNTIME_DIR", cacheDirString.c_str(), 0) == -1)
-		{
-			printf("Failed to setenv $XDG_CONFIG_HOME.");
-			return true;
-		}
-	}
-	
 	return false;
-}
-
-void updateXDGRuntimeStamps()
-{
-	// This should be at least once every 6 hours, to prevent files in
-	// $XDG_RUNTIME_DIR/desura from being cleaned out.
-	// UpdateThread_Old runs this.
-	
-	std::string runtimePath = UTIL::LIN::expandPath("$XDG_RUNTIME_DIR/desura");
-	
-	DIR* dir = opendir(runtimePath.c_str());
-	
-	if (dir == 0)
-	{
-		printf("Failed to open %s!\n", runtimePath.c_str());
-		return;
-	}
-	
-	dirent* file;
-	
-	errno = 0;
-	
-	while ((file = readdir(dir)) != 0)
-	{
-		std::string filename = runtimePath + "/" + file->d_name;
-		
-		// While calling utime with 0 as its second argument means that access time
-		// is updated as well as the modification time, I don't want to pull in
-		// stat and time buffers. Things are simpler this way.
-		
-		if (utime(filename.c_str(), 0) == -1)
-		{
-			printf("utime failed for %s!\n", filename.c_str());
-		}
-		
-		errno = 0;
-	}
-	
-	if(errno != 0)
-	{
-		printf("readdir failed for %s!\n", runtimePath.c_str());
-	}
-	
-	closedir(dir);
 }
 
 }
