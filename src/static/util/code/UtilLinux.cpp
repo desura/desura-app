@@ -249,6 +249,7 @@ std::wstring getAppPath(std::wstring extra)
 	if (extra.size() > 0)
 	{
 		wresult += DIRS_WSTR;
+		wresult += L"/";
 		wresult += extra;
 	}
 
@@ -358,7 +359,8 @@ uint64 getFreeSpace(const char* path)
 	for (size_t x=1; x<=folders.size(); x++)
 	{
 		UTIL::FS::Path fullP;
-		
+		fullP.m_absolutePath = p.m_absolutePath;
+
 		for (size_t y=0; y<folders.size()-x; y++)
 			fullP += folders[y];
 	
@@ -680,6 +682,28 @@ std::string getCmdStdout(const char* command, int stdErrDest)
 	return trim(output); 
 }
 
+std::wstring getDesktopPath(std::wstring extra)
+{
+	std::wstring desktop((wchar_t*) getCmdStdout("xdg-user-dir DESKTOP", 1).c_str());
+	if(!desktop.empty())
+	{
+		desktop += L"/";
+		desktop += extra;
+	}
+	return desktop;
+}
+
+std::wstring getApplicationsPath(std::wstring extra)
+{
+	std::wstring data_home(UTIL::STRING::toWStr(getenv("XDG_DATA_HOME")));
+
+	data_home += L"/applications/";
+	data_home += L"/";
+	data_home += extra;
+
+	return data_home;
+}
+
 bool fileExists(const char* file) 
 {
 	char buffer[PATH_MAX];
@@ -741,6 +765,29 @@ const char g_cBadChars[] = {
 	'"',
 	NULL
 };
+
+gcString getAbsPath(const gcString& path)
+{
+	if (path.size() == 0 || path[0] == '/')
+		return path;
+
+	gcString wd = UTIL::LIN::getAppPath(L"");
+
+	if (path.find(wd) == std::string::npos)
+		return wd + "/" + path;
+
+	return path;
+}
+
+gcString getRelativePath(const gcString &path)
+{
+	gcString wd = UTIL::LIN::getAppPath(L"");
+
+	if (path.find(wd) == 0)
+		return path.substr(wd.size()+1, std::string::npos);
+
+	return path;
+}
 
 std::string sanitiseFileName(const char* name)
 {

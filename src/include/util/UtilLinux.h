@@ -134,7 +134,7 @@ namespace LIN
 #ifdef NIX
 	inline const char* SOCK_PATH(void)
 	{
-		return UTIL::STRING::toStr(UTIL::OS::getCachePath(L"/socket")).c_str();
+		return UTIL::STRING::toStr(UTIL::OS::getCachePath(L"socket")).c_str();
 	}
 #endif
 }
