@@ -66,6 +66,7 @@ include(parsearguments)
 include(CheckCompiler)
 include(SetInstallPaths)
 include(ProcessorCount)
+include(Package)
 
 ###############################################################################
 # find all packages which are needed
