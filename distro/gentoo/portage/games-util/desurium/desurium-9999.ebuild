@@ -10,10 +10,8 @@ if [[ ${PV} = 9999* ]]; then
 	EGIT_REPO_URI="git://github.com/lodle/Desurium.git"
 	GIT_ECLASS="git-2"
 	SRC_URI=""
-	EGIT_NOUNPACK="true"
 else
-	DESURA_ARC="${Desura-${PV}.tar.bz2}"
-	SRC_URI="https://github.com/downloads/lodle/Desurium/${DESURA_ARC}"
+	SRC_URI="https://github.com/downloads/lodle/Desurium/Desura-${PV}.tar.bz2"
 fi
 CHROMIUM_ARC="chromium-15.0.876.0.tar.bz2"
 CHROMIUM_URI="http://commondatastorage.googleapis.com/chromium-browser-official/${CHROMIUM_ARC}"
@@ -47,6 +45,16 @@ GAMESDEPEND="
 		media-libs/sdl-ttf
 		virtual/ffmpeg
 		>=virtual/jre-1.6
+
+		amd64? ( 32bit? (
+			app-emulation/emul-linux-x86-gtklibs
+			app-emulation/emul-linux-x86-gtkmmlibs
+			app-emulation/emul-linux-x86-medialibs
+			app-emulation/emul-linux-x86-opengl
+			app-emulation/emul-linux-x86-sdl
+			app-emulation/emul-linux-x86-soundlibs
+			app-emulation/emul-linux-x86-xlibs[opengl]
+		) )
 	)
 "
 
@@ -73,22 +81,15 @@ COMMON_DEPEND="
 	sys-libs/zlib
 	virtual/jpeg
 	x11-libs/gtk+:2
-	x11-misc/xdg-utils
 
-	32bit? (
-		app-emulation/emul-linux-x86-gtklibs
-		app-emulation/emul-linux-x86-gtkmmlibs
-		app-emulation/emul-linux-x86-medialibs
-		app-emulation/emul-linux-x86-opengl
-		app-emulation/emul-linux-x86-sdl
-		app-emulation/emul-linux-x86-soundlibs
-		app-emulation/emul-linux-x86-xlibs[opengl]
+	amd64? ( 32bit? (
 		sys-devel/gcc[multilib]
-	)
+	) )
 "
 
 RDEPEND="
 	x11-misc/xdg-user-dirs
+	x11-misc/xdg-utils
 	${COMMON_DEPEND}
 	${GAMESDEPEND}
 "
@@ -104,15 +105,11 @@ if [[ $PV != 9999* ]]; then
 fi
 
 pkg_setup() {
-    check-reqs_pkg_setup
+	check-reqs_pkg_setup
 }
 
 src_unpack() {
-	if [[ ${PV} = 9999* ]]; then
-		git-2_src_unpack
-	else
-		unpack ${DESURA_ARC}
-	fi
+	git-2_src_unpack
 }
 
 src_configure() {
@@ -124,7 +121,7 @@ src_configure() {
 		-DCMAKE_INSTALL_PREFIX=${GAMES_PREFIX}/${PN}
 		-DSET_OWN_EXT_SRC=ON
 		-DCHROMIUM_URL="file://${DISTDIR}/${CHROMIUM_ARC}"
-		-DWXWIDGET_URL="file://${DISTDIR}/${WX_ARC}"
+		-DWXWIDGET_URL="file://${DISTDIR}/${WXWIDGET_ARC}"
 	)
 	cmake-utils_src_configure
 }
@@ -136,7 +133,7 @@ src_compile() {
 src_install() {
 	cmake-utils_src_install
 
-	dosym ${GAMES_PREFIX}/${PN}/run.sh ${GAMES_BINDIR}/${PN}.sh
+	dosym "${GAMES_PREFIX}/${PN}/run.sh" "${GAMES_BINDIR}/${PN}.sh"
 
 	doicon "${FILESDIR}/${PN}.png"
 	make_desktop_entry "${PN}.sh" "Desurium"
