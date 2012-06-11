@@ -5,19 +5,13 @@
 #   name            default             description
 #
 # global options:
+#   BUILD_TESTS     ON                  Build various unit tests
 #   OFFICIAL_BUILD  OFF                 for official build only
-#   BRANDING        depends on          which branding should be used?
+#   BRANDING        depends on          ehich branding should be used?
 #                   OFFICIAL_BUILD
 #   DEBUG           OFF                 will add debug symbols and other
 #                                       debugging stuff
 #   PACKAGE_TYPE    DEB                 Which packages should be created with "make package"
-#   SET_OWN_EXT_SRC OFF                 useful for ebuild or saving traffic,
-#                                       but you have to set all of the following
-#                                       vars via cmake -D..
-#                                           BOOST_URL (Windows only)
-#                                           CHROMIUM_URL
-#                                           CURL_URL (Linux only)
-#                                           WXWIDGET_URL
 #
 # unix-only options:
 #   DEBUG_EXTERNAL  OFF                 same as DEBUG, but for externap deps
@@ -34,7 +28,7 @@
 # some dev notes:
 #
 #   if you want to port desura to another compiler on UNIX bases systems,
-#   please create a file for compiler flags in:
+#   please create a files for compiler flags in:
 #
 #     cmake/platform/unix/compiler/${CMAKE_C_COMPILER_ID}.cmake
 #
@@ -52,6 +46,7 @@ set(CMAKE_USER_MAKE_RULES_OVERRIDE_CXX
    ${CMAKE_SOURCE_DIR}/cmake/scripts/cxx_flag_overrides.cmake)
 
 # TODO: silent output for externel dependencies
+# TODO: get libs automatically for externel builds, maybe make desura a external build itself?
 project(Desura)
 cmake_minimum_required(VERSION 2.8.5)
 
@@ -64,6 +59,7 @@ set(CMAKE_PLATFORM_PATH "${CMAKE_SOURCE_DIR}/cmake/platform")
 set(CMAKE_EXTERNAL_BINARY_DIR "${CMAKE_BINARY_DIR}/external")
 set(CMAKE_THIRD_PARTY_DIR "${CMAKE_SOURCE_DIR}/third_party")
 set(CMAKE_SCRIPT_PATH "${CMAKE_SOURCE_DIR}/cmake/scripts")
+set(CMAKE_PATCH_DIR "${CMAKE_SOURCE_DIR}/cmake/patches")
 
 if(DEBUG)
   set(CMAKE_BUILD_TYPE Debug)
@@ -75,8 +71,8 @@ endif()
 # some includes
 ###############################################################################
 
-include(ExternalProject)
 include(CheckOptions)
+include(ExternalProject)
 include(macros)
 include(parsearguments)
 include(CheckCompiler)
@@ -88,27 +84,18 @@ include(Package)
 # SVN, Git, HTTP stuff
 ###############################################################################
 
-if(NOT SET_OWN_EXT_SRC)
-  set(BOOST_URL http://downloads.sourceforge.net/project/boost/boost/1.49.0/boost_1_49_0.zip)
-  set(BOOST_MD5 854dcbbff31b896c85c38247060b7713)
-
-  set(CHROMIUM_URL http://commondatastorage.googleapis.com/chromium-browser-official/chromium-15.0.876.0.tar.bz2)
-  set(CHROMIUM_MD5 22c8e1db4d1c4b474c600dffbb5fdd0c)
-
-  set(CURL_URL http://curl.haxx.se/download/curl-7.26.0.tar.bz2)
-  set(CURL_MD5 bfa80f01b3d300359cfb4d409b6136a3)
-
-  set(WXWIDGET_URL ftp://ftp.wxwidgets.org/pub/2.9.3/wxWidgets-2.9.3.tar.bz2)
-  set(WXWIDGET_MD5 6b6003713289ea4d3cd9b49c5db5b721)
-endif()
-
+set(BOOST_DOWNLOAD_PATH http://downloads.sourceforge.net/project/boost/boost/1.49.0/boost_1_49_0.zip)
+set(BOOST_DOWNLOAD_MD5 854dcbbff31b896c85c38247060b7713)
 set(BREAKPAD_SVN http://google-breakpad.googlecode.com/svn/trunk -r 850)
 set(CEF_SVN http://chromiumembedded.googlecode.com/svn/trunk/@291)
-# for windows
+set(CHROMIUM_DOWNLOAD_PATH http://commondatastorage.googleapis.com/chromium-browser-official/chromium-15.0.876.0.tar.bz2)
+set(CHROMIUM_DOWNLOAD_MD5 22c8e1db4d1c4b474c600dffbb5fdd0c)
 set(CURL_GIT git://github.com/bagder/curl.git)
 set(CURL_VERSION tags/curl-7_25_0)
 set(DEPOT_TOOLS_SVN http://src.chromium.org/svn/trunk/tools/depot_tools)
 set(V8_SVN http://v8.googlecode.com/svn/tags/3.9.9/)
+set(WXWIDGET_URL ftp://ftp.wxwidgets.org/pub/2.9.3/wxWidgets-2.9.3.tar.bz2)
+set(WXWIDGET_MD5 6b6003713289ea4d3cd9b49c5db5b721)
 
 ###############################################################################
 # find all packages which are needed
