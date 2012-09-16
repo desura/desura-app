@@ -142,7 +142,7 @@ src_configure() {
 		
 		-DBINDIR="${GAMES_BINDIR}"
 		-DDATADIR="${GAMES_DATADIR}"
-		-DRUNTIME_LIBDIR="${GAMES_PREFIX}/lib"
+		-DRUNTIME_LIBDIR="$(games_get_libdir)"
 		-DDESKTOPDIR="/usr/share/applications"
 	)
 	cmake-utils_src_configure
