@@ -9,7 +9,7 @@ include_directories(
 
 file(GLOB SourcesWEB code/UtilWeb.cpp)
 
-if(WIN32)
+if(WIN32 AND NOT MINGW)
   set(WINDOWS_LIBRARIES msi Winhttp wintrust)
   add_linker_flags(/NOD:MSVCRTD)
   use_unicode_here()
@@ -50,12 +50,10 @@ if(WIN32)
                              code/UtilWindows_osver.cpp
                              code/UtilWindows_service.cpp
 							 code/third_party/WinXPSP2FireWall.cpp)
+  set(PLATFORM_LIBRARIES msi wintrust)
+  use_unicode_here()
 else()
   file(GLOB PlattformSources code/UtilLinux.cpp)
-endif()
-
-if(WIN32)
-  use_unicode_here()
 endif()
 
 if(UNIX)
@@ -80,5 +78,6 @@ target_link_libraries(util
   ${BZIP2_LIBRARIES}
   ${SQLITE3X_LIBRARIES}
   ${Boost_FILESYSTEM_LIBRARY}
-  ${Boost_SYSTEM_LIBRARY}  
+  ${Boost_SYSTEM_LIBRARY}
+  ${PLATFORM_LIBRARIES}
 )
