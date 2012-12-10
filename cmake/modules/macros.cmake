@@ -84,3 +84,25 @@ macro(pair)
   unset(_CMD)
   unset(_aList)
 endmacro()
+
+macro(add_desura_test name category neededLibs)
+  if(BUILD_TESTS)
+    file(GLOB ${name}_SRC ${CMAKE_SOURCE_DIR}/src/tests/${category}/${name}*.c
+                          ${CMAKE_SOURCE_DIR}/src/tests/${category}/${name}*.C
+                          ${CMAKE_SOURCE_DIR}/src/tests/${category}/${name}*.cc
+                          ${CMAKE_SOURCE_DIR}/src/tests/${category}/${name}*.cpp
+                          ${CMAKE_SOURCE_DIR}/src/tests/${category}/${name}*.cxx
+                          ${CMAKE_SOURCE_DIR}/src/tests/${category}/${name}*.h
+                          ${CMAKE_SOURCE_DIR}/src/tests/*.h)
+    add_executable(${name} ${${name}_SRC})
+    include_directories(
+      ${CMAKE_SOURCE_DIR}/src/tests
+      ${Boost_INCLUDE_DIR}
+    )
+    target_link_libraries(${name}
+      ${Boost_LIBRARIES}
+      ${neededLibs}
+    )
+    add_test(${name} ${CMAKE_BINARY_DIR}/src/tests/${name})
+  endif()
+endmacro()
