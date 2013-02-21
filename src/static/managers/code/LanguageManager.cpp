@@ -27,10 +27,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>
 #include <branding/branding.h>
 
 
-LanguageManager::LanguageManager(const char* defaultLangFile) : BaseManager( true )
+LanguageManager::LanguageManager() : BaseManager<LanguageString>( true )
 {
-	if (defaultLangFile)
-		loadFromFile(defaultLangFile);
+	// load english files by default
+	std::wstring path = UTIL::OS::getDataPath(L"language/english.xml");
+	loadFromFile(UTIL::STRING::toStr(path).c_str());
 }
 
 LanguageManager::~LanguageManager()
@@ -96,8 +97,9 @@ bool LanguageManager::loadFromFile(const char* file)
 			this->addItem( temp );
 		}
 
-#ifndef DESURA_OFFICAL_BUILD
-
+#ifdef DESURA_OFFICAL_BUILD
+		temp->ustr = val;
+#else
 		std::vector<std::string> res;
 		UTIL::STRING::tokenize(gcString(val), res, "Desura");
 
@@ -113,8 +115,6 @@ bool LanguageManager::loadFromFile(const char* file)
 
 		temp->ustr = out;
 #endif
-
-		temp->ustr = val;
 	};
 
 	XML::for_each_child("str", cNode->FirstChild("strings"), parseString);
