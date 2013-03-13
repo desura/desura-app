@@ -47,7 +47,7 @@ void ItemHandle::doLaunch(Helper::ItemLaunchHelperI* helper)
 	{
 		if (!UTIL::FS::isValidFile(globalExe.c_str()))
 		{
-			Warning(gcString("Couldnt find global exe [{0}], ignoring.\n", globalExe));
+			Warning(gcString("Couldn't find global exe [{0}], ignoring.\n", globalExe));
 			globalExe = "";
 			exe = ei->getExe();
 		}
@@ -127,7 +127,8 @@ void ItemHandle::doLaunch(bool useXdgOpen, const char* globalExe, const char* gl
 	UserCore::Item::BranchInfoI* branch = getItemInfo()->getCurrentBranch();
 
 #ifdef NIX64
-	if (!useXdgOpen && branch && branch->is32Bit())
+	// Branches can be marked simultaneously 32- and 64-bit, be sure it isn't.
+	if (!useXdgOpen && branch && !branch->is64Bit())
 	{
 		#ifdef USE_BITTEST
 			int testRet = system("desura_bittest");
@@ -316,8 +317,10 @@ void ItemHandle::installLaunchScripts()
 
 inline gcString createDesktopFile(ItemInfoI* i)
 {
+	using boost::algorithm::replace_all_copy;
 	// KDE menu doesn't accept files like "Publisher Name-GameName.desktop" so we replace all " " with "_"
-	gcString publisher = boost::algorithm::replace_all_copy(std::string(i->getPublisher()), " ", "_");
+	gcString publisher = replace_all_copy(std::string(i->getPublisher()), " ", "_");
+	gcString comment = replace_all_copy(std::string(i->getDesc()), "\n", "\\n");
 
 	gcString tmpPath("{0}/{1}-{2}.desktop",
 	                 UTIL::OS::getCachePath(),
@@ -328,13 +331,18 @@ inline gcString createDesktopFile(ItemInfoI* i)
 	desktopFile << "[Desktop Entry]"
 	            << "\nType=Application"
 	            << "\nName=" << i->getName()
-	            << "\nComment=" << i->getDesc()
+	            << "\nComment=" << comment
 	            << "\nIcon=" << i->getIcon()
 	            << "\nTryExec=" << i->getActiveExe()->getExe()
 	            << "\nExec=" << i->getActiveExe()->getExe() << ' '
 	                         << i->getActiveExe()->getExeArgs()
-	            << "\nCategories=Game;" << i->getGenre() << ';'
-	            << std::endl;
+	            << "\nPath=" << i->getPath()
+	            << "\nCategories=Game;";
+	// check for the genre first, before writing an empty string ("Categories=Game;;" is invalid)
+	if (std::string(i->getGenre()).size() > 0)
+		desktopFile << i->getGenre() << ';';
+	// finish the desktopFile
+	desktopFile << std::endl;
 	desktopFile.close();
 
 	return tmpPath;
