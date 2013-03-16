@@ -1,8 +1,12 @@
+if(UNIX)
+	set(MY_BUILD_TOOL $(MAKE))
+else()
+	set(MY_BUILD_TOOL ${CMAKE_BUILD_TOOL})
+endif()
+
 if(BUILD_CEF OR BUILD_ONLY_CEF)
   set(DEPOT_TOOLS_INSTALL_DIR ${CMAKE_EXTERNAL_BINARY_DIR}/depot_tools)
   set(DEPOT_TOOLS_BIN_DIR ${DEPOT_TOOLS_INSTALL_DIR}/src/depot_tools)
-
-  ProcessorCount(CPU_COUNT)
 
   ExternalProject_Add(
     depot_tools
@@ -60,7 +64,7 @@ if(BUILD_CEF OR BUILD_ONLY_CEF)
     URL ${CEF_URL}
     URL_MD5 ${CEF_MD5}
     UPDATE_COMMAND ""
-    PATCH_COMMAND ${CMAKE_SCRIPT_PATH}/patch.${SCRIPT_PREFIX} ${CMAKE_SOURCE_DIR}/cmake/patches/cef.patch
+    PATCH_COMMAND ${PATCH_SCRIPT_PATH} ${CMAKE_SOURCE_DIR}/cmake/patches/cef.patch
     CONFIGURE_COMMAND ""
     BUILD_COMMAND "" 
     INSTALL_COMMAND ""
@@ -76,7 +80,7 @@ if(BUILD_CEF OR BUILD_ONLY_CEF)
   ExternalProject_Add_Step(
     fetch_cef
     cef_gyp-patch
-    COMMAND ${CMAKE_SCRIPT_PATH}/patch.sh ${CMAKE_BINARY_DIR}/gen/patches/cef_gyp.patch
+    COMMAND ${PATCH_SCRIPT_PATH} ${CMAKE_BINARY_DIR}/gen/patches/cef_gyp.patch
     DEPENDEES patch
     WORKING_DIRECTORY ${FETCH_CEF_SOURCE_DIR}
   )
@@ -109,7 +113,7 @@ if(BUILD_CEF OR BUILD_ONLY_CEF)
     ExternalProject_Add_Step(
     cef
     glib-2-32-patch
-    COMMAND ${CMAKE_SCRIPT_PATH}/patch.sh ${CMAKE_SOURCE_DIR}/cmake/patches/cef_glib_2_32_compile.patch
+    COMMAND ${PATCH_SCRIPT_PATH} ${CMAKE_SOURCE_DIR}/cmake/patches/cef_glib_2_32_compile.patch
     DEPENDERS patch
     WORKING_DIRECTORY ${CHROMIUM_SOURCE_DIR}/src
     )
@@ -117,7 +121,7 @@ if(BUILD_CEF OR BUILD_ONLY_CEF)
     ExternalProject_Add_Step(
     cef
     gcc-4-7-patch
-    COMMAND ${CMAKE_SCRIPT_PATH}/patch.sh ${CMAKE_SOURCE_DIR}/cmake/patches/cef_gcc47_compile_fix.patch
+    COMMAND ${PATCH_SCRIPT_PATH} ${CMAKE_SOURCE_DIR}/cmake/patches/cef_gcc47_compile_fix.patch
     DEPENDERS patch
     WORKING_DIRECTORY ${CHROMIUM_SOURCE_DIR}/src
     )
@@ -125,7 +129,7 @@ if(BUILD_CEF OR BUILD_ONLY_CEF)
     ExternalProject_Add_Step(
     cef
     bison-2-6-patch
-    COMMAND ${CMAKE_SCRIPT_PATH}/patch.sh ${CMAKE_SOURCE_DIR}/cmake/patches/chromium-bison-2.6.patch
+    COMMAND ${PATCH_SCRIPT_PATH} ${CMAKE_SOURCE_DIR}/cmake/patches/chromium-bison-2.6.patch
     DEPENDERS patch
     WORKING_DIRECTORY ${CHROMIUM_SOURCE_DIR}/src
     )
@@ -139,10 +143,17 @@ if(BUILD_CEF OR BUILD_ONLY_CEF)
     WORKING_DIRECTORY ${CHROMIUM_SOURCE_DIR}/src/cef
     )
 
+    message(STATUS "the value of env CFLAGS: " $ENV{CFLAGS})
+    message(STATUS "the value of env CXXFLAGS: " $ENV{CXXFLAGS})
+    message(STATUS "the value of env LDFLAGS: " $ENV{LDFLAGS})
+    set(ENV{CFLAGS.host} "$ENV{CFLAGS}")
+    set(ENV{CXXFLAGS.host} "$ENV{CXXFLAGS}")
+    set(ENV{LDFLAGS.host} "$ENV{LDFLAGS}")
+
     ExternalProject_Add_Step(
     cef
     build_cef
-    COMMAND ${CMAKE_SCRIPT_PATH}/depot_tools_wrapper.sh ${DEPOT_TOOLS_BIN_DIR} make cef_desura -j${CPU_COUNT} BUILDTYPE=Release
+    COMMAND ${CMAKE_SCRIPT_PATH}/depot_tools_wrapper.sh ${DEPOT_TOOLS_BIN_DIR} ${MY_BUILD_TOOL} cef_desura V=1 $ENV{MAKEOPTS} CC.host=${CMAKE_C_COMPILER} CXX.host=${CMAKE_CXX_COMPILER} LINK.host=${CMAKE_CXX_COMPILER} AR.host=${CMAKE_AR} BUILDTYPE=Release
     DEPENDEES configure
     DEPENDERS build
     WORKING_DIRECTORY ${CHROMIUM_SOURCE_DIR}/src
@@ -179,7 +190,7 @@ else(BUILD_CEF)
     URL ${CEF_URL}
     URL_MD5 ${CEF_MD5}
     UPDATE_COMMAND ""
-    PATCH_COMMAND ${CMAKE_SCRIPT_PATH}/patch.${SCRIPT_PREFIX} ${CMAKE_SOURCE_DIR}/cmake/patches/cef.patch
+    PATCH_COMMAND ${PATCH_SCRIPT_PATH} ${CMAKE_SOURCE_DIR}/cmake/patches/cef.patch
     CONFIGURE_COMMAND ""
     BUILD_COMMAND "" 
     INSTALL_COMMAND ""
