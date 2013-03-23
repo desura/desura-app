@@ -38,18 +38,18 @@ set(AllSources ${Sources} ${PlattformSources} ${SERVICE_PIPE_SPOURCES})
 setup_precompiled_header(Common.h ${COMMON_INCLUDE_DIRS}/Common.cpp AllSources)
 add_library(servicecore SHARED ${AllSources})
 target_link_libraries(servicecore
-    gcJSBase
-    ipc_pipe
-    threads
-    umcf
-    util
-    util_fs
-	${BZIP2_LIBRARIES}
-    ${SQLITE_LIBRARIES}
-    ${SQLITE3X_LIBRARIES}
-    ${TINYXML_LIBRARIES}
-    ${CMAKE_THREAD_LIBS_INIT}
-	${PLATFORM_LIBRARIES}
+  gcJSBase
+  ipc_pipe
+  threads
+  umcf
+  util
+  util_fs
+  ${BZIP2_LIBRARIES}
+  ${SQLITE_LIBRARIES}
+  ${SQLITE3X_LIBRARIES}
+  ${TINYXML_LIBRARIES}
+  ${CMAKE_THREAD_LIBS_INIT}
+  ${PLATFORM_LIBRARIES}
 )
 
 add_dependencies(servicecore bzip2 tinyxml2 sqlite sqlite3x)
