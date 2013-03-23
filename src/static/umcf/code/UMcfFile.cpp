@@ -31,7 +31,7 @@ Contact us at legal@badjuju.com.
 #include "XMLMacros.h"
 #include "UMcfFile_utils.h"
 
-#ifdef NIX
+#if defined(NIX) || defined(MACOS)
 #include <errno.h>
 #include <limits.h>
 #endif
@@ -119,7 +119,7 @@ uint8 UMcfFile::loadXmlData(const XML::gcXMLElement &xmlElement)
 	m_szName = name;
 	m_szPath = path;
 
-#ifdef NIX
+#if defined(NIX) || defined(MACOS)
 	std::replace(m_szPath.begin(), m_szPath.end(), '\\', '/');
 #endif
 
@@ -135,13 +135,13 @@ uint8 UMcfFile::loadXmlData(const XML::gcXMLElement &xmlElement)
 
 void UMcfFile::genXml(XML::gcXMLElement &xmlElement)
 {
-#ifdef NIX
+#if defined(NIX) || defined(MACOS)
 	std::wstring copy(m_szPath);
 	std::replace(copy.begin(), copy.end(), '/', '\\');
 #endif
 
 	xmlElement.WriteChild("name", gcString(m_szName));
-#ifdef NIX
+#if defined(NIX) || defined(MACOS)
 	xmlElement.WriteChild("path", gcString(copy));
 #else
 	xmlElement.WriteChild("path", gcString(m_szPath));
@@ -160,7 +160,7 @@ void UMcfFile::genXml(XML::gcXMLElement &xmlElement)
 
 bool UMcfFile::checkFile(const wchar_t* dir)
 {
-#ifdef NIX
+#if defined(NIX) || defined(MACOS)
 	gcString path;
 	if (*dir == L'.') {  // TODO|HACK -- mcf for desura should be prepending ../ to path; it's running out of ./lib not ./
 		path = gcString(".{0}/{1}/{2}", dir, m_szPath, m_szName);
@@ -424,7 +424,7 @@ uint8 UMcfFile::readMCFAndSave(FILEHANDLE hFile, const wchar_t* dir, uint64 offs
 
 	FileClose(hSaveFile);
 
-#ifdef NIX
+#if defined(NIX) || defined(MACOS)
 	struct stat s;
 
 	if (HasAnyFlags(getFlags(), UMCFF_FLAG_XECUTABLE) && stat(fullPath.c_str(), &s) == 0)
