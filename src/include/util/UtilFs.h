@@ -348,7 +348,7 @@ namespace UTIL
 			//!
 			bool isValidFile() const { return (m_bIsOpen && m_hFileHandle); }
 
-#ifdef NIX
+#if defined(NIX) || defined(MACOS)
 			const char* getMode() const { return m_szMode.c_str(); }
 #endif
 
@@ -361,7 +361,7 @@ namespace UTIL
 
 			bool m_bIsOpen;
 
-#ifdef NIX
+#if defined(NIX) || defined(MACOS)
 			std::string m_szMode;
 #endif
 

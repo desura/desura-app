@@ -152,6 +152,7 @@ bool IsUIThread();
 			#define MACOS64 1
 		#endif
 		#define fopen64 fopen
+		#define fseeko64 fseeko
 	#endif
 
 
