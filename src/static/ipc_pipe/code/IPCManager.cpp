@@ -842,7 +842,7 @@ void IPCManager::informClassesOfDisconnect()
 }
 
 
-#ifdef NIX
+#if defined(NIX) || defined(MACOS)
 uint32 IPCManager::getNumSendEvents()
 {
 	uint32 ret = 0;

@@ -29,6 +29,7 @@ Contact us at legal@badjuju.com.
 #include "IPCMessage.h"
 #include "IPCLockable.h"
 #include "IPCPipeAuth.h"
+#include "IPCServerI.h"
 #include <atomic>
 
 #include "util_thread/BaseThread.h"
