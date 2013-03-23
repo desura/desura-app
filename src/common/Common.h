@@ -148,6 +148,9 @@ bool IsUIThread();
 			#define MACOS 1
 		#endif
 
+		#if defined __x86_64 || defined __amd64 || defined __x86_64__
+			#define MACOS64 1
+		#endif
 		#define fopen64 fopen
 	#endif
 
@@ -264,7 +267,7 @@ bool IsUIThread();
 
 	#endif
 
-	#ifdef NIX // LINUX
+	#if defined(NIX) || defined(MACOS) // UNIX
 		#define _LARGEFILE_SOURCE 1
 		#define _LARGEFILE64_SOURCE 1
 		#define _FILE_OFFSET_BITS   64
@@ -308,7 +311,11 @@ bool IsUIThread();
 		#define OutputDebugString(out)	fprintf(stderr, "%s", out);
 		#define OutputDebugStringW(out)	fprintf(stderr, "%ls", out);
 
-		#ifdef NIX64
+		#if defined(MACOS)
+			#define BUILDID_INTERNAL 530
+			#define BUILDID_BETA 330
+			#define BUILDID_PUBLIC 130
+		#elif defined(NIX64)
 			#define BUILDID_INTERNAL 520
 			#define BUILDID_BETA 320
 			#define BUILDID_PUBLIC 120
