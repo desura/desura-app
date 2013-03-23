@@ -90,7 +90,7 @@ namespace FS
 
 		bool startsWith(const Path &path) const;
 
-#ifdef NIX
+#if defined(NIX) || defined(MACOS)
 		bool m_absolutePath;
 #endif
 	private:

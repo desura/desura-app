@@ -184,7 +184,7 @@ void InstallPrompt::onButtonClick(wxCommandEvent& event)
 #ifdef WIN32
 		ShellExecute(nullptr, L"open", m_szPath.c_str(), nullptr, nullptr, SW_SHOWDEFAULT);
 #else
-		UTIL::LIN::launchFolder(gcString(m_szPath).c_str());
+		UTIL::OS::launchFolder(gcString(m_szPath).c_str());
 #endif
 	}
 	else if (event.GetId() == m_butOk->GetId())

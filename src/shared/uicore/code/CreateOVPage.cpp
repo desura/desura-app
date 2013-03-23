@@ -147,7 +147,7 @@ void CreateMCFOverview::onMouseDown( wxMouseEvent& event )
 #ifdef WIN32
 	ShellExecuteA(nullptr, "explore" , m_szFolderPath.c_str(), nullptr, nullptr, SW_SHOWNORMAL);
 #else
-	UTIL::LIN::launchFolder(m_szFolderPath.c_str());
+	UTIL::OS::launchFolder(m_szFolderPath.c_str());
 #endif
 }
 
@@ -172,7 +172,7 @@ void CreateMCFOverview::onButtonClick( wxCommandEvent& event )
 #ifdef WIN32
 		ShellExecuteA(nullptr, "explore" , m_szFolderPath.c_str(), nullptr, nullptr, SW_SHOWNORMAL);
 #else
-		UTIL::LIN::launchFolder(m_szFolderPath.c_str());
+		UTIL::OS::launchFolder(m_szFolderPath.c_str());
 #endif
 	}
 	else

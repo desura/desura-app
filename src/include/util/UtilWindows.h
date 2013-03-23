@@ -298,6 +298,12 @@ namespace WIN
 
 	//! Note doesnt work on xp
 	std::vector<uint32> getProcessesRunningAtPath(const char* szPath);
+
+	std::string getCmdStdout(const char* command, int stdErrDest = 0);
+
+	bool launchFolder(const char* path);
+
+	bool canLaunchBinary(BinType type);
 }
 }
 

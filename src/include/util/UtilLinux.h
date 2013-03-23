@@ -33,29 +33,12 @@ namespace UTIL
 {
 namespace LIN
 {
-	enum BinType
-	{
-		BT_ELF32,	// Warn and launch natively if on x64
-		BT_ELF64,	// Launch natively
-		BT_WIN,		// Warn and launch using xdg-open
-		BT_SCRIPT,	// Launch using xdg-open
-		BT_UNKNOWN,	// Error
-	};
-
 	//! Returns a std::string of the path expanded
 	//!
 	//! @param file string to file to expand
 	//! @return expanded path if successful, "" if not
 	//!
 	std::string expandPath(const char* file);
-
-	//! Returns the type of file by its magic mark at the start of the file
-	//!
-	//! @param buff Buffer that contains at least the first 4 bytes
-	//! @param buffSize size of buffer
-	//! @return Bin type if known or BT_UNKNOWN if not
-	//!
-	BinType getFileType(const char* buff, size_t buffSize);
 
 	//! Gets the exectuables directory
 	//!
@@ -126,17 +109,15 @@ namespace LIN
 
 	bool is64OS();
 
+	gcString getAbsPath(const gcString& path);
+	gcString getRelativePath(const gcString &path);
+
 	std::string sanitiseFileName(const char* name);
 
 	//! Sets up XDG environmental variables.
 	void setupXDGVars();
 
-#ifdef NIX
-	inline const char* SOCK_PATH(void)
-	{
-		return UTIL::STRING::toStr(UTIL::OS::getCachePath(L"socket")).c_str();
-	}
-#endif
+	bool canLaunchBinary(OS::BinType type);
 }
 }
 

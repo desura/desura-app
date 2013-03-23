@@ -26,6 +26,20 @@ Contact us at legal@badjuju.com.
 #include "util/UtilLinux.h"
 #endif
 
+#ifdef MACOS
+  #include "util/UtilMacos.h"
+#endif
+
+#ifdef WIN32
+  #define  PLATFORM UTIL::WIN
+#elif  NIX
+  #define  PLATFORM UTIL::LIN
+#elif  MACOS
+  #define  PLATFORM UTIL::MAC
+#else
+  #error platform not supported
+#endif
+
 #ifdef WIN32
 	#include <shlobj.h>
 #endif
@@ -40,69 +54,56 @@ namespace OS
 {
 bool is64OS()
 {
-#ifdef WIN32
-	return UTIL::WIN::is64OS();
-#else
-	return UTIL::LIN::is64OS();
-#endif
+	return PLATFORM::is64OS();
 }
 
 bool isPointOnScreen(int32 x, int32 y)
 {
 #ifdef WIN32
-	return UTIL::WIN::isPointOnScreen(x, y);
-#endif
-#ifdef NIX
-	return true;// TODO LINUX
+	return PLATFORM::isPointOnScreen(x, y);
+#else
+	return true;// TODO LINUX, MACOS
 #endif
 }
 
 uint64 getFreeSpace(const char* path)
 {
-#ifdef WIN32
-	return UTIL::WIN::getFreeSpace(path);
-#endif
-#ifdef NIX
-	return UTIL::LIN::getFreeSpace(path);
-#endif
+	return PLATFORM::getFreeSpace(path);
 }
 
 std::string getOSString()
 {
 #ifdef WIN32
 	char buff[255] = {0};
-	UTIL::WIN::getOSString(buff, 255);
-
+	PLATFORM::getOSString(buff, 255);
 	return std::string(buff, 255);
-#endif
-
-#ifdef NIX
-	return UTIL::LIN::getOSString();
+#else
+	return PLATFORM::getOSString();
 #endif
 }
 
 void setConfigValue(const std::string &regIndex, const std::string &value, bool expandStr, bool use64bit)
 {
 #ifdef WIN32
-	return UTIL::WIN::setRegValue(regIndex, value, expandStr, use64bit);
+	return PLATFORM::setRegValue(regIndex, value, expandStr, use64bit);
 #else
-	return UTIL::LIN::setConfigValue(regIndex, value);
+	return PLATFORM::setConfigValue(regIndex, value);
 #endif
 }
 
 void setConfigValue(const std::string &regIndex, uint32 value, bool use64bit)
 {
 #ifdef WIN32
-	return UTIL::WIN::setRegValue(regIndex, value, use64bit);
+	return PLATFORM::setRegValue(regIndex, value, use64bit);
 #else
-	return UTIL::LIN::setConfigValue(regIndex, value);
+	return PLATFORM::setConfigValue(regIndex, value);
 #endif
 }
 
 void setConfigBinaryValue(const std::string &regIndex, const char* blob, size_t size, bool use64bit)
 {
 #ifdef WIN32
-	return UTIL::WIN::setRegBinaryValue(regIndex, blob, size, use64bit);
+	return PLATFORM::setRegBinaryValue(regIndex, blob, size, use64bit);
 #else
 	ERROR_NOT_IMPLEMENTED;
 #endif
@@ -111,18 +112,16 @@ void setConfigBinaryValue(const std::string &regIndex, const char* blob, size_t 
 std::string getConfigValue(const std::string &configKey, bool use64bit)
 {
 #ifdef WIN32
-	return UTIL::WIN::getRegValue(configKey, use64bit);
-#endif
-
-#ifdef NIX
-	return UTIL::LIN::getConfigValue(configKey);
+	return PLATFORM::getRegValue(configKey, use64bit);
+#else
+	return PLATFORM::getConfigValue(configKey);
 #endif
 }
 
 std::wstring getCurrentDir(std::wstring extra)
 {
-#ifdef NIX
-	return UTIL::LIN::getAppPath(extra);
+#if defined NIX || MACOS
+	return PLATFORM::getAppPath(extra);
 #else
 	wchar_t path[MAX_PATH];
 	GetCurrentDirectoryW(MAX_PATH, path);
@@ -165,6 +164,8 @@ std::wstring getCachePath(std::wstring extra)
 		extra.insert(0, DIRS_WSTR);
 
 	return UTIL::STRING::toWStr(cachePath) + extra;
+#elif MACOS
+	return PLATFORM::getCachePath(extra);
 #else
 	return getAppDataPath(std::wstring(L"cache\\") + extra);
 #endif
@@ -196,6 +197,8 @@ std::wstring getAppInstallPath(std::wstring extra)
 		extra.insert(0, DIRS_WSTR);
 
 	return UTIL::STRING::toWStr(installPath) + extra;
+#elif MACOS
+	return PLATFORM::getAppInstallPath(extra);
 #else
 	return UTIL::OS::getCurrentDir(DIR_WCOMMON);
 #endif
@@ -218,6 +221,8 @@ std::wstring getAppDataPath(std::wstring extra)
 		extra.insert(0, DIRS_WSTR);
 
 	return UTIL::STRING::toWStr(configPath) + extra;
+#elif MACOS
+	return PLATFORM::getAppDataPath(extra);
 #else
 	wchar_t path[MAX_PATH];
 	getSystemPath(CSIDL_COMMON_APPDATA, path);
@@ -255,6 +260,8 @@ std::wstring getLocalAppDataPath(std::wstring extra)
 	}
 
 	return out;
+#elif defined(MACOS)
+	return PLATFORM::getLocalAppDataPath(extra);
 #else
 	return L"";
 #endif
@@ -277,7 +284,9 @@ std::wstring getTempInternetPath(std::wstring extra)
 		out += extra;
 	}
 
-	return out;
+	return out
+#elif defined(MACOS)
+	return PLATFORM::getTempInternetPath(extra);
 #else
 	return L"";
 #endif
@@ -302,6 +311,8 @@ std::wstring getCommonProgramFilesPath(std::wstring extra)
 	}
 
 	return out;
+#elif defined(MACOS)
+	return PLATFORM::getCommonProgramFilesPath(extra);
 #else
 	return L"";
 #endif
@@ -347,46 +358,15 @@ std::wstring getDesktopPath(std::wstring extra)
 #endif
 }
 
-#ifdef WIN32
-
 gcString getAbsPath(const gcString& path)
 {
-	return path;
+	return PLATFORM::getAbsPath(path);
 }
 
-gcString getRelativePath(const gcString &path)
+gcString getRelativePath(const gcString& path)
 {
-	return path;
+	return PLATFORM::getRelativePath(path);
 }
-
-#else
-
-gcString getAbsPath(const gcString& path)
-{
-	if (path.size() == 0 || path[0] == '/')
-		return path;
-
-	gcString wd = UTIL::LIN::getAppPath(L"");
-
-	if (path.find(wd) == std::string::npos)
-		return wd + "/" + path;
-
-	return path;
-}
-
-gcString getRelativePath(const gcString &path)
-{
-	gcString wd = UTIL::LIN::getAppPath(L"");
-
-	if (path.find(wd) == 0)
-		return path.substr(wd.size()+1, std::string::npos);
-
-	return path;
-}
-
-#endif
-
-
 
 std::string UserEncodeString(const std::string& strKey, const std::string& strValue)
 {
@@ -529,6 +509,47 @@ std::vector<uint32> getProcessesRunningAtPath(const char* szPath)
 #endif
 
 	return std::vector<uint32>();
+}
+
+std::string getCmdStdout(const char* command, int stdErrDest)
+{
+	return PLATFORM::getCmdStdout(command, stdErrDest);
+}
+
+bool launchFolder(const char* path)
+{
+	return PLATFORM::launchFolder(path);
+}
+
+BinType getFileType(const char* buff, size_t buffSize)
+{
+	if (buffSize < 2)
+		return BinType::UNKNOWN;
+
+	if (strncmp(buff, "#!", 2) == 0)
+		return BinType::SH;
+
+	if (strncmp(buff, "MZ", 2) == 0)
+		return BinType::WIN32;
+
+	if (buffSize < 5)
+		return BinType::UNKNOWN;
+
+	if (strncmp(buff+1, "ELF", 3) == 0)
+	{
+		if (*(buff + 4) == (char)0x01)
+			return BinType::ELF32;
+
+		if (*(buff + 4) == (char)0x02)
+			return BinType::ELF64;
+	}
+
+	return BinType::UNKNOWN;
+}
+
+bool canLaunchBinary(BinType type)
+{
+	return PLATFORM::canLaunchBinary(type);
 }
 
 void killProcess(uint32 pid)

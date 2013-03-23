@@ -170,7 +170,7 @@ void DesuraJSUploadInfo::exploreMcf(gcRefPtr<UserCore::Misc::UploadInfoThreadI> 
 #ifdef WIN32
 		ShellExecuteA(nullptr, "explore" , path.getFolderPath().c_str(), nullptr, nullptr, SW_SHOWNORMAL);
 #else
-		UTIL::LIN::launchFolder(path.getFolderPath().c_str());
+		UTIL::OS::launchFolder(path.getFolderPath().c_str());
 #endif
 	}
 }

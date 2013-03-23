@@ -31,6 +31,19 @@ namespace UTIL
 {
 	namespace OS
 	{
+		enum class BinType
+		{
+			ELF32,
+			ELF64,
+			WIN32,
+			WIN64,
+			MACH32,
+			MACH64,
+			SH,
+			BAT,
+			UNKNOWN,
+		};
+
 		bool is64OS();
 
 		//! Determines if a point is on the screen
@@ -183,6 +196,32 @@ namespace UTIL
 
 		std::vector<uint32> getProcessesRunningAtPath(const char* szPath);
 		void killProcess(uint32 pid);
+
+		//! Returns the stdout of a system() call
+		//!
+		//! @param command command to execute
+		//! @param stdErrDest 0 = do nothing, 1 = hide it, 2 = append to stdout
+		//! @return stdout
+		//! @note Throws exceptions if can't run command
+		//!
+		std::string getCmdStdout(const char* command, int stdErrDest = 0);
+
+		bool launchFolder(const char* path);
+
+		//! Returns the type of file by its magic mark at the start of the file
+		//!
+		//! @param buff Buffer that contains at least the first 4 bytes
+		//! @param buffSize size of buffer
+		//! @return Bin type if known or BT_UNKNOWN if not
+		//!
+		BinType getFileType(const char* buff, size_t buffSize);
+
+		bool canLaunchBinary(BinType type);
+
+		inline const char* SOCK_PATH(void)
+		{
+			return UTIL::STRING::toStr(UTIL::OS::getCachePath(L"socket")).c_str();
+		}
 	}
 }
 

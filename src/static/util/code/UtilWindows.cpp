@@ -854,6 +854,16 @@ static std::vector<char> g_cBadChars = {
 	'|'
 };
 
+gcString getAbsPath(const gcString& path)
+{
+	return path;
+}
+
+gcString getRelativePath(const gcString &path)
+{
+	return path;
+}
+
 std::string sanitiseFileName(const char* name)
 {
 	if (!name)
@@ -983,7 +993,27 @@ std::vector<uint32> getProcessesRunningAtPath(const char* szPath)
 	return res;
 }
 
+std::string getCmdStdout(const char* command, int stdErrDest)
+{
+	return "";
 }
+
+bool launchFolder(const char* path)
+{
+	return false;
+}
+
+bool canLaunchBinary(OS::BinType type)
+{
+	if(type == OS::BinType::WIN32
+	#ifdef WIN64
+		|| type == OS::BinType::WIN64
+	#endif
+		|| type == OS::BinType::BAT)
+		return true;
+	return false;
+}
+
 }
 
 #endif
