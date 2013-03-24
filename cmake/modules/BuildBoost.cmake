@@ -29,7 +29,7 @@ if (WIN32 AND NOT MINGW)
   endif()
 endif()
 
-if(DEBUG) 
+if(DEBUG_EXTERNAL) 
   ExternalProject_Add(
     boost
     URL "${BOOST_URL}"
@@ -78,7 +78,7 @@ set(Boost_SYSTEM_LIBRARY "${Boost_LIBRARY_DIR}/libboost_system-${BOOST_LIB_ADD_S
 set_property(TARGET boost PROPERTY FOLDER "ThirdParty")
 
 if (WIN32)
-  if(DEBUG)
+  if(DEBUG_EXTERNAL)
     ExternalProject_Add(
       boost_s
       UPDATE_COMMAND ""
