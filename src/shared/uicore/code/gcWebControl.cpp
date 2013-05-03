@@ -39,13 +39,9 @@ gcWebControl::gcWebControl(wxWindow* parent, const char* defaultUrl, const char*
 	Bind(wxEVT_SIZE, &gcWebControl::onResize, this);
 	Bind(wxEVT_COMMAND_MENU_SELECTED, &gcWebControl::onMenuClicked, this);
 	
-#ifdef WIN32
 	Bind(wxEVT_ERASE_BACKGROUND, &gcWebControl::onPaintBg, this);
 	Bind(wxEVT_PAINT, &gcWebControl::onPaint, this);
-#else
-	Bind(wxEVT_SET_FOCUS, &gcWebControl::onFocus, this);
-#endif
-	
+	Bind(wxEVT_SET_FOCUS, &gcWebControl::onFocus, this);	
 
 	m_bStartedLoading = false;
 	gcString loadingurl = gcString(GetGCThemeManager()->getWebPage("loading"));
@@ -242,6 +238,8 @@ void gcWebControl::onPaintBg( wxEraseEvent& event )
 {
 #ifdef WIN32
 	m_pChromeBrowser->onPaintBg();
+#else
+	m_pChromeBrowser->onResize(0, 0, GetSize().GetWidth(), GetSize().GetHeight());
 #endif
 }
 
@@ -249,6 +247,8 @@ void gcWebControl::onPaint( wxPaintEvent& event )
 {
 #ifdef WIN32
 	m_pChromeBrowser->onPaint();
+#else
+	m_pChromeBrowser->onResize(0, 0, GetSize().GetWidth(), GetSize().GetHeight());
 #endif
 }
 
