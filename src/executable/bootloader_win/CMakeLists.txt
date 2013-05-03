@@ -20,21 +20,22 @@ endif()
 set(Sources "${Sources};${AdditionalSources}")
 
 add_definitions(-D_WINDOWS
-                -DGAMECORE_LOG
-				-DDONT_INCLUDE_WINH
-				-DDONTUSE_PCH
-				-DDESURA_EXE
-				-DDESURA_CLIENT
-				-DNO_UTIL_FS)
-				
-add_executable(Desura ${Sources} ${SERVICE_PIPE_IPCUPDATEMAIN})
-target_link_libraries(Desura
-    ipc_pipe
-	threads
-    util
-    util_bootloader
-	comctl32
+  -DGAMECORE_LOG
+  -DDONTUSE_PCH
+  -DDESURA_EXE
+  -DDESURA_CLIENT
+  -DNO_UTIL_FS
 )
 
-install(TARGETS Desura
+add_executable(desura WIN32 ${Sources} ${SERVICE_PIPE_IPCUPDATEMAIN})
+target_link_libraries(desura
+  ipc_pipe
+  threads
+  util
+  util_bootloader
+  comctl32
+  mdump
+)
+
+install(TARGETS desura
         DESTINATION "${BIN_INSTALL_DIR}")
