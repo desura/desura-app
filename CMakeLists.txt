@@ -35,8 +35,8 @@
 #   DESKTOPDIR      depends on OS       the directory where the desktop file or link should be installed
 #
 # unix-only options:
-#   FORCE_BUNDLED_WXGTK					bundle wxGTK
-#                   ON
+#   FORCE_BUNDLED_WXGTK  		ON: bundle wxGTK 2.9.3
+#                   ON			OFF: use system wxGTK (has to be 2.9.x, work stable on 2.9.3)
 #   DEBUG_EXTERNAL  OFF                 same as DEBUG, but for externap deps
 #   WITH_ARES       ON                  build CURL with ares support (c-ares REQUIRED)
 #   DIR_TYPE        SINGLE              how should game data be stored?
@@ -51,8 +51,8 @@
 #   DESKTOP_ICON    desura              the value of Icon in the desktop file
 #
 # wxWidgets select correct  version
-#   wxWidgets_CONFIG_EXECUTABLE         path to wx-config (version 2.9.3)
-#   wxWidgets_wxrc_EXECUTABLE           path to wxrc (version 2.9.3)
+#   wxWidgets_CONFIG_EXECUTABLE         path to wx-config (version 2.9.x)
+#   wxWidgets_wxrc_EXECUTABLE           path to wxrc (version 2.9.x)
 #
 # windows-only options:
 #   BOOST_URL                           URL to boost archive
@@ -129,7 +129,7 @@ if(NOT BUILD_ONLY_CEF)
     set(Boost_ADDITION_LIBS ${Boost_ADDITION_LIBS} chrono)
   endif()
   if(BUILD_TESTS)
-    set(Boost_ADDITION_LIBS ${Boost_ADDITION_LIBS} test_exec_monitor unit_test_framework)
+    set(Boost_ADDITION_LIBS ${Boost_ADDITION_LIBS} unit_test_framework)
   endif()
   
   set(Boost_USE_MULTITHREADED ON)
@@ -173,31 +173,26 @@ if(NOT BUILD_ONLY_CEF)
   if(NOT FORCE_BUNDLED_WXGTK)
     find_package(wxWidgets 2.9 COMPONENTS richtext ${REQUIRED_IF_OPTION})
   endif()
-  if(wxWidgets_FOUND)
-    try_compile(
-      WXWIDGET_2_9_TEST_COMPILE
-      "${CMAKE_TEST_PROJECTS_BIN}/wxWidget_2.9_test"
-      "${CMAKE_TEST_PROJECTS}/wxWidget_2.9_test"
-      "wxWidget_2_9_test"
-      "wxWidget_2_9_test"
-      CMAKE_FLAGS
-      "-DwxWidgets_CONFIG_EXECUTABLE=${wxWidgets_CONFIG_EXECUTABLE}"
-      "-DwxWidgets_wxrc_EXECUTABLE=${wxWidgets_wxrc_EXECUTABLE}")
-    if(NOT WXWIDGET_2_9_TEST_COMPILE)
-      message(STATUS "no working wxWidgets-2.9.3 found")
-      unset(wxWidgets_FOUND)
-      if(REQUIRED_IF_OPTION)
-        message(FATAL_ERROR "no wxWidget-2.9.3 found")
-      endif()
-    endif()
-  endif()
 endif()
 
 find_package(PythonInterp REQUIRED)
 
 if(WIN32)
-  find_package(MFC)
   find_package(PythonLibs REQUIRED)
+  # only define this if MFC was found
+  # VC express and mingw doesn't provide MFC, but other versions of VC do
+  find_package(MFC)
+  if(MFC_FOUND)
+    add_definitions(-DMFC_FOUND)
+  endif()
+endif()
+
+find_package(Patch REQUIRED)
+if(MSVC)
+  configure_file(${CMAKE_SCRIPT_PATH}/patch.bat ${CMAKE_GEN_SRC_DIR}/scripts/patch.bat @ONLY)
+  set(PATCH_SCRIPT_PATH ${CMAKE_GEN_SRC_DIR}/scripts/patch.bat)
+else()
+  set(PATCH_SCRIPT_PATH ${CMAKE_SCRIPT_PATH}/patch.sh)
 endif()
 
 ###############################################################################
@@ -215,7 +210,7 @@ if(WIN32)
   endif()
 endif()
 
-set(BREAKPAD_URL_DEFAULT "https://github.com/downloads/lodle/Desurium/breakpad-850.tar.gz")
+set(BREAKPAD_URL_DEFAULT "http://sourceforge.net/projects/desurium/files/breakpad-850.tar.gz/download")
 set(BREAKPAD_URL ${BREAKPAD_URL_DEFAULT}
     CACHE STRING "URL to breakpad")
 if(BREAKPAD_URL STREQUAL BREAKPAD_URL_DEFAULT)
@@ -225,7 +220,7 @@ else()
 endif()
 
 
-set(CEF_URL_DEFAULT "https://github.com/downloads/lodle/Desurium/cef-291.tar.gz")
+set(CEF_URL_DEFAULT "http://sourceforge.net/projects/desurium/files/cef-291.tar.gz/download")
 set(CEF_URL ${CEF_URL_DEFAULT}
     CACHE STRING "URL to cef, has to be revision 291")
 if(CEF_URL STREQUAL CEF_URL_DEFAULT)
@@ -254,7 +249,7 @@ if(WIN32 OR NOT CURL_FOUND)
   endif()
 endif()
 
-set(DEPOT_TOOLS_URL_DEFAULT "https://github.com/downloads/lodle/Desurium/depot_tools-145556-2.tar.gz")
+set(DEPOT_TOOLS_URL_DEFAULT "http://sourceforge.net/projects/desurium/files/depot_tools-145556-2.tar.gz/download")
 set(DEPOT_TOOLS_URL ${DEPOT_TOOLS_URL_DEFAULT}
     CACHE STRING "URL to depot_tools")
 if(DEPOT_TOOLS_URL STREQUAL DEPOT_TOOLS_URL_DEFAULT)
@@ -263,7 +258,7 @@ else()
   unset(DEPOT_TOOLS_MD5)
 endif()
 
-set(WXWIDGET_URL_DEFAULT ftp://ftp.wxwidgets.org/pub/2.9.3/wxWidgets-2.9.3.tar.bz2)
+set(WXWIDGET_URL_DEFAULT http://garr.dl.sourceforge.net/project/wxwindows/2.9.3/wxWidgets-2.9.3.tar.bz2)
 set(WXWIDGET_URL ${WXWIDGET_URL_DEFAULT}
     CACHE STRING "URL to wxWidget 2.9.3 archive")
 if(WXWIDGET_URL STREQUAL WXWIDGET_URL_DEFAULT)
