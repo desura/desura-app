@@ -4,7 +4,7 @@ if(WIN32 AND NOT MINGW)
     URL ${WXWIDGET_URL}
     URL_MD5 ${WXWIDGET_MD5}
     UPDATE_COMMAND ""
-    PATCH_COMMAND ${CMAKE_SOURCE_DIR}/cmake/scripts/Patch.bat ${CMAKE_SOURCE_DIR}/cmake/patches/wxWidgets.patch
+    PATCH_COMMAND ${PATCH_SCRIPT_PATH} ${CMAKE_SOURCE_DIR}/cmake/patches/wxWidgets.patch
     CONFIGURE_COMMAND ""
     BUILD_COMMAND ""
     INSTALL_COMMAND ""
@@ -43,13 +43,11 @@ if(WIN32 AND NOT MINGW)
   if(DEBUG)
     set(wxWidgets_INCLUDE_DIRS ${wxWidgets_INSTALL_DIR}/include ${wxWidgets_INSTALL_DIR}/include/msvc)
     set(wxWidgets_LIBRARIES ${wxWidgets_LIBRARY_DIRS}/wxmsw29ud.lib)
-    install(FILES ${wxWidgets_LIBRARY_DIRS}/wxmsw293ud_vc_desura.dll
-            DESTINATION ${LIB_INSTALL_DIR})
+    install_external_library(wxWidget-2-9 "${wxWidgets_LIBRARY_DIRS}/wxmsw293ud_vc_desura.dll")
   else()
     set(wxWidgets_INCLUDE_DIRS ${wxWidgets_INSTALL_DIR}/include ${wxWidgets_INSTALL_DIR}/include/msvc)
     set(wxWidgets_LIBRARIES ${wxWidgets_LIBRARY_DIRS}/wxmsw29u.lib)
-    install(FILES ${wxWidgets_LIBRARY_DIRS}/wxmsw293u_vc_desura.dll
-            DESTINATION ${LIB_INSTALL_DIR})
+    install_external_library(wxWidget-2-9 "${wxWidgets_LIBRARY_DIRS}/wxmsw293u_vc_desura.dll")
   endif()
   
 else()
@@ -60,17 +58,17 @@ else()
 	set(WX_LIB_NAME_DEBUG "libwx_mswu_desura-2.9.dll.a")
   else()
     set(WX_SETUP_INCLUDE_SUB "gtk2-unicode-2.9-desura")
-    set(WX_SETUP_INCLUDE_SUB_DEBUG "gtk2-unicode-debug-2.9-desura")
-	set(WX_LIB_NAME "libwx_gtk2u_desura-2.9.so.3.0.0")
-	set(WX_LIB_NAME_DEBUG "libwx_gtk2ud_desura-2.9.so.3.0.0")
+    set(WX_SETUP_INCLUDE_SUB_DEBUG ${WX_SETUP_INCLUDE_SUB})
+	set(WX_LIB_NAME "libwx_gtk2u_desura-2.9.so.3")
+	set(WX_LIB_NAME_DEBUG ${WX_LIB_NAME})
   endif()
 
   set(wxWidgets_INSTALL_DIR ${CMAKE_EXTERNAL_BINARY_DIR}/wxWidgets)
   
   if(MINGW)
-    set(WX_PATCH_COMMAND "${CMAKE_SOURCE_DIR}/cmake/scripts/Patch.sh" "${CMAKE_SOURCE_DIR}/cmake/patches/wxWidgets.patch")
+    set(WX_PATCH_COMMAND "${PATCH_SCRIPT_PATH}" "${CMAKE_SOURCE_DIR}/cmake/patches/wxWidgets.patch")
   endif()
-  
+
   ExternalProject_Add(
     wxWidget-2-9
     URL ${WXWIDGET_URL}
@@ -88,18 +86,14 @@ else()
   if(DEBUG_EXTERNAL)
     set(wxWidgets_INCLUDE_DIRS  ${wxWidgets_INSTALL_DIR}/include/wx-2.9-desura ${wxWidgets_LIBRARY_DIRS}/wx/include/${WX_SETUP_INCLUDE_SUB_DEBUG})
     set(wxWidgets_LIBRARIES "${wxWidgets_LIBRARY_DIRS}/${WX_LIB_NAME_DEBUG}")
-    install(FILES ${wxWidgets_LIBRARY_DIRS}/libwx_gtk2ud_desura-2.9.so.3.0.0
-            RENAME libwx_gtk2ud_desura-2.9.so.3
-            DESTINATION ${LIB_INSTALL_DIR})
+    install_external_library(wxWidget-2-9 ${wxWidgets_LIBRARY_DIRS}/${WX_LIB_NAME})
   else()
     set(wxWidgets_INCLUDE_DIRS  ${wxWidgets_INSTALL_DIR}/include/wx-2.9-desura ${wxWidgets_LIBRARY_DIRS}/wx/include/${WX_SETUP_INCLUDE_SUB})
     set(wxWidgets_LIBRARIES "${wxWidgets_LIBRARY_DIRS}/${WX_LIB_NAME}")
-    install(FILES ${wxWidgets_LIBRARY_DIRS}/libwx_gtk2u_desura-2.9.so.3.0.0
-            RENAME libwx_gtk2u_desura-2.9.so.3
-            DESTINATION ${LIB_INSTALL_DIR})
+    install_external_library(wxWidget-2-9 ${wxWidgets_LIBRARY_DIRS}/${WX_LIB_NAME})
   endif()
   set(wxWidgets_BIN_DIR ${wxWidgets_INSTALL_DIR}/bin)
   set(wxWidgets_CONFIG_EXECUTABLE ${wxWidgets_BIN_DIR}/wx-config)
+  set_property(TARGET wxWidget-2-9 PROPERTY FOLDER "ThirdParty")
 endif()
 
-SET_PROPERTY(TARGET wxWidget-2-9                PROPERTY FOLDER "ThirdParty")

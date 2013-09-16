@@ -11,29 +11,21 @@ file(COPY ${BRANDING} DESTINATION ${BIN_INCLUDE_DIR})
 file(REMOVE_RECURSE ${BIN_INCLUDE_DIR}/branding)
 file(RENAME ${BIN_INCLUDE_DIR}/${BRANDING} ${BIN_INCLUDE_DIR}/branding)
 
-set(BR ${BIN_INCLUDE_DIR}/branding)
-set(APP ${BR}/data/themes/default/images/app)
+set(BRANDING_DIR ${BIN_INCLUDE_DIR}/branding)
+set(APP ${BRANDING_DIR}/data/themes/default/images/app)
 
-install(FILES ${BR}/data/desura_lin.png
-        DESTINATION ${DATA_INSTALL_DIR}
-        RENAME desura.png
-)
-install(FILES ${BR}/data/themes/default/images/html/default/logo.png
-        DESTINATION ${DATA_INSTALL_DIR}/themes/default/images/html/default/)
-install(FILES ${APP}/about_logo.png
-              ${APP}/icon_download.png
-              ${APP}/signin_banner.png
-        DESTINATION ${DATA_INSTALL_DIR}/themes/default/images/app/
-)
+install_data_files("" ${BRANDING_DIR}/data/desura_lin.png)
+install_data_files(themes/default/images/html/default ${BRANDING_DIR}/data/themes/default/images/html/default/logo.png)
+install_data_files(themes/default/images/app ${APP}/about_logo.png ${APP}/icon_download.png ${APP}/signin_banner.png)
 
 if(WIN32)
-  install(FILES ${APP}/menu_button_hover_win.png RENAME menu_button_hover.png DESTINATION ${DATA_INSTALL_DIR}/themes/default/images/app)
-  install(FILES ${APP}/menu_button_nonactive_win.png RENAME menu_button_nonactive.png DESTINATION ${DATA_INSTALL_DIR}/themes/default/images/app)
-  install(FILES ${APP}/menu_button_win.png RENAME menu_button.png DESTINATION ${DATA_INSTALL_DIR}/themes/default/images/app)
+  install_data_files(themes/default/images/app ${APP}/menu_button_hover_win.png)
+  install_data_files(themes/default/images/app ${APP}/menu_button_nonactive_win.png)
+  install_data_files(themes/default/images/app ${APP}/menu_button_win.png)
 else()
-  install(FILES ${APP}/menu_button_hover_lin.png RENAME menu_button_hover.png DESTINATION ${DATA_INSTALL_DIR}/themes/default/images/app)
-  install(FILES ${APP}/menu_button_nonactive_lin.png RENAME menu_button_nonactive.png DESTINATION ${DATA_INSTALL_DIR}/themes/default/images/app)
-  install(FILES ${APP}/menu_button_lin.png RENAME menu_button.png DESTINATION ${DATA_INSTALL_DIR}/themes/default/images/app)
+  install_data_files(themes/default/images/app ${APP}/menu_button_hover_lin.png)
+  install_data_files(themes/default/images/app ${APP}/menu_button_nonactive_lin.png)
+  install_data_files(themes/default/images/app ${APP}/menu_button_lin.png)
 endif()
 
 ###############################################################################
@@ -43,12 +35,23 @@ endif()
 set(GLOBAL_INCLUDE_DIRS ${CMAKE_CURRENT_SOURCE_DIR}/include)
 set(COMMON_INCLUDE_DIRS ${CMAKE_CURRENT_SOURCE_DIR}/common)
 
-include_directories(
+if(ICC)
+  # on ICC we have to include glib-2 because of some hacks in Common.h
+  include_directories(
     ${GLOBAL_INCLUDE_DIRS}
     ${COMMON_INCLUDE_DIRS}
-    ${TINYXML_INCLUDE_DIR}
+    ${TINYXML_INCLUDEDIR}
     ${BIN_INCLUDE_DIR}
-)
+    ${GTK2_INCLUDE_DIRS}
+  )
+else()
+  include_directories(
+    ${GLOBAL_INCLUDE_DIRS}
+    ${COMMON_INCLUDE_DIRS}
+    ${TINYXML_INCLUDEDIR}
+    ${BIN_INCLUDE_DIR}
+  )
+endif()
 
 ###############################################################################
 # build static libs
@@ -109,10 +112,16 @@ endif()
 option(BUILD_TOOLS "Build various Desura tools." ON)
 
 if(BUILD_TOOLS)
-  add_subdirectory(tools/mfc_upload_cli)
+  add_subdirectory(tools/mcf_upload_cli)
   add_subdirectory(tools/mcf_extract)
   add_subdirectory(tools/mcf_util)
 endif()
+
+###############################################################################
+# build the tests
+###############################################################################
+
+add_subdirectory(tests)
 
 ###############################################################################
 # some pre building or installing actions
@@ -174,6 +183,7 @@ endif()
   add_dependencies(managers_window wxWidget-2-9)
   add_dependencies(wx_controls wxWidget-2-9)
   add_dependencies(uicore wxWidget-2-9)
+  add_dependencies(desura wxWidget-2-9)
   if(WIN32)
     add_dependencies(utilcore wxWidget-2-9)
   endif()
