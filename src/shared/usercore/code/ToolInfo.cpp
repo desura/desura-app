@@ -26,116 +26,112 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>
 
 #define X_CONSTANT 0x7FFFFFFF
 
-int getOperatorOrder(std::string curOp)
-{
-	if (curOp == "<" || curOp == "<=" || curOp == ">" || curOp == ">=")
-		return 6;
-
-	if (curOp == "==" || curOp == "!=")
-		return 7;
-
-	if (curOp == "&&")
-		return 11;
-
-	if (curOp == "||")
-		return 12;
-
-	return 20;
-}
-
-int32 getOpereatorCount(std::string curOp)
-{
-	if (curOp == "==" || curOp == "!=" || curOp == ">" || curOp == "<" || curOp == ">=" || curOp == "<=")
-		return 2;
-
-	return 0;
-}
-
-
 class OutValI
 {
 public:
-	virtual bool isOperand()=0;
+	virtual bool isOperand() = 0;
+	virtual ~OutValI(){}
 };
 
-class Operand : public OutValI
+namespace 
 {
-public:
-	Operand(int val)
+	int getOperatorOrder(std::string curOp)
 	{
-		m_iVal = val;
+		if (curOp == "<" || curOp == "<=" || curOp == ">" || curOp == ">=")
+			return 6;
+
+		if (curOp == "==" || curOp == "!=")
+			return 7;
+
+		if (curOp == "&&")
+			return 11;
+
+		if (curOp == "||")
+			return 12;
+
+		return 20;
 	}
 
-	virtual bool isOperand()
+	int32 getOpereatorCount(std::string curOp)
 	{
+		if (curOp == "==" || curOp == "!=" || curOp == ">" || curOp == "<" || curOp == ">=" || curOp == "<=")
+			return 2;
+
+		return 0;
+	}
+
+	class Operand : public OutValI
+	{
+	public:
+		Operand(int val)
+		{
+			m_iVal = val;
+		}
+
+		virtual bool isOperand()
+		{
+			return true;
+		}
+
+		virtual int getOperand()
+		{
+			return m_iVal;
+		}
+
+	private:
+		int32 m_iVal;
+	};
+
+	class Operator : public OutValI
+	{
+	public:
+		Operator(std::string val)
+			: m_szVal(val)
+		{}
+
+		virtual bool isOperand()
+		{
+			return false;
+		}
+
+		virtual std::string& getOperator()
+		{
+			return m_szVal;
+		}
+
+	private:
+		std::string m_szVal;
+	};
+
+	bool processStack(std::deque<OutValI*> &vOutStack, std::deque<int32> &valStack, std::deque<std::string> &opStack)
+	{
+		size_t c = getOpereatorCount(opStack.back());
+
+		if (c > valStack.size())
+			return false;
+
+		while (c > 0)
+		{
+			vOutStack.push_back(new Operand(valStack.back()));
+			valStack.pop_back();
+			c--;
+		}
+
+		vOutStack.push_back(new Operator(opStack.back()));
+		opStack.pop_back();
+
 		return true;
 	}
-
-	virtual int getOperand()
-	{
-		return m_iVal;
-	}
-
-private:
-	int32 m_iVal;
-};
-
-class Operator : public OutValI
-{
-public:
-	Operator(std::string val)
-	{
-		m_szVal = val;
-	}
-
-	virtual bool isOperand()
-	{
-		return false;
-	}
-
-	virtual std::string& getOperator()
-	{
-		return m_szVal;
-	}
-
-private:
-	std::string m_szVal;
-};
-
-bool processStack(std::deque<OutValI*> &vOutStack, std::deque<int32> &valStack, std::deque<std::string> &opStack)
-{
-	size_t c = getOpereatorCount(opStack.back());
-
-	if (c > valStack.size())
-		return false;
-
-	while (c > 0)
-	{
-		vOutStack.push_back(new Operand(valStack.back()));
-		valStack.pop_back();
-		c--;
-	}
-
-	vOutStack.push_back(new Operator(opStack.back()));
-	opStack.pop_back();
-
-	return true;
 }
 
-
-
-
-
-namespace UserCore
-{
+using namespace UserCore;
 
 ToolInfo::ToolInfo(DesuraId id)
+:	m_ToolId(id),
+	m_uiDownloadSize(0),
+	m_uiFlags(0)
 {
-	m_ToolId = id;
 	m_uiHash = id.toInt64();
-
-	m_uiDownloadSize = 0;
-	m_uiFlags = 0;
 }
 
 ToolInfo::~ToolInfo()
@@ -143,7 +139,7 @@ ToolInfo::~ToolInfo()
 	safe_delete(m_vRPN);
 }
 
-void ToolInfo::parseXml(TiXmlNode* ToolInfoNode, WildcardManager* wildcardManager, const char* appDataPath)
+void ToolInfo::parseXml(tinyxml2::XMLNode* ToolInfoNode, WildcardManager* wildcardManager, const char* appDataPath)
 {
 	XML::GetChild("name", m_szNameString, ToolInfoNode);
 	XML::GetChild("nameid", m_szName, ToolInfoNode);
@@ -164,15 +160,15 @@ void ToolInfo::parseXml(TiXmlNode* ToolInfoNode, WildcardManager* wildcardManage
 	m_szArgs = res;
 	safe_delete(res);
 
-	TiXmlNode* iChecksNode = ToolInfoNode->FirstChild("intallchecks");
+	tinyxml2::XMLElement* iChecksNode = ToolInfoNode->FirstChildElement("intallchecks");
 
 	if (!iChecksNode)
-		iChecksNode = ToolInfoNode->FirstChild("installchecks");
+		iChecksNode = ToolInfoNode->FirstChildElement("installchecks");
 
 	if (!iChecksNode)
 		return;
 
-	TiXmlElement* iCheckNode = iChecksNode->FirstChildElement("installcheck");
+	tinyxml2::XMLElement* iCheckNode = iChecksNode->FirstChildElement("installcheck");
 
 	while (iCheckNode)
 	{
@@ -412,7 +408,7 @@ bool ToolInfo::processResultString()
 	std::deque<std::string> opStack;
 
 	bool lastWasDigit = false;
-	bool lastWasAlpha = false;
+	bool lastWasNeg = false;
 
 	while (it != m_szResult.end())
 	{
@@ -427,25 +423,38 @@ bool ToolInfo::processResultString()
 		}
 		else if (c == ')')
 		{
-			while (opStack.size() > 0 && opStack.back() != "(")
+			while (!opStack.empty() && opStack.back() != "(")
 			{
 				if (!processStack(m_vRPN, valStack, opStack))
 					return false;
 			}
 
-			if (opStack.size() == 0)
+			if (opStack.empty())
 				return false;
 
 			opStack.pop_back();
 		}
+		else if (c == '-')
+		{
+			lastWasNeg = true;
+		}
 		else if (isdigit(c))
 		{
 			int val = c - 48;
-
-			if (lastWasDigit)
+			
+			if (lastWasDigit && !lastWasNeg)
 			{
-				val = valStack.back()*10 + val;
+				if (valStack.back() > 0)
+					val = valStack.back() * 10 + val;
+				else
+					val = valStack.back() * 10 - val;
+				
 				valStack.pop_back();
+			}
+			else if (lastWasNeg)
+			{
+				val = val*-1;
+				lastWasNeg = false;
 			}
 
 			valStack.push_back(val);
@@ -466,13 +475,13 @@ bool ToolInfo::processResultString()
 				++it;
 				c = *it;
 			}
-			while (it != m_szResult.end() && !isdigit(c) && !isalpha(c) && c != '(' && c != ')');
+			while (it != m_szResult.end() && !isdigit(c) && !isalpha(c) && c != '(' && c != ')' && c != '-');
 
 			--it;
 			c = *it;
 
 
-			while (opStack.size() > 0 && opStack.back() != "(" && (getOperatorOrder(val) > getOperatorOrder(opStack.back())))
+			while (!opStack.empty() && opStack.back() != "(" && (getOperatorOrder(val) > getOperatorOrder(opStack.back())))
 			{
 				if (!processStack(m_vRPN, valStack, opStack))
 					return false;
@@ -481,14 +490,16 @@ bool ToolInfo::processResultString()
 			opStack.push_back(val);
 		}
 
-		lastWasAlpha = isalpha(c) || c == '(' || c == ')';
-		lastWasDigit = isdigit(c)?true:false;
+		lastWasDigit = isdigit(c) || c == '-';
+
+		if (!lastWasDigit)
+			lastWasNeg = false;
 
 		++it;
 	}
 
 
-	while (opStack.size() > 0)
+	while (!opStack.empty())
 	{
 		if (opStack.back() == "(")
 			return false;
@@ -497,7 +508,7 @@ bool ToolInfo::processResultString()
 			return false;
 	}
 
-	while (valStack.size() > 0)
+	while (!valStack.empty())
 	{
 		m_vRPN.push_back(new Operand(valStack.back()));
 		valStack.pop_back();
@@ -508,10 +519,10 @@ bool ToolInfo::processResultString()
 
 bool ToolInfo::checkExpectedResult(uint32 res)
 {
-	if (m_szResult.size() == 0)
+	if (m_szResult.empty())
 		return true;
 
-	if (m_vRPN.size() == 0)
+	if (m_vRPN.empty())
 	{
 		if (!processResultString())
 		{
@@ -527,7 +538,7 @@ bool ToolInfo::checkExpectedResult(uint32 res)
 	std::deque<OutValI*> vList = m_vRPN;
 	std::vector<int32> stack;
 
-	while (vList.size() > 0)
+	while (!vList.empty())
 	{
 		OutValI* item = vList.front();
 		vList.pop_front();
@@ -606,7 +617,7 @@ bool ToolInfo::checkExpectedResult(uint32 res)
 	if (stack.size() > 1)
 		Warning(gcString("To many items left on stack after results calc for tool {0}.", getName()));
 
-	if (stack.size() == 0)
+	if (stack.empty())
 		return true;
 
 	return stack.front()?true:false;
@@ -617,4 +628,159 @@ const char* ToolInfo::getResultString()
 	return m_szResult.c_str();
 }
 
+
+#include <gtest/gtest.h>
+
+namespace UnitTest
+{
+	class ToolInfoFixture : public ::testing::TestWithParam<int>
+	{
+	public:
+		ToolInfoFixture()
+			: m_ToolInfo(DesuraId())
+		{
+
+		}
+
+		void SetupResult(const gcString &szRes)
+		{
+			m_ToolInfo.m_szResult = szRes;
+		}
+
+		UserCore::ToolInfo m_ToolInfo;
+	};
+
+	INSTANTIATE_TEST_CASE_P(ReturnValues,
+		ToolInfoFixture,
+		::testing::Values(-1000, -1, 0, 1, 1000));
+
+	TEST_P(ToolInfoFixture, ResultTest_Empty)
+	{
+		SetupResult("");
+		ASSERT_TRUE(m_ToolInfo.checkExpectedResult(GetParam()));
+	}
+
+	TEST_P(ToolInfoFixture, ResultTest_Exact_Zero)
+	{
+		SetupResult("0");
+
+		if (GetParam() == 0)
+			ASSERT_TRUE(m_ToolInfo.checkExpectedResult(GetParam()));
+		else
+			ASSERT_FALSE(m_ToolInfo.checkExpectedResult(GetParam()));
+	}
+
+	TEST_P(ToolInfoFixture, ResultTest_EqualZero)
+	{
+		SetupResult("X==0");
+
+		if (GetParam() == 0)
+			ASSERT_TRUE(m_ToolInfo.checkExpectedResult(GetParam()));
+		else
+			ASSERT_FALSE(m_ToolInfo.checkExpectedResult(GetParam()));
+	}
+
+	TEST_P(ToolInfoFixture, ResultTest_NotEqualZero)
+	{
+		SetupResult("X!=0");
+
+		if (GetParam() != 0)
+			ASSERT_TRUE(m_ToolInfo.checkExpectedResult(GetParam()));
+		else
+			ASSERT_FALSE(m_ToolInfo.checkExpectedResult(GetParam()));
+	}
+
+	TEST_P(ToolInfoFixture, ResultTest_Exact_NonZero)
+	{
+		SetupResult("1000");
+
+		if (GetParam() == 1000)
+			ASSERT_TRUE(m_ToolInfo.checkExpectedResult(GetParam()));
+		else
+			ASSERT_FALSE(m_ToolInfo.checkExpectedResult(GetParam()));
+	}
+
+	TEST_P(ToolInfoFixture, ResultTest_Exact_ZeroOr1)
+	{
+		int nParam = GetParam();
+
+		SetupResult("X == 0 || X == 1");
+
+		if (nParam == 0 || nParam == 1)
+			ASSERT_TRUE(m_ToolInfo.checkExpectedResult(nParam));
+		else
+			ASSERT_FALSE(m_ToolInfo.checkExpectedResult(nParam));
+	}
+
+	TEST_P(ToolInfoFixture, ResultTest_GreaterThanZero)
+	{
+		int nParam = GetParam();
+
+		SetupResult("X > 0");
+
+		if (nParam > 0)
+			ASSERT_TRUE(m_ToolInfo.checkExpectedResult(nParam));
+		else
+			ASSERT_FALSE(m_ToolInfo.checkExpectedResult(nParam));
+	}
+
+	TEST_P(ToolInfoFixture, ResultTest_GreaterThanOrEqualZero)
+	{
+		int nParam = GetParam();
+
+		SetupResult("X >= 0");
+
+		if (nParam >= 0)
+			ASSERT_TRUE(m_ToolInfo.checkExpectedResult(nParam));
+		else
+			ASSERT_FALSE(m_ToolInfo.checkExpectedResult(nParam));
+	}
+
+	TEST_P(ToolInfoFixture, ResultTest_LessThanZero)
+	{
+		int nParam = GetParam();
+
+		SetupResult("X < 0");
+
+		if (nParam < 0)
+			ASSERT_TRUE(m_ToolInfo.checkExpectedResult(nParam));
+		else
+			ASSERT_FALSE(m_ToolInfo.checkExpectedResult(nParam));
+	}
+
+	TEST_P(ToolInfoFixture, ResultTest_LessThanOrEqualZero)
+	{
+		int nParam = GetParam();
+
+		SetupResult("X <= 0");
+
+		if (nParam <= 0)
+			ASSERT_TRUE(m_ToolInfo.checkExpectedResult(nParam));
+		else
+			ASSERT_FALSE(m_ToolInfo.checkExpectedResult(nParam));
+	}
+
+	TEST_P(ToolInfoFixture, ResultTest_LessThanOrGreaterThanZero)
+	{
+		int nParam = GetParam();
+
+		SetupResult("X < 0 || X > 0");
+
+		if (nParam < 0 || nParam > 0)
+			ASSERT_TRUE(m_ToolInfo.checkExpectedResult(nParam));
+		else
+			ASSERT_FALSE(m_ToolInfo.checkExpectedResult(nParam));
+	}
+
+	TEST_P(ToolInfoFixture, ResultTest_LessThan1AndGreaterThanNeg1)
+	{
+		int nParam = GetParam();
+
+		SetupResult("(X > -1) && (X < 1)");
+
+		if ((nParam > -1) && (nParam < 1))
+			ASSERT_TRUE(m_ToolInfo.checkExpectedResult(nParam));
+		else
+			ASSERT_FALSE(m_ToolInfo.checkExpectedResult(nParam));
+	}
 }
