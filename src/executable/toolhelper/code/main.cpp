@@ -20,26 +20,24 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>
 #include "stdafx.h"
 #include "Common.h"
 
-#include "resource.h"
-
 #include "UtilBootloader.h"
 #include "MiniDumpGenerator.h"
+
+#include "Commctrl.h"
 
 #include "SharedObjectLoader.h"
 #include "UICoreI.h"
 #include <branding/branding.h>
+#include "DesuraWinApp.h"
 
-
-class BootLoader : public CWinApp
+class BootLoader : public Desurium::CDesuraWinApp
 {
 public:
 	BootLoader();
 	~BootLoader();
 
-	BOOL InitInstance();
+	void InitInstance();
 	int ExitInstance();
-	BOOL PreTranslateMessage(MSG *msg);
-	BOOL OnIdle(LONG lCount);
 
 protected:
 	bool sendArgs();
@@ -60,10 +58,7 @@ BootLoader theApp;
 
 BootLoader::BootLoader()
 {
-	AfxEnableMemoryTracking(FALSE);
-
 	InitCommonControls();
-
 #if 0
 	WaitForDebugger();
 #endif
@@ -75,59 +70,33 @@ BootLoader::~BootLoader()
 {
 }
 
-BOOL BootLoader::InitInstance()
+void BootLoader::InitInstance()
 {
-	CWinApp::InitInstance();
-
 	if (BootLoaderUtil::GetOSId() == WINDOWS_PRE2000)
 	{
-		::MessageBox(NULL, "Desura needs Windows xp or better to run.", "Desura Error: Old Windows", MB_OK);
-		return FALSE;
+		::MessageBox(NULL, PRODUCT_NAME " needs Windows XP or better to run.", PRODUCT_NAME " Error: Old Windows", MB_OK);
+		return;
 	}
 
 	loadUICore();
 
 	if (!m_pUICore)
-		return FALSE;
+		return;
 
 	BootLoaderUtil::CMDArgs args(m_lpCmdLine);
 	args.addValue("-toolhelper");
 
-	bool res = m_pUICore->initWxWidgets(m_hInstance, m_nCmdShow, args.getArgc(), const_cast<char**>(args.getArgv()));
-
-	if (res)
-		m_pMainWnd = new BootLoaderUtil::CDummyWindow(m_pUICore->getHWND());
-
-	return res?TRUE:FALSE;
+	m_pUICore->initWxWidgets(m_hInstance, m_nCmdShow, args.getArgc(), const_cast<char**>(args.getArgv()));
 }
 
 int BootLoader::ExitInstance()
 {
-	delete m_pMainWnd;
-
-	int ret = CWinApp::ExitInstance();
+	int ret=0;
 
 	if (m_pUICore)
 		m_pUICore->exitApp(&ret);
 
 	return ret;
-}
-
-// Override this to provide wxWidgets message loop compatibility
-BOOL BootLoader::PreTranslateMessage(MSG *msg)
-{
-	if (m_pUICore && m_pUICore->preTranslateMessage(msg) )
-		return TRUE;
-
-	return CWinApp::PreTranslateMessage(msg);
-}
-
-BOOL BootLoader::OnIdle(LONG lCount)
-{
-	if (m_pUICore)
-		return m_pUICore->onIdle();
-
-	return FALSE;
 }
 
 void BootLoader::loadUICore()
@@ -136,7 +105,7 @@ void BootLoader::loadUICore()
 
 	if (!BootLoaderUtil::SetDllDir(".\\bin"))
 	{
-		::MessageBox(NULL, "Failed to set the dll path to the bin folder.", "Desura: ERROR!",  MB_OK);
+		::MessageBox(NULL, "Failed to set the DLL path to the bin folder.", PRODUCT_NAME ": ERROR!",  MB_OK);
 		exit(-100);			
 	}
 
@@ -149,7 +118,7 @@ void BootLoader::loadUICore()
 	if (!m_hUICore.load(dllname))
 	{
 		DWORD err = GetLastError();
-		::MessageBox(NULL, "Failed to load utilcore.dll", "Desura: ERROR!",  MB_OK);
+		::MessageBox(NULL, "Failed to load utilcore.dll", PRODUCT_NAME ": ERROR!",  MB_OK);
 		exit(-200);
 	}
 	
@@ -157,7 +126,7 @@ void BootLoader::loadUICore()
 
 	if (!UICoreGetInterface)
 	{
-		::MessageBox(NULL, "Failed to load wxWidgets mappings in utilcore.dll", "Desura: ERROR!", MB_OK);
+		::MessageBox(NULL, "Failed to load wxWidgets mappings in utilcore.dll", PRODUCT_NAME ": ERROR!", MB_OK);
 		exit(-500);
 	} 
 
