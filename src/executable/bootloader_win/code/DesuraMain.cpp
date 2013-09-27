@@ -23,7 +23,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>
 #include "resource.h"
 #include "UtilBootloader.h"
 
-#ifdef DESURA_NONGPL_BUILD
+#ifdef DESURA_OFFICAL_BUILD
 	#include "AppUpdateInstall.h"
 	
 	extern UINT DownloadFilesForTest();
@@ -168,7 +168,7 @@ BOOL BootLoader::InitInstance()
 	BootLoaderUtil::SetCurrentDir();
 	CWinApp::InitInstance();
 
-#ifdef DESURA_NONGPL_BUILD
+#ifdef DESURA_OFFICAL_BUILD
 	CheckForBadUninstaller();
 #endif
 
@@ -183,7 +183,7 @@ BOOL BootLoader::InitInstance()
 		return FALSE;
 	}
 
-#ifdef DESURA_NONGPL_BUILD
+#ifdef DESURA_OFFICAL_BUILD
 	if (args.hasArg("testinstall"))
 	{
 		m_bRetCode = true;
@@ -213,7 +213,7 @@ BOOL BootLoader::InitInstance()
 		return FALSE;
 	}
 
-#ifdef DESURA_NONGPL_BUILD
+#ifdef DESURA_OFFICAL_BUILD
 #ifdef DEBUG
 	if (args.hasArg("debugupdater"))
 	{
@@ -251,7 +251,7 @@ BOOL BootLoader::InitInstance()
 
 	if (osid == WINDOWS_PRE2000)
 	{
-		::MessageBox(NULL, "Desura needs Windows xp or better to run.", "Desura Error: Old Windows", MB_OK);
+		::MessageBox(NULL, PRODUCT_NAME " needs Windows XP or better to run.", PRODUCT_NAME " Error: Old Windows", MB_OK);
 		return FALSE;
 	}
 	else if (osid == WINDOWS_XP || osid == WINDOWS_XP64)
@@ -292,7 +292,7 @@ BOOL BootLoader::InitInstance()
 		}
 	}
 
-#ifdef DESURA_NONGPL_BUILD
+#ifdef DESURA_OFFICAL_BUILD
 	if (args.hasArg("forceupdate"))
 	{
 		if (!hasAdminRights)
@@ -392,8 +392,8 @@ void BootLoader::restartAsAdmin(int needupdate)
 	if (!BootLoaderUtil::RestartAsAdmin(args))
 	{
 		char msg[255];
-		_snprintf_s(msg, 255, _TRUNCATE, "Failed to restart Desura with admin rights [Update: %d].", needupdate);
-		::MessageBox(NULL, msg, "Desura Critical Error", MB_OK);
+		_snprintf_s(msg, 255, _TRUNCATE, "Failed to restart " PRODUCT_NAME " with admin rights [Update: %d].", needupdate);
+		::MessageBox(NULL, msg, PRODUCT_NAME " Critical Error", MB_OK);
 	}
 }
 
@@ -477,7 +477,7 @@ void BootLoader::loadUICore()
 {
 	if (!BootLoaderUtil::SetDllDir("."))
 	{
-		::MessageBox(NULL, "Failed to set the dll path to the bin folder.", "Desura: ERROR!",  MB_OK);
+		::MessageBox(NULL, "Failed to set the DLL path to the bin folder.", PRODUCT_NAME ": ERROR!",  MB_OK);
 		exit(-100);			
 	}
 
@@ -488,7 +488,7 @@ void BootLoader::loadUICore()
 	if (!m_hUICore.load(dllname))
 	{
 		DWORD err = GetLastError();
-		::MessageBox(NULL, "Failed to load uicore.dll", "Desura: ERROR!",  MB_OK);
+		::MessageBox(NULL, "Failed to load uicore.dll", PRODUCT_NAME ": ERROR!",  MB_OK);
 		exit(-200);
 	}
 	
@@ -496,7 +496,7 @@ void BootLoader::loadUICore()
 
 	if (!UICoreGetInterface)
 	{
-		::MessageBox(NULL, "Failed to load wxWidgets mappings in uicore.dll", "Desura: ERROR!", MB_OK);
+		::MessageBox(NULL, "Failed to load wxWidgets mappings in uicore.dll", PRODUCT_NAME ": ERROR!", MB_OK);
 		exit(-500);
 	} 
 
