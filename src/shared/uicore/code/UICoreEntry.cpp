@@ -25,6 +25,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>
 #include <wx/snglinst.h>
 #include <wx/evtloop.h>
 
+#ifdef WITH_GTEST
+  #include <gtest/gtest.h>
+#endif
+
 extern "C" CEXPORT UICoreI* GetInterface();
 
 #ifdef NIX
@@ -114,9 +118,6 @@ public:
 #ifdef WIN32
 	bool initWxWidgets(HINSTANCE hInst, int CmdShow, int argc, char** argv)
 	{
-		if (needForceUpdate())
-			return false;
-
 		hIISHook = SetWindowsHookEx(WH_CALLWNDPROC, (HOOKPROC)CallWndProc, 0, GetCurrentThreadId());
 
 		wxSetInstance(hInst);
@@ -131,9 +132,6 @@ public:
 #else
 	bool initWxWidgets(int argc, char** argv)
 	{
-		if (needForceUpdate())
-			return false;
-
 		wxEntry(argc, argv);
 
 		if ( !wxTheApp || !wxTheApp->CallOnInit() )
@@ -257,12 +255,15 @@ public:
 	}
 #endif
 
-protected:
-	bool needForceUpdate()
+	int runUnitTests(int argc, char** argv)
 	{
-		return false;
+#ifdef WITH_GTEST
+		testing::InitGoogleTest(&argc, argv);
+		return RUN_ALL_TESTS();
+#else
+		return 0;
+#endif
 	}
-
 
 private:
 	DumpSettingsFP m_pDumpSettings;

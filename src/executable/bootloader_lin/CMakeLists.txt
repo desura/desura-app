@@ -1,6 +1,6 @@
 include_directories(
   ${CMAKE_CURRENT_SOURCE_DIR}/code
-  ${TINYXML_INCLUDE_DIR}
+  ${TINYXML_INCLUDEDIR}
 )
 
 file(GLOB Sources code/*.cpp )
@@ -22,4 +22,4 @@ target_link_libraries(desura
 )
 
 install_executable(desura)
-        
+add_gtest_test(desura --unittests)
