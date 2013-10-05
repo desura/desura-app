@@ -391,7 +391,7 @@ void MainApp::onCrashShib(const char* path)
 	if (!path)
 	{
 		fprintf(stderr, "on crash path is null!");
-		return;
+		return false;
 	}
 	
 	int appid = 0;
