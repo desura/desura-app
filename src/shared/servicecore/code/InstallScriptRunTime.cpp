@@ -59,7 +59,7 @@ void FromJSObject(ServiceItem* &jsItem, JSObjHandle& arg)
 class ItemExtender : public DesuraJSBase<ItemExtender>
 {
 public:
-	ItemExtender() :  DesuraJSBase("item", "installer_binding_item_service.js")
+	ItemExtender() :  DesuraJSBase<ItemExtender>("item", "installer_binding_item_service.js")
 	{
 		REG_SIMPLE_JS_OBJ_FUNCTION( GetInstallPath, ItemExtender );
 		REG_SIMPLE_JS_FUNCTION( GetSpecialPath, ItemExtender );
@@ -168,7 +168,7 @@ public:
 protected:
 	bool loadDll()
 	{
-#ifndef DEBUG
+#if !defined(DEBUG) && defined(DESURA_OFFICIAL_BUILD)
 	#ifdef WIN32
 			char message[255] = {0};
 			if (UTIL::WIN::validateCert(L".\\bin\\scriptcore.dll", message, 255) != ERROR_SUCCESS)
@@ -180,13 +180,8 @@ protected:
 #endif
 
 #ifdef WIN32
-	#ifdef DEBUG
-			if (!m_ScriptCore.load("scriptcore-d.dll"))
-				return false;
-	#else
-			if (!m_ScriptCore.load("scriptcore.dll"))
-				return false;
-	#endif
+		if (!m_ScriptCore.load("scriptcore.dll"))
+			return false;
 #else
 		if (!m_ScriptCore.load("libscriptcore.so"))
 			return false;
