@@ -16,14 +16,17 @@ ExternalProject_Get_Property(
   source_dir
 )
 
-if(DEBUG)
-  set(GTEST_DIR "Debug")
-else()
-  set(GTEST_DIR "Release")
-endif()
+
 
 set(GTEST_INCLUDE_DIRS "${source_dir}/include")
 if(WIN32)
+
+  if(DEBUG)
+    set(GTEST_DIR "Debug")
+  else()
+    set(GTEST_DIR ".")
+  endif()
+  
   set(GTEST_LIBRARIES "${source_dir}/${GTEST_DIR}/gtest.lib")
   # currently we don't need them, but we should keep it here
   # set(GTEST_MAIN_LIBRARIES "${source_dir}/${GTEST_DIR}/gtest_main.lib")
