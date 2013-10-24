@@ -750,7 +750,11 @@ bool BranchInstallInfo::processUpdateXml(const XML::gcXMLElement &branch)
 		{
 			uint32 build = -1;
 			mcfEl.GetChild("build", build);
-			m_NextBuild = MCFBuild::BuildFromInt(build);
+
+			if (m_INBuild == 0 || build > m_INBuild)
+				m_NextBuild = MCFBuild::BuildFromInt(build);
+			else
+				m_NextBuild = m_INBuild;
 		}
 	}					
 
