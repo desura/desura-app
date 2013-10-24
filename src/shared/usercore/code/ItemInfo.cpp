@@ -478,7 +478,8 @@ void ItemInfo::loadXmlData(uint32 platform, const XML::gcXMLElement &xmlNode, ui
 
 	//the only time settings should be present if the xml came from the api
 	auto setNode = xmlNode.FirstChildElement("settings");
-	if (setNode.IsValid() && !isInstalled() && pWildCard)
+
+	if (setNode.IsValid() && pWildCard)
 		processSettings(platform, setNode, pWildCard, reset);
 
 	gcString installCheckFile;
@@ -640,7 +641,6 @@ void ItemInfo::processInfo(const XML::gcXMLElement &xmlEl)
 
 void ItemInfo::processSettings(uint32 platform, const XML::gcXMLElement &setNode, WildcardManager* pWildCard, bool reset)
 {
-
 	bool hasBroughtItem = false;
 
 	for (size_t x=0; x<m_vBranchList.size(); x++)
@@ -1204,9 +1204,7 @@ void ItemInfo::setLinkInfo(const char* exe, const char* args)
 
 	UserCore::Item::BranchInfo* bi = m_vBranchList[0];
 
-	bii->setPath(path.getFolderPath().c_str());
-	bii->setInsCheck(exe);
-	bii->setLinkInfo(exe, args);
+	bii->setLinkInfo(path.getFolderPath().c_str(), exe, args);
 	bi->setLinkInfo(getName());
 
 	m_iStatus = STATUS_LINK|STATUS_NONDOWNLOADABLE|STATUS_READY|STATUS_ONCOMPUTER|STATUS_INSTALLED;
