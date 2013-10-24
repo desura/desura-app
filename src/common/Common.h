@@ -855,7 +855,7 @@ T Clamp(T val, T minVal, T maxVal)
 	#if !__has_feature(cxx_override_control)
 		#define override
 	#endif
+
 #endif
 
-
-#include <memory>
+bool CheckVerify(bool bCon, const char* szFunction, const char* szCheck);
