@@ -40,8 +40,9 @@ const XML::gcXMLElement WebCoreClass::postToServer(std::string url, std::string 
 		if (useHTTPS)
 		{
 			hh->setUserAgent(getUserAgent());
-			hh->setCertFile(
-				UTIL::STRING::toStr(UTIL::OS::getDataPath(L"ca-bundle.crt")).c_str());
+
+			if (m_bValidateCert)
+				hh->setCertFile(UTIL::STRING::toStr(UTIL::OS::getDataPath(L"ca-bundle.crt")).c_str());
 		}
 		else
 		{

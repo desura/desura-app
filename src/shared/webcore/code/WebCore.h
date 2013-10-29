@@ -170,6 +170,7 @@ private:
 	gcString m_szAppDataPath;
 
 	bool m_bDebuggingOut;
+	bool m_bValidateCert;
 
 	ImageCache m_ImageCache;
 
