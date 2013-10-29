@@ -77,6 +77,7 @@ public:
 	WebCoreClass();
 	~WebCoreClass();
 
+	virtual void init(const char* appDataPath, const char* szProviderUrl) override;
 	virtual void init(const char* appDataPath);
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////
 	// Getters

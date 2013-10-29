@@ -274,7 +274,8 @@ void UpdateThreadOld::parseXML(const XML::gcXMLDocument &doc)
 		pUser->setCounts(pm, up, th, cc);
 	}
 
-	checkAppUpdate(uNode);
+	if (!pUser->isAltProvider())
+		checkAppUpdate(uNode);
 
 	if (version == 1)
 	{
@@ -337,7 +338,7 @@ void UpdateThreadOld::loadLoginItems()
 }
 
 
-#ifdef DESURA_OFFICAL_BUILD
+#ifdef DESURA_OFFICIAL_BUILD
 
 void UpdateThreadOld::checkAppUpdate(const XML::gcXMLElement &uNode)
 {
