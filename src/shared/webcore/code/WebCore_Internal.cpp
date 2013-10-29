@@ -34,6 +34,14 @@ const XML::gcXMLElement WebCoreClass::postToServer(std::string url, std::string 
 {
 	gcString httpOut;
 
+	if (m_bDebuggingOut)
+	{
+		if (url.find('?') == std::string::npos)
+			url += "?XDEBUG_SESSION_START=xdebug";
+		else
+			url += "&XDEBUG_SESSION_START=xdebug";
+	}
+
 	{
 		HttpHandle hh(url.c_str(), useHTTPS);
 
