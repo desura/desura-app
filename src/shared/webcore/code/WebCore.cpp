@@ -101,10 +101,7 @@ gcString WebCoreClass::getPassWordReminderUrl()
 
 gcString WebCoreClass::getLoginUrl()
 {
-	if (g_szRootDomain == "desura.com")
-		return gcString("https://secure.desura.com/3/memberlogin");
-
-	return gcString("http://api.") + g_szRootDomain + "/3/memberlogin";
+	return gcString("https://secure.") + g_szRootDomain + "/3/memberlogin";
 }
 
 gcString WebCoreClass::getRefreshUrl()
@@ -276,6 +273,14 @@ gcString WebCoreClass::getUrl(WebCoreUrl id)
 	
 	case ListKeys:
 		url = "https://secure." + g_szRootDomain + "/cart/cdkeys";
+		break;
+
+	case AppChangeLog:
+		url += "/app/changelog";
+		break;
+
+	case ComplexModTutorial:
+		url += "/groups/desura/tutorials/complex-mod-installing";
 		break;
 	};
 

@@ -78,6 +78,9 @@ enum WebCoreUrl
 	Updates,
 	LinuxToolHelp,
 	ListKeys,
+	Root,
+	AppChangeLog,
+	ComplexModTutorial
 };
 
 class WebCoreI
