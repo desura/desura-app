@@ -1,0 +1,146 @@
+Desura
+===================
+
+Desura is a gaming client that allows a user to one click download and install games and game modification.
+See here for more information: http://www.moddb.com/groups/desura/forum/thread/open-sourcing-desura
+
+
+
+Build Desura Windows
+===================
+
+To build Desura you will need Visual Studio 2008 and also Visual Studio 2010
+
+Download and install:
+ * TortiseSvn http://tortoisesvn.net/downloads.html. Make sure to install command line tools
+ * TortiseGit http://code.google.com/p/tortoisegit/downloads/list
+ * Windows Sdk 7.1 http://www.microsoft.com/download/en/details.aspx?id=8279
+ * Python 2.7 http://www.python.org/getit/
+ * SCons http://www.scons.org/download.php
+
+Check Out git repo
+Launch visual studio 2010 command prompt and cd into the desura/src/third_party
+Run SVNCheckOut.bat
+Run BuildAll.bat
+Copy branding_default in desura/src to desura/src/branding
+
+
+This should now allow you to open the desura solution in desura/build_win/desura.sln and build the desura client but you still need to build Cef
+
+Once built, open console to the desura/build_out and run "copy_data.bat [dest]" with dest being debug_win or release_win
+
+
+Build Cef Windows
+===================
+
+This requires visual studio 2008. You can cheat and copy the cef dll's from a current Desura install instead of this step.
+
+Have a look at desura/src/third_party/cef/CHROMIUM_BUILD_COMPATIBILITY.txt and note the last svn repo (at time of writing its 91424)
+
+Create a dir called chromium in the desura/src/third_party folder
+Launch command prompt and cd into the desura/src/third_party/chromium
+Run these commands (where SVN VERSION is the number found above):
+ set PATH=%PATH%:../depot_tools
+ gclient config http://src.chromium.org/svn/trunk/src
+ gclient sync --revision src@[SVN VERSION]
+
+Once complete copy desura/src/third_party/cef to desura/src/third_party/chromium/src/cef
+Run cef_create_projects.bat in desura/src/third_party/chromium/src/cef
+And then you should be able to build cef using visual studio 2008 solution file.
+You will need to copy the output dll's into the desura/build_out/[mode]_win/bin folder (where mode is debug or release)
+
+
+Run Windows
+===================
+
+You will need to run the debug build as the release build will try and auto update it self upon start. You can do this via running desura-d.exe
+from the folder or setup visual studio to use the desura-d.exe from the build_out/debug_win and also use this as the current working dir
+
+
+Build Desura Linux
+===================
+
+Need to have gcc 4.5 installed and these deps:
+ * git-core   
+ * subversion
+ * m4
+ * build-essential
+ * binutils
+ * automake
+ * autoconf
+ * libtool
+ * libgtk2.0-dev 
+ * libnss3-dev 
+ * libgconf2-dev 
+ * libgnome-keyring-dev 
+ * libdbus-glib-1-dev 
+ * gperf 
+ * bison 
+ * libcups2-dev 
+ * flex 
+ * libjpeg-dev 
+ * libasound2-dev 
+ * libbz2-dev 
+ * libxpm-dev 
+ * libx11-dev 
+ * libssl-dev scons
+
+Check out repo
+Copy branding_default in src to src/branding
+
+#!/bin/bash
+# Run from root repo dir
+# Build desura
+cd ./src/third_party
+source python_env.sh # Only run if your Python 2 executable is 'python2'!
+                     # And with that, run it each time before build.sh!
+./SvnCheckOut.sh
+./BuildAll.sh
+cd ../../build_lin
+./build.sh
+
+
+Build Cef Linux
+===================
+
+You can cheat and copy the cef so's from a current Desura install instead of this step.
+Have a look at desura/src/third_party/cef/CHROMIUM_BUILD_COMPATIBILITY.txt and note the last svn repo (at time of writing its 91424). Make sure you replace [CEF SVN VERSION]
+
+
+#!/bin/bash
+# Run from root repo dir
+# Checkout Chromium
+cd src/third_party/
+patches/depot_tools_python3.sh # Only run if your Python 2 executable is 'python2'!
+source python_env.sh # Only run if your Python 2 executable is 'python2'!
+mkdir chromium
+cd chromium
+gclient config http://src.chromium.org/svn/trunk/src
+gclient sync --revision src@[CEF SVN VERSION] #from above
+mv ../cef src/
+cd ..
+ln -s chromium/src/cef .
+cd build_lin
+./BuildCef.sh
+
+
+Build Courgette Linux
+===================
+
+Only do this after you have the Chromium repo checked out.
+
+#!/bin/bash
+# Run from root repo dir
+cd src/third_party/
+patches/depot_tools_python3.sh # Only run if your Python 2 executable is 'python2'!
+source python_env.sh # Only run if your Python 2 executable is 'python2'!
+cp -r courgette/* chromium/src/courgette
+cd build_lin
+./BuildCourgette.sh
+
+
+Run Linux
+===================
+
+If you built the debug build (default) you should be able to run ./test.sh in the build_lin folder to teset or ./desura in the build_out/debug_lin folder
+
