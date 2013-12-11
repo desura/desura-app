@@ -173,47 +173,34 @@ void UploadThread::doRun()
 
 		//Warning("UC: %s\n", error);
 
-		TiXmlDocument doc;
-		XML::loadBuffer(doc, const_cast<char*>(error), m_hHttpHandle->getDataSize());
+		XML::gcXMLDocument doc(const_cast<char*>(error), m_hHttpHandle->getDataSize());
 
-		TiXmlNode *gNode = doc.FirstChild("itemupload");
-		if (!gNode)
+		try
 		{
-			if (m_uiContinueCount > 3)
-			{
-				throw gcException(ERR_BADXML, "Couldnt find the root node in itemupload xml.");
-			}
-			else
-			{
-				m_uiContinueCount++;
-				Warning(gcString("Unable to find root node for upload! Retrying. [{0}]\n", m_pInfo->szFile));
-				continue;
-			}
+			doc.ProcessStatus("itemupload");
 		}
-
-		TiXmlNode *gMsg = gNode->FirstChild("status");
-		if (!gMsg)
+		catch (...)
 		{
 			if (m_uiContinueCount > 3)
 			{
-				throw gcException(ERR_BADXML, "Couldnt find the status node in itemupload xml.");
+				throw;
 			}
 			else
 			{
 				m_uiContinueCount++;
-				Warning(gcString("Unable to find status node for file upload. Retrying. [{0}]\n", m_pInfo->szFile));
+				Warning(gcString("Upload xml error! Retrying. [{0}]\n", m_pInfo->szFile));
 				continue;
 			}
 		}
 		
-		TiXmlElement* gEle = gMsg->ToElement();
+		auto gMsg = doc.GetRoot("itemupload").FirstChildElement("status");
 
-		const char* id = gEle->Attribute("code");
-		const char* msg = gEle->GetText();
+		uint32 t = 0;
+		gMsg.GetAtt("code", t);
 
-		if (id)
+		if (t != 0)
 		{
-			sCode = atoi(id);
+			sCode = t;
 
 			if (sCode == 0 || sCode == 999)
 			{
@@ -226,13 +213,13 @@ void UploadThread::doRun()
 			}
 			else if (sCode == 107 && m_uiContinueCount < 3)	//only part upload
 			{
-				Warning(gcString("Upload failed, bad status: {0} [{1}]. Trying to continue.\n", sCode, msg));
+				Warning(gcString("Upload failed, bad status: {0} [{1}]. Trying to continue.\n", sCode, gMsg.GetText()));
 				m_uiContinueCount++;
 				continue;
 			}
 			else
 			{	
-				throw gcException(ERR_BADSTATUS, gcString("Upload failed, bad status: {0} [{1}]", sCode, msg));
+				throw gcException(ERR_BADSTATUS, gcString("Upload failed, bad status: {0} [{1}]", sCode, gMsg.GetText()));
 				break;
 			}
 		}

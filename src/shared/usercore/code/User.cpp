@@ -391,51 +391,45 @@ void User::changeAccount(DesuraId id, uint8 action)
 
 
 
-void User::parseNews(TiXmlNode* newsNode)
+void User::parseNews(const XML::gcXMLElement &newsNode)
 {
-	parseNewsAndGifts(newsNode, onNewsUpdateEvent);
+	parseNewsAndGifts(newsNode, "news", onNewsUpdateEvent);
 }
 
 
-void User::parseGifts(TiXmlNode* giftNode)
+void User::parseGifts(const XML::gcXMLElement &giftNode)
 {
 
-	parseNewsAndGifts(giftNode, onGiftUpdateEvent);
+	parseNewsAndGifts(giftNode, "gift", onGiftUpdateEvent);
 }
 
-void User::parseNewsAndGifts(TiXmlNode* xmlNode, Event<std::vector<UserCore::Misc::NewsItem*> > &onEvent)
+void User::parseNewsAndGifts(const XML::gcXMLElement &xmlNode, const char* szChildName, Event<std::vector<UserCore::Misc::NewsItem*> > &onEvent)
 {
-	if (!xmlNode)
+	if (!xmlNode.IsValid())
 		return;
 
 	std::vector<UserCore::Misc::NewsItem*> itemList;
 
-	TiXmlNode* pChild = xmlNode->FirstChild();
-	while (pChild)
+	assert(false);//check child name below
+
+	xmlNode.for_each_child(szChildName, [&itemList](const XML::gcXMLElement &itemElem)
 	{
-		if (XML::isValidElement(pChild))
-		{
-			TiXmlElement *itemElem = pChild->ToElement();
+		const std::string szId = itemElem.GetAtt("id");
 
-			const char* szId = itemElem->Attribute("id");
+		gcString szTitle;
+		gcString szUrl;
 
-			gcString szTitle;
-			gcString szUrl;
-
-			XML::GetChild("title", szTitle, itemElem);
-			XML::GetChild("url", szUrl, itemElem);
+		itemElem.GetChild("title", szTitle);
+		itemElem.GetChild("url", szUrl);
 			
-			if (szId && szTitle != "" && szUrl != "")
-			{
-				uint32 id = (uint32)atoi(szId);
+		if (szId.empty() || szTitle.empty() || szUrl.empty())
+			return;
 
-				UserCore::Misc::NewsItem *temp = new UserCore::Misc::NewsItem(id, 0, szTitle.c_str(), szUrl.c_str());
-				itemList.push_back(temp);
-			}
-		}
+		uint32 id = (uint32)atoi(szId.c_str());
 
-		pChild = pChild->NextSibling();
-	}
+		UserCore::Misc::NewsItem *temp = new UserCore::Misc::NewsItem(id, 0, szTitle.c_str(), szUrl.c_str());
+		itemList.push_back(temp);
+	});
 
 	if (itemList.size() > 0)
 		onEvent(itemList);
@@ -522,17 +516,13 @@ void User::runInstallScript(const char* file, const char* installPath, const cha
 		getServiceMain()->runInstallScript(file, installPath, function);
 }
 
-bool User::platformFilter(TiXmlElement* platform, PlatformType type)
+bool User::platformFilter(const XML::gcXMLElement &platform, PlatformType type)
 {
-	if (!platform)
+	if (!platform.IsValid())
 		return true;
 
-	const char* szId = platform->Attribute("id");
-
-	if (!szId)
-		return true;
-
-	uint32 id = atoi(szId);
+	uint32 id = 0;
+	platform.GetAtt("id", id);
 
 	if (id == 0)
 		return true;

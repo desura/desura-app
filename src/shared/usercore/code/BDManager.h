@@ -47,7 +47,7 @@ public:
 	BDManager(UserCore::User* user);
 	~BDManager();
 
-	void downloadBanner(UserCore::Misc::BannerNotifierI* obj, MCFCore::Misc::DownloadProvider* provider);
+	void downloadBanner(UserCore::Misc::BannerNotifierI* obj, const MCFCore::Misc::DownloadProvider& provider);
 	void cancelDownloadBannerHooks(UserCore::Misc::BannerNotifierI* obj);
 
 protected:

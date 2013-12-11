@@ -25,7 +25,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>
 
 typedef uint32 ToolTransactionId;
 
-class TiXmlNode;
+namespace XML
+{
+	class gcXMLElement;
+}
 
 namespace UserCore
 {
@@ -98,7 +101,7 @@ namespace UserCore
 		//!
 		//! @param toolinfoNode Tool info node in item xml
 		//!
-		virtual void parseXml(TiXmlNode* toolinfoNode)=0;
+		virtual void parseXml(const XML::gcXMLElement &toolinfoNode)=0;
 
 		//! Checks to see if all tool ids are valid tools
 		virtual bool areAllToolsValid(std::vector<DesuraId> &list)=0;

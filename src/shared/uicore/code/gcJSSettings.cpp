@@ -32,6 +32,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>
 #include "util/UtilLinux.h"
 #endif
 
+#include "XMLMacros.h"
+
 REGISTER_JSEXTENDER(DesuraJSSettings);
 
 DesuraJSSettings::DesuraJSSettings() : DesuraJSBase("settings", "native_binding_settings.js")
@@ -133,16 +135,15 @@ std::vector<MapElementI*> DesuraJSSettings::getLanguages()
 
 	for (size_t x=0; x<fileList.size(); x++)
 	{
-		TiXmlDocument doc;
-		doc.LoadFile(fileList[x].getFullPath().c_str());
+		XML::gcXMLDocument doc(fileList[x].getFullPath().c_str());
 				
-		TiXmlElement *uNode = doc.FirstChildElement("lang");
+		auto uNode = doc.GetRoot("lang");
 
-		if (!uNode)
+		if (!uNode.IsValid())
 			continue;
 
-		gcString name = uNode->ToElement()->Attribute("name");
-		gcString skip = uNode->ToElement()->Attribute("skip");
+		gcString name = uNode.GetAtt("name");
+		gcString skip = uNode.GetAtt("skip");
 
 		if (name.size() == 0)
 			continue;

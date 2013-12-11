@@ -242,26 +242,26 @@ void CreateMCFThread::onStop()
 
 void CreateMCFThread::retrieveBranchList(std::vector<UserCore::Item::BranchInfo*> &outList)
 {
-	TiXmlDocument doc;
+	XML::gcXMLDocument doc;
 	getWebCore()->getItemInfo(getItemId(), doc, MCFBranch(), MCFBuild());
 
-	TiXmlNode *uNode = doc.FirstChild("iteminfo");
+	auto uNode = doc.GetRoot("iteminfo");
 
-	if (!uNode)
+	if (!uNode.IsValid())
 		throw gcException(ERR_BADXML);
 
-	XML::for_each_child("platform", uNode->FirstChildElement("platforms"), [this, &outList](TiXmlElement* platform)
+	uNode.FirstChildElement("platforms").for_each_child("platform", [this, &outList](const XML::gcXMLElement &platform)
 	{
 		this->processGames(outList, platform);
 	});
 }
 
-void CreateMCFThread::processGames(std::vector<UserCore::Item::BranchInfo*> &outList, TiXmlElement* platform)
+void CreateMCFThread::processGames(std::vector<UserCore::Item::BranchInfo*> &outList, const XML::gcXMLElement &platform)
 {
-	XML::for_each_child("game", platform->FirstChildElement("games"), [this, &outList](TiXmlElement* game)
+	platform.FirstChildElement("games").for_each_child("game", [this, &outList](const XML::gcXMLElement &game)
 	{
-		const char* szId = game->Attribute("siteareaid");
-		DesuraId gid(szId, "games");
+		const std::string szId = game.GetAtt("siteareaid");
+		DesuraId gid(szId.c_str(), "games");
 
 		if (gid == this->getItemId())
 			this->processBranches(outList, game);
@@ -273,12 +273,12 @@ void CreateMCFThread::processGames(std::vector<UserCore::Item::BranchInfo*> &out
 	});
 }
 
-void CreateMCFThread::processMods(std::vector<UserCore::Item::BranchInfo*> &outList, TiXmlElement* game)
+void CreateMCFThread::processMods(std::vector<UserCore::Item::BranchInfo*> &outList, const XML::gcXMLElement &game)
 {
-	XML::for_each_child("mod", game->FirstChildElement("mods"), [this, &outList](TiXmlElement* mod)
+	game.FirstChildElement("mods").for_each_child("mod", [this, &outList](const XML::gcXMLElement &mod)
 	{
-		const char* szId = mod->Attribute("siteareaid");
-		DesuraId id(szId, "mods");
+		const std::string szId = mod.GetAtt("siteareaid");
+		DesuraId id(szId.c_str(), "mods");
 
 		if (this->getItemId() != id)
 			return;
@@ -287,12 +287,12 @@ void CreateMCFThread::processMods(std::vector<UserCore::Item::BranchInfo*> &outL
 	});
 }
 
-void CreateMCFThread::processBranches(std::vector<UserCore::Item::BranchInfo*> &outList, TiXmlElement* item)
+void CreateMCFThread::processBranches(std::vector<UserCore::Item::BranchInfo*> &outList, const XML::gcXMLElement &item)
 {
-	XML::for_each_child("branch", item->FirstChildElement("branches"), [this, &outList](TiXmlElement* branch)
+	item.FirstChildElement("branches").for_each_child("branch", [this, &outList](const XML::gcXMLElement &branch)
 	{
 		uint32 id = 0;
-		XML::GetAtt("id", id, branch);
+		branch.GetAtt("id", id);
 
 		if (id == 0)
 			return;

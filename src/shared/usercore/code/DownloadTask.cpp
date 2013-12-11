@@ -95,23 +95,23 @@ void DownloadTask::startToolDownload()
 	if (!getUserCore()->getToolManager()->areAllToolsValid(toolList))
 	{
 		//missing tools. Gather info again
-		TiXmlDocument doc;
+		XML::gcXMLDocument doc;
 
 		getWebCore()->getItemInfo(getItemId(), doc, MCFBranch(), MCFBuild());
 
-		TiXmlNode *uNode = doc.FirstChild("iteminfo");
+		auto uNode = doc.GetRoot("iteminfo");
 
-		if (!uNode)
+		if (!uNode.IsValid())
 			throw gcException(ERR_BADXML);
 
-		TiXmlNode *toolNode = uNode->FirstChild("toolinfo");
+		auto toolNode = uNode.FirstChildElement("toolinfo");
 
-		if (toolNode)
+		if (toolNode.IsValid())
 			getUserCore()->getToolManager()->parseXml(toolNode);
 
-		TiXmlNode *gameNode = uNode->FirstChild("games");
+		auto gameNode = uNode.FirstChildElement("games");
 
-		if (!gameNode)
+		if (!gameNode.IsValid())
 			throw gcException(ERR_BADXML);
 
 		getItemInfo()->getCurrentBranch()->getToolList(toolList);
@@ -254,11 +254,11 @@ void DownloadTask::onNewProvider(MCFCore::Misc::DP_s& dp)
 		UserCore::User* pUser = dynamic_cast<UserCore::User*>(getUserCore());
 
 		if (pUser)
-			pUser->getBDManager()->downloadBanner(this, dp.provider);
+			pUser->getBDManager()->downloadBanner(this, *dp.provider);
 	}
 	else if (dp.action == MCFCore::Misc::DownloadProvider::REMOVE)
 	{
-		UserCore::Misc::GuiDownloadProvider gdp(MCFCore::Misc::DownloadProvider::REMOVE, dp.provider);
+		UserCore::Misc::GuiDownloadProvider gdp(MCFCore::Misc::DownloadProvider::REMOVE, *dp.provider);
 		onNewProviderEvent(gdp);
 	}
 }

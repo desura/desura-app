@@ -64,7 +64,7 @@ public:
 	//! @param pProvMng Provider manager
 	//! @param pFileAuth Mcf download auth
 	//!
-	WGTWorker(WGTControllerI* controller, uint16 id, MCFCore::Misc::ProviderManager *pProvMng, MCFCore::Misc::GetFile_s* pFileAuth);
+	WGTWorker(WGTControllerI* controller, uint16 id, MCFCore::Misc::ProviderManager *pProvMng, const MCFCore::Misc::GetFile_s& pFileAuth);
 	~WGTWorker();
 
 	//! Reports a download error from controller
@@ -99,21 +99,21 @@ private:
 	friend class UnitTest::TestWGTWorker;
 
 	gcString m_szUrl;
-	MCFCore::Misc::MCFServerConI *m_pMcfCon;
-	MCFCore::Misc::GetFile_s* m_pFileAuth;
+	MCFCore::Misc::MCFServerConI *m_pMcfCon = nullptr;
+	MCFCore::Misc::GetFile_s m_FileAuth;
 
-	uint32 m_iAttempt;
-	uint32 m_uiId;
+	uint32 m_iAttempt = 0;
+	uint32 m_uiId = 0;
 
 	::Thread::Mutex m_DeleteMutex;
 
-	MCFCore::Thread::WGTControllerI *m_pCT;
-	MCFCore::Thread::Misc::WGTSuperBlock *m_pCurBlock;
-	MCFCore::Misc::ProviderManager *m_pProvMng;
+	MCFCore::Thread::WGTControllerI *m_pCT = nullptr;
+	MCFCore::Thread::Misc::WGTSuperBlock *m_pCurBlock = nullptr;
+	MCFCore::Misc::ProviderManager *m_pProvMng = nullptr;
 
 
 	::Thread::Mutex m_ErrorMutex;
-	bool m_bError;
+	bool m_bError = false;
 	gcException m_Error;
 };
 

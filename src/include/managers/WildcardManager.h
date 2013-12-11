@@ -53,25 +53,29 @@ public:
 class WildcardInfo : public BaseItem
 {
 public:
-	WildcardInfo(const char* name, const char* path, const char* type, bool resolved = false) : BaseItem(name)
+	WildcardInfo(const std::string& name, const std::string& path, const std::string& type, bool resolved = false) 
+		: BaseItem(name.c_str())
+		, m_szName(name)
+		, m_szPath(path)
+		, m_szType(type)
+		, m_bResolved(resolved)
 	{
-		m_szName = name;
-		m_szPath = path;
-		m_szType = type;
-
-		m_bResolved = resolved;
 	}
 
 	~WildcardInfo()
 	{
 	}
 
-	gcString m_szName;
-	gcString m_szPath;
-	gcString m_szType;
-
+	std::string m_szName;
+	std::string m_szPath;
+	std::string m_szType;
 	bool m_bResolved;
 };
+
+namespace XML
+{
+	class gcXMLElement;
+}
 
 //! Stores wild cards (path and special locations) and allows them to be resolved into full paths on the file system
 class CEXPORT WildcardManager : public BaseManager<WildcardInfo>
@@ -96,7 +100,7 @@ public:
 	void constructPath(const char* path, char **res, bool fixPath = true);
 
 	//! this parses an xml feed.
-	uint8 parseXML(TiXmlNode* node);
+	uint8 parseXML(const XML::gcXMLElement &xmlElement);
 
 	uint32 getDepth(){return m_uiDepth;}
 

@@ -36,6 +36,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>
 namespace UM = UserCore::Item;
 
 
+
+
 class CompairDesuraIds
 {
 public:
@@ -46,7 +48,7 @@ public:
 };
 
 
-typedef std::map<DesuraId, std::pair<TiXmlElement*, DesuraId>, CompairDesuraIds> InfoMap;
+typedef std::map<DesuraId, std::pair<XML::gcXMLElement, DesuraId>, CompairDesuraIds> InfoMap;
 
 class InfoMaps
 {
@@ -58,6 +60,31 @@ public:
 namespace UserCore
 {
 
+
+class ItemManager::ParseInfo
+{
+public:
+	ParseInfo(uint32 statusOverride, WildcardManager* pWildCard = NULL, bool reset=false, InfoMaps* maps=NULL)
+	{
+		this->statusOverride = statusOverride;
+		this->pWildCard = pWildCard;
+		this->reset = reset;
+		this->maps = maps;
+
+		platform = -1;
+	}
+
+	XML::gcXMLElement rootNode;
+	XML::gcXMLElement infoNode;
+
+	WildcardManager* pWildCard;
+	InfoMaps* maps;
+
+	uint32 statusOverride = 0;
+	uint32 platform;
+
+	bool reset;
+};
 
 ItemManager::ItemManager(User* user) : BaseManager(true)
 {
@@ -599,32 +626,30 @@ void ItemManager::retrieveItemInfo(DesuraId id, uint32 statusOveride, WildcardMa
 {
 	assert(m_pUser->m_pWebCore);
 
-	TiXmlDocument doc;
+	XML::gcXMLDocument doc;
 	m_pUser->m_pWebCore->getItemInfo(id, doc, mcfBranch, mcfBuild);
 
-	TiXmlNode *uNode = doc.FirstChild("iteminfo");
+	auto uNode = doc.GetRoot("iteminfo");
+	uint32 ver = doc.ProcessStatus("iteminfo");
 
-	if (!uNode)
+	if (!uNode.IsValid())
 		throw gcException(ERR_BADXML);
 
-	TiXmlNode *wcNode = uNode->FirstChild("wcards");
-	TiXmlElement *gamesNode = uNode->FirstChildElement("games");
-
-	uint32 ver = 1;
-	XML::GetAtt("version", ver, uNode->ToElement());
+	auto wcNode = uNode.FirstChildElement("wcards");
+	auto gamesNode = uNode.FirstChildElement("games");
 
 	//make sure atoi worked
 	if (ver == 0)
 		ver = 1;
 
-	if (ver== 1 && !gamesNode)
+	if (ver== 1 && !gamesNode.IsValid())
 		throw gcException(ERR_BADXML);
 
 	if (pWildCard)
 	{
 		pWildCard->onNeedSpecialEvent += delegate(&m_pUser->onNeedWildCardEvent);
 
-		if (wcNode)
+		if (wcNode.IsValid())
 			pWildCard->parseXML(wcNode);
 	}
 
@@ -644,18 +669,18 @@ void ItemManager::retrieveItemInfo(DesuraId id, uint32 statusOveride, WildcardMa
 
 		ParseInfo pi(statusOveride, pWildCard, reset, &maps);
 
-		XML::for_each_child("platform", uNode->FirstChildElement("platforms"), [&](TiXmlElement* platform)
+		uNode.FirstChildElement("platforms").for_each_child("platform", [&](const XML::gcXMLElement &platform)
 		{
 			if (!m_pUser->platformFilter(platform, PlatformType::PT_Tool))
-				m_pUser->getToolManager()->parseXml(platform->FirstChild("toolinfo"));
+				m_pUser->getToolManager()->parseXml(platform.FirstChildElement("toolinfo"));
 
-			XML::GetAtt("id", pi.platform, platform);
-			parseKnownBranches(platform->FirstChildElement("games"));
+			platform.GetAtt("id", pi.platform);
+			parseKnownBranches(platform.FirstChildElement("games"));
 
 			if (m_pUser->platformFilter(platform, PlatformType::PT_Item))
 				return;
 
-			pi.rootNode = platform->FirstChildElement("games");
+			pi.rootNode = platform.FirstChildElement("games");
 
 			if (!pWildCard)
 			{
@@ -664,9 +689,9 @@ void ItemManager::retrieveItemInfo(DesuraId id, uint32 statusOveride, WildcardMa
 			else
 			{
 				WildcardManager wc(pWildCard);
-				TiXmlNode *wcNode = platform->FirstChild("wcards");
+				const XML::gcXMLElement &wcNode = platform.FirstChildElement("wcards");
 
-				if (wcNode)
+				if (wcNode.IsValid())
 					wc.parseXML(wcNode);
 
 				pi.pWildCard = &wc;
@@ -689,11 +714,12 @@ void ItemManager::retrieveItemInfo(DesuraId id, uint32 statusOveride, WildcardMa
 void ItemManager::processLeftOvers(InfoMaps &maps, bool addMissing)
 {
 	//if we have left over games we didnt parse add them as deleted items if they dont exist
-	std::for_each(maps.gameMap.begin(), maps.gameMap.end(), [this, &maps, addMissing](std::pair<DesuraId, std::pair<TiXmlElement*, DesuraId> > p)
+	for (auto p : maps.gameMap)
 	{
 		DesuraId pid = p.second.second;
 		DesuraId id = p.first;
-		TiXmlElement* infoNode = p.second.first;
+
+		auto infoNode = p.second.first;
 
 		UserCore::Item::ItemInfo* info = this->findItemInfoNorm(id);
 		ParseInfo pi(UM::ItemInfo::STATUS_STUB);
@@ -701,11 +727,10 @@ void ItemManager::processLeftOvers(InfoMaps &maps, bool addMissing)
 		if (info)
 			return;
 
-	
-		auto isDev = [](TiXmlElement* infoNode) -> bool
+		auto isDev = [](const XML::gcXMLElement &infoNode) -> bool
 		{
 			bool isDev = false;
-			return (XML::GetChild("devadmin", isDev, infoNode) && isDev);
+			return (infoNode.GetChild("devadmin", isDev) && isDev);
 		};
 		
 		bool isDevOfGame = isDev(infoNode);
@@ -720,10 +745,10 @@ void ItemManager::processLeftOvers(InfoMaps &maps, bool addMissing)
 		bool addMissingChild = addMissing;
 		ItemManager* im = this;
 
-		std::for_each(maps.modMap.begin(), maps.modMap.end(), [im, id, &pi, &isDevOfMod, addMissingChild, isDev](std::pair<DesuraId, std::pair<TiXmlElement*, DesuraId> > p)
+		for(auto p : maps.modMap)
 		{
 			DesuraId gid = p.second.second;
-			TiXmlElement* infoNode = p.second.first;
+			const XML::gcXMLElement &infoNode = p.second.first;
 			
 			if (id != gid)
 				return;
@@ -747,11 +772,11 @@ void ItemManager::processLeftOvers(InfoMaps &maps, bool addMissing)
 				info->delSFlag(UM::ItemInfo::STATUS_STUB);
 				isDevOfMod = true;
 			}
-		});
+		}
 
 		if (isDevOfMod || isDevOfGame)
 			info->delSFlag(UM::ItemInfo::STATUS_STUB);
-	});
+	}
 }
 
 void ItemManager::loadItems()
@@ -848,9 +873,9 @@ void ItemManager::saveDbItems(bool fullSave)
 	}
 }
 
-void ItemManager::itemsNeedUpdate(TiXmlNode *itemsNode)
+void ItemManager::itemsNeedUpdate(const XML::gcXMLElement &itemsNode)
 {
-	if (!itemsNode)
+	if (!itemsNode.IsValid())
 		return;
 
 	m_pUser->getToolManager()->initJSEngine();
@@ -863,14 +888,14 @@ void ItemManager::itemsNeedUpdate(TiXmlNode *itemsNode)
 	onUpdateEvent();
 }
 
-void ItemManager::itemsNeedUpdate2(TiXmlNode* platformsNode)
+void ItemManager::itemsNeedUpdate2(const XML::gcXMLElement &platformsNode)
 {
-	if (!platformsNode)
+	if (!platformsNode.IsValid())
 		return;
 
 	m_pUser->getToolManager()->initJSEngine();
 
-	XML::for_each_child("platform", platformsNode, [this](TiXmlElement* platform)
+	platformsNode.for_each_child("platform", [this](const XML::gcXMLElement &platform)
 	{
 		if (!m_pUser->platformFilter(platform, PlatformType::PT_Item))
 		{
@@ -878,25 +903,25 @@ void ItemManager::itemsNeedUpdate2(TiXmlNode* platformsNode)
 			parseItemUpdateXml("game", platform);
 		}
 
-		parseKnownBranches(platform->FirstChildElement("games"));
+		parseKnownBranches(platform.FirstChildElement("games"));
 	});
 
 	m_pUser->getToolManager()->destroyJSEngine();
 	onUpdateEvent();
 }
 
-void ItemManager::parseItemUpdateXml(const char* area, TiXmlNode *itemsNode)
+void ItemManager::parseItemUpdateXml(const char* area, const XML::gcXMLElement &itemsNode)
 {
 	gcString rootArea = gcString(area) + "s";
 
-	TiXmlNode *modNode = itemsNode->FirstChild(rootArea.c_str());
-	if (!modNode)
+	auto modNode = itemsNode.FirstChildElement(rootArea.c_str());
+	if (!modNode.IsValid())
 		return;
 
-	XML::for_each_child(area, modNode, [&](TiXmlElement* itemNode)
+	modNode.for_each_child(area, [&](const XML::gcXMLElement &itemNode)
 	{
-		const char* szId = itemNode->Attribute("siteareaid");
-		DesuraId id(szId, rootArea.c_str());
+		const std::string szId = itemNode.GetAtt("siteareaid");
+		DesuraId id(szId.c_str(), rootArea.c_str());
 
 		if (!id.isOk())
 			return;
@@ -938,31 +963,31 @@ void ItemManager::postParseLoginXml()
 	m_bFirstLogin = false;
 }
 
-void ItemManager::generateInfoMaps(TiXmlElement* gamesNode, InfoMaps* maps)
+void ItemManager::generateInfoMaps(const XML::gcXMLElement &gamesNode, InfoMaps* maps)
 {
-	XML::for_each_child("game", gamesNode, [&maps, this](TiXmlElement* game)
+	gamesNode.for_each_child("game", [&maps, this](const XML::gcXMLElement &game)
 	{
 		InfoMaps* pMaps = maps;
 
-		const char* szId = game->Attribute("siteareaid");
+		const std::string szId = game.GetAtt("siteareaid");
 	
-		if (!szId)
+		if (szId.empty())
 			return;
 
-		DesuraId pid = getParentId(game);
-		DesuraId gid(szId, "games");
+		DesuraId pid = getParentId(game, game);
+		DesuraId gid(szId.c_str(), "games");
 		
-		maps->gameMap[gid] = std::pair<TiXmlElement*, DesuraId>(game, pid);
+		maps->gameMap[gid] = std::pair<XML::gcXMLElement, DesuraId>(game, pid);
 
-		XML::for_each_child("mod", game->FirstChild("mods"), [&pMaps, gid](TiXmlElement* mod)
+		game.FirstChildElement("mods").for_each_child("mod", [&pMaps, gid](const XML::gcXMLElement &mod)
 		{
-			const char* id = mod->Attribute("siteareaid");
+			const std::string id = mod.GetAtt("siteareaid");
 	
-			if (!id)
+			if (id.empty())
 				return;
 
-			DesuraId mid(id, "mods");
-			pMaps->modMap[mid] = std::pair<TiXmlElement*, DesuraId>(mod, gid);
+			DesuraId mid(id.c_str(), "mods");
+			pMaps->modMap[mid] = std::pair<XML::gcXMLElement, DesuraId>(mod, gid);
 		});
 	});
 }
@@ -974,7 +999,7 @@ UserCore::Item::ItemInfo* ItemManager::createNewItem(DesuraId pid, DesuraId id, 
 
 	try
 	{
-		if (pi.infoNode)
+		if (pi.infoNode.IsValid())
 			temp->loadXmlData(pi.platform, pi.infoNode, pi.statusOverride, pi.pWildCard, pi.reset);
 
 		temp->loadXmlData(pi.platform, pi.rootNode, pi.statusOverride, pi.pWildCard, pi.reset);
@@ -998,7 +1023,7 @@ void ItemManager::updateItem(UserCore::Item::ItemInfo* itemInfo, ParseInfo& pi)
 {
 	uint32 newSO = pi.statusOverride&~(UM::ItemInfoI::STATUS_DELETED);
 
-	if (pi.infoNode)
+	if (pi.infoNode.IsValid())
 		itemInfo->loadXmlData(pi.platform, pi.infoNode, newSO, pi.pWildCard, pi.reset);
 
 	itemInfo->loadXmlData(pi.platform, pi.rootNode, newSO, pi.pWildCard, pi.reset);
@@ -1009,13 +1034,13 @@ void ItemManager::updateItem(UserCore::Item::ItemInfo* itemInfo, ParseInfo& pi)
 	m_pUser->getToolManager()->findJSTools(itemInfo);
 }
 
-void ItemManager::parseLoginXml(TiXmlElement* gameNode, TiXmlElement* devNode)
+void ItemManager::parseLoginXml(const XML::gcXMLElement &gameNode, const XML::gcXMLElement &devNode)
 {
 	m_pUser->getToolManager()->initJSEngine();
 
 	ParseInfo pi(UM::ItemInfoI::STATUS_ONACCOUNT);
 
-	if (gameNode)
+	if (gameNode.IsValid())
 	{
 		ParseInfo pi(UM::ItemInfoI::STATUS_ONACCOUNT);
 		pi.rootNode = gameNode;
@@ -1023,10 +1048,10 @@ void ItemManager::parseLoginXml(TiXmlElement* gameNode, TiXmlElement* devNode)
 		parseGamesXml(pi);
 	}
 
-	if (devNode)
+	if (devNode.IsValid())
 	{
 		ParseInfo pi(UM::ItemInfoI::STATUS_DEVELOPER);
-		pi.rootNode = devNode->FirstChildElement("games");
+		pi.rootNode = devNode.FirstChildElement("games");
 
 		parseGamesXml(pi);
 	}
@@ -1035,7 +1060,7 @@ void ItemManager::parseLoginXml(TiXmlElement* gameNode, TiXmlElement* devNode)
 	m_pUser->getToolManager()->destroyJSEngine();
 }
 
-void ItemManager::parseLoginXml2(TiXmlElement* gamesNode, TiXmlElement* platformNodes)
+void ItemManager::parseLoginXml2(const XML::gcXMLElement &gamesNode, const XML::gcXMLElement &platformNodes)
 {
 	m_pUser->getToolManager()->initJSEngine();
 	
@@ -1044,15 +1069,15 @@ void ItemManager::parseLoginXml2(TiXmlElement* gamesNode, TiXmlElement* platform
 
 	ParseInfo pi(UM::ItemInfoI::STATUS_ONACCOUNT, 0, false, &maps);
 
-	XML::for_each_child("platform", platformNodes, [this, &pi](TiXmlElement* platform)
+	platformNodes.for_each_child("platform", [this, &pi](const XML::gcXMLElement &platform)
 	{
-		XML::GetAtt("id", pi.platform, platform);
-		pi.rootNode = platform->FirstChildElement("games");
+		platform.GetAtt("id", pi.platform);
+		pi.rootNode = platform.FirstChildElement("games");
 
 		if (!m_pUser->platformFilter(platform, PlatformType::PT_Item))
 			parseGamesXml(pi);
 
-		parseKnownBranches(platform->FirstChildElement("games"));
+		parseKnownBranches(platform.FirstChildElement("games"));
 	});
 
 	processLeftOvers(maps, false);
@@ -1063,24 +1088,24 @@ void ItemManager::parseLoginXml2(TiXmlElement* gamesNode, TiXmlElement* platform
 
 void ItemManager::parseGamesXml(ParseInfo& pi)
 {
-	if (!pi.rootNode)
+	if (!pi.rootNode.IsValid())
 		return;
 
 	uint32 beforeCount = BaseManager::getCount();
 
 	ParseInfo gamePi(pi);
 
-	XML::for_each_child("game", pi.rootNode, [&](TiXmlElement* game)
+	pi.rootNode.for_each_child("game", [&](const XML::gcXMLElement &game)
 	{
-		const char* id = game->Attribute("siteareaid");
+		const std::string id = game.GetAtt("siteareaid");
 	
-		if (!id)
+		if (id.empty())
 			return;
 
 		DesuraId pid = getParentId(game, pi.infoNode);
-		DesuraId gid(id, "games");
+		DesuraId gid(id.c_str(), "games");
 
-		TiXmlElement* infoNode = NULL;
+		XML::gcXMLElement infoNode;
 
 		if (pi.maps)
 		{
@@ -1108,13 +1133,13 @@ void ItemManager::parseGamesXml(ParseInfo& pi)
 	}
 }
 
-DesuraId ItemManager::getParentId(TiXmlElement* gameNode, TiXmlElement* infoNode)
+DesuraId ItemManager::getParentId(const XML::gcXMLElement &gameNode, const XML::gcXMLElement &infoNode)
 {
 	gcString expansion;
-	XML::GetChild("expansion", expansion, gameNode);
+	gameNode.GetChild("expansion", expansion);
 
 	if (expansion.size() == 0 || expansion == "0")
-		XML::GetChild("expansion", expansion, infoNode);
+		infoNode.GetChild("expansion", expansion);
 
 	DesuraId parentId;
 
@@ -1166,7 +1191,7 @@ void ItemManager::parseGameXml(DesuraId id, ParseInfo &pi)
 
 	ParseInfo gamePi(pi);
 
-	gamePi.rootNode = pi.rootNode->FirstChildElement("mods");
+	gamePi.rootNode = pi.rootNode.FirstChildElement("mods");
 	gamePi.infoNode = NULL;
 
 	parseModsXml(temp, gamePi);
@@ -1174,20 +1199,20 @@ void ItemManager::parseGameXml(DesuraId id, ParseInfo &pi)
 
 void ItemManager::parseModsXml(UserCore::Item::ItemInfo* parent, ParseInfo &pi)
 {
-	if (!pi.rootNode || !parent)
+	if (!pi.rootNode.IsValid() || !parent)
 		return;
 
 	ParseInfo modPi(pi);
 
-	XML::for_each_child("mod", pi.rootNode, [&](TiXmlElement* mod)
+	pi.rootNode.for_each_child("mod", [&](const XML::gcXMLElement &mod)
 	{
-		const char* id = mod->Attribute("siteareaid");
-		DesuraId internId(id, "mods");
+		const std::string id = mod.GetAtt("siteareaid");
+		DesuraId internId(id.c_str(), "mods");
 
 		if (!internId.isOk())
 			return;
 
-		TiXmlElement* infoNode = NULL;
+		XML::gcXMLElement infoNode;
 
 		if (pi.maps)
 		{
@@ -1497,13 +1522,12 @@ void ItemManager::updateLink(DesuraId id, const char* args)
 }
 
 
-void ItemManager::parseKnownBranches(TiXmlElement* gamesNode)
+void ItemManager::parseKnownBranches(const XML::gcXMLElement &gamesNode)
 {
-	auto parseBranch = [this](DesuraId id, TiXmlElement* branch)
+	auto parseBranch = [this](DesuraId id, const XML::gcXMLElement &branch)
 	{
 		uint32 branchId = 0;
-
-		XML::GetAtt("id", branchId, branch);
+		branch.GetAtt("id", branchId);
 
 		if (branchId == 0)
 			return;
@@ -1513,34 +1537,34 @@ void ItemManager::parseKnownBranches(TiXmlElement* gamesNode)
 		m_BranchLock.unlock();
 	};
 
-	XML::for_each_child("game", gamesNode, [this, &parseBranch](TiXmlElement* game)
+	gamesNode.for_each_child("game", [this, &parseBranch](const XML::gcXMLElement &game)
 	{
-		const char* szId = game->Attribute("siteareaid");
+		const std::string szId = game.GetAtt("siteareaid");
 	
-		if (!szId)
+		if (!szId.empty())
 			return;
 
-		DesuraId id(szId, "games");
+		DesuraId id(szId.c_str(), "games");
 
 		auto parseBranchLocal = parseBranch;
 
-		XML::for_each_child("branch", game->FirstChildElement("branches"), [&parseBranchLocal, &id](TiXmlElement* branch)
+		game.FirstChildElement("branches").for_each_child("branch", [&parseBranchLocal, &id](const XML::gcXMLElement &branch)
 		{
 			parseBranchLocal(id, branch);
 		});
 
-		XML::for_each_child("mod", game->FirstChildElement("mods"), [&parseBranchLocal](TiXmlElement* mod)
+		game.FirstChildElement("mods").for_each_child("mod", [&parseBranchLocal](const XML::gcXMLElement &mod)
 		{
-			const char* szId = mod->Attribute("siteareaid");
+			const std::string szId = mod.GetAtt("siteareaid");
 	
-			if (!szId)
+			if (!szId.empty())
 				return;
 
-			DesuraId id(szId, "mods");
+			DesuraId id(szId.c_str(), "mods");
 
 			auto parseBranchLocalMod = parseBranchLocal;
 
-			XML::for_each_child("branch", mod->FirstChildElement("branches"), [&parseBranchLocalMod, &id](TiXmlElement* branch)
+			mod.FirstChildElement("branches").for_each_child("branch", [&parseBranchLocalMod, &id](const XML::gcXMLElement &branch)
 			{
 				parseBranchLocalMod(id, branch);
 			});

@@ -69,7 +69,7 @@ protected:
 	bool saveData(const char* data, uint32 size);
 
 	bool expandDiffs();
-	bool expandDiff(CourgetteInstance* ci, MCFCore::MCFFile* file);
+	bool expandDiff(CourgetteInstance* ci, std::shared_ptr<MCFCore::MCFFile> file);
 
 	bool writeDiff(uint64 &tot, uint64 fsize, const char* buff, size_t size);
 

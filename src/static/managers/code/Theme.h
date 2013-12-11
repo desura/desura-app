@@ -29,8 +29,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>
 #include "Common.h"
 #include "Color.h"
 #include "BaseManager.h"
-#include "tinyxml.h"
 #include "managers/Managers.h"
+
+namespace XML
+{
+	class gcXMLElement;
+}
 
 class SpriteRect : public BaseItem, public SpriteRectI
 {
@@ -199,6 +203,31 @@ public:
 	//!
 	void parseFile(const char* file);
 
+protected:
+	void LoadImages(const UTIL::FS::Path& path, const XML::gcXMLElement &xmlEl);
+	void LoadWeb(const UTIL::FS::Path& path, const XML::gcXMLElement &xmlEl);
+	void LoadSprites(const XML::gcXMLElement &xmlEl);
+	void LoadControls(const XML::gcXMLElement &xmlEl);
+
+	void addItem(ThemeImageInfo* pImageInfo)
+	{
+		ImageList::addItem(pImageInfo);
+	}
+
+	void addItem(ThemeWebInfo* pWebInfo)
+	{
+		WebList::addItem(pWebInfo);
+	}
+
+	void addItem(ThemeControlInfo* pControlInfo)
+	{
+		ControlList::addItem(pControlInfo);
+	}
+
+	void addItem(ThemeSpriteInfo* pSpritInfo)
+	{
+		SpriteList::addItem(pSpritInfo);
+	}
 
 private:
 	uint32 m_uiHash;

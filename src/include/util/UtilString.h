@@ -28,6 +28,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>
 
 #include "util/UtilCallback.h"
 
+#include <memory>
+
 #ifdef WIN32
 typedef void* FHANDLE;
 #endif
@@ -140,7 +142,7 @@ namespace STRING
 	//! @param outLen Length of returned string
 	//! @return Decoded string (must delete)
 	//!
-	unsigned char* base64_decode(const std::string &encoded_string, size_t &outlen);
+	std::unique_ptr<unsigned char[]> base64_decode(const std::string &encoded_string, size_t &outlen);
 
 	//! Encode a binary buffer into a base 64 string
 	//!

@@ -56,18 +56,11 @@ void WebCoreClass::sendPassReminder(const char* email)
 	if (hh->getDataSize() == 0)
 		throw gcException(ERR_BADRESPONSE, "Data size was zero");
 
-	TiXmlDocument doc;
-	XML::loadBuffer(doc, const_cast<char*>(hh->getData()), hh->getDataSize());
-
-	TiXmlNode *uNode = doc.FirstChild("memberpasswordreminder");
-
-	if (!uNode)
-		throw gcException(ERR_BADXML, "Missing the root node");
-
-	XML::processStatus(doc, "memberpasswordreminder");
+	XML::gcXMLDocument doc(const_cast<char*>(hh->getData()), hh->getDataSize());
+	doc.ProcessStatus("memberpasswordreminder");
 }
 
-void WebCoreClass::getInstalledItemList(TiXmlDocument &doc)
+void WebCoreClass::getInstalledItemList(XML::gcXMLDocument &xmlDocument)
 {
 	HttpHandle hh(getInstalledWizardUrl().c_str());
 	setWCCookies(hh);
@@ -83,14 +76,14 @@ void WebCoreClass::getInstalledItemList(TiXmlDocument &doc)
 		UTIL::MISC::Buffer buff(bufSize);
 		UTIL::BZIP::BZ2DBuff(buff, &bufSize, const_cast<char*>(hh->getData()), hh->getDataSize());
 
-		XML::loadBuffer(doc, buff, bufSize);
+		xmlDocument.LoadBuffer(buff, bufSize);
 	}
 	else
 	{
-		XML::loadBuffer(doc, const_cast<char*>(hh->getData()), hh->getDataSize());
+		xmlDocument.LoadBuffer(const_cast<char*>(hh->getData()), hh->getDataSize());
 	}
 
-	XML::processStatus(doc, "itemwizard");
+	xmlDocument.ProcessStatus("itemwizard");
 }
 
 void WebCoreClass::onHttpProg(volatile bool& stop, Prog_s& prog)

@@ -55,31 +55,22 @@ class SMTWorkerInfo
 {
 public:
 	SMTWorkerInfo(SMTController* con, uint32 i, UTIL::FS::FileHandle* fileHandle, const char* f)
+		: id(i)
+		, file(f)
+		, workThread(std::make_unique<SMTWorker>(con, i, fileHandle))
 	{
-		id = i;
-		workThread = new SMTWorker(con, i, fileHandle);
 		workThread->setPriority(::Thread::BaseThread::BELOW_NORMAL);
-		curFile = NULL;
-		ammountDone = 0;
-		status = 0;
-		file = f;
 	}
 
-	~SMTWorkerInfo()
-	{
-		safe_delete(workThread);
-	}
+	uint64 ammountDone = 0;
 
-
-	uint64 ammountDone;
-
-	uint32 id;
-	uint32 status;
+	uint32 id = 0;
+	uint32 status = 0;
 
 	gcString file;
 
-	MCFCore::MCFFile* curFile;
-	SMTWorker* workThread;
+	std::shared_ptr<MCFCore::MCFFile> curFile;
+	std::unique_ptr<SMTWorker> workThread;
 	std::vector<uint32> vFileList;
 };
 
@@ -237,7 +228,7 @@ void SMTController::postProcessing()
 		for (size_t y=0; y<worker->vFileList.size(); y++)
 		{
 			uint32 index = worker->vFileList[y];
-			MCFCore::MCFFile *temp = m_rvFileList[index];
+			auto temp = m_rvFileList[index];
 
 			if (!temp)
 				continue;
@@ -308,7 +299,7 @@ uint32 SMTController::getStatus(uint32 id)
 	return worker->status;
 }
 
-MCFCore::MCFFile* SMTController::newTask(uint32 id)
+std::shared_ptr<MCFCore::MCFFile> SMTController::newTask(uint32 id)
 {
 	SMTWorkerInfo* worker = findWorker(id);
 	assert(worker);
@@ -336,7 +327,7 @@ MCFCore::MCFFile* SMTController::newTask(uint32 id)
 	m_vFileList.pop_back();
 	m_pFileMutex.unlock();
 
-	MCFCore::MCFFile *temp = m_rvFileList[index];
+	auto temp = m_rvFileList[index];
 
 	if (!temp)
 		return newTask(id);

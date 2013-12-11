@@ -37,74 +37,55 @@ InstallInfo::~InstallInfo()
 {
 }
 
-void InstallInfo::loadXmlData(TiXmlNode *xmlNode, WildcardManager* pWildCard)
+void InstallInfo::loadXmlData(const XML::gcXMLElement &xmlNode, WildcardManager* pWildCard)
 {
 	WildcardManager lwc(pWildCard);
 
-	TiXmlNode* wcNode = xmlNode->FirstChild("wcards");
-	if (wcNode)
+	auto wcNode = xmlNode.FirstChildElement("wcards");
+	if (wcNode.IsValid())
 	{
 		lwc.parseXML(wcNode);
 	}
 
-	XML::GetChild("name", m_szName, xmlNode);
-	TiXmlNode* setNode = xmlNode->FirstChild("settings");
-	if (setNode)
+	xmlNode.GetChild("name", m_szName);
+	auto icsNode = xmlNode.FirstChildElement("settings").FirstChildElement("installlocations");
+
+	if (!icsNode.IsValid())
+		return;
+		
+	icsNode.for_each_child("installlocation", [&](const XML::gcXMLElement &xmlChild)
 	{
-		TiXmlNode* icsNode = setNode->FirstChild("installlocations");
-		if (icsNode)
+		if (m_bInstalled)
+			return;
+
+		const std::string path = xmlChild.GetChild("path");
+		const std::string check = xmlChild.GetChild("check");
+
+		if (path.empty() || check.empty())
+			return;
+
+		char* CheckRes = NULL;
+		char* PathRes = NULL;
+
+		try
 		{
-			TiXmlElement* icNode = icsNode->FirstChildElement("installlocation");
+			lwc.constructPath(check.c_str(), &CheckRes);
+			lwc.constructPath(path.c_str(), &PathRes);
 
-			while (icNode)
+			if (CheckRes && PathRes && UTIL::FS::isValidFile(UTIL::FS::PathWithFile(CheckRes)))
 			{
-				char* path = NULL;
-				char* check = NULL;
-
-				XML::GetChild("path", path, icNode);
-				XML::GetChild("check", check, icNode);
-
-				if (!path || !check)
-				{
-					safe_delete(path);
-					safe_delete(check);
-					continue;
-				}
-
-				char* CheckRes = NULL;
-				char* PathRes = NULL;
-
-				try
-				{
-					lwc.constructPath(check, &CheckRes);
-					lwc.constructPath(path, &PathRes);
-
-					safe_delete(path);
-					safe_delete(check);
-
-					if (CheckRes && PathRes && UTIL::FS::isValidFile(UTIL::FS::PathWithFile(CheckRes)))
-					{
-						m_szPath = PathRes;
-						m_bInstalled = true;
-						safe_delete(CheckRes);
-						safe_delete(PathRes);
-						break;
-					}
-				}
-				catch (gcException &e)
-				{
-					Debug(gcString("InstallInfo: Error parsing wildcards for installInfo: {0}\n", e));
-				}
-
-				safe_delete(path);
-				safe_delete(check);
-				safe_delete(CheckRes);
-				safe_delete(PathRes);
-
-				icNode = icNode->NextSiblingElement();
+				m_szPath = PathRes;
+				m_bInstalled = true;
 			}
 		}
-	}
+		catch (gcException &e)
+		{
+			Debug(gcString("InstallInfo: Error parsing wildcards for installInfo: {0}\n", e));
+		}
+
+		safe_delete(CheckRes);
+		safe_delete(PathRes);
+	});
 }
 
 }

@@ -22,6 +22,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>
 #pragma once
 #endif
 
+namespace XML
+{
+	class gcXMLElement;
+}
+
 namespace UserCore
 {
 	namespace Misc
@@ -44,7 +49,7 @@ namespace Item
 namespace Thread
 {
 
-//! Installed wizard looks for items allready installed on user computer
+//! Installed wizard looks for items already installed on user computer
 //!
 class InstalledWizardThread : public MCFThread
 {
@@ -55,10 +60,10 @@ public:
 protected:
 	void doRun();
 
-	void parseItemsQuick(TiXmlNode *fNode);
+	void parseItemsQuick(const XML::gcXMLElement &fNode);
 
-	void parseItems1(TiXmlNode *fNode, WildcardManager *pWildCard, std::map<uint64, TiXmlElement*> *vMap = NULL);
-	void parseItems2(TiXmlNode *fNode, WildcardManager *pWildCard);
+	void parseItems1(const XML::gcXMLElement &fNode, WildcardManager *pWildCard, std::map<uint64, XML::gcXMLElement> *vMap = NULL);
+	void parseItems2(const XML::gcXMLElement &fNode, WildcardManager *pWildCard);
 
 	bool selectBranch(UserCore::Item::ItemInfoI *item);
 	void onItemFound(UserCore::Item::ItemInfoI *item);
@@ -73,10 +78,10 @@ protected:
 
 	void triggerProgress();
 
-	void parseGameQuick(TiXmlElement* game);
+	void parseGameQuick(const XML::gcXMLElement &game);
 
-	void parseGame(DesuraId id, TiXmlElement* game, WildcardManager *pWildCard, TiXmlElement* info = NULL);
-	void parseMod(DesuraId parId, DesuraId id, TiXmlElement* mod, WildcardManager *pWildCard, TiXmlElement* info = NULL);
+	void parseGame(DesuraId id, const XML::gcXMLElement &game, WildcardManager *pWildCard, const XML::gcXMLElement &info);
+	void parseMod(DesuraId parId, DesuraId id, const XML::gcXMLElement &mod, WildcardManager *pWildCard, const XML::gcXMLElement &info);
 
 private:
 	UserCore::User* m_pUser;

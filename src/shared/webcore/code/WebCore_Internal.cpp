@@ -30,7 +30,7 @@ namespace WebCore
 {
 
 
-TiXmlNode* WebCoreClass::postToServer(std::string url, std::string resource, PostMap &postData, TiXmlDocument &doc, bool useHTTPS)
+const XML::gcXMLElement WebCoreClass::postToServer(std::string url, std::string resource, PostMap &postData, XML::gcXMLDocument &xmlDocument, bool useHTTPS)
 {
 	gcString httpOut;
 
@@ -61,24 +61,19 @@ TiXmlNode* WebCoreClass::postToServer(std::string url, std::string resource, Pos
 		if (hh->getDataSize() == 0)
 			throw gcException(ERR_BADRESPONSE, "Data size was zero");
 
-		XML::loadBuffer(doc, const_cast<char*>(hh->getData()), hh->getDataSize());
+		xmlDocument.LoadBuffer(const_cast<char*>(hh->getData()), hh->getDataSize());
 
 		if (m_bDebuggingOut)
 			httpOut.assign(const_cast<char*>(hh->getData()), hh->getDataSize());
 	}
 
-	TiXmlNode *uNode = doc.FirstChild(resource.c_str());
-
-	if (m_bDebuggingOut && !uNode)
-		Warning(httpOut);
-
-	XML::processStatus(doc, resource.c_str());
-	return uNode;
+	xmlDocument.ProcessStatus(resource);
+	return xmlDocument.GetRoot(resource);
 }
 
-TiXmlNode* WebCoreClass::loginToServer(std::string url, std::string resource, PostMap &postData, TiXmlDocument &doc)
+const XML::gcXMLElement WebCoreClass::loginToServer(std::string url, std::string resource, PostMap &postData, XML::gcXMLDocument &xmlDocument)
 {
-	return postToServer(url, resource, postData, doc, true);
+	return postToServer(url, resource, postData, xmlDocument, true);
 }
 
 DesuraId WebCoreClass::nameToId(const char* name, const char* type)
@@ -102,45 +97,41 @@ DesuraId WebCoreClass::nameToId(const char* name, const char* type)
 	{
 	}
 
-	TiXmlDocument doc;
+
+	XML::gcXMLDocument doc;
 	PostMap post;
 
 	post["nameid"] = name;
 	post["sitearea"] = type;
 
-	TiXmlNode *uNode = postToServer(getNameLookUpUrl(), "iteminfo", post, doc);
-	TiXmlNode* cNode = uNode->FirstChild("item");
+	auto uNode = postToServer(getNameLookUpUrl(), "iteminfo", post, doc);
+	auto cNode = uNode.FirstChildElement("item");
 
-	if (cNode)
+	if (cNode.IsValid())
 	{
-		TiXmlElement* cEl = cNode->ToElement();
-		
-		if (cEl)
+		const std::string idStr = cNode.GetAtt("siteareaid");
+		const std::string typeS = cNode.GetAtt("sitearea");
+
+		DesuraId id(idStr.c_str(), typeS.c_str());
+
+		if (!id.isOk() || DesuraId::getTypeString(id.getType()) != type)
 		{
-			const char* idStr = cEl->Attribute("siteareaid");
-			const char* typeS = cEl->Attribute("sitearea");
-
-			DesuraId id(idStr, typeS);
-
-			if (!id.isOk() || DesuraId::getTypeString(id.getType()) != type)
+			throw gcException(ERR_BADXML);
+		}
+		else
+		{
+			try 
 			{
-				throw gcException(ERR_BADXML);
+				sqlite3x::sqlite3_connection db(getWebCoreDb(m_szAppDataPath.c_str()).c_str());
+				gcString q("replace into namecache (internalid, nameid, ttl) values ('{0}','{1}', DATETIME('NOW', '+5 day'));", id.toInt64(), hash);
+				db.executenonquery(q.c_str());
 			}
-			else
+			catch(std::exception &ex) 
 			{
-				try 
-				{
-					sqlite3x::sqlite3_connection db(getWebCoreDb(m_szAppDataPath.c_str()).c_str());
-					gcString q("replace into namecache (internalid, nameid, ttl) values ('{0}','{1}', DATETIME('NOW', '+5 day'));", id.toInt64(), hash);
-					db.executenonquery(q.c_str());
-				}
-				catch(std::exception &ex) 
-				{
-					Warning(gcString("Failed to update namecache in webcore: {0}\n", ex.what()));
-				}	
+				Warning(gcString("Failed to update namecache in webcore: {0}\n", ex.what()));
+			}	
 
-				return id;
-			}
+			return id;
 		}
 	}
 
@@ -167,44 +158,39 @@ DesuraId WebCoreClass::hashToId(const char* itemHashId)
 	}
 
 
-	TiXmlDocument doc;
+	XML::gcXMLDocument doc;
 	PostMap post;
 
 	post["hashid"] = itemHashId;
 
-	TiXmlNode *uNode = postToServer(getNameLookUpUrl(), "iteminfo", post, doc);
-	TiXmlNode* cNode = uNode->FirstChild("item");
+	auto uNode = postToServer(getNameLookUpUrl(), "iteminfo", post, doc);
+	auto cNode = uNode.FirstChildElement("item");
 
-	if (cNode)
+	if (cNode.IsValid())
 	{
-		TiXmlElement* cEl = cNode->ToElement();
-		
-		if (cEl)
+		const std::string idStr = cNode.GetAtt("siteareaid");
+		const std::string typeS = cNode.GetAtt("sitearea");
+
+		if (typeS.empty() || idStr.empty())
 		{
-			const char* idStr = cEl->Attribute("siteareaid");
-			const char* typeS = cEl->Attribute("sitearea");
+			throw gcException(ERR_BADXML);
+		}
+		else
+		{
+			DesuraId id(idStr.c_str(), typeS.c_str());
 
-			if (!typeS || !idStr)
+			try 
 			{
-				throw gcException(ERR_BADXML);
+				sqlite3x::sqlite3_connection db(getWebCoreDb(m_szAppDataPath.c_str()).c_str());
+				gcString q("replace into namecache (internalid, hashid, ttl) values ('{0}','{1}', DATETIME('NOW', '+5 day'));", id.toInt64(), UTIL::MISC::RSHash_CSTR(itemHashId));
+				db.executenonquery(q.c_str());
 			}
-			else
+			catch(std::exception &ex) 
 			{
-				DesuraId id(idStr, typeS);
+				Warning(gcString("Failed to update namecache in webcore: {0}\n", ex.what()));
+			}	
 
-				try 
-				{
-					sqlite3x::sqlite3_connection db(getWebCoreDb(m_szAppDataPath.c_str()).c_str());
-					gcString q("replace into namecache (internalid, hashid, ttl) values ('{0}','{1}', DATETIME('NOW', '+5 day'));", id.toInt64(), UTIL::MISC::RSHash_CSTR(itemHashId));
-					db.executenonquery(q.c_str());
-				}
-				catch(std::exception &ex) 
-				{
-					Warning(gcString("Failed to update namecache in webcore: {0}\n", ex.what()));
-				}	
-
-				return id;
-			}
+			return id;
 		}
 	}
 
@@ -214,7 +200,7 @@ DesuraId WebCoreClass::hashToId(const char* itemHashId)
 
 void WebCoreClass::updateAccountItem(DesuraId id, bool add)
 {
-	TiXmlDocument doc;
+	XML::gcXMLDocument doc;
 	PostMap post;
 
 	post["siteareaid"] = id.getItem();
@@ -228,7 +214,7 @@ void WebCoreClass::newUpload(DesuraId id, const char* hash, uint64 fileSize, cha
 {
 	gcString size("{0}", fileSize);
 
-	TiXmlDocument doc;
+	XML::gcXMLDocument doc;
 	PostMap post;
 
 	post["siteareaid"] = id.getItem();
@@ -237,22 +223,20 @@ void WebCoreClass::newUpload(DesuraId id, const char* hash, uint64 fileSize, cha
 	post["filehash"] = hash;
 	post["filesize"] = size;
 
-	TiXmlNode *uNode = postToServer(getMcfUploadUrl(), "itemupload", post, doc);
-	TiXmlNode* iNode = uNode->FirstChild("mcf");
+	auto uNode = postToServer(getMcfUploadUrl(), "itemupload", post, doc);
+	auto iNode = uNode.FirstChildElement("mcf");
 	
-	if (!iNode)
+	if (!iNode.IsValid())
 		throw gcException(ERR_BADXML);	
 
-	TiXmlElement* cEl = iNode->ToElement();
-		
-	if (cEl)
+	if (key)
 	{
-		const char* text = cEl->Attribute("key");
+		const std::string text = iNode.GetAtt("key");
 
-		if (!text)
+		if (text.empty())
 			throw gcException(ERR_BADXML);	
 
-		Safe::strcpy(key, text, 255);
+		Safe::strcpy(key, text.c_str(), text.size());
 	}
 }
 
@@ -260,7 +244,7 @@ void WebCoreClass::newUpload(DesuraId id, const char* hash, uint64 fileSize, cha
 
 void WebCoreClass::resumeUpload(DesuraId id, const char* key, WebCore::Misc::ResumeUploadInfo &info)
 {
-	TiXmlDocument doc;
+	XML::gcXMLDocument doc;
 	PostMap post;
 
 	post["siteareaid"] = id.getItem();
@@ -268,27 +252,28 @@ void WebCoreClass::resumeUpload(DesuraId id, const char* key, WebCore::Misc::Res
 	post["action"] = "resumeupload";
 	post["key"] = key;
 
-	TiXmlNode *uNode = postToServer(getMcfUploadUrl(), "itemupload", post, doc);
-	TiXmlNode* mNode = uNode->FirstChild("mcf");
+	auto uNode = postToServer(getMcfUploadUrl(), "itemupload", post, doc);
+	auto iNode = uNode.FirstChildElement("mcf");
 
-	if (!mNode)
+	if (!iNode.IsValid())
 		throw gcException(ERR_BADXML);	
 
 	gcString complete;
-	XML::GetChild("complete", complete, mNode);
+	iNode.GetChild("complete", complete);
 
 	if (complete == "1")
 		throw gcException(ERR_COMPLETED);
 
-	XML::GetChild("date", info.szDate, mNode);
-	XML::GetChild("filehash", info.szHash, mNode);
-	XML::GetChild("filesize", info.size, mNode);
-	XML::GetChild("filesizeup", info.upsize, mNode);
+	iNode.GetChild("date", info.szDate);
+	iNode.GetChild("filehash", info.szHash);
+	iNode.GetChild("filesize", info.size);
+	iNode.GetChild("filesizeup", info.upsize);
 }
 
 
-void WebCoreClass::getItemInfo(DesuraId id, TiXmlDocument &doc, MCFBranch mcfBranch, MCFBuild mcfBuild)
+void WebCoreClass::getItemInfo(DesuraId id, XML::gcXMLDocument &xmlDocument, MCFBranch mcfBranch, MCFBuild mcfBuild)
 {
+	XML::gcXMLDocument doc;
 	PostMap post;
 
 	post["siteareaid"] = id.getItem();
@@ -310,7 +295,7 @@ void WebCoreClass::getItemInfo(DesuraId id, TiXmlDocument &doc, MCFBranch mcfBra
 
 gcString WebCoreClass::getCDKey(DesuraId id, MCFBranch branch)
 {
-	TiXmlDocument doc;
+	XML::gcXMLDocument doc;
 	PostMap post;
 
 	post["siteareaid"] = id.getItem();
@@ -323,16 +308,16 @@ gcString WebCoreClass::getCDKey(DesuraId id, MCFBranch branch)
 	post["token"] = "todo";
 #endif
 
-	TiXmlNode* root = postToServer(getCDKeyUrl(), "cdkey", post, doc);
-	TiXmlElement* key = root->FirstChildElement("key");
+	auto root = postToServer(getCDKeyUrl(), "cdkey", post, doc);
+	auto key = root.FirstChildElement("key");
 
-	if (!key)
+	if (!key.IsValid())
 		throw gcException(ERR_BADXML);
 
-	return key->GetText();
+	return key.GetText();
 }
 
-void WebCoreClass::logIn(const char* user, const char* pass, TiXmlDocument &doc)
+void WebCoreClass::logIn(const char* user, const char* pass, XML::gcXMLDocument &xmlDocument)
 {
 	if (m_bUserAuth)
 		throw gcException(ERR_ALREADYLOGGEDIN);
@@ -342,24 +327,25 @@ void WebCoreClass::logIn(const char* user, const char* pass, TiXmlDocument &doc)
 	post["username"] = user;
 	post["password"] = pass;
 
-	TiXmlNode* uNode = loginToServer(getLoginUrl(), "memberlogin", post, doc);
-	TiXmlElement *memNode = uNode->FirstChildElement("member");
+	auto uNode = loginToServer(getLoginUrl(), "memberlogin", post, xmlDocument);
+	auto memNode = uNode.FirstChildElement("member");
 	
-	if (!memNode)
+	if (!memNode.IsValid())
 		throw gcException(ERR_BADXML);
 
-	const char* idStr =  memNode->Attribute("siteareaid");
+	const std::string idStr =  memNode.GetAtt("siteareaid");
 
-	if (!idStr || atoi(idStr) < 0)
+	if (idStr.empty() || atoi(idStr.c_str()) <= 0)
 		throw gcException(ERR_BAD_PORU);
 
-	m_uiUserId = atoi(idStr);
+	m_uiUserId = atoi(idStr.c_str());
 
-	TiXmlNode *cookieNode = memNode->FirstChild("cookies");
-	if (cookieNode)
+	auto cookieNode = memNode.FirstChildElement("cookies");
+
+	if (cookieNode.IsValid())
 	{
-		XML::GetChild("id", m_szIdCookie, cookieNode);
-		XML::GetChild("session", m_szSessCookie, cookieNode);
+		memNode.GetChild("id", m_szIdCookie);
+		memNode.GetChild("session", m_szSessCookie);
 	}
 
 	m_bUserAuth = true;
@@ -372,7 +358,7 @@ void WebCoreClass::logOut()
 	m_szSessCookie = gcString("");
 }
 
-void WebCoreClass::getUpdatePoll(TiXmlDocument &doc, const std::map<std::string, std::string> &post)
+void WebCoreClass::getUpdatePoll(XML::gcXMLDocument &xmlDocument, const std::map<std::string, std::string> &post)
 {
 	PostMap postData;
 
@@ -381,13 +367,13 @@ void WebCoreClass::getUpdatePoll(TiXmlDocument &doc, const std::map<std::string,
 		postData[p.first] = p.second;
 	});
 
-	TiXmlNode* root = postToServer(getUpdatePollUrl(), "updatepoll", postData, doc);
+	postToServer(getUpdatePollUrl(), "updatepoll", postData, xmlDocument);
 }
 
-void WebCoreClass::getLoginItems(TiXmlDocument &doc)
+void WebCoreClass::getLoginItems(XML::gcXMLDocument &xmlDocument)
 {
 	PostMap postData;
-	postToServer(getMemberDataUrl(), "memberdata", postData, doc);
+	postToServer(getMemberDataUrl(), "memberdata", postData, xmlDocument);
 }
 
 }

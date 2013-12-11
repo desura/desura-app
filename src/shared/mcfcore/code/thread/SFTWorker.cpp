@@ -177,12 +177,12 @@ int32 SFTWorker::doWork()
 		return BZ_STREAM_END;
 
 	uint32 status = 0;
-	AutoDelete<SFTWorkerBuffer> temp(m_pCT->getBlock(m_uiId, status));
+	std::shared_ptr<SFTWorkerBuffer> temp(m_pCT->getBlock(m_uiId, status));
 
 	bool endFile = (status == BaseMCFThread::SF_STATUS_ENDFILE);
 
 	//if temp is null we are waiting on data to be read. Lets nap for a bit
-	if (!temp.handle())
+	if (!temp)
 	{
 		if (endFile)
 		{

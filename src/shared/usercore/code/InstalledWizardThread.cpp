@@ -56,15 +56,15 @@ void InstalledWizardThread::doRun()
 {
 	m_szDbName = getCIBDb(getUserCore()->getAppDataPath());
 
-	TiXmlDocument doc;
+	XML::gcXMLDocument doc;
 	getWebCore()->getInstalledItemList(doc);
 
 
-	int ver = XML::processStatus(doc, "itemwizard");
+	int ver = doc.ProcessStatus("itemwizard");
 
-	TiXmlNode *infoNode = doc.FirstChild("itemwizard");
+	auto infoNode = doc.GetRoot("itemwizard");
 
-	if (!infoNode)
+	if (!infoNode.IsValid())
 		throw gcException(ERR_BADXML);
 
 	WildcardManager wMng = WildcardManager();
@@ -231,29 +231,29 @@ bool InstalledWizardThread::selectBranch(UserCore::Item::ItemInfoI *item)
 	return true;
 }
 
-void InstalledWizardThread::parseGameQuick(TiXmlElement* game)
+void InstalledWizardThread::parseGameQuick(const XML::gcXMLElement &game)
 {
-	if (!game)
+	if (!game.IsValid())
 		return;
 
 	m_uiTotal++;
 
-	XML::for_each_child("mod", game->FirstChildElement("mods"), [&](TiXmlElement*)
+	game.FirstChildElement("mods").for_each_child("mod", [&](const XML::gcXMLElement &)
 	{
 		m_uiTotal++;
 	});
 }
 
-void InstalledWizardThread::parseItemsQuick(TiXmlNode *fNode)
+void InstalledWizardThread::parseItemsQuick(const XML::gcXMLElement &fNode)
 {
-	if (!fNode)
+	if (!fNode.IsValid())
 		return;
 
-	TiXmlNode* platforms = fNode->FirstChild("platforms");
+	auto platforms = fNode.FirstChildElement("platforms");
 
-	if (platforms)
+	if (platforms.IsValid())
 	{
-		XML::for_each_child("platform", platforms, [&](TiXmlElement* platform)
+		platforms.for_each_child("platform", [&](const XML::gcXMLElement &platform)
 		{
 			if (m_pUser->platformFilter(platform, PT_Item))
 				return;
@@ -263,10 +263,10 @@ void InstalledWizardThread::parseItemsQuick(TiXmlNode *fNode)
 	}
 	else
 	{
-		XML::for_each_child("game", fNode->FirstChild("games"), [&](TiXmlElement* game)
+		fNode.FirstChildElement("games").for_each_child("game", [&](const XML::gcXMLElement &game)
 		{
-			const char* id = game->Attribute("siteareaid");
-			DesuraId gameId(id, "games");
+			const std::string id = game.GetAtt("siteareaid");
+			DesuraId gameId(id.c_str(), "games");
 
 			if (gameId.isOk())
 				parseGameQuick(game);
@@ -285,17 +285,16 @@ void InstalledWizardThread::triggerProgress()
 	}
 }
 
-void InstalledWizardThread::parseGame(DesuraId id, TiXmlElement* game, WildcardManager *pWildCard, TiXmlElement* info)
+void InstalledWizardThread::parseGame(DesuraId id, const XML::gcXMLElement &game, WildcardManager *pWildCard, const XML::gcXMLElement &info)
 {
 	pWildCard->updateInstallWildcard("INSTALL_PATH", "INSTALL_PATH");
 	pWildCard->updateInstallWildcard("PARENT_INSTALL_PATH", "%INSTALL_PATH%");
 
 
-	gcString name;
-	XML::GetChild("name", name, game);
+	gcString name = game.GetChild("name");
 
-	if (name == "")
-		XML::GetChild("name", name, info);
+	if (name == "" && info.IsValid())
+		name = info.GetChild("name");
 	
 	if (name == "")
 		return;
@@ -310,7 +309,7 @@ void InstalledWizardThread::parseGame(DesuraId id, TiXmlElement* game, WildcardM
 
 	try
 	{
-		if (info)
+		if (info.IsValid())
 			temp.loadXmlData(info, pWildCard);
 
 		temp.loadXmlData(game, pWildCard);
@@ -329,34 +328,33 @@ void InstalledWizardThread::parseGame(DesuraId id, TiXmlElement* game, WildcardM
 	pWildCard->updateInstallWildcard("INSTALL_PATH", "INSTALL_PATH");
 	pWildCard->updateInstallWildcard("PARENT_INSTALL_PATH", temp.getPath());
 
-	std::map<uint64, TiXmlElement*> mModMap;
+	std::map<uint64, XML::gcXMLElement> mModMap;
 
-	XML::for_each_child("mods", info->FirstChildElement("mods"), [&mModMap](TiXmlElement* mod)
+	info.FirstChildElement("mods").for_each_child("mods", [&mModMap](const XML::gcXMLElement &mod)
 	{
-		const char* szId = mod->Attribute("siteareaid");
-		DesuraId internId(szId, "mods");
+		const std::string szId = mod.GetAtt("siteareaid");
+		DesuraId internId(szId.c_str(), "mods");
 
 		if (internId.isOk())
 			mModMap[internId.toInt64()] = mod;
 	});
 
-	XML::for_each_child("mods", game->FirstChildElement("mods"), [&](TiXmlElement* mod)
+	game.FirstChildElement("mods").for_each_child("mods", [&](const XML::gcXMLElement &mod)
 	{
-		const char* szId = mod->Attribute("siteareaid");
-		DesuraId internId(szId, "mods");
+		const std::string szId = mod.GetAtt("siteareaid");
+		DesuraId internId(szId.c_str(), "mods");
 
 		if (internId.isOk())
 			parseMod(id, internId, mod, pWildCard, mModMap[internId.toInt64()]);
 	});
 }
 
-void InstalledWizardThread::parseMod(DesuraId parId, DesuraId id, TiXmlElement* mod, WildcardManager *pWildCard, TiXmlElement* info)
+void InstalledWizardThread::parseMod(DesuraId parId, DesuraId id, const XML::gcXMLElement &mod, WildcardManager *pWildCard, const XML::gcXMLElement &info)
 {
-	gcString name;
-	XML::GetChild("name", name, mod);
+	gcString name = mod.GetChild("name");
 
-	if (name == "")
-		XML::GetChild("name", name, info);
+	if (name == "" && info.IsValid())
+		name = info.GetChild("name");
 	
 	if (name == "")
 		return;
@@ -383,57 +381,57 @@ void InstalledWizardThread::parseMod(DesuraId parId, DesuraId id, TiXmlElement* 
 	}
 }
 
-void InstalledWizardThread::parseItems1(TiXmlNode *fNode, WildcardManager *pWildCard, std::map<uint64, TiXmlElement*> *vMap)
+void InstalledWizardThread::parseItems1(const XML::gcXMLElement &fNode, WildcardManager *pWildCard, std::map<uint64, XML::gcXMLElement> *vMap)
 {
 	assert(pWildCard);
 
-	if (!fNode)
+	if (!fNode.IsValid())
 		return;
 
-	XML::for_each_child("game", fNode->FirstChild("games"), [&](TiXmlElement* game)
+	fNode.FirstChildElement("games").for_each_child("game", [&](const XML::gcXMLElement &game)
 	{
-		const char* id = game->Attribute("siteareaid");
-		DesuraId gameId(id, "games");
+		const std::string szId = game.GetAtt("siteareaid");
+		DesuraId gameId(szId.c_str(), "games");
 
 		if (!gameId.isOk())
 			return;
 
-		TiXmlElement* info = NULL;
+		XML::gcXMLElement info;
 
 		if (vMap)
-			info = vMap->operator[](gameId.toInt64());
+			info = (*vMap)[gameId.toInt64()];
 
 		parseGame(gameId, game, pWildCard, info);
 	});
 }
 
-void InstalledWizardThread::parseItems2(TiXmlNode *fNode, WildcardManager *pWildCard)
+void InstalledWizardThread::parseItems2(const XML::gcXMLElement &fNode, WildcardManager *pWildCard)
 {
 	assert(pWildCard);
 
-	if (!fNode)
+	if (!fNode.IsValid())
 		return;
 
-	std::map<uint64, TiXmlElement*> vMap;
+	std::map<uint64, XML::gcXMLElement> vMap;
 
-	XML::for_each_child("game", fNode->FirstChild("games"), [&](TiXmlElement* game)
+	fNode.FirstChildElement("games").for_each_child("game", [&](const XML::gcXMLElement &game)
 	{
-		const char* id = game->Attribute("siteareaid");
-		DesuraId gameId(id, "games");
+		const std::string szId = game.GetAtt("siteareaid");
+		DesuraId gameId(szId.c_str(), "games");
 
 		if (gameId.isOk())
 			vMap[gameId.toInt64()] = game;
 	});
 
-	XML::for_each_child("platform", fNode->FirstChild("platforms"), [&](TiXmlElement* platform)
+	fNode.FirstChildElement("platforms").for_each_child("platform", [&](const XML::gcXMLElement &platform)
 	{
 		if (m_pUser->platformFilter(platform, PT_Item))
 			return;
 
 		WildcardManager wm(pWildCard);
-		TiXmlNode *wildCardNode = platform->FirstChild("wcards");
+		auto wildCardNode = platform.FirstChildElement("wcards");
 
-		if (wildCardNode)
+		if (wildCardNode.IsValid())
 		{
 			wm.parseXML(wildCardNode);
 			wm.compactWildCards();

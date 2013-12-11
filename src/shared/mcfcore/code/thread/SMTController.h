@@ -52,7 +52,7 @@ public:
 	//! @param id Worker id
 	//! @return File to process
 	//!
-	MCFCore::MCFFile* newTask(uint32 id);
+	std::shared_ptr<MCFCore::MCFFile> newTask(uint32 id);
 
 	//! Report a worker has completed its task
 	//!

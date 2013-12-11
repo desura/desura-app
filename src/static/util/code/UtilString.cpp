@@ -22,7 +22,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>
 #include <iostream>
 
 
-#include "tinyxml.h"
+
 
 #include "third_party/utf8.h"
 
@@ -573,7 +573,7 @@ public:
 
 
 
-unsigned char* base64_decode(const std::string &encoded_string, size_t &outlen)
+std::unique_ptr<unsigned char[]> base64_decode(const std::string &encoded_string, size_t &outlen)
 {
 	OutFunctor of;
 	base64_decode(encoded_string, of);
@@ -583,7 +583,7 @@ unsigned char* base64_decode(const std::string &encoded_string, size_t &outlen)
 	if (outlen == 0)
 		return NULL;
 
-	unsigned char* ret = new unsigned char[outlen];
+	auto ret = std::make_unique<unsigned char[]>(outlen);
 
 	for (size_t x=0; x<outlen; x++)
 		ret[x] = of.vOut[x];

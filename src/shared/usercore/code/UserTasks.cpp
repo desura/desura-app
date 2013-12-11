@@ -150,7 +150,9 @@ void ChangeAccountTask::doTask()
 ////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////
 
-DownloadBannerTask::DownloadBannerTask(UserCore::User* user, MCFCore::Misc::DownloadProvider *dp) : UserTask(user), m_DPInfo(dp)
+DownloadBannerTask::DownloadBannerTask(UserCore::User* user, const MCFCore::Misc::DownloadProvider& dp) 
+	: UserTask(user)
+	, m_DPInfo(dp)
 {
 }
 
@@ -360,14 +362,14 @@ void MigrateStandaloneTask::doTask()
 	{
 		AutoDelFile adf(m_vFileList[x]);
 
-		TiXmlDocument doc;
+		XML::gcXMLDocument doc(m_vFileList[x].getFullPath().c_str());
 
-		if (!doc.LoadFile(m_vFileList[x].getFullPath().c_str()))
+		if (!doc.IsValid())
 			continue;
 
-		TiXmlElement* root = doc.FirstChildElement("game");
+		auto root = doc.GetRoot("game");
 
-		if (!root)
+		if (!root.IsValid())
 			continue;
 
 		gcString path;
@@ -376,11 +378,11 @@ void MigrateStandaloneTask::doTask()
 		uint32 branch = -1;
 		uint32 build = -1;
 
-		XML::GetChild("path", path, root);
-		XML::GetChild("id", id, root);
+		root.GetChild("path", path);
+		root.GetChild("id", id);
 
-		XML::GetChild("branch", branch, root);
-		XML::GetChild("build", build, root);
+		root.GetChild("branch", branch);
+		root.GetChild("build", build);
 
 		if (id == "" || !UTIL::FS::isValidFolder(path))
 			continue;

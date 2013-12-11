@@ -19,7 +19,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>
 #include "Common.h"
 #include "LanguageManager.h"
 
-#include "tinyxml.h"
+
 #include <algorithm>
 #include <string.h>
 #include "XMLMacros.h"
@@ -69,27 +69,29 @@ const wchar_t* LanguageManager::getString(const wchar_t* name)
 
 bool LanguageManager::loadFromFile(const char* file)
 {
-	TiXmlDocument doc;
-	doc.LoadFile(file);
+	XML::gcXMLDocument doc(file);
 
-	TiXmlNode *cNode = doc.FirstChild("lang");
-
-	if (!cNode)
+	if (!doc.IsValid())
 		return false;
 
-	auto parseString = [this](TiXmlElement* str)
-	{
-		const char* name = str->Attribute("name");
-		const char* val = str->GetText();
+	auto cNode = doc.GetRoot("lang");
 
-		if (!name || !val)
+	if (!cNode.IsValid())
+		return false;
+
+	auto parseString = [this](const XML::gcXMLElement &xmlChild)
+	{
+		const std::string name = xmlChild.GetAtt("name");
+		const std::string val = xmlChild.GetText();
+
+		if (name.empty() || val.empty())
 			return;
 
-		LanguageString* temp = dynamic_cast<LanguageString*>(this->BaseManager::findItem(name));
+		LanguageString* temp = dynamic_cast<LanguageString*>(this->BaseManager::findItem(name.c_str()));
 
 		if (!temp)
 		{
-			temp = new LanguageString(name);
+			temp = new LanguageString(name.c_str());
 			this->addItem( temp );
 		}
 
@@ -113,14 +115,14 @@ bool LanguageManager::loadFromFile(const char* file)
 #endif
 	};
 
-	XML::for_each_child("str", cNode->FirstChild("strings"), parseString);
-
 #ifdef WIN32
-	XML::for_each_child("str", cNode->FirstChild("windows"), parseString);
+	const char* szPlatform = "windows";
 #else
-	XML::for_each_child("str", cNode->FirstChild("linux"), parseString);
+	const char* szPlatform = "linux";
 #endif
 
+	cNode.FirstChildElement("strings").for_each_child("str", parseString);
+	cNode.FirstChildElement(szPlatform).for_each_child("str", parseString);
 	return true;
 }
 

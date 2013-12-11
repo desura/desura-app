@@ -25,6 +25,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>
 
 #define TYPE_APP (0x8)
 
+namespace XML
+{
+	class gcXMLElement;
+	class gcXMLDocument;
+}
+
+
 enum
 {
 	MCF_OK = 0,
@@ -119,10 +126,10 @@ protected:
 
 	//parsers a xml buffer
 	uint8 parseXml(char* buff, size_t buffLen);
-	uint8 parseXml(TiXmlNode *fNode);
+	uint8 parseXml(const XML::gcXMLElement &xmlElement);
 	
 	//parsers the update xml
-	void parseUpdateXml(TiXmlDocument &doc);
+	void parseUpdateXml(const XML::gcXMLDocument &xmlDocument);
 
 	void updateAllCB(Prog_s& p);
 
@@ -131,27 +138,27 @@ protected:
 
 
 protected:
-	uint32 m_iAppId;
-	uint32 m_iAppBuild;	
-	uint64 m_uiOffset;
+	uint32 m_iAppId = 100;
+	uint32 m_iAppBuild = 0;
+	uint64 m_uiOffset = 0;
 	
 	std::wstring m_szFile;
 	std::string m_szUrl;
 
 
-	UMcfHeader* m_sHeader;
-	std::vector<UMcfFile*> m_pFileList;
+	std::unique_ptr<UMcfHeader> m_sHeader;
+	std::vector<std::shared_ptr<UMcfFile>> m_pFileList;
 
 	friend class UMcfEx;
 
-	uint64 m_uiTotProgress;
-	uint64 m_uiCurProgress;
+	uint64 m_uiTotProgress = 0;
+	uint64 m_uiCurProgress = 0;
 
 	void onFileProgress(ProgressCB& prog);
 
 private:
-	bool m_bShouldMoveOldFiles;
-	volatile bool m_bCanceled;
+	bool m_bShouldMoveOldFiles = true;
+	volatile bool m_bCanceled = false;
 };
 
 #endif

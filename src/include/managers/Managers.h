@@ -39,6 +39,9 @@ public:
 	virtual int32 getY()=0;
 	virtual int32 getW()=0;
 	virtual int32 getH()=0;
+
+protected:
+	virtual ~SpriteRectI(){}
 };
 
 class ThemeStubI
@@ -51,9 +54,6 @@ public:
 	virtual const char* getVersion()=0;
 	virtual bool parseFile(const char* file)=0;
 
-	virtual void destroy()=0;
-	
-protected:
 	virtual ~ThemeStubI(){}
 };
 
@@ -73,6 +73,9 @@ public:
 
 	//make sure to destroy them
 	virtual void getThemeStubList(std::vector<ThemeStubI*> &vList)=0;
+
+protected:
+	virtual ~ThemeManagerI(){};
 };
 
 class LanguageManagerI
@@ -82,6 +85,9 @@ public:
 	virtual const wchar_t* getString(const wchar_t* name)=0;
 
 	virtual bool loadFromFile(const char* file)=0;
+
+protected:
+	virtual ~LanguageManagerI(){};
 };
 
 class WindowManagerI
@@ -90,6 +96,9 @@ public:
 	virtual void registerWindow(wxFrame* win)=0;
 	virtual void unRegisterWindow(wxFrame* win)=0;
 	virtual void getWindowList(std::vector<wxFrame*> &vList)=0;
+
+protected:
+	virtual ~WindowManagerI(){};
 };
 
 class CVarManagerI
@@ -102,6 +111,9 @@ public:
 
 	virtual CVar* findCVar(const char* name)=0;
 	virtual void getCVarList(std::vector<CVar*> &vList)=0;
+
+protected:
+	virtual ~CVarManagerI(){};
 };
 
 class CCommandManagerI
@@ -109,6 +121,9 @@ class CCommandManagerI
 public:
 	virtual ConCommand* findCCommand(const char* name)=0;
 	virtual void getConCommandList(std::vector<ConCommand*> &vList)=0;
+
+protected:
+	virtual ~CCommandManagerI(){};
 };
 
 ThemeManagerI &     GetThemeManager();

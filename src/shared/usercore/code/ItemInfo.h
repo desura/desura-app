@@ -26,7 +26,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>
 #include "managers/WildcardManager.h"
 #include "BranchInfo.h"
 
-
+namespace XML
+{
+	class gcXMLElement;
+}
 
 namespace sqlite3x
 {
@@ -179,7 +182,7 @@ public:
 	//! @param statusOveride New status flags to add when load is complete
 	//! @param pWildCard Wildcard manager to resolve wildcards from
 	//!
-	void loadXmlData(uint32 platform, TiXmlNode *xmlNode, uint16 statusOveride, WildcardManager* pWildCard=NULL, bool reset = false);
+	void loadXmlData(uint32 platform, const XML::gcXMLElement &xmlNode, uint16 statusOveride, WildcardManager* pWildCard=NULL, bool reset = false);
 
 
 	//! hash for base manager
@@ -244,7 +247,7 @@ public:
 	void setLogoUrl(const char* logo);
 
 
-	void processUpdateXml(TiXmlNode *node);
+	void processUpdateXml(const XML::gcXMLElement &node);
 
 
 	bool setInstalledMcf(MCFBranch branch, MCFBuild build);
@@ -310,15 +313,15 @@ protected:
 
 	void broughtCheck();
 
-	void processInfo(TiXmlNode* xmlEl);
-	void processSettings(uint32 platform, TiXmlNode* setNode, WildcardManager* pWildCard, bool reset);
+	void processInfo(const XML::gcXMLElement &xmlEl);
+	void processSettings(uint32 platform, const XML::gcXMLElement &setNode, WildcardManager* pWildCard, bool reset);
 
 	void launchExeHack();
 
 	void onBranchInfoChanged();
 	bool shouldSaveDb(sqlite3x::sqlite3_connection* db);
 
-	void loadBranchXmlData(TiXmlElement* branch);
+	void loadBranchXmlData(const XML::gcXMLElement &branch);
 	
 	BranchInfo* getCurrentBranchFull();
 	BranchInstallInfo* getBranchOrCurrent(MCFBranch branch);

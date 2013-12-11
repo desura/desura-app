@@ -32,6 +32,7 @@ target_link_libraries(desura
   threads_s
   util_s
   util_bootloader_s
+  ${Boost_DATE_TIME_LIBRARY_S}
   mdump_s
   ${OFFICIAL_DEP}
   comctl32

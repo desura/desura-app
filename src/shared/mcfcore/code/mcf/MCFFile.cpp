@@ -130,6 +130,11 @@ MCFFile::MCFFile(MCFFile* tMCFFile)
 		m_vCRCList.push_back(tMCFFile->getCRC(x));
 }
 
+MCFFile::MCFFile(std::shared_ptr<MCFFile> tMCFFile)
+	: MCFFile(tMCFFile.get())
+{
+}
+
 MCFFile::~MCFFile()
 {
 }
@@ -297,49 +302,47 @@ uint64 MCFFile::getCurSize()
 		return m_iSize;
 }
 
-void MCFFile::loadXmlData(TiXmlElement *xmlNode)
+void MCFFile::loadXmlData(const XML::gcXMLElement &xmlElement)
 {
-	XML::GetChild("name", this, &MCFFile::setName, xmlNode);
-	XML::GetChild("path", this, &MCFFile::setPath, xmlNode);
-	XML::GetChild("nom_csum", this, &MCFFile::setCsum, xmlNode);
-	XML::GetChild("com_csum", this, &MCFFile::setCCsum, xmlNode);
+	xmlElement.GetChild("name", this, &MCFFile::setName);
+	xmlElement.GetChild("path", this, &MCFFile::setPath);
+	xmlElement.GetChild("nom_csum", this, &MCFFile::setCsum);
+	xmlElement.GetChild("com_csum", this, &MCFFile::setCCsum);
 
-	XML::GetChild("size", m_iSize, xmlNode);
-	XML::GetChild("csize", m_iCSize, xmlNode);
-	XML::GetChild("flags", m_uiFlags, xmlNode);
+	xmlElement.GetChild("size", m_iSize);
+	xmlElement.GetChild("csize", m_iCSize);
+	xmlElement.GetChild("flags", m_uiFlags);
 
-	XML::GetChild("offset", m_llOffset, xmlNode);
-	XML::GetChild("tstamp", m_iTimeStamp, xmlNode);
+	xmlElement.GetChild("offset", m_llOffset);
+	xmlElement.GetChild("tstamp", m_iTimeStamp);
 
-	TiXmlNode* diff = xmlNode->FirstChild("diff");
+	auto diff = xmlElement.FirstChildElement("diff");
 
-	if (hasDiff() && diff)
+	if (hasDiff() && diff.IsValid())
 	{
-		XML::GetChild("offset", m_llDiffOffset, diff);
-		XML::GetChild("size", m_llDiffSize, diff);
-		XML::GetChild("file_csum", m_szDiffOrgFileHash, diff);
-		XML::GetChild("csum", m_szDiffHash, diff);
+		diff.GetChild("offset", m_llDiffOffset);
+		diff.GetChild("size", m_llDiffSize);
+		diff.GetChild("file_csum", m_szDiffOrgFileHash);
+		diff.GetChild("csum", m_szDiffHash);
 	}
 	else
 	{
 		delFlag(FLAG_HASDIFF);
 	}
 
-	TiXmlNode *crcNode = xmlNode->FirstChild("crc");
+	auto crcNode = xmlElement.FirstChildElement("crc");
 
-	if (crcNode && crcNode->ToElement())
+	if (crcNode.IsValid())
 	{
-		TiXmlElement* crcEl = crcNode->ToElement();
+		const std::string bs = crcNode.GetAtt("blocksize");
 
-		const char* bs = crcEl->Attribute("blocksize");
+		if (!bs.empty())
+			m_iBlockSize = atoi(bs.c_str());
 
-		if (bs)
-			m_iBlockSize = atoi(bs);
-
-		gcString baseBuff(crcEl->GetText());
+		gcString baseBuff(crcNode.GetText());
 
 		size_t outSize = 0;
-		const unsigned char* buff = UTIL::STRING::base64_decode(baseBuff, outSize);
+		auto buff = UTIL::STRING::base64_decode(baseBuff, outSize);
 
 		if (outSize % 4 != 0)
 		{
@@ -352,8 +355,6 @@ void MCFFile::loadXmlData(TiXmlElement *xmlNode)
 			uint32 crc = (((uint32)buff[x])<<24) + (((uint32)buff[x+1])<<16) + (((uint32)buff[x+2])<<8) + (((uint32)buff[x+3])<<0);
 			m_vCRCList.push_back(crc);
 		}
-
-		safe_delete(buff);
 	}
 }
 
@@ -480,7 +481,7 @@ void MCFFile::genXml(XMLSaveAndCompress *sac)
 	}
 }
 
-void MCFFile::copyBorkedSettings(MCFFile* tMCFFile)
+void MCFFile::copyBorkedSettings(std::shared_ptr<MCFFile> tMCFFile)
 {
 	setCCsum(tMCFFile->getCCsum());
 	m_vCRCList.clear();
@@ -489,7 +490,7 @@ void MCFFile::copyBorkedSettings(MCFFile* tMCFFile)
 		m_vCRCList.push_back(tMCFFile->getCRC(x));
 }
 
-void MCFFile::copySettings(MCFFile* tMCFFile)
+void MCFFile::copySettings(std::shared_ptr<MCFFile> tMCFFile)
 {
 	gcString tn(this->getName());
 	gcString on(tMCFFile->getName());

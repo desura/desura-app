@@ -27,20 +27,13 @@ namespace MCFCore
 namespace Thread
 {
 
-WGTWorker::WGTWorker(WGTControllerI* controller, uint16 id, MCFCore::Misc::ProviderManager *pProvMng, MCFCore::Misc::GetFile_s* pFileAuth) 
+WGTWorker::WGTWorker(WGTControllerI* controller, uint16 id, MCFCore::Misc::ProviderManager *pProvMng, const MCFCore::Misc::GetFile_s& fileAuth) 
 	: BaseThread( "WebGet Worker Thread" )
+	, m_FileAuth(fileAuth)
+	, m_pProvMng(pProvMng)
+	, m_uiId(id)
+	, m_pCT(controller)
 {
-	m_pProvMng = pProvMng;
-	m_pMcfCon = NULL;
-	m_pCurBlock = NULL;
-
-	m_uiId = id;
-	m_pCT = controller;
-
-	m_pFileAuth = pFileAuth;
-	m_iAttempt = 0;
-
-	m_bError = false;
 }
 
 WGTWorker::~WGTWorker()
@@ -254,7 +247,7 @@ void WGTWorker::doDownload()
 			throw gcException(ERR_MCFSERVER, "No more download servers to use.");
 
 		if (!m_pMcfCon->isConnected())
-			m_pMcfCon->connect(m_szUrl.c_str(), m_pFileAuth);
+			m_pMcfCon->connect(m_szUrl.c_str(), m_FileAuth);
 
 		m_pMcfCon->downloadRange(m_pCurBlock->offset + m_pCurBlock->done, m_pCurBlock->size - m_pCurBlock->done, this);
 	}
@@ -378,7 +371,7 @@ namespace UnitTest
 		{
 		}
 		
-		void connect(const char* host, MCFCore::Misc::GetFile_s* fileAuth) override
+		void connect(const char* host, const MCFCore::Misc::GetFile_s& fileAuth) override
 		{
 		}
 
@@ -481,8 +474,8 @@ namespace UnitTest
 	class TestWGTWorker : public MCFCore::Thread::WGTWorker
 	{
 	public:
-		TestWGTWorker(MCFCore::Thread::WGTControllerI* controller, uint16 id, MCFCore::Misc::ProviderManager *pProvMng, MCFCore::Misc::GetFile_s* pFileAuth)
-			: MCFCore::Thread::WGTWorker(controller, id, pProvMng, pFileAuth)
+		TestWGTWorker(MCFCore::Thread::WGTControllerI* controller, uint16 id, MCFCore::Misc::ProviderManager *pProvMng, const MCFCore::Misc::GetFile_s& fileAuth)
+			: MCFCore::Thread::WGTWorker(controller, id, pProvMng, fileAuth)
 		{
 			m_szUrl = "UnitTest";
 		}
@@ -503,9 +496,9 @@ namespace UnitTest
 		WGTWorkerFixture()
 			: m_nParamOne(GetParam().first)
 			, m_nParamTwo(GetParam().second)
-			, Provider("", "", "", "")
+			, Provider(std::make_shared<MCFCore::Misc::DownloadProvider>("", "", "", ""))
 			, ProviderManager(getProviderVector())
-			, Worker(&Controller, 1, &ProviderManager, &FileAuth)
+			, Worker(&Controller, 1, &ProviderManager, FileAuth)
 		{
 		}
 
@@ -553,14 +546,15 @@ namespace UnitTest
 		int m_nParamOne;
 		int m_nParamTwo;
 
-		std::vector<MCFCore::Misc::DownloadProvider*>& getProviderVector()
+		std::vector<std::shared_ptr<const MCFCore::Misc::DownloadProvider>>& getProviderVector()
 		{
-			Providers.push_back(&Provider);
+			if (Providers.empty())
+				Providers.push_back(Provider);
 			return Providers;
 		}
 
-		std::vector<MCFCore::Misc::DownloadProvider*> Providers;
-		MCFCore::Misc::DownloadProvider Provider;
+		std::vector<std::shared_ptr<const MCFCore::Misc::DownloadProvider>> Providers;
+		std::shared_ptr<MCFCore::Misc::DownloadProvider> Provider;
 		MCFCore::Misc::ProviderManager ProviderManager;
 		
 		std::vector<std::shared_ptr<MCFCore::Thread::Misc::WGTBlock>> m_vBlocks;

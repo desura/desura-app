@@ -40,7 +40,7 @@ public:
 		action = 0;
 	}
 
-	GuiDownloadProvider(uint32 a, MCFCore::Misc::DownloadProvider* dp)
+	GuiDownloadProvider(uint32 a, const MCFCore::Misc::DownloadProvider& dp)
 	{
 		action = a;
 		provider = dp;

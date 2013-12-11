@@ -79,14 +79,14 @@ public:
 	//! @param[out] status Worker status
 	//! @return Block
 	//!
-	SFTWorkerBuffer *getBlock(uint32 id, uint32 &status);
+	std::shared_ptr<SFTWorkerBuffer> getBlock(uint32 id, uint32 &status);
 
 	//! Creates a new save file task
 	//!
 	//! @param id Worker thread id
 	//! @return MCFFile to save
 	//!
-	MCFCore::MCFFile *newTask(uint32 id);
+	std::shared_ptr<MCFCore::MCFFile> newTask(uint32 id);
 
 	//! Ends the current task when file save is complete
 	//!

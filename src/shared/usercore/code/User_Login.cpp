@@ -133,54 +133,44 @@ void User::doLogIn(const char* user, const char* pass, bool bTestOnly)
 	if (!m_pWebCore)
 		throw gcException(ERR_NULLWEBCORE);
 
-	tinyxml2::XMLDocument doc;
+	XML::gcXMLDocument doc;
 	m_pWebCore->logIn(user, pass, doc);
 
-	tinyxml2::XMLElement *uNode = doc.FirstChildElement("memberlogin");
+	auto uNode = doc.GetRoot("memberlogin");
+
+	if (!uNode.IsValid())
+	{
+		logOut();
+		throw gcException(ERR_BADXML);
+	}
 
 	uint32 version = 0;
-	XML::GetAtt("version", version, uNode);
+	uNode.GetAtt("version", version);
 
 	if (version == 0)
 		version = 1;
 
 	m_bDelayLoading = (version >= 3);
 
-	if (!uNode)
-	{
-		logOut();
-		throw gcException(ERR_BADXML);
-	}
-
-	tinyxml2::XMLElement *memNode = uNode->FirstChildElement("member");
+	auto memNode = uNode.FirstChildElement("member");
 	
-	if (memNode)
+	if (memNode.IsValid())
 	{
+		m_iUserId = 0;
+		memNode.GetAtt("siteareaid", m_iUserId);
 
-		const char* idStr =  memNode->Attribute("siteareaid");
-
-		if (idStr)
-		{
-			m_iUserId = atoi(idStr);
-
-			if ((int)m_iUserId <= 0)
-			{
-				logOut();
-				throw gcException(ERR_BAD_PORU);
-			}
-		}
-		else
+		if ((int)m_iUserId <= 0)
 		{
 			logOut();
 			throw gcException(ERR_BAD_PORU);
 		}
 	}
 
-	XML::GetChild("admin", m_bAdmin,  memNode);
-	XML::GetChild("name", m_szUserName,  memNode);
-	XML::GetChild("nameid", m_szUserNameId,  memNode);
-	XML::GetChild("url", m_szProfileUrl,  memNode);
-	XML::GetChild("urledit", m_szProfileEditUrl,  memNode);
+	memNode.GetChild("admin", m_bAdmin);
+	memNode.GetChild("name", m_szUserName);
+	memNode.GetChild("nameid", m_szUserNameId);
+	memNode.GetChild("url", m_szProfileUrl);
+	memNode.GetChild("urledit", m_szProfileEditUrl);
 
 	if (bTestOnly)
 		return;
@@ -214,18 +204,18 @@ void User::doLogIn(const char* user, const char* pass, bool bTestOnly)
 #endif
 
 	gcString szAvatar;
-	XML::GetChild("avatar", szAvatar, memNode);
+	memNode.GetChild("avatar", szAvatar);
 
 	m_pThreadPool->queueTask(new UserCore::Task::DownloadAvatarTask(this, szAvatar.c_str(), m_iUserId) );
 
 
-	tinyxml2::XMLElement *msgNode = memNode->FirstChildElement("messages");
-	if (msgNode)
+	auto msgNode = memNode.FirstChildElement("messages");
+	if (msgNode.IsValid())
 	{
-		XML::GetChild("updates", m_iUpdates, msgNode);
-		XML::GetChild("privatemessages", m_iPms, msgNode);
-		XML::GetChild("cart", m_iCartItems, msgNode);
-		XML::GetChild("threadwatch", m_iThreads, msgNode);
+		msgNode.GetChild("updates", m_iUpdates);
+		msgNode.GetChild("privatemessages", m_iPms);
+		msgNode.GetChild("cart", m_iCartItems);
+		msgNode.GetChild("threadwatch", m_iThreads);
 	}
 
 	m_pToolManager->loadItems();
@@ -239,11 +229,11 @@ void User::doLogIn(const char* user, const char* pass, bool bTestOnly)
 		}
 		else if (version == 2)
 		{
-			m_pItemManager->parseLoginXml2(memNode->FirstChildElement("games"), memNode->FirstChildElement("platforms"));
+			m_pItemManager->parseLoginXml2(memNode.FirstChildElement("games"), memNode.FirstChildElement("platforms"));
 		}
 		else
 		{
-			m_pItemManager->parseLoginXml(memNode->FirstChildElement("games"), memNode->FirstChildElement("developer"));
+			m_pItemManager->parseLoginXml(memNode.FirstChildElement("games"), memNode.FirstChildElement("developer"));
 		}
 	}
 	catch (gcException &)
@@ -252,12 +242,12 @@ void User::doLogIn(const char* user, const char* pass, bool bTestOnly)
 		throw;
 	}
 
-	tinyxml2::XMLElement *newsNode = memNode->FirstChildElement("news");
-	if (newsNode)
+	auto newsNode = memNode.FirstChildElement("news");
+	if (newsNode.IsValid())
 		parseNews(newsNode);
 
-	tinyxml2::XMLElement *giftsNode = memNode->FirstChildElement("gifts");
-	if (giftsNode)
+	auto giftsNode = memNode.FirstChildElement("gifts");
+	if (giftsNode.IsValid())
 		parseGifts(giftsNode);
 
 	m_pUThread = m_pThreadManager->newUpdateThread(&onForcePollEvent, m_bDelayLoading);

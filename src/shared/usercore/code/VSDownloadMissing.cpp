@@ -124,11 +124,11 @@ void VSDownloadMissing::onNewProvider(MCFCore::Misc::DP_s& dp)
 		UserCore::User* pUser = dynamic_cast<UserCore::User*>(getUserCore());
 
 		if (pUser)
-			pUser->getBDManager()->downloadBanner(this, dp.provider);
+			pUser->getBDManager()->downloadBanner(this, *dp.provider);
 	}
 	else if (dp.action == MCFCore::Misc::DownloadProvider::REMOVE)
 	{
-		UserCore::Misc::GuiDownloadProvider gdp(MCFCore::Misc::DownloadProvider::REMOVE, dp.provider);
+		UserCore::Misc::GuiDownloadProvider gdp(MCFCore::Misc::DownloadProvider::REMOVE, *dp.provider);
 		onNewProviderEvent(gdp);
 	}
 }

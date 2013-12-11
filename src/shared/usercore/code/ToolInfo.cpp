@@ -139,15 +139,15 @@ ToolInfo::~ToolInfo()
 	safe_delete(m_vRPN);
 }
 
-void ToolInfo::parseXml(tinyxml2::XMLNode* ToolInfoNode, WildcardManager* wildcardManager, const char* appDataPath)
+void ToolInfo::parseXml(const XML::gcXMLElement &toolInfoNode, WildcardManager* wildcardManager, const char* appDataPath)
 {
-	XML::GetChild("name", m_szNameString, ToolInfoNode);
-	XML::GetChild("nameid", m_szName, ToolInfoNode);
-	XML::GetChild("args", m_szArgs, ToolInfoNode);
-	XML::GetChild("result", m_szResult, ToolInfoNode);
-	XML::GetChild("url", m_szUrl, ToolInfoNode);
-	XML::GetChild("size", m_uiDownloadSize, ToolInfoNode);
-	XML::GetChild("hash", m_szHash, ToolInfoNode);
+	toolInfoNode.GetChild("name", m_szNameString);
+	toolInfoNode.GetChild("nameid", m_szName);
+	toolInfoNode.GetChild("args", m_szArgs);
+	toolInfoNode.GetChild("result", m_szResult);
+	toolInfoNode.GetChild("url", m_szUrl);
+	toolInfoNode.GetChild("size", m_uiDownloadSize);
+	toolInfoNode.GetChild("hash", m_szHash);
 
 	checkFile(appDataPath);
 
@@ -160,49 +160,45 @@ void ToolInfo::parseXml(tinyxml2::XMLNode* ToolInfoNode, WildcardManager* wildca
 	m_szArgs = res;
 	safe_delete(res);
 
-	tinyxml2::XMLElement* iChecksNode = ToolInfoNode->FirstChildElement("intallchecks");
+	auto iChecksNode = toolInfoNode.FirstChildElement("intallchecks");
 
-	if (!iChecksNode)
-		iChecksNode = ToolInfoNode->FirstChildElement("installchecks");
+	if (!iChecksNode.IsValid())
+		iChecksNode = toolInfoNode.FirstChildElement("installchecks");
 
-	if (!iChecksNode)
+	if (!iChecksNode.IsValid())
 		return;
 
-	tinyxml2::XMLElement* iCheckNode = iChecksNode->FirstChildElement("installcheck");
-
-	while (iCheckNode)
+	iChecksNode.for_each_child("installcheck", [&](const XML::gcXMLElement &xmlCheck)
 	{
-		const char* check = iCheckNode->GetText();
+		if (HasAllFlags(m_uiFlags, TF_INSTALLED))
+			return;
 
-		if (check)
+		const std::string check = xmlCheck.GetText();
+
+		if (check.empty())
+			return;
+
+		char* res = NULL;
+
+		try
 		{
-			char* res = NULL;
+			wildcardManager->constructPath(check.c_str(), &res);
 
-			try
+			if (res && UTIL::FS::isValidFile(res))
 			{
-				wildcardManager->constructPath(check, &res);
-
-				if (res && UTIL::FS::isValidFile(res))
-				{
-					m_uiFlags |= TF_INSTALLED;
+				m_uiFlags |= TF_INSTALLED;
 					
 #ifdef NIX
-					overridePath(res);
+				overridePath(res);
 #endif	
-				}
 			}
-			catch (gcException)
-			{
-			}
-
-			safe_delete(res);
-
-			if (HasAllFlags(m_uiFlags, TF_INSTALLED))
-				break;
+		}
+		catch (gcException)
+		{
 		}
 
-		iCheckNode = iCheckNode->NextSiblingElement("installcheck");
-	}
+		safe_delete(res);
+	});
 }
 
 void ToolInfo::checkFile(const char* appDataPath)

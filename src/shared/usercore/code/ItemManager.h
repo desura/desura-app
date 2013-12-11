@@ -30,6 +30,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>
 #include "ItemInfo.h"
 #include "ItemHandle.h"
 
+namespace XML
+{
+	class gcXMLElement;
+}
+
 class InfoMaps;
 
 namespace UserCore
@@ -76,8 +81,8 @@ public:
 	virtual void getRecentList(std::vector<UserCore::Item::ItemInfoI*> &rList);
 	virtual void getNewItems(std::vector<UserCore::Item::ItemInfoI*> &tList);
 
-	virtual void itemsNeedUpdate(TiXmlNode *itemsNode);
-	virtual void itemsNeedUpdate2(TiXmlNode* platformsNode);
+	virtual void itemsNeedUpdate(const XML::gcXMLElement &itemsNode);
+	virtual void itemsNeedUpdate2(const XML::gcXMLElement &platformsNode);
 
 	virtual EventV* getOnUpdateEvent();
 	virtual Event<DesuraId>* getOnRecentUpdateEvent();
@@ -107,39 +112,12 @@ public:
 	virtual void regenLaunchScripts();
 	
 protected:
-	class ParseInfo
-	{
-	public:
-		ParseInfo(uint32 statusOverride, WildcardManager* pWildCard = NULL, bool reset=false, InfoMaps* maps=NULL)
-		{
-			this->rootNode = NULL;
-			this->infoNode = NULL;
-
-			this->statusOverride = statusOverride;
-			this->pWildCard = pWildCard;
-			this->reset = reset;
-			this->maps = maps;
-
-			platform = -1;
-		}
-
-		TiXmlElement* rootNode;
-		TiXmlElement* infoNode;
-
-		WildcardManager* pWildCard;
-		InfoMaps* maps;
-
-		uint32 statusOverride;
-		uint32 platform;
-
-		bool reset;
-	};
-
+	class ParseInfo;
 
 	void parseXml(uint16 statusOverride = 0);
 
-	void parseLoginXml(TiXmlElement* gamesNode, TiXmlElement* devNodes);
-	void parseLoginXml2(TiXmlElement* gamesNode, TiXmlElement* platformNodes);
+	void parseLoginXml(const XML::gcXMLElement &gamesNode, const XML::gcXMLElement &devNodes);
+	void parseLoginXml2(const XML::gcXMLElement &gamesNode, const XML::gcXMLElement &platformNodes);
 	void postParseLoginXml();
 
 	void parseGamesXml(ParseInfo &pi);
@@ -148,12 +126,12 @@ protected:
 	void parseModsXml(UserCore::Item::ItemInfo* parent, ParseInfo &pi);
 	void parseModXml(UserCore::Item::ItemInfo* parent, DesuraId id, ParseInfo &pi);
 
-	void parseItemUpdateXml(const char* area, TiXmlNode *itemsNode);
+	void parseItemUpdateXml(const char* area, const XML::gcXMLElement &itemsNode);
 
 	UserCore::Item::ItemInfo* createNewItem(DesuraId pid, DesuraId id, ParseInfo &pi);
 	void updateItem(UserCore::Item::ItemInfo* info, ParseInfo &pi);
 
-	DesuraId getParentId(TiXmlElement* gameNode, TiXmlElement* infoNode = NULL);
+	DesuraId getParentId(const XML::gcXMLElement &gameNode, const XML::gcXMLElement &infoNode);
 
 	void processLeftOvers(InfoMaps &maps, bool addMissing);
 
@@ -180,10 +158,10 @@ protected:
 	void migrateOldItemInfo(const char* olddb, const char* newdb);
 	void migrateStandaloneFiles();
 
-	void generateInfoMaps(TiXmlElement* gamesNode, InfoMaps* maps);
+	void generateInfoMaps(const XML::gcXMLElement &gamesNode, InfoMaps* maps);
 
 
-	void parseKnownBranches(TiXmlElement* gamesNode);
+	void parseKnownBranches(const XML::gcXMLElement &gamesNode);
 
 	void onNewItem(DesuraId id);
 	bool isDelayLoading();

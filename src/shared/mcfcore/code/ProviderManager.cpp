@@ -71,18 +71,15 @@ private:
 };
 
 
-ProviderManager::ProviderManager(std::vector<MCFCore::Misc::DownloadProvider*> &source) : m_vSourceList(source)
+ProviderManager::ProviderManager(std::vector<std::shared_ptr<const MCFCore::Misc::DownloadProvider>> &source) 
+	: m_vSourceList(source)
 {
-	for (size_t x=0; x<m_vSourceList.size(); x++)
-	{
-		m_vErrorList.push_back(new ErrorInfo());
-	}
-
+	for (auto i : m_vSourceList)
+		m_vErrorList.push_back(std::make_shared<ErrorInfo>());
 }
 
 ProviderManager::~ProviderManager()
 {
-	safe_delete(m_vErrorList);
 }
 
 gcString ProviderManager::getUrl(uint32 id)

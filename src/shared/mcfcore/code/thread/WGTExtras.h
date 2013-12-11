@@ -62,7 +62,7 @@ public:
 	uint32 crc;
 
 
-	MCFCore::MCFFile* file;
+	std::shared_ptr<MCFCore::MCFFile> file;
 	uint32 index;
 
 	gcString provider;

@@ -26,7 +26,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>
 #include "BZip2.h"
 
 
-
+#include <array>
 
 namespace MCFCore
 {
@@ -39,7 +39,6 @@ void MCF::getDownloadProviders(const char* url, MCFCore::Misc::UserCookies *pCoo
 	HttpHandle wc(url);
 	pCookies->set(wc);
 
-
 	DesuraId id = m_sHeader->getDesuraId();
 	gcString type = id.getTypeString();
 
@@ -47,116 +46,75 @@ void MCF::getDownloadProviders(const char* url, MCFCore::Misc::UserCookies *pCoo
 	wc->addPostText("sitearea", type.c_str());
 	wc->addPostText("branch", m_sHeader->getBranch());
 
-	MCFBuild build = m_sHeader->getBuild();
+	{
+		MCFBuild build = m_sHeader->getBuild();
 
-	if (build != 0)
-		wc->addPostText("build", build);
+		if (build != 0)
+			wc->addPostText("build", build);
 
-	if (local)
-		wc->addPostText("local", "yes");
-
+		if (local)
+			wc->addPostText("local", "yes");
+	}
 
 	wc->postWeb();
 
 	if (wc->getDataSize() == 0)
 		throw gcException(ERR_BADRESPONSE);
 	
-	TiXmlDocument doc;
+	XML::gcXMLDocument doc(const_cast<char*>(wc->getData()), wc->getDataSize());
 
-	doc.SetCondenseWhiteSpace(false);
-	XML::loadBuffer(doc, const_cast<char*>(wc->getData()), wc->getDataSize());
+	doc.ProcessStatus("itemdownloadurl");
 
-	TiXmlNode *uNode = doc.FirstChild("itemdownloadurl");
+	auto uNode = doc.GetRoot("itemdownloadurl");
+	auto iNode = uNode.FirstChildElement("item");
 
-	if (!uNode)
+	if (!iNode.IsValid())
 		throw gcException(ERR_BADXML);
 
-	TiXmlNode* sNode = uNode->FirstChild("status");
+	auto mNode = iNode.FirstChildElement("mcf");
 
-	if (!sNode)
+	if (!mNode.IsValid())
 		throw gcException(ERR_BADXML);
 
-	uint32 status = 0;
-	TiXmlElement* sEl = sNode->ToElement();
-	if (sEl)
 	{
-		const char* statStr = sEl->Attribute("code");
-		if (statStr)
-			status = atoi(statStr);
-		else
-			throw gcException(ERR_BADXML);
-	}
-	else
-	{
-		throw gcException(ERR_BADXML);
-	}
-
-	if (status != 0)
-		throw gcException(ERR_BADSTATUS, status, gcString("Status: {0}", sEl->GetText()));
-
-	TiXmlNode* iNode = uNode->FirstChild("item");
-
-	if (!iNode)
-	{
-		throw gcException(ERR_BADXML);
-	}
-
-	TiXmlNode* mNode = iNode->FirstChild("mcf");
-
-	if (!mNode)
-	{
-		throw gcException(ERR_BADXML);
-	}
-
-	TiXmlElement *melNode = mNode->ToElement();
-
-	if (melNode)
-	{
-		const char* build = melNode->Attribute("build");
-		const char* branch = melNode->Attribute("branch");
+		const std::string build = mNode.GetAtt("build");
+		const std::string branch = mNode.GetAtt("branch");
 
 		//Debug(gcString("MCF: R: {0}.{1} G: {2}.{3}\n", m_sHeader->getBranch(), m_sHeader->getBuild(), build, branch));
 
-		if (build)
-			m_sHeader->setBuild(MCFBuild::BuildFromInt(atoi(build)));
+		if (!build.empty())
+			m_sHeader->setBuild(MCFBuild::BuildFromInt(atoi(build.c_str())));
 
-		if (branch)
-			m_sHeader->setBranch(MCFBranch::BranchFromInt(atoi(branch)));
+		if (!branch.empty())
+			m_sHeader->setBranch(MCFBranch::BranchFromInt(atoi(branch.c_str())));
 	}
-	
-	safe_delete(m_pFileAuth);
-	
-	char *szAuthCode = NULL;
-	XML::GetChild("authhash", szAuthCode, mNode);
-	if (!szAuthCode)
+
+	const std::string szAuthCode = mNode.GetChild("authhash");
+
+	if (szAuthCode.empty())
 		throw gcException(ERR_BADXML);
 
-	m_pFileAuth = new Misc::GetFile_s;
-	memset(m_pFileAuth, 0, sizeof(Misc::GetFile_s));
-
-	Safe::strncpy(m_pFileAuth->authhash, 33, szAuthCode, 33);
-
-	char buff[10];
-	Safe::snprintf(buff, 10, "%d", pCookies->getUserId());
-	size_t size = Safe::strlen(buff, 10);
 	
-	memcpy(m_pFileAuth->authkey, buff, size);
-	safe_delete(szAuthCode);
 
-	TiXmlNode* urlNode = mNode->FirstChild("urls");
+	auto temp = std::make_shared<Misc::GetFile_s>();
 
-	if (!urlNode)
+	Safe::strncpy(temp->authhash->data(), 33, szAuthCode.c_str(), szAuthCode.size());
+	Safe::snprintf(temp->authkey->data(), 10, "%d", pCookies->getUserId());
+
+	m_pFileAuth = temp;
+
+
+	auto urlNode = mNode.FirstChildElement("urls");
+
+	if (!urlNode.IsValid())
 		throw gcException(ERR_BADXML);
 
-	char * szAuthed = NULL;
-	XML::GetChild("authed", szAuthed, mNode);
+	const std::string szAuthed = mNode.GetChild("authed");
 
-	if (unauthed && szAuthed)
+	if (unauthed && !szAuthed.empty())
 	{
-		*unauthed = (atoi(szAuthed) == 0);
+		*unauthed = (atoi(szAuthed.c_str()) == 0);
 	}
-
-	safe_delete(szAuthed);
 
 
 #ifdef DEBUG
@@ -167,13 +125,10 @@ void MCF::getDownloadProviders(const char* url, MCFCore::Misc::UserCookies *pCoo
 #endif
 #endif
 
-	TiXmlElement* pChild = urlNode->FirstChildElement("url");
-	while (pChild)
+	urlNode.for_each_child("url", [this](const XML::gcXMLElement &xmlChild)
 	{
-		MCFCore::Misc::DownloadProvider* temp = new MCFCore::Misc::DownloadProvider(pChild);
-		m_vProviderList.push_back(temp);
-		pChild = pChild->NextSiblingElement();
-	}
+		m_vProviderList.push_back(std::make_shared<MCFCore::Misc::DownloadProvider>(xmlChild));
+	});
 
 	if (m_vProviderList.size() == 0)
 		throw gcException(ERR_ZEROSIZE);

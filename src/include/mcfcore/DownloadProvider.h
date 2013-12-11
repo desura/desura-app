@@ -51,10 +51,10 @@ public:
 		if (!prov)
 			return;
 
-		m_szName = gcString(prov->getName());
-		m_szUrl = gcString(prov->getUrl());
-		m_szBanner = gcString(prov->getBanner());
-		m_szProvUrl = gcString(prov->getProvUrl());
+		m_szName = prov->getName();
+		m_szUrl = prov->getUrl();
+		m_szBanner = prov->getBanner();
+		m_szProvUrl = prov->getProvUrl();
 	}
 
 	//! Alt Constructor
@@ -65,30 +65,32 @@ public:
 	//! @param p Provider Url
 	//!
 	DownloadProvider(const char* n, const char* u, const char* b, const char* p)
+		: m_szName(n)
+		, m_szUrl(u)
+		, m_szBanner(b)
+		, m_szProvUrl(p)
 	{
-		m_szName = gcString(n);
-		m_szUrl = gcString(u);
-		m_szBanner = gcString(b);
-		m_szProvUrl = gcString(p);
 	}
 
 	//! Alt Constructor from xml
 	//! 
 	//! @param node Xml node to get info from
 	//!
-	DownloadProvider(TiXmlElement* node)
+	DownloadProvider(const XML::gcXMLElement &xmlElement)
 	{
-		XML::GetChild("banner", m_szBanner, node);
-		XML::GetChild("provider", m_szName, node);
-		XML::GetChild("provlink", m_szProvUrl, node);
-		XML::GetChild("link", m_szUrl, node);
+		assert(xmlElement.IsValid());
+
+		xmlElement.GetChild("banner", m_szBanner);
+		xmlElement.GetChild("provider", m_szName);
+		xmlElement.GetChild("provlink", m_szProvUrl);
+		xmlElement.GetChild("link", m_szUrl);
 	}
 
 	//! Checks to see if its a valid banner
 	//! 
 	//! @return True if valid, False if not
 	//!
-	bool isValid()
+	bool isValid() const
 	{
 		return (m_szName.size() > 0 && m_szUrl.size() > 0 && m_szBanner.size() > 0 && m_szProvUrl.size() > 0);
 	}
@@ -97,7 +99,7 @@ public:
 	//!
 	//! @return Provider name
 	//!
-	const char* getName()
+	const char* getName() const
 	{
 		return m_szName.c_str();
 	}
@@ -106,7 +108,7 @@ public:
 	//!
 	//! @return Download url
 	//!
-	const char* getUrl()
+	const char* getUrl() const
 	{
 		return m_szUrl.c_str();
 	}
@@ -115,7 +117,7 @@ public:
 	//!
 	//! @return Banner Url
 	//!
-	const char* getBanner()
+	const char* getBanner() const
 	{
 		return m_szBanner.c_str();
 	}
@@ -124,11 +126,10 @@ public:
 	//!
 	//! @return Provider url
 	//!
-	const char* getProvUrl()
+	const char* getProvUrl() const
 	{
 		return m_szProvUrl.c_str();
 	}
-
 
 	//! Sets the banner url
 	//!
@@ -136,7 +137,7 @@ public:
 	//!
 	void setBanner(const char* banner)
 	{
-		m_szBanner = gcString(banner);
+		m_szBanner = banner;
 	}
 
 private:

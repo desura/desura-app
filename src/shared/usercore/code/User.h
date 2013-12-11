@@ -45,6 +45,10 @@ class UpdateThread;
 class ThreadPool;
 
 
+namespace XML
+{
+	class gcXMLElement;
+}
 
 namespace Thread
 {
@@ -180,13 +184,13 @@ public:
 	//!
 	//! @param newsNode News xml
 	//!
-	void parseNews(TiXmlNode* newsNode);
+	void parseNews(const XML::gcXMLElement &newsNode);
 
 	//! Parses gifts xml
 	//!
 	//! @param giftNode Gifts xml
 	//!
-	void parseGifts(TiXmlNode* giftNode);
+	void parseGifts(const XML::gcXMLElement &giftNode);
 
 	//! Set user avatar
 	//!
@@ -231,7 +235,7 @@ public:
 	//! @param type Type of item applying the filter for
 	//! @return true to filter, false to inclue
 	//!
-	bool platformFilter(TiXmlElement* platform, PlatformType type);
+	bool platformFilter(const XML::gcXMLElement &platform, PlatformType type);
 
 	BDManager* getBDManager();
 
@@ -270,7 +274,7 @@ protected:
 	//!
 	void onNeedWildCardCB(WCSpecialInfo& info);
 
-	void parseNewsAndGifts(TiXmlNode* xmlNode, Event<std::vector<UserCore::Misc::NewsItem*> > &onEvent);
+	void parseNewsAndGifts(const XML::gcXMLElement &xmlNode, const char* szChildName, Event<std::vector<UserCore::Misc::NewsItem*> > &onEvent);
 
 	void testMcfCache();
 

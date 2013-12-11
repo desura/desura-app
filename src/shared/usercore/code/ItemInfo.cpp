@@ -396,14 +396,13 @@ void ItemInfo::loadDb(sqlite3x::sqlite3_connection* db)
 	triggerCallBack();
 }
 
-void ItemInfo::loadBranchXmlData(TiXmlElement* branch)
+void ItemInfo::loadBranchXmlData(const XML::gcXMLElement &branch)
 {
-	const char* szId = branch->Attribute("id");
+	uint32 id = 0;
+	branch.GetAtt("id", id);
 
-	if (!szId)
+	if (id == 0)
 		return;
-
-	uint32 id = atoi(szId);
 
 	BranchInfo* bi = NULL;
 	bool found = false;
@@ -423,7 +422,7 @@ void ItemInfo::loadBranchXmlData(TiXmlElement* branch)
 	if (!bi)
 	{
 		uint32 platformId = 100;
-		XML::GetAtt("platformid", platformId, branch);
+		branch.GetAtt("platformid", platformId);
 
 		auto it = m_mBranchInstallInfo.find(platformId);
 
@@ -446,35 +445,22 @@ void ItemInfo::loadBranchXmlData(TiXmlElement* branch)
 	}
 }
 
-void ItemInfo::loadXmlData(uint32 platform, TiXmlNode *xmlNode, uint16 statusOveride, WildcardManager* pWildCard, bool reset)
+void ItemInfo::loadXmlData(uint32 platform, const XML::gcXMLElement &xmlNode, uint16 statusOveride, WildcardManager* pWildCard, bool reset)
 {
-	if (!xmlNode)
-		throw gcException(ERR_BADXML);
-
-	TiXmlElement* xmlEl = xmlNode->ToElement();
-
-	if (!xmlEl)
+	if (!xmlNode.IsValid())
 		throw gcException(ERR_BADXML);
 
 	pauseCallBack();
 
-	TiXmlNode* statNode = xmlNode->FirstChild("status");
-	if (statNode)
+	auto statNode = xmlNode.FirstChildElement("status");
+	if (statNode.IsValid())
 	{
-		TiXmlElement* statEl = statNode->ToElement();
+		bool isDev = (m_iStatus&UM::ItemInfoI::STATUS_DEVELOPER)?true:false;
 
-		if (statEl)
-		{
-			const char* status = statEl->Attribute("id");
-			
-			bool isDev = (m_iStatus&UM::ItemInfoI::STATUS_DEVELOPER)?true:false;
+		statNode.GetAtt("id", m_iStatus);
 
-			if (status)
-				m_iStatus = atoi(status);
-
-			if (isDev)
-				m_iStatus |= UM::ItemInfoI::STATUS_DEVELOPER;
-		}
+		if (isDev)
+			m_iStatus |= UM::ItemInfoI::STATUS_DEVELOPER;
 	}
 
 	bool installed = HasAllFlags(m_iStatus, UM::ItemInfoI::STATUS_INSTALLED);
@@ -483,16 +469,16 @@ void ItemInfo::loadXmlData(uint32 platform, TiXmlNode *xmlNode, uint16 statusOve
 	addSFlag(statusOveride);
 	delSFlag(UM::ItemInfoI::STATUS_INSTALLED);	//need this otherwise installpath and install check dont get set
 	
-	processInfo(xmlEl);
+	processInfo(xmlNode);
 
-	XML::for_each_child("branch", xmlNode->FirstChild("branches"), [this](TiXmlElement* branch)
+	xmlNode.FirstChildElement("branches").for_each_child("branch", [this](const XML::gcXMLElement &branch)
 	{
 		loadBranchXmlData(branch);
 	});
 
 	//the only time settings should be present if the xml came from the api
-	TiXmlNode* setNode = xmlNode->FirstChild("settings");
-	if (setNode && !isInstalled() && pWildCard)
+	auto setNode = xmlNode.FirstChildElement("settings");
+	if (setNode.IsValid() && !isInstalled() && pWildCard)
 		processSettings(platform, setNode, pWildCard, reset);
 
 	gcString installCheckFile;
@@ -575,42 +561,44 @@ void ItemInfo::loadXmlData(uint32 platform, TiXmlNode *xmlNode, uint16 statusOve
 }
 
 
-void ItemInfo::processInfo(TiXmlNode* xmlEl)
+void ItemInfo::processInfo(const XML::gcXMLElement &xmlEl)
 {
 	//desura info
-	XML::GetChild("name", this, &ItemInfo::setName, xmlEl);
-	XML::GetChild("nameid", m_szShortName, xmlEl);
-	XML::GetChild("summary", m_szDesc, xmlEl);
-	XML::GetChild("url", m_szProfile, xmlEl);
-	XML::GetChild("style", m_szGenre, xmlEl);
-	XML::GetChild("theme", m_szTheme, xmlEl);
-	XML::GetChild("rating", m_szRating, xmlEl);
-	XML::GetChild("eula", m_szEULAUrl, xmlEl);
+	xmlEl.GetChild("name", this, &ItemInfo::setName);
+	xmlEl.GetChild("nameid", m_szShortName);
+	xmlEl.GetChild("summary", m_szDesc);
+	xmlEl.GetChild("url", m_szProfile);
+	xmlEl.GetChild("style", m_szGenre);
+	xmlEl.GetChild("theme", m_szTheme);
+	xmlEl.GetChild("rating", m_szRating);
+	xmlEl.GetChild("eula", m_szEULAUrl);
 
 	bool isDev = false;
-	if (XML::GetChild("devadmin", isDev, xmlEl) && isDev)
+
+	if (xmlEl.GetChild("devadmin", isDev) && isDev)
 		addSFlag(STATUS_DEVELOPER);
 
-	TiXmlNode * logoNode= xmlEl->FirstChild("boxart");
-	if (logoNode && logoNode->ToElement())
-	{
-		const char *icon= logoNode->ToElement()->GetText();
+	auto logoNode= xmlEl.FirstChildElement("boxart");
 
-		if (UTIL::MISC::isWebURL(icon))
-			setLogoUrl(icon);
+	if (logoNode.IsValid())
+	{
+		const std::string icon= logoNode.GetText();
+
+		if (UTIL::MISC::isWebURL(icon.c_str()))
+			setLogoUrl(icon.c_str());
 		else
-			setLogo(icon);
+			setLogo(icon.c_str());
 	}
 
-	TiXmlNode * iconNode= xmlEl->FirstChild("icon");
-	if (iconNode && iconNode->ToElement())
+	auto iconNode= xmlEl.FirstChildElement("icon");
+	if (iconNode.IsValid())
 	{
-		const char *icon= iconNode->ToElement()->GetText();
+		const std::string icon= iconNode.GetText();
 
-		if (UTIL::MISC::isWebURL(icon))
-			setIconUrl(icon);
+		if (UTIL::MISC::isWebURL(icon.c_str()))
+			setIconUrl(icon.c_str());
 		else
-			setIcon(icon);
+			setIcon(icon.c_str());
 	}
 
 	//add support for install info here;
@@ -618,7 +606,7 @@ void ItemInfo::processInfo(TiXmlNode* xmlEl)
 
 
 	bool downloadable = false;
-	if (XML::GetChild("downloadable", downloadable, xmlEl))
+	if (xmlEl.GetChild("downloadable", downloadable))
 	{
 		if (downloadable)
 			delSFlag(UM::ItemInfoI::STATUS_NONDOWNLOADABLE);
@@ -627,7 +615,7 @@ void ItemInfo::processInfo(TiXmlNode* xmlEl)
 	}
 
 	uint32 dlc = 0;
-	if (XML::GetChild("expansion", dlc, xmlEl))
+	if (xmlEl.GetChild("expansion", dlc))
 	{
 		if (dlc)
 			addSFlag(UM::ItemInfoI::STATUS_DLC);
@@ -635,22 +623,22 @@ void ItemInfo::processInfo(TiXmlNode* xmlEl)
 			delSFlag(UM::ItemInfoI::STATUS_DLC);
 	}
 
-	TiXmlNode* devNode = xmlEl->FirstChild("developer");
-	if (devNode)
+	auto devNode = xmlEl.FirstChildElement("developer");
+	if (devNode.IsValid())
 	{
-		XML::GetChild("name", m_szDev, devNode);
-		XML::GetChild("url", m_szDevProfile, devNode);
+		devNode.GetChild("name", m_szDev);
+		devNode.GetChild("url", m_szDevProfile);
 	}
 
-	TiXmlNode* pubNode = xmlEl->FirstChild("publisher");
-	if (pubNode)
+	auto pubNode = xmlEl.FirstChildElement("publisher");
+	if (pubNode.IsValid())
 	{
-		XML::GetChild("name", m_szPublisher, pubNode);
-		XML::GetChild("url", m_szPublisherProfile, pubNode);
+		pubNode.GetChild("name", m_szPublisher);
+		pubNode.GetChild("url", m_szPublisherProfile);
 	}
 }
 
-void ItemInfo::processSettings(uint32 platform, TiXmlNode* setNode, WildcardManager* pWildCard, bool reset)
+void ItemInfo::processSettings(uint32 platform, const XML::gcXMLElement &setNode, WildcardManager* pWildCard, bool reset)
 {
 
 	bool hasBroughtItem = false;
@@ -667,7 +655,7 @@ void ItemInfo::processSettings(uint32 platform, TiXmlNode* setNode, WildcardMana
 	}
 
 	bool installComplex = false;
-	XML::GetChild("installcomplex", installComplex, setNode);
+	setNode.GetChild("installcomplex", installComplex);
 
 	if (installComplex)
 		addSFlag(UM::ItemInfoI::STATUS_INSTALLCOMPLEX);
@@ -968,27 +956,15 @@ bool ItemInfo::compare(const char* filter)
 }
 
 
-void ItemInfo::processUpdateXml(TiXmlNode *node)
+void ItemInfo::processUpdateXml(const XML::gcXMLElement &node)
 {
-	TiXmlNode* branches = node->FirstChild("branches");
-
-	if (!branches)
-		return;
-
-	TiXmlElement* branch = branches->FirstChildElement("branch");
-	while (branch)
+	node.FirstChildElement("branches").for_each_child("branch", [this](const XML::gcXMLElement &branch)
 	{
-		uint32 id;
+		uint32 id = 0;
+		branch.GetAtt("id", id);
 
-		const char* szId = branch->Attribute("id");
-
-		if (!szId)
-		{
-			branch = branch->NextSiblingElement("branch");
-			continue;
-		}
-
-		id = atoi(szId);
+		if (id == 0)
+			return;
 
 		BranchInfo* bi = NULL;
 
@@ -1003,7 +979,7 @@ void ItemInfo::processUpdateXml(TiXmlNode *node)
 		if (!bi)
 		{
 			uint32 platformId = 100;
-			XML::GetAtt("platformid", platformId, branch);
+			branch.GetAtt("platformid", platformId);
 
 			auto it = m_mBranchInstallInfo.find(platformId);
 
@@ -1025,10 +1001,9 @@ void ItemInfo::processUpdateXml(TiXmlNode *node)
 		{
 			if (bi->getInstallInfo()->processUpdateXml(branch))
 				addSFlag(UM::ItemInfoI::STATUS_UPDATEAVAL);
-		}
+		}	
 
-		branch = branch->NextSiblingElement("branch");
-	}
+	});
 
 	broughtCheck();
 }

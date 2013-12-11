@@ -25,6 +25,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>
 
 #include "usercore/ItemInfoI.h"
 
+namespace XML
+{
+	class gcXMLElement;
+}
+
 namespace sqlite3x
 {
 	class sqlite3_connection;
@@ -126,7 +131,7 @@ public:
 	//!
 	//! @param xmlNode Xml to get data from
 	//!
-	ProcessResult processSettings(TiXmlNode* setNode, WildcardManager* pWildCard, bool reset, bool hasBroughtItem, const char* cipPath);
+	ProcessResult processSettings(const XML::gcXMLElement &setNode, WildcardManager* pWildCard, bool reset, bool hasBroughtItem, const char* cipPath);
 
 
 	//! Sets the item install path
@@ -160,7 +165,7 @@ public:
 	void overideInstalledBuild(MCFBuild build);
 	void resetInstalledMcf();
 
-	bool processUpdateXml(TiXmlNode* branch);
+	bool processUpdateXml(const XML::gcXMLElement &branch);
 
 	bool hasInstalledMod();
 
@@ -183,7 +188,7 @@ public:
 
 protected:
 	void launchExeHack();
-	void processExes(TiXmlNode* setNode, WildcardManager* pWildCard, bool useCip);
+	void processExes(const XML::gcXMLElement &setNode, WildcardManager* pWildCard, bool useCip);
 
 private:
 	gcString m_szPath;

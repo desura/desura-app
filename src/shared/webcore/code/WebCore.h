@@ -28,6 +28,10 @@ namespace sqlite3x
 	class sqlite3_connection;
 }
 
+namespace XML
+{
+	class gcXMLElement;
+}
 
 
 namespace WebCore
@@ -79,12 +83,12 @@ public:
 	virtual const char* getSessCookie();
 
 	virtual const char* getUserAgent();
-	virtual void getItemInfo(DesuraId id, TiXmlDocument &doc, MCFBranch mcfBranch, MCFBuild mcfBuild); 
-	virtual void getInstalledItemList(TiXmlDocument &doc);
+	virtual void getItemInfo(DesuraId id, XML::gcXMLDocument &xmlDocument, MCFBranch mcfBranch, MCFBuild mcfBuild); 
+	virtual void getInstalledItemList(XML::gcXMLDocument &xmlDocument);
 	virtual EventV* getCookieUpdateEvent();
 	virtual gcString getCDKey(DesuraId id, MCFBranch branch);
-	virtual void getUpdatePoll(TiXmlDocument &doc, const std::map<std::string, std::string> &post);
-	virtual void getLoginItems(TiXmlDocument &doc);
+	virtual void getUpdatePoll(XML::gcXMLDocument &xmlDocument, const std::map<std::string, std::string> &post);
+	virtual void getLoginItems(XML::gcXMLDocument &xmlDocument);
 
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////
 	// Setters
@@ -139,14 +143,14 @@ public:
 	static gcString getMemberDataUrl();
 
 protected:
-	virtual void logIn(const char* user, const char* pass, TiXmlDocument &doc);
+	virtual void logIn(const char* user, const char* pass, XML::gcXMLDocument &xmlDocument);
 	virtual void logOut();
 
 	void startRefreshCycle();
 	void stopRefreshCycle();
 
-	TiXmlNode* postToServer(std::string url, std::string resource, PostMap &postData, TiXmlDocument &doc, bool useHTTPS = false);
-	TiXmlNode* loginToServer(std::string url, std::string resource, PostMap &postData, TiXmlDocument &doc);
+	const XML::gcXMLElement postToServer(std::string url, std::string resource, PostMap &postData, XML::gcXMLDocument &xmlDocument, bool useHTTPS = false);
+	const XML::gcXMLElement loginToServer(std::string url, std::string resource, PostMap &postData, XML::gcXMLDocument &xmlDocument);
 
 	EventV onCookieUpdateEvent;
 

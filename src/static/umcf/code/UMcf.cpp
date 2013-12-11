@@ -138,25 +138,12 @@ const wchar_t* problemFilesPath[] =
 
 
 UMcf::UMcf()
+	: m_sHeader(std::make_unique<UMcfHeader>())
 {
-	m_sHeader = new UMcfHeader();
-
-
-	m_bShouldMoveOldFiles = true;
-	m_bCanceled = false;
-
-	m_iAppId = 100;
-	m_iAppBuild = 0;
-	m_uiOffset = 0;
-
-	m_uiTotProgress = 0;
-	m_uiCurProgress = 0;
 }
 
 UMcf::~UMcf()
 {
-	safe_delete(m_sHeader);
-	safe_delete(m_pFileList);
 }
 
 void UMcf::setFile(const wchar_t* file, uint64 offset)
@@ -171,7 +158,8 @@ void UMcf::setFile(const wchar_t* file, uint64 offset)
 
 uint8 UMcf::parseXml(char* buff, size_t buffLen)
 {
-	char* outbuff = NULL;
+	std::unique_ptr<char[]> outbuff;
+
 	UTIL::MISC::BZ2Worker worker(UTIL::MISC::BZ2_DECOMPRESS);
 
 	if (!(m_sHeader->getFlags() & MCFCore::MCFHeaderI::FLAG_NOTCOMPRESSED))
@@ -180,40 +168,30 @@ uint8 UMcf::parseXml(char* buff, size_t buffLen)
 		worker.doWork();
 
 		buffLen = worker.getReadSize();
-		outbuff = new char[buffLen];
-		buff = outbuff;
 
-		worker.read(outbuff, buffLen);
+		outbuff = std::make_unique<char[]>(buffLen);
+		buff = outbuff.get();
+
+		worker.read(buff, buffLen);
 	}
 
-	tinyxml2::XMLDocument doc;
-	XML::loadBuffer(doc, buff);
-
-	delete [] outbuff;
-
-	tinyxml2::XMLElement *fNode = doc.FirstChildElement("files");
-	return parseXml(fNode);
+	XML::gcXMLDocument doc(buff, buffLen);
+	return parseXml(doc.GetRoot("files"));
 }
 
 
-uint8 UMcf::parseXml(tinyxml2::XMLNode *fNode)
+uint8 UMcf::parseXml(const XML::gcXMLElement &xmlElement)
 {
-	if (!fNode)
+	if (!xmlElement.IsValid())
 		return UMCF_ERR_XML_NOPRIMENODE;
 
-	tinyxml2::XMLElement* pChild = fNode->FirstChildElement();
-
-	while (pChild)
+	xmlElement.for_each_child("file", [this](const XML::gcXMLElement &xmlChild)
 	{
-		UMcfFile* temp = new UMcfFile();
+		auto temp = std::make_shared<UMcfFile>();
 
-		if (temp->loadXmlData(pChild) == UMCF_OK)
-			m_pFileList.push_back( temp );
-		else
-			delete temp;
-
-		pChild = pChild->NextSiblingElement();
-	}
+		if (temp->loadXmlData(xmlChild) == UMCF_OK)
+			m_pFileList.push_back(temp);
+	});
 
 	return UMCF_OK;
 }
@@ -266,7 +244,7 @@ void UMcf::cancel()
 	m_bCanceled = true;
 }
 
-bool SortMcfFiles(const UMcfFile* a, const UMcfFile* b)
+bool SortMcfFiles(const std::shared_ptr<UMcfFile>& a, const std::shared_ptr<UMcfFile>& b)
 {
 	return a->getOffSet() < b->getOffSet();
 }
@@ -344,12 +322,10 @@ void UMcf::onFileProgress(ProgressCB& prog)
 
 uint8 UMcf::loadFromFile(const wchar_t* file)
 {
-	tinyxml2::XMLDocument doc;
 	gcString strFile(file);
+	XML::gcXMLDocument doc(strFile.c_str());
 
-	int nRes = doc.LoadFile(strFile.c_str());
-
-	if (nRes != tinyxml2::XML_NO_ERROR)
+	if (!doc.IsValid())
 		return MCF_ERR_INVALIDHANDLE;
 
 	parseUpdateXml(doc);
@@ -360,39 +336,35 @@ uint8 UMcf::loadFromFile(const wchar_t* file)
 	return MCF_OK;
 }
 
-void UMcf::parseUpdateXml(tinyxml2::XMLDocument &doc)
+void UMcf::parseUpdateXml(const XML::gcXMLDocument &xmlDocument)
 {
-	tinyxml2::XMLElement *uNode = doc.FirstChildElement("appupdate");
+	auto uNode = xmlDocument.GetRoot("appupdate");
 
-	if (!uNode)
+	if (!uNode.IsValid())
 		return;
 
-	tinyxml2::XMLElement *mcfNode = uNode->FirstChildElement("mcf");
+	auto mcfNode = uNode.FirstChildElement("mcf");
 
-	if (!mcfNode)
+	if (!mcfNode.IsValid())
 		return;
 
-	if (mcfNode->ToElement())
-	{
-		const char* appid = mcfNode->ToElement()->Attribute("appid");
 
-		if (appid)
-			m_iAppId = atoi(appid);
-		else
-			m_iAppId = 100;
+	const std::string appid = mcfNode.GetAtt("appid");
 
-		const char* build = mcfNode->ToElement()->Attribute("build");
+	if (!appid.empty())
+		m_iAppId = atoi(appid.c_str());
+	else
+		m_iAppId = 100;
 
-		if (build)
-			m_iAppBuild = atoi(build);
-		else
-			m_iAppBuild = 0;
-	}
+	const std::string build = mcfNode.GetAtt("build");
 
-	XML::GetChild("url", m_szUrl, mcfNode);
+	if (!build.empty())
+		m_iAppBuild = atoi(build.c_str());
+	else
+		m_iAppBuild = 0;
 
-	tinyxml2::XMLElement *fNode = mcfNode->FirstChildElement("files");
-	parseXml(fNode);
+	mcfNode.GetChild("url", m_szUrl);
+	parseXml(mcfNode.FirstChildElement("files"));
 }
 
 //checks local files. returns true if they are good false if they are bad
@@ -592,29 +564,18 @@ void UMcf::dumpXml(const wchar_t* path)
 	if (!path)
 		return;
 
-	tinyxml2::XMLDocument doc;
+	XML::gcXMLDocument doc;
 
-	tinyxml2::XMLDeclaration * decl = doc.NewDeclaration();
+	auto root = doc.Create("appupdate");
+	auto mcfElFiles = root.NewElement("mcf");
 
-	tinyxml2::XMLElement * startElFiles = doc.NewElement( "appupdate" );
+	mcfElFiles.SetAttribute("build",  m_sHeader->getBuild());
+	mcfElFiles.SetAttribute("appid",  m_sHeader->getId());
 
-	tinyxml2::XMLElement * mcfElFiles = doc.NewElement( "mcf" );
-	mcfElFiles->SetAttribute("build",  m_sHeader->getBuild() );
-	mcfElFiles->SetAttribute("appid",  m_sHeader->getId() );
-	startElFiles->InsertEndChild(mcfElFiles);
-
-	tinyxml2::XMLElement * filesElFiles = doc.NewElement( "files" );
-	mcfElFiles->InsertEndChild(filesElFiles);
+	auto filesElFiles = mcfElFiles.NewElement( "files" );
 
 	for (size_t x=0; x<m_pFileList.size(); x++)
-	{
-		tinyxml2::XMLElement * startElFile = doc.NewElement( "file" );
-		m_pFileList[x]->genXml(startElFile, doc);
-		filesElFiles->InsertEndChild(startElFile);
-	}
-
-	doc.InsertEndChild( decl );
-	doc.InsertEndChild( startElFiles );
+		m_pFileList[x]->genXml(filesElFiles.NewElement("file"));
 
 	doc.SaveFile(gcString(path).c_str());
 }
@@ -623,7 +584,7 @@ void UMcf::removeOldFiles(UMcf* oldMcf, const wchar_t* dir)
 {
 	for (size_t x=0; x<oldMcf->m_pFileList.size(); x++)
 	{
-		UMcfFile* file = oldMcf->m_pFileList[x];
+		UMcfFile* file = oldMcf->m_pFileList[x].get();
 
 		if (!file)
 			continue;
@@ -662,18 +623,15 @@ uint8 UMcf::parseMCF()
 
 	m_pFileList.erase(m_pFileList.begin(), m_pFileList.end());
 
-
-	UMcfHeader* tempHeader = new UMcfHeader();
-	uint8 err = tempHeader->readFromFile(fh.hFileSrc);
-
-	if (err != MCF_OK)
 	{
-		safe_delete(tempHeader);
-		return MCF_ERR_BADHEADER;
-	}
+		std::unique_ptr<UMcfHeader> tempHeader = std::make_unique<UMcfHeader>();
+		uint8 err = tempHeader->readFromFile(fh.hFileSrc);
 
-	safe_delete(m_sHeader);
-	m_sHeader = tempHeader;
+		if (err != MCF_OK)
+			return MCF_ERR_BADHEADER;
+
+		m_sHeader = std::move(tempHeader);
+	}
 
 	if (!FileSeek(fh.hFileSrc, m_uiOffset + m_sHeader->getXmlStart()))
 		return MCF_ERR_FAILEDSEEK;

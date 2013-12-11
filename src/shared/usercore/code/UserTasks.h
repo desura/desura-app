@@ -134,7 +134,7 @@ public:
 class DownloadBannerTask : public UserTask
 {
 public:
-	DownloadBannerTask(UserCore::User* user, MCFCore::Misc::DownloadProvider *dp);
+	DownloadBannerTask(UserCore::User* user, const MCFCore::Misc::DownloadProvider& dp);
 
 	void doTask();
 	Event<BannerCompleteInfo> onDLCompleteEvent;

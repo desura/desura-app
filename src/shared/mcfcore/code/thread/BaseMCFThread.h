@@ -93,7 +93,7 @@ protected:
 	MCFCore::Thread::UpdateProgThread *m_pUPThread;
 	::Thread::Mutex m_pFileMutex;
 
-	std::vector<MCFCore::MCFFile*> &m_rvFileList;
+	std::vector<std::shared_ptr<MCFCore::MCFFile>> &m_rvFileList;
 	std::vector<int32> m_vFileList;
 
 	uint64 m_uiFileOffset;

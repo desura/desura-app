@@ -24,6 +24,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>
 
 #include "usercore/BranchInfoI.h"
 
+namespace XML
+{
+	class gcXMLElement;
+}
 
 namespace sqlite3x
 {
@@ -104,7 +108,7 @@ public:
 	//!
 	//! @param xmlNode Xml to get data from
 	//!
-	void loadXmlData(TiXmlNode *xmlNode);
+	void loadXmlData(const XML::gcXMLElement &xmlNode);
 
 	//! Returns the last mcf build for this branch
 	//!
@@ -128,7 +132,7 @@ protected:
 	gcString encodeCDKey();
 	void decodeCDKey(gcString key);
 
-	void processInstallScript(TiXmlElement* scriptNode);
+	void processInstallScript(const XML::gcXMLElement &scriptNode);
 
 private:
 	DesuraId m_ItemId;

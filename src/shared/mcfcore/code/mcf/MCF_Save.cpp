@@ -128,7 +128,7 @@ void MCF::dlHeaderFromWeb()
 		try
 		{
 			msc.disconnect();
-			msc.connect(m_vProviderList[x]->getUrl(), m_pFileAuth);
+			msc.connect(m_vProviderList[x]->getUrl(), *m_pFileAuth.get());
 
 			msc.downloadRange(0, 5, &out); //4 id bytes and 1 version byte
 
@@ -329,7 +329,7 @@ void MCF::parseFolder(const char *filePath, const char *oPath)
 
 	if (fileList.size() == 0 && dirList.size() == 0)
 	{
-		MCFCore::MCFFile *temp = new MCFCore::MCFFile();
+		auto temp = std::make_shared<MCFCore::MCFFile>();
 
 		if (filePath)
 			temp->setPath(filePath);
@@ -352,7 +352,7 @@ void MCF::parseFolder(const char *filePath, const char *oPath)
 		if (file.size() > 0 && file[file.size()-1] == ' ')
 			throw gcException(ERR_BADPATH, gcString("File [{0}] has a space at the end of its name. This is not valid for MCF archives.", fileList[x].getFullPath()));
 
-		MCFCore::MCFFile *temp = new MCFCore::MCFFile();
+		auto temp = std::make_shared<MCFCore::MCFFile>();
 
 		if (filePath)
 			temp->setPath(filePath);
@@ -557,7 +557,7 @@ void MCF::optimiseAndSaveMcf(MCFI* prevMcf, const char* path)
 
 	for (size_t x=0; x<vNew.size(); x++)
 	{
-		MCFFile* file = m_pFileList[vNew[x].thisMcf];
+		auto file = m_pFileList[vNew[x].thisMcf];
 
 		if (file->isSaved())
 		{
@@ -568,7 +568,7 @@ void MCF::optimiseAndSaveMcf(MCFI* prevMcf, const char* path)
 
 	for (size_t x=0; x<vDiff.size(); x++)
 	{
-		MCFFile* file = m_pFileList[vDiff[x].thisMcf];
+		auto file = m_pFileList[vDiff[x].thisMcf];
 
 		if (file->isSaved())
 		{
@@ -579,7 +579,7 @@ void MCF::optimiseAndSaveMcf(MCFI* prevMcf, const char* path)
 
 	for (size_t x=0; x<vSame.size(); x++)
 	{
-		MCFFile* file = m_pFileList[vSame[x].thisMcf];
+		auto file = m_pFileList[vSame[x].thisMcf];
 
 		if (file->isSaved())
 		{
@@ -612,7 +612,7 @@ void MCF::saveMCF()
 
 struct OffsetSortKey
 {
-	bool operator()(MCFFile *lhs, MCFFile *rhs )
+	bool operator()(std::shared_ptr<MCFFile>& lhs, std::shared_ptr<MCFFile>& rhs)
 	{
 		return (lhs->getOffSet() < rhs->getOffSet());
 	}
@@ -694,7 +694,7 @@ void MCF::saveMCF_Header()
 
 	for (size_t x=0; x<m_pFileList.size(); x++)
 	{
-		MCFFile* file = m_pFileList[x];
+		auto file = m_pFileList[x];
 
 		if (!file->isSaved())
 			continue;
@@ -735,7 +735,7 @@ void MCF::parseMCF()
 	UTIL::FS::FileHandle hFile;
 	getReadHandle(hFile);
 
-	safe_delete(m_pFileList);
+	m_pFileList.clear();
 
 	MCFCore::MCFHeader tempHeader;
 	tempHeader.readFromFile(hFile);

@@ -45,6 +45,7 @@ void InitCVarManger();
 void DestroyCVarManager();
 void SaveCVars();
 
+
 class CVarManager : public BaseManager<CVar>, public CVarManagerI
 {
 public:
@@ -71,8 +72,6 @@ public:
 	virtual void getCVarList(std::vector<CVar*> &vList);
 
 protected:
-	void parseXML(TiXmlNode *cNode);
-
 	void loadFromDb(sqlite3x::sqlite3_reader &reader);
 	void saveToDb(sqlite3x::sqlite3_command &cmd, uint8 flags);
 

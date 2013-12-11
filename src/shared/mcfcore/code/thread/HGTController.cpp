@@ -134,7 +134,7 @@ void HGTController::decompressDiff(uint64 size, UTIL::FS::FileHandle &fhSrc, UTI
 	});
 }
 
-bool HGTController::expandDiff(CourgetteInstance* ci, MCFCore::MCFFile* file)
+bool HGTController::expandDiff(CourgetteInstance* ci, std::shared_ptr<MCFCore::MCFFile> file)
 {
 	m_hFile.close();
 
@@ -245,7 +245,7 @@ static bool WGTBlockSort(Misc::WGTBlock* a, Misc::WGTBlock* b)
 	return a->webOffset < b->webOffset;
 }
 
-static bool SortByOffset(MCFCore::MCFFile* a, MCFCore::MCFFile* b)
+static bool SortByOffset(std::shared_ptr<MCFCore::MCFFile>& a, std::shared_ptr<MCFCore::MCFFile>& b)
 {
 	return a->getOffSet() < b->getOffSet();
 }
@@ -298,7 +298,7 @@ void HGTController::fillDownloadList(bool &usingDiffs)
 			continue;	
 
 		uint32 index = webMcf->findFileIndexByHash(m_rvFileList[x]->getHash());
-		MCFCore::MCFFile *webFile = webMcf->getFile(index);
+		auto webFile = webMcf->getFile(index);
 
 		uint64 size = m_rvFileList[x]->getCurSize();
 		bool started = m_rvFileList[x]->hasStartedDL();

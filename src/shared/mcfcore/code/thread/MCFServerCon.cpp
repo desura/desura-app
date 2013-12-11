@@ -21,6 +21,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>
 #include "MCFServerCon.h"
 #include "MCFDPReporter.h"
 
+#include <array>
+
 #define READ_SIZE (1024*1024)
 
 namespace MCFCore
@@ -76,7 +78,7 @@ void MCFServerCon::onWrite(WriteMem_s &mem)
 	}
 }
 
-void MCFServerCon::connect(const char* url, GetFile_s* pFileAuth)
+void MCFServerCon::connect(const char* url, const GetFile_s& fileAuth)
 {
 	if (m_bConnected)
 		return;
@@ -94,7 +96,7 @@ void MCFServerCon::connect(const char* url, GetFile_s* pFileAuth)
 	u += "/mcf";
 
 	m_FtpHandle->setUrl(u.c_str());
-	m_FtpHandle->setUserPass(pFileAuth->authkey, pFileAuth->authhash);
+	m_FtpHandle->setUserPass(fileAuth.authkey->data(), fileAuth.authhash->data());
 
 	m_bConnected = true;
 }

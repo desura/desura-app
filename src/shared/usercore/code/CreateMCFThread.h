@@ -25,6 +25,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>
 
 #include "MCFThread.h"
 
+namespace XML
+{
+	class gcXMLElement;
+}
 
 namespace UserCore
 {
@@ -58,9 +62,9 @@ protected:
 
 	void retrieveBranchList(std::vector<UserCore::Item::BranchInfo*> &outList);
 	
-	void processGames(std::vector<UserCore::Item::BranchInfo*> &outList, TiXmlElement* platform);
-	void processMods(std::vector<UserCore::Item::BranchInfo*> &outList, TiXmlElement* game);
-	void processBranches(std::vector<UserCore::Item::BranchInfo*> &outList, TiXmlElement* item);
+	void processGames(std::vector<UserCore::Item::BranchInfo*> &outList, const XML::gcXMLElement &platform);
+	void processMods(std::vector<UserCore::Item::BranchInfo*> &outList, const XML::gcXMLElement &game);
+	void processBranches(std::vector<UserCore::Item::BranchInfo*> &outList, const XML::gcXMLElement &item);
 
 
 

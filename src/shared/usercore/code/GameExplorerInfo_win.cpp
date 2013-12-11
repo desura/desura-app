@@ -80,24 +80,21 @@ GRPICONDIR, *LPGRPICONDIR;
 #pragma pack(pop)
 
 
-TiXmlElement* WriteChildWithChildAndAtt(const char* nodeName, const char* childName, const char* attName, const char* attValue, TiXmlNode* root)
+namespace
 {
-	TiXmlElement *node = new TiXmlElement(nodeName);
-	TiXmlElement *child = new TiXmlElement(childName);
+	XML::gcXMLElement WriteChildWithChildAndAtt(XML::gcXMLElement &node, const char* childName, const char* attName, const char* attValue)
+	{
+		auto child = node.NewElement(childName);
+		child.SetAttribute(attName, attValue);
+		return child;
+	}
 
-	child->SetAttribute(attName, attValue);
-
-	node->LinkEndChild(child);
-	root->LinkEndChild(node);
-
-	return node;
-}
-
-TiXmlElement* WriteChildWithChildAndAtt(TiXmlElement* node, const char* childName, const char* attName, const char* attValue)
-{
-	TiXmlElement *child = new TiXmlElement(childName);
-	child->SetAttribute(attName, attValue);
-	return node;
+	XML::gcXMLElement WriteChildWithChildAndAtt(const char* nodeName, const char* childName, const char* attName, const char* attValue, XML::gcXMLElement &root)
+	{
+		auto node = root.NewElement(nodeName);
+		WriteChildWithChildAndAtt(node, childName, attName, attValue);
+		return node;
+	}	
 }
 
 
@@ -420,161 +417,131 @@ gcWString GameExplorerInfo::generateXml()
 	if (szGenere.size() == 0)
 		szGenere = "Unknown";
 
-	TiXmlDeclaration *decl = new TiXmlDeclaration( "1.0", "utf-16", "");
-	TiXmlElement *gameDefFile = new TiXmlElement("GameDefinitionFile");
-	TiXmlElement *gameDef = new TiXmlElement("GameDefinition");
+	XML::gcXMLDocument doc;
 
-	gameDefFile->SetAttribute("xmlns:baseTypes", "urn:schemas-microsoft-com:GamesExplorerBaseTypes.v1");
-	gameDefFile->SetAttribute("xmlns", "urn:schemas-microsoft-com:GameDescription.v1");
-	gameDef->SetAttribute("gameID", m_szGuid.c_str());
+	auto gameDefFile = doc.Create("GameDefinitionFile", "xml version=\"1.0\" encoding=\"utf-16\"");
+	auto gameDef = gameDefFile.NewElement("GameDefinition");
 
 
-	XML::WriteChild("Name", szName, gameDef);
-	XML::WriteChild("Description", szDescription, gameDef);
-	XML::WriteChild("ReleaseDate", szReleaseData, gameDef);
+	gameDefFile.SetAttribute("xmlns:baseTypes", "urn:schemas-microsoft-com:GamesExplorerBaseTypes.v1");
+	gameDefFile.SetAttribute("xmlns", "urn:schemas-microsoft-com:GameDescription.v1");
+	gameDef.SetAttribute("gameID", m_szGuid.c_str());
 
-	TiXmlElement *genres = new TiXmlElement("Genres");
-	XML::WriteChild("Genre", szGenere, genres);
-	gameDef->LinkEndChild(genres);
-	
+
+	gameDef.WriteChild("Name", szName);
+	gameDef.WriteChild("Description", szDescription);
+	gameDef.WriteChild("ReleaseDate", szReleaseData);
+
+	auto genres = gameDef.NewElement("Genres");
+	genres.WriteChild("Genre", szGenere);
+		
 	WriteChildWithChildAndAtt("Version", "VersionNumber", "versionNumber", szVersion.c_str(), gameDef);
 
-
-	TiXmlElement *devs = new TiXmlElement("Developers");
-		TiXmlElement *dev = new TiXmlElement("Developer");
-
-			dev->SetAttribute("URI", szDevUrl.c_str());
-			dev->LinkEndChild(new TiXmlText(szDevName.c_str()));
-
-		devs->LinkEndChild(dev);
-	gameDef->LinkEndChild(devs);
+	auto dev = gameDef.NewElement("Developers").NewElement("Developer");
+	dev.SetAttribute("URI", szDevUrl.c_str());
+	dev.SetText(szDevName.c_str());
 
 
-	TiXmlElement *publishers = new TiXmlElement("Publishers");
-		TiXmlElement *publisher = new TiXmlElement("Publisher");
-
-			publisher->SetAttribute("URI", szPubUrl.c_str());
-			publisher->LinkEndChild(new TiXmlText(szPub.c_str()));
-
-		publishers->LinkEndChild(publisher);
-	gameDef->LinkEndChild(publishers);
-
+	auto publisher = gameDef.NewElement("Publishers").NewElement("Publisher");
+	publisher.SetAttribute("URI", szPubUrl.c_str());
+	publisher.SetText(szPub.c_str());
 
 	
 	if (vExeList.size() > 0)
 	{
-		TiXmlElement *gameExecutables = new TiXmlElement("GameExecutables");
+		auto gameExecutables = gameDef.NewElement("GameExecutables");
 
 		for (size_t x=0; x<vExeList.size(); x++)
 		{
 			gcString szGameExe(UTIL::FS::PathWithFile(vExeList[x]->getExe()).getFile().getFile());
-			TiXmlElement *gameExecutable = new TiXmlElement("GameExecutable");
 
-			gameExecutable->SetAttribute("path", szGameExe.c_str());
-			gameExecutables->LinkEndChild(gameExecutable);
+			auto gameExe = gameExecutables.NewElement("GameExecutable");
+			gameExe.SetAttribute("path", szGameExe.c_str());
 		}
-
-		gameDef->LinkEndChild(gameExecutables);
 	}
 
 	int i = 1;
 
-	TiXmlElement *extProps = new TiXmlElement("ExtendedProperties");
-	TiXmlElement *gameTasks = new TiXmlElement("GameTasks");
 
-	TiXmlElement *playTask = new TiXmlElement("Play");
 
-		WriteChildWithChildAndAtt("Primary", "URLTask", "Link", szPlayLink.c_str(), playTask);
+	auto extProps = gameDef.NewElement("ExtendedProperties");
+	auto gameTasks = extProps.NewElement("GameTasks");
+	auto playTask = gameTasks.NewElement("Play");
 
-		if (vExeList.size() > 1)
+	WriteChildWithChildAndAtt("Primary", "URLTask", "Link", szPlayLink.c_str(), playTask);
+
+	if (vExeList.size() > 1)
+	{
+		for (size_t x=0; x<vExeList.size(); x++)
 		{
-			for (size_t x=0; x<vExeList.size(); x++)
-			{
-				gcString play("Play: {0}", vExeList[x]->getName());
-				gcString link("desura://launch/{0}/{1}/{2}", m_Id.getTypeString(), m_pItemInfo->getShortName(), vExeList[x]->getName());
+			gcString play("Play: {0}", vExeList[x]->getName());
+			gcString link("desura://launch/{0}/{1}/{2}", m_Id.getTypeString(), m_pItemInfo->getShortName(), vExeList[x]->getName());
 
-				TiXmlElement *changeLog = WriteChildWithChildAndAtt("Task", "URLTask", "Link", link.c_str(), playTask);
-				changeLog->SetAttribute("index", i);
-				changeLog->SetAttribute("name", play.c_str());
-				i++;
-			}
-		}
-
-		if (m_pItemInfo->isDownloadable())
-		{
-			TiXmlElement *changeLog = WriteChildWithChildAndAtt("Task", "URLTask", "Link", szChangeLogLink.c_str(), playTask);
-			changeLog->SetAttribute("index", i);
-			changeLog->SetAttribute("name", "View Update History");
+			auto changeLog = WriteChildWithChildAndAtt("Task", "URLTask", "Link", link.c_str(), playTask);
+			changeLog.SetAttribute("index", i);
+			changeLog.SetAttribute("name", play.c_str());
 			i++;
 		}
-		
-		
-		TiXmlElement *profile = WriteChildWithChildAndAtt("Task", "URLTask", "Link", szProfileLink.c_str(), playTask);
-		profile->SetAttribute("index", i);
-		profile->SetAttribute("name", "View Profile");
+	}
+
+	if (m_pItemInfo->isDownloadable())
+	{
+		auto changeLog = WriteChildWithChildAndAtt("Task", "URLTask", "Link", szChangeLogLink.c_str(), playTask);
+		changeLog.SetAttribute("index", i);
+		changeLog.SetAttribute("name", "View Update History");
 		i++;
+	}
+		
+		
+	auto profile = WriteChildWithChildAndAtt("Task", "URLTask", "Link", szProfileLink.c_str(), playTask);
+	profile.SetAttribute("index", i);
+	profile.SetAttribute("name", "View Profile");
+	i++;
 		
 
-		uint32 count = 0;
-		for (uint32 x=0; x<m_pItemInfo->getBranchCount(); x++)
-		{
-			UserCore::Item::BranchInfoI* bi = m_pItemInfo->getBranch(x);
+	uint32 count = 0;
+	for (uint32 x=0; x<m_pItemInfo->getBranchCount(); x++)
+	{
+		UserCore::Item::BranchInfoI* bi = m_pItemInfo->getBranch(x);
 
-			if (!bi)
-				continue;
+		if (!bi)
+			continue;
 
-			if (bi->getBranchId() == m_pItemInfo->getInstalledBranch())
-				continue;
+		if (bi->getBranchId() == m_pItemInfo->getInstalledBranch())
+			continue;
 
-			if (bi->getFlags()&UserCore::Item::BranchInfoI::BF_NORELEASES)
-				continue;
+		if (bi->getFlags()&UserCore::Item::BranchInfoI::BF_NORELEASES)
+			continue;
 
-			if (!(bi->getFlags()&UserCore::Item::BranchInfoI::BF_ONACCOUNT) && !(bi->getFlags()&UserCore::Item::BranchInfoI::BF_FREE))
-				continue;
+		if (!(bi->getFlags()&UserCore::Item::BranchInfoI::BF_ONACCOUNT) && !(bi->getFlags()&UserCore::Item::BranchInfoI::BF_FREE))
+			continue;
 
-			gcString name("Install Branch: {0}", bi->getName());
-			gcString link("desura://install/{0}/{1}/{2}", m_Id.getTypeString(), m_pItemInfo->getShortName(), bi->getBranchId());
+		gcString name("Install Branch: {0}", bi->getName());
+		gcString link("desura://install/{0}/{1}/{2}", m_Id.getTypeString(), m_pItemInfo->getShortName(), bi->getBranchId());
 
-			TiXmlElement *branch = WriteChildWithChildAndAtt("Task", "URLTask", "Link", link.c_str(), playTask);
-			branch->SetAttribute("index", x+i);
-			branch->SetAttribute("name", name.c_str());
+		auto branch = WriteChildWithChildAndAtt("Task", "URLTask", "Link", link.c_str(), playTask);
+		branch.SetAttribute("index", x+i);
+		branch.SetAttribute("name", name.c_str());
 			
-		}
+	}
 
 
-	gameTasks->LinkEndChild(playTask);
+	auto supportTask = gameTasks.NewElement("Support");
 
-	TiXmlElement *supportTask = new TiXmlElement("Support");
+	auto verify = WriteChildWithChildAndAtt("Task", "URLTask", "Link", szVerifyLink.c_str(), supportTask);
+	verify.SetAttribute("index", 0);
+	verify.SetAttribute("name", "Verify Files");
 
-		TiXmlElement *verify = WriteChildWithChildAndAtt("Task", "URLTask", "Link", szVerifyLink.c_str(), supportTask);
-		verify->SetAttribute("index", 0);
-		verify->SetAttribute("name", "Verify Files");
+	auto uninstall = WriteChildWithChildAndAtt("Task", "URLTask", "Link", szUninstallLink.c_str(), supportTask);
+	uninstall.SetAttribute("index", 1);
+	uninstall.SetAttribute("name", "Uninstall");
 
-		TiXmlElement *uninstall = WriteChildWithChildAndAtt("Task", "URLTask", "Link", szUninstallLink.c_str(), supportTask);
-		uninstall->SetAttribute("index", 1);
-		uninstall->SetAttribute("name", "Uninstall");
-		
-
-	gameTasks->LinkEndChild(supportTask);
-	extProps->LinkEndChild(gameTasks);
-	gameDef->LinkEndChild(extProps);
-	gameDefFile->LinkEndChild(gameDef);
-
-	TiXmlDocument doc;
-	doc.LinkEndChild(decl);
-	doc.LinkEndChild(gameDefFile);
-
-	TiXmlPrinter printer;
-	printer.SetIndent( "\t" );
-
-	doc.Accept( &printer );
 
 	gcWString res;
-
 	res.resize(1);
 
 	res[0] = 0xFF + (0xFE<<8);
-	res += gcWString(printer.CStr());
+	res += doc.ToWString(false);
 
 	return res;
 }

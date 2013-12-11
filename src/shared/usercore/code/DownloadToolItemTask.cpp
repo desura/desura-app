@@ -103,23 +103,23 @@ void DownloadToolTask::validateTools()
 	if (!getUserCore()->getToolManager()->areAllToolsValid(toolList))
 	{
 		//missing tools. Gather info again
-		TiXmlDocument doc;
+		XML::gcXMLDocument doc;
 
 		getWebCore()->getItemInfo(getItemId(), doc, MCFBranch(), MCFBuild());
 
-		TiXmlNode *uNode = doc.FirstChild("iteminfo");
+		auto uNode = doc.GetRoot("iteminfo");
 
-		if (!uNode)
+		if (!uNode.IsValid())
 			throw gcException(ERR_BADXML);
 
-		TiXmlNode *toolNode = uNode->FirstChild("toolinfo");
+		auto toolNode = uNode.FirstChildElement("toolinfo");
 
-		if (toolNode)
+		if (toolNode.IsValid())
 			getUserCore()->getToolManager()->parseXml(toolNode);
 
-		TiXmlNode *gameNode = uNode->FirstChild("games");
+		auto gameNode = uNode.FirstChildElement("games");
 
-		if (!gameNode)
+		if (!gameNode.IsValid())
 			throw gcException(ERR_BADXML);
 
 		getItemInfo()->getCurrentBranch()->getToolList(toolList);

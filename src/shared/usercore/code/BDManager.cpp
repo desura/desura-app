@@ -64,7 +64,7 @@ void BDManager::onBannerComplete(UserCore::Task::BannerCompleteInfo& bci)
 	m_BannerLock.unlock();
 }
 
-void BDManager::downloadBanner(UserCore::Misc::BannerNotifierI* obj, MCFCore::Misc::DownloadProvider* provider)
+void BDManager::downloadBanner(UserCore::Misc::BannerNotifierI* obj, const MCFCore::Misc::DownloadProvider& provider)
 {
 	m_BannerLock.lock();
 

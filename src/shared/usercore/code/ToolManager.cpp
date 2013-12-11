@@ -252,14 +252,14 @@ ToolTransactionId ToolManager::installTools(Misc::ToolTransaction* transaction)
 
 
 
-void ToolManager::parseXml(TiXmlNode* toolinfoNode)
+void ToolManager::parseXml(const XML::gcXMLElement &toolinfoNode)
 {
-	if (!toolinfoNode)
+	if (!toolinfoNode.IsValid())
 		return;	
 
-	TiXmlNode* toolsNode = toolinfoNode->FirstChild("tools");
+	auto toolsNode = toolinfoNode.FirstChildElement("tools");
 
-	if (!toolsNode)
+	if (!toolsNode.IsValid())
 		return;
 
 	WildcardManager wcm;
@@ -267,9 +267,9 @@ void ToolManager::parseXml(TiXmlNode* toolinfoNode)
 	wcm.onNeedInstallSpecialEvent += delegate(this, &ToolManager::onSpecialCheck);
 	wcm.onNeedSpecialEvent += delegate(m_pUser->getNeedWildCardEvent());
 
-	TiXmlNode* wildcardNode = toolinfoNode->FirstChild("wcards");
+	auto wildcardNode = toolinfoNode.FirstChildElement("wcards");
 
-	if (wildcardNode)
+	if (wildcardNode.IsValid())
 		wcm.parseXML(wildcardNode);
 
 	//clear the java path value
@@ -283,20 +283,20 @@ void ToolManager::parseXml(TiXmlNode* toolinfoNode)
 
 	bool is64OS = UTIL::OS::is64OS();
 
-	XML::for_each_child("tool", toolsNode, [this, is64OS, &wcm](TiXmlElement* toolEl)
+	toolsNode.for_each_child("tool", [this, is64OS, &wcm](const XML::gcXMLElement &toolEl)
 	{
 		bool isTool64 = false;
-		XML::GetChild("bit64", isTool64, toolEl);
+		toolEl.GetChild("bit64", isTool64);
 
 		if (isTool64 && !is64OS)
 			return;
 
-		const char* id = toolEl->Attribute("siteareaid");
+		const std::string id = toolEl.GetAtt("siteareaid");
 
-		if (!id)
+		if (id.empty())
 			return;
 
-		DesuraId tid(id, "tools");
+		DesuraId tid(id.c_str(), "tools");
 		ToolInfo* tool = this->findItem(tid.toInt64());
 
 		bool bAdd = false;

@@ -25,6 +25,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>
 #include "managers/WildcardManager.h"
 #include "usercore/InstallInfoI.h"
 
+
+namespace XML
+{
+	class gcXMLElement;
+}
+
 namespace UserCore
 {
 namespace Misc
@@ -36,7 +42,7 @@ public:
 	InstallInfo(DesuraId id, DesuraId pid = 0);
 	~InstallInfo();
 
-	void loadXmlData(TiXmlNode *xmlNode, WildcardManager* pWildCard);
+	void loadXmlData(const XML::gcXMLElement &xmlNode, WildcardManager* pWildCard);
 
 	const char* getName(){return m_szName.c_str();}
 	const char* getPath(){return m_szPath.c_str();}

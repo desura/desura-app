@@ -302,12 +302,10 @@ bool InternalLink::switchTab(bool &badLink, std::vector<gcString> &list, const c
 	if (page != ITEMS && list.size() >= 3 && list[2].size() > 0)
 	{
 		size_t outLen=0;
-		unsigned char* out = UTIL::STRING::base64_decode(list[2], outLen);
+		auto out = UTIL::STRING::base64_decode(list[2], outLen);
 
 		gcString url;
-		url.assign((char*)out, outLen);
-
-		safe_delete(out);
+		url.assign((char*)out.get(), outLen);
 
 		if (url.size() > 0 && url.find("http://") == 0)
 			g_pMainApp->loadUrl(url.c_str(), page);

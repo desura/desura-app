@@ -45,51 +45,17 @@ MCFI::~MCFI()
 }
 
 MCF::MCF()
+	: m_sHeader(std::make_shared<MCFCore::MCFHeader>())
+	, m_pFileAuth(std::make_shared<Misc::GetFile_s>())
 {
-	m_pFileAuth = NULL;
-	m_sHeader = NULL;
-
-	init();
-}
-
-MCF::MCF(std::vector<MCFCore::Misc::DownloadProvider*> &vProviderList, Misc::GetFile_s* pFileAuth)
-{
-	m_pFileAuth = NULL;
-	m_sHeader = NULL;
-
-	init();
-
-	for (size_t x=0; x<vProviderList.size(); x++)
-		m_vProviderList.push_back(new MCFCore::Misc::DownloadProvider(vProviderList[x]));
-
-	Safe::strncpy(m_pFileAuth->authhash, 33, pFileAuth->authhash, 33);
-
-	size_t size = Safe::strlen(pFileAuth->authkey, 10);
-	memcpy(m_pFileAuth->authkey, pFileAuth->authkey, size);
-
-}
-
-void MCF::init()
-{
-	m_iLastSorted = 0;
-
-	safe_delete(m_sHeader);
-	m_sHeader = new MCFCore::MCFHeader();
-
-	m_uiChunkCount = 0;
-
-	m_bPaused = false;
-	m_bStopped = false;
-	m_pTHandle = NULL;
-
 	setWorkerCount(0);
+}
 
-	safe_delete(m_pFileAuth);
-
-	m_pFileAuth = new Misc::GetFile_s;
-	memset( m_pFileAuth, 0 , sizeof( Misc::GetFile_s ));
-
-	m_uiFileOffset = 0;
+MCF::MCF(std::vector<std::shared_ptr<const MCFCore::Misc::DownloadProvider>> &vProviderList, std::shared_ptr<const Misc::GetFile_s> pFileAuth)
+	: MCF()
+{
+	m_vProviderList = vProviderList;
+	m_pFileAuth = pFileAuth;
 }
 
 MCF::~MCF()
@@ -97,28 +63,17 @@ MCF::~MCF()
 	m_mThreadMutex.lock();
 	safe_delete(m_pTHandle);
 	m_mThreadMutex.unlock();
-
-	safe_delete(m_pFileList);
-	safe_delete(m_vProviderList);
-
-	safe_delete(m_sHeader);
-	safe_delete(m_pFileAuth);
 }
 
 void MCF::disableCompression()
 {
-	if (!m_sHeader)
-		m_sHeader = new MCFCore::MCFHeader();
-
+	assert(m_sHeader);
 	m_sHeader->addFlags(MCFCore::MCFHeaderI::FLAG_NOTCOMPRESSED);
 }
 
 bool MCF::isCompressed()
 {
-	//compression defaults to on
-	if (!m_sHeader)
-		return true;
-
+	assert(m_sHeader);
 	return !(m_sHeader->getFlags() & MCFCore::MCFHeaderI::FLAG_NOTCOMPRESSED);
 }
 
@@ -140,7 +95,7 @@ const char* MCF::getFile()
 
 MCFCore::MCFHeaderI* MCF::getHeader()
 {
-	return m_sHeader;
+	return m_sHeader.get();
 }
 
 void MCF::setHeader(MCFCore::MCFHeaderI* head)
@@ -150,17 +105,12 @@ void MCF::setHeader(MCFCore::MCFHeaderI* head)
 	if (!temp)
 		return;
 
-	if (m_sHeader)
-		safe_delete(m_sHeader);
-
-	m_sHeader = new MCFCore::MCFHeader(head);
+	m_sHeader = std::make_shared<MCFCore::MCFHeader>(head);
 }
 
 void MCF::setHeader(DesuraId id, MCFBranch branch, MCFBuild build)
 {
-	if (!m_sHeader)
-		m_sHeader = new MCFCore::MCFHeader();
-
+	assert(m_sHeader);
 	m_sHeader->setBranch(branch);
 	m_sHeader->setType(id.getType());
 	m_sHeader->setBuild(build);
@@ -258,7 +208,7 @@ uint64 MCF::getFileSize()
 	return size;
 }
 
-void MCF::addFile(MCFCore::MCFFile* file)
+void MCF::addFile(std::shared_ptr<MCFCore::MCFFile>& file)
 {
 	m_pFileList.push_back(file);
 }
@@ -268,13 +218,13 @@ MCFCore::MCFFileI* MCF::getMCFFile(uint32 index)
 	if (index >= m_pFileList.size())
 		return NULL;
 
-	return m_pFileList[index];
+	return m_pFileList[index].get();
 }
 
-MCFCore::MCFFile* MCF::getFile( uint32 index )
+std::shared_ptr<MCFCore::MCFFile> MCF::getFile( uint32 index )
 {
 	if (index >= m_pFileList.size())
-		return NULL;
+		return std::shared_ptr<MCFCore::MCFFile>();
 
 	return m_pFileList[index];
 }
@@ -290,37 +240,28 @@ void MCF::parseXml(char* buff, uint32 buffLen)
 	if (m_bStopped)
 		return;
 
-	TiXmlDocument doc;
+	XML::gcXMLDocument doc(buff, buffLen);
 	
-	doc.SetCondenseWhiteSpace(false);
-	XML::loadBuffer(doc, buff, buffLen);
+	auto fNode = doc.GetRoot("files");
 
-	TiXmlNode *fNode = doc.FirstChild("files");
-
-	if (!fNode)
+	if (!fNode.IsValid())
 		throw gcException(ERR_XML_NOPRIMENODE);
 
-	TiXmlElement* pChild = fNode->FirstChildElement();
-
-	while (pChild)
+	fNode.for_each_child("file", [this](const XML::gcXMLElement &xmlElement)
 	{
 		if (m_bStopped)
 			return;
 
-		MCFCore::MCFFile* temp = new MCFCore::MCFFile();
-
 		try
 		{
-			temp->loadXmlData(pChild);
-			m_pFileList.push_back( temp );
+			auto temp = std::make_shared<MCFCore::MCFFile>();
+			temp->loadXmlData(xmlElement);
+			m_pFileList.push_back(temp);
 		}
 		catch (gcException &)
 		{
-			safe_delete(temp);
 		}
-
-		pChild = pChild->NextSiblingElement();
-	}
+	});
 }
 
 void MCF::genXml(XMLSaveAndCompress *sac)

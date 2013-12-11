@@ -102,48 +102,28 @@ void DownloadUpdateTask::downloadUpdate()
 		throw gcException(ERR_INVALIDDATA);
 
 
-	TiXmlDocument doc;
-	XML::loadBuffer(doc, const_cast<char*>(wc->getData()), wc->getDataSize());
+	XML::gcXMLDocument doc(const_cast<char*>(wc->getData()), wc->getDataSize());
+	doc.ProcessStatus("appupdate");
 
-	XML::processStatus(doc, "appupdate");
+	auto mNode = doc.GetRoot("appupdate").FirstChildElement("mcf");
 
-	TiXmlNode *uNode = doc.FirstChild("appupdate");
-
-	if (!uNode)
-		throw gcException(ERR_BADXML);
-
-	TiXmlNode *mNode = uNode->FirstChild("mcf");
-
-	if (!mNode)
+	if (!mNode.IsValid())
 		throw gcException(ERR_BADXML);
 
 	uint32 version = 0;
 	uint32 build = 0;
-	gcString url;
-
-	if (mNode->ToElement())
-	{
-		const char* szId = mNode->ToElement()->Attribute("appid");
-
-		if (szId)
-			version = atoi(szId);
-
-		const char* szBuild = mNode->ToElement()->Attribute("build");
-		
-		if (szBuild)
-			build = atoi(szBuild);
-	}
+	
+	mNode.GetAtt("appid", version);
+	mNode.GetAtt("build", build);
 
 	if (version == 0 || build == 0)
 		throw gcException(ERR_BADXML);
 
 	//check to see if its newer than last
 	if (appbuild != 0 && build <= appbuild && appver == version)
-	{
 		return;
-	}
 
-	XML::GetChild("url", url, mNode);
+	gcString url = mNode.GetChild("url");
 
 	if (url.size() == 0)
 		throw gcException(ERR_BADXML);

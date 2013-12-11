@@ -20,7 +20,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>
 #define DESURA_UMCF_FILE_H
 
 #include <string.h>
-#include "tinyxml.h"
 
 #define UMCF_NAME_LEN 256
 #define UMCF_PATH_LEN 2048
@@ -35,6 +34,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>
 #endif
 #endif
 
+
+namespace XML
+{
+	class gcXMLElement;
+}
 
 enum
 {
@@ -130,7 +134,7 @@ public:
 	void setTimeStamp(uint64 time){m_ullTimeStamp = time;}
 	void setOffset(uint64 offset){ m_ullOffset = offset; }
 
-	uint8 loadXmlData(TiXmlElement *xmlNode);
+	uint8 loadXmlData(const XML::gcXMLElement &xmlElement);
 
 	//checks to see if file exists in dir
 	bool checkFile(const wchar_t* dir);
@@ -147,7 +151,7 @@ public:
 
 	void remove(const wchar_t* dir);
 
-	void genXml(TiXmlElement *element);
+	void genXml(XML::gcXMLElement &xmlElement);
 	bool verifyFile(FILEHANDLE hFile, uint64 baseOffset);
 
 	uint8 readMCFAndSave(FILEHANDLE hFile, const wchar_t* path, uint64 offset, DelegateI<ProgressCB> *del = NULL);

@@ -267,12 +267,11 @@ bool UploadDump(const char* file, const char* user, int build, int branch, Deleg
 		return false;
 	}
 
-	TiXmlDocument doc;
-	XML::loadBuffer(doc, const_cast<char*>(hh->getData()), hh->getDataSize());
-	
+	XML::gcXMLDocument doc(const_cast<char*>(hh->getData()), hh->getDataSize());
+
 	try
 	{
-		XML::processStatus(doc, "crashupload");
+		doc.ProcessStatus("crashupload");
 		log.write("Uploaded dump\r\n");
 		UTIL::FS::delFile(UTIL::FS::Path(dump, "", true));		
 	}

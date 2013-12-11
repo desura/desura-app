@@ -66,7 +66,7 @@ class CEXPORT MCF : public MCFI
 {
 public:
 	MCF();
-	MCF(std::vector<MCFCore::Misc::DownloadProvider*> &vProviderList, Misc::GetFile_s* pFileAuth);
+	MCF(std::vector<std::shared_ptr<const MCFCore::Misc::DownloadProvider>> &vProviderList, std::shared_ptr<const Misc::GetFile_s> pFileAuth);
 	virtual ~MCF();
 
 
@@ -76,7 +76,7 @@ public:
 	//! 
 	//! @param file MCFFile to add
 	//!
-	void addFile(MCFCore::MCFFile* file);
+	void addFile(std::shared_ptr<MCFCore::MCFFile>& file);
 
 	//! Finds a files index by its hash
 	//!
@@ -90,13 +90,13 @@ public:
 	//! @param index File index
 	//! @return MCFFile
 	//!
-	MCFCore::MCFFile* getFile(uint32 index);
+	std::shared_ptr<MCFCore::MCFFile> getFile(uint32 index);
 	
 	//! Gets the file list
 	//!
 	//! @return MCFile list
 	//!
-	std::vector<MCFCore::MCFFile*>& getFileList()
+	std::vector<std::shared_ptr<MCFCore::MCFFile>>& getFileList()
 	{
 		return m_pFileList;
 	}
@@ -115,102 +115,102 @@ public:
 	// Getters
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-	virtual MCFCore::MCFHeaderI* getHeader();
-	virtual uint64 getDLSize();
-	virtual uint64 getINSize();
-	virtual uint64 getFileSize();
-	virtual uint32 getFileCount();
-	virtual MCFCore::MCFFileI* getMCFFile(uint32 index);
-	virtual const char* getFile();
-	virtual void getDownloadProviders(const char* url, MCFCore::Misc::UserCookies *pCookies, bool *unauthed = NULL, bool local = false);
-	virtual Misc::GetFile_s* getAuthInfo();
-	virtual Event<MCFCore::Misc::ProgressInfo>& getProgEvent();
-	virtual Event<gcException>&	getErrorEvent();
-	virtual Event<MCFCore::Misc::DP_s>& getNewProvider();
-	virtual bool isCompressed();
-	virtual bool isComplete();
-	virtual bool isComplete(MCFI* exsitingFiles);
+	MCFCore::MCFHeaderI* getHeader() override;
+	uint64 getDLSize() override;
+	uint64 getINSize() override;
+	uint64 getFileSize() override;
+	uint32 getFileCount() override;
+	MCFCore::MCFFileI* getMCFFile(uint32 index) override;
+	const char* getFile() override;
+	void getDownloadProviders(const char* url, MCFCore::Misc::UserCookies *pCookies, bool *unauthed = NULL, bool local = false) override;
+	std::shared_ptr<const Misc::GetFile_s> getAuthInfo() override;
+	Event<MCFCore::Misc::ProgressInfo>& getProgEvent() override;
+	Event<gcException>&	getErrorEvent() override;
+	Event<MCFCore::Misc::DP_s>& getNewProvider() override;
+	bool isCompressed() override;
+	bool isComplete() override;
+	bool isComplete(MCFI* exsitingFiles) override;
 
 
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////
 	// Setters
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-	virtual void setHeader(MCFCore::MCFHeaderI* head);
-	virtual void setHeader(DesuraId id, MCFBranch branch, MCFBuild build);	
-	virtual void setFile(const char* file);
-	virtual void setFile(const char* file, uint64 offset);
-	virtual void setWorkerCount(uint16 count);
-	virtual void disableCompression();
-	virtual void addProvider(MCFCore::Misc::DownloadProvider* pov);
+	void setHeader(MCFCore::MCFHeaderI* head) override;
+	void setHeader(DesuraId id, MCFBranch branch, MCFBuild build) override;	
+	void setFile(const char* file) override;
+	void setFile(const char* file, uint64 offset) override;
+	void setWorkerCount(uint16 count) override;
+	void disableCompression() override;
+	void addProvider(MCFCore::Misc::DownloadProvider* pov) override;
 
 
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////
 	// File processing
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-	virtual void parseFolder(const char *path, bool hashFile = false, bool reportProgress = false);
-	virtual void parseMCF();
-	virtual void saveMCF();
-	virtual void saveFiles(const char* path );
-	virtual bool verifyInstall(const char* path, bool flagMissing = false, bool useDiffs = false);
-	virtual void removeFiles(const char* path,  bool removeNonSave = true);
-	virtual void hashFiles();
-	virtual void hashFiles(MCFI* inMcf);
-	virtual bool crcCheck();
-	virtual void makeCRC();
-	virtual void removeIncompleteFiles();
-	virtual void saveXml(const char* file);
-	virtual void saveBlankMcf();
-	virtual void saveMCFHeader();
+	void parseFolder(const char *path, bool hashFile = false, bool reportProgress = false) override;
+	void parseMCF() override;
+	void saveMCF() override;
+	void saveFiles(const char* path ) override;
+	bool verifyInstall(const char* path, bool flagMissing = false, bool useDiffs = false) override;
+	void removeFiles(const char* path,  bool removeNonSave = true) override;
+	void hashFiles() override;
+	void hashFiles(MCFI* inMcf) override;
+	bool crcCheck() override;
+	void makeCRC() override;
+	void removeIncompleteFiles() override;
+	void saveXml(const char* file) override;
+	void saveBlankMcf() override;
+	void saveMCFHeader() override;
 
-	virtual void preAllocateFile();
+	void preAllocateFile() override;
 
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////
 	// Downloading
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-	virtual void dlHeaderFromWeb();
-	virtual void dlFilesFromWeb();
-	virtual void dlHeaderFromHttp(const char* url);
-	virtual void dlFilesFromHttp(const char* url, const char* installDir = NULL);
+	void dlHeaderFromWeb() override;
+	void dlFilesFromWeb() override;
+	void dlHeaderFromHttp(const char* url) override;
+	void dlFilesFromHttp(const char* url, const char* installDir = NULL) override;
 
 
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////
 	// Threads
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-	virtual void pause();
-	virtual void unpause();
-	virtual void stop();
-	virtual bool isPaused();
+	void pause() override;
+	void unpause() override;
+	void stop() override;
+	bool isPaused() override;
 
 
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////
 	// Mcf processing
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-	virtual void getPatchStats(MCFI* inMcf, uint64* dlSize, uint32* fileCount);
-	virtual void makePatch(MCFI* inMcf);
-	virtual void makeFullFile(MCFI* inMcf, const char* path);
-	virtual void makeBackPatchMCF(MCFI* inMcf, const char* path);
-	virtual bool verifyMCF();
-	virtual void copyMissingFiles(MCFI *sourceMcf);
-	virtual void markFiles(MCFI* inMcf, bool tagSame, bool tagChanged, bool tagDeleted, bool tagNew);
-	virtual void exportMcf(const char* path);
-	virtual void markChanged(MCFI* inMcf);
-	virtual void resetSavedFiles();
+	void getPatchStats(MCFI* inMcf, uint64* dlSize, uint32* fileCount) override;
+	void makePatch(MCFI* inMcf) override;
+	void makeFullFile(MCFI* inMcf, const char* path) override;
+	void makeBackPatchMCF(MCFI* inMcf, const char* path) override;
+	bool verifyMCF() override;
+	void copyMissingFiles(MCFI *sourceMcf) override;
+	void markFiles(MCFI* inMcf, bool tagSame, bool tagChanged, bool tagDeleted, bool tagNew) override;
+	void exportMcf(const char* path) override;
+	void markChanged(MCFI* inMcf) override;
+	void resetSavedFiles() override;
 
-	virtual int32 verifyAll(const char* tempPath);
-	virtual bool verifyUnitTest(MCFI* mcf);
+	int32 verifyAll(const char* tempPath) override;
+	bool verifyUnitTest(MCFI* mcf) override;
 
-	virtual void removeNonSavedFiles();
-	virtual bool fixMD5AndCRC();
-	virtual void optimiseAndSaveMcf(MCFI* prevMcf, const char* path);
+	void removeNonSavedFiles() override;
+	bool fixMD5AndCRC() override;
+	void optimiseAndSaveMcf(MCFI* prevMcf, const char* path) override;
 
-	virtual uint64 getFileOffset();
+	uint64 getFileOffset();
 
-	virtual void createCourgetteDiffs(MCFI* oldMcf, const char* outPath);
+	void createCourgetteDiffs(MCFI* oldMcf, const char* outPath) override;
 
 protected:
 	//! A struct that holds the position of a MCFFile in two different Mcfs.
@@ -226,7 +226,7 @@ protected:
 	//!
 	struct file_sortkey
 	{
-		bool operator()(MCFCore::MCFFile *lhs, MCFCore::MCFFile *rhs )
+		bool operator()(std::shared_ptr<MCFCore::MCFFile>& lhs, std::shared_ptr<MCFCore::MCFFile>& rhs)
 		{
 			return (lhs->getHash() < rhs->getHash());
 		}
@@ -278,7 +278,7 @@ protected:
 	//! @param hFileSrc File handle to the source mcf
 	//! @param hFileDest File handle to the dest mcf
 	//!
-	void copyFile(MCFCore::MCFFile* file, uint64 &lastOffset, UTIL::FS::FileHandle& hFileSrc, UTIL::FS::FileHandle& hFileDest);
+	void copyFile(std::shared_ptr<MCFCore::MCFFile> file, uint64 &lastOffset, UTIL::FS::FileHandle& hFileSrc, UTIL::FS::FileHandle& hFileDest);
 
 
 	//! Finds a file by performing a binary search
@@ -307,36 +307,31 @@ protected:
 	//!
 	void saveMCF_Header(char* xml, uint32 xmlSize, uint64 offset);
 
-	//! This is used by the constuctors to init the mcf to a common state
-	//!
-	void init();
-
 	//! Gets a read handle. Applys file offset for use with mcf embeded in another file
 	void getReadHandle(UTIL::FS::FileHandle& handle);
 	void getWriteHandle(UTIL::FS::FileHandle& handle);
 
 
-	void createCourgetteDiff(CourgetteInstance* ci, UTIL::MISC::Buffer &oldBuff, UTIL::MISC::Buffer &newBuff, const char* oldHash, MCFFile* file, UTIL::FS::FileHandle& dest);
-	void extractFile(const char* mcfPath, MCFFile* file, UTIL::MISC::Buffer &outBuff);
+	void createCourgetteDiff(CourgetteInstance* ci, UTIL::MISC::Buffer &oldBuff, UTIL::MISC::Buffer &newBuff, const char* oldHash, std::shared_ptr<MCFFile>& file, UTIL::FS::FileHandle& dest);
+	void extractFile(const char* mcfPath, std::shared_ptr<MCFFile>& file, UTIL::MISC::Buffer &outBuff);
 
 private:
-	uint16 m_uiWCount;
+	uint16 m_uiWCount = 0;
 	gcString m_szFile;
 
-	Misc::GetFile_s* m_pFileAuth;
+	volatile bool m_bStopped = false;
+	volatile bool m_bPaused = false;
 
-	volatile bool m_bStopped;
-	volatile bool m_bPaused;
+	uint32 m_iLastSorted = 0;
+	uint32 m_uiChunkCount = 0;
+	uint64 m_uiFileOffset = 0;
 
-	uint32 m_iLastSorted;
-	uint32 m_uiChunkCount;
-	uint64 m_uiFileOffset;
+	::Thread::BaseThread *m_pTHandle = nullptr;
 
-	::Thread::BaseThread *m_pTHandle;
-
-	MCFCore::MCFHeader* m_sHeader;
-	std::vector<MCFCore::MCFFile*> m_pFileList;
-	std::vector<MCFCore::Misc::DownloadProvider*> m_vProviderList;
+	std::shared_ptr<const Misc::GetFile_s> m_pFileAuth;
+	std::shared_ptr<MCFCore::MCFHeader> m_sHeader;
+	std::vector<std::shared_ptr<MCFCore::MCFFile>> m_pFileList;
+	std::vector<std::shared_ptr<const MCFCore::Misc::DownloadProvider>> m_vProviderList;
 
 	::Thread::Mutex m_mThreadMutex;
 };
@@ -347,7 +342,7 @@ inline uint32 MCF::getFileCount()
 	return (uint32)m_pFileList.size();
 }
 
-inline Misc::GetFile_s* MCF::getAuthInfo()
+inline std::shared_ptr<const Misc::GetFile_s> MCF::getAuthInfo()
 {
 	return m_pFileAuth;
 }
@@ -369,7 +364,7 @@ inline Event<MCFCore::Misc::DP_s>& MCF::getNewProvider()
 
 inline void MCF::addProvider(MCFCore::Misc::DownloadProvider* pov)
 {
-	m_vProviderList.push_back(pov);
+	m_vProviderList.push_back(std::shared_ptr<MCFCore::Misc::DownloadProvider>(pov));
 }
 
 }

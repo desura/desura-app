@@ -32,33 +32,24 @@ class SFTWorkerInfo
 {
 public:
 	SFTWorkerInfo(SFTController* con, uint32 i)
+		: id(i)
+		, workThread(std::make_unique<SFTWorker>(con, i))
 	{
-		id = i;
-		workThread = new SFTWorker(con, i);
 		workThread->setPriority(::Thread::BaseThread::BELOW_NORMAL);
-		curFile = NULL;
-		status = 0;
-		offset = 0;
-		ammountDone = 0;
 	}
 
-	~SFTWorkerInfo()
-	{
-		safe_delete(vBuffer);
-		safe_delete(workThread);
-	}
 
-	uint64 offset;
-	uint64 ammountDone;
+	uint64 offset = 0;
+	uint64 ammountDone = 0;
 
-	uint32 id;
-	uint32 status;
+	uint32 id = 0;
+	uint32 status = 0;
 
 	::Thread::Mutex mutex;
 
-	MCFCore::MCFFile* curFile;
-	SFTWorker* workThread;
-	std::vector<SFTWorkerBuffer*> vBuffer;
+	std::shared_ptr<MCFCore::MCFFile> curFile;
+	std::unique_ptr<SFTWorker> workThread;
+	std::vector<std::shared_ptr<SFTWorkerBuffer>> vBuffer;
 };
 
 
@@ -70,9 +61,7 @@ SFTController::SFTController(uint16 num, MCFCore::MCF* caller, const char* path)
 
 SFTController::~SFTController()
 {
-	safe_delete(m_vWorkerList);
 }
-
 
 void SFTController::run()
 {
@@ -231,7 +220,7 @@ bool SFTController::fillBuffers(UTIL::FS::FileHandle& fileHandle)
 
 		processed = true;
 
-		MCFCore::MCFFile *file = m_vWorkerList[x]->curFile;
+		auto file = m_vWorkerList[x]->curFile;
 
 		if (!file || file->isZeroSize())
 			continue;
@@ -263,7 +252,7 @@ bool SFTController::fillBuffers(UTIL::FS::FileHandle& fileHandle)
 
 		m_vWorkerList[x]->mutex.lock();
 
-		m_vWorkerList[x]->vBuffer.push_back(new SFTWorkerBuffer(buffSize, buff));
+		m_vWorkerList[x]->vBuffer.push_back(std::make_shared<SFTWorkerBuffer>(buffSize, buff));
 
 		if (endFile)
 			m_vWorkerList[x]->status = SF_STATUS_ENDFILE;
@@ -290,12 +279,12 @@ uint32 SFTController::getStatus(uint32 id)
 	return worker->status;
 }
 
-SFTWorkerBuffer* SFTController::getBlock(uint32 id, uint32 &status)
+std::shared_ptr<SFTWorkerBuffer> SFTController::getBlock(uint32 id, uint32 &status)
 {
 	SFTWorkerInfo* worker = findWorker(id);
 	assert(worker);
 
-	SFTWorkerBuffer* temp = NULL;
+	std::shared_ptr<SFTWorkerBuffer> temp = NULL;
 
 	worker->mutex.lock();
 		status = worker->status;
@@ -316,7 +305,7 @@ void SFTController::pokeThread()
 	m_WaitCond.notify();
 }
 
-MCFCore::MCFFile* SFTController::newTask(uint32 id)
+std::shared_ptr<MCFCore::MCFFile> SFTController::newTask(uint32 id)
 {
 	SFTWorkerInfo* worker = findWorker(id);
 	assert(worker);
@@ -342,7 +331,7 @@ MCFCore::MCFFile* SFTController::newTask(uint32 id)
 	m_vFileList.pop_back();
 	m_pFileMutex.unlock();
 
-	MCFCore::MCFFile *temp = m_rvFileList[index];
+	auto temp = m_rvFileList[index];
 
 	if (!temp)
 		return newTask(id);
@@ -388,7 +377,7 @@ void SFTController::endTask(uint32 id, uint32 status, gcException e)
 	worker->curFile = NULL;
 
 	worker->mutex.lock();
-	safe_delete(worker->vBuffer);
+	worker->vBuffer.clear();
 	worker->mutex.unlock();
 }
 

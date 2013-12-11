@@ -53,10 +53,10 @@ struct block_sortkey
 class WGTWorkerInfo
 {
 public:
-	WGTWorkerInfo(WGTControllerI* con, uint32 i, MCFCore::Misc::ProviderManager *pProvMng, MCFCore::Misc::GetFile_s* pFileAuth)
+	WGTWorkerInfo(WGTControllerI* con, uint32 i, MCFCore::Misc::ProviderManager *pProvMng, const MCFCore::Misc::GetFile_s& fileAuth)
 	{
 		id = i;
-		workThread = new WGTWorker(con, i, pProvMng, pFileAuth);
+		workThread = new WGTWorker(con, i, pProvMng, fileAuth);
 		workThread->setPriority(::Thread::BaseThread::BELOW_NORMAL);
 		curBlock = NULL;
 		ammountDone = 0;
@@ -82,12 +82,13 @@ public:
 };
 
 
-WGTController::WGTController(std::vector<MCFCore::Misc::DownloadProvider*> &source, uint16 numWorkers, MCFCore::MCF* caller, bool checkMcf) : MCFCore::Thread::BaseMCFThread(numWorkers, caller, "WebGet Controller Thread")
+WGTController::WGTController(std::vector<std::shared_ptr<const MCFCore::Misc::DownloadProvider>> &source, uint16 numWorkers, MCFCore::MCF* caller, bool checkMcf) 
+	: MCFCore::Thread::BaseMCFThread(numWorkers, caller, "WebGet Controller Thread")
 {
 #ifdef DEBUG
 #if 0
 	source.clear();
-	source.push_back(new MCFCore::Misc::DownloadProvider("us1", "mcf://10.0.0.2:62003", "http://images.wikia.com/mariokart/images/4/45/Mkdd_giant_banana.jpg", ""));
+	source.push_back(std::make_shread<MCFCore::Misc::DownloadProvider>("us1", "mcf://10.0.0.2:62003", "http://images.wikia.com/mariokart/images/4/45/Mkdd_giant_banana.jpg", ""));
 	/*std::vector<MCFCore::Misc::DownloadProvider*> list;
 
 	for (size_t x=0; x<source.size(); x++)
@@ -238,7 +239,7 @@ void WGTController::createWorkers()
 {
 	for (uint16 x=0; x<m_uiNumber; x++)
 	{
-		WGTWorkerInfo* temp = new WGTWorkerInfo(this, (uint32)x, m_pProvManager, m_pFileAuth);
+		WGTWorkerInfo* temp = new WGTWorkerInfo(this, (uint32)x, m_pProvManager, *m_pFileAuth);
 		m_vWorkerList.push_back(temp);
 
 		temp->workThread->start();
@@ -385,7 +386,7 @@ static bool WGTBlockSort(Misc::WGTBlock* a, Misc::WGTBlock* b)
 	return a->webOffset < b->webOffset;
 }
 
-static bool SortByOffset(MCFCore::MCFFile* a, MCFCore::MCFFile* b)
+static bool SortByOffset(std::shared_ptr<MCFCore::MCFFile>& a, std::shared_ptr<MCFCore::MCFFile>& b)
 {
 	return a->getOffSet() < b->getOffSet();
 }
@@ -416,13 +417,13 @@ bool WGTController::fillBlockList()
 
 	size_t fsSize = m_rvFileList.size();
 
-	std::vector<MCFFile*> tempFileList;
+	std::vector<std::shared_ptr<MCFFile>> tempFileList;
 	tempFileList.reserve(fsSize);
 
 	//find the last files offset
 	for (size_t x=0; x< fsSize; x++)
 	{
-		MCFFile *file = m_rvFileList[x];
+		auto file = m_rvFileList[x];
 
 		if (!file->isSaved())
 			continue;
@@ -449,9 +450,9 @@ bool WGTController::fillBlockList()
 	std::deque<Misc::WGTBlock*> vBlockList;
 	std::sort(tempFileList.begin(), tempFileList.end(), SortByOffset);
 
-	for (size_t x=0; x< fsSize; x++)
+	for (size_t x=0; x<tempFileList.size(); ++x)
 	{
-		MCFFile* file = tempFileList[x];
+		auto file = tempFileList[x];
 
 		if (isStopped())
 		{
@@ -489,7 +490,7 @@ bool WGTController::fillBlockList()
 		bool started = file->hasStartedDL();
 
 		uint32 index = webMcf.findFileIndexByHash(file->getHash());
-		MCFCore::MCFFile *webFile = webMcf.getFile(index);
+		auto webFile = webMcf.getFile(index);
 
 		if (index == UNKNOWN_ITEM || !webFile || !webFile->isSaved())
 		{

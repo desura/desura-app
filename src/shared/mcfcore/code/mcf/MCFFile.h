@@ -25,7 +25,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>
 #include "mcfcore/MCFFileI.h"
 
 #include <string.h>
-#include "tinyxml.h"
+
+
+namespace XML
+{
+	class gcXMLElement;
+}
 
 class XMLSaveAndCompress;
 class CourgetteInstance;
@@ -49,6 +54,7 @@ public:
 	//! Copy Constuctor
 	//!
 	MCFFile(MCFFile* tMCFFile);
+	MCFFile(std::shared_ptr<MCFFile> tMCFFile);
 
 	virtual ~MCFFile();
 
@@ -56,7 +62,7 @@ public:
 	//!
 	//! @param xmlNode node in the xml tree
 	//!
-	void loadXmlData(TiXmlElement *xmlNode);
+	void loadXmlData(const XML::gcXMLElement &xmlElement);
 
 	//! Generates xml from file data and appends it to element
 	//!
@@ -183,8 +189,8 @@ public:
 	//!
 	//! @param tMCFFile File to copy from
 	//!
-	void copySettings(MCFFile* tMCFFile);
-	void copyBorkedSettings(MCFFile* tMCFFile);
+	void copySettings(std::shared_ptr<MCFFile> tMCFFile);
+	void copyBorkedSettings(std::shared_ptr<MCFFile> tMCFFile);
 
 	//! Checks to see if this file is completed inside a MCF. Sets a flag if true
 	//!
@@ -209,7 +215,7 @@ public:
 	//! @return Compair status (see FILE_CMP enum)
 	//! @see MCFFileI
 	//!
-	uint8 isEquals( MCFFile * file);
+	uint8 isEquals(MCFFile * file);
 
 
 	//! Gets the crc block size

@@ -25,6 +25,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>
 #include "DownloadProvider.h"
 #include "Event.h"
 
+#include <array>
+
 #define MCF_FACTORY "MCF_INTERFACE_001"
 
 namespace MCFCore
@@ -38,14 +40,15 @@ namespace Misc
 	typedef struct
 	{
 		DownloadProvider::PROVIDER action;	//!< Action (add or remove)
-		DownloadProvider* provider;			//!< Provider information
+		std::shared_ptr<const DownloadProvider> provider;			//!< Provider information
 	} DP_s;
 
-	typedef struct
+	class GetFile_s
 	{
-		char authhash[33];
-		char authkey[10];
-	} GetFile_s;
+	public:
+		std::array<char, 33> authhash[33];
+		std::array<char, 10> authkey[10];
+	};
 }
 
 //! MCFI is the interface file for MCF's. A MCF stores content for the desura application and allows part downloads 
@@ -116,7 +119,7 @@ public:
 	//!
 	//! @return Auth information
 	//!
-	virtual Misc::GetFile_s* getAuthInfo()=0;
+	virtual std::shared_ptr<const Misc::GetFile_s> getAuthInfo()=0;
 
 	//! Gets the progress event
 	//!

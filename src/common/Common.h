@@ -251,7 +251,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>
 #include <wchar.h>
 #include <string.h>
 
-#include "tinyxml.h"
 //using namespace openutils;
 
 #include <vector>
@@ -846,3 +845,5 @@ T Clamp(T val, T minVal, T maxVal)
 	#endif
 #endif
 
+#include <assert.h>
+#include <memory>

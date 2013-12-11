@@ -98,15 +98,15 @@ void UMcfFile::setCCsum(const char* var)
 		m_szCCsum = var;
 }
 
-uint8 UMcfFile::loadXmlData(TiXmlElement *xmlNode)
+uint8 UMcfFile::loadXmlData(const XML::gcXMLElement &xmlElement)
 {
 	std::string name;
 	std::string path;
 
-	XML::GetChild("name", name, xmlNode);
-	XML::GetChild("path", path, xmlNode);
-	XML::GetChild("nom_csum", m_szCsum, xmlNode);
-	XML::GetChild("com_csum", m_szCCsum, xmlNode);
+	xmlElement.GetChild("name", name);
+	xmlElement.GetChild("path", path);
+	xmlElement.GetChild("nom_csum", m_szCsum);
+	xmlElement.GetChild("com_csum", m_szCCsum);
 
 	m_szName = name;
 	m_szPath = path;
@@ -115,38 +115,38 @@ uint8 UMcfFile::loadXmlData(TiXmlElement *xmlNode)
 	std::replace(m_szPath.begin(), m_szPath.end(), '\\', '/');
 #endif
 
-	XML::GetChild("size", m_ullSize, xmlNode);
-	XML::GetChild("csize", m_ullCSize, xmlNode);
-	XML::GetChild("flags", m_uiFlags, xmlNode);
+	xmlElement.GetChild("size", m_ullSize);
+	xmlElement.GetChild("csize", m_ullCSize);
+	xmlElement.GetChild("flags", m_uiFlags);
 
-	XML::GetChild("offset", m_ullOffset, xmlNode);
-	XML::GetChild("tstamp", m_ullTimeStamp, xmlNode);
+	xmlElement.GetChild("offset", m_ullOffset);
+	xmlElement.GetChild("tstamp", m_ullTimeStamp);
 
 	return MCFF_OK;
 }
 
-void UMcfFile::genXml(TiXmlElement *element)
+void UMcfFile::genXml(XML::gcXMLElement &xmlElement)
 {
 #ifdef NIX
 	std::wstring copy(m_szPath);
 	std::replace(copy.begin(), copy.end(), '/', '\\');
 #endif
 
-	XML::WriteChild("name", gcString(m_szName), element);
+	xmlElement.WriteChild("name", gcString(m_szName));
 #ifdef NIX
-	XML::WriteChild("path", gcString(copy), element);
+	xmlElement.WriteChild("path", gcString(copy));
 #else
-	XML::WriteChild("path", gcString(m_szPath), element);
+	xmlElement.WriteChild("path", gcString(m_szPath));
 #endif
-	XML::WriteChild("nom_csum", m_szCsum, element);
-	XML::WriteChild("com_csum", m_szCCsum, element);
+	xmlElement.WriteChild("nom_csum", m_szCsum);
+	xmlElement.WriteChild("com_csum", m_szCCsum);
 
-	XML::WriteChild("size", m_ullSize, element);
-	XML::WriteChild("csize", m_ullCSize, element);
-	XML::WriteChild("flags", m_uiFlags, element);
+	xmlElement.WriteChild("size", m_ullSize);
+	xmlElement.WriteChild("csize", m_ullCSize);
+	xmlElement.WriteChild("flags", m_uiFlags);
 
-	XML::WriteChild("offset", m_ullOffset, element);
-	XML::WriteChild("tstamp", m_ullTimeStamp, element);
+	xmlElement.WriteChild("offset", m_ullOffset);
+	xmlElement.WriteChild("tstamp", m_ullTimeStamp);
 }
 
 

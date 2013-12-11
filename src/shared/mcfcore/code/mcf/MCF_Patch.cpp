@@ -82,7 +82,7 @@ void MCF::resetSavedFiles()
 	}
 }
 
-void MCF::copyFile(MCFCore::MCFFile* file, uint64 &lastOffset, UTIL::FS::FileHandle& hFileSrc, UTIL::FS::FileHandle& hFileDest)
+void MCF::copyFile(std::shared_ptr<MCFCore::MCFFile> file, uint64 &lastOffset, UTIL::FS::FileHandle& hFileSrc, UTIL::FS::FileHandle& hFileDest)
 {
 	if (m_bStopped)
 		return;
@@ -95,11 +95,11 @@ void MCF::copyFile(MCFCore::MCFFile* file, uint64 &lastOffset, UTIL::FS::FileHan
 
 	uint32 element = findFileIndexByHash(file->getHash());
 
-	MCFCore::MCFFile* temp = NULL;
+	std::shared_ptr<MCFCore::MCFFile> temp;
 
 	if (element == UNKNOWN_ITEM)
 	{
-		temp = new MCFCore::MCFFile();
+		temp = std::make_shared<MCFCore::MCFFile>();
 		m_pFileList.push_back(temp);
 	}
 	else
@@ -212,8 +212,8 @@ void MCF::copyMissingFiles(MCFI *sourceMcf)
 
 	for (size_t x=0; x<vSame.size(); x++)
 	{
-		MCFCore::MCFFile* tempFile = temp->getFile(vSame[x].otherMcf);
-		MCFCore::MCFFile* thisFile = m_pFileList[vSame[x].thisMcf];
+		auto tempFile = temp->getFile(vSame[x].otherMcf);
+		auto thisFile = m_pFileList[vSame[x].thisMcf];
 
 		if (thisFile->isSaved() && destValid)
 			thisFile->verifyMcf(hFileDest, placeholder);
@@ -243,8 +243,8 @@ void MCF::copyMissingFiles(MCFI *sourceMcf)
 
 	for (size_t x=0; x<vProcessList.size(); x++)
 	{
-		MCFCore::MCFFile* tempFile = temp->getFile(vProcessList[x].otherMcf);
-		MCFCore::MCFFile* thisFile = m_pFileList[vProcessList[x].thisMcf];
+		auto tempFile = temp->getFile(vProcessList[x].otherMcf);
+		auto thisFile = m_pFileList[vProcessList[x].thisMcf];
 
 		tempFile->verifyMcf(hFileSrc, placeholder);
 		bool isComplete = tempFile->isComplete();
@@ -324,8 +324,8 @@ void MCF::makeFullFile(MCFI* patchFile, const char* path)
 	// remove all the same files that are in the patch from the patch as to group the new files together
 	for (size_t x=0; x<vSame.size(); x++)
 	{
-		MCFCore::MCFFile* tempFile = temp->getFile(vSame[x].otherMcf);
-		MCFCore::MCFFile* thisFile = m_pFileList[vSame[x].thisMcf];
+		auto tempFile = temp->getFile(vSame[x].otherMcf);
+		auto thisFile = m_pFileList[vSame[x].thisMcf];
 
 		if (thisFile->isSaved())
 		{
@@ -360,7 +360,7 @@ void MCF::makeFullFile(MCFI* patchFile, const char* path)
 	//copy all the files from the patch first as they are more likley to be downloaded
 	for (uint32 x=0; x<(uint32)temp->getFileCount(); x++)
 	{
-		MCFCore::MCFFile* tempFile = temp->getFile(x);
+		auto tempFile = temp->getFile(x);
 
 		if (!tempFile || !tempFile->isSaved())
 			continue;
@@ -389,7 +389,7 @@ void MCF::makeFullFile(MCFI* patchFile, const char* path)
 
 	for (size_t x=0; x<fullMcf.getFileCount(); x++)
 	{
-		MCFFile* file = fullMcf.getFile(x);
+		auto file = fullMcf.getFile(x);
 
 		if (file->getCRCCount() == 0)
 			file->generateCRC(hFileDest);
@@ -431,11 +431,11 @@ void MCF::makeBackPatchMCF(MCFI* backFile, const char* path)
 
 	for (uint32 x=0; x<this->getFileCount(); x++)
 	{
-		MCFCore::MCFFile* tempFile = this->getFile(x);
+		auto tempFile = this->getFile(x);
 
 		if (tempFile && !tempFile->isSaved())
 		{
-			FullFile.addFile( new MCFCore::MCFFile(tempFile));
+			FullFile.addFile(std::make_shared<MCFCore::MCFFile>(tempFile));
 		}
 		else
 		{
@@ -546,8 +546,8 @@ void MCF::makePatch(MCFI* file)
 
 void MCF::findSameHashFile(MCF* newFile, std::vector<mcfDif_s> &vSame, std::vector<size_t> &vOther)
 {
-	std::vector<MCFCore::MCFFile*> vThisFileList = m_pFileList;
-	std::vector<MCFCore::MCFFile*> vNewFileList = newFile->getFileList();
+	auto vThisFileList = m_pFileList;
+	auto vNewFileList = newFile->getFileList();
 
 	for (size_t x=0; x<vThisFileList.size(); x++)
 	{
@@ -555,8 +555,8 @@ void MCF::findSameHashFile(MCF* newFile, std::vector<mcfDif_s> &vSame, std::vect
 		
 		for (size_t y=0; y<vNewFileList.size(); y++)
 		{
-			MCFCore::MCFFile* a = vThisFileList[x];
-			MCFCore::MCFFile* b = vNewFileList[y];
+			auto a = vThisFileList[x];
+			auto b = vNewFileList[y];
 
 			if (a->getSize() != b->getSize())
 				continue;
@@ -606,7 +606,7 @@ void MCF::findChanges(MCF* newFile,  std::vector<mcfDif_s> *vSame, std::vector<m
 
 		vUsedList.push_back(element);
 
-		int res = m_pFileList[x]->isEquals( newFile->getFile(element) );
+		int res = m_pFileList[x]->isEquals( newFile->getFile(element).get() );
 
 		switch (res)
 		{
@@ -681,11 +681,11 @@ void MCF::createCourgetteDiffs(MCFI* oldMcf, const char* outPath)
 
 	auto copyFiles = [this, &FullFile, &lastOffset, &hFileSrc, &hFileDest](size_t x)
 	{
-		MCFCore::MCFFile* tempFile = getFile(x);
+		auto tempFile = getFile(x);
 
 		if (tempFile && !tempFile->isSaved())
 		{
-			FullFile.addFile( new MCFCore::MCFFile(tempFile));
+			FullFile.addFile(std::make_shared<MCFCore::MCFFile>(tempFile));
 		}
 		else
 		{
@@ -713,12 +713,12 @@ void MCF::createCourgetteDiffs(MCFI* oldMcf, const char* outPath)
 
 	for (size_t x=0; x<vDiff.size(); x++)
 	{
-		MCFFile* newMCFFile = this->getFile(vDiff[x].thisMcf);
-		MCFFile* oldMCFFile = temp->getFile(vDiff[x].otherMcf);
+		auto newMCFFile = this->getFile(vDiff[x].thisMcf);
+		auto oldMCFFile = temp->getFile(vDiff[x].otherMcf);
 
 		uint32 index = FullFile.findFileIndexByHash(newMCFFile->getHash());
 
-		MCFFile* copyMCFFile = FullFile.getFile(index);
+		auto copyMCFFile = FullFile.getFile(index);
 			
 		UTIL::MISC::Buffer oldBuff(0);
 		UTIL::MISC::Buffer newBuff(0);
@@ -739,7 +739,7 @@ void MCF::createCourgetteDiffs(MCFI* oldMcf, const char* outPath)
 	FullFile.saveMCF_Header();
 }
 
-void MCF::createCourgetteDiff(CourgetteInstance* ci, UTIL::MISC::Buffer &oldBuff, UTIL::MISC::Buffer &newBuff, const char* oldHash, MCFFile* file, UTIL::FS::FileHandle& dest)
+void MCF::createCourgetteDiff(CourgetteInstance* ci, UTIL::MISC::Buffer &oldBuff, UTIL::MISC::Buffer &newBuff, const char* oldHash, std::shared_ptr<MCFFile>& file, UTIL::FS::FileHandle& dest)
 {
 	MD5Progressive md5;
 	uint64 totSize = 0;
@@ -784,7 +784,7 @@ void MCF::createCourgetteDiff(CourgetteInstance* ci, UTIL::MISC::Buffer &oldBuff
 	file->setDiffInfo(oldHash, diffHash.c_str(), tot);
 }
 
-void MCF::extractFile(const char* mcfPath, MCFFile* file, UTIL::MISC::Buffer &outBuff)
+void MCF::extractFile(const char* mcfPath, std::shared_ptr<MCFFile>& file, UTIL::MISC::Buffer &outBuff)
 {
 	if (file->getSize() >> 32)
 		throw gcException(ERR_INVALID, "File is larger than 4gb");

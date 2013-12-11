@@ -94,7 +94,7 @@ private:
 
 	SMTController *m_pCT;
 
-	MCFCore::MCFFile *m_pCurFile;
+	std::shared_ptr<MCFCore::MCFFile> m_pCurFile;
 	UTIL::MISC::BZ2Worker *m_BZ2Worker;
 
 	UTIL::FS::FileHandle m_hFhSource;

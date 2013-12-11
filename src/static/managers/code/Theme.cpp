@@ -73,248 +73,194 @@ SpriteRect* Theme::getSpriteRect(const char* id, const char* rectId)
 	return sprite->findItem(rectId);
 }
 
+void Theme::LoadImages(const UTIL::FS::Path& path, const XML::gcXMLElement &xmlEl)
+{
+	xmlEl.for_each_child("image", [this, &path](const XML::gcXMLElement &xmlChild)
+	{
+		const std::string name = xmlChild.GetAtt("name");
+		const std::string val = xmlChild.GetText();
+
+		if (name.empty() || val.empty())
+			return;
+
+		std::string outVal = UTIL::STRING::sanitizeFileName(val);
+		ThemeImageInfo* img = ImageList::findItem(name.c_str());
+
+		if (!img)
+		{
+			img = new ThemeImageInfo(name.c_str());
+			addItem(img);
+		}
+
+		gcString fullPath("{0}{2}images{2}app{2}{1}", path.getFolderPath(), outVal, DIRS_STR);
+		img->path = fullPath;
+	});
+}
+
+void Theme::LoadWeb(const UTIL::FS::Path& path, const XML::gcXMLElement &xmlEl)
+{
+	gcString urlPath(path.getFolderPath());
+
+	for (size_t x=0; x<urlPath.size(); x++)
+	{
+		if (urlPath[x] == '\\')
+			urlPath[x] = '/';
+	}
+
+	xmlEl.for_each_child("page", [this, urlPath](const XML::gcXMLElement &xmlChild)
+	{
+		const std::string name = xmlChild.GetAtt("name");
+		const std::string val = xmlChild.GetText();
+
+		if (name.empty() || val.empty())
+			return;
+
+		std::string outVal = UTIL::STRING::sanitizeFileName(val);
+
+#ifdef WIN32
+		gcString fullPath("file:///{0}/html/{1}", urlPath, outVal);
+#else
+		gcString fullPath("file://{0}/html/{1}", urlPath, outVal);
+#endif
+
+		ThemeWebInfo* web = WebList::findItem(name.c_str());
+
+		if (!web)
+		{
+			web = new ThemeWebInfo(name.c_str());
+			addItem(web);
+		}
+
+		web->path = fullPath;
+	});
+}
+
+void Theme::LoadSprites(const XML::gcXMLElement &xmlEl)
+{
+	xmlEl.for_each_child("sprite", [this](const XML::gcXMLElement &xmlChild)
+	{
+		const std::string name = xmlChild.GetAtt("name");
+			
+		if (name.empty())
+			return;
+
+		ThemeSpriteInfo* sprite = SpriteList::findItem(name.c_str());
+
+		if (!sprite)
+		{
+			sprite = new ThemeSpriteInfo(name.c_str());
+			addItem(sprite);
+		}
+
+		xmlChild.for_each_child("rect", [sprite](const XML::gcXMLElement &xmlRect)
+		{
+			const std::string rName = xmlRect.GetAtt("name");
+
+			const XML::gcXMLElement pos = xmlRect.FirstChildElement("pos");
+			const XML::gcXMLElement size = xmlRect.FirstChildElement("size");
+
+			if (rName.empty() || !pos.IsValid() || !size.IsValid())
+				return;
+
+			const std::string x = pos.GetAtt("x");
+			const std::string y = pos.GetAtt("y");
+
+			const std::string w = size.GetAtt("w");
+			const std::string h = size.GetAtt("h");
+
+			if (x.empty() || y.empty() || w.empty() || h.empty())
+				return;
+
+			SpriteRect* rect = sprite->findItem(rName.c_str());
+		
+			if (!rect)
+			{
+				rect = new SpriteRect(rName.c_str());
+				sprite->addItem(rect);
+			}
+
+			rect->x = atoi(x.c_str());
+			rect->y = atoi(y.c_str());
+			rect->w = atoi(w.c_str());
+			rect->h = atoi(h.c_str());
+		});
+	});
+}
+
+void Theme::LoadControls(const XML::gcXMLElement &xmlEl)
+{
+	xmlEl.for_each_child("control", [this](const XML::gcXMLElement &xmlChild)
+	{
+		const std::string name = xmlChild.GetAtt("name");
+
+		if (name.empty())
+			return;
+		
+		ThemeControlInfo* control = ControlList::findItem(name.c_str());
+
+		if (!control)
+		{
+			control = new ThemeControlInfo(name.c_str());
+			addItem(control);
+		}
+
+		xmlChild.for_each_child("color", [control](const XML::gcXMLElement &xmlCol)
+		{
+			const std::string id = xmlCol.GetAtt("id");
+			const std::string val = xmlCol.GetText();
+
+			if (id.empty() || val.empty())
+				return;
+
+			ThemeColorInfo* col = control->findItem(id.c_str());
+
+			if (!col)
+			{
+				col = new ThemeColorInfo(id.c_str());
+				control->add(col);
+			}
+
+			col->color = Color(val.c_str());
+		});
+	});
+}
+
 void Theme::parseFile(const char* file)
 {
-	TiXmlDocument doc;
+	XML::gcXMLDocument doc(file);
 
-	doc.LoadFile(file);
+	if (!doc.IsValid())
+		throw gcException(ERR_BADXML);
 
-	TiXmlNode *mcNode = doc.FirstChild("theme");
+	auto mcNode = doc.GetRoot("theme");
 
-	if (!mcNode)
+	if (!mcNode.IsValid())
 		throw gcException(ERR_XML_NOPRIMENODE);
 
-	XML::GetChild("creator", m_szDev, mcNode);
-	XML::GetChild("name", m_szPName, mcNode);
+	mcNode.GetChild("creator", m_szDev);
+	mcNode.GetChild("name", m_szPName);
 
 	UTIL::FS::Path path(file, "", true);
 
-	TiXmlNode *cNode = mcNode->FirstChild("images");
-	if (cNode)
-	{
-		TiXmlNode* pChild = cNode->FirstChild();
+	auto iNode = mcNode.FirstChildElement("images");
 
-		while (pChild)
-		{
-			if (!XML::isValidElement(pChild))
-			{
-				pChild = pChild->NextSibling();
-				continue;
-			}
+	if (iNode.IsValid())
+		LoadImages(path, iNode);
 
-			const char* name = pChild->ToElement()->Attribute("name");
-			const char* val = pChild->ToElement()->GetText();
+	auto wNode = mcNode.FirstChildElement("web");
 
-			if (name && val)
-			{
-				std::string outVal = UTIL::STRING::sanitizeFileName(val);
-				gcString fullPath("{0}{2}images{2}app{2}{1}", path.getFolderPath(), outVal, DIRS_STR);
-				ThemeImageInfo* img = ImageList::findItem(name);
+	if (wNode.IsValid())
+		LoadWeb(path, wNode);
 
-				if (!img)
-				{
-					img = new ThemeImageInfo(name);
-					ImageList::addItem(img);
-				}
+	auto sNode = mcNode.FirstChildElement("sprites");
 
-				img->path = fullPath;
-			}
+	if (sNode.IsValid())
+		LoadSprites(sNode);
 
-			pChild = pChild->NextSibling();
-		}
-	}
+	auto cNode = mcNode.FirstChildElement("controls");
 
-
-	cNode = mcNode->FirstChild("web");
-	if (cNode)
-	{
-		TiXmlNode* pChild = cNode->FirstChild();
-
-		gcString urlPath(path.getFolderPath());
-
-		for (size_t x=0; x<urlPath.size(); x++)
-		{
-			if (urlPath[x] == '\\')
-				urlPath[x] = '/';
-		}
-
-		while (pChild)
-		{
-			if (!XML::isValidElement(pChild))
-			{
-				pChild = pChild->NextSibling();
-				continue;
-			}
-
-			const char* name = pChild->ToElement()->Attribute("name");
-			const char* val= pChild->ToElement()->GetText();
-
-			if (name && val)
-			{
-				std::string outVal = UTIL::STRING::sanitizeFileName(val);
-
-#ifdef WIN32
-				gcString fullPath("file:///{0}/html/{1}", urlPath, outVal);
-#else
-				gcString fullPath("file://{0}/html/{1}", urlPath, outVal);
-#endif
-
-				ThemeWebInfo* web = WebList::findItem(name);
-
-				if (!web)
-				{
-					web = new ThemeWebInfo(name);
-					WebList::addItem(web);
-				}
-
-				web->path = fullPath;
-			}
-
-			pChild = pChild->NextSibling();
-		}
-	}
-
-
-	cNode = mcNode->FirstChild("sprites");
-	if (cNode)
-	{
-		TiXmlNode* pChild = cNode->FirstChild();
-
-		while (pChild)
-		{
-			if (!XML::isValidElement(pChild))
-			{
-				pChild = pChild->NextSibling();
-				continue;
-			}
-
-			const char* name = pChild->ToElement()->Attribute("name");
-			
-			if (!name)
-			{
-				pChild = pChild->NextSibling();
-				continue;
-			}
-
-			ThemeSpriteInfo* sprite = SpriteList::findItem(name);
-
-			if (!sprite)
-			{
-				sprite = new ThemeSpriteInfo(name);
-				SpriteList::addItem( sprite );
-			}
-
-			TiXmlNode* rNode = pChild->FirstChild();
-
-			while (rNode)
-			{
-				if (!XML::isValidElement(rNode))
-				{
-					rNode = rNode->NextSibling();
-					continue;
-				}
-
-				const char* rName = rNode->ToElement()->Attribute("name");
-				TiXmlNode* pos = rNode->FirstChild("pos");
-				TiXmlNode* size = rNode->FirstChild("size");
-
-				if (!rName || !XML::isValidElement(pos) || !XML::isValidElement(size))
-				{
-					rNode = rNode->NextSibling();
-					continue;
-				}
-
-				const char* x = pos->ToElement()->Attribute("x");
-				const char* y = pos->ToElement()->Attribute("y");
-
-				const char* w = size->ToElement()->Attribute("w");
-				const char* h = size->ToElement()->Attribute("h");
-
-				if (!(x && y && w && h))
-				{
-					rNode = rNode->NextSibling();
-					continue;
-				}
-
-				SpriteRect* rect = sprite->findItem(rName);
-		
-				if (!rect)
-				{
-					rect = new SpriteRect(rName);
-					sprite->addItem(rect);
-				}
-
-				rect->x = atoi(x);
-				rect->y = atoi(y);
-				rect->w = atoi(w);
-				rect->h = atoi(h);
-
-				rNode = rNode->NextSibling();
-			}
-
-			pChild = pChild->NextSibling();
-		}
-	}
-
-
-
-	cNode = mcNode->FirstChild("controls");
-	if (cNode)
-	{
-		TiXmlNode* pChild = cNode->FirstChild();
-
-		while (pChild)
-		{
-			if (!XML::isValidElement(pChild))
-			{
-				pChild = pChild->NextSibling();
-				continue;
-			}
-		
-
-			const char* name = pChild->ToElement()->Attribute("name");
-			TiXmlNode* colNode = pChild->FirstChild("color");
-
-			if (name && colNode)
-			{
-				ThemeControlInfo* control = ControlList::findItem(name);
-
-				if (!control)
-				{
-					control = new ThemeControlInfo(name);
-					ControlList::addItem(control);
-				}
-
-				while (colNode)
-				{
-					if (!XML::isValidElement(colNode))
-					{
-						colNode = colNode->NextSibling();
-						continue;
-					}
-
-					const char* id = colNode->ToElement()->Attribute("id");
-					const char* val = colNode->ToElement()->GetText();
-
-					if (id && val)
-					{
-						ThemeColorInfo* col = control->findItem(id);
-
-						if (!col)
-						{
-							col = new ThemeColorInfo(id);
-							control->add(col);
-						}
-
-						col->color = Color(val);
-					}
-
-					colNode = colNode->NextSibling();
-				}
-			}
-			pChild = pChild->NextSibling();
-		}
-	}
+	if (cNode.IsValid())
+		LoadControls(cNode);
 
 	ThemeControlInfo* control = ControlList::findItem("default");
 
@@ -334,6 +280,3 @@ void Theme::parseFile(const char* file)
 		ControlList::addItem( control );
 	}
 }
-
-
-

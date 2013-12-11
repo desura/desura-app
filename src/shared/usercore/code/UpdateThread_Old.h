@@ -38,21 +38,21 @@ protected:
 
 	void init();
 	bool pollUpdates();
-	void parseXML(TiXmlDocument &doc);
+	void parseXML(const XML::gcXMLDocument &xmlDocument);
 	
 
 	void updateBuildVer();
 	void onForcePoll();
 
-	virtual bool onMessageReceived(const char* resource, TiXmlNode* root);
-	virtual void setInfo(UserCore::UserI* user, WebCore::WebCoreI* webcore);
+	bool onMessageReceived(const char* resource, const XML::gcXMLElement &xmlElement) override;
+	void setInfo(UserCore::UserI* user, WebCore::WebCoreI* webcore) override;
 
 #ifdef WIN32
 	void checkFreeSpace();
 #endif
 
 	void loadLoginItems();
-	void checkAppUpdate(TiXmlNode* uNode);
+	void checkAppUpdate(const XML::gcXMLElement &xmlElement);
 
 private:
 	HttpHandle m_hHttpHandle;

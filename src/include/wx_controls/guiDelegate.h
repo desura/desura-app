@@ -26,7 +26,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>
 #include "Event.h"
 #include "util_thread/BaseThread.h"
 
-#include "boost/shared_ptr.hpp"
+#include <memory>
 
 class gcPanel;
 class gcDialog;
@@ -78,7 +78,7 @@ class wxGuiDelegateEvent : public wxNotifyEvent
 {
 public:
 	wxGuiDelegateEvent();
-	wxGuiDelegateEvent(boost::shared_ptr<InvokeI> invoker, int winId);
+	wxGuiDelegateEvent(std::shared_ptr<InvokeI> invoker, int winId);
 	wxGuiDelegateEvent(InvokeI* invoker, int winId);
 
 	wxGuiDelegateEvent(const wxGuiDelegateEvent& event);
@@ -89,7 +89,7 @@ public:
 	void invoke();
 
 private:
-	boost::shared_ptr<InvokeI> m_spDelegate;
+	std::shared_ptr<InvokeI> m_spDelegate;
 	InvokeI* m_pDelegate;
 
 	DECLARE_DYNAMIC_CLASS(wxGuiDelegateEvent);
@@ -345,7 +345,7 @@ public:
 		{
 			InvokeI *i = new Invoker<TObj, TArg>(new ObjDelegate<TObj, TArg>(this), new TArg(a));
 
-			wxGuiDelegateEvent event(boost::shared_ptr<InvokeI>(i), ObjDelegate<TObj, TArg>::m_pObj->GetId());
+			wxGuiDelegateEvent event(std::shared_ptr<InvokeI>(i), ObjDelegate<TObj, TArg>::m_pObj->GetId());
 			ObjDelegate<TObj, TArg>::m_pObj->GetEventHandler()->AddPendingEvent(event);
 		}
 		else if (m_Mode == MODE_PROCESS || Thread::BaseThread::GetCurrentThreadId() == GetMainThreadId())
@@ -355,7 +355,7 @@ public:
 		else if (m_Mode == MODE_PENDING_WAIT)
 		{
 			PrimInvoker<TObj, TArg> *i = new PrimInvoker<TObj, TArg>(new ObjDelegate<TObj, TArg>(this), a);
-			boost::shared_ptr<InvokeI> invoker(i);
+			std::shared_ptr<InvokeI> invoker(i);
 
 			wxGuiDelegateEvent event(invoker, ObjDelegate<TObj, TArg>::m_pObj->GetId());
 			ObjDelegate<TObj, TArg>::m_pObj->GetEventHandler()->AddPendingEvent(event);
@@ -454,7 +454,7 @@ public:
 		else if (m_Mode == MODE_PENDING_WAIT)
 		{
 			PrimInvoker<TObj, TArg> *i = new PrimInvoker<TObj, TArg>(new ObjDelegate<TObj, TArg>(this), a);
-			boost::shared_ptr<InvokeI> invoker(i);
+			std::shared_ptr<InvokeI> invoker(i);
 
 			wxGuiDelegateEvent event(invoker, ObjDelegate<TObj, TArg>::m_pObj->GetId());
 			ObjDelegate<TObj, TArg>::m_pObj->GetEventHandler()->AddPendingEvent(event);
@@ -652,7 +652,7 @@ public:
 		{
 			InvokerV<TObj> *i = new InvokerV<TObj>(new ObjDelegateV<TObj>(this));
 
-			wxGuiDelegateEvent event(boost::shared_ptr<InvokeI>(i), ObjDelegateV<TObj>::m_pObj->GetId());
+			wxGuiDelegateEvent event(std::shared_ptr<InvokeI>(i), ObjDelegateV<TObj>::m_pObj->GetId());
 			ObjDelegateV<TObj>::m_pObj->GetEventHandler()->AddPendingEvent(event);
 		}
 		else if (m_Mode == MODE_PROCESS || Thread::BaseThread::GetCurrentThreadId() == GetMainThreadId())
@@ -662,7 +662,7 @@ public:
 		else if (m_Mode == MODE_PENDING_WAIT)
 		{
 			InvokerV<TObj> *i = new InvokerV<TObj>(new ObjDelegateV<TObj>(this));
-			boost::shared_ptr<InvokeI> invoker(i);
+			std::shared_ptr<InvokeI> invoker(i);
 
 			wxGuiDelegateEvent event(invoker, ObjDelegateV<TObj>::m_pObj->GetId());
 			ObjDelegateV<TObj>::m_pObj->GetEventHandler()->AddPendingEvent(event);

@@ -22,6 +22,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>
 #ifdef WIN32
 	#include <windows.h>
 #endif
+
 #include "XMLMacros.h"
 
 
@@ -157,22 +158,24 @@ void ThemeManager::getThemeStubList(std::vector<ThemeStubI*> &vList)
 
 bool ThemeStub::parseFile(const char* szFile)
 {
-	TiXmlDocument doc;
-	doc.LoadFile(szFile);
+	XML::gcXMLDocument doc(szFile);
 
-	TiXmlNode *mcNode = doc.FirstChild("theme");
-
-	if (!mcNode)
+	if (!doc.IsValid())
 		return false;
 
-	XML::GetChild("creator", szAuthor, mcNode);
-	XML::GetChild("name", szPrintName, mcNode);
-	XML::GetChild("version", szVersion, mcNode);
+	auto mcNode = doc.GetRoot("theme");
+
+	if (!mcNode.IsValid())
+		return false;
+
+	mcNode.GetChild("creator", szAuthor);
+	mcNode.GetChild("name", szPrintName);
+	mcNode.GetChild("version", szVersion);
 
 	gcString img;
 	gcString folder;
 
-	XML::GetChild("preview", img, mcNode);
+	mcNode.GetChild("preview", img);
 	img = UTIL::STRING::sanitizeFileName(img.c_str());
 
 	UTIL::FS::Path path(szFile, "", true);

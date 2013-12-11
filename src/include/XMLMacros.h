@@ -22,291 +22,474 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>
 #pragma once
 #endif
 
+#include <tinyxml2.h>
 typedef void (*gcszFn)(const char*);
 
 
 namespace XML
 {
-
-	
-template <typename T>
-void for_each_child(const char* name, TiXmlNode* parent, const T& t)
-{
-	if (!parent || !name)
-		return;
-
-	TiXmlElement* child = parent->FirstChildElement(name);
-
-	while (child)
+	class gcXMLElement
 	{
-		t(child);
-		child = child->NextSiblingElement(name);
-	};
-}
+	public:
+		gcXMLElement()
+			: m_XmlDoc(nullptr)
+			, m_pElement(nullptr)
+			, m_pConstElement(nullptr)
+		{
+		}
 
-inline void GetAtt(const char* name, gcString& outVal, TiXmlElement* el)
-{
-	if (!el || !name)
-		return;
+		gcXMLElement(const tinyxml2::XMLElement* pElement)
+			: m_XmlDoc(nullptr)
+			, m_pElement(nullptr)
+			, m_pConstElement(pElement)
+		{
+		}
 
-	const char* val = el->Attribute(name);
+		gcXMLElement(tinyxml2::XMLDocument& xmlDoc, tinyxml2::XMLElement* pElement)
+			: m_XmlDoc(&xmlDoc)
+			, m_pElement(pElement)
+			, m_pConstElement(pElement)
+		{
+		}
 
-	if (!val)
-		return;
+		template <typename T>
+		void for_each_child(const char* name, const T& t) const
+		{
+			if (!m_pConstElement || !name)
+				return;
 
-	outVal = val;
-}
+			auto child = m_pConstElement->FirstChildElement(name);
 
-inline void GetAtt(const char* name, uint32& outVal, TiXmlElement* el)
-{
-	gcString r;
-	GetAtt(name, r, el);
+			while (child)
+			{
+				const gcXMLElement c(child);
+				t(c);
 
-	if (r.size() > 0)
-		outVal = atoi(r.c_str());
-}
+				child = child->NextSiblingElement(name);
+			};
+		}
 
-template <class T>
-inline bool GetChild(const char* name, T* obj, void (T::*func)(const char*), TiXmlNode* node)
-{
-	if (!name || !func || !node || !obj)
-		return false;
+		std::string GetAtt(const char* name) const
+		{
+			gcString outVal;
+			GetAtt(name, outVal);
+			return outVal;
+		}
 
-	TiXmlElement* child = node->FirstChildElement(name);
+		std::string GetText() const
+		{
+			if (!m_pConstElement)
+				return "";
+
+			return m_pConstElement->GetText();
+		}
+
+		void GetAtt(const char* name, gcString& outVal) const
+		{
+			if (!m_pConstElement || !name)
+				return;
+
+			const char* val = m_pConstElement->Attribute(name);
+
+			if (!val)
+				return;
+
+			outVal = val;
+		}
+
+		void GetAtt(const char* name, uint32& outVal) const
+		{
+			gcString r;
+			GetAtt(name, r);
+
+			if (r.size() > 0)
+				outVal = atoi(r.c_str());
+		}
+
+		std::string GetChild(const char* name) const
+		{
+			gcString outVal;
+			GetChild(name, outVal);
+			return outVal;
+		}
+
+		template <class T>
+		bool GetChild(const char* name, T* obj, void (T::*func)(const char*)) const
+		{
+			if (!name || !func || !m_pConstElement || !obj)
+				return false;
+
+			auto child = m_pConstElement->FirstChildElement(name);
 	
-	if (child)
-		(*obj.*func)(child->GetText());
+			if (child)
+				(*obj.*func)(child->GetText());
 
-	return !!child;
-}
+			return !!child;
+		}
 
-inline bool GetChild(const char* name, gcszFn func, TiXmlNode* node)
-{
-	if (!name || !func || !node)
-		return false;
+		bool GetChild(const char* name, gcszFn func) const
+		{
+			if (!name || !func || !m_pConstElement)
+				return false;
 
-	TiXmlElement* child = node->FirstChildElement(name);
+			auto child = m_pConstElement->FirstChildElement(name);
 
-	if (child)
-		func(child->GetText());
+			if (child)
+				func(child->GetText());
 
-	return !!child;
-}
+			return !!child;
+		}
 
-inline bool GetChild(const char* name, gcString& str, TiXmlNode* node)
-{
-	if (!name || !node)
-		return false;
+		bool GetChild(const char* name, gcString& str) const
+		{
+			if (!name || !m_pConstElement)
+				return false;
 
-	TiXmlElement* child = node->FirstChildElement(name);
+			auto child = m_pConstElement->FirstChildElement(name);
 
-	if (child)
-		str = child->GetText();
+			if (child)
+				str = child->GetText();
 
-	return !!child;
-}
+			return !!child;
+		}
 
-inline bool GetChild(const char* name, std::string& str, TiXmlNode* node)
-{
-	if (!name || !node)
-		return false;
+		bool GetChild(const char* name, std::string& str) const
+		{
+			if (!name || !m_pConstElement)
+				return false;
 
-	TiXmlElement* child = node->FirstChildElement(name);
+			auto child = m_pConstElement->FirstChildElement(name);
 
-	if (child && child->GetText())
-		str = child->GetText();
+			if (child && child->GetText())
+				str = child->GetText();
 
-	return !!child;
-}
+			return !!child;
+		}
 
-inline bool GetChild(const char* name, char*& str, TiXmlNode* node)
-{
-	gcString string;
-	bool res = GetChild(name, string, node);
+		bool GetChild(const char* name, char*& str) const
+		{
+			gcString string;
+			bool res = GetChild(name, string);
 
-	safe_delete(str);
-	str = new char[string.length()+1];
+			safe_delete(str);
+			str = new char[string.length()+1];
 		
-#ifdef WIN32
-	strcpy_s(str, string.length()+1, string.c_str());
-#else
-	strcpy(str, string.c_str());
-#endif
+		#ifdef WIN32
+			strcpy_s(str, string.length()+1, string.c_str());
+		#else
+			strcpy(str, string.c_str());
+		#endif
 
-	return res;
-}
+			return res;
+		}
 
-inline bool GetChild(const char* name, int32& num, TiXmlNode* node)
-{
-	gcString string("0");
-	bool res = GetChild(name, string, node);
+		bool GetChild(const char* name, int32& num) const
+		{
+			gcString string("0");
+			bool res = GetChild(name, string);
 
-	if (res)
-		num = atoi(string.c_str());
+			if (res)
+				num = atoi(string.c_str());
 
-	return res;
-}
+			return res;
+		}
 
-inline bool GetChild(const char* name, uint32& num, TiXmlNode* node)
-{
-	int32 value = 0;
-	bool res = GetChild(name, value, node);
+		bool GetChild(const char* name, uint32& num) const
+		{
+			int32 value = 0;
+			bool res = GetChild(name, value);
 
-	if (res)
-		num = (uint32)value;
+			if (res)
+				num = (uint32)value;
 
-	return res;
-}
+			return res;
+		}
 
-inline bool GetChild(const char* name, int64& num, TiXmlNode* node)
-{
-	gcString string("0");
-	bool res = GetChild(name, string, node);
+		bool GetChild(const char* name, int64& num) const
+		{
+			gcString string("0");
+			bool res = GetChild(name, string);
 
-	if (res)
-		num = UTIL::MISC::atoll(string.c_str());
+			if (res)
+				num = UTIL::MISC::atoll(string.c_str());
 
-	return res;
-}
+			return res;
+		}
 
-inline bool GetChild(const char* name, uint64& num, TiXmlNode* node)
-{
-	int64 value = 0;
-	bool res = GetChild(name, value, node);
+		bool GetChild(const char* name, uint64& num) const
+		{
+			int64 value = 0;
+			bool res = GetChild(name, value);
 
-	if (res)
-		num = (uint64)value;
+			if (res)
+				num = (uint64)value;
 
-	return res;
-}
+			return res;
+		}
 
-inline bool GetChild(const char* name, uint16& num, TiXmlNode* node)
-{
-	int32 value = 0;
-	bool res = GetChild(name, value, node);
+		bool GetChild(const char* name, uint16& num) const
+		{
+			int32 value = 0;
+			bool res = GetChild(name, value);
 
-	if (res)
-		num = (uint16)value;
+			if (res)
+				num = (uint16)value;
 
-	return res;
-}
+			return res;
+		}
 
-inline bool GetChild(const char* name, uint8& num, TiXmlNode* node)
-{
-	int32 value = 0;
-	bool res = GetChild(name, value, node);
+		bool GetChild(const char* name, uint8& num) const
+		{
+			int32 value = 0;
+			bool res = GetChild(name, value);
 
-	if (res)
-		num = (uint8)value;
+			if (res)
+				num = (uint8)value;
 
-	return res;
-}
+			return res;
+		}
 
-inline bool GetChild(const char* name, bool& num, TiXmlNode* node)
-{
-	gcString value;
-	bool res = GetChild(name, value, node);
+		bool GetChild(const char* name, bool& num) const
+		{
+			gcString value;
+			bool res = GetChild(name, value);
 
-	if (res)
-		num = (value == "true" || value == "1" || value == "yes");
+			if (res)
+				num = (value == "true" || value == "1" || value == "yes");
 
-	return res;
-}
-
-inline void WriteChild(const char* name, const char* value, TiXmlNode* node)
-{
-	if ( !value || !node || !name)
-		return;
-
-	TiXmlElement * newEle = new TiXmlElement( name );
-	TiXmlText * newTextEle = new TiXmlText( value );
-	newEle->LinkEndChild(newTextEle);
-	node->LinkEndChild( newEle );
-}
-
-inline void WriteChild(const char* name, const gcString &val, TiXmlNode* node)
-{
-	WriteChild(name, val.c_str(), node);
-}
-
-template <typename T>
-inline void WriteChild(const char* name, T &val, TiXmlNode* node)
-{
-	WriteChild(name, gcString("{0}", val).c_str(), node);
-}
-
-template <typename T>
-inline void WriteChild(const char* name, T* val, TiXmlNode* node)
-{
-	if (val == NULL)
-		WriteChild(name, "", node);
-	else
-		WriteChild(name, gcString("{0}", val).c_str(), node);
-}
+			return res;
+		}
 
 
-inline bool isValidElement(TiXmlNode* node)
-{
-	if (!node)
-		return false;
+		void WriteChild(const char* name, const char* value)
+		{
+			if ( !value || !m_pElement || !name || !m_XmlDoc)
+				return;
 
-	if (node->Type() != TiXmlNode::TINYXML_ELEMENT)
-		return false;
+			auto newEle = m_XmlDoc->NewElement(name);
+			auto newTextEle = m_XmlDoc->NewText(value);
 
-	return (node->ToElement()?true:false);
-}
+			newEle->LinkEndChild(newTextEle);
+			m_pElement->LinkEndChild( newEle );
+		}
+
+		void WriteChild(const char* name, const gcString &val)
+		{
+			WriteChild(name, val.c_str());
+		}
+
+		template <typename T>
+		void WriteChild(const char* name, T &val)
+		{
+			WriteChild(name, gcString("{0}", val).c_str());
+		}
+
+		template <typename T>
+		void WriteChild(const char* name, T* val)
+		{
+			if (val == NULL)
+				WriteChild(name, "");
+			else
+				WriteChild(name, gcString("{0}", val).c_str());
+		}
+
+		bool IsValid() const
+		{
+			return !!m_pElement;
+		}
+
+		gcXMLElement FirstChildElement(const char* name)
+		{
+			assert(m_pElement);
+
+			if (!m_pElement)
+				return gcXMLElement();
+
+			return gcXMLElement(*m_XmlDoc, m_pElement->FirstChildElement(name));
+		}
+
+		const gcXMLElement FirstChildElement(const char* name) const
+		{
+			assert(m_pConstElement);
+
+			if (!m_pConstElement)
+				return gcXMLElement();
+
+			return gcXMLElement(m_pConstElement->FirstChildElement(name));
+		}
+
+		gcXMLElement NewElement(const char* szName)
+		{
+			assert(m_pElement && m_XmlDoc);
+
+			if (!m_pElement || !m_XmlDoc)
+				return gcXMLElement();
+
+			auto pNode = m_XmlDoc->NewElement(szName);
+			m_pElement->InsertEndChild(pNode);
+
+			return gcXMLElement(*m_XmlDoc, pNode);
+		}
+
+		template <typename T>
+		void SetAttribute(const char* szName, T tVal)
+		{
+			assert(m_pElement);
+
+			if (!m_pElement)
+				return;
+
+			m_pElement->SetAttribute(szName, tVal);
+		}
+
+		void SetText(const char* szText)
+		{
+			assert(m_pElement);
+
+			if (!m_pElement)
+				return;
+
+			m_pElement->LinkEndChild(m_XmlDoc->NewText(szText));
+		}
+
+	private:
+		tinyxml2::XMLDocument* m_XmlDoc;
+		tinyxml2::XMLElement* m_pElement;
+		const tinyxml2::XMLElement* m_pConstElement;
+	};
 
 
-//! Returns version
-inline uint32 processStatus(TiXmlDocument& doc, const char* root)
-{
-	uint32 v = 1;
 
-	TiXmlElement *uNode = doc.FirstChildElement(root);
+	class gcXMLDocument
+	{
+	public:
+		gcXMLDocument()
+		{
+		}
 
-	if (!uNode)
-		uNode = doc.FirstChildElement("servererror");
+		explicit gcXMLDocument(const char* szFile)
+		{
+			m_eXMLLoadError = m_XmlDoc.LoadFile(szFile);
+		}
 
-	if (!uNode)
-		throw gcException(ERR_BADXML, "Missing root node");
+		explicit gcXMLDocument(const char* szBuffer, uint32 nLength)
+		{
+			m_eXMLLoadError = m_XmlDoc.Parse(szBuffer, nLength);
+		}
 
-	TiXmlElement* sNode = uNode->FirstChildElement("status");
+		gcXMLDocument(const gcXMLDocument&) = delete;
 
-	if (!sNode)
-		throw gcException(ERR_BADXML, "Missing status node");
+		gcXMLElement GetRoot()
+		{
+			return gcXMLElement(m_XmlDoc, m_XmlDoc.FirstChildElement());
+		}
 
-	uint32 status = 0;
-	const char* statStr = sNode->Attribute("code");
+		gcXMLElement GetRoot(const std::string &strRoot)
+		{
+			return gcXMLElement(m_XmlDoc, m_XmlDoc.FirstChildElement(strRoot.c_str()));
+		}
 
-	if (!statStr)
-		throw gcException(ERR_BADXML, "No status code");
+		const gcXMLElement GetRoot() const
+		{
+			return gcXMLElement(m_XmlDoc.FirstChildElement());
+		}
+
+		const gcXMLElement GetRoot(const std::string &strRoot) const
+		{
+			return gcXMLElement(m_XmlDoc.FirstChildElement(strRoot.c_str()));
+		}
+
+
+		//! Returns version
+		uint32 ProcessStatus(const std::string &strRoot) const
+		{
+			uint32 v = 1;
+
+			auto uNode = m_XmlDoc.FirstChildElement(strRoot.c_str());
+
+			if (!uNode)
+				uNode = m_XmlDoc.FirstChildElement("servererror");
+
+			if (!uNode)
+				throw gcException(ERR_BADXML, "Missing root node");
+
+			auto sNode = uNode->FirstChildElement("status");
+
+			if (!sNode)
+				throw gcException(ERR_BADXML, "Missing status node");
+
+			uint32 status = 0;
+			const char* statStr = sNode->Attribute("code");
+
+			if (!statStr)
+				throw gcException(ERR_BADXML, "No status code");
 		
-	status = atoi(statStr);
+			status = atoi(statStr);
 
-	if (status != 0)
-		throw gcException(ERR_BADSTATUS, status, gcString("Status: {0}", sNode->GetText()));
+			if (status != 0)
+				throw gcException(ERR_BADSTATUS, status, gcString("Status: {0}", sNode->GetText()));
 
+			const char* verStr = uNode->Attribute("version");
 
-	const char* verStr = uNode->Attribute("version");
+			if (verStr)
+				v = atoi(verStr);
 
-	if (verStr)
-		v = atoi(verStr);
+			if (v == 0)
+				v = 1;
 
-	if (v == 0)
-		v = 1;
+			return v;
+		}
 
-	return v;
-}
+		void LoadBuffer(char* buff, size_t buffLen)
+		{
+			m_XmlDoc.DeleteChildren();
+			m_eXMLLoadError = m_XmlDoc.Parse(buff, buffLen);
+		}
 
-#include <tinyxml.h>
+		bool IsValid() const
+		{
+			return m_eXMLLoadError == tinyxml2::XML_SUCCESS;
+		}
 
-inline void loadBuffer(TiXmlDocument& doc, char* buff, size_t buffLen,
-	TiXmlEncoding encoding = TIXML_ENCODING_UTF8)
-{
-	doc.Clear();
-	doc.Parse(buff, 0, encoding);
-}
+		gcXMLElement Create(const char* szRoot, const char* str = nullptr)
+		{
+			m_XmlDoc.DeleteChildren();
+			m_eXMLLoadError = tinyxml2::XML_SUCCESS;
 
+			auto root = m_XmlDoc.NewElement(szRoot);
+
+			m_XmlDoc.InsertEndChild(m_XmlDoc.NewDeclaration(str));
+			m_XmlDoc.InsertEndChild(root);
+
+			return gcXMLElement(m_XmlDoc, root);
+
+		}
+
+		bool SaveFile(const char* szPath)
+		{
+			return m_XmlDoc.SaveFile(szPath) == tinyxml2::XML_SUCCESS;
+		}
+
+		std::string ToString(bool bCompact = false)
+		{
+			tinyxml2::XMLPrinter printer(0, bCompact);
+			m_XmlDoc.Accept(&printer);
+
+			return std::string(printer.CStr(), printer.CStrSize());
+		}
+
+		std::wstring ToWString(bool bCompact = false)
+		{
+			tinyxml2::XMLPrinter printer(0, bCompact);
+			m_XmlDoc.Accept(&printer);
+
+			return gcWString(printer.CStr(), printer.CStrSize());
+		}
+
+	private:
+		tinyxml2::XMLError m_eXMLLoadError = tinyxml2::XML_ERROR_EMPTY_DOCUMENT;
+		tinyxml2::XMLDocument m_XmlDoc;
+	};
 }
 
 #endif //DESURA_XML_MACROS_H

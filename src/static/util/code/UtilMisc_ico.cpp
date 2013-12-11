@@ -21,6 +21,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>
 
 //#include "FreeImage.h"
 #include "SharedObjectLoader.h"
+#include <mutex>
 
 #pragma pack(push, 2)
 

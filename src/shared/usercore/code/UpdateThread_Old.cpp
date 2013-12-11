@@ -18,7 +18,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>
 
 #include "Common.h"
 #include "UpdateThread_Old.h"
-#include "tinyxml.h"
+
 #include "XMLMacros.h"
 #include "User.h"
 #ifdef WIN32
@@ -177,7 +177,7 @@ bool UpdateThreadOld::pollUpdates()
 		post[key] = "1";
 	}
 
-	TiXmlDocument doc;
+	XML::gcXMLDocument doc;
 
 	try
 	{
@@ -223,7 +223,7 @@ void UpdateThreadOld::checkFreeSpace()
 #endif
 
 
-void UpdateThreadOld::parseXML(TiXmlDocument &doc)
+void UpdateThreadOld::parseXML(const XML::gcXMLDocument &doc)
 {
 	UserCore::User *pUser = dynamic_cast<UserCore::User*>(m_pUser);
 
@@ -234,7 +234,7 @@ void UpdateThreadOld::parseXML(TiXmlDocument &doc)
 
 	try
 	{
-		version = XML::processStatus(doc, "updatepoll");
+		version = doc.ProcessStatus("updatepoll");
 	}
 	catch (gcException &e)
 	{
@@ -242,38 +242,36 @@ void UpdateThreadOld::parseXML(TiXmlDocument &doc)
 		return;
 	}
 
-	TiXmlNode *uNode = doc.FirstChild("updatepoll");
+	auto uNode = doc.GetRoot("updatepoll");
 	
-	if (!uNode)
+	if (!uNode.IsValid())
 		return;
 
-	TiXmlNode* tempNode = NULL;
+	auto tempNode = uNode.FirstChildElement("cookies");
 
 
-	tempNode = uNode->FirstChild("cookies");
-
-	if (tempNode)
+	if (tempNode.IsValid())
 	{
 		gcString szSessCookie;
-		XML::GetChild("session", szSessCookie, tempNode);
+		tempNode.GetChild("session", szSessCookie);
 
 		if (szSessCookie != "")
 			m_pWebCore->setCookie(szSessCookie.c_str());
 	}
 
-	tempNode = uNode->FirstChild("messages");
+	tempNode = uNode.FirstChildElement("messages");
 
-	if (tempNode)
+	if (tempNode.IsValid())
 	{
 		int32 up = -1;
 		int32 pm = -1;
 		int32 cc = -1;
 		int32 th = -1;
 
-		XML::GetChild("updates", up, tempNode);
-		XML::GetChild("privatemessages", pm, tempNode);
-		XML::GetChild("cart", cc, tempNode);
-		XML::GetChild("threadwatch", th, tempNode);
+		tempNode.GetChild("updates", up);
+		tempNode.GetChild("privatemessages", pm);
+		tempNode.GetChild("cart", cc);
+		tempNode.GetChild("threadwatch", th);
 
 		pUser->setCounts(pm, up, th, cc);
 	}
@@ -282,32 +280,32 @@ void UpdateThreadOld::parseXML(TiXmlDocument &doc)
 
 	if (version == 1)
 	{
-		tempNode = uNode->FirstChild("items");
+		tempNode = uNode.FirstChildElement("items");
 
-		if (tempNode)
+		if (tempNode.IsValid())
 			pUser->getItemManager()->itemsNeedUpdate(tempNode);
 	}
 	else
 	{
-		tempNode = uNode->FirstChild("platforms");
+		tempNode = uNode.FirstChildElement("platforms");
 
-		if (tempNode)
+		if (tempNode.IsValid())
 			pUser->getItemManager()->itemsNeedUpdate2(tempNode);
 	}
 
-	tempNode = uNode->FirstChild("news");
+	tempNode = uNode.FirstChildElement("news");
 
-	if (tempNode)
+	if (tempNode.IsValid())
 		pUser->parseNews(tempNode);
 
 
-	tempNode = uNode->FirstChild("gifts");
+	tempNode = uNode.FirstChildElement("gifts");
 
-	if (tempNode)
+	if (tempNode.IsValid())
 		pUser->parseGifts(tempNode);
 }
 
-bool UpdateThreadOld::onMessageReceived(const char* resource, TiXmlNode* root)
+bool UpdateThreadOld::onMessageReceived(const char* resource, const XML::gcXMLElement &root)
 {
 	return false;
 }
@@ -322,14 +320,14 @@ void UpdateThreadOld::loadLoginItems()
 {
 	UserCore::ItemManager* im = dynamic_cast<UserCore::ItemManager*>(m_pUser->getItemManager());
 
-	TiXmlDocument doc;
+	XML::gcXMLDocument doc;
 
 	try
 	{
 		m_pWebCore->getLoginItems(doc);
 
-		TiXmlNode* first = doc.FirstChildElement("memberdata");
-		im->parseLoginXml2(first->FirstChildElement("games"), first->FirstChildElement("platforms"));
+		auto first = doc.GetRoot("memberdata");
+		im->parseLoginXml2(first.FirstChildElement("games"), first.FirstChildElement("platforms"));
 	}
 	catch (gcException &e)
 	{
@@ -343,7 +341,7 @@ void UpdateThreadOld::loadLoginItems()
 
 #ifdef DESURA_OFFICAL_BUILD
 
-void UpdateThreadOld::checkAppUpdate(TiXmlNode* uNode)
+void UpdateThreadOld::checkAppUpdate(const XML::gcXMLElement &uNode)
 {
 	TiXmlElement* appEl = uNode->FirstChildElement("app");
 
@@ -392,7 +390,7 @@ void UpdateThreadOld::updateBuildVer()
 
 #else
 
-void UpdateThreadOld::checkAppUpdate(TiXmlNode* uNode)
+void UpdateThreadOld::checkAppUpdate(const XML::gcXMLElement &uNode)
 {
 }
 

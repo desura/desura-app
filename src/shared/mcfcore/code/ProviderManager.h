@@ -46,7 +46,7 @@ public:
 	//!
 	//! @param source Provider source lise
 	//!
-	ProviderManager(std::vector<MCFCore::Misc::DownloadProvider*> &source);
+	ProviderManager(std::vector<std::shared_ptr<const MCFCore::Misc::DownloadProvider>> &source);
 	~ProviderManager();
 
 	//! Gets new url for download
@@ -89,7 +89,10 @@ public:
 	//!
 	//! @return Provider list
 	//!
-	std::vector<MCFCore::Misc::DownloadProvider*>& getVector(){return m_vSourceList;}
+	std::vector<std::shared_ptr<const MCFCore::Misc::DownloadProvider>>& getVector()
+	{
+		return m_vSourceList;
+	}
 
 	//! Event that gets triggered when using new providers
 	//!
@@ -97,8 +100,8 @@ public:
 
 private:
 
-	std::vector<MCFCore::Misc::DownloadProvider*> &m_vSourceList;
-	std::vector<ErrorInfo*> m_vErrorList;
+	std::vector<std::shared_ptr<const MCFCore::Misc::DownloadProvider>> &m_vSourceList;
+	std::vector<std::shared_ptr<ErrorInfo>> m_vErrorList;
 	::Thread::Mutex m_WaitMutex;
 };
 

@@ -28,6 +28,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>
 class OutValI;
 class WildcardManager;
 
+namespace XML
+{
+	class gcXMLElement;
+}
+
 namespace sqlite3x
 {
 	class sqlite3_connection;
@@ -84,7 +89,7 @@ protected:
 		TF_LINK = 1<<2,
 	};
 
-	void parseXml(TiXmlNode* toolNode, WildcardManager* wildCardManager, const char* appDataPath);
+	void parseXml(const XML::gcXMLElement &xmlElement, WildcardManager* wildCardManager, const char* appDataPath);
 
 	virtual void loadFromDb(sqlite3x::sqlite3_connection* db);
 	virtual void saveToDb(sqlite3x::sqlite3_connection* db);

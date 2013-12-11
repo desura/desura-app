@@ -173,37 +173,30 @@ void BranchInstallInfo::loadDb(sqlite3x::sqlite3_connection* db)
 	}
 }
 
-ProcessResult BranchInstallInfo::processSettings(TiXmlNode* setNode, WildcardManager* pWildCard, bool reset, bool hasBroughtItem, const char* cipPath)
+ProcessResult BranchInstallInfo::processSettings(const XML::gcXMLElement &setNode, WildcardManager* pWildCard, bool reset, bool hasBroughtItem, const char* cipPath)
 {
 	ProcessResult pr;
 	pr.found = false;
 	pr.useCip = false;
 	pr.notFirst = false;
 
-	TiXmlNode* icsNode = setNode->FirstChild("installlocations");
+	auto icsNode = setNode.FirstChildElement("installlocations");
 	
-	if (icsNode)
+	if (icsNode.IsValid())
 	{
 		std::vector<InsCheck*> insCheck;
-		TiXmlNode* icNode = icsNode->FirstChild("installlocation");
-		while (icNode)
-		{
-			gcString iCheck;
-			gcString iPath;
 
-			XML::GetChild("check", iCheck, icNode);
-			XML::GetChild("path", iPath, icNode);
+		icsNode.for_each_child("installlocation", [this, hasBroughtItem, &insCheck](const XML::gcXMLElement &icNode)
+		{
+			if (hasBroughtItem && !insCheck.empty())
+				return;
+
+			gcString iCheck = icNode.GetChild("check");
+			gcString iPath = icNode.GetChild("path");
 
 			if (iCheck.size() > 0 && iPath.size() > 0)
-			{
 				insCheck.push_back(new InsCheck(iCheck.c_str(), iPath.c_str()));
-
-				if (hasBroughtItem)
-					break;
-			}
-
-			icNode = icNode->NextSibling();
-		}
+		});
 
 		size_t size = insCheck.size();
 
@@ -268,7 +261,7 @@ ProcessResult BranchInstallInfo::processSettings(TiXmlNode* setNode, WildcardMan
 		char* insPrim = NULL;
 		char* insPrimRes = NULL;
 		
-		XML::GetChild("installprimary", insPrim, setNode);
+		setNode.GetChild("installprimary", insPrim);
 
 		try
 		{
@@ -467,19 +460,19 @@ void BranchInstallInfo::launchExeHack()
 #endif
 }
 
-void BranchInstallInfo::processExes(TiXmlNode* setNode, WildcardManager* pWildCard, bool useCip)
+void BranchInstallInfo::processExes(const XML::gcXMLElement &setNode, WildcardManager* pWildCard, bool useCip)
 {
 	uint32 rank = 0;
 
-	XML::for_each_child("execute", setNode->FirstChild("executes"), [&](TiXmlElement* exe)
+	setNode.FirstChildElement("executes").for_each_child("execute", [&](const XML::gcXMLElement &xmlChild)
 	{
 		gcString ePath;
 		gcString args;
 		gcString name;
 
-		XML::GetChild("name", name, exe);
-		XML::GetChild("exe", ePath, exe);
-		XML::GetChild("args", args, exe);
+		xmlChild.GetChild("name", name);
+		xmlChild.GetChild("exe", ePath);
+		xmlChild.GetChild("args", args);
 
 		if (ePath.size() == 0)
 			return;
@@ -582,17 +575,17 @@ void BranchInstallInfo::resetInstalledMcf()
 	m_INBuild = MCFBuild();
 }
 
-bool BranchInstallInfo::processUpdateXml(TiXmlNode* branch)
+bool BranchInstallInfo::processUpdateXml(const XML::gcXMLElement &branch)
 {
-	TiXmlElement* mcfEl = branch->FirstChildElement("mcf");
-	if (mcfEl)
+	auto mcfEl = branch.FirstChildElement("mcf");
+	if (mcfEl.IsValid())
 	{
-		const char* id = mcfEl->Attribute("id");
+		const std::string id = mcfEl.GetAtt("id");
 					
-		if (id)
+		if (!id.empty())
 		{
 			uint32 build = -1;
-			XML::GetChild("build", build, mcfEl);
+			mcfEl.GetChild("build", build);
 			m_NextBuild = MCFBuild::BuildFromInt(build);
 		}
 	}					

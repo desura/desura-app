@@ -27,7 +27,9 @@ namespace MCFCore
 namespace Thread
 {
 
-BaseMCFThread::BaseMCFThread(uint16 num, MCFCore::MCF* caller, const char* name) : BaseThread( name ), m_rvFileList(caller->getFileList())
+BaseMCFThread::BaseMCFThread(uint16 num, MCFCore::MCF* caller, const char* name) 
+	: BaseThread( name )
+	, m_rvFileList(caller->getFileList())
 {
 	assert(caller);
 

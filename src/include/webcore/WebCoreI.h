@@ -34,6 +34,10 @@ typedef void (*PassReminderFN)(const char*);
 typedef gcString (*UserAgentFN)();
 typedef const char* (*WebCoreVersionFN)();
 
+namespace XML
+{
+	class gcXMLDocument;
+}
 
 namespace MCFCore 
 { 
@@ -122,14 +126,14 @@ public:
 	//! @param internId Desura item internal id
 	//! @param[out] doc Item xml
 	//!
-	virtual void getItemInfo(DesuraId id, TiXmlDocument &doc, MCFBranch mcfBranch, MCFBuild mcfBuild)=0; 
+	virtual void getItemInfo(DesuraId id, XML::gcXMLDocument &xmlDocument, MCFBranch mcfBranch, MCFBuild mcfBuild)=0; 
 
 
 	//! Gets all the items for the mod install wizard
 	//!
 	//! @param[out] doc Item list xml
 	//!
-	virtual void getInstalledItemList(TiXmlDocument &doc)=0;
+	virtual void getInstalledItemList(XML::gcXMLDocument &xmlDocument)=0;
 
 	//! Gets a cdkey for a branch
 	//!
@@ -148,11 +152,11 @@ public:
 
 	//! Calls the update poll with the post data
 	//!
-	virtual void getUpdatePoll(TiXmlDocument &doc, const std::map<std::string, std::string> &post)=0;
+	virtual void getUpdatePoll(XML::gcXMLDocument &xmlDocument, const std::map<std::string, std::string> &post)=0;
 
 	//! Gets the items that where normally part of the login
 	//!
-	virtual void getLoginItems(TiXmlDocument &doc)=0;
+	virtual void getLoginItems(XML::gcXMLDocument &xmlDocument)=0;
 
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////
 	// Setters
@@ -254,7 +258,7 @@ public:
 	//! @param[out] doc Login xml
 	//! @return Api Version Number
 	//!
-	virtual void logIn(const char* user, const char* pass, TiXmlDocument &doc)=0;
+	virtual void logIn(const char* user, const char* pass, XML::gcXMLDocument &xmlDocument)=0;
 
 	//! Logs the user out
 	//!

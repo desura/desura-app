@@ -53,7 +53,7 @@ public:
 	//! @param caller Parent Mcf
 	//! @param checkMcf Check the Mcf for downloaded chunks before starting
 	//!
-	WGTController(std::vector<MCFCore::Misc::DownloadProvider*> &source, uint16 numWorkers, MCFCore::MCF* caller, bool checkMcf);
+	WGTController(std::vector<std::shared_ptr<const MCFCore::Misc::DownloadProvider>> &source, uint16 numWorkers, MCFCore::MCF* caller, bool checkMcf);
 	~WGTController();
 	
 	//! Provider event
@@ -121,7 +121,7 @@ protected:
 	virtual void pokeThread();
 
 private:
-	MCFCore::Misc::GetFile_s* m_pFileAuth;
+	std::shared_ptr<const MCFCore::Misc::GetFile_s> m_pFileAuth;
 	MCFCore::Misc::ProviderManager* m_pProvManager;
 
 

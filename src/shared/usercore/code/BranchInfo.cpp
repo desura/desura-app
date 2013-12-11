@@ -234,21 +234,19 @@ void BranchInfo::loadDb(sqlite3x::sqlite3_connection* db)
 }
 
 
-void BranchInfo::loadXmlData(TiXmlNode *xmlNode)
+void BranchInfo::loadXmlData(const XML::gcXMLElement &xmlNode)
 {
-	XML::GetChild("name", m_szName, xmlNode);
-	XML::GetChild("price", m_szCost, xmlNode);
-	XML::GetChild("eula", m_szEulaUrl, xmlNode);
+	xmlNode.GetChild("name", m_szName);
+	xmlNode.GetChild("price", m_szCost);
+	xmlNode.GetChild("eula", m_szEulaUrl);
 
-	TiXmlNode* eNode = xmlNode->FirstChild("eula");
+	auto eNode = xmlNode.FirstChildElement("eula");
 
-	if (eNode && XML::isValidElement(eNode))
+	if (eNode.IsValid())
 	{
-		TiXmlElement *eEl = dynamic_cast<TiXmlElement*>(eNode);
+		const std::string date = eNode.GetAtt("date");
 
-		const char* date = eEl->Attribute("date");
-
-		if (date && m_szEulaDate != date)
+		if (!date.empty() && m_szEulaDate != date)
 		{
 			m_uiFlags &= ~BF_ACCEPTED_EULA; 
 			m_szEulaDate = date;
@@ -256,7 +254,7 @@ void BranchInfo::loadXmlData(TiXmlNode *xmlNode)
 	}
 
 	gcString preload;
-	XML::GetChild("preload", preload, xmlNode);
+	xmlNode.GetChild("preload", preload);
 
 	if (m_szPreOrderDate.size() > 0 && (preload.size() == 0 || preload == "0"))
 	{
@@ -284,18 +282,18 @@ void BranchInfo::loadXmlData(TiXmlNode *xmlNode)
 	bool cdkey = false;
 	gcString cdkeyType;
 
-	XML::GetChild("nameon", nameon, xmlNode);
-	XML::GetChild("free", free, xmlNode);
-	XML::GetChild("onaccount", onaccount, xmlNode);
-	XML::GetChild("regionlock", regionlock, xmlNode);
-	XML::GetChild("inviteonly", memberlock, xmlNode);
-	XML::GetChild("demo", demo, xmlNode);
-	XML::GetChild("test", test, xmlNode);
-	XML::GetChild("cdkey", cdkey, xmlNode);
-	XML::GetAtt("type", cdkeyType, xmlNode->FirstChildElement("cdkey"));
+	xmlNode.GetChild("nameon", nameon);
+	xmlNode.GetChild("free", free);
+	xmlNode.GetChild("onaccount", onaccount);
+	xmlNode.GetChild("regionlock", regionlock);
+	xmlNode.GetChild("inviteonly", memberlock);
+	xmlNode.GetChild("demo", demo);
+	xmlNode.GetChild("test", test);
+	xmlNode.GetChild("cdkey", cdkey);
+	xmlNode.FirstChildElement("cdkey").GetAtt("type", cdkeyType);
 
 	uint32 global = -1;
-	XML::GetChild("global", global, xmlNode);
+	xmlNode.GetChild("global", global);
 
 	if (global != -1)
 		m_uiGlobalId = MCFBranch::BranchFromInt(global, true);
@@ -328,48 +326,44 @@ void BranchInfo::loadXmlData(TiXmlNode *xmlNode)
 		m_uiFlags |= BF_STEAMGAME;
 
 	//no mcf no release
-	TiXmlNode* mcfNode = xmlNode->FirstChild("mcf");
-	if (!mcfNode)
+	auto mcfNode = xmlNode.FirstChildElement("mcf");
+	if (!mcfNode.IsValid())
 	{
 		m_uiFlags |= BF_NORELEASES;
 	}
 	else
 	{
 		uint32 build = -1;
-		XML::GetChild("build", build, mcfNode);
+		mcfNode.GetChild("build", build);
 
 		m_uiLatestBuild = MCFBuild::BuildFromInt(build);
 	}
 
-	TiXmlNode* toolsNode = xmlNode->FirstChild("tools");
+	auto toolsNode = xmlNode.FirstChildElement("tools");
 
-	if (toolsNode)
+	if (toolsNode.IsValid())
 	{
 		m_vToolList.clear();
 
-		TiXmlElement* toolNode = toolsNode->FirstChildElement("tool");
-
-		while (toolNode)
+		toolsNode.for_each_child("tool", [this](const XML::gcXMLElement &xmlTool)
 		{
-			const char* id = toolNode->GetText();
+			const std::string id = xmlTool.GetText();
 
-			if (id)
-				m_vToolList.push_back(DesuraId(id, "tools"));
-
-			toolNode = toolNode->NextSiblingElement("tool");
-		}
+			if (!id.empty())
+				m_vToolList.push_back(DesuraId(id.c_str(), "tools"));
+		});
 	}
 
-	TiXmlElement* scriptNode = xmlNode->FirstChildElement("installscript");
+	auto scriptNode = xmlNode.FirstChildElement("installscript");
 
-	if (scriptNode)
+	if (scriptNode.IsValid())
 		processInstallScript(scriptNode);
 }
 
-void BranchInfo::processInstallScript(TiXmlElement* scriptNode)
+void BranchInfo::processInstallScript(const XML::gcXMLElement &xmlElement)
 {
-	int crc = 0;
-	scriptNode->Attribute("crc", &crc);
+	uint32 crc = 0;
+	xmlElement.GetAtt("crc", crc);
 
 	if (UTIL::FS::isValidFile(m_szInstallScript))
 	{
@@ -381,7 +375,7 @@ void BranchInfo::processInstallScript(TiXmlElement* scriptNode)
 		m_szInstallScript = UTIL::OS::getAppDataPath(gcWString(L"{0}\\{1}\\install_script.js", m_ItemId.getFolderPathExtension(), getBranchId()).c_str());
 	}
 
-	gcString base64 = scriptNode->GetText();
+	gcString base64 = xmlElement.GetText();
 
 	try
 	{
@@ -445,14 +439,14 @@ void BranchInfo::decodeCDKey(gcString cdkey)
 	
 #ifdef WIN32
 	size_t outLen = 0;
-	char* raw = (char*)UTIL::STRING::base64_decode(cdkey, outLen);
+	auto raw = UTIL::STRING::base64_decode(cdkey, outLen);
 
 	std::string reg = UTIL::OS::getConfigValue("HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Cryptography\\MachineGuid", true);
 	gcString key("{0}_{1}", reg, m_ItemId.toInt64());
 
 	DATA_BLOB db;
 
-	db.pbData = (BYTE*)raw;
+	db.pbData = (BYTE*)raw.get();
 	db.cbData = outLen;
 
 	DATA_BLOB secret;
@@ -464,7 +458,6 @@ void BranchInfo::decodeCDKey(gcString cdkey)
 	if (CryptUnprotectData(&db, NULL, &secret, NULL, NULL, CRYPTPROTECT_UI_FORBIDDEN, &out))
 		m_szCDKey.assign((char*)out.pbData, out.cbData);
 
-	safe_delete(raw);
 #else // TODO
 	m_szCDKey = cdkey;
 #endif

@@ -20,6 +20,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>
 #include "managers/WildcardManager.h"
 #include "util_thread/BaseThread.h"
 
+#include "XMLMacros.h"
 
 
 static Thread::Mutex m_WCMutex;
@@ -238,26 +239,22 @@ void WildcardManager::constructPath(const char* path, char **res, uint8 *depth)
 }
 
 
-uint8 WildcardManager::parseXML(TiXmlNode* node)
+uint8 WildcardManager::parseXML(const XML::gcXMLElement &xmlElement)
 {
-	if (!node)
+	if (!xmlElement.IsValid())
 		return WCM_ERR_BADXML;
 
-	TiXmlElement* pChild = node->FirstChildElement("wcard");
-	while (pChild)
+	xmlElement.for_each_child("wcard", [this](const XML::gcXMLElement &xmlChild)
 	{
-		const char* name = pChild->Attribute("name");
-		const char* type = pChild->Attribute("type");
-		const char* string = pChild->GetText();
+		const std::string name = xmlChild.GetAtt("name");
+		const std::string type = xmlChild.GetAtt("type");
+		const std::string string = xmlChild.GetText();
 			
-		if (name && type && string)
+		if (!name.empty() && !type.empty() && !string.empty())
 		{
-			WildcardInfo *temp = new WildcardInfo(name, string, type);
-			addItem(temp);
+			addItem(new WildcardInfo(name, string, type));
 		}
-
-		pChild = pChild->NextSiblingElement();
-	}
+	});
 
 	return WCM_OK;
 }

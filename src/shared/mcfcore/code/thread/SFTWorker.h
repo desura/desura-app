@@ -74,7 +74,7 @@ private:
 	uint32 m_uiId;
 	SFTController *m_pCT;
 
-	MCFCore::MCFFile *m_pCurFile;
+	std::shared_ptr<MCFCore::MCFFile> m_pCurFile;
 
 	UTIL::MISC::BZ2Worker *m_pBzs;
 	UTIL::FS::FileHandle m_hFh;

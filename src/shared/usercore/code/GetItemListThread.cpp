@@ -41,14 +41,14 @@ void GetItemListThread::doRun()
 {
 	m_szDbName = getCIBDb(getUserCore()->getAppDataPath());
 
-	TiXmlDocument doc;
+	XML::gcXMLDocument doc;
 	getWebCore()->getInstalledItemList(doc);
 
-	int ver = XML::processStatus(doc, "itemwizard");
+	int ver = doc.ProcessStatus("itemwizard");
 
-	TiXmlNode *infoNode = doc.FirstChild("itemwizard");
+	auto infoNode = doc.GetRoot("itemwizard");
 
-	if (!infoNode)
+	if (!infoNode.IsValid())
 		throw gcException(ERR_BADXML);
 
 	if (isStopped())
