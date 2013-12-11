@@ -393,7 +393,7 @@ void User::changeAccount(DesuraId id, uint8 action)
 
 void User::parseNews(const XML::gcXMLElement &newsNode)
 {
-	parseNewsAndGifts(newsNode, "news", onNewsUpdateEvent);
+	parseNewsAndGifts(newsNode, "item", onNewsUpdateEvent);
 }
 
 
@@ -409,8 +409,6 @@ void User::parseNewsAndGifts(const XML::gcXMLElement &xmlNode, const char* szChi
 		return;
 
 	std::vector<UserCore::Misc::NewsItem*> itemList;
-
-	assert(false);//check child name below
 
 	xmlNode.for_each_child(szChildName, [&itemList](const XML::gcXMLElement &itemElem)
 	{

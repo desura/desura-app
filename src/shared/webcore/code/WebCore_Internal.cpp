@@ -344,8 +344,10 @@ void WebCoreClass::logIn(const char* user, const char* pass, XML::gcXMLDocument 
 
 	if (cookieNode.IsValid())
 	{
-		memNode.GetChild("id", m_szIdCookie);
-		memNode.GetChild("session", m_szSessCookie);
+		std::lock_guard<std::mutex> l(m_mSessLock);
+
+		cookieNode.GetChild("id", m_szIdCookie);
+		cookieNode.GetChild("session", m_szSessCookie);
 	}
 
 	m_bUserAuth = true;
@@ -353,6 +355,8 @@ void WebCoreClass::logIn(const char* user, const char* pass, XML::gcXMLDocument 
 
 void WebCoreClass::logOut()
 {
+	std::lock_guard<std::mutex> l(m_mSessLock);
+
 	m_bUserAuth = false;
 	m_szIdCookie = gcString("");
 	m_szSessCookie = gcString("");

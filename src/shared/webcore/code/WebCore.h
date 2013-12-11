@@ -23,6 +23,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>
 #include "util_thread/BaseThread.h"
 #include "ImageCache.h"
 
+#include <mutex>
+
 namespace sqlite3x
 {
 	class sqlite3_connection;
@@ -169,6 +171,8 @@ private:
 	bool m_bDebuggingOut;
 
 	ImageCache m_ImageCache;
+
+	std::mutex m_mSessLock;
 };
 
 inline const char* WebCoreClass::getUserAgent()
@@ -183,6 +187,7 @@ inline const char* WebCoreClass::getIdCookie()
 
 inline const char* WebCoreClass::getSessCookie()
 {
+	std::lock_guard<std::mutex> l(m_mSessLock);
 	return m_szSessCookie.c_str();
 }
 

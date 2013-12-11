@@ -399,12 +399,11 @@ public:
 
 		printf("%s\n", std::string(wc->getData(), wc->getDataSize()).c_str());
 
-		tinyxml2::XMLDocument doc;
-		doc.Parse(const_cast<char*>(wc->getData()), wc->getDataSize());
+		XML::gcXMLDocument doc(const_cast<char*>(wc->getData()), wc->getDataSize());
 
 		try
 		{
-			XML::processStatus(doc, "appupload");
+			doc.ProcessStatus("appupload");
 		}
 		catch (gcException &e)
 		{
