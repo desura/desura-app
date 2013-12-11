@@ -652,8 +652,6 @@ void ItemInfo::processInfo(TiXmlNode* xmlEl)
 
 void ItemInfo::processSettings(uint32 platform, TiXmlNode* setNode, WildcardManager* pWildCard, bool reset)
 {
-	if (platform == -1)
-		int a=1;
 
 	bool hasBroughtItem = false;
 
@@ -1226,20 +1224,10 @@ void ItemInfo::setLinkInfo(const char* exe, const char* args)
 
 	UTIL::FS::Path path = UTIL::FS::PathWithFile(exe);
 
-#ifdef WIN32
-	uint32 platform = 100;
-#else
-#ifdef NIX64
-	uint32 platform = 120;
-#else
-	uint32 platform = 110;
-#endif
-#endif
-
 	if (m_mBranchInstallInfo.size() == 0)
-		m_mBranchInstallInfo[platform] = new UserCore::Item::BranchInstallInfo(platform, this);
+		m_mBranchInstallInfo[BUILDID_PUBLIC] = new UserCore::Item::BranchInstallInfo(BUILDID_PUBLIC, this);
 
-	BranchInstallInfo *bii = m_mBranchInstallInfo[platform];
+	BranchInstallInfo *bii = m_mBranchInstallInfo[BUILDID_PUBLIC];
 
 	if (m_vBranchList.size() == 0)
 		m_vBranchList.push_back(new UserCore::Item::BranchInfo(MCFBranch::BranchFromInt(0), getId(), bii));

@@ -66,7 +66,7 @@ typedef void				(__stdcall *FreeImage_UnloadFn)					(FIBITMAP *dib);
 typedef FIBITMAP*			(__stdcall *FreeImage_MakeThumbnailFn)			(FIBITMAP *dib, int dst_width, bool convert);
 
 
-static QuickMutex g_FreeImageMutex;
+static std::mutex g_FreeImageMutex;
 static SharedObjectLoader g_ImgLib;
 
 FreeImage_GetFileTypeFn			FreeImage_GetFileType;

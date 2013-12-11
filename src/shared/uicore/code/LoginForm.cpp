@@ -158,10 +158,8 @@ LoginForm::LoginForm(wxWindow* parent) : gcFrame(parent, wxID_ANY, Managers::Get
 	m_tbPassword = new gcTextCtrl(this, wxID_ANY, "", wxDefaultPosition, wxDefaultSize, wxTE_PROCESS_ENTER|wxWANTS_CHARS|wxTE_PASSWORD);
 	m_tbPasswordDisp = new gcTextCtrl(this, wxID_ANY, Managers::GetString(L"#LF_PASS"));
 
-#ifndef UI_HIDE_AUTOLOGIN
 	m_cbRemPass = new gcCheckBox(this, wxID_ANY, Managers::GetString(L"#LF_AUTO"));
 	m_cbRemPass->SetToolTip(Managers::GetString(L"#LF_AUTO_TOOLTIP"));
-#endif
 
 	m_butSignin = new gcButton(this, wxID_ANY, Managers::GetString(L"#LOGIN"), wxDefaultPosition, wxDefaultSize, wxWANTS_CHARS);
 	m_butCancel = new gcButton(this, wxID_ANY, Managers::GetString(L"#CANCEL"), wxDefaultPosition, wxDefaultSize, wxWANTS_CHARS);
@@ -199,9 +197,7 @@ LoginForm::LoginForm(wxWindow* parent) : gcFrame(parent, wxID_ANY, Managers::Get
 	m_tbPasswordDisp->Bind(wxEVT_COMMAND_TEXT_UPDATED, &LoginForm::onTextChange, this);
 	m_tbPasswordDisp->Bind(wxEVT_SET_FOCUS, &LoginForm::onFocus, this);
 
-#ifndef UI_HIDE_AUTOLOGIN
 	m_cbRemPass->Bind(wxEVT_CHAR, &LoginForm::onChar, this);
-#endif
 
 	m_linkOffline->Bind(wxEVT_CHAR, &LoginForm::onChar, this);
 	m_linkNewAccount->Bind(wxEVT_CHAR, &LoginForm::onChar, this);
@@ -226,12 +222,8 @@ LoginForm::LoginForm(wxWindow* parent) : gcFrame(parent, wxID_ANY, Managers::Get
 	fgSizer4->AddGrowableCol( 0 );
 	fgSizer4->SetFlexibleDirection( wxBOTH );
 	fgSizer4->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
-	
-#ifndef UI_HIDE_AUTOLOGIN
+
 	fgSizer4->Add( m_cbRemPass, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
-#else
-	fgSizer4->Add(0,0,0,0);
-#endif
 
 	fgSizer4->Add( m_butSignin, 0, wxTOP|wxBOTTOM|wxLEFT, 5 );
 	fgSizer4->Add( m_butCancel, 0, wxTOP|wxBOTTOM|wxLEFT, 5 );
@@ -294,9 +286,7 @@ LoginForm::LoginForm(wxWindow* parent) : gcFrame(parent, wxID_ANY, Managers::Get
 	m_vTabOrder.push_back(m_tbUsername);
 	m_vTabOrder.push_back(m_tbPasswordDisp);
 	m_vTabOrder.push_back(m_tbPassword);
-#ifndef UI_HIDE_AUTOLOGIN
 	m_vTabOrder.push_back(m_cbRemPass);
-#endif
 	m_vTabOrder.push_back(m_butSignin);
 	m_vTabOrder.push_back(m_butCancel);
 	m_vTabOrder.push_back(m_linkOffline);
@@ -329,10 +319,8 @@ LoginForm::LoginForm(wxWindow* parent) : gcFrame(parent, wxID_ANY, Managers::Get
 			setSavedWindowPos(gc_login_x.getInt(), gc_login_y.getInt(), UINT_MAX, UINT_MAX);
 	}
 
-#ifndef UI_HIDE_AUTOLOGIN
 	if (gc_savelogin.getBool())
 		m_cbRemPass->SetValue(true);
-#endif
 
 	if (gc_saveusername.getBool())
 	{
@@ -362,10 +350,8 @@ LoginForm::LoginForm(wxWindow* parent) : gcFrame(parent, wxID_ANY, Managers::Get
 	onStartLoginEvent += guiDelegate(this, &LoginForm::onStartLogin);
 
 	Managers::LoadTheme(this, "formlogin");
-	
-#ifndef UI_HIDE_AUTOLOGIN
+
 	Managers::LoadTheme(m_cbRemPass, "formlogin");
-#endif
 
 #ifdef WIN32
 	SetSize(wxSize(420,246));
@@ -696,6 +682,8 @@ void LoginForm::doLogin()
 	m_tbPassword->Disable();
 	m_butSignin->Disable();
 
+	m_cbRemPass->Disable();
+
 	m_butCancel->Disable();
 
 	m_linkOffline->Disable();
@@ -722,7 +710,7 @@ void LoginForm::onStartLogin()
 #ifdef WIN32
 	m_pLogThread = new LoginThread(gcString(user.wc_str()).c_str(), gcString(pass.wc_str()).c_str(), this);
 #else
-	m_pLogThread = new LoginThread(gcString(user.wc_str().data()).c_str(), gcString(pass.wc_str().data()).c_str(), this);
+	m_pLogThread = new LoginThread(user.c_str(), pass.c_str(), this);
 #endif
 
 	m_tbPassword->SetValue("****************");
@@ -733,12 +721,8 @@ void LoginForm::onLogin()
 {
 	safe_delete(m_pLogThread);
 
-#ifndef UI_HIDE_AUTOLOGIN
 	bool remPass = m_cbRemPass->GetValue();
 	gc_savelogin.setValue(remPass);
-#else
-	bool remPass = false;
-#endif
 
 	if (gc_saveusername.getBool())
 	{
@@ -771,6 +755,8 @@ void LoginForm::onLoginError(gcException &e)
 	m_butSignin->Enable();
 	m_butCancel->Enable();
 
+	m_cbRemPass->Enable();
+
 	m_linkOffline->Enable();
 	m_linkNewAccount->Enable();
 	m_linkLostPassword->Enable();
@@ -786,7 +772,6 @@ void LoginForm::onChar(wxKeyEvent& event)
 	}
 	else
 	{
-#ifndef UI_HIDE_AUTOLOGIN
 		if (event.GetId() == m_cbRemPass->GetId())
 		{
 			if (event.m_keyCode == WXK_RETURN)
@@ -794,7 +779,6 @@ void LoginForm::onChar(wxKeyEvent& event)
 			else if (event.m_keyCode == ' ')
 				m_cbRemPass->SetValue(!m_cbRemPass->GetValue());
 		}
-#endif
 
 		event.Skip(); 
 	}

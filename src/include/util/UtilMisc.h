@@ -124,11 +124,37 @@ namespace MISC
 	//!
 	bool isValidEmail(const char* email);
 
+	//! Checks that a Desura date/time is a valid ISO 8601 date/time and fixes if not
+	//! 
+	//! @param date/time desura date/time string
+	//! return fixed date/time string (same as original if all okay)
+	//!
+	const std::string fixDateTimeString(const char* dateTime);
+
+	//! Converts a Desura date/time string to a locale specific format for display
+	//! E.G.  20131205T123456 -> 12/05/13 in US
+	//! 
+	//! @param dateTime date/time string
+	//! return locale formatted string
+	//!
+	const std::string dateTimeToDisplay(const char* dateTime);
+
+	//! Gets the diff between 2 date/times
+	//! 
+	//! @param dateTimeFirst date time input in the format YYYYMMDDHHMMSS
+	//! @param dateTimeLast date time input in the format YYYYMMDDHHMMSS
+	//! @param days out number of days between
+	//! @param hours out number of hours between
+	//! @param dtIsUTC flag true/false if time is UTC or not
+	//!
+	void getTimeDiff(const char* dateTimeFirst, const char* dateTimeLast, uint32 &days, uint32 &hours, bool dtIsUTC);
+
 	//! Gets the time diff from the input datetime to now
 	//! 
 	//! @param dateTime date time input in the format YYYYMMDDHHMMSS
 	//! @param days out number of days between
 	//! @param hours out number of hours between
+	//! @param dtIsUTC flag true/false if time is UTC or not
 	//!
 	void getTimeDiffFromNow(const char* dateTime, uint32 &days, uint32 &hours, bool dtIsUTC = false);
 
@@ -184,7 +210,7 @@ namespace MISC
 	//! @param dwCrc32 last byte hash
 	//! @return hash
 	//!
-	unsigned long CRC32(const unsigned char byte, unsigned long dwCrc32);
+	uint32 CRC32(const unsigned char byte, uint32 dwCrc32);
 
 	//! Hash a buffer using crc32
 	//!
@@ -192,7 +218,7 @@ namespace MISC
 	//! @param len Buffer length
 	//! @return hash
 	//!
-	unsigned long CRC32(const unsigned char* buff, uint32 len);
+	uint32 CRC32(const unsigned char* buff, uint64 len);
 
 #ifdef WIN32
 	//! Converts an image to an ico file

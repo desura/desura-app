@@ -331,7 +331,7 @@ void IPCBrowser::newBrowser(uint64 hwnd, const char* url)
 
 	m_pEventHandler = new EventHandler();
 
-	m_pBrowser = NewChromiumBrowser(h, "Desura", url);
+	m_pBrowser = NewChromiumBrowser(h, PRODUCT_NAME, url);
 	m_pBrowser->setEventCallback(m_pEventHandler);
 }
 

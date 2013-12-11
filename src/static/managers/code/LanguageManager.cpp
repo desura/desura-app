@@ -72,10 +72,6 @@ bool LanguageManager::loadFromFile(const char* file)
 	TiXmlDocument doc;
 	doc.LoadFile(file);
 
-#ifdef WIN32 // seemingly unused
-	const char* err = doc.ErrorDesc();
-#endif
-
 	TiXmlNode *cNode = doc.FirstChild("lang");
 
 	if (!cNode)

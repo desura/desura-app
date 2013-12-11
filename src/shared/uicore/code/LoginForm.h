@@ -52,10 +52,8 @@ protected:
 	gcTextCtrl* m_tbUsername;
 	gcTextCtrl* m_tbPassword;
 	gcTextCtrl* m_tbPasswordDisp;
-	
-#ifndef UI_HIDE_AUTOLOGIN
+
 	gcCheckBox* m_cbRemPass;
-#endif
 
 	gcStaticLine* m_staticline1;
 

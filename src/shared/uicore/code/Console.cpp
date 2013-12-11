@@ -49,6 +49,11 @@ CONCOMMAND(cvarlist, "cvarlist")
 
 	uint32 skiped = 0;
 
+	std::sort(begin(vList), end(vList), [](CVar* pA, CVar* pB)
+	{
+		return std::string(pA->getName()) < std::string(pB->getName()); 
+	});
+
 	for (size_t x=0; x<vList.size(); x++)
 	{
 		CVar *temp = vList[x];
@@ -70,7 +75,7 @@ CONCOMMAND(cvarlist, "cvarlist")
 
 
 
-//both these concommands are handled by the consle form
+//both these concommands are handled by the console form
 CONCOMMAND(condump, "condump"){}
 CONCOMMAND(clear, "clear"){}
 
@@ -401,7 +406,7 @@ void Console::processCommand()
 		else if (cv)
 			cv->parseCommand(vArgList);
 		else
-			Msg(gcString("Couldnt find anything related to {0}.\n", vArgList[0]));
+			Msg(gcString("Couldn't find anything related to {0}.\n", vArgList[0]));
 	}
 
 	m_tbInfo->SetValue(L"");

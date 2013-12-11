@@ -5,6 +5,7 @@ include_directories(
 
 file(GLOB Sources code/util/gcBuff_test.cpp
                   code/util/MD5_test.cpp
+                  code/util/util_misc.cpp
                   code/util_fs/util_fs_copyFile.cpp
                   code/util_fs/util_fs_copyFolder.cpp
                   code/util_fs/util_fs_getAllFiles.cpp
@@ -24,4 +25,4 @@ target_link_libraries(unittest
 )
 
 link_with_gtest(unittest)
-desurium_install_library(unittest "Shared")
+install_library(unittest "Shared")

@@ -121,7 +121,6 @@ void CreateMCFThread::doRun()
 void CreateMCFThread::compareBranches(std::vector<UserCore::Item::BranchInfo*> &vBranchList)
 {
 	uint64 lastSize = 0;
-	uint32 lastIndex = 0;
 
 	McfHandle lastMcf;
 
@@ -171,7 +170,6 @@ void CreateMCFThread::compareBranches(std::vector<UserCore::Item::BranchInfo*> &
 			if (lastSize == 0 || totalSize < lastSize)
 			{
 				lastSize = totalSize;
-				lastIndex = x;
 				lastMcf.setHandle(tempMcf.releaseHandle());
 
 				// if there are no files just use this one

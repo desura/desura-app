@@ -53,7 +53,7 @@ public:
 
 private:
 	static Class* instance;
-	static QuickMutex mutex;
+	static std::mutex mutex;
 
 	static void NewInstance();
 
@@ -88,7 +88,7 @@ template <typename Class>
 Class *SingletonHolder<Class>::instance = nullptr;
 
 template <typename Class>
-QuickMutex SingletonHolder<Class>::mutex;
+std::mutex SingletonHolder<Class>::mutex;
 
 class ManagersImpl
 {

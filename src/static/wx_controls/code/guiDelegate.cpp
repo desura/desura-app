@@ -19,9 +19,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>
 #include "Common.h"
 #include "wx_controls/guiDelegate.h"
 
-#include "boost/shared_ptr.hpp"
-
-
 wxDEFINE_EVENT(wxEVT_GUIDELEGATE, wxGuiDelegateEvent);
 IMPLEMENT_DYNAMIC_CLASS(wxGuiDelegateEvent, wxNotifyEvent)
 
@@ -30,7 +27,7 @@ wxGuiDelegateEvent::wxGuiDelegateEvent() : wxNotifyEvent(wxEVT_GUIDELEGATE, 0)
 	m_pDelegate = NULL;
 }
 
-wxGuiDelegateEvent::wxGuiDelegateEvent(boost::shared_ptr<InvokeI> invoker, int winId) : wxNotifyEvent(wxEVT_GUIDELEGATE, winId)
+wxGuiDelegateEvent::wxGuiDelegateEvent(std::shared_ptr<InvokeI> invoker, int winId) : wxNotifyEvent(wxEVT_GUIDELEGATE, winId)
 {
 	m_pDelegate = NULL;
 	m_spDelegate = invoker;

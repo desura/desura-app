@@ -215,7 +215,7 @@ void SetUninstallRegKey(UninstallInfo &info, uint64 installSize)
 	gcString uninstallExe("\"{0}\" desura://uninstall/{1}/{2}", desuraExe, info.id.getTypeString(), info.id.getItem());
 	gcString verifyExe("\"{0}\" desura://verify/{1}/{2}", desuraExe, info.id.getTypeString(), info.id.getItem());
 
-	UTIL::OS::setConfigValue(name, "Desura: " + info.displayName);
+	UTIL::OS::setConfigValue(name, PRODUCT_NAME ": " + info.displayName);
 	UTIL::OS::setConfigValue(version, info.version);
 	UTIL::OS::setConfigValue(publisher, info.developer);
 

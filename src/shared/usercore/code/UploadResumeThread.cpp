@@ -18,10 +18,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>
 
 #include "Common.h"
 #include "UploadResumeThread.h"
-#include "boost/filesystem/operations.hpp"
-#include "boost/filesystem/path.hpp"
-namespace bfs = boost::filesystem;
-
 
 namespace UserCore
 {

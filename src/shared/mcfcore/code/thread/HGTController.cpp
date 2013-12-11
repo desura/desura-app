@@ -112,9 +112,6 @@ void HGTController::decompressDiff(uint64 size, UTIL::FS::FileHandle &fhSrc, UTI
 {
 	uint64 done = 0;
 
-	uint32 buffSize = 10*1024;
-	char buff[10*1024] = {0};
-
 	UTIL::MISC::BZ2Worker worker(UTIL::MISC::BZ2_DECOMPRESS);
 
 	fhSrc.read(done, [&worker, &fhDest](const unsigned char* buff, uint32 size) -> bool

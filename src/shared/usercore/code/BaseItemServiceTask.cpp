@@ -49,8 +49,6 @@ void BaseItemServiceTask::resetFinish()
 
 void BaseItemServiceTask::waitForFinish()
 {
-	boost::mutex waitMutex;
-
 	if (!m_bFinished)
 		m_WaitCond.wait();
 }
@@ -59,7 +57,6 @@ void BaseItemServiceTask::doRun()
 {
 	m_bStarted = true;
 	m_bFinished = false;
-	boost::mutex waitMutex;
 
 	bool shouldWait = initService();
 	if (shouldWait && !m_bFinished && !isStopped())

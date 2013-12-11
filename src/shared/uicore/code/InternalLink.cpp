@@ -717,11 +717,16 @@ void InternalLink::showPreorderPrompt(DesuraId id, bool isPreload)
 
 	uint32 days;
 	uint32 hours;
+	std::string time_available = UTIL::MISC::dateTimeToDisplay(str);
 
 	UTIL::MISC::getTimeDiffFromNow(str, days, hours, true);
 
 	gcString title(Managers::GetString("#IF_PRELOADLAUNCH_TITLE"), item->getName());
-	gcString msg(Managers::GetString("#IF_PRELOADLAUNCH"), item->getName(), days, Managers::GetString(isPreload?"#IF_PRELOADLAUNCH_PRELOADED":"#IF_PRELOADLAUNCH_PREORDERED"));
+	gcString msg(Managers::GetString("#IF_PRELOADLAUNCH"), item->getName(), 
+					days, 
+						Managers::GetString(isPreload?"#IF_PRELOADLAUNCH_PRELOADED":"#IF_PRELOADLAUNCH_PREORDERED"), 
+							time_available, 
+								Managers::GetString(days == 1 ? "#IF_PRELOADLAUNCH_WORD_DAY":"#IF_PRELOADLAUNCH_WORD_DAYS"));
 
 	PreloadButtonHelper pobh(id);
 
@@ -1192,8 +1197,6 @@ void InternalLink::showSettings(Args &args)
 
 void InternalLink::uploadMCF(DesuraId id)
 {
-	FINDFORM(id, UploadMCFForm);
-
 	UserCore::Item::ItemInfoI* item = GetUserCore()->getItemManager()->findItemInfo( id );
 	if (!item && !GetUserCore()->isAdmin())
 	{
@@ -1215,8 +1218,6 @@ void InternalLink::uploadMCF(DesuraId id)
 
 void InternalLink::resumeUploadMCF(DesuraId id, Args args)
 {
-	FINDFORM(id, UploadMCFForm);
-
 	std::string key = args.getArgValue("key");
 
 	UserCore::Item::ItemInfoI* item = GetUserCore()->getItemManager()->findItemInfo( id );
@@ -1241,8 +1242,6 @@ void InternalLink::resumeUploadMCF(DesuraId id, Args args)
 
 void InternalLink::createMCF(DesuraId id)
 {
-	FINDFORM(id, CreateMCFForm);
-
 	UserCore::Item::ItemInfoI* item = GetUserCore()->getItemManager()->findItemInfo( id );
 
 	if (!GetUserCore()->isAdmin() && !item)
