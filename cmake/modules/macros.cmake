@@ -59,9 +59,11 @@ macro(add_compiler_flags)
     endforeach()
     if(NOT ARG_C AND NOT ARG_CXX OR ARG_C)
       set(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} ${flags_list}")
+      set(CMAKE_C_FLAGS_RELWITHDEBINFO "${CMAKE_CXX_FLAGS_RELWITHDEBINFO} ${flags_list}")
     endif()
     if(NOT ARG_C AND NOT ARG_CXX OR ARG_CXX)
       set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} ${flags_list}")
+      set(CMAKE_CXX_FLAGS_RELWITHDEBINFO "${CMAKE_CXX_FLAGS_RELWITHDEBINFO} ${flags_list}")
     endif()
   endif()
 endmacro()
@@ -116,28 +118,6 @@ macro(pair)
   unset(_aList)
 endmacro()
 
-macro(add_desura_test name category neededLibs)
-  if(BUILD_TESTS)
-    file(GLOB ${name}_SRC ${CMAKE_SOURCE_DIR}/src/tests/${category}/${name}*.c
-                          ${CMAKE_SOURCE_DIR}/src/tests/${category}/${name}*.C
-                          ${CMAKE_SOURCE_DIR}/src/tests/${category}/${name}*.cc
-                          ${CMAKE_SOURCE_DIR}/src/tests/${category}/${name}*.cpp
-                          ${CMAKE_SOURCE_DIR}/src/tests/${category}/${name}*.cxx
-                          ${CMAKE_SOURCE_DIR}/src/tests/${category}/${name}*.h
-                          ${CMAKE_SOURCE_DIR}/src/tests/*.h)
-    add_executable(${name} ${${name}_SRC})
-    include_directories(
-      ${CMAKE_SOURCE_DIR}/src/tests
-      ${Boost_INCLUDE_DIR}
-    )
-    target_link_libraries(${name}
-      ${neededLibs}
-      ${Boost_UNIT_TEST_FRAMEWORK_LIBRARY}
-      ${Boost_TEST_EXEC_MONITOR_LIBRARY}
-    )
-    add_test(${name} ${CMAKE_BINARY_DIR}/src/tests/${name})
-  endif()
-endmacro()
 
 function(add_gtest_test binaryname arg)
   if(WITH_GTEST)
@@ -261,7 +241,7 @@ function(install_data_directories target_path)
   endforeach()
 endfunction()
 
-macro(LinkWithGTest target)
+macro(link_with_gtest target)
   if(WITH_GTEST)
     if(MSVC11)
       add_definitions(-D_VARIADIC_MAX=10)
