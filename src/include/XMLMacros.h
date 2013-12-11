@@ -295,17 +295,20 @@ namespace XML
 
 		bool IsValid() const
 		{
-			return !!m_pElement;
+			return !!m_pConstElement;
 		}
 
 		gcXMLElement FirstChildElement(const char* name)
 		{
-			assert(m_pElement);
+			assert(m_pConstElement);
 
-			if (!m_pElement)
+			if (!m_pConstElement)
 				return gcXMLElement();
 
-			return gcXMLElement(*m_XmlDoc, m_pElement->FirstChildElement(name));
+			if (m_pElement)
+				return gcXMLElement(*m_XmlDoc, m_pElement->FirstChildElement(name));
+
+			return gcXMLElement(m_pConstElement->FirstChildElement(name));
 		}
 
 		const gcXMLElement FirstChildElement(const char* name) const
