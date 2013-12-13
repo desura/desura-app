@@ -50,11 +50,15 @@ int gcMessageBox(wxWindow *parent, const wxString& message, const wxString& capt
 		decorated_style |= ( style & wxYES ) ? wxICON_QUESTION : wxICON_INFORMATION ;
 	}
 
-	gcMessageDialog dialog(parent, message, caption, decorated_style);
+	gcMessageDialog dialog(parent, message, caption, decorated_style|wxSTAY_ON_TOP);
 	dialog.addHelper(helper);
 
+	wxWindow* pLastTop = wxTheApp->GetTopWindow();
+
+	wxTheApp->SetTopWindow(&dialog);
 	int ans = dialog.ShowModal();
-	
+	wxTheApp->SetTopWindow(pLastTop);
+
 	if (ans == wxID_OK)
 		return wxOK;
 	else if (ans == wxID_YES)
