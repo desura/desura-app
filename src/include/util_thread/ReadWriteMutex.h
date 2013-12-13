@@ -21,32 +21,36 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>
 #pragma once
 #endif
 
-#include "boost/thread.hpp"
-#include "boost/bind.hpp"
-#include "boost/thread/condition.hpp"
+#include <mutex>
+#include <condition_variable>
 
 namespace Thread
 {
 namespace Internal
 {
 
-class ReadWriteMutex : boost::noncopyable
+class ReadWriteMutex
 {
 public:
     ReadWriteMutex() :
         m_readers(0),
         m_pendingWriters(0),
         m_currentWriter(false)
-    {}
+    {
+	}
+
+	ReadWriteMutex(const ReadWriteMutex&) = delete;
 
     // local class has access to ReadWriteMutex private members, as required
-    class ScopedReadLock : boost::noncopyable
+    class ScopedReadLock
     {
     public:
         ScopedReadLock(ReadWriteMutex& rwLock) : m_rwLock(rwLock)
         {
             m_rwLock.acquireReadLock();
         }
+
+		ScopedReadLock(const ScopedReadLock&) = delete;
 
         ~ScopedReadLock()
         {
@@ -57,7 +61,7 @@ public:
         ReadWriteMutex& m_rwLock;
     };
 
-    class ScopedWriteLock : boost::noncopyable
+    class ScopedWriteLock
     {
     public:
         ScopedWriteLock(ReadWriteMutex& rwLock) :
@@ -65,6 +69,8 @@ public:
         {
             m_rwLock.acquireWriteLock();
         }
+
+		ScopedWriteLock(const ScopedWriteLock&) = delete;
 
         ~ScopedWriteLock()
         {
@@ -77,20 +83,20 @@ public:
 
 
 private: // data
-    boost::mutex m_mutex;
+    std::mutex m_mutex;
 
     unsigned int m_readers;
-    boost::condition m_noReaders;
+    std::condition_variable m_noReaders;
 
     unsigned int m_pendingWriters;
     bool m_currentWriter;
-    boost::condition m_writerFinished;
+    std::condition_variable m_writerFinished;
 
 
 public: // internal locking functions
     void acquireReadLock()
     {
-        boost::mutex::scoped_lock lock(m_mutex);
+        std::unique_lock<std::mutex> lock(m_mutex);
 
         // require a while loop here, since when the writerFinished condition is notified
         // we should not allow readers to lock if there is a writer waiting
@@ -104,7 +110,7 @@ public: // internal locking functions
 
     void releaseReadLock()
     {
-        boost::mutex::scoped_lock lock(m_mutex);
+        std::unique_lock<std::mutex> lock(m_mutex);
         --m_readers;
 
         if(m_readers == 0)
@@ -119,7 +125,7 @@ public: // internal locking functions
     // if the wait calls throw, m_pendingWriter can be left in an inconsistent state
     void acquireWriteLock()
     {
-        boost::mutex::scoped_lock lock(m_mutex);
+        std::unique_lock<std::mutex> lock(m_mutex);
 
         // ensure subsequent readers block
         ++m_pendingWriters;
@@ -142,7 +148,7 @@ public: // internal locking functions
 
     void releaseWriteLock()
     {
-        boost::mutex::scoped_lock lock(m_mutex);
+        std::unique_lock<std::mutex> lock(m_mutex);
         m_currentWriter = false;
         m_writerFinished.notify_all();
     }

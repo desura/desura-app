@@ -41,11 +41,10 @@ protected:
 	virtual void onStop();
 
 private:
-	ScriptTaskI* m_pLastTask;
+	ScriptTaskI* m_pLastTask = nullptr;
 
 	::Thread::WaitCondition m_WaitCond;
 	::Thread::Mutex m_LockMutex;
-	::Thread::Mutex m_StartMutex;
 
 	std::deque<ScriptTaskI*> m_TaskQue;
 };

@@ -20,17 +20,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>
 #include "ScriptTaskThread.h"
 
 
-ScriptTaskThread::ScriptTaskThread() : BaseThread("ScriptCore Thread")
+ScriptTaskThread::ScriptTaskThread() 
+	: BaseThread("ScriptCore Thread")
 {
-	m_pLastTask = NULL;
-	m_StartMutex.lock();
 }
 
 ScriptTaskThread::~ScriptTaskThread()
 {
-	m_StartMutex.lock();
-	m_StartMutex.unlock();
-
 	stop();
 
 	m_LockMutex.lock();
@@ -58,8 +54,6 @@ void ScriptTaskThread::setLastTask(ScriptTaskI* task)
 
 void ScriptTaskThread::run()
 {
-	m_StartMutex.unlock();
-
 	ScriptTaskI* curTask = NULL;
 
 	while (!isStopped())

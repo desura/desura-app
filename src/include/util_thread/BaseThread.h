@@ -216,11 +216,9 @@ protected:
 
 	//! Sets the thread name for the debugger after its started
 	//!
-	void setThreadName(const char* nameOveride = NULL);
+	void setThreadName(const char* nameOveride = nullptr);
 
 private:
-	void doRun();
-
 	class ThreadPrivates;
 	ThreadPrivates* m_pPrivates;
 };

@@ -27,9 +27,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>
 
 #include "XMLSaveAndCompress.h"
 
-//using namespace boost::BOOST_FILESYSTEM_NAMESPACE;
-//using namespace boost::posix_time;
-
 namespace MCFCore
 {
 

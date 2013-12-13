@@ -20,8 +20,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>
 #include "Common.h"
 #include "util_thread/BaseThread.h"
 
-#include "boost/thread.hpp"
-#include "boost/bind.hpp"
+#include <thread>
+#include <mutex>
+#include <condition_variable>
+#include <chrono>
+
 #include "util_thread/ReadWriteMutex.h"
 
 #define MS_VC_EXCEPTION 0x406D1388
@@ -37,20 +40,19 @@ namespace Thread
 {
 
 
-void waitOnMutex(boost::condition_variable &waitCond, boost::mutex &waitMutex)
+void waitOnMutex(std::condition_variable &waitCond, std::mutex &waitMutex)
 {
-	boost::unique_lock<boost::mutex> lock(waitMutex);
+	std::unique_lock<std::mutex> lock(waitMutex);
 	waitCond.wait(lock);
 }
 
-bool timedWaitOnMutex(boost::condition_variable &waitCond, boost::mutex &waitMutex, int secs, int msecs)
+//! Returns true if timeout hit
+bool timedWaitOnMutex(std::condition_variable &waitCond, std::mutex &waitMutex, int secs, int msecs)
 {
-	boost::posix_time::ptime waitTime(boost::posix_time::microsec_clock::universal_time());
-	waitTime += boost::posix_time::seconds(secs);
-	waitTime += boost::posix_time::millisec(msecs);
+	auto span = std::chrono::seconds(secs) + std::chrono::milliseconds(msecs);
 
-	boost::unique_lock<boost::mutex> lock(waitMutex);
-	return waitCond.timed_wait(lock, waitTime) == false;
+	std::unique_lock<std::mutex> lock(waitMutex);
+	return waitCond.wait_for(lock, span) == std::cv_status::timeout;
 }
 
 
@@ -97,7 +99,7 @@ void ReadWriteMutex::writeUnlock()
 class Mutex::MutexPrivates
 {
 public:
-	boost::mutex m_WaitMutex;
+	std::mutex m_WaitMutex;
 };
 
 
@@ -128,49 +130,39 @@ void Mutex::unlock()
 class WaitCondition::WaitConditionPrivates
 {
 public:
-	WaitConditionPrivates()
-	{
-		m_bNotify = false;
-	}
-
-	volatile bool m_bNotify;
-	boost::condition_variable m_WaitCond;
-	boost::mutex m_WaitMutex;
-	boost::mutex m_NotifyLock;
-
 	bool checkNotify()
 	{
-		bool notify = false;
+		std::lock_guard<std::mutex> guard(m_NotifyLock);
 
-		m_NotifyLock.lock();
+		if (!m_bNotify)
+			return false;
 
-		if (m_bNotify)
-		{
-			m_bNotify = false;
-			notify = true;
-		}
-
-		m_NotifyLock.unlock();
-
-		return notify;
+		m_bNotify = false;
+		return true;
 	}
 
 	void setNotify(bool state)
 	{
-		m_NotifyLock.lock();
+		std::lock_guard<std::mutex> guard(m_NotifyLock);
+
 		m_bNotify = state;
 
 		if (state)
 			m_WaitCond.notify_all();
-
-		m_NotifyLock.unlock();
 	}
+
+	std::condition_variable m_WaitCond;
+	std::mutex m_WaitMutex;
+	
+private:
+	std::mutex m_NotifyLock;
+	volatile bool m_bNotify = false;
 };
 
 
 WaitCondition::WaitCondition()
+	: m_pPrivates(new WaitConditionPrivates())
 {
-	m_pPrivates = new WaitConditionPrivates();
 }
 
 WaitCondition::~WaitCondition()
@@ -192,10 +184,9 @@ bool WaitCondition::wait(int sec, int msec)
 
 	bool res = timedWaitOnMutex(m_pPrivates->m_WaitCond, m_pPrivates->m_WaitMutex, sec, msec);
 
-	if (m_pPrivates->m_bNotify)
+	if (m_pPrivates->checkNotify())
 		res = false;
 
-	m_pPrivates->setNotify(false);
 	return res;
 }
 
@@ -220,47 +211,46 @@ void WaitCondition::notify()
 class BaseThread::ThreadPrivates
 {
 public:
-	char* m_szName;
+	ThreadPrivates(const char* szName)
+		: m_szName(gcString(szName))
+	{
+	}
 
-	bool m_bIsRunning;
-	volatile bool m_bPause;
-	volatile bool m_bStop;
+	~ThreadPrivates()
+	{
+		safe_delete(m_pThread);
+	}
 
-	BaseThread::PRIORITY m_uiPriority;
+	const std::string m_szName;
 
-	boost::thread *m_pThread;
-	boost::condition_variable m_PauseCond;
-	boost::mutex m_PauseMutex;
+	bool m_bIsRunning = false;
+	volatile bool m_bPause = false;
+	volatile bool m_bStop = false;
+
+	BaseThread::PRIORITY m_uiPriority = NORMAL;
+
+	std::thread *m_pThread = nullptr;
+	std::condition_variable m_PauseCond;
+	std::mutex m_PauseMutex;
+	std::recursive_mutex m_PauseInitMutex;
 };
 
 
 
 BaseThread::BaseThread(const char* name)
+	: m_pPrivates(new ThreadPrivates(name))
 {
-	m_pPrivates = new ThreadPrivates();
-
-	m_pPrivates->m_szName = NULL;
-	Safe::strcpy(&m_pPrivates->m_szName, name, 255);
-	m_pPrivates->m_pThread = NULL;
-	m_pPrivates->m_bStop = false;
-	m_pPrivates->m_bPause = false;
-	m_pPrivates->m_bIsRunning = false;
-
-	m_pPrivates->m_uiPriority = NORMAL;
 }
 
 BaseThread::~BaseThread()
 {
 	stop();
-	safe_delete(m_pPrivates->m_pThread);
-	safe_delete(m_pPrivates->m_szName);
-
 	safe_delete(m_pPrivates);
 }
 
 const char* BaseThread::getName()
 {
-	return m_pPrivates->m_szName;
+	return m_pPrivates->m_szName.c_str();
 }
 
 void BaseThread::start()
@@ -268,15 +258,20 @@ void BaseThread::start()
 	if (m_pPrivates->m_pThread)
 		return;
 
-	m_pPrivates->m_pThread = new boost::thread(boost::bind(&BaseThread::doRun, this));
-}
+	auto waitCond = std::make_shared<WaitCondition>();
 
-void BaseThread::doRun()
-{
-	m_pPrivates->m_bIsRunning = true;
-	applyPriority();
-	setThreadName();
-	run();
+	m_pPrivates->m_pThread = new std::thread([this, waitCond](){
+
+		waitCond->wait();
+		assert(m_pPrivates->m_pThread);
+
+		m_pPrivates->m_bIsRunning = true;
+		applyPriority();
+		setThreadName();
+		run();	
+	});
+
+	waitCond->notify();
 }
 
 bool BaseThread::isRunning()
@@ -294,25 +289,30 @@ volatile bool BaseThread::isPaused()
 	return (!m_pPrivates->m_bStop && m_pPrivates->m_bPause);
 }
 
-
-
-
 void BaseThread::doPause()
 {
 	if (isPaused())
-	{
 		waitOnMutex(m_pPrivates->m_PauseCond, m_pPrivates->m_PauseMutex);
-	}
 }
 
 void BaseThread::pause()
 {
+	std::lock_guard<std::recursive_mutex> guard(m_pPrivates->m_PauseInitMutex);
+
+	if (m_pPrivates->m_bPause)
+		return;
+
 	m_pPrivates->m_bPause = true;
 	onPause();
 }
 
 void BaseThread::unpause()
 {
+	std::lock_guard<std::recursive_mutex> guard(m_pPrivates->m_PauseInitMutex);
+
+	if (!m_pPrivates->m_bPause)
+		return;
+
 	m_pPrivates->m_bPause = false;
 	onUnpause();
 	m_pPrivates->m_PauseCond.notify_all();
@@ -320,23 +320,13 @@ void BaseThread::unpause()
 
 void BaseThread::stop()
 {
-	if (m_pPrivates->m_bPause)
-		unpause();
-
+	unpause();
 	nonBlockStop();
 
-	if (m_pPrivates->m_pThread)
-	{
-		m_pPrivates->m_pThread->interrupt();
-		if (m_pPrivates->m_pThread->joinable())
-		{
-			try {
-				m_pPrivates->m_pThread->join();
-			} catch (boost::thread_interrupted &e) {
-				// thread was interrupted, which is fine for us here
-			}
-		}
-	}
+	auto thread = m_pPrivates->m_pThread;
+
+	if (thread && thread->joinable())
+		thread->join();
 }
 
 void BaseThread::nonBlockStop()
@@ -350,11 +340,12 @@ void BaseThread::nonBlockStop()
 
 void BaseThread::join()
 {
-	boost::thread* thread = m_pPrivates->m_pThread;
+	auto thread = m_pPrivates->m_pThread;
+
 	if (!thread)
 		return;
 
-	if(thread->joinable())
+	if (thread->joinable())
 		thread->join();
 }
 

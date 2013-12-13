@@ -9,7 +9,7 @@ else()
   set(BOOST_EXTRA_BUILD_OPTS "")
 endif()
 
-set(BOOST_BJAM_LIBS_STATIC --with-chrono --with-filesystem --with-thread --with-system --with-date_time)
+set(BOOST_BJAM_LIBS_STATIC --with-filesystem --with-date_time)
 set(BOOST_BJAM_LIBS ${BOOST_BJAM_LIBS_STATIC})
 
 if (WIN32 AND NOT MINGW)
@@ -71,14 +71,9 @@ else()
   set(BOOST_SUFFIX lib)
 endif()
 
-set(Boost_CHRONO_LIBRARY "${Boost_LIBRARY_DIR}/libboost_chrono-${BOOST_LIB_ADD_STRING}.${BOOST_SUFFIX}")
 set(Boost_DATE_TIME_LIBRARY "${Boost_LIBRARY_DIR}/libboost_date_time-${BOOST_LIB_ADD_STRING}.${BOOST_SUFFIX}")
 set(Boost_FILESYSTEM_LIBRARY "${Boost_LIBRARY_DIR}/libboost_filesystem-${BOOST_LIB_ADD_STRING}.${BOOST_SUFFIX}")
-set(Boost_PRG_EXEC_MONITOR_LIBRARY "${Boost_LIBRARY_DIR}/libboost_prg_exec_monitor-${BOOST_LIB_ADD_STRING}.${BOOST_SUFFIX}")
 set(Boost_SYSTEM_LIBRARY "${Boost_LIBRARY_DIR}/libboost_system-${BOOST_LIB_ADD_STRING}.${BOOST_SUFFIX}")
-set(Boost_TEST_EXEC_MONITOR_LIBRARY "${Boost_LIBRARY_DIR}/libboost_test_exec_monitor-${BOOST_LIB_ADD_STRING}.${BOOST_SUFFIX}")
-set(Boost_THREAD_LIBRARY "${Boost_LIBRARY_DIR}/libboost_thread-${BOOST_LIB_ADD_STRING}.${BOOST_SUFFIX}")
-set(Boost_UNIT_TEST_FRAMEWORK_LIBRARY "${Boost_LIBRARY_DIR}/libboost_unit_test_framework-${BOOST_LIB_ADD_STRING}.${BOOST_SUFFIX}")
 
 set_property(TARGET boost PROPERTY FOLDER "ThirdParty")
 
@@ -118,8 +113,6 @@ if (WIN32)
   set_property(TARGET boost_s PROPERTY FOLDER "ThirdParty")
   
   set(Boost_DATE_TIME_LIBRARY_S "${Boost_LIBRARY_DIR}/libboost_date_time-${BOOST_LIB_ADD_STRING}.${BOOST_SUFFIX}")
-  set(Boost_CHRONO_LIBRARY_S "${Boost_LIBRARY_DIR}/libboost_chrono-${BOOST_LIB_ADD_STRING}.${BOOST_SUFFIX}")
   set(Boost_FILESYSTEM_LIBRARY_S "${Boost_LIBRARY_DIR}/libboost_filesystem-${BOOST_LIB_ADD_STRING}.${BOOST_SUFFIX}")
   set(Boost_SYSTEM_LIBRARY_S "${Boost_LIBRARY_DIR}/libboost_system-${BOOST_LIB_ADD_STRING}.${BOOST_SUFFIX}")
-  set(Boost_THREAD_LIBRARY_S "${Boost_LIBRARY_DIR}/libboost_thread-${BOOST_LIB_ADD_STRING}.${BOOST_SUFFIX}")
 endif()
