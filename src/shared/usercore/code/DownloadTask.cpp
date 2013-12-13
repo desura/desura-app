@@ -237,7 +237,7 @@ void DownloadTask::onBannerComplete(MCFCore::Misc::DownloadProvider &info)
 	if (isStopped())
 		return;
 
-	UserCore::Misc::GuiDownloadProvider gdp(MCFCore::Misc::DownloadProvider::ADD, &info);
+	UserCore::Misc::GuiDownloadProvider gdp(MCFCore::Misc::DownloadProvider::ADD, info);
 	onNewProviderEvent(gdp);
 }
 

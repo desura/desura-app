@@ -23,6 +23,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>
 #endif
 
 #include "XMLMacros.h"
+#include <mutex>
+#include <array>
 
 namespace MCFCore
 {
@@ -46,15 +48,27 @@ public:
 	}
 
 	//! Copy Constructor
-	DownloadProvider(MCFCore::Misc::DownloadProvider* prov)
+	DownloadProvider(const MCFCore::Misc::DownloadProvider& prov)
 	{
-		if (!prov)
-			return;
+		m_szName = prov.getName();
+		m_szUrl = prov.getUrl();
+		m_szProvUrl = prov.getProvUrl();
 
-		m_szName = prov->getName();
-		m_szUrl = prov->getUrl();
-		m_szBanner = prov->getBanner();
-		m_szProvUrl = prov->getProvUrl();
+		setBanner(prov.getBanner());
+	}
+
+	DownloadProvider& operator=(const DownloadProvider& prov)
+	{
+		if (this == &prov)
+			return *this;
+
+		m_szName = prov.getName();
+		m_szUrl = prov.getUrl();
+		m_szProvUrl = prov.getProvUrl();
+
+		setBanner(prov.getBanner());
+
+		return *this;
 	}
 
 	//! Alt Constructor
@@ -67,9 +81,9 @@ public:
 	DownloadProvider(const char* n, const char* u, const char* b, const char* p)
 		: m_szName(n)
 		, m_szUrl(u)
-		, m_szBanner(b)
 		, m_szProvUrl(p)
 	{
+		setBanner(b);
 	}
 
 	//! Alt Constructor from xml
@@ -80,7 +94,9 @@ public:
 	{
 		assert(xmlElement.IsValid());
 
-		xmlElement.GetChild("banner", m_szBanner);
+		const std::string strBanner = xmlElement.GetChild("banner");
+		setBanner(strBanner.c_str());
+
 		xmlElement.GetChild("provider", m_szName);
 		xmlElement.GetChild("provlink", m_szProvUrl);
 		xmlElement.GetChild("link", m_szUrl);
@@ -119,7 +135,8 @@ public:
 	//!
 	const char* getBanner() const
 	{
-		return m_szBanner.c_str();
+		std::lock_guard<std::mutex> guard(m_BannerLock);
+		return m_szBanner.data();
 	}
 
 	//! Gets the providers url
@@ -135,16 +152,21 @@ public:
 	//!
 	//! @param banner New banner Url
 	//!
-	void setBanner(const char* banner)
+	void setBanner(const char* banner) const
 	{
-		m_szBanner = banner;
+		std::lock_guard<std::mutex> guard(m_BannerLock);
+
+		gcString strBanner(banner);
+		Safe::strncpy(m_szBanner.data(), m_szBanner.size(), strBanner.c_str(), strBanner.size());
 	}
 
 private:
 	gcString m_szName;
 	gcString m_szUrl;
-	gcString m_szBanner;
 	gcString m_szProvUrl;
+
+	mutable std::mutex m_BannerLock;
+	mutable std::array<char, 256> m_szBanner;
 };
 
 }

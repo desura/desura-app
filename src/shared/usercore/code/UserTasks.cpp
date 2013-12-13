@@ -158,7 +158,7 @@ DownloadBannerTask::DownloadBannerTask(UserCore::User* user, const MCFCore::Misc
 
 void DownloadBannerTask::doTask()
 {
-	BannerCompleteInfo bci;
+	BannerCompleteInfo bci(this, m_DPInfo);
 
 	try
 	{
@@ -175,9 +175,6 @@ void DownloadBannerTask::doTask()
 		Warning(gcString("Failed to download banner: {0}\n", e));
 		bci.complete = false;
 	}
-
-	bci.task = this;
-	bci.info = m_DPInfo;
 
 	onDLCompleteEvent(bci);
 }

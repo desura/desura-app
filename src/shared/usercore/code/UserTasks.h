@@ -125,7 +125,14 @@ class DownloadBannerTask;
 class BannerCompleteInfo
 {
 public:
+	BannerCompleteInfo(DownloadBannerTask* pTask, const MCFCore::Misc::DownloadProvider& provider)
+		: task(pTask)
+		, info(provider)
+	{
+	}
+
 	bool complete;
+	
 	DownloadBannerTask* task;
 	MCFCore::Misc::DownloadProvider info;
 };

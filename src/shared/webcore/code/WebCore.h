@@ -23,6 +23,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>
 #include "util_thread/BaseThread.h"
 #include "ImageCache.h"
 
+#include <array>
 #include <mutex>
 
 namespace sqlite3x
@@ -164,7 +165,7 @@ private:
 
 	gcString m_szUserAgent;
 	gcString m_szIdCookie;
-	gcString m_szSessCookie;
+	std::array<char, 4096> m_szSessCookie;
 	gcString m_szMCFDownloadUrl;
 	gcString m_szAppDataPath;
 
@@ -188,7 +189,7 @@ inline const char* WebCoreClass::getIdCookie()
 inline const char* WebCoreClass::getSessCookie()
 {
 	std::lock_guard<std::mutex> l(m_mSessLock);
-	return m_szSessCookie.c_str();
+	return m_szSessCookie.data();
 }
 
 inline EventV* WebCoreClass::getCookieUpdateEvent()

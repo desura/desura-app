@@ -23,6 +23,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>
 #endif
 
 #include <algorithm>
+#include <array>
 
 namespace UTIL
 {
@@ -1227,6 +1228,17 @@ public:
 		assign(Template::Format<T, A, B, C, D, E, F>(t.c_str(), a, b, c, d, e, f));
 	}
 
+	template<std::size_t SIZE>
+	gcBaseString(const std::array<char, SIZE>& aString)
+		: gcBaseString(aString.data())
+	{
+	}
+
+	template<std::size_t SIZE>
+	gcBaseString(const std::array<wchar_t, SIZE>& aString)
+		: gcBaseString(aString.data())
+	{
+	}
 
 	void vformat(const char* szFormat, va_list arglist)
 	{

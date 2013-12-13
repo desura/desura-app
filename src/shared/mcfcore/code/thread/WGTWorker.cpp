@@ -417,8 +417,8 @@ namespace UnitTest
 			return true;
 		}
 
-		const int m_nDownloadSize;
-		const int m_nMaxRequestSize;
+		const uint32 m_nDownloadSize;
+		const uint32 m_nMaxRequestSize;
 	};
 
 	class StubWGTController : public MCFCore::Thread::WGTControllerI

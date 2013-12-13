@@ -154,13 +154,15 @@ void WebCoreClass::setCookie(const char* sess)
 	if (!sess)
 		return;
 
+	gcString strSess(sess);
+
 	{
 		std::lock_guard<std::mutex> l(m_mSessLock);
 
-		if (m_szSessCookie == sess)
+		if (strSess == gcString(m_szSessCookie))
 			return;
 
-		m_szSessCookie = gcString(sess);
+		Safe::strncpy(const_cast<char*>(m_szSessCookie.data()), m_szSessCookie.size(), strSess.c_str(), strSess.size());
 	}
 
 	onCookieUpdateEvent();
@@ -171,7 +173,7 @@ void WebCoreClass::setWCCookies(HttpHandle& hh)
 	std::lock_guard<std::mutex> l(m_mSessLock);
 
 	hh->addCookie("freeman", m_szIdCookie.c_str());
-	hh->addCookie("masterchief", m_szSessCookie.c_str());
+	hh->addCookie("masterchief", gcString(m_szSessCookie).c_str());
 	hh->setUserAgent(getUserAgent());
 }
 
@@ -181,7 +183,7 @@ void WebCoreClass::setMCFCookies(MCFCore::Misc::UserCookies* uc)
 
 	uc->setUserId(m_uiUserId);
 	uc->setId(m_szIdCookie.c_str());
-	uc->setSess(m_szSessCookie.c_str());
+	uc->setSess(gcString(m_szSessCookie).c_str());
 	uc->setUAgent(getUserAgent());
 }
 

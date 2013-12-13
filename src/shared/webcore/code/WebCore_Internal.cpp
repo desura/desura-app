@@ -347,7 +347,9 @@ void WebCoreClass::logIn(const char* user, const char* pass, XML::gcXMLDocument 
 		std::lock_guard<std::mutex> l(m_mSessLock);
 
 		cookieNode.GetChild("id", m_szIdCookie);
-		cookieNode.GetChild("session", m_szSessCookie);
+
+		gcString strSession = cookieNode.GetChild("session");
+		Safe::strncpy(const_cast<char*>(m_szSessCookie.data()), m_szSessCookie.size(), strSession.c_str(), strSession.size());
 	}
 
 	m_bUserAuth = true;
@@ -359,7 +361,7 @@ void WebCoreClass::logOut()
 
 	m_bUserAuth = false;
 	m_szIdCookie = gcString("");
-	m_szSessCookie = gcString("");
+	m_szSessCookie[0] = '\0';
 }
 
 void WebCoreClass::getUpdatePoll(XML::gcXMLDocument &xmlDocument, const std::map<std::string, std::string> &post)
