@@ -108,6 +108,7 @@ endif()
 ###############################################################################
 
 if(WIN32)
+  add_subdirectory(include)
   add_subdirectory(executable/bootloader_win)
   add_subdirectory(executable/desura_browserhost)
   add_subdirectory(executable/service_win)
