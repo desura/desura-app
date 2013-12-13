@@ -273,7 +273,6 @@ void WebCoreClass::resumeUpload(DesuraId id, const char* key, WebCore::Misc::Res
 
 void WebCoreClass::getItemInfo(DesuraId id, XML::gcXMLDocument &xmlDocument, MCFBranch mcfBranch, MCFBuild mcfBuild)
 {
-	XML::gcXMLDocument doc;
 	PostMap post;
 
 	post["siteareaid"] = id.getItem();
@@ -290,7 +289,7 @@ void WebCoreClass::getItemInfo(DesuraId id, XML::gcXMLDocument &xmlDocument, MCF
 			post["branch"] = mcfBranch;
 	}
 
-	postToServer(getItemInfoUrl(), "iteminfo", post, doc);
+	postToServer(getItemInfoUrl(), "iteminfo", post, xmlDocument);
 }
 
 gcString WebCoreClass::getCDKey(DesuraId id, MCFBranch branch)
