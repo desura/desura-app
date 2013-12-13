@@ -300,7 +300,7 @@ void gcUnitTestForm::onStart()
 	m_lcStats->InsertColumn(3, "F");
 	m_lcStats->InsertColumn(4, "T");
 
-	m_lcStats->InsertItem(-1, "");
+	m_lcStats->InsertItem(0xFFFFFFFE, "");
 
 	m_lcStats->SetItem(0, 0, "", 1);
 	m_lcStats->SetItem(0, 1, "0");
@@ -322,7 +322,7 @@ void gcUnitTestForm::onEnd()
 
 void gcUnitTestForm::onTestStart(gcString &strTest)
 {
-	m_mTestIndex[strTest] = m_lcUnitTests->InsertItem(-1, "");
+	m_mTestIndex[strTest] = m_lcUnitTests->InsertItem(0xFFFFFFFE, "");
 	m_lcUnitTests->SetItem(m_mTestIndex[strTest], 1, strTest);
 }
 

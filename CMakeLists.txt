@@ -24,7 +24,7 @@
 #   CURL_URL                            URL to curl archive
 #   DEPOT_TOOLS_URL                     URL to depot_tools archive
 #   V8_URL                              URL to v8 archive
-#   WXWIDGET_URL                        URL to wxWidget archive, has to be 2.9.3
+#   WXWIDGET_URL                        URL to wxWidget archive, has to be 3.0.0
 #
 # cef options:
 #   H264_SUPPORT    OFF                 build ffmpeg with mpeg-4 support. Be aware of patent and license problems
@@ -37,8 +37,8 @@
 #   DESKTOPDIR      depends on OS       the directory where the desktop file or link should be installed
 #
 # unix-only options:
-#   FORCE_BUNDLED_WXGTK  		ON: bundle wxGTK 2.9.3
-#                   ON			OFF: use system wxGTK (has to be 2.9.x, work stable on 2.9.3)
+#   FORCE_BUNDLED_WXGTK  		ON: bundle wxGTK 3.0.0
+#                   OFF			OFF: use system wxGTK (has to be 2.9.5 or later)
 #   DEBUG_EXTERNAL  OFF                 same as DEBUG, but for externap deps
 #   WITH_ARES       ON                  build CURL with ares support (c-ares REQUIRED)
 #   DIR_TYPE        SINGLE              how should game data be stored?
@@ -53,8 +53,8 @@
 #   DESKTOP_ICON    desura              the value of Icon in the desktop file
 #
 # wxWidgets select correct  version
-#   wxWidgets_CONFIG_EXECUTABLE         path to wx-config (version 2.9.x)
-#   wxWidgets_wxrc_EXECUTABLE           path to wxrc (version 2.9.x)
+#   wxWidgets_CONFIG_EXECUTABLE         path to wx-config (version 2.9.5 or later)
+#   wxWidgets_wxrc_EXECUTABLE           path to wxrc (version 2.9.5 or later)
 #
 # windows-only options:
 #   BOOST_URL                           URL to boost archive
@@ -167,10 +167,8 @@ if(NOT BUILD_ONLY_CEF)
   find_package(BZip2 ${REQUIRED_IF_OPTION})
   find_package(Sqlite ${REQUIRED_IF_OPTION})
 
-  find_package(v8 ${REQUIRED_IF_OPTION})
-
   if(NOT FORCE_BUNDLED_WXGTK)
-    find_package(wxWidgets 2.9 COMPONENTS richtext ${REQUIRED_IF_OPTION})
+    find_package(wxWidgets 2.9.5 COMPONENTS richtext ${REQUIRED_IF_OPTION})
   endif()
 
   if(WITH_GTEST)
@@ -203,15 +201,18 @@ endif()
 
 set(DOWNLOAD_URL "https://s3-us-west-2.amazonaws.com/lecs.desura.lindenlab.com/" CACHE STRING "Download mirror for third party source code and binaries")
 
-
-macro(SetupDownloadUrl name url md5)
-  set(${name}_URL_DEFAULT "${DOWNLOAD_URL}${url}")
+macro(SetupDownloadUrlCustom name url md5)
+  set(${name}_URL_DEFAULT "${url}")
   set(${name}_URL ${${name}_URL_DEFAULT} CACHE STRING "URL to get ${name} archive")
   if(${name}_URL STREQUAL ${name}_URL_DEFAULT)
     set(${name}_MD5 ${md5} CACHE STRING "Md5 for ${name} archive")
   else()
     unset(${name}_MD5)
   endif()
+endmacro()
+
+macro(SetupDownloadUrl name url md5)
+  SetupDownloadUrlCustom(${name} "${DOWNLOAD_URL}${url}" ${md5})
 endmacro()
 
 if(WIN32)
@@ -230,8 +231,10 @@ endif()
 
 SetupDownloadUrl(DEPOT_TOOLS "depot_tools-r1.zip" a27266b8d2388c4dc51645d1159dd0de)
 SetupDownloadUrl(GTEST "gtest-1.7.0.zip" 2d6ec8ccdf5c46b05ba54a9fd1d130d7)
-SetupDownloadUrl(WXWIDGET "wxWidgets-2.9.3.tar.bz2" 6b6003713289ea4d3cd9b49c5db5b721)
 SetupDownloadUrl(V8 "v8-3.18.5.14.tar.bz2" 657802ea63c89190fd510ee1a2a719bf)
+
+#SetupDownloadUrl(WXWIDGET "wxWidgets-2.9.3.tar.bz2" 6b6003713289ea4d3cd9b49c5db5b721)
+SetupDownloadUrlCustom(WXWIDGET "http://sourceforge.net/projects/wxwindows/files/3.0.0/wxWidgets-3.0.0.tar.bz2/download" 241998efc12205172ed24c18788ea2cd)
 
 ###############################################################################
 # build some externel projects
