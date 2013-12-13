@@ -57,176 +57,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>
 #endif
 
 #include <functional>
-
-#ifdef WIN32
-	#include <WinBase.h>
-#else
-	 #include <pthread.h>
-#endif
+#include <mutex>
  
 class VoidEventArg
 {
 };
  
-#ifdef WIN32
-	typedef DWORD ThreadId;
-	typedef CRITICAL_SECTION MutexType;
-
-#else
-	typedef pthread_mutex_t MutexType;
-	typedef pthread_t ThreadId;
-
-	inline pthread_t GetCurrentThreadId()
-	{
-		return pthread_self();
-	}
-
-	inline void InitializeCriticalSection(MutexType *_mutex)
-	{
-		  pthread_mutexattr_t attr;
-		  pthread_mutexattr_init(&attr);
-		  pthread_mutexattr_settype(&attr,PTHREAD_MUTEX_ERRORCHECK);
-		  pthread_mutex_init(_mutex, &attr);
-		  pthread_mutexattr_destroy(&attr);
-	}
-
-	inline void DeleteCriticalSection(MutexType *_mutex)
-	{
-		pthread_mutex_unlock(_mutex);
-		pthread_mutex_destroy(_mutex);
-	}
-
-	inline void EnterCriticalSection(MutexType *_mutex)
-	{
-		pthread_mutex_trylock(_mutex);
-	}
-
-	inline void LeaveCriticalSection(MutexType *_mutex)
-	{
-		pthread_mutex_unlock(_mutex);
-	}
-
-	inline bool TryEnterCriticalSection(MutexType *_mutex)
-	{
-		return pthread_mutex_trylock(_mutex) == 0;
-	}
-#endif
-
-//Use this instead of thread::mutex so we dont depend on the boost threading libs
-class QuickMutex
-{
-public:
-	QuickMutex()
-	{
-		memset(&_mutex, 0, sizeof(MutexType));
-		InitializeCriticalSection(&_mutex);
-	}
-
-	virtual ~QuickMutex()
-	{
-		DeleteCriticalSection(&_mutex);
-	}
- 
-	void lock()
-	{
-		EnterCriticalSection(&_mutex);
-	}
- 
-	void unlock()
-	{
-		LeaveCriticalSection(&_mutex);
-	}
-
-	bool tryLock()
-	{
-		return !!TryEnterCriticalSection(&_mutex);
-	}
-
-private:
-	 MutexType _mutex;
-};
-
-class QuickThreadMutex
-{
-public:
-	QuickThreadMutex()
-	{
-		m_LockCount = 0;
-		m_ThreadId = 0;
-	}
-
-	void lock()
-	{
-		bool locked = false;
-
-		m_CountLock.lock();
-
-			if (m_ThreadId == GetCurrentThreadId())
-			{
-				m_LockCount++;
-				locked = true;
-			}
-			else if (m_RealLock.tryLock())
-			{
-				m_ThreadId = GetCurrentThreadId();
-				locked = true;
-			}
-
-		m_CountLock.unlock();
-
-		if (locked)
-			return;
-
-		m_RealLock.lock();
-		m_ThreadId = GetCurrentThreadId();
-	}
- 
-	void unlock()
-	{
-		m_CountLock.lock();
-
-			if (m_LockCount == 0)
-			{
-				m_ThreadId = 0;
-				m_RealLock.unlock();
-			}
-
-			if (m_LockCount > 0 && m_ThreadId == GetCurrentThreadId())
-				m_LockCount--;
-
-		m_CountLock.unlock();
-	}
-
-	bool tryLock()
-	{
-		bool locked = false;
-
-		m_CountLock.lock();
-
-			if (m_ThreadId == GetCurrentThreadId())
-			{
-				m_LockCount++;
-				locked = true;
-			}
-			else if (m_RealLock.tryLock())
-			{
-				m_ThreadId = GetCurrentThreadId();
-				locked = true;
-			}
-
-		m_CountLock.unlock();
-
-		return locked;
-	}
-
-private:
-	QuickMutex m_CountLock;
-	QuickMutex m_RealLock;
-
-	ThreadId m_ThreadId;
-	int m_LockCount;
-};
-
 template <typename TArg>
 class DelegateI
 {
@@ -297,7 +133,7 @@ public:
 		//cant use this with void event
 		assert( typeid(TArg) != typeid(VoidEventArg) );
 
-		m_Lock.lock();
+		std::lock_guard<std::recursive_mutex> guard(m_Lock);
 		migratePending();
 
 		for (size_t x=0; x<m_vDelegates.size(); x++)
@@ -314,12 +150,11 @@ public:
 		}
 
 		migratePending();
-		m_Lock.unlock();
 	}
 
 	void operator()()
 	{
-		m_Lock.lock();
+		std::lock_guard<std::recursive_mutex> guard(m_Lock);
 		migratePending();
 
 		for (size_t x=0; x<m_vDelegates.size(); x++)
@@ -336,12 +171,11 @@ public:
 		}
 
 		migratePending();
-		m_Lock.unlock();
 	}
 
 	EventBase<TArg, TDel>& operator=(const EventBase<TArg, TDel>& e)
 	{
-		m_Lock.lock();
+		std::lock_guard<std::recursive_mutex> guard(m_Lock);
 
 		std::vector<TDel*> temp = m_vDelegates;
 		std::vector<TDel*> eTemp = e.m_vDelegates;
@@ -354,13 +188,12 @@ public:
 		for (size_t x=0; x<temp.size(); x++)
 			temp[x]->destroy();
 
-		m_Lock.unlock();
 		return *this;
 	}
 
 	EventBase<TArg, TDel>& operator+=(const EventBase<TArg, TDel>& e)
 	{
-		m_Lock.lock();
+		std::lock_guard<std::recursive_mutex> guard(m_Lock);
 
 		for (size_t x=0; x<e.m_vDelegates.size(); x++)
 		{
@@ -370,13 +203,12 @@ public:
 				m_vDelegates.push_back(d->clone());
 		}
 
-		m_Lock.unlock();
 		return *this;
 	}
 
 	EventBase<TArg, TDel>& operator-=(const EventBase<TArg, TDel>& e)
 	{
-		m_Lock.lock();
+		std::lock_guard<std::recursive_mutex> guard(m_Lock);
 
 		std::vector<size_t> del;
 
@@ -396,7 +228,6 @@ public:
 		for (size_t x=del.size(); x>0; x--)
 			m_vDelegates.erase(m_vDelegates.begin()+del[x]);
 
-		m_Lock.unlock();
 		return *this;
 	}
 
@@ -406,11 +237,12 @@ public:
 		if (!d)
 			return *this;
 
-		m_PendingLock.lock();
-		m_vPendingDelegates.push_back(std::pair<bool, TDel*>(true, d->clone()));
-		m_PendingLock.unlock();
-
-		if (m_Lock.tryLock())
+		{
+			std::lock_guard<std::recursive_mutex> guard(m_PendingLock);
+			m_vPendingDelegates.push_back(std::pair<bool, TDel*>(true, d->clone()));
+		}
+		
+		if (m_Lock.try_lock())
 		{
 			migratePending();
 			m_Lock.unlock();
@@ -425,11 +257,12 @@ public:
 		if (!d)
 			return *this;
 
-		m_PendingLock.lock();
-		m_vPendingDelegates.push_back(std::pair<bool, TDel*>(false, d->clone()));
-		m_PendingLock.unlock();
+		{
+			std::lock_guard<std::recursive_mutex> guard(m_PendingLock);
+			m_vPendingDelegates.push_back(std::pair<bool, TDel*>(false, d->clone()));
+		}
 
-		if (m_Lock.tryLock())
+		if (m_Lock.try_lock())
 		{
 			migratePending();
 			m_Lock.unlock();
@@ -449,35 +282,34 @@ public:
 		if (i)
 			i->cancel();
 
-		m_Lock.lock();
 
-		for (size_t x=0; x<m_vDelegates.size(); x++)
 		{
-			if (m_vDelegates[x])
-				m_vDelegates[x]->destroy();
+			std::lock_guard<std::recursive_mutex> guard(m_Lock);
+			for (size_t x=0; x<m_vDelegates.size(); x++)
+			{
+				if (m_vDelegates[x])
+					m_vDelegates[x]->destroy();
+			}
+
+			m_vDelegates.clear();
 		}
 
-		m_vDelegates.clear();
-		m_Lock.unlock();
-
-		m_PendingLock.lock();
-
-		for (size_t x=0; x<m_vPendingDelegates.size(); x++)
 		{
-			if (m_vPendingDelegates[x].second)
-				m_vPendingDelegates[x].second->destroy();
+			std::lock_guard<std::recursive_mutex> guard(m_PendingLock);
+			for (size_t x=0; x<m_vPendingDelegates.size(); x++)
+			{
+				if (m_vPendingDelegates[x].second)
+					m_vPendingDelegates[x].second->destroy();
+			}
 		}
-
-		m_PendingLock.unlock();
 
 		m_bCancel = false;
 	}
 
 	void flush()
 	{
-		m_Lock.lock();
+		std::lock_guard<std::recursive_mutex> guard(m_Lock);
 		migratePending();
-		m_Lock.unlock();
 	}
 
 protected:
@@ -494,8 +326,8 @@ protected:
 
 	void migratePending()
 	{
-		m_PendingLock.lock();
-		
+		std::lock_guard<std::recursive_mutex> guard(m_PendingLock);
+
 		for (size_t x=0; x<m_vPendingDelegates.size(); x++)
 		{
 			if (m_vPendingDelegates[x].first)
@@ -516,19 +348,17 @@ protected:
 		}
 
 		m_vPendingDelegates.clear();
-		m_PendingLock.unlock();
 	}
 
 private:
-	QuickThreadMutex m_Lock;
-	QuickThreadMutex m_PendingLock;
+	std::recursive_mutex m_Lock;
+	std::recursive_mutex m_PendingLock;
 
 	std::vector<TDel*> m_vDelegates;
 	std::vector<std::pair<bool, TDel*> > m_vPendingDelegates;
 	
-	bool m_bCancel;
-
-	TDel* m_pCurDelegate;
+	bool m_bCancel = false;
+	TDel* m_pCurDelegate = nullptr;
 };
 
 
