@@ -135,8 +135,17 @@ void SetDumpLevel(unsigned char level)
 		theApp.m_MDumpHandle.setDumpLevel(level);
 }
 
+#include <signal.h>
+
+void CustomSigAbort(int nSig)
+{
+	assert(false);
+	throw std::exception("sig abort");
+}
+
 BootLoader::BootLoader()
 {
+	signal(SIGABRT, CustomSigAbort);
 	_set_error_mode(_OUT_TO_MSGBOX);
 
 	m_MDumpHandle.showMessageBox(true);

@@ -385,24 +385,17 @@ void BaseThread::applyPriority()
 #endif
 }
 
-void BaseThread::setThreadName(const char* nameOveride)
+#if defined(WIN32) && !defined(__MINGW32__)
+typedef struct tagTHREADNAME_INFO
 {
-#if defined(WIN32)
-	typedef struct tagTHREADNAME_INFO
-	{
-		DWORD dwType; // must be 0x1000
-		LPCSTR szName; // pointer to name (in user addr space)
-		DWORD dwThreadID; // thread ID (-1=caller thread)
-		DWORD dwFlags; // reserved for future use, must be zero
-	} THREADNAME_INFO;
+	DWORD dwType; // must be 0x1000
+	LPCSTR szName; // pointer to name (in user addr space)
+	DWORD dwThreadID; // thread ID (-1=caller thread)
+	DWORD dwFlags; // reserved for future use, must be zero
+} THREADNAME_INFO;
 
-	THREADNAME_INFO info;
-	info.dwType = 0x1000;
-	info.szName = nameOveride?nameOveride:m_pPrivates->m_szName;
-	info.dwThreadID = (DWORD)GetCurrentThreadId();;
-	info.dwFlags = 0;
-
-  #ifndef __MINGW32__
+static void ThrowException(THREADNAME_INFO &info)
+{
    // what the hell is happening here?
 	__try
 	{
@@ -411,14 +404,28 @@ void BaseThread::setThreadName(const char* nameOveride)
 	__except(EXCEPTION_CONTINUE_EXECUTION)
 	{
 	}
-	#endif
+}
+#endif
+
+void BaseThread::setThreadName(const char* nameOveride)
+{
+	if (!nameOveride)
+		nameOveride = m_pPrivates->m_szName.c_str();
+
+#if defined(WIN32) && !defined(__MINGW32__)
+	THREADNAME_INFO info;
+	info.dwType = 0x1000;
+	info.szName = nameOveride;
+	info.dwThreadID = (DWORD)GetCurrentThreadId();;
+	info.dwFlags = 0;
+
+	gcString strThreadName("Thread 0x{0:x} name is \"{1}\"\n", GetCurrentThreadId(), nameOveride);
+	OutputDebugStringA(strThreadName.c_str());
+
+	ThrowException(info);
 #else
 	char name[16];
-	
-	if (nameOveride)
-		strncpy(name, nameOveride, 15);
-	else
-		strncpy(name, m_pPrivates->m_szName, 15);
+	strncpy(name, nameOveride, 15);
 		
 	name[15] = '\0'; 
 	prctl(PR_SET_NAME, name, 0, 0, 0);

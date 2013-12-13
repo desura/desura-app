@@ -19,6 +19,25 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>
 #ifndef COMMON_H
 #define COMMON_H
 
+#include <assert.h>
+#include <exception>
+
+#define BOOST_ENABLE_ASSERT_HANDLER 1
+namespace boost
+{
+	inline void assertion_failed(char const * expr, char const * function, char const * file, long line)
+	{
+		assert(false);
+		throw std::exception("Boost assert failed");
+	}
+
+	inline void assertion_failed_msg(char const * expr, char const * msg, char const * function, char const * file, long line)
+	{
+		assert(false);
+		throw std::exception("Boost assert failed");
+	}
+}
+
 #define DONT_INCLUDE_SHLOBJ
 
 #ifdef _DEBUG
@@ -845,5 +864,5 @@ T Clamp(T val, T minVal, T maxVal)
 	#endif
 #endif
 
-#include <assert.h>
+
 #include <memory>

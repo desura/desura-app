@@ -43,9 +43,22 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>
 ITaskbarList3* g_pITBL3= NULL;
 HINSTANCE g_hInstDLL;
 
+
+#include <signal.h>
+
+void CustomSigAbort(int nSig)
+{
+	assert(false);
+	throw std::exception("sig abort");
+}
+
 // This is where windows wants to start a DLL
 BOOL WINAPI DllMain(HINSTANCE hinstDLL, DWORD fdwReason, LPVOID lpvReserved)
 {
+	//Do it here as well as this needs to be done once for dynamic run time and once for static run time
+	signal(SIGABRT, CustomSigAbort);
+	_set_error_mode(_OUT_TO_MSGBOX);
+
 	g_hInstDLL = hinstDLL;
 	return TRUE;
 }
