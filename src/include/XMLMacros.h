@@ -483,10 +483,7 @@ namespace XML
 
 		std::wstring ToWString(bool bCompact = false)
 		{
-			tinyxml2::XMLPrinter printer(0, bCompact);
-			m_XmlDoc.Accept(&printer);
-
-			return gcWString(printer.CStr(), printer.CStrSize());
+			return gcWString(ToString(bCompact));
 		}
 
 	private:
