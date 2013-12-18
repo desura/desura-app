@@ -856,12 +856,12 @@ namespace UnitTest
 			return m_BranchInstallInfo.m_NextBuild;
 		}
 
-		bool processUpdateXml(tinyxml2::XMLNode* branch)
+		bool processUpdateXml(const XML::gcXMLElement& branch)
 		{
 			return m_BranchInstallInfo.processUpdateXml(branch);
 		}
 
-		ProcessResult processSettings(tinyxml2::XMLNode* setNode, WildcardManager* pWildCard, bool reset, bool hasBroughtItem, const char* cipPath)
+		ProcessResult processSettings(const XML::gcXMLElement& setNode, WildcardManager* pWildCard, bool reset, bool hasBroughtItem, const char* cipPath)
 		{
 			return m_BranchInstallInfo.processSettings(setNode, pWildCard, reset, hasBroughtItem, cipPath);
 		}

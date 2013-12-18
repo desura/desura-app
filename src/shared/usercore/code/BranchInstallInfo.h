@@ -30,6 +30,11 @@ namespace XML
 	class gcXMLElement;
 }
 
+namespace UnitTest
+{
+	class BranchInstallInfoFixture;
+}
+
 class InsCheck;
 
 namespace sqlite3x
@@ -174,6 +179,8 @@ public:
 	void setLinkInfo(const char* exe, const char* args);
 
 protected:
+	friend class UnitTest::BranchInstallInfoFixture;
+
 	void launchExeHack();
 	void processExes(const XML::gcXMLElement &setNode, WildcardManager* pWildCard, bool useCip);
 
