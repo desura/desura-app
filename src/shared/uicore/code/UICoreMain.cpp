@@ -300,7 +300,7 @@ class DesuraLog : public wxLog
 public:
 	virtual void DoLogString(const wxChar *msg, time_t timestamp)
 	{
-		Debug(msg);
+		Debug(gcString("{0}\n", msg));
 	}
 };
 
