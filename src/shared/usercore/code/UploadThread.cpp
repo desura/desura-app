@@ -173,13 +173,18 @@ void UploadThread::doRun()
 
 		XML::gcXMLDocument doc(const_cast<char*>(error), m_hHttpHandle->getDataSize());
 
+		int status = -1;
+
 		try
 		{
-			doc.ProcessStatus("itemupload");
+			doc.ProcessStatus("itemupload", status);
 		}
 		catch (...)
 		{
-			if (m_uiContinueCount > 3)
+			if (status == (int)MCFUploadStatus::Finished)
+			{
+			}
+			else if (status == (int)MCFUploadStatus::Failed || status == (int)MCFUploadStatus::ItemNotFound || m_uiContinueCount > 3)
 			{
 				throw;
 			}
@@ -191,48 +196,16 @@ void UploadThread::doRun()
 			}
 		}
 		
-		auto gMsg = doc.GetRoot("itemupload").FirstChildElement("status");
+		sCode = status;
 
-		uint32 t = 0;
-		gMsg.GetAtt("code", t);
-
-		if (t != 0)
+		if (sCode == (int)MCFUploadStatus::Ok || sCode == (int)MCFUploadStatus::Finished)
 		{
-			sCode = t;
+			m_uiAmountRead += chunkSize;
+			m_uiContinueCount = 0;
 
-			if (sCode == 0 || sCode == 999)
-			{
-				m_uiAmountRead += chunkSize;
-				m_uiContinueCount = 0;
-
-				UserCore::Misc::UploadInfo ui;
-				ui.milestone = true;
-				onUploadProgressEvent(ui);
-			}
-			else if (sCode == 107 && m_uiContinueCount < 3)	//only part upload
-			{
-				Warning(gcString("Upload failed, bad status: {0} [{1}]. Trying to continue.\n", sCode, gMsg.GetText()));
-				m_uiContinueCount++;
-				continue;
-			}
-			else
-			{	
-				throw gcException(ERR_BADSTATUS, gcString("Upload failed, bad status: {0} [{1}]", sCode, gMsg.GetText()));
-				break;
-			}
-		}
-		else
-		{
-			if (m_uiContinueCount > 3)
-			{
-				throw gcException(ERR_BADXML, "Couldnt find the id node in itemupload xml.");
-			}
-			else
-			{
-				m_uiContinueCount++;
-				//bad upload, let it continue restart it
-				Warning(gcString("Unable to find id node for file upload. Retrying. [{0}]\n", m_pInfo->szFile));	
-			}
+			UserCore::Misc::UploadInfo ui;
+			ui.milestone = true;
+			onUploadProgressEvent(ui);
 		}
 	}
 

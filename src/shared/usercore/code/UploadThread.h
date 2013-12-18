@@ -32,6 +32,18 @@ namespace UserCore
 namespace Thread
 {
 
+	enum class MCFUploadStatus : int
+	{
+		Ok = 0,
+		GenericError = 100,
+		ValidationError = 107,
+		PermissionError = 108,
+		ItemNotFound = 110,
+		Started = 121,
+		Failed = 122,
+		Finished = 999,
+	};
+
 class UploadThreadInfo
 {
 public:

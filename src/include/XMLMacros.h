@@ -406,6 +406,13 @@ namespace XML
 		//! Returns version
 		uint32 ProcessStatus(const std::string &strRoot) const
 		{
+			int s;
+			return ProcessStatus(strRoot, s);
+		}
+
+		//! Returns version
+		uint32 ProcessStatus(const std::string &strRoot, int &status) const
+		{
 			uint32 v = 1;
 
 			auto uNode = m_XmlDoc.FirstChildElement(strRoot.c_str());
@@ -421,7 +428,7 @@ namespace XML
 			if (!sNode)
 				throw gcException(ERR_BADXML, "Missing status node");
 
-			uint32 status = 0;
+			status = -1;
 			const char* statStr = sNode->Attribute("code");
 
 			if (!statStr)
