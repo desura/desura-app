@@ -22,11 +22,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>
 #include "McfManager.h"
 #include "mcfcore/UserCookies.h"
 
-#include "boost/date_time/posix_time/conversion.hpp"
-#include "boost/date_time/posix_time/posix_time.hpp"
-namespace bpt = boost::posix_time;
-
 #include "ItemManager.h"
+#include "util/gcTime.h"
 
 namespace UserCore
 {
@@ -195,7 +192,7 @@ void CreateMCFThread::compareBranches(std::vector<UserCore::Item::BranchInfo*> &
 
 void CreateMCFThread::createMcf()
 {
-	std::string timeStr = bpt::to_iso_string( bpt::ptime(bpt::second_clock::local_time()));
+	std::string timeStr = gcTime().to_iso_string();
 
 	MCFBranch branch = m_hMCFile->getHeader()->getBranch();
 

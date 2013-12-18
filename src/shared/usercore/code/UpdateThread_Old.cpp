@@ -29,6 +29,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>
 #endif
 #include <branding/branding.h>
 
+#include "util/gcTime.h"
+
 #define SAVE_TIME	30 //seconds
 
 #ifdef DEBUG
@@ -36,8 +38,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>
 #else
 	#define UPDATE_TIME	9 //mins
 #endif
-
-#include <boost/date_time/posix_time/posix_time.hpp>
 
 namespace UserCore
 {
@@ -82,16 +82,17 @@ void UpdateThreadOld::doRun()
 	if (m_bLoadLoginItems)
 		loadLoginItems();
 
-	boost::posix_time::ptime timer(boost::posix_time::second_clock::universal_time());
-	boost::posix_time::ptime savetimer(boost::posix_time::second_clock::universal_time());
+	gcTime timer;
+	gcTime savetimer;
 
 	//see where we are within the 10 min window
-	uint32 offset = timer.time_of_day().seconds() + (timer.time_of_day().minutes()%6)*60;
+	uint32 offset = timer.seconds() + (timer.minutes()%6)*60;
 	bool lastFailed = false;
 
 	while (!isStopped())
 	{
-		boost::posix_time::ptime now(boost::posix_time::second_clock::universal_time());
+		gcTime now;
+
 		if (now >= savetimer)
 		{
 			m_pUser->getItemManager()->saveItems();
@@ -102,7 +103,7 @@ void UpdateThreadOld::doRun()
 #endif
 
 			savetimer = now;
-			savetimer += boost::posix_time::seconds(SAVE_TIME);
+			savetimer += std::chrono::seconds(SAVE_TIME);
 		}
 
 		if (now >= timer || m_bForcePoll)
@@ -112,15 +113,15 @@ void UpdateThreadOld::doRun()
 			if (pollUpdates())
 			{
 				if (lastFailed || m_bForcePoll)
-					timer -= boost::posix_time::seconds(offset);
+					timer -= std::chrono::seconds(offset);
 
-				timer += boost::posix_time::minutes(UPDATE_TIME);
+				timer += std::chrono::minutes(UPDATE_TIME);
 				lastFailed = false;
 			}
 			else
 			{
 				lastFailed = true;
-				timer += boost::posix_time::minutes(1);
+				timer += std::chrono::minutes(1);
 			}
 
 			m_bForcePoll = false;
@@ -128,13 +129,10 @@ void UpdateThreadOld::doRun()
 
 		if (!isStopped())
 		{
-			uint32 saveSecs = (savetimer - now).seconds();
-			uint32 pollSecs = (timer - now).seconds();
+			auto saveSecs = (savetimer - now).seconds();
+			auto pollSecs = (timer - now).seconds();
 
-			if (saveSecs > pollSecs)
-				m_WaitCond.wait(pollSecs+1);
-			else
-				m_WaitCond.wait(saveSecs+1);
+			m_WaitCond.wait(std::min(pollSecs, saveSecs)+1);
 		}
 	}
 }

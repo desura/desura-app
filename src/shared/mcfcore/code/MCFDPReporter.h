@@ -25,10 +25,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>
 #include "mcfcore/MCFDPReporterI.h"
 #include "BaseManager.h"
 
-#include "boost/date_time/posix_time/posix_time.hpp"
-namespace bpt = boost::posix_time;
-
 #include "util_thread/BaseThread.h"
+#include "util/gcTime.h"
 
 namespace MCFCore
 {
@@ -41,21 +39,20 @@ public:
 	DPProvider(const char* name, uint32 id);
 	~DPProvider();
 
-	uint32 getId();
-	const char* getName();
+	uint32 getId() const;
+	uint32 getLastRate() const;
+	const char* getName() const;
 
 	void reportProgress(uint32 prog);
-	uint32 getLastRate();
-
 	void clear();
 
 private:
-	bpt::ptime m_tStart;
-	bpt::ptime m_tLastUpdate;
-	double m_fAmmount;
+	gcTime m_tStart;
+	gcTime m_tLastUpdate;
+	uint64 m_ullAmmount = 0;
 
-	gcString m_szName;
-	uint32 m_uiId;
+	const gcString m_szName;
+	uint32 m_uiId = 0;
 };
 
 
@@ -78,10 +75,10 @@ public:
 	void delProvider(uint32 id);
 
 private:
-	::Thread::Mutex m_MapLock;
+	std::mutex m_MapLock;
 
-	uint64 m_uiTotal;
-	uint32 m_uiLastId;
+	uint64 m_uiTotal = 0;
+	uint32 m_uiLastId = 0;
 };
 
 

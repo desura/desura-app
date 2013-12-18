@@ -24,20 +24,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>
 
 #include <time.h>
 #include <time.h>
-#include "boost/filesystem/operations.hpp"
-#include "boost/filesystem/path.hpp"
-#include "boost/date_time/posix_time/conversion.hpp"
-#include "boost/date_time/posix_time/posix_time.hpp"
-
-namespace bfs = boost::filesystem;
-namespace bpt = boost::posix_time;
 
 #ifdef NIX
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <unistd.h>
 #endif
-
 
 namespace MCFCore 
 {
@@ -106,7 +98,7 @@ void SFTWorker::run()
 	}
 }
 
-static ptime parseTimeStamp(gcString &str)
+static gcTime parseTimeStamp(gcString &str)
 {
 	//Boost throws exception if no time string. :(
 	if (str.find('T') == std::string::npos)
@@ -114,7 +106,7 @@ static ptime parseTimeStamp(gcString &str)
 		str = str.substr(0, 8) + "T" + str.substr(8);
 	}
 
-	return ptime(from_iso_string(str));
+	return gcTime::from_iso_string(str);
 }
 
 void SFTWorker::finishFile()
@@ -126,11 +118,7 @@ void SFTWorker::finishFile()
 
 	try
 	{
-		ptime t = parseTimeStamp(str);
-		bfs::path spath(file);
-
-		tm pt_tm = to_tm(t);
-		last_write_time(spath, mktime(&pt_tm));
+		UTIL::FS::setLastWriteTime(file, parseTimeStamp(str));
 	}
 	catch (...)
 	{
@@ -324,10 +312,19 @@ namespace UnitTest
 {
 	TEST(SFTWorker, ParseTimeStamp)
 	{
-		ptime e(boost::gregorian::date(2013, 9, 10), time_duration(8, 6, 54));
+		tm t = {0};
+		t.tm_hour = 8;
+		t.tm_min = 6;
+		t.tm_sec = 56;
+
+		t.tm_year = 2013;
+		t.tm_mon = 9;
+		t.tm_mday = 10;
+
+		gcTime e(std::chrono::system_clock::from_time_t(mktime(&t)));
 
 		gcString strTimeStamp("20130910080654");
-		ptime p = MCFCore::Thread::parseTimeStamp(strTimeStamp);
+		auto p = MCFCore::Thread::parseTimeStamp(strTimeStamp);
 
 		ASSERT_EQ(e, p);
 	}

@@ -26,9 +26,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>
 #include "Event.h"
 #include "mcfcore/ProgressInfo.h"
 
-#include "boost/date_time/posix_time/posix_time.hpp"
-using namespace boost::posix_time;
-
+#include "util/gcTime.h "
 
 
 namespace MCFCore
@@ -88,19 +86,18 @@ protected:
 	void onUnpause();
 
 private:
-	::Thread::Mutex m_pProgMutex;
+	std::mutex m_pProgMutex;
 
-	ptime m_tLastUpdateTime;
+	gcTime m_tLastUpdateTime;
+	gcTime m_tStartTime;
+	gcTime m_tPauseStartTime;
+	gcDuration m_tTotPauseTime;
 
-	ptime m_tStartTime;
-	ptime m_tPauseStartTime;
-	time_duration m_tTotPauseTime;
-
-	uint16 m_pCount;
+	uint16 m_pCount = 0;
 	std::vector<uint64> m_vProgInfo;
 
-	uint64 m_uiTotalSize;
-	uint64 m_uiDoneSize;
+	uint64 m_uiTotalSize = 0;
+	uint64 m_uiDoneSize = 0;
 };
 
 }}

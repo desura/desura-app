@@ -23,8 +23,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>
 #endif
 
 #include <vector>
-#include "wxControls/gcControls.h"
-#include "boost/date_time.hpp"
+#include "util/gcTime.h"
 
 class TabPanelI;
 
@@ -52,13 +51,13 @@ protected:
 	void updatePanel();
 
 private:
-	boost::posix_time::ptime m_tNextUpdate;
+	gcTime m_tNextUpdate;
 
 
 	std::vector<TabPanelI*> m_vPanelList;
-	unsigned int m_uiCurPanel;
 
 	TabPanelI* m_pParent;
+	size_t m_uiCurPanel = 0;
 };
 
 #endif //DESURA_TABHANDLER_H

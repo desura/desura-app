@@ -96,6 +96,8 @@ void UploadThread::doRun()
 
 	UTIL::MISC::Buffer buffer(m_uiChunkSize);
 
+	m_tStartTime = gcTime();
+
 	while (sCode != 999)
 	{
 		if (m_bCancel)
@@ -103,7 +105,7 @@ void UploadThread::doRun()
 
 		if (m_bSetPauseStart)
 		{
-			m_tPauseStartTime = boost::posix_time::ptime(boost::posix_time::second_clock::universal_time());
+			m_tPauseStartTime = gcTime();
 			m_bSetPauseStart = false;
 		}
 
@@ -137,10 +139,6 @@ void UploadThread::doRun()
 		m_hHttpHandle->addPostFileAsBuff("mcf", "upload.mcf", buffer, chunkSize);
 		m_hHttpHandle->addPostText("uploadsize", chunkSize);
 		m_hHttpHandle->getProgressEvent()  += delegate(this,  &UploadThread::onProgress);
-
-
-		if (m_tStartTime.is_not_a_date_time())
-			m_tStartTime = boost::posix_time::ptime(boost::posix_time::second_clock::universal_time());
 
 		uint8 res = 0;
 
@@ -271,9 +269,8 @@ void UploadThread::onProgress(Prog_s& p)
 		return;
 	}
 
-	boost::posix_time::ptime curTime(boost::posix_time::second_clock::universal_time());
-
-	double rate = (temp->ulnow - m_fLastAmmount)/((double)(curTime - m_tLastTime).total_seconds());
+	gcTime curTime;
+	double rate = (temp->ulnow - m_fLastAmmount)/((double)(curTime - m_tLastTime).seconds());
 	
 	if (m_fLastAmmount < 1)
 		rate = 0;
@@ -281,13 +278,13 @@ void UploadThread::onProgress(Prog_s& p)
 	m_fLastAmmount = temp->ulnow;
 	m_tLastTime = curTime;
 
-	boost::posix_time::time_duration total = curTime - m_tStartTime;
+	auto total = curTime - m_tStartTime;
 	total -= m_tTotPauseTime;
 
-	double avgRate = (currProg) / ((double)total.total_seconds());
+	double avgRate = (currProg) / ((double)total.seconds());
 	double pred = (m_uiFileSize - currProg - m_pInfo->uiStart) / avgRate;
 
-	boost::posix_time::time_duration predTime = boost::posix_time::seconds((long)pred);
+	auto predTime = gcDuration(std::chrono::seconds((long)pred));
 
 	ui.min = (uint8)predTime.minutes();
 	ui.hour = (uint8)predTime.hours();
@@ -306,9 +303,7 @@ void UploadThread::onPause()
 
 void UploadThread::onUnpause()
 {
-	boost::posix_time::ptime curTime(boost::posix_time::second_clock::universal_time());
-	m_tTotPauseTime += curTime - m_tPauseStartTime;
-
+	m_tTotPauseTime += gcTime() - m_tPauseStartTime;
 	onUnpauseEvent();
 }
 

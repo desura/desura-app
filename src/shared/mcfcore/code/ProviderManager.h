@@ -26,8 +26,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>
 #include "mcfcore/MCFI.h"
 
 #include "util_thread/BaseThread.h"
-#include "boost/date_time/posix_time/posix_time.hpp"
-using namespace boost::posix_time;
 
 
 namespace MCFCore
@@ -37,14 +35,14 @@ namespace Misc
 
 class ErrorInfo;
 
-//! Provider manager handles all the providers for mcf download including error managment
+//! Provider manager handles all the providers for mcf download including error management
 //!
 class ProviderManager
 {
 public:
-	//! Constuctor
+	//! Constructor
 	//!
-	//! @param source Provider source lise
+	//! @param source Provider source list
 	//!
 	ProviderManager(std::vector<std::shared_ptr<const MCFCore::Misc::DownloadProvider>> &source);
 	~ProviderManager();
@@ -99,10 +97,10 @@ public:
 	Event<MCFCore::Misc::DP_s> onProviderEvent;
 
 private:
-
 	std::vector<std::shared_ptr<const MCFCore::Misc::DownloadProvider>> &m_vSourceList;
 	std::vector<std::shared_ptr<ErrorInfo>> m_vErrorList;
-	::Thread::Mutex m_WaitMutex;
+
+	std::mutex m_WaitMutex;
 };
 
 }

@@ -33,10 +33,9 @@ DPReproter* GetDPReporter()
 
 
 
-DPReproter::DPReproter() : BaseManager<DPProvider>(true)
+DPReproter::DPReproter() 
+	: BaseManager<DPProvider>(true)
 {
-	m_uiLastId = 0;
-	m_uiTotal = 0;
 }
 
 uint32 DPReproter::getProviderCount()
@@ -46,9 +45,8 @@ uint32 DPReproter::getProviderCount()
 
 uint32 DPReproter::getProviderId(uint32 index)
 {
-	m_MapLock.lock();
+	std::lock_guard<std::mutex> guard(m_MapLock);
 	DPProvider* item = getItem(index);
-	m_MapLock.unlock();
 
 	if (item)
 		return item->getId();
@@ -58,9 +56,8 @@ uint32 DPReproter::getProviderId(uint32 index)
 
 void DPReproter::getName(uint32 id, char* buff, uint32 size)
 {
-	m_MapLock.lock();
+	std::lock_guard<std::mutex> guard(m_MapLock);
 	DPProvider* item = findItem(id);
-	m_MapLock.unlock();
 
 	if (item)
 	{
@@ -71,9 +68,8 @@ void DPReproter::getName(uint32 id, char* buff, uint32 size)
 
 uint32 DPReproter::getLastRate(uint32 id)
 {
-	m_MapLock.lock();
+	std::lock_guard<std::mutex> guard(m_MapLock);
 	DPProvider* item = findItem(id);
-	m_MapLock.unlock();
 
 	if (item)
 		return item->getLastRate();
@@ -85,9 +81,8 @@ void DPReproter::reportProgress(uint32 id, uint32 prog)
 {
 	m_uiTotal += prog;
 
-	m_MapLock.lock();
+	std::lock_guard<std::mutex> guard(m_MapLock);
 	DPProvider* item = findItem(id);
-	m_MapLock.unlock();
 
 	if (item)
 		item->reportProgress(prog);
@@ -98,18 +93,15 @@ uint32 DPReproter::newProvider(const char* name)
 	uint32 id = m_uiLastId;
 	m_uiLastId++;
 
-	m_MapLock.lock();
+	std::lock_guard<std::mutex> guard(m_MapLock);
 	addItem(new DPProvider(name, id));
-	m_MapLock.unlock();
-
 	return id;
 }
 
 void DPReproter::delProvider(uint32 id)
 {
-	m_MapLock.lock();
+	std::lock_guard<std::mutex> guard(m_MapLock);
 	removeItem(id, true);
-	m_MapLock.unlock();
 }
 
 uint64 DPReproter::getTotalSinceStart()
@@ -144,15 +136,12 @@ void DPReproter::resetStart()
 
 
 
-DPProvider::DPProvider(const char* name, uint32 id) : BaseItem()
+DPProvider::DPProvider(const char* name, uint32 id) 
+	: BaseItem()
+	, m_uiId(id)
+	, m_szName(name)
 {
-	m_uiId = id;
 	m_uiHash = id;
-	m_szName = gcString(name);
-	
-	m_tStart = bpt::ptime(bpt::microsec_clock::universal_time());
-
-	clear();
 }
 
 DPProvider::~DPProvider()
@@ -161,40 +150,37 @@ DPProvider::~DPProvider()
 
 void DPProvider::clear()
 {
-	m_fAmmount = 0;
-	
+	reportProgress(0);
 }
 
-uint32 DPProvider::getId()
+void DPProvider::reportProgress(uint32 prog)
+{
+	m_ullAmmount += prog;
+	m_tLastUpdate = gcTime();
+}
+
+uint32 DPProvider::getId() const
 {
 	return m_uiId;
 }
 
-const char* DPProvider::getName()
+const char* DPProvider::getName() const
 {
 	return m_szName.c_str();
 }
 
-
-void DPProvider::reportProgress(uint32 prog)
+uint32 DPProvider::getLastRate() const
 {
-	m_fAmmount += prog;
-	m_tLastUpdate = bpt::ptime(bpt::microsec_clock::universal_time());
-}
+	if (m_ullAmmount < 1)
+		return 0;
+	
+	auto total = gcTime() - m_tStart;
 
-uint32 DPProvider::getLastRate()
-{
-	if (m_fAmmount < 1)
+	if (total.seconds() == 0)
 		return 0;
 
-	bpt::ptime curTime(bpt::microsec_clock::universal_time());
-	bpt::time_duration total = curTime - m_tStart;
-
-	if (total.total_seconds() == 0)
-		return 0;
-
-	double avgRate = m_fAmmount / ((double)total.total_seconds());
-	return (uint32)(avgRate/1024);
+	double avgRate = ((double)m_ullAmmount) / ((double)total.seconds());
+	return (uint32)(avgRate/1024.0);
 }
 
 

@@ -24,7 +24,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>
 
 
 #include "MCFThread.h"
-#include "boost/date_time/posix_time/posix_time.hpp"
+#include "util/gcTime.h"
 
 
 namespace UserCore
@@ -83,10 +83,10 @@ private:
 
 	double m_fLastAmmount;
 
-	boost::posix_time::ptime m_tLastTime;
-	boost::posix_time::ptime m_tStartTime;
-	boost::posix_time::ptime m_tPauseStartTime;
-	boost::posix_time::time_duration m_tTotPauseTime;
+	gcTime m_tLastTime;
+	gcTime m_tStartTime;
+	gcTime m_tPauseStartTime;
+	gcDuration m_tTotPauseTime;
 };
 
 

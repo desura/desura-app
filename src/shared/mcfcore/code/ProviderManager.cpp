@@ -18,6 +18,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>
 
 #include "Common.h"
 #include "ProviderManager.h"
+#include "util/gcTime.h"
 
 namespace MCFCore
 {
@@ -29,23 +30,16 @@ const uint32 g_uiTimeOutDelay = 15;
 class ErrorInfo
 {
 public:
-	ErrorInfo()
-	{
-		m_uiErrCount = 0;
-		m_iOwner = -1;
-		m_tExpTime = ptime(second_clock::universal_time());
-	}
-
 	void setTimeOut()
 	{
 		m_iOwner = -1;
-		m_tExpTime = ptime(second_clock::universal_time()) + seconds( getTimeOut() );
+		m_tExpTime = gcTime() + std::chrono::seconds( getTimeOut() );
 		m_uiErrCount++;
 	}
 
 	bool isInTimeOut()
 	{
-		return (m_tExpTime > ptime(second_clock::universal_time()));
+		return m_tExpTime > gcTime();
 	}
 
 	void setOwner(uint32 id)
@@ -65,9 +59,9 @@ protected:
 	}
 
 private:
-	uint32 m_uiErrCount;
-	uint32 m_iOwner;
-	ptime m_tExpTime;
+	uint32 m_uiErrCount = 0;
+	uint32 m_iOwner = -1;
+	gcTime m_tExpTime;
 };
 
 

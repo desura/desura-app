@@ -24,18 +24,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>
 #include "boost\date_time.hpp"
 
 TabHandler::TabHandler(TabPanelI* parent)
+	: m_pParent(parent)
 {
-	m_pParent = parent;
-	m_uiCurPanel = 0;
-
-	m_tNextUpdate = boost::posix_time::ptime(boost::posix_time::microsec_clock::universal_time());
 }
 
 TabHandler::~TabHandler()
 {
-
 }
-
 
 void TabHandler::clear()
 {
@@ -55,11 +50,12 @@ void TabHandler::addPanel(TabPanelI* pan)
 
 void TabHandler::onKeyDown(TabPanelI* pan, wxKeyEvent& event)
 {
-	boost::posix_time::ptime now(boost::posix_time::microsec_clock::universal_time());
+	auto now = gcTime();
+
 	if (now < m_tNextUpdate)
 		return;
 
-	m_tNextUpdate = now + boost::posix_time::milliseconds(100);
+	m_tNextUpdate = now + std::chrono::milliseconds(100);
 
 	for (size_t x=0; x<m_vPanelList.size(); x++)
 	{

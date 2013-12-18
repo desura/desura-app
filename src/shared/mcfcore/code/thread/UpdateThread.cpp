@@ -25,11 +25,11 @@ namespace MCFCore
 namespace Thread
 {
 
-UpdateProgThread::UpdateProgThread(uint16 count, uint64 totSize) : BaseThread( "Update Progress Thread" )
+UpdateProgThread::UpdateProgThread(uint16 count, uint64 totSize) 
+	: BaseThread( "Update Progress Thread" )
+	, m_pCount(count)
+	, m_uiTotalSize(totSize)
 {
-	m_pCount = count;
-	m_uiTotalSize = totSize;
-	m_uiDoneSize = 0;
 }
 
 UpdateProgThread::~UpdateProgThread()
@@ -52,10 +52,10 @@ void UpdateProgThread::reportProg(uint32 id, uint64 ammount)
 	if (id >= m_vProgInfo.size())
 		return;
 
-	m_pProgMutex.lock();
+	std::lock_guard<std::mutex> guard(m_pProgMutex);
+
 	m_vProgInfo[id] = ammount;
-	m_tLastUpdateTime = ptime(microsec_clock::universal_time());
-	m_pProgMutex.unlock();
+	m_tLastUpdateTime = gcTime();
 }
 
 void UpdateProgThread::stopThread(uint32 id)
@@ -64,8 +64,8 @@ void UpdateProgThread::stopThread(uint32 id)
 
 void UpdateProgThread::run()
 {
-	m_tStartTime = ptime(microsec_clock::universal_time());
-	m_tLastUpdateTime = ptime(microsec_clock::universal_time());
+	m_tStartTime = gcTime();
+	m_tLastUpdateTime = gcTime();
 
 	for (uint8 x=0; x<m_pCount; x++)
 		m_vProgInfo.push_back(0);
@@ -84,20 +84,21 @@ void UpdateProgThread::calcResults()
 		return;
 
 	uint64 done = 0;
-	ptime curTime(microsec_clock::universal_time());
+	gcTime curTime;
 
-	time_duration elasped = curTime - m_tStartTime;
+	auto elasped = curTime - m_tStartTime;
 
 	//only go fowards if total time elasped is greater than a second
-	if (elasped.total_seconds() == 0)
+	if (elasped.seconds() == 0)
 		return;
 
-	m_pProgMutex.lock();
+	{
+		std::lock_guard<std::mutex> guard(m_pProgMutex);
 
-	for (size_t x=0; x<m_vProgInfo.size(); x++)
-		done += m_vProgInfo[x];
-
-	m_pProgMutex.unlock();
+		for (size_t x=0; x<m_vProgInfo.size(); x++)
+			done += m_vProgInfo[x];
+	}
+	
 
 	if (done == 0)
 		return;
@@ -108,21 +109,21 @@ void UpdateProgThread::calcResults()
 	temp.totalAmmount = m_uiTotalSize;
 	temp.percent = (uint8)(((done+m_uiDoneSize)*100)/m_uiTotalSize);
 
-	time_duration diff = curTime - m_tLastUpdateTime;
+	auto diff = curTime - m_tLastUpdateTime;
 
 	if (temp.doneAmmount >= temp.totalAmmount)
 	{
 		temp.doneAmmount = temp.totalAmmount;
 	}
-	else if (diff.total_seconds() < 5)
+	else if (diff.seconds() < 5)
 	{
-		time_duration total = curTime - m_tStartTime;
+		auto total = curTime - m_tStartTime;
 		total -= m_tTotPauseTime;
 
-		double avgRate	= done / (double)total.total_seconds();
+		double avgRate	= done / (double)total.seconds();
 		uint64 pred		= (uint64)((m_uiTotalSize - done - m_uiDoneSize) / avgRate);
 		
-		time_duration predTime = seconds((long)pred);
+		auto predTime = gcDuration(std::chrono::seconds((long)pred));
 
 		temp.hour	= (uint8)predTime.hours();
 		temp.min	= (uint8)predTime.minutes();
@@ -139,13 +140,12 @@ void UpdateProgThread::calcResults()
 
 void UpdateProgThread::onPause()
 {
-	m_tPauseStartTime = ptime(second_clock::universal_time());
+	m_tPauseStartTime = gcTime();
 }
 
 void UpdateProgThread::onUnpause()
 {
-	ptime curTime(second_clock::universal_time());
-	m_tTotPauseTime += curTime - m_tPauseStartTime;
+	m_tTotPauseTime += gcTime() - m_tPauseStartTime;
 }
 
 void UpdateProgThread::onStop()

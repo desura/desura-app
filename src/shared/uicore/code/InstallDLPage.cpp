@@ -22,9 +22,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>
 
 #define DEFAULT_BANNER "#icon_download"
 
-#include "boost/date_time/posix_time/posix_time.hpp"
-using namespace boost::posix_time;
-
 namespace UI
 {
 namespace Forms

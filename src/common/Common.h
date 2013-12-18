@@ -188,6 +188,15 @@ namespace boost
 		// netfw.h:
 		// included in projects directly
 	#endif
+
+	#ifdef min
+	#undef min
+	#endif
+
+	#ifdef max
+	#undef max
+	#endif
+
 #endif
 
 #ifdef NIX // LINUX 
@@ -639,20 +648,8 @@ inline bool HasAllFlags(uint32 value, uint32 flags)
 
 #include <memory>
 
-#if defined(NIX) || defined(__MINGW32__)
-#  ifdef __ICC
-#    include <boost/weak_ptr.hpp>
-#    include <boost/shared_ptr.hpp>
-#    define WeakPtr boost::weak_ptr
-#    define SmartPtr boost::shared_ptr
-#  else
-#    define WeakPtr std::weak_ptr
-#    define SmartPtr std::shared_ptr
-#  endif
-#else
-#  define WeakPtr std::tr1::weak_ptr
-#  define SmartPtr std::tr1::shared_ptr
-#endif
+#define WeakPtr std::weak_ptr
+#define SmartPtr std::shared_ptr
 
 namespace Safe
 {
@@ -826,11 +823,7 @@ namespace Safe
 template <typename T>
 T Clamp(T val, T minVal, T maxVal)
 {
-#if defined(WIN32) && !defined(__MINGW32__)
-	return max(min(val, maxVal), minVal);
-#else
 	return std::max(std::min(val, maxVal), minVal);
-#endif
 }
 
 #include <branding/branding.h>

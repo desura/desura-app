@@ -25,6 +25,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>
 #include "util/UtilFsPath.h"
 #include "util/UtilCallback.h"
 
+#include "util/gcTime.h"
+
 namespace UTIL
 {
 namespace FS
@@ -42,8 +44,8 @@ namespace FS
 	//! @param file File path
 	//! @return File size in bytes
 	//!
-	uint64 getFileSize(Path file);
-	inline uint64 getFileSize(std::string file)
+	uint64 getFileSize(const Path& file);
+	inline uint64 getFileSize(const std::string& file)
 	{
 		return getFileSize(UTIL::FS::PathWithFile(file));
 	}
@@ -53,8 +55,8 @@ namespace FS
 	//! @param folder folder path
 	//! @return folder size in bytes
 	//!
-	uint64 getFolderSize(Path folder);
-	inline uint64 getFolderSize(std::string folder)
+	uint64 getFolderSize(const Path& folder);
+	inline uint64 getFolderSize(const std::string& folder)
 	{
 		return getFolderSize(UTIL::FS::Path(folder, "", false));
 	}
@@ -63,8 +65,8 @@ namespace FS
 	//!
 	//! @param path Path of folders to make
 	//!
-	void recMakeFolder(Path path);
-	inline void recMakeFolder(std::string file)
+	void recMakeFolder(const Path& path);
+	inline void recMakeFolder(const std::string& file)
 	{
 		recMakeFolder(UTIL::FS::Path(file, "", false));
 	}
@@ -73,8 +75,8 @@ namespace FS
 	//!
 	//! @param path path to folder and folder to make (last part of path)
 	//!
-	void makeFolder(Path path);
-	inline void makeFolder(std::string file)
+	void makeFolder(const Path& path);
+	inline void makeFolder(const std::string& file)
 	{
 		makeFolder(UTIL::FS::PathWithFile(file));
 	}
@@ -85,8 +87,8 @@ namespace FS
 	//! @parma buff Buffer to save result in. Will allocate it. 
 	//! @return Size of the buffer.
 	//!
-	uint32 readWholeFile(Path file, char** buf);
-	inline uint32 readWholeFile(std::string file, char** buf)
+	uint32 readWholeFile(const Path& file, char** buf);
+	inline uint32 readWholeFile(const std::string& file, char** buf)
 	{
 		return readWholeFile(UTIL::FS::PathWithFile(file), buf);
 	}
@@ -96,7 +98,7 @@ namespace FS
 	//! @param src File to copy
 	//! @param dest File to copy to
 	//!
-	void copyFile(Path src, Path dest);
+	void copyFile(const Path& src, const Path& dest);
 	inline void copyFile(std::string src, std::string dest)
 	{
 		copyFile(UTIL::FS::PathWithFile(src), UTIL::FS::PathWithFile(dest));
@@ -107,7 +109,7 @@ namespace FS
 	//! @param src Folder to copy
 	//! @param dest of folder
 	//!
-	void copyFolder(Path src, Path dest, std::vector<std::string> *vIgnoreList = NULL, bool copyOverExisting = true);
+	void copyFolder(const Path& src, const Path& dest, std::vector<std::string> *vIgnoreList = NULL, bool copyOverExisting = true);
 	inline void copyFolder(std::string src, std::string dest, std::vector<std::string> *vIgnoreList = NULL, bool copyOverExisting = true)
 	{
 		copyFolder(UTIL::FS::Path(src, "", false), UTIL::FS::Path(dest, "", false), vIgnoreList, copyOverExisting);
@@ -118,7 +120,7 @@ namespace FS
 	//! @param src Folder to move
 	//! @param dest Location to move to
 	//!
-	void moveFolder(Path src, Path dest);
+	void moveFolder(const Path& src, const Path& dest);
 	inline void moveFolder(std::string src, std::string dest)
 	{
 		moveFolder(UTIL::FS::Path(src, "", false), UTIL::FS::Path(dest, "", false));
@@ -130,7 +132,7 @@ namespace FS
 	//! @param src file to move
 	//! @param dest Location to move to
 	//!
-	void moveFile(Path src, Path dest);
+	void moveFile(const Path& src, const Path& dest);
 	inline void moveFile(std::string src, std::string dest)
 	{
 		moveFile(UTIL::FS::PathWithFile(src), UTIL::FS::PathWithFile(dest));
@@ -140,7 +142,7 @@ namespace FS
 	//!
 	//! @param src Folder to erase
 	//!
-	void eraseFolder(Path src);
+	void eraseFolder(const Path& src);
 	inline void eraseFolder(std::string src)
 	{
 		eraseFolder(UTIL::FS::PathWithFile(src));
@@ -150,8 +152,8 @@ namespace FS
 	//! 
 	//! @param file Path to file
 	//!
-	void delFile(Path file);
-	inline void delFile(std::string file)
+	void delFile(const Path& file);
+	inline void delFile(const std::string& file)
 	{
 		delFile(UTIL::FS::PathWithFile(file));
 	}
@@ -160,8 +162,8 @@ namespace FS
 	//!
 	//! @param folder Path to folder
 	//!
-	void delFolder(Path folder);
-	inline void delFolder(std::string folder)
+	void delFolder(const Path& folder);
+	inline void delFolder(const std::string& folder)
 	{
 		delFolder(UTIL::FS::Path(folder, "", false));
 	}
@@ -170,8 +172,8 @@ namespace FS
 	//!
 	//! @param path Path to start from
 	//!
-	void delEmptyFolders(Path path);
-	inline void delEmptyFolders(std::string path)
+	void delEmptyFolders(const Path& path);
+	inline void delEmptyFolders(const std::string& path)
 	{
 		delEmptyFolders(UTIL::FS::Path(path, "", false));
 	}
@@ -181,8 +183,8 @@ namespace FS
 	//! @param file Path to file
 	//! @return True if valid, false if not
 	//!
-	bool isValidFile(Path file);
-	inline bool isValidFile(std::string file)
+	bool isValidFile(const Path& file);
+	inline bool isValidFile(const std::string& file)
 	{
 		return isValidFile(UTIL::FS::PathWithFile(file));
 	}
@@ -192,8 +194,8 @@ namespace FS
 	//! @param folder Path to folder
 	//! @return True if valid, false if not
 	//!
-	bool isValidFolder(Path folder);
-	inline bool isValidFolder(std::string folder)
+	bool isValidFolder(const Path& folder);
+	inline bool isValidFolder(const std::string& folder)
 	{
 		return isValidFolder(UTIL::FS::Path(folder, "", false));
 	}
@@ -203,16 +205,23 @@ namespace FS
 	//! @param path Path to folder
 	//! @return True if empty, false if not
 	//!
-	bool isFolderEmpty(Path path);
-	inline bool isFolderEmpty(std::string path)
+	bool isFolderEmpty(const Path& path);
+	inline bool isFolderEmpty(const std::string& path)
 	{
 		return isFolderEmpty(UTIL::FS::Path(path, "", false));
 	}
 
-	time_t lastWriteTime(Path path);
-	inline time_t lastWriteTime(std::string file)
+	gcTime lastWriteTime(const Path& path);
+	inline gcTime lastWriteTime(const std::string& file)
 	{
 		return lastWriteTime(UTIL::FS::Path(file, "", true));
+	}
+
+
+	void setLastWriteTime(const Path& path, const gcTime& t);
+	inline void setLastWriteTime(const std::string& file, const gcTime& t)
+	{
+		setLastWriteTime(UTIL::FS::Path(file, "", true), t);
 	}
 
 	//! Gets all files in a folder
@@ -221,14 +230,14 @@ namespace FS
 	//! @param outList List of files found
 	//! @param extsFilter Extension filter or null if no filter
 	//!
-	void getAllFiles(Path path, std::vector<Path> &outList, std::vector<std::string> *extsFilter);
+	void getAllFiles(const Path& path, std::vector<Path> &outList, std::vector<std::string> *extsFilter);
 
 	//! Gets all folders in a folder
 	//!
 	//! @param path Folder path
 	//! @param outList List of folders found (raw folder name)
 	//!
-	void getAllFolders(Path path, std::vector<Path> &outList);
+	void getAllFolders(const Path& path, std::vector<Path> &outList);
 
 	//! Mode to open a file with
 	enum FILE_MODE
@@ -253,7 +262,7 @@ namespace FS
 		//! @param offset Default offset from start as file. Treats file as being (size - offset) big starting from offset
 		//!
 		FileHandle(const char* file, FILE_MODE mode, uint64 offset = 0);
-		FileHandle(const Path path, FILE_MODE mode, uint64 offset = 0);
+		FileHandle(const Path& path, FILE_MODE mode, uint64 offset = 0);
 
 		//! 
 		~FileHandle();
@@ -268,7 +277,7 @@ namespace FS
 		//! @param offset Default offset from start as file. Treats file as being (size - offset) big starting from offset
 		//!
 		void open(const char* file, FILE_MODE mode, uint64 offset = 0);
-		void open(const Path path, FILE_MODE mode, uint64 offset = 0);
+		void open(const Path& path, FILE_MODE mode, uint64 offset = 0);
 
 		//! Close currently opened file
 		//!

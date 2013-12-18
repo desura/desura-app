@@ -66,7 +66,7 @@ FileHandle::FileHandle(const char* fileName, FILE_MODE mode, uint64 offset)
 	open(fileName, mode, offset);
 }
 
-FileHandle::FileHandle(const Path path, FILE_MODE mode, uint64 offset)
+FileHandle::FileHandle(const Path& path, FILE_MODE mode, uint64 offset)
 {
 	m_hFileHandle = NULL;
 	m_bIsOpen = false;
@@ -79,7 +79,7 @@ FileHandle::~FileHandle()
 		close();
 }
 
-void FileHandle::open(const Path path, FILE_MODE mode, uint64 offset)
+void FileHandle::open(const Path& path, FILE_MODE mode, uint64 offset)
 {
 	open(path.getFullPath().c_str(), mode, offset);
 }
@@ -108,7 +108,7 @@ void FileHandle::readCB(uint64 size, UTIL::CB::CallbackI* callback)
 
 void printError( bf::filesystem_error e);
 
-uint64 getFileSize(Path szfile)
+uint64 getFileSize(const Path& szfile)
 {
 	try
 	{
@@ -122,7 +122,7 @@ uint64 getFileSize(Path szfile)
 	return 0;
 }
 
-uint64 getFolderSize(Path folder)
+uint64 getFolderSize(const Path& folder)
 {
 	uint64 ret = 0;
 
@@ -149,7 +149,7 @@ uint64 getFolderSize(Path folder)
 	return ret;
 }
 
-void makeFolder(Path name)
+void makeFolder(const Path& name)
 {
 	try
 	{
@@ -161,7 +161,7 @@ void makeFolder(Path name)
 	}
 }
 
-void recMakeFolder(Path name)
+void recMakeFolder(const Path& name)
 {
 	try
 	{
@@ -174,7 +174,7 @@ void recMakeFolder(Path name)
 
 }
 
-void moveFolder(Path src, Path dest)
+void moveFolder(const Path& src, const Path& dest)
 {
 	if (!isValidFolder(src))
 		return;
@@ -190,7 +190,7 @@ void moveFolder(Path src, Path dest)
 	}
 }
 
-void moveFile(Path src, Path dest)
+void moveFile(const Path& src, const Path& dest)
 {
 	if (!isValidFile(src))
 		return;
@@ -206,7 +206,7 @@ void moveFile(Path src, Path dest)
 	}
 }
 
-void eraseFolder(Path src)
+void eraseFolder(const Path& src)
 {
 	try
 	{
@@ -219,7 +219,7 @@ void eraseFolder(Path src)
 }
 
 
-bool isValidFile(Path file)
+bool isValidFile(const Path& file)
 {
 	try
 	{
@@ -233,7 +233,7 @@ bool isValidFile(Path file)
 }
 
 
-bool isValidFolder(Path folder)
+bool isValidFolder(const Path& folder)
 {
 	try
 	{
@@ -246,7 +246,7 @@ bool isValidFolder(Path folder)
 	return false;
 }
 
-void delFile(Path file)
+void delFile(const Path& file)
 {
 	if (isValidFile(file))
 	{
@@ -261,7 +261,7 @@ void delFile(Path file)
 	}
 }
 
-void delFolder(Path filePath)
+void delFolder(const Path& filePath)
 {
 	if (isValidFolder(filePath))
 	{
@@ -276,7 +276,7 @@ void delFolder(Path filePath)
 	}
 }
 
-bool isFolderEmpty(Path filePath)
+bool isFolderEmpty(const Path& filePath)
 {
 	if (isValidFolder(filePath))
 	{
@@ -287,7 +287,7 @@ bool isFolderEmpty(Path filePath)
 }
 
 
-void delEmptyFolders(Path filePath)
+void delEmptyFolders(const Path& filePath)
 {
 	if (!isValidFolder(filePath))
 		return;
@@ -338,7 +338,7 @@ void printError( bf::filesystem_error e)
 }
 
 
-uint32 readWholeFile(Path path, char** buffer)
+uint32 readWholeFile(const Path& path, char** buffer)
 {
 	uint64 size = UTIL::FS::getFileSize(path);
 
@@ -358,7 +358,7 @@ uint32 readWholeFile(Path path, char** buffer)
 	return size32;
 }
 
-void copyFile(Path src, Path dest)
+void copyFile(const Path& src, const Path& dest)
 {
 	try
 	{
@@ -371,7 +371,7 @@ void copyFile(Path src, Path dest)
 	}
 }
 
-void copyFolder(Path src, Path dest, std::vector<std::string> *vIgnoreList, bool copyOverExisting)
+void copyFolder(const Path& src, const Path& dest, std::vector<std::string> *vIgnoreList, bool copyOverExisting)
 {
 	UTIL::FS::recMakeFolder(dest);
 	bf::directory_iterator end_itr;
@@ -408,12 +408,12 @@ void copyFolder(Path src, Path dest, std::vector<std::string> *vIgnoreList, bool
 			if (isDir)
 			{
 				tdest += szNode;
-				UTIL::FS::copyFolder(Path(szPath, "", false), tdest, vIgnoreList);
+				UTIL::FS::copyFolder(UTIL::FS::Path(szPath, "", false), tdest, vIgnoreList);
 			}
 			else if (copyOverExisting == false || UTIL::FS::isValidFile(tdest) == false)
 			{
 				tdest += UTIL::FS::File(szNode);
-				UTIL::FS::copyFile(Path(szPath, "", true), tdest);
+				UTIL::FS::copyFile(UTIL::FS::Path(szPath, "", true), tdest);
 			}
 		}
 	}
@@ -423,12 +423,17 @@ void copyFolder(Path src, Path dest, std::vector<std::string> *vIgnoreList, bool
 	}
 }
 
-time_t lastWriteTime(Path path)
+gcTime lastWriteTime(const Path& path)
 {
-	return boost::filesystem::last_write_time(bf::path(path.getFullPath()));
+	return gcTime(boost::filesystem::last_write_time(bf::path(path.getFullPath())));
 }
 
-void getAllFiles(Path path, std::vector<Path> &outList, std::vector<std::string> *extsFilter)
+void setLastWriteTime(const Path& path, const gcTime& t)
+{
+	boost::filesystem::last_write_time(bf::path(path.getFullPath()), t.to_time_t());
+}
+
+void getAllFiles(const Path& path, std::vector<Path> &outList, std::vector<std::string> *extsFilter)
 {
 	bf::path full_path(path.getFolderPath());
 
@@ -470,7 +475,7 @@ void getAllFiles(Path path, std::vector<Path> &outList, std::vector<std::string>
 	}
 }
 
-void getAllFolders(Path path, std::vector<Path> &outList)
+void getAllFolders(const Path& path, std::vector<Path> &outList)
 {
 	bf::path full_path(path.getFolderPath());
 

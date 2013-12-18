@@ -19,11 +19,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>
 #include "Common.h"
 #include "InstallBannerPage.h"
 
-
 #define DEFAULT_BANNER "#icon_download"
 
-#include "boost/date_time/posix_time/posix_time.hpp"
-using namespace boost::posix_time;
 
 namespace UI
 {
@@ -88,12 +85,11 @@ InstallBannerPage::InstallBannerPage(wxWindow* parent, bool useSpinnerFirst) : B
 	if (par)
 		par->setProgressState(gcFrame::P_NORMAL);
 
-	m_tLastBannerChange = new ptime(microsec_clock::universal_time());
+	m_tLastBannerChange = gcTime();
 }
 
 InstallBannerPage::~InstallBannerPage()
 {
-	safe_delete(m_tLastBannerChange);
 }
 
 void InstallBannerPage::onButtonPressed(wxCommandEvent& event)
@@ -200,12 +196,11 @@ void InstallBannerPage::onIdle( wxIdleEvent& event )
 		{
 			m_iCurProvider = 0;
 			updateBanner();
-			safe_delete(m_tLastBannerChange);
-			m_tLastBannerChange = new ptime(microsec_clock::universal_time());
+			m_tLastBannerChange = gcTime();
 		}
 		else
 		{
-			time_duration elasped = ptime(microsec_clock::universal_time()) - *m_tLastBannerChange;
+			auto elasped = gcTime() - m_tLastBannerChange;
 
 			size_t secs = elasped.seconds();
 
@@ -222,8 +217,7 @@ void InstallBannerPage::onIdle( wxIdleEvent& event )
 					{
 						m_iCurProvider = cur;
 						updateBanner();
-						safe_delete(m_tLastBannerChange);
-						m_tLastBannerChange = new ptime(microsec_clock::universal_time());
+						m_tLastBannerChange = gcTime();
 						break;
 					}
 				}

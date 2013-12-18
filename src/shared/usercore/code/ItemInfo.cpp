@@ -885,12 +885,7 @@ void ItemInfo::setPercent(uint8 percent)
 	if (m_iPercent == percent)
 		return;
 
-#if defined(WIN32) && !defined(__MINGW32__)
-	m_iPercent = min(max(percent,0),100);
-#else
 	m_iPercent = std::min(std::max((int)percent,0),100);
-#endif
-
 	m_iChangedFlags |= UM::ItemInfoI::CHANGED_PERCENT;
 
 	onInfoChange();

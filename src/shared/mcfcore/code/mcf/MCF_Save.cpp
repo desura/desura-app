@@ -29,15 +29,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>
 #include "XMLSaveAndCompress.h"
 
 #include <time.h>
-#include "boost/date_time/posix_time/conversion.hpp"
-#include "boost/date_time/posix_time/posix_time.hpp"
-
 #include "thread/MCFServerCon.h"
 
+#include "util/gcTime.h"
+
 #define MAX_FRAGMENT_SIZE (20*1024*1024)
-
-namespace bpt = boost::posix_time;
-
 
 class OutBuffer : public MCFCore::Misc::OutBufferI
 {
@@ -364,9 +360,7 @@ void MCF::parseFolder(const char *filePath, const char *oPath)
 
 		temp->setSize((uint32)UTIL::FS::getFileSize(fileList[x]));
 
-		time_t lastWrite = UTIL::FS::lastWriteTime(fileList[x]);
-
-		std::string timeStr = bpt::to_iso_string(bpt::from_time_t(lastWrite));
+		std::string timeStr = UTIL::FS::lastWriteTime(fileList[x]).to_iso_string();
 		temp->setTimeStamp(ConvertTimeStringToInt(timeStr));
 
 

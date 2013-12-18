@@ -29,14 +29,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>
 #include "usercore/GuiDownloadProvider.h"
 #include "mcfcore/DownloadProvider.h"
 #include "wx_controls/gcSpinnerProgBar.h"
+#include "util/gcTime.h"
 
-namespace boost
-{
-	namespace posix_time
-	{
-		class ptime;
-	}
-}
 
 
 namespace UI
@@ -86,7 +80,7 @@ protected:
 private:
 	std::vector<MCFCore::Misc::DownloadProvider*> m_vDownloadProv;
 	int32 m_iCurProvider;
-	boost::posix_time::ptime* m_tLastBannerChange;
+	gcTime m_tLastBannerChange;
 
 	bool m_bDefaultBanner;
 };
