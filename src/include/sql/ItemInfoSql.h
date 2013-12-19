@@ -124,6 +124,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>
 												");"
 
 
+#define COUNT_CDKEY "select count(*) from sqlite_master where name='cdkey';"
+#define CREATE_CDKEY "create table cdkey(branchid INTEGER, "							\
+												"userid INTEGER,"						\
+												"key TEXT"								\
+												");"
+
+
 #define ITEMINFO_DB "iteminfo_d.sqlite"
 
 inline gcString getItemInfoDb(const char* appDataPath)
@@ -142,10 +149,8 @@ inline void trycatch(sqlite3x::sqlite3_connection &db, const char* sql)
 	}
 }
 
-inline void createItemInfoDbTables(const char* appDataPath)
+inline void createItemInfoDbTables(sqlite3x::sqlite3_connection& db)
 {
-	sqlite3x::sqlite3_connection db(getItemInfoDb(appDataPath).c_str());
-
 	if (db.executeint(COUNT_ITEMINFO) == 0)
 		db.executenonquery(CREATE_ITEMINFO);
 
@@ -172,6 +177,15 @@ inline void createItemInfoDbTables(const char* appDataPath)
 
 	if (db.executeint(COUNT_INSTALLINFOEX) == 0)
 		db.executenonquery(CREATE_INSTALLINFOEX);
+
+	if (db.executeint(COUNT_CDKEY) == 0)
+		db.executenonquery(CREATE_CDKEY);
+}
+
+inline void createItemInfoDbTables(const char* appDataPath)
+{
+	sqlite3x::sqlite3_connection db(getItemInfoDb(appDataPath).c_str());
+	createItemInfoDbTables(db);
 }
 
 #endif //DESURA_CIP_H

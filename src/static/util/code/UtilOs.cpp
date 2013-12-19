@@ -382,5 +382,57 @@ gcString getRelativePath(const gcString &path)
 
 #endif
 
+
+
+std::string UserEncodeString(const std::string& strKey, const std::string& strValue)
+{
+#ifdef WIN32
+	DATA_BLOB secret;
+	secret.pbData = (BYTE*)strKey.c_str();
+	secret.cbData = strKey.size();
+
+	DATA_BLOB db;
+	db.pbData = (BYTE*)strValue.c_str();
+	db.cbData = strValue.size();
+
+
+	DATA_BLOB out;
+
+	if (!CryptProtectData(&db, NULL, &secret, NULL, NULL, CRYPTPROTECT_UI_FORBIDDEN, &out))
+		return "";
+
+	return UTIL::STRING::base64_encode((char*)out.pbData, out.cbData);
+#else
+	return UTIL::STRING::base64_encode((char*)strValue.c_str(), strValue.size());
+#endif
+}
+
+std::string UserDecodeString(const std::string& strKey, const std::string& strValue)
+{
+	size_t outLen = 0;
+	auto raw = UTIL::STRING::base64_decode(strValue, outLen);
+
+#ifdef WIN32
+	DATA_BLOB db;
+
+	db.pbData = (BYTE*)raw.get();
+	db.cbData = outLen;
+
+	DATA_BLOB secret;
+	secret.pbData = (BYTE*)strKey.c_str();
+	secret.cbData = strKey.size();
+
+	DATA_BLOB out;
+
+	if (CryptUnprotectData(&db, NULL, &secret, NULL, NULL, CRYPTPROTECT_UI_FORBIDDEN, &out))
+		return std::string((char*)out.pbData, out.cbData);
+
+	return "";
+#else
+	return std::string(raw.data(), raw.size());
+#endif
+}
+
+
 }
 }

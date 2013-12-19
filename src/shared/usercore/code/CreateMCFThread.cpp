@@ -294,7 +294,7 @@ void CreateMCFThread::processBranches(std::vector<UserCore::Item::BranchInfo*> &
 		if (id == 0)
 			return;
 
-		UserCore::Item::BranchInfo *bi = new UserCore::Item::BranchInfo(MCFBranch::BranchFromInt(id), this->getItemId(), NULL);
+		UserCore::Item::BranchInfo *bi = new UserCore::Item::BranchInfo(MCFBranch::BranchFromInt(id), this->getItemId(), nullptr, 0, m_pUserCore->getUserId());
 		bi->loadXmlData(branch);
 
 		if (!HasAnyFlags(bi->getFlags(), UserCore::Item::BranchInfoI::BF_NORELEASES))

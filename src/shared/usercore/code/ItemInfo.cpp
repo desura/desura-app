@@ -329,7 +329,7 @@ void ItemInfo::loadDb(sqlite3x::sqlite3_connection* db)
 			if (it == m_mBranchInstallInfo.end())
 				m_mBranchInstallInfo[vIdList[x].second] = new BranchInstallInfo(vIdList[x].second, this);
 
-			BranchInfo* bi = new BranchInfo(MCFBranch::BranchFromInt(vIdList[x].first), m_iId, m_mBranchInstallInfo[vIdList[x].second]);
+			BranchInfo* bi = new BranchInfo(MCFBranch::BranchFromInt(vIdList[x].first), m_iId, m_mBranchInstallInfo[vIdList[x].second], 0, m_pUserCore->getUserId());
 			bi->onBranchInfoChangedEvent += delegate(this, &ItemInfo::onBranchInfoChanged);
 
 			try
@@ -429,7 +429,7 @@ void ItemInfo::loadBranchXmlData(const XML::gcXMLElement &branch)
 		if (it == m_mBranchInstallInfo.end())
 			m_mBranchInstallInfo[platformId] = new BranchInstallInfo(platformId, this);
 
-		bi = new BranchInfo(MCFBranch::BranchFromInt(id), m_iId, m_mBranchInstallInfo[platformId], platformId);
+		bi = new BranchInfo(MCFBranch::BranchFromInt(id), m_iId, m_mBranchInstallInfo[platformId], platformId, m_pUserCore->getUserId());
 		bi->onBranchInfoChangedEvent += delegate(this, &ItemInfo::onBranchInfoChanged);
 	}
 
@@ -981,7 +981,7 @@ void ItemInfo::processUpdateXml(const XML::gcXMLElement &node)
 			if (it == m_mBranchInstallInfo.end())
 				m_mBranchInstallInfo[platformId] = new BranchInstallInfo(platformId, this);
 
-			bi = new BranchInfo(MCFBranch::BranchFromInt(id), m_iId, m_mBranchInstallInfo[platformId], platformId);
+			bi = new BranchInfo(MCFBranch::BranchFromInt(id), m_iId, m_mBranchInstallInfo[platformId], platformId, m_pUserCore->getUserId());
 			bi->loadXmlData(branch);
 
 			bi->onBranchInfoChangedEvent += delegate(this, &ItemInfo::onBranchInfoChanged);
@@ -1200,7 +1200,7 @@ void ItemInfo::setLinkInfo(const char* exe, const char* args)
 	BranchInstallInfo *bii = m_mBranchInstallInfo[BUILDID_PUBLIC];
 
 	if (m_vBranchList.size() == 0)
-		m_vBranchList.push_back(new UserCore::Item::BranchInfo(MCFBranch::BranchFromInt(0), getId(), bii));
+		m_vBranchList.push_back(new UserCore::Item::BranchInfo(MCFBranch::BranchFromInt(0), getId(), bii, 0, m_pUserCore->getUserId()));
 
 	UserCore::Item::BranchInfo* bi = m_vBranchList[0];
 

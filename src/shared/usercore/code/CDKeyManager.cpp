@@ -71,10 +71,13 @@ void CDKeyManager::getCDKeyForCurrentBranch(DesuraId id, UserCore::Misc::CDKeyCa
 		return;
 	}
 
-	gcString key(binfo->getCDKey());
 
-	if (key.size() > 0)
+	std::vector<gcString> vCDKeys;
+	binfo->getCDKey(vCDKeys);
+
+	if (!vCDKeys.empty())
 	{
+		gcString key(vCDKeys[0]);
 		callback->onCDKeyComplete(id, key);
 		return;
 	}

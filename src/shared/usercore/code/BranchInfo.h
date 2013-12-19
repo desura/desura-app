@@ -45,7 +45,7 @@ class BranchInstallInfo;
 class BranchInfo : public BranchInfoI
 {
 public:
-	BranchInfo(MCFBranch branchId, DesuraId itemId, BranchInstallInfo* bii, uint32 platformId = 0);
+	BranchInfo(MCFBranch branchId, DesuraId itemId, BranchInstallInfo* bii, uint32 platformId, uint32 userid);
 	~BranchInfo();
 
 	virtual uint32 getFlags();
@@ -116,7 +116,7 @@ public:
 	//!
 	MCFBuild getLatestBuild();
 
-	const char* getCDKey();
+	void getCDKey(std::vector<gcString> &vKeys) const;
 	void setCDKey(gcString key);
 
 	EventV onBranchInfoChangedEvent;
@@ -129,8 +129,8 @@ public:
 	BranchInstallInfo* getInstallInfo();
 
 protected:
-	gcString encodeCDKey();
-	void decodeCDKey(gcString key);
+	gcString encodeCDKey(const gcString& strRawKey);
+	gcString decodeCDKey(const gcString& strEncodedKey);
 
 	void processInstallScript(const XML::gcXMLElement &scriptNode);
 
@@ -142,18 +142,22 @@ private:
 	gcString m_szEulaUrl;
 	gcString m_szEulaDate;
 	gcString m_szPreOrderDate;
-	gcString m_szCDKey;
 	gcString m_szInstallScript;
 
 	uint32 m_uiInstallScriptCRC;
 	uint32 m_uiFlags;
+	uint32 m_uiUserId;
 
 	MCFBranch m_uiGlobalId;
 	MCFBranch m_uiBranchId;
 	MCFBuild m_uiLatestBuild;
 
 	std::vector<DesuraId> m_vToolList;
+	std::vector<gcString> m_vCDKeyList;
+
 	BranchInstallInfo* m_InstallInfo;
+
+	mutable std::mutex m_BranchLock;
 };
 
 
@@ -198,11 +202,6 @@ inline const char* BranchInfo::getEulaUrl()
 inline const char* BranchInfo::getPreOrderExpDate()
 {
 	return m_szPreOrderDate.c_str();
-}
-
-inline const char* BranchInfo::getCDKey()
-{
-	return m_szCDKey.c_str();
 }
 
 inline const char* BranchInfo::getInstallScriptPath()

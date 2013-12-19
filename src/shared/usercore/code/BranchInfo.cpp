@@ -28,18 +28,15 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>
   #include <Wincrypt.h>
 #endif
 
-namespace UserCore
-{
-namespace Item
-{
+using namespace UserCore::Item;
 
-BranchInfo::BranchInfo(MCFBranch branchId, DesuraId itemId, BranchInstallInfo* bii, uint32 platformId)
+BranchInfo::BranchInfo(MCFBranch branchId, DesuraId itemId, BranchInstallInfo* bii, uint32 platformId, uint32 userid)
+	: m_InstallInfo(bii)
+	, m_ItemId(itemId)
+	, m_uiBranchId(branchId)
+	, m_uiUserId(userid)
+	, m_uiFlags(0)
 {
-	m_InstallInfo = bii;
-	m_ItemId = itemId;
-	m_uiBranchId = branchId;
-	m_uiFlags = 0;
-
 	if (platformId != 0)
 	{
 		switch (platformId)
@@ -162,23 +159,47 @@ void BranchInfo::saveDbFull(sqlite3x::sqlite3_connection* db)
 	{
 		sqlite3x::sqlite3_command cmd(*db, "REPLACE INTO branchinfo VALUES (?,?,?,?,?, ?,?,?,?,?, ?,?);");
 
-		cmd.bind(1, (int)m_uiBranchId);
+		cmd.bind(1, (int) m_uiBranchId);
 		cmd.bind(2, (long long int)m_ItemId.toInt64());
 		cmd.bind(3, m_szName);				//name
-		cmd.bind(4, (int)m_uiFlags);		//flags
+		cmd.bind(4, (int) m_uiFlags);		//flags
 		cmd.bind(5, m_szEulaUrl);
 
 		cmd.bind(6, m_szEulaDate);
 		cmd.bind(7, m_szPreOrderDate);
-		cmd.bind(8, encodeCDKey());
+		cmd.bind(8, "");
 		cmd.bind(9, UTIL::OS::getRelativePath(m_szInstallScript));
-		cmd.bind(10, (int)m_uiInstallScriptCRC);
-		
-		cmd.bind(11, (int)m_uiGlobalId);
-		cmd.bind(12, (int)m_InstallInfo->getBiId());
+		cmd.bind(10, (int) m_uiInstallScriptCRC);
+
+		cmd.bind(11, (int) m_uiGlobalId);
+		cmd.bind(12, (int) m_InstallInfo->getBiId());
 
 		cmd.executenonquery();
 	}
+
+	{
+		sqlite3x::sqlite3_command cmd(*db, "DELETE from cdkey WHERE branchid=? and userid=?;");
+		cmd.bind(1, (int)m_uiBranchId);
+		cmd.bind(2, (int)m_uiUserId);
+		cmd.executenonquery();
+	}
+
+	{
+		sqlite3x::sqlite3_command cmd(*db, "INSERT INTO cdkey VALUES (?,?,?);");
+
+		std::lock_guard<std::mutex> guard(m_BranchLock);
+
+		for (auto key : m_vCDKeyList)
+		{
+			cmd.bind(1, (int)m_uiBranchId);
+			cmd.bind(2, (int)m_uiUserId);
+			cmd.bind(3, encodeCDKey(key));
+
+			cmd.executenonquery();
+		}
+	}
+
+
 
 	{
 		sqlite3x::sqlite3_command cmd(*db, "DELETE from tools WHERE branchid=?;");
@@ -189,10 +210,10 @@ void BranchInfo::saveDbFull(sqlite3x::sqlite3_connection* db)
 	{
 		sqlite3x::sqlite3_command cmd(*db, "INSERT INTO tools VALUES (?,?);");
 
-		for (size_t x=0; x<m_vToolList.size(); x++)
+		for (auto tool : m_vToolList)
 		{
 			cmd.bind(1, (int)m_uiBranchId);
-			cmd.bind(2, (long long int)m_vToolList[x].toInt64());
+			cmd.bind(2, (long long int)tool.toInt64());
 			cmd.executenonquery();
 		}
 	}
@@ -216,7 +237,7 @@ void BranchInfo::loadDb(sqlite3x::sqlite3_connection* db)
 	m_szEulaUrl		= reader.getstring(4);
 	m_szEulaDate	= reader.getstring(5);
 	m_szPreOrderDate = reader.getstring(6);
-	decodeCDKey(reader.getstring(7));
+	//7 is normally cd key but is moved to new table
 	m_szInstallScript = UTIL::OS::getAbsPath(reader.getstring(8));
 	m_uiInstallScriptCRC = reader.getint(9);
 	m_uiGlobalId = MCFBranch::BranchFromInt(reader.getint(10), true);
@@ -230,6 +251,24 @@ void BranchInfo::loadDb(sqlite3x::sqlite3_connection* db)
 	
 		while (reader.read())
 			m_vToolList.push_back(DesuraId(reader.getint64(1)));
+	}
+
+	{
+		sqlite3x::sqlite3_command cmd(*db, "SELECT key FROM cdkey WHERE branchid=? and userid=?;");
+		cmd.bind(1, (int)m_uiBranchId);
+		cmd.bind(2, (int)m_uiUserId);
+		sqlite3x::sqlite3_reader reader = cmd.executereader();
+
+		std::lock_guard<std::mutex> guard(m_BranchLock);
+
+		while (reader.read())
+		{
+			auto key = decodeCDKey(reader.getstring(0));
+
+			if (!key.empty())
+				m_vCDKeyList.push_back(key);
+		}
+			
 	}
 }
 
@@ -401,77 +440,51 @@ void BranchInfo::getToolList(std::vector<DesuraId> &toolList)
 	toolList = m_vToolList;
 }
 
-gcString BranchInfo::encodeCDKey()
+gcString BranchInfo::encodeCDKey(const gcString& strRawKey)
 {
-	if (m_szCDKey.size() == 0)
+	if (strRawKey.empty())
 		return "";
 
 #ifdef WIN32
 	std::string reg = UTIL::OS::getConfigValue("HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Cryptography\\MachineGuid", true);
 	gcString key("{0}_{1}", reg, m_ItemId.toInt64());
-
-	DATA_BLOB secret;
-	secret.pbData = (BYTE*)key.c_str();
-	secret.cbData = key.size();
-
-	DATA_BLOB db;
-	db.pbData = (BYTE*)m_szCDKey.c_str();
-	db.cbData = m_szCDKey.size();
-
-
-	DATA_BLOB out;
-
-	if (!CryptProtectData(&db, NULL, &secret, NULL, NULL, CRYPTPROTECT_UI_FORBIDDEN, &out))
-		return "";
-
-	return UTIL::STRING::base64_encode((char*)out.pbData, out.cbData);
-#else // TODO
-	return m_szCDKey;
+#else
+	gcString key("{0}", m_ItemId.toInt64());
 #endif
+
+	return UTIL::OS::UserEncodeString(key, strRawKey);
 }
 
-void BranchInfo::decodeCDKey(gcString cdkey)
+gcString BranchInfo::decodeCDKey(const gcString& strEncodedKey)
 {
-	m_szCDKey = "";
-
-	if (cdkey.size() == 0)
-		return;
+	if (strEncodedKey.empty())
+		return "";
 	
 #ifdef WIN32
-	size_t outLen = 0;
-	auto raw = UTIL::STRING::base64_decode(cdkey, outLen);
-
 	std::string reg = UTIL::OS::getConfigValue("HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Cryptography\\MachineGuid", true);
 	gcString key("{0}_{1}", reg, m_ItemId.toInt64());
-
-	DATA_BLOB db;
-
-	db.pbData = (BYTE*)raw.get();
-	db.cbData = outLen;
-
-	DATA_BLOB secret;
-	secret.pbData = (BYTE*)key.c_str();
-	secret.cbData = key.size();
-
-	DATA_BLOB out;
-
-	if (CryptUnprotectData(&db, NULL, &secret, NULL, NULL, CRYPTPROTECT_UI_FORBIDDEN, &out))
-		m_szCDKey.assign((char*)out.pbData, out.cbData);
-
-#else // TODO
-	m_szCDKey = cdkey;
+#else
+	gcString key("{0}", m_ItemId.toInt64());
 #endif
+
+	return UTIL::OS::UserDecodeString(key, strEncodedKey);
 }
 
 void BranchInfo::setCDKey(gcString key)
 {
-	m_szCDKey = key;
-	onBranchCDKeyChangedEvent();
+	std::lock_guard<std::mutex> guard(m_BranchLock);
+
+	if (std::find(begin(m_vCDKeyList), end(m_vCDKeyList), key) == end(m_vCDKeyList))
+	{
+		m_vCDKeyList.push_back(key);
+		onBranchCDKeyChangedEvent();
+	}
 }
 
 bool BranchInfo::isCDKeyValid()
 {
-	return m_szCDKey.size() > 0;
+	std::lock_guard<std::mutex> guard(m_BranchLock);
+	return !m_vCDKeyList.empty();
 }
 
 DesuraId BranchInfo::getItemId()
@@ -507,5 +520,81 @@ BranchInstallInfo* BranchInfo::getInstallInfo()
 	return m_InstallInfo;
 }
 
+void BranchInfo::getCDKey(std::vector<gcString> &vKeys) const
+{
+	std::lock_guard<std::mutex> guard(m_BranchLock);
+	vKeys = m_vCDKeyList;
 }
+
+
+#ifdef WITH_GTEST
+
+#include <gtest/gtest.h>
+#include "sql/ItemInfoSql.h"
+#include "ItemInfo.h"
+
+namespace UnitTest
+{
+	class StubBranchItemInfo2 : public BranchItemInfoI
+	{
+	public:
+		DesuraId getId() override
+		{
+			return DesuraId("2", "games");
+		}
+
+		uint32 getStatus() override
+		{
+			return m_nStatus;
+		}
+
+		uint32 m_nStatus = 0;
+	};
+
+	TEST(BranchInfo, CDKeyPerUser)
+	{
+		StubBranchItemInfo2 bi;
+		BranchInstallInfo info(1, &bi);
+
+		BranchInfo a(MCFBranch::BranchFromInt(1), DesuraId("2", "games"), &info, 0, 123);
+		BranchInfo b(MCFBranch::BranchFromInt(1), DesuraId("2", "games"), &info, 0, 123);
+		BranchInfo c(MCFBranch::BranchFromInt(1), DesuraId("2", "games"), &info, 0, 456);
+
+		a.setCDKey("A Test CD Key");
+
+		{
+			std::vector<gcString> vCDKeys;
+			a.getCDKey(vCDKeys);
+
+			ASSERT_EQ(1, vCDKeys.size());
+			ASSERT_STREQ("A Test CD Key", vCDKeys[0].c_str());
+		}
+
+
+		sqlite3x::sqlite3_connection db(":memory:");
+		createItemInfoDbTables(db);
+
+
+		a.saveDbFull(&db);
+		b.loadDb(&db);
+		c.loadDb(&db);
+
+		{
+			std::vector<gcString> vCDKeys;
+			b.getCDKey(vCDKeys);
+
+			ASSERT_EQ(1, vCDKeys.size());
+			ASSERT_STREQ("A Test CD Key", vCDKeys[0].c_str());
+		}
+
+		{
+			std::vector<gcString> vCDKeys;
+			c.getCDKey(vCDKeys);
+
+			ASSERT_EQ(0, vCDKeys.size());
+		}
+	}
 }
+
+
+#endif

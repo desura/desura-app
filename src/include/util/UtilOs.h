@@ -128,6 +128,14 @@ namespace OS
 #endif
 
 	gcString getRelativePath(const gcString &path);
+
+	//! Encodes a string using a unique key per user, is reversable
+	//!
+	std::string UserEncodeString(const std::string& strKey, const std::string& strValue);
+
+	//! Decodes a string using a unique key per user
+	//!
+	std::string UserDecodeString(const std::string& strKey, const std::string& strValue);
 }
 }
 

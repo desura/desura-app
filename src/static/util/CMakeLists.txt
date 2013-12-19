@@ -11,7 +11,7 @@ include_directories(
 file(GLOB SourcesWEB code/UtilWeb.cpp)
 
 if(WIN32 AND NOT MINGW)
-  set(WINDOWS_LIBRARIES msi Winhttp wintrust)
+  set(WINDOWS_LIBRARIES msi Winhttp wintrust Comctl32 crypt32)
   use_unicode_here()
 endif()
 
@@ -80,6 +80,7 @@ target_link_libraries(util
   ${Boost_DATE_TIME_LIBRARY}
   ${Boost_SYSTEM_LIBRARY}
   ${PLATFORM_LIBRARIES}
+  ${WINDOWS_LIBRARIES}
 )
 
 if(WIN32)
@@ -100,6 +101,7 @@ if (WIN32)
       ${Boost_SYSTEM_LIBRARY_S}
 	  ${Boost_DATE_TIME_LIBRARY_S}
 	  ${PLATFORM_LIBRARIES}
+	  ${WINDOWS_LIBRARIES}
 	)
 
 	SET_PROPERTY(TARGET util_s                PROPERTY FOLDER "Static")
