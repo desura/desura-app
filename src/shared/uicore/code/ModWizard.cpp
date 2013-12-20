@@ -24,7 +24,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>
 
 ModWizardForm::ModWizardForm(wxWindow* parent) : gcFrame(parent, wxID_ANY, wxT("#MW_TITLE"), wxDefaultPosition, wxSize( 370,160 ), wxCAPTION|wxCLOSE_BOX|wxFRAME_FLOAT_ON_PARENT|wxSYSTEM_MENU|wxTAB_TRAVERSAL)
 {
-	m_pPage = NULL;
+	m_pPage = nullptr;
 
 	SetTitle(Managers::GetString(L"#MW_TITLE"));
 
@@ -88,7 +88,7 @@ void ModWizardForm::cleanUpPages()
 		m_pPage->Show(false);
 		m_pPage->Close();
 		m_pPage->dispose();
-		m_pPage = NULL;
+		m_pPage = nullptr;
 	}
 }
 

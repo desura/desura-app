@@ -35,11 +35,11 @@ class CVarInfo
 public:
 	CVarInfo()
 	{
-		m_pFormWidth = NULL;
-		m_pFormHeight = NULL;
-		m_pFormXPos = NULL;
-		m_pFormYPos = NULL;
-		m_pFormMax = NULL;
+		m_pFormWidth = nullptr;
+		m_pFormHeight = nullptr;
+		m_pFormXPos = nullptr;
+		m_pFormYPos = nullptr;
+		m_pFormMax = nullptr;
 
 		m_bSaveMax = false;
 		m_bPosSaveEnabled = false;
@@ -120,7 +120,7 @@ BEGIN_EVENT_TABLE( gcFrame, gcCustomFrame<wxFrame> )
 END_EVENT_TABLE()
 
 gcFrame::gcFrame() 
-	: wxGuiDelegateImplementation<gcCustomFrame<wxFrame> >(NULL, wxID_ANY,  wxEmptyString, wxDefaultPosition, wxDefaultSize, wxDEFAULT_FRAME_STYLE)
+	: wxGuiDelegateImplementation<gcCustomFrame<wxFrame> >(nullptr, wxID_ANY,  wxEmptyString, wxDefaultPosition, wxDefaultSize, wxDEFAULT_FRAME_STYLE)
 {
 	initGCFrame(true, 0);
 }
@@ -142,7 +142,7 @@ void gcFrame::initGCFrame(bool delayLoad, long style)
 
 	WINDOW_REG();
 
-	m_pCVarInfo = NULL;
+	m_pCVarInfo = nullptr;
 
 	if (!delayLoad)
 		loadFrame(style);

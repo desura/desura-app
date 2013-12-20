@@ -45,13 +45,13 @@ CVar admin_developer("admin_developer", "0", CFLAG_ADMIN|CFLAG_NOSAVE, (CVarCall
 
 
 
-void DESURA_Msg(const char* msg, Color *col = NULL)
+void DESURA_Msg(const char* msg, Color *col = nullptr)
 {
 	if (logForm)
 		logForm->appendText(msg, col?*col:Color(0));
 }
 
-void DESURA_Msg(const wchar_t* msg, Color *col = NULL)
+void DESURA_Msg(const wchar_t* msg, Color *col = nullptr)
 {
 	if (logForm)
 		logForm->appendText(msg, col?*col:Color(0));
@@ -140,7 +140,7 @@ void InitLogging()
 	if (logForm)
 		safe_delete(logForm);
 
-	logForm = new Console(NULL);
+	logForm = new Console(nullptr);
 	
 
 	Msg("UICore Logging Started\n");
@@ -168,11 +168,11 @@ void RegLogWithWindow()
 void DestroyLogging()
 {
 	logForm->Destroy();
-	logForm = NULL;
+	logForm = nullptr;
 
-	RegDLLCB_MCF(NULL);
-	RegDLLCB_WEBCORE(NULL);
-	RegDLLCB_USERCORE(NULL);
+	RegDLLCB_MCF(nullptr);
+	RegDLLCB_WEBCORE(nullptr);
+	RegDLLCB_USERCORE(nullptr);
 
 	safe_delete(g_pLogCallback);
 }

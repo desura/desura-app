@@ -122,7 +122,7 @@ public:
 	uint32 getFileCount() override;
 	MCFCore::MCFFileI* getMCFFile(uint32 index) override;
 	const char* getFile() override;
-	void getDownloadProviders(const char* url, MCFCore::Misc::UserCookies *pCookies, bool *unauthed = NULL, bool local = false) override;
+	void getDownloadProviders(const char* url, MCFCore::Misc::UserCookies *pCookies, bool *unauthed = nullptr, bool local = false) override;
 	std::shared_ptr<const Misc::GetFile_s> getAuthInfo() override;
 	Event<MCFCore::Misc::ProgressInfo>& getProgEvent() override;
 	Event<gcException>&	getErrorEvent() override;
@@ -173,7 +173,7 @@ public:
 	void dlHeaderFromWeb() override;
 	void dlFilesFromWeb() override;
 	void dlHeaderFromHttp(const char* url) override;
-	void dlFilesFromHttp(const char* url, const char* installDir = NULL) override;
+	void dlFilesFromHttp(const char* url, const char* installDir = nullptr) override;
 
 
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -265,7 +265,7 @@ protected:
 	//! @param vDel Vector to store the deleted files into (in this mcf not in newMcf)
 	//! @param vNew Vector to store the new files into (in newMcf not in this mcf)
 	//!
-	void findChanges( MCF* newFile,  std::vector<mcfDif_s> *vSame, std::vector<mcfDif_s> *vDiff, std::vector<mcfDif_s> *vDel, std::vector<mcfDif_s> *vNew = NULL);
+	void findChanges( MCF* newFile,  std::vector<mcfDif_s> *vSame, std::vector<mcfDif_s> *vDiff, std::vector<mcfDif_s> *vDel, std::vector<mcfDif_s> *vNew = nullptr);
 
 	//! Finds files in both that have the same hash
 	//!

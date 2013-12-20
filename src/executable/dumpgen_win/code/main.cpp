@@ -62,7 +62,7 @@ BootLoader::BootLoader()
 	WaitForDebugger();
 #endif
 
-	m_pUICore = NULL;
+	m_pUICore = nullptr;
 }
 
 BootLoader::~BootLoader()
@@ -75,11 +75,11 @@ void BootLoader::InitInstance()
 
 	if (!BootLoaderUtil::SetDllDir(".\\bin"))
 	{
-		::MessageBox(NULL, "Failed to set the dll path to the bin folder.", "Desura: ERROR!", MB_OK);
+		::MessageBox(nullptr, "Failed to set the dll path to the bin folder.", "Desura: ERROR!", MB_OK);
 		exit(-100);
 	}
 
-	if (strstr(m_lpCmdLine,"-crashreport")!=NULL)
+	if (strstr(m_lpCmdLine,"-crashreport")!=nullptr)
 	{
 		ProcessDump(m_lpCmdLine);
 		return;
@@ -91,7 +91,7 @@ void BootLoader::InitInstance()
 
 	if (osid == WINDOWS_PRE2000)
 	{
-		::MessageBox(NULL, "Desura needs Windows xp or better to run.", "Desura Error: Old Windows", MB_OK);
+		::MessageBox(nullptr, "Desura needs Windows xp or better to run.", "Desura Error: Old Windows", MB_OK);
 		return;
 	}
 	else if (osid == WINDOWS_XP || osid == WINDOWS_XP64)
@@ -99,7 +99,7 @@ void BootLoader::InitInstance()
 		hasAdminRights = true;
 	}
 
-	if (strstr(m_lpCmdLine,"-admin")!=NULL)
+	if (strstr(m_lpCmdLine,"-admin")!=nullptr)
 	{
 		hasAdminRights = true;
 	}
@@ -141,7 +141,7 @@ void BootLoader::loadUICore()
 	if (!m_hUICore.load(dllname))
 	{
 		DWORD err = GetLastError();
-		::MessageBox(NULL, "Failed to load utilcore.dll", "Desura: ERROR!",  MB_OK);
+		::MessageBox(nullptr, "Failed to load utilcore.dll", "Desura: ERROR!",  MB_OK);
 		exit(-200);
 	}
 	
@@ -149,7 +149,7 @@ void BootLoader::loadUICore()
 
 	if (!UICoreGetInterface)
 	{
-		::MessageBox(NULL, "Failed to load wxWidgets mappings in utilcore.dll", "Desura: ERROR!", MB_OK);
+		::MessageBox(nullptr, "Failed to load wxWidgets mappings in utilcore.dll", "Desura: ERROR!", MB_OK);
 		exit(-500);
 	} 
 

@@ -67,7 +67,7 @@ protected:
 	void onLowDiskSpace(std::pair<bool,char> &info);
 	void onShowAlert(const gcString &text, uint32 time=15);
 
-	void postEvent(const char* name, const char* arg1=NULL, const char* arg2=NULL);
+	void postEvent(const char* name, const char* arg1=nullptr, const char* arg2=nullptr);
 
 	virtual void onFind();
 

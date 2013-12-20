@@ -49,7 +49,7 @@ void UploadResumeThread::doRun()
 	//gona try and search for the file in the data/mods/id folder
 	const char* appDataPath = getUserCore()->getAppDataPath();
 	gcString searchPath("{0}{1}{2}", appDataPath, DIRS_STR, getItemId().getFolderPathExtension());
-	gcString sNull("NULL");
+	gcString sNull("nullptr");
 
 	if (doSearch(searchPath.c_str()))
 		return;

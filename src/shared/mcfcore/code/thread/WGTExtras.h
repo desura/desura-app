@@ -38,14 +38,14 @@ class WGTBlock
 public:
 	WGTBlock()
 	{
-		buff = NULL;
+		buff = nullptr;
 		webOffset = 0;
 		fileOffset = 0;
 		size = 0;
 		crc = 0;
 		dlsize = 0;
 
-		file = NULL;
+		file = nullptr;
 		index = -1;
 	}
 

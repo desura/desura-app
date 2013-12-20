@@ -43,9 +43,9 @@ namespace BootLoaderUtil
 	void InitCommonControls();
 	void WaitForDebugger();
 
-	bool Restart(const char* args = NULL, bool wait = true);
-	bool RestartAsAdmin(const char* args = NULL);
-	bool RestartAsNormal(const char* args = NULL);
+	bool Restart(const char* args = nullptr, bool wait = true);
+	bool RestartAsAdmin(const char* args = nullptr);
+	bool RestartAsNormal(const char* args = nullptr);
 
 	void GetLastFolder(char* dest, size_t destSize, const char* src);
 	bool IsExeRunning(char* pName);

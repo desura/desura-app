@@ -66,7 +66,7 @@ HtmlToolBarControl::HtmlToolBarControl(wxWindow* parent)
 	m_pSearch->onSearchEvent += delegate(&onSearchEvent);
 	m_pSearch->onFullSearchEvent += delegate(&onFullSearchEvent);
 #else
-	m_pSearch = NULL;
+	m_pSearch = nullptr;
 #endif
 
 	wxFlexGridSizer* fgSizer1;
@@ -191,5 +191,5 @@ const wchar_t* HtmlToolBarControl::getCrumbUrl(int32 id)
 		}
 	}
 
-	return NULL;
+	return nullptr;
 }

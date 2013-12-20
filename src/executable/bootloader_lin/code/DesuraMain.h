@@ -29,7 +29,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>
 
 typedef bool (*UploadCrashFn)(const char* path, const char* user, int build, int branch);
 
-void ShowHelpDialog(const char* msg, const char* url = NULL, const char* type = "--error");
+void ShowHelpDialog(const char* msg, const char* url = nullptr, const char* type = "--error");
 
 typedef struct
 {
@@ -71,7 +71,7 @@ protected:
 	void onCrashShib(const char* path);
 	static bool onCrash(const char* path);
 	
-	void processCrash(CrashArg_s* args = NULL);
+	void processCrash(CrashArg_s* args = nullptr);
 	void setUser(const char* user);
 	
 	static void setCrashSettings(const char* user, bool upload);
@@ -101,6 +101,6 @@ private:
 	char m_szUser[255];
 };
 
-bool RestartBootloader(const char* args = NULL);
+bool RestartBootloader(const char* args = nullptr);
 
 #endif

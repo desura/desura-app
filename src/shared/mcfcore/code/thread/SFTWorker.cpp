@@ -41,8 +41,8 @@ SFTWorker::SFTWorker(SFTController* controller, uint32 id) : BaseThread( "SafeFi
 	m_uiId = id;
 	m_pCT = controller;
 
-	m_pCurFile = NULL;
-	m_pBzs = NULL;
+	m_pCurFile = nullptr;
+	m_pBzs = nullptr;
 }
 
 SFTWorker::~SFTWorker()
@@ -175,7 +175,7 @@ int32 SFTWorker::doWork()
 		if (endFile)
 		{
 			if (m_pCurFile->isCompressed())
-				return doDecompression(NULL, 0, true);
+				return doDecompression(nullptr, 0, true);
 
 			return BZ_STREAM_END;
 		}
@@ -196,7 +196,7 @@ int SFTWorker::doDecompression(const char* buff, uint32 buffSize, bool endFile)
 {
 	if (!m_pBzs)
 	{
-		gcException e(ERR_BZ2, 0, "Bzip2 handle was NULL");
+		gcException e(ERR_BZ2, 0, "Bzip2 handle was nullptr");
 		return reportError(BZ_STREAM_END, e);
 	}
 

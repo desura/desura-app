@@ -105,7 +105,7 @@ void FileDelete(const wchar_t* file)
 
 bool IsValidFileHandle(FILEHANDLE fh)
 {
-	return fh != NULL;
+	return fh != nullptr;
 }
 
 bool CreateDir(const wchar_t* path)
@@ -127,9 +127,9 @@ bool CreateDir(const wchar_t* path)
 bool FileOpen(FILEHANDLE &fh, const wchar_t* path, uint32 mode)
 {
 	if (mode == FILE_WRITE)
-		fh = CreateFileW(path, GENERIC_WRITE, 0, NULL, CREATE_ALWAYS, 0, NULL);
+		fh = CreateFileW(path, GENERIC_WRITE, 0, nullptr, CREATE_ALWAYS, 0, nullptr);
 	else
-		fh = CreateFileW(path, GENERIC_READ, FILE_SHARE_READ, NULL, OPEN_EXISTING, 0, NULL);
+		fh = CreateFileW(path, GENERIC_READ, FILE_SHARE_READ, nullptr, OPEN_EXISTING, 0, nullptr);
 
 	return IsValidFileHandle(fh);
 }
@@ -156,14 +156,14 @@ bool FileSeek(FILEHANDLE fh, uint64 pos)
 	LARGE_INTEGER mov;
 	mov.QuadPart = pos;
 
-	BOOL res = SetFilePointerEx(fh, mov, NULL, FILE_BEGIN);
+	BOOL res = SetFilePointerEx(fh, mov, nullptr, FILE_BEGIN);
 	return (res != 0);
 }
 
 bool FileRead(FILEHANDLE fh, uint32 size, char* buff)
 {
 	DWORD dwRead = 0;
-	uint8 readRet = ReadFile(fh, buff, size, &dwRead, NULL);
+	uint8 readRet = ReadFile(fh, buff, size, &dwRead, nullptr);
 
 	if (!readRet)
 		return false;
@@ -177,7 +177,7 @@ bool FileRead(FILEHANDLE fh, uint32 size, char* buff)
 bool FileWrite(FILEHANDLE fh, uint32 size, char* buff)
 {
 	DWORD dwWrite = 0;
-	DWORD writeRes = WriteFile(fh, buff, size, &dwWrite, NULL);
+	DWORD writeRes = WriteFile(fh, buff, size, &dwWrite, nullptr);
 
 	if (writeRes == 0)
 		return false;
@@ -203,7 +203,7 @@ bool CreateDir(const wchar_t* path)
 	if (!path)
 		return false;
 
-	if (!CreateDirectoryW(path, NULL))
+	if (!CreateDirectoryW(path, nullptr))
 	{
 		if (GetLastError() != ERROR_ALREADY_EXISTS)
 			return false;

@@ -34,7 +34,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>
 
 REG_IPC_CLASS( IPCBrowser );
 
-IPCBrowser* g_pIPCBrowser = NULL;
+IPCBrowser* g_pIPCBrowser = nullptr;
 
 IPCBrowser* GetIPCBrowser()
 {
@@ -45,10 +45,10 @@ IPCBrowser* GetIPCBrowser()
 IPCBrowser::IPCBrowser(IPC::IPCManager* mang, uint32 id, DesuraId itemId) : IPC::IPCClass(mang, id, itemId)
 {
 	registerFunctions();
-	m_pEventHandler = NULL;
+	m_pEventHandler = nullptr;
 
 #ifndef DESURA_CLIENT
-	m_pBrowser = NULL;
+	m_pBrowser = nullptr;
 #endif
 
 	g_pIPCBrowser = this;
@@ -56,13 +56,13 @@ IPCBrowser::IPCBrowser(IPC::IPCManager* mang, uint32 id, DesuraId itemId) : IPC:
 
 IPCBrowser::~IPCBrowser()
 {
-	g_pIPCBrowser = NULL;
+	g_pIPCBrowser = nullptr;
 
 #ifndef DESURA_CLIENT
 	if (m_pBrowser)
 		m_pBrowser->destroy();
 
-	m_pBrowser = NULL;
+	m_pBrowser = nullptr;
 
 	safe_delete(m_pEventHandler);
 #endif

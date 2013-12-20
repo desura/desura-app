@@ -190,7 +190,7 @@ public:
 	//! @param statusOveride New status flags to add when load is complete
 	//! @param pWildCard Wildcard manager to resolve wildcards from
 	//!
-	void loadXmlData(uint32 platform, const XML::gcXMLElement &xmlNode, uint16 statusOveride, WildcardManager* pWildCard=NULL, bool reset = false);
+	void loadXmlData(uint32 platform, const XML::gcXMLElement &xmlNode, uint16 statusOveride, WildcardManager* pWildCard=nullptr, bool reset = false);
 
 
 	//! hash for base manager
@@ -536,7 +536,7 @@ inline const char* ItemInfo::getPublisherProfile()
 inline const char* ItemInfo::getInstallScriptPath()
 {
 	if (!getCurrentBranch())
-		return NULL;
+		return nullptr;
 
 	return getCurrentBranch()->getInstallScriptPath();
 }

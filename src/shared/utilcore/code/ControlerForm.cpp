@@ -39,10 +39,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>
 
 void SetExitCode(int32 code);
 
-ControllerForm::ControllerForm() : wxFrame(NULL, wxID_ANY, "HiddenWindow")
+ControllerForm::ControllerForm() : wxFrame(nullptr, wxID_ANY, "HiddenWindow")
 {
-	m_pChecker = NULL;
-	m_pUser = NULL;
+	m_pChecker = nullptr;
+	m_pUser = nullptr;
 	Show(false);
 }
 
@@ -62,7 +62,7 @@ bool ControllerForm::init(int argc, wxCmdLineArgsArray &argv)
 
 	gcString mcf;
 
-	wxFrame *form = NULL;
+	wxFrame *form = nullptr;
 
 	for (int x=0; x<argc; x++)
 	{

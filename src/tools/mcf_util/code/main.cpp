@@ -39,7 +39,7 @@ class ShowVersion : public UtilFunction
 {
 public:
 	virtual uint32 getNumArgs(){return 0;}
-	virtual const char* getArgDesc(size_t index){return NULL;}
+	virtual const char* getArgDesc(size_t index){return nullptr;}
 
 	virtual const char* getFullArg(){return "version";}
 	virtual const char getShortArg(){return 'v';}
@@ -166,7 +166,7 @@ int main(int argc, char** argv)
 	GetFunctionList(list);
 
 	std::vector<std::string> args;
-	UtilFunction* funct = NULL;
+	UtilFunction* funct = nullptr;
 
 	for (size_t x=2; x<(size_t)argc; x++)
 	{

@@ -27,7 +27,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>
 #endif
 
 #ifdef WIN32
-#define getSystemPath(id, path) SHGetFolderPathW(NULL, id , NULL, SHGFP_TYPE_CURRENT, path);
+#define getSystemPath(id, path) SHGetFolderPathW(nullptr, id , nullptr, SHGFP_TYPE_CURRENT, path);
 #endif
 
 namespace UTIL
@@ -398,7 +398,7 @@ std::string UserEncodeString(const std::string& strKey, const std::string& strVa
 
 	DATA_BLOB out;
 
-	if (!CryptProtectData(&db, NULL, &secret, NULL, NULL, CRYPTPROTECT_UI_FORBIDDEN, &out))
+	if (!CryptProtectData(&db, nullptr, &secret, nullptr, nullptr, CRYPTPROTECT_UI_FORBIDDEN, &out))
 		return "";
 
 	return UTIL::STRING::base64_encode((char*)out.pbData, out.cbData);
@@ -424,7 +424,7 @@ std::string UserDecodeString(const std::string& strKey, const std::string& strVa
 
 	DATA_BLOB out;
 
-	if (CryptUnprotectData(&db, NULL, &secret, NULL, NULL, CRYPTPROTECT_UI_FORBIDDEN, &out))
+	if (CryptUnprotectData(&db, nullptr, &secret, nullptr, nullptr, CRYPTPROTECT_UI_FORBIDDEN, &out))
 		return std::string((char*)out.pbData, out.cbData);
 
 	return "";

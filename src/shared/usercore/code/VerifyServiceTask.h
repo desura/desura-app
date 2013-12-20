@@ -42,7 +42,7 @@ protected:
 
 
 	void onProgress(MCFCore::Misc::ProgressInfo& prog);
-	void finishVerify(UserCore::Misc::VerifyComplete::VSTATUS status = UserCore::Misc::VerifyComplete::V_COMPLETE, const char* installpath = NULL, bool endStage = true);
+	void finishVerify(UserCore::Misc::VerifyComplete::VSTATUS status = UserCore::Misc::VerifyComplete::V_COMPLETE, const char* installpath = nullptr, bool endStage = true);
 
 	void onError(gcException& e);
 	void switchBranch();

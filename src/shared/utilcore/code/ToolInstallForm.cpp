@@ -25,7 +25,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>
 #define STR_INSTALLING Managers::GetString(L"#TIF_INSTALLING")
 #define STR_NOTINSTALLING Managers::GetString(L"#TIF_WAITINFO")
 
-ToolInstallForm* g_pToolInstallForm = NULL;
+ToolInstallForm* g_pToolInstallForm = nullptr;
 
 static VOID CALLBACK TimerProc(HWND hwnd, UINT uMsg, UINT_PTR idEvent, DWORD dwTime)
 {
@@ -57,7 +57,7 @@ ToolInstallForm::ToolInstallForm(wxWindow* parent, const char* key) : gcFrame(pa
 ToolInstallForm::~ToolInstallForm()
 {
 	stopServer();
-	g_pToolInstallForm = NULL;
+	g_pToolInstallForm = nullptr;
 }
 
 void ToolInstallForm::startTimer()

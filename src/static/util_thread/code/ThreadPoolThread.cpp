@@ -29,7 +29,7 @@ ThreadPoolThread::ThreadPoolThread(ThreadPoolTaskSourceI* taskSource, bool force
 	m_bForced = forced;
 	m_bCompTask = false;
 
-	m_pTask = NULL;
+	m_pTask = nullptr;
 	m_pTaskSource = taskSource;
 }
 
@@ -76,7 +76,7 @@ bool ThreadPoolThread::doTask()
 
 	m_pTask = task;
 	task->doTask();
-	m_pTask = NULL;
+	m_pTask = nullptr;
 
 	safe_delete(task);
 	onCompleteEvent();

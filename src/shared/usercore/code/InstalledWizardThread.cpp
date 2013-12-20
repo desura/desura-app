@@ -40,7 +40,7 @@ InstalledWizardThread::InstalledWizardThread() : MCFThread( "Installed Wizard Th
 {
 	m_pUser = dynamic_cast<UserCore::User*>(getUserCore());
 	m_bTriggerNewEvent = true;
-	m_pTaskGroup = NULL;
+	m_pTaskGroup = nullptr;
 
 	m_uiDone = 0;
 	m_uiTotal = 0;
@@ -89,7 +89,7 @@ void InstalledWizardThread::doRun()
 	if (m_pTaskGroup)
 	{
 		m_pTaskGroup->finalize();
-		m_pTaskGroup = NULL;
+		m_pTaskGroup = nullptr;
 	}
 
 	try

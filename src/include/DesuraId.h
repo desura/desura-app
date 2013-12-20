@@ -143,7 +143,7 @@ public:
 		return (m_uiItemId != 0 && m_uiType != TYPE_NONE);
 	}
 
-	gcString getFolderPathExtension(const char* extra = NULL)
+	gcString getFolderPathExtension(const char* extra = nullptr)
 	{
 		gcString res;
 		gcString type = getTypeString();

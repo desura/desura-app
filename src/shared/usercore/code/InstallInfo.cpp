@@ -64,8 +64,8 @@ void InstallInfo::loadXmlData(const XML::gcXMLElement &xmlNode, WildcardManager*
 		if (path.empty() || check.empty())
 			return;
 
-		char* CheckRes = NULL;
-		char* PathRes = NULL;
+		char* CheckRes = nullptr;
+		char* PathRes = nullptr;
 
 		try
 		{

@@ -36,7 +36,7 @@ public:
 	IPCLock()
 	{
 		id = 0;
-		result = NULL;
+		result = nullptr;
 		m_bTriggered = false;
 	}
 
@@ -203,7 +203,7 @@ protected:
 
 		m_lockMutex.unlock();
 
-		return NULL;
+		return nullptr;
 	}
 
 private:

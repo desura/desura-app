@@ -37,8 +37,8 @@ HDDEDATA CALLBACK _DDECallback(WORD wType, WORD wFmt, HCONV hConv, HSZ hsz1, HSZ
 
 gcDDEManager::gcDDEManager()
 {
-	m_pCurConnecting = NULL;
-	m_hDDEIdInst = NULL;
+	m_pCurConnecting = nullptr;
+	m_hDDEIdInst = 0;
 	m_bDDEInit = false;
 }
 
@@ -87,7 +87,7 @@ void gcDDEManager::cleanUp()
 gcDDEServer* gcDDEManager::findServer(const char* name)
 {
 	if (!name)
-		return NULL;
+		return nullptr;
 
 	for (size_t x=0; x<m_vServer.size(); x++)
 	{
@@ -98,7 +98,7 @@ gcDDEServer* gcDDEManager::findServer(const char* name)
 			return m_vServer[x];
 	}
 
-	return NULL;
+	return nullptr;
 }
 
 void gcDDEManager::removeServer(gcDDEServer* server)
@@ -113,7 +113,7 @@ void gcDDEManager::removeServer(gcDDEServer* server)
 
 		if (m_vServer[x] == server)
 		{
-			m_vServer[x] = NULL;
+			m_vServer[x] = nullptr;
 			break;
 		}
 	}
@@ -131,7 +131,7 @@ void gcDDEManager::removeClient(gcDDEClient* client)
 
 		if (m_vClient[x] == client)
 		{
-			m_vClient[x] = NULL;
+			m_vClient[x] = nullptr;
 			break;
 		}
 	}
@@ -177,7 +177,7 @@ gcDDEConnection* gcDDEManager::findConnection(HCONV conv)
 			return con;
 	}
 
-	return NULL;
+	return nullptr;
 }
 
 
@@ -222,7 +222,7 @@ HDDEDATA gcDDEManager::processCallBack(WORD wType, WORD wFmt, HCONV hConv, HSZ h
                 if (m_pCurConnecting)
                 {
                     m_pCurConnecting->setConv(hConv);
-                    m_pCurConnecting = NULL;
+                    m_pCurConnecting = nullptr;
                     return (DDERETURN)(DWORD)true;
                 }
                 break;

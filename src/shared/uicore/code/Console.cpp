@@ -131,7 +131,7 @@ Console::Console(wxWindow* parent) : gcFrame(parent, wxID_ANY, wxT("#CS_TITLE"),
 
 	m_rtDisplay = new wxRichTextCtrl( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_READONLY|wxHSCROLL|wxVSCROLL );
 
-	m_tbInfo = new gcComboBox( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0, NULL, wxTE_PROCESS_ENTER|wxWANTS_CHARS );
+	m_tbInfo = new gcComboBox( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0, nullptr, wxTE_PROCESS_ENTER|wxWANTS_CHARS );
 	m_tbInfo->Bind(wxEVT_KEY_DOWN, &Console::onKeyDown, this);
 
 	m_butSubmit = 0;
@@ -168,7 +168,7 @@ Console::Console(wxWindow* parent) : gcFrame(parent, wxID_ANY, wxT("#CS_TITLE"),
 
 Console::~Console()
 {
-	wxLog *old_log = wxLog::SetActiveTarget(NULL);
+	wxLog *old_log = wxLog::SetActiveTarget(nullptr);
 	delete old_log;
 }
 

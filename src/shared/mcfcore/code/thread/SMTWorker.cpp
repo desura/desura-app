@@ -49,11 +49,11 @@ SMTWorker::SMTWorker(SMTController* controller, uint32 id, UTIL::FS::FileHandle*
 	m_uiCompressSize = 0;
 	m_uiTotRead = 0;
 
-	m_pCRC = NULL;
-	m_pMD5Norm = NULL;
-	m_pMD5Comp = NULL;
+	m_pCRC = nullptr;
+	m_pMD5Norm = nullptr;
+	m_pMD5Comp = nullptr;
 
-	m_BZ2Worker = NULL;
+	m_BZ2Worker = nullptr;
 }
 
 SMTWorker::~SMTWorker()
@@ -131,7 +131,7 @@ void SMTWorker::doWork()
 		if (m_pCurFile->isCompressed())
 		{
 			//need to make sure we finish the compression off
-			doCompression(NULL, 0, true);
+			doCompression(nullptr, 0, true);
 		}
 		else
 		{
@@ -173,7 +173,7 @@ void SMTWorker::doCompression(const char* buff, uint32 buffSize, bool endFile)
 	if (endFile)
 	{
 		m_BZ2Worker->end(updateCallback);
-		writeFile(NULL, 0, true);
+		writeFile(nullptr, 0, true);
 	}
 }
 

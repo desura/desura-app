@@ -239,12 +239,12 @@ template <class T>
 T* CreateIPCClass(IPC::IPCManager* mng, const char* name)
 {
 	if (!mng || ! name)
-		return NULL;
+		return nullptr;
 
 	WeakPtr<IPCClass> wClass = mng->createClass(name);
 
 	if (wClass.expired())
-		return NULL;
+		return nullptr;
 
 	SmartPtr<IPCClass> sClass = wClass.lock();
 	return dynamic_cast<T*>(sClass.get());

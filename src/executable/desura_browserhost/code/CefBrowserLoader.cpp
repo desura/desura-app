@@ -57,16 +57,16 @@ guint m_timeoutSource = 0;
 bool g_bLoaded = false;
 SharedObjectLoader g_CEFDll;
 
-CEF_InitFn CEF_Init = NULL;
-CEF_StopFn CEF_Stop = NULL;
-CEF_RegisterJSExtenderFn CEF_RegisterJSExtender = NULL;
-CEF_RegisterSchemeExtenderFn CEF_RegisterSchemeExtender = NULL;
-CEF_DeleteCookieFn CEF_DeleteCookie = NULL;
-CEF_CreateCookieFn CEF_CreateCookie = NULL;
-CEF_SetCookieFn CEF_SetCookie = NULL;
-CEF_NewChromiumBrowserFn CEF_NewChromiumBrowser = NULL;
-CEF_DoWorkFn CEF_DoWork = NULL;
-CEF_PostCallbackFn CEF_PostCallback = NULL;
+CEF_InitFn CEF_Init = nullptr;
+CEF_StopFn CEF_Stop = nullptr;
+CEF_RegisterJSExtenderFn CEF_RegisterJSExtender = nullptr;
+CEF_RegisterSchemeExtenderFn CEF_RegisterSchemeExtender = nullptr;
+CEF_DeleteCookieFn CEF_DeleteCookie = nullptr;
+CEF_CreateCookieFn CEF_CreateCookie = nullptr;
+CEF_SetCookieFn CEF_SetCookie = nullptr;
+CEF_NewChromiumBrowserFn CEF_NewChromiumBrowser = nullptr;
+CEF_DoWorkFn CEF_DoWork = nullptr;
+CEF_PostCallbackFn CEF_PostCallback = nullptr;
 
 
 #ifdef NIX
@@ -89,7 +89,7 @@ void RestartTimer(uint timeout)
 	
 	if (m_timeoutSource != 0)
 		g_source_remove(m_timeoutSource);
-	m_timeoutSource = g_timeout_add(timeout, onTimeout, NULL);
+	m_timeoutSource = g_timeout_add(timeout, onTimeout, nullptr);
 }
 
 bool RestartTimerCB(const CVar* hook, const char* newval)
@@ -107,16 +107,16 @@ CVar gc_cef_timeout("gc_cef_timeout", "50", 0, &RestartTimerCB);
 
 void UnloadCEFDll()
 {
-	CEF_Init = NULL;
-	CEF_Stop = NULL;
-	CEF_RegisterJSExtender = NULL;
-	CEF_RegisterSchemeExtender = NULL;
-	CEF_DeleteCookie = NULL;
-	CEF_CreateCookie = NULL;
-	CEF_SetCookie = NULL;
-	CEF_NewChromiumBrowser = NULL;
-	CEF_DoWork = NULL;
-	CEF_PostCallback = NULL;
+	CEF_Init = nullptr;
+	CEF_Stop = nullptr;
+	CEF_RegisterJSExtender = nullptr;
+	CEF_RegisterSchemeExtender = nullptr;
+	CEF_DeleteCookie = nullptr;
+	CEF_CreateCookie = nullptr;
+	CEF_SetCookie = nullptr;
+	CEF_NewChromiumBrowser = nullptr;
+	CEF_DoWork = nullptr;
+	CEF_PostCallback = nullptr;
 
 	g_CEFDll.unload();
 }
@@ -193,7 +193,7 @@ bool InitWebControl(const char* hostName, const char* userAgent)
 	RegisterSchemes();
 
 #ifdef NIX
-	m_timeoutSource = g_timeout_add(50, onTimeout, NULL);
+	m_timeoutSource = g_timeout_add(50, onTimeout, nullptr);
 #endif
 	
 	g_bLoaded = true;
@@ -234,13 +234,13 @@ void SetCookies(const char* freeman, const char* masterchief)
 
 	if (!CEF_CreateCookie)
 	{
-		Warning("CEF_CreateCookie is NULL. Failed to set cookies. :(\n");
+		Warning("CEF_CreateCookie is nullptr. Failed to set cookies. :(\n");
 		return;
 	}
 
 	if (!CEF_SetCookie)
 	{
-		Warning("CEF_SetCookie is NULL. Failed to set cookies. :(\n");
+		Warning("CEF_SetCookie is nullptr. Failed to set cookies. :(\n");
 		return;
 	}
 
@@ -276,14 +276,14 @@ ChromiumDLL::ChromiumBrowserI* NewChromiumBrowser(int* hwnd, const char* name, c
 #endif
 {
 	if (!g_bLoaded)
-		return NULL;
+		return nullptr;
 
 	return CEF_NewChromiumBrowser((int*)hwnd, name, loadUrl);
 }
 
 
 
-std::vector<ChromiumDLL::JavaScriptExtenderI*> *g_vJSExtenderList=NULL;
+std::vector<ChromiumDLL::JavaScriptExtenderI*> *g_vJSExtenderList=nullptr;
 
 void RegisterJSExtender( ChromiumDLL::JavaScriptExtenderI* scheme )
 {
@@ -307,7 +307,7 @@ void RegisterJSBindings()
 
 
 
-std::vector<ChromiumDLL::SchemeExtenderI*> *g_vSchemeList = NULL;
+std::vector<ChromiumDLL::SchemeExtenderI*> *g_vSchemeList = nullptr;
 
 void RegisterScheme( ChromiumDLL::SchemeExtenderI* scheme )
 {

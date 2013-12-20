@@ -37,11 +37,11 @@ ItemThread::ItemThread(UserCore::Item::ItemHandle *handle) : ::Thread::BaseThrea
 	m_bRunningTask = false;
 	start();
 
-	m_pThreadManager = NULL;	
-	m_pWebCore = NULL;
-	m_pUserCore = NULL;
+	m_pThreadManager = nullptr;	
+	m_pWebCore = nullptr;
+	m_pUserCore = nullptr;
 
-	m_pCurrentTask = NULL;
+	m_pCurrentTask = nullptr;
 	m_bDeleteCurrentTask = false;
 }
 
@@ -160,7 +160,7 @@ bool ItemThread::performTask()
 	}
 
 	m_DeleteMutex.lock();
-	m_pCurrentTask = NULL;
+	m_pCurrentTask = nullptr;
 	m_DeleteMutex.unlock();
 
 	safe_delete(task);
@@ -172,9 +172,9 @@ bool ItemThread::performTask()
 UserCore::ItemTask::BaseItemTask* ItemThread::getNewTask()
 {
 	if (isPaused())
-		return NULL;
+		return nullptr;
 
-	UserCore::ItemTask::BaseItemTask* task = NULL;
+	UserCore::ItemTask::BaseItemTask* task = nullptr;
 
 	m_TaskMutex.lock();
 	

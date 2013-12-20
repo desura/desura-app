@@ -61,7 +61,7 @@ public:
 
 ThemeManager::ThemeManager()
 {
-	m_pTheme = NULL;
+	m_pTheme = nullptr;
 }
 
 ThemeManager::~ThemeManager()
@@ -107,7 +107,7 @@ const char* ThemeManager::getWebPage(const char* id)
 	if (m_pTheme)
 		return m_pTheme->getWebPage(id);
 
-	return NULL;
+	return nullptr;
 }
 
 const char* ThemeManager::getImage(const char* id)
@@ -115,7 +115,7 @@ const char* ThemeManager::getImage(const char* id)
 	if (m_pTheme)
 		return m_pTheme->getImage(id);
 
-	return NULL;
+	return nullptr;
 }
 
 Color ThemeManager::getColor(const char* name, const char* id)
@@ -131,7 +131,7 @@ SpriteRectI* ThemeManager::getSpriteRect(const char* id, const char* rectId)
 	if (m_pTheme)
 		return m_pTheme->getSpriteRect(id, rectId);
 
-	return NULL;
+	return nullptr;
 }
 
 void ThemeManager::getThemeStubList(std::vector<ThemeStubI*> &vList)

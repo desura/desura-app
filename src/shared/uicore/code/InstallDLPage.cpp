@@ -130,7 +130,7 @@ public:
 
 	virtual const wchar_t* getToolTip(uint32 index)
 	{
-		return NULL;
+		return nullptr;
 	}
 
 	virtual void performAction(uint32 index)

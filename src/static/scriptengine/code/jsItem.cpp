@@ -76,7 +76,7 @@ void ItemJSBinding::RemoveItem(uint32 itemId)
 
 ScriptCoreItemI* ItemJSBinding::GetItem(uint32 itemId)
 {
-	ScriptCoreItemI* ret = NULL;
+	ScriptCoreItemI* ret = nullptr;
 
 	g_ItemLock.lock();
 

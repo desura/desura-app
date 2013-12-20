@@ -292,7 +292,7 @@ public:
 	GuiDelegate(TObj* t, TFunct f, MODE mode) : ObjDelegate<TObj, TArg>(t,f)
 	{
 		m_Mode = mode;
-		m_pInvoker = NULL;
+		m_pInvoker = nullptr;
 
 		if (ObjDelegate<TObj, TArg>::m_pObj)
 			ObjDelegate<TObj, TArg>::m_pObj->registerDelegate(this);
@@ -302,7 +302,7 @@ protected:
 	GuiDelegate(MODE mode) : ObjDelegate<TObj, TArg>()
 	{
 		m_Mode = mode;
-		m_pInvoker = NULL;
+		m_pInvoker = nullptr;
 	}
 
 public:
@@ -320,8 +320,8 @@ public:
 
 	virtual void nullObject()
 	{
-		ObjDelegate<TObj, TArg>::m_pObj = NULL;
-		ObjDelegate<TObj, TArg>::m_pFunct = NULL;
+		ObjDelegate<TObj, TArg>::m_pObj = nullptr;
+		ObjDelegate<TObj, TArg>::m_pFunct = nullptr;
 		
 		m_InvokerMutex.lock();
 		
@@ -362,7 +362,7 @@ public:
 
 			setInvoker(i);
 			i->wait();
-			setInvoker(NULL);
+			setInvoker(nullptr);
 			
 			a = i->m_Arg;
 		}
@@ -403,7 +403,7 @@ public:
 		if (ObjDelegate<TObj, TArg>::m_pObj)
 			ObjDelegate<TObj, TArg>::m_pObj->registerDelegate(this);
 
-		m_pInvoker = NULL;
+		m_pInvoker = nullptr;
 	}
 
 	~GuiPrimDelegate()
@@ -419,8 +419,8 @@ public:
 
 	virtual void nullObject()
 	{
-		ObjDelegate<TObj, TArg>::m_pObj = NULL;
-		ObjDelegate<TObj, TArg>::m_pFunct = NULL;
+		ObjDelegate<TObj, TArg>::m_pObj = nullptr;
+		ObjDelegate<TObj, TArg>::m_pFunct = nullptr;
 
 		m_InvokerMutex.lock();
 		
@@ -461,7 +461,7 @@ public:
 
 			setInvoker(i);
 			i->wait();
-			setInvoker(NULL);
+			setInvoker(nullptr);
 			a = i->m_Arg;
 		}
 	}
@@ -497,7 +497,7 @@ inline bool validateForm(TObj* pObj)
 }
 
 
-#define PRIMOVERIDEDELEGATE( type )	template <class TObj, type> DelegateI<type>* guiDelegate(TObj* pObj, void (TObj::*NotifyMethod)(type&), MODE mode = MODE_PENDING){if (!validateForm(pObj)){assert(false);return NULL;}return new GuiPrimDelegate<TObj, type>(pObj, NotifyMethod, mode);}
+#define PRIMOVERIDEDELEGATE( type )	template <class TObj, type> DelegateI<type>* guiDelegate(TObj* pObj, void (TObj::*NotifyMethod)(type&), MODE mode = MODE_PENDING){if (!validateForm(pObj)){assert(false);return nullptr;}return new GuiPrimDelegate<TObj, type>(pObj, NotifyMethod, mode);}
 
 PRIMOVERIDEDELEGATE( bool );
 PRIMOVERIDEDELEGATE( int8 );
@@ -515,7 +515,7 @@ DelegateI<TArg>* guiDelegate(TObj* pObj, void (TObj::*NotifyMethod)(TArg&), MODE
 	if (!validateForm(pObj))
 	{
 		assert(false);
-		return NULL;
+		return nullptr;
 	}
 
 	return new GuiDelegate<TObj, TArg>(pObj, NotifyMethod, mode);
@@ -600,7 +600,7 @@ public:
 	GuiDelegateV(TObj* t, TFunct f, MODE mode) : ObjDelegateV<TObj>(t,f)
 	{
 		m_Mode = mode;
-		m_pInvoker = NULL;
+		m_pInvoker = nullptr;
 
 		if (ObjDelegateV<TObj>::m_pObj)
 			ObjDelegateV<TObj>::m_pObj->registerDelegate(this);
@@ -610,7 +610,7 @@ protected:
 	GuiDelegateV(MODE mode) : ObjDelegateV<TObj>()
 	{
 		m_Mode = mode;
-		m_pInvoker = NULL;
+		m_pInvoker = nullptr;
 	}
 
 public:
@@ -627,8 +627,8 @@ public:
 
 	virtual void nullObject()
 	{
-		ObjDelegateV<TObj>::m_pObj = NULL;
-		ObjDelegateV<TObj>::m_pFunct = NULL;
+		ObjDelegateV<TObj>::m_pObj = nullptr;
+		ObjDelegateV<TObj>::m_pFunct = nullptr;
 		
 		m_InvokerMutex.lock();
 		
@@ -669,7 +669,7 @@ public:
 
 			setInvoker(i);
 			i->wait();
-			setInvoker(NULL);
+			setInvoker(nullptr);
 		}
 	}
 
@@ -712,7 +712,7 @@ DelegateVI* guiDelegate(TObj* pObj, void (TObj::*NotifyMethod)(), MODE mode = MO
 	if (!validateForm(pObj))
 	{
 		assert(false);
-		return NULL;
+		return nullptr;
 	}
 
 	return new GuiDelegateV<TObj>(pObj, NotifyMethod, mode);
@@ -831,7 +831,7 @@ DelegateI<TArg>* guiExtraDelegate(TObj* pObj, void (TObj::*NotifyMethod)(TExtra,
 	if (!validateForm(pObj))
 	{
 		assert(false);
-		return NULL;
+		return nullptr;
 	}
 
 	return new GuiExtraDelegate<TObj, TArg, TExtra>(pObj, tExtra, NotifyMethod, mode);
@@ -912,7 +912,7 @@ DelegateVI* guiExtraDelegate(TObj* pObj, void (TObj::*NotifyMethod)(TExtra), TEx
 	if (!validateForm(pObj))
 	{
 		assert(false);
-		return NULL;
+		return nullptr;
 	}
 
 	return new GuiExtraDelegateV<TObj, TExtra>(pObj, tExtra, NotifyMethod, mode);

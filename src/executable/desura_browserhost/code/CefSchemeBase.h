@@ -51,7 +51,7 @@ public:
 		m_szHostname = hostname;
 		m_szSchemename = schemename;
 
-		m_pCallback = NULL;
+		m_pCallback = nullptr;
 		m_uiResponseSize = 0;
 	}
 
@@ -88,7 +88,7 @@ public:
 	virtual const char* getResponseMimeType()
 	{
 		if (m_szMimeType.size() == 0)
-			return NULL;
+			return nullptr;
 
 		return m_szMimeType.c_str();
 	}
@@ -96,7 +96,7 @@ public:
 	virtual const char* getRedirectUrl()
 	{
 		if (m_szRedirectUrl.size() == 0)
-			return NULL;
+			return nullptr;
 
 		return m_szRedirectUrl.c_str();
 	}

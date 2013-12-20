@@ -64,7 +64,7 @@ namespace UserCore
 class ItemManager::ParseInfo
 {
 public:
-	ParseInfo(uint32 statusOverride, WildcardManager* pWildCard = NULL, bool reset=false, InfoMaps* maps=NULL)
+	ParseInfo(uint32 statusOverride, WildcardManager* pWildCard = nullptr, bool reset=false, InfoMaps* maps=nullptr)
 	{
 		this->statusOverride = statusOverride;
 		this->pWildCard = pWildCard;
@@ -1192,7 +1192,7 @@ void ItemManager::parseGameXml(DesuraId id, ParseInfo &pi)
 	ParseInfo gamePi(pi);
 
 	gamePi.rootNode = pi.rootNode.FirstChildElement("mods");
-	gamePi.infoNode = NULL;
+	gamePi.infoNode = nullptr;
 
 	parseModsXml(temp, gamePi);
 }
@@ -1385,7 +1385,7 @@ UserCore::Item::ItemInfo* ItemManager::findItemInfoNorm(DesuraId id)
 	if (handle)
 		return handle->getItemInfoNorm();
 
-	return NULL;
+	return nullptr;
 }
 
 UserCore::Item::ItemInfoI* ItemManager::findItemInfo(DesuraId id)
@@ -1443,7 +1443,7 @@ UserCore::Item::ItemTaskGroup* ItemManager::newTaskGroup(uint32 type)
 
 void ItemManager::checkItems()
 {
-	UserCore::Item::ItemTaskGroup* group = NULL;
+	UserCore::Item::ItemTaskGroup* group = nullptr;
 
 
 	uint32 count = getCount();

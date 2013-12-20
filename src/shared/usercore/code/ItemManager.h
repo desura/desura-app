@@ -60,7 +60,7 @@ public:
 	virtual void removeItem(DesuraId id);
 
 	virtual void getCIP(DesuraId id, char** buff);
-	virtual void retrieveItemInfo(DesuraId id, uint32 statusOveride = 0, WildcardManager* pWildCard = NULL, MCFBranch branch = MCFBranch(), MCFBuild mcfBuild = MCFBuild(), bool reset = false);
+	virtual void retrieveItemInfo(DesuraId id, uint32 statusOveride = 0, WildcardManager* pWildCard = nullptr, MCFBranch branch = MCFBranch(), MCFBuild mcfBuild = MCFBuild(), bool reset = false);
 	virtual void retrieveItemInfoAsync(DesuraId id, bool addToAccount);
 
 	virtual uint32 getDevItemCount();
@@ -199,7 +199,7 @@ inline UserCore::Item::ItemInfoI* ItemManager::getItemInfo(uint32 index)
 	if (handle)
 		return handle->getItemInfo();
 
-	return NULL;
+	return nullptr;
 }
 
 inline UserCore::Item::ItemHandleI* ItemManager::getItemHandle(uint32 index)

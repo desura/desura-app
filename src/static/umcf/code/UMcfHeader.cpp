@@ -83,7 +83,7 @@ uint8 UMcfHeader::readFromFile(FILE* hFile)
 
 #ifdef WIN32
 	DWORD dwRead = 0;
-	int readRet = ReadFile(hFile, str, size, &dwRead, NULL);
+	int readRet = ReadFile(hFile, str, size, &dwRead, nullptr);
 
 	if (dwRead != size)
 	{

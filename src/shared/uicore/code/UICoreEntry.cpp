@@ -43,7 +43,7 @@ extern "C" CEXPORT UICoreI* GetInterface();
 WXDLLIMPEXP_BASE void wxSetInstance(HINSTANCE hInst);
 
 
-HHOOK hIISHook = NULL;
+HHOOK hIISHook = nullptr;
 
 
 LRESULT CALLBACK CallWndProc(int nCode,WPARAM wParam, LPARAM lParam)
@@ -55,10 +55,10 @@ LRESULT CALLBACK CallWndProc(int nCode,WPARAM wParam, LPARAM lParam)
 	{
 		GetInterface()->closeMainWindow();
 
-		if (hIISHook != NULL)
+		if (hIISHook != nullptr)
 			UnhookWindowsHookEx(hIISHook);
 
-		hIISHook = NULL;
+		hIISHook = nullptr;
 	}
 
 	return CallNextHookEx(hIISHook, nCode, wParam, lParam);
@@ -73,10 +73,10 @@ LRESULT CALLBACK CallWndProc(int nCode,WPARAM wParam, LPARAM lParam)
 void gtkMessageBox(const char* text, const char* title)
 {
 	int argc=0;
-	char** argv=NULL;
+	char** argv=nullptr;
 
 	gtk_init(&argc, &argv);
-	GtkWidget* dialog = gtk_message_dialog_new(NULL, GTK_DIALOG_MODAL, GTK_MESSAGE_WARNING, GTK_BUTTONS_OK, "%s", text);
+	GtkWidget* dialog = gtk_message_dialog_new(nullptr, GTK_DIALOG_MODAL, GTK_MESSAGE_WARNING, GTK_BUTTONS_OK, "%s", text);
 	gtk_window_set_title(GTK_WINDOW(dialog), title);
 
 	gtk_dialog_run(GTK_DIALOG(dialog));
@@ -89,10 +89,10 @@ class UICore : public UICoreI
 public:
 	UICore()
 	{
-		m_szAppVersion = NULL;
-		m_pDumpSettings = NULL;
-		m_pDumpLevel = NULL;
-		m_pRestart = NULL;
+		m_szAppVersion = nullptr;
+		m_pDumpSettings = nullptr;
+		m_pDumpLevel = nullptr;
+		m_pRestart = nullptr;
 
 		m_bExitCodeSet = false;
 		m_iExitCode = 0;
@@ -113,10 +113,10 @@ public:
 		safe_delete(m_szAppVersion);
 
 #ifdef WIN32
-		if (hIISHook != NULL)
+		if (hIISHook != nullptr)
 			UnhookWindowsHookEx(hIISHook);
 
-		hIISHook = NULL;
+		hIISHook = nullptr;
 #else
 		safe_delete(m_pChecker);
 #endif
@@ -223,7 +223,7 @@ public:
 			g_pMainApp->Close(true);
 	}
 
-	void restart(const char* args = NULL)
+	void restart(const char* args = nullptr)
 	{
 		if (m_pRestart)
 			m_pRestart(args);
@@ -263,7 +263,7 @@ public:
 	
 	void disableSingleInstanceLock()
 	{
-		m_pChecker = NULL;
+		m_pChecker = nullptr;
 	}
 #endif
 

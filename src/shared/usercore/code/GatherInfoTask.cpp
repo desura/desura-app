@@ -334,7 +334,7 @@ uint32 GatherInfoTask::validate()
 		return UserCore::Item::Helper::V_BADINFO;
 
 	DesuraId par = pItemInfo->getParentId();
-	UserCore::Item::ItemInfoI *parInfo = NULL;
+	UserCore::Item::ItemInfoI *parInfo = nullptr;
 
 	if (par.isOk())
 	{

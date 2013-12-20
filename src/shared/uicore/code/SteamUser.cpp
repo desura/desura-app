@@ -32,7 +32,7 @@ const char* g_szIgnoredFolders[] =
 	"sourcemods",
 	"media",
 	"downloading",
-	NULL
+	nullptr
 };
 
 int GetSteamUsers(std::vector<gcString> &vUsers)

@@ -38,7 +38,7 @@ void FromJSObject(UserCore::Misc::UploadInfoThreadI* &upload, JSObjHandle& arg)
 	if (arg->isObject())
 		upload = arg->getUserObject<UserCore::Misc::UploadInfoThreadI>();
 	else
-		upload = NULL;
+		upload = nullptr;
 }
 
 REGISTER_JSEXTENDER(DesuraJSUploadInfo);
@@ -97,7 +97,7 @@ bool DesuraJSUploadInfo::isValid(UserCore::Misc::UploadInfoThreadI* upload)
 void* DesuraJSUploadInfo::getUploadFromId(int32 uid)
 {
 	if (!GetUploadMng())
-		return NULL;
+		return nullptr;
 
 	void* ret = GetUploadMng()->findItem((uint32)uid);
 	return ret;
@@ -164,7 +164,7 @@ void DesuraJSUploadInfo::exploreMcf(UserCore::Misc::UploadInfoThreadI* upload)
 	{
 		UTIL::FS::Path path(file, "", true);
 #ifdef WIN32
-		ShellExecuteA(NULL, "explore" , path.getFolderPath().c_str(), NULL, NULL, SW_SHOWNORMAL);
+		ShellExecuteA(nullptr, "explore" , path.getFolderPath().c_str(), nullptr, nullptr, SW_SHOWNORMAL);
 #else
 		UTIL::LIN::launchFolder(path.getFolderPath().c_str());
 #endif
@@ -182,7 +182,7 @@ int32 DesuraJSUploadInfo::getProgress(UserCore::Misc::UploadInfoThreadI* upload)
 void* DesuraJSUploadInfo::getItem(UserCore::Misc::UploadInfoThreadI* upload)
 {
 	if (!GetUserCore() || !GetUserCore()->getItemManager())
-		return NULL;
+		return nullptr;
 
 	return GetUserCore()->getItemManager()->findItemInfo(upload->getItemId());
 }

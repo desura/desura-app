@@ -24,12 +24,12 @@ typedef int  (__stdcall * BZ2_bzCompressInitFN)(bz_stream*, int, int, int);
 typedef int  (__stdcall * BZ2_bzCompressFN)(bz_stream*, int);
 typedef int  (__stdcall * BZ2_bzCompressEndFN)(bz_stream*);
 
-HINSTANCE g_hBZ2 = NULL;
+HINSTANCE g_hBZ2 = nullptr;
 
 
-BZ2_bzCompressInitFN pBZ2_bzCompressInit = NULL;
-BZ2_bzCompressFN pBZ2_bzCompress = NULL;
-BZ2_bzCompressEndFN pBZ2_bzCompressEnd = NULL;
+BZ2_bzCompressInitFN pBZ2_bzCompressInit = nullptr;
+BZ2_bzCompressFN pBZ2_bzCompress = nullptr;
+BZ2_bzCompressEndFN pBZ2_bzCompressEnd = nullptr;
 
 bool initFactory()
 {
@@ -84,9 +84,9 @@ void bz2CompressFile(const char* src, const char* dest)
 	uint64 fileSize = UTIL::FS::getFileSize(UTIL::FS::PathWithFile(src));
 
 	bz_stream* bzs = new bz_stream;
-	bzs->bzalloc = NULL;
-	bzs->bzfree = NULL;
-	bzs->opaque = NULL;
+	bzs->bzalloc = nullptr;
+	bzs->bzfree = nullptr;
+	bzs->opaque = nullptr;
 
 	int32 res = pBZ2_bzCompressInit(bzs, 9, 0, 0);
 

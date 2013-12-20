@@ -38,7 +38,7 @@ MCFServerCon::MCFServerCon()
 	m_FtpHandle->getProgressEvent() += delegate(this, &MCFServerCon::onProgress);
 	m_FtpHandle->getWriteEvent() += delegate(this, &MCFServerCon::onWrite);
 
-	m_pOutBuffer = NULL;
+	m_pOutBuffer = nullptr;
 }
 
 MCFServerCon::~MCFServerCon()
@@ -120,7 +120,7 @@ void MCFServerCon::downloadRange(uint64 offset, uint32 size, OutBufferI* buff)
 	}
 	catch (gcException &e)
 	{
-		m_pOutBuffer = NULL;
+		m_pOutBuffer = nullptr;
 
 		if (e.getSecErrId() == 18) //CURLE_PARTIAL_FILE
 			return;
@@ -129,7 +129,7 @@ void MCFServerCon::downloadRange(uint64 offset, uint32 size, OutBufferI* buff)
 		throw;
 	}
 
-	m_pOutBuffer = NULL;
+	m_pOutBuffer = nullptr;
 }
 
 void MCFServerCon::doDownloadRange(uint64 offset, uint32 size)

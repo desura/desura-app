@@ -192,7 +192,7 @@ bool SetShape(const wxRegion& region, wxWindow* frame)
     // window.
     if ( region.IsEmpty() )
     {
-        if (::SetWindowRgn((HWND)frame->GetHWND(), NULL, TRUE) == 0)
+        if (::SetWindowRgn((HWND)frame->GetHWND(), nullptr, TRUE) == 0)
         {
             wxLogLastError(_T("SetWindowRgn"));
             return false;
@@ -200,10 +200,10 @@ bool SetShape(const wxRegion& region, wxWindow* frame)
         return true;
     }
 
-    DWORD noBytes = ::GetRegionData((HRGN)(region.GetHRGN()), 0, NULL);
+    DWORD noBytes = ::GetRegionData((HRGN)(region.GetHRGN()), 0, nullptr);
     RGNDATA *rgnData = (RGNDATA*) new char[noBytes];
     ::GetRegionData((HRGN)(region.GetHRGN()), noBytes, rgnData);
-    HRGN hrgn = ::ExtCreateRegion(NULL, noBytes, rgnData);
+    HRGN hrgn = ::ExtCreateRegion(nullptr, noBytes, rgnData);
     delete[] (char*) rgnData;
    
     RECT rect;
@@ -252,10 +252,10 @@ bool SetShape(const wxRegion& region, wxWindow* frame)
 	if (region.IsEmpty())
 	{
 		if (m_wxwindow && GTK_WIDGET_NO_WINDOW(m_wxwindow))
-			gtk_widget_shape_combine_mask(m_wxwindow, NULL, 0, 0);
+			gtk_widget_shape_combine_mask(m_wxwindow, nullptr, 0, 0);
 			
 		if (m_widget && GTK_WIDGET_NO_WINDOW(m_widget))
-			gtk_widget_shape_combine_mask(m_widget, NULL, 0, 0);
+			gtk_widget_shape_combine_mask(m_widget, nullptr, 0, 0);
 	}
 	else
 	{	

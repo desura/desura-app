@@ -112,7 +112,7 @@ GameExplorerInfo::GameExplorerInfo(DesuraId id, UserCore::UserI* user)
 	m_pUser = user;
 	m_uiFlags = 0;
 
-	m_pItemInfo = NULL;
+	m_pItemInfo = nullptr;
 
 	regEvent();
 }
@@ -288,7 +288,7 @@ void GameExplorerInfo::generateDll()
 	if (!handle)
 		return;
 
-	char *logoData = NULL;
+	char *logoData = nullptr;
 	uint32 logoSize = 0;
 
 	try
@@ -319,7 +319,7 @@ void GameExplorerInfo::generateDll()
 
 void GameExplorerInfo::translateIco(HANDLE handle, const char* icoPath)
 {
-	char* buff = NULL;
+	char* buff = nullptr;
 	uint32 size = UTIL::FS::readWholeFile(icoPath, &buff);
 	
 	if (size == 0)

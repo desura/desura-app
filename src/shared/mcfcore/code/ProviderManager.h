@@ -52,14 +52,14 @@ public:
 	//! @param id Agent id
 	//! @param errCode Reason why requesting new url
 	//! @param errMsg Detail error message
-	//! @return url if has valid url or "NULL" if no valid url
+	//! @return url if has valid url or "nullptr" if no valid url
 	//!
 	gcString requestNewUrl(uint32 id, uint32 errCode, const char* errMsg);
 
 	//! Gets a url for agent
 	//!
 	//! @param id Agent id
-	//! @return url if has valid url or "NULL" if no valid url
+	//! @return url if has valid url or "nullptr" if no valid url
 	//!
 	gcString getUrl(uint32 id);
 

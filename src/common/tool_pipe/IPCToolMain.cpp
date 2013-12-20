@@ -26,7 +26,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>
 #include "ToolInfo.h"
 #endif
 
-IPCToolMain* g_pToolMain = NULL;
+IPCToolMain* g_pToolMain = nullptr;
 REG_IPC_CLASS( IPCToolMain );
 
 
@@ -98,7 +98,7 @@ IPCToolMain::IPCToolMain(IPC::IPCManager* mang, uint32 id, DesuraId itemId) : IP
 	g_pToolMain = this;
 
 #ifndef DESURA_CLIENT
-	m_pThread = NULL;
+	m_pThread = nullptr;
 #endif
 }
 

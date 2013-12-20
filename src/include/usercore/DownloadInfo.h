@@ -38,7 +38,7 @@ public:
 	{
 		dlSize = 0;
 		inSize = 0;
-		iInfo = NULL;
+		iInfo = nullptr;
 	}
 
 	DownloadInfo(DownloadInfo* di)

@@ -31,7 +31,7 @@ REG_IPC_CLASS( IPCComplexLaunch );
 IPCComplexLaunch::IPCComplexLaunch(IPC::IPCManager* mang, uint32 id, DesuraId itemId) : IPC::IPCClass(mang, id, itemId)
 {
 	registerFunctions();
-	m_pThread = NULL;
+	m_pThread = nullptr;
 }
 
 IPCComplexLaunch::~IPCComplexLaunch()

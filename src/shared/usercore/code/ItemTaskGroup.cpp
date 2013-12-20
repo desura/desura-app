@@ -69,7 +69,7 @@ void ItemTaskGroup::cancelAll()
 	m_ListLock.lock();
 
 	for (size_t x=0; x<m_vWaitingList.size(); x++)
-		m_vWaitingList[x]->setTaskGroup(NULL);
+		m_vWaitingList[x]->setTaskGroup(nullptr);
 
 	m_vWaitingList.clear();
 	m_ListLock.unlock();
@@ -147,7 +147,7 @@ bool ItemTaskGroup::removeItem(UserCore::Item::ItemHandleI* item)
 	m_ListLock.unlock();
 
 	if (found)
-		handle->setTaskGroup(NULL);
+		handle->setTaskGroup(nullptr);
 
 	uint32 p=m_vWaitingList.size();
 	m_TaskListLock.lock();
@@ -164,7 +164,7 @@ bool ItemTaskGroup::removeItem(UserCore::Item::ItemHandleI* item)
 UserCore::Item::ItemHandleI* ItemTaskGroup::getActiveItem()
 {
 	if (m_uiActiveItem >= m_vWaitingList.size())
-		return NULL;
+		return nullptr;
 
 	return m_vWaitingList[m_uiActiveItem];
 }

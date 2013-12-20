@@ -62,7 +62,7 @@ protected:
 
 	void parseItemsQuick(const XML::gcXMLElement &fNode);
 
-	void parseItems1(const XML::gcXMLElement &fNode, WildcardManager *pWildCard, std::map<uint64, XML::gcXMLElement> *vMap = NULL);
+	void parseItems1(const XML::gcXMLElement &fNode, WildcardManager *pWildCard, std::map<uint64, XML::gcXMLElement> *vMap = nullptr);
 	void parseItems2(const XML::gcXMLElement &fNode, WildcardManager *pWildCard);
 
 	bool selectBranch(UserCore::Item::ItemInfoI *item);

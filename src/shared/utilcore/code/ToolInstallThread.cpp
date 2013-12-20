@@ -40,7 +40,7 @@ gcException ToolInstallThread::installTool(const char* exe, const char* args)
 		return gcException(ERR_TOOLINSTALL, gcString("Cant install tool {0} while {1} is installing.", exe, m_szExe));
 
 	if (!exe)
-		return gcException(ERR_TOOLINSTALL, "Exe for tool install was NULL.");
+		return gcException(ERR_TOOLINSTALL, "Exe for tool install was nullptr.");
 
 	if (!UTIL::FS::isValidFile(exe))
 		return gcException(ERR_TOOLINSTALL, gcString("Exe {0} for tool install is invalid and doesnt exist.\n", exe));

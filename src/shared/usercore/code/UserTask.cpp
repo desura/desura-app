@@ -33,7 +33,7 @@ UserTask::UserTask(UserCore::User *user, DesuraId id)
 	if (user)
 		m_pWebCore = user->getWebCore();
 	else
-		m_pWebCore = NULL;
+		m_pWebCore = nullptr;
 
 	m_iId = id;
 	m_bStopped = false;
@@ -46,7 +46,7 @@ UserTask::~UserTask()
 UserCore::Item::ItemInfo* UserTask::getItemInfo()
 {
 	if (!m_pUserCore || !m_iId.isOk())
-		return NULL;
+		return nullptr;
 
 	return dynamic_cast<UserCore::Item::ItemInfo*>(m_pUserCore->getItemManager()->findItemInfo(m_iId));
 }

@@ -54,11 +54,11 @@ void ScriptTaskThread::setLastTask(ScriptTaskI* task)
 
 void ScriptTaskThread::run()
 {
-	ScriptTaskI* curTask = NULL;
+	ScriptTaskI* curTask = nullptr;
 
 	while (!isStopped())
 	{
-		curTask = NULL;
+		curTask = nullptr;
 
 		m_LockMutex.lock();
 
@@ -74,7 +74,7 @@ void ScriptTaskThread::run()
 		{
 			curTask->doTask();
 			curTask->destory();
-			curTask = NULL;
+			curTask = nullptr;
 		}
 		else
 		{

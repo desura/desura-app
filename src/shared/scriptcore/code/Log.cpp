@@ -22,14 +22,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>
 
 class Color;
 
-LogCallback* g_pLogCallBack = NULL;
+LogCallback* g_pLogCallBack = nullptr;
 
-void DESURA_Msg(const char* msg, Color* col = NULL)
+void DESURA_Msg(const char* msg, Color* col = nullptr)
 {
 	Msg(msg);
 }
 
-void DESURA_Msg_W(const wchar_t* msg, Color* col = NULL)
+void DESURA_Msg_W(const wchar_t* msg, Color* col = nullptr)
 {
 	gcString m(msg);
 	Msg(m.c_str());

@@ -305,7 +305,7 @@ std::shared_ptr<MCFCore::MCFFile> SMTController::newTask(uint32 id)
 	assert(worker);
 
 	if (worker->status != SF_STATUS_NULL)
-		return NULL;
+		return nullptr;
 
 	m_pFileMutex.lock();
 	size_t listSize = m_vFileList.size();
@@ -319,7 +319,7 @@ std::shared_ptr<MCFCore::MCFFile> SMTController::newTask(uint32 id)
 		m_iRunningWorkers--;
 		//wake thread up
 		m_WaitCond.notify();
-		return NULL;
+		return nullptr;
 	}
 
 	m_pFileMutex.lock();
@@ -351,7 +351,7 @@ void SMTController::endTask(uint32 id)
 SMTWorkerInfo* SMTController::findWorker(uint32 id)
 {
 	if (id >= m_vWorkerList.size())
-		return NULL;
+		return nullptr;
 
 	for (size_t x=0; x<m_vWorkerList.size(); x++)
 	{
@@ -359,7 +359,7 @@ SMTWorkerInfo* SMTController::findWorker(uint32 id)
 			return m_vWorkerList[x];
 	}
 
-	return NULL;
+	return nullptr;
 }
 
 void SMTController::reportError(uint32 id, gcException &e)

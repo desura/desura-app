@@ -128,7 +128,7 @@ CONCOMMAND(cc_CheckCert, "checkcert")
 	Msg("--------------------------------------------------\n");
 
 	wchar_t exePath[255];
-	GetModuleFileNameW(NULL, exePath, 255);
+	GetModuleFileNameW(nullptr, exePath, 255);
 
 	size_t exePathLen = Safe::wcslen(exePath, 255);
 	for (size_t x=exePathLen; x>0; x--)
@@ -161,7 +161,7 @@ CONCOMMAND(cc_PrintThreads, "threadlist")
 {
 	if (!GetThreadManager())
 	{
-		Warning("Cant print thread list as ThreadManager is NULL.\n");
+		Warning("Cant print thread list as ThreadManager is nullptr.\n");
 	}
 	else
 	{
@@ -191,7 +191,7 @@ CONCOMMAND(cc_testformat, "testformat")
 
 CONCOMMAND(cc_crash, "testcrash")
 {
-	UserCore::UserI *temp=NULL;
+	UserCore::UserI *temp=nullptr;
 	temp->logIn("crash", "crash");
 }
 
@@ -201,7 +201,7 @@ CONCOMMAND(cc_MsgboxTest, "testmsgbox")
 	gcMessageBox(g_pMainApp->getMainWindow(), "This\n has\n a\n lot\n of\n new\n lines\n!", "Desura message box test! (ok, hand)", wxOK|wxICON_HAND);
 	gcMessageBox(g_pMainApp->getMainWindow(), "This is a very very very very very very very very very very very very very very very very very long message", "Desura message box test! (close, question)", wxCLOSE|wxICON_QUESTION);
 	gcMessageBox(g_pMainApp->getMainWindow(), "This is a short message!", "Desura message box test! (apply cancel, information)", wxAPPLY|wxCANCEL|wxICON_INFORMATION);
-	gcMessageBox(NULL, "This message box doesnt have a parent!", "Desura message box test! (NULL parent)", wxOK|wxICON_INFORMATION);
+	gcMessageBox(nullptr, "This message box doesnt have a parent!", "Desura message box test! (nullptr parent)", wxOK|wxICON_INFORMATION);
 }
 
 CONCOMMAND(cc_NewsTest, "testnews")
@@ -409,7 +409,7 @@ bool autoStartChange(CVar* var, const char* val)
 	if (strcmp(val, "1")==0 || strcmp(val, "true")==0)
 	{
 		char exePath[255];
-		GetModuleFileNameA(NULL, exePath, 255);
+		GetModuleFileNameA(nullptr, exePath, 255);
 
 		UTIL::WIN::setRegValue(REGRUN, gcString("{0} -autostart", exePath).c_str());
 	}
@@ -454,7 +454,7 @@ CONCOMMAND(cc_test_popup, "test_popup")
 class SpinnerTest : public wxFrame
 {
 public:
-	SpinnerTest() : wxFrame(NULL, wxID_ANY, "Test Spinner", wxDefaultPosition, wxSize(200,200))
+	SpinnerTest() : wxFrame(nullptr, wxID_ANY, "Test Spinner", wxDefaultPosition, wxSize(200,200))
 	{
 		this->SetSizeHints( wxDefaultSize, wxDefaultSize );
 		
@@ -479,7 +479,7 @@ CONCOMMAND(cc_test_spinner, "test_spinner")
 
 CONCOMMAND(cc_test_form, "test_form")
 {
-	wxFrame* sp = new wxFrame(NULL, wxID_ANY, "Test frame", wxDefaultPosition, wxSize(200,200), wxDEFAULT_FRAME_STYLE);
+	wxFrame* sp = new wxFrame(nullptr, wxID_ANY, "Test frame", wxDefaultPosition, wxSize(200,200), wxDEFAULT_FRAME_STYLE);
 	sp->Show();
 }
 
@@ -504,7 +504,7 @@ CONCOMMAND(cc_test_post, "test_post")
 
 CONCOMMAND(cc_test_crash, "test_crash")
 {
-	wxFrame* sp = NULL;
+	wxFrame* sp = nullptr;
 	sp->Show();
 }
 

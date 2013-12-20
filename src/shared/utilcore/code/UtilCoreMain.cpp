@@ -33,7 +33,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>
 #include "ControlerForm.h"
 #include "util_thread/BaseThread.h"
 
-wxFrame* g_pMainApp = NULL;
+wxFrame* g_pMainApp = nullptr;
 HINSTANCE g_hInstDLL;
 
 bool InitWebControl();
@@ -55,7 +55,7 @@ void ShutdownWebControl();
 
 CVar gc_theme("gc_theme", "default", CFLAG_SAVEONEXIT);
 
-struct ITaskbarList3 * g_pITBL3 = NULL;
+struct ITaskbarList3 * g_pITBL3 = nullptr;
 
 void InitManagers();
 void DestroyManagers();
@@ -168,7 +168,7 @@ public:
 		wxWindow::MSWUnregisterMessageHandler(WM_ENDSESSION, &WindowsShutdown);
 		wxWindow::MSWUnregisterMessageHandler(WM_QUERYENDSESSION, &WindowsShutdown);
 
-		g_pMainApp = NULL;
+		g_pMainApp = nullptr;
 
 		DestroyManagers();
 		return wxApp::OnExit();

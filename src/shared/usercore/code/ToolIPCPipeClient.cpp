@@ -39,7 +39,7 @@ ToolIPCPipeClient::ToolIPCPipeClient(const char* user, bool uploadDumps, const c
 	m_szUser = user;
 	m_bUploadDumps = uploadDumps;
 
-	m_pServiceMain = NULL;
+	m_pServiceMain = nullptr;
 }
 
 ToolIPCPipeClient::~ToolIPCPipeClient()
@@ -50,7 +50,7 @@ ToolIPCPipeClient::~ToolIPCPipeClient()
 void ToolIPCPipeClient::onDisconnect()
 {
 	Warning(PRODUCT_NAME " Tool Helper Disconnected unexpectedly!\n");
-	m_pServiceMain = NULL;
+	m_pServiceMain = nullptr;
 }
 
 void ToolIPCPipeClient::start()
@@ -146,13 +146,13 @@ void ToolIPCPipeClient::startHelper()
 
 void ToolIPCPipeClient::stopHelper()
 {
-	m_pServiceMain = NULL;
+	m_pServiceMain = nullptr;
 }
 
 IPCToolMain* ToolIPCPipeClient::getToolMain()
 {
 	if (isDisconnected())
-		return NULL;
+		return nullptr;
 
 	return m_pServiceMain;
 }

@@ -686,7 +686,7 @@ template<typename CT, typename T>
 void PrintToStream(const T* t, std::basic_stringstream<CT> &oss)
 {
 	if (!t)
-		PrintToStream("NULL", oss);
+		PrintToStream("nullptr", oss);
 	else
 		oss << t;
 }
@@ -1251,7 +1251,7 @@ public:
 #ifdef WIN32
 		int size = vscprintf(szFormat, arglist)+1;
 #else
-		int size = vsnprintf(NULL, 0, szFormat, arglist)+1;
+		int size = vsnprintf(nullptr, 0, szFormat, arglist)+1;
 #endif
 
 		char* temp = new char[size];
@@ -1281,7 +1281,7 @@ public:
 #ifdef WIN32
 		int size = vscwprintf(szFormat, arglist)+1;
 #else
-		int size = vswprintf(NULL, 0, szFormat, arglist)+1;
+		int size = vswprintf(nullptr, 0, szFormat, arglist)+1;
 #endif
 		wchar_t* temp = new wchar_t[size];
 
@@ -1296,6 +1296,16 @@ public:
 		this->assign(out);
 
 		safe_delete(temp);
+	}
+
+	gcBaseString<T> trim()
+	{
+		auto temp = *this;
+
+		temp.erase(0, temp.find_first_not_of(' '));       //prefixing spaces
+		temp.erase(temp.find_last_not_of(' ')+1);         //suffixing spaces
+
+		return temp;
 	}
 };
 

@@ -45,7 +45,7 @@ void FromJSObject(UserItem* &jsItem, JSObjHandle& arg)
 	if (arg->isObject())
 		jsItem = dynamic_cast<UserItem*>(arg->getUserObject<ScriptCoreItemI>());
 	else
-		jsItem = NULL;
+		jsItem = nullptr;
 }
 
 
@@ -153,7 +153,7 @@ public:
 	gcString GetInstallPath(UserItem* item)
 	{
 		if (!item)
-			return "NULL ITEM";
+			return "nullptr ITEM";
 
 		gcString p = item->m_pItem->getPath();
 		p.push_back(UTIL::FS::Path::GetDirSeperator());
@@ -347,7 +347,7 @@ bool ToolManager::loadJSEngine()
 	if (!setup)
 		return false;
 
-	m_tJSEngineExpireTime = time(NULL) + 60*15;
+	m_tJSEngineExpireTime = time(nullptr) + 60*15;
 	setup->useInternalTaskRunner();
 
 	return setup->addItemExtender(&g_ItemExtender);
@@ -367,7 +367,7 @@ void ToolManager::unloadJSEngine(bool forced)
 {
 	m_ScriptLock.lock();
 
-	time_t now = time(NULL);
+	time_t now = time(nullptr);
 
 	if (forced || (m_uiInstanceCount == 0 && now > m_tJSEngineExpireTime))
 	{
@@ -379,7 +379,7 @@ void ToolManager::unloadJSEngine(bool forced)
 				setup->cleanUp();
 		}
 
-		m_pFactory = NULL;
+		m_pFactory = nullptr;
 		m_ScriptCore.unload();
 		m_ScriptCore = SharedObjectLoader();
 

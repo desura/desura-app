@@ -165,7 +165,7 @@ void MCF::dlHeaderFromHttp(const char* url)
 		throw gcException(ERR_WEBDL_FAILED, "Failed to download MCF xml from web (size is ether zero or didnt match header size)");
 
 	uint32 bz2BuffLen = webHeader.getXmlSize()*25;
-	char* bz2Buff = NULL;
+	char* bz2Buff = nullptr;
 
 	if ( isCompressed() )
 	{

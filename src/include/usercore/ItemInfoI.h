@@ -388,7 +388,7 @@ public:
 
 	//! Gets the end user license agreement url
 	//!
-	//! @return Url or NULL if none
+	//! @return Url or nullptr if none
 	//!
 	virtual const char* getEulaUrl()=0;
 
@@ -413,7 +413,7 @@ public:
 	//! Get a branch at an index
 	//!
 	//! @param index Branch index
-	//! @return Branch info or NULL if bad index
+	//! @return Branch info or nullptr if bad index
 	//!
 	virtual BranchInfoI* getBranch(uint32 index)=0;
 

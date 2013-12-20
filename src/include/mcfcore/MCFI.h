@@ -113,7 +113,7 @@ public:
 	//! @param unauthed Is this an unauthed MCF
 	//! @param local use local download mirror (admin only!)
 	//!
-	virtual void getDownloadProviders(const char* url, MCFCore::Misc::UserCookies *pCookies, bool *unauthed = NULL, bool local = false)=0;
+	virtual void getDownloadProviders(const char* url, MCFCore::Misc::UserCookies *pCookies, bool *unauthed = nullptr, bool local = false)=0;
 
 	//! Gets the authirzation information for testing purpuses
 	//!
@@ -306,7 +306,7 @@ public:
 	//! @param url Url to the MCF file to download the files from
 	//! @param installDir dir used to expand diffs from
 	//!
-	virtual void dlFilesFromHttp(const char* url, const char* installDir = NULL)=0;
+	virtual void dlFilesFromHttp(const char* url, const char* installDir = nullptr)=0;
 
 
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////

@@ -75,10 +75,10 @@ void PipeClient::setUpPipes()
 	if (m_bSetUped)
 		return;
 
-	m_hEventsArr[0] = CreateEvent(NULL, TRUE, TRUE, NULL);
-	m_hEventsArr[1] = CreateEvent(NULL, TRUE, TRUE, NULL);
+	m_hEventsArr[0] = CreateEvent(nullptr, TRUE, TRUE, nullptr);
+	m_hEventsArr[1] = CreateEvent(nullptr, TRUE, TRUE, nullptr);
 
-	if (m_hEventsArr[0] == NULL || m_hEventsArr[1] == NULL) 
+	if (m_hEventsArr[0] == nullptr || m_hEventsArr[1] == nullptr) 
 		throw gcException(ERR_IPC, gcString("CreateEvent failed with {0}.\n", GetLastError()));
 
 	setSendEvent(m_hEventsArr[0]);
@@ -98,10 +98,10 @@ void PipeClient::setUpPipes()
 		
 
 	//as this is the client connect to opposite server pipes
-	m_pdSend.hPipe = CreateFile(m_szRecvName.c_str(), GENERIC_READ|GENERIC_WRITE, 0, NULL, OPEN_EXISTING, FILE_FLAG_OVERLAPPED, NULL);
+	m_pdSend.hPipe = CreateFile(m_szRecvName.c_str(), GENERIC_READ|GENERIC_WRITE, 0, nullptr, OPEN_EXISTING, FILE_FLAG_OVERLAPPED, nullptr);
 	DWORD sErr = GetLastError();
 
-	m_pdRecv.hPipe = CreateFile(m_szSendName.c_str(), GENERIC_READ|GENERIC_WRITE, 0, NULL, OPEN_EXISTING, FILE_FLAG_OVERLAPPED, NULL);
+	m_pdRecv.hPipe = CreateFile(m_szSendName.c_str(), GENERIC_READ|GENERIC_WRITE, 0, nullptr, OPEN_EXISTING, FILE_FLAG_OVERLAPPED, nullptr);
 	DWORD rErr = GetLastError();
 
 	if (m_pdSend.hPipe == INVALID_HANDLE_VALUE || m_pdRecv.hPipe == INVALID_HANDLE_VALUE)
@@ -118,8 +118,8 @@ void PipeClient::setUpPipes()
 	}
 
 	DWORD dwMode = PIPE_MODE; //PipeClient_READMODE_MESSAGE; 
-	uint32 res1 = SetNamedPipeHandleState(m_pdSend.hPipe, &dwMode, NULL, NULL);
-	uint32 res2 = SetNamedPipeHandleState(m_pdRecv.hPipe, &dwMode, NULL, NULL);
+	uint32 res1 = SetNamedPipeHandleState(m_pdSend.hPipe, &dwMode, nullptr, nullptr);
+	uint32 res2 = SetNamedPipeHandleState(m_pdRecv.hPipe, &dwMode, nullptr, nullptr);
 
 	if (!(res1 == 0) || !(res2 == 0))
 		throw gcException(ERR_PIPE, "Failed to set PipeClient state");

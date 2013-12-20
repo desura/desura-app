@@ -77,7 +77,7 @@ UploadInfoPage::UploadInfoPage( wxWindow* parent, wxWindowID id, const wxPoint& 
 	Bind(wxEVT_COMMAND_BUTTON_CLICKED, &UploadInfoPage::onButtonClicked, this);
 	Bind(wxEVT_COMMAND_TEXT_UPDATED, &UploadInfoPage::onTextChange, this);
 
-	m_tbItemFile = NULL;
+	m_tbItemFile = nullptr;
 
 	wxFlexGridSizer* fgSizer1;
 	fgSizer1 = new wxFlexGridSizer( 4, 1, 0, 0 );
@@ -126,11 +126,11 @@ UploadInfoPage::UploadInfoPage( wxWindow* parent, wxWindowID id, const wxPoint& 
 	this->SetSizer( fgSizer1 );
 	this->Layout();
 	
-	m_pPrepThread = NULL;
-	m_pUpInfo = NULL;
+	m_pPrepThread = nullptr;
+	m_pUpInfo = nullptr;
 
-	m_pResumeThread = NULL;
-	m_pVFThread = NULL;
+	m_pResumeThread = nullptr;
+	m_pVFThread = nullptr;
 
 	m_bResume = false;
 
@@ -332,7 +332,7 @@ void UploadInfoPage::onResume()
 
 void UploadInfoPage::onResumeComplete(const char* path)
 {
-	if (path && strcmp(path, "NULL") != 0)
+	if (path && strcmp(path, "nullptr") != 0)
 	{
 		initUpload(path, m_pUpInfo->upsize);
 	}

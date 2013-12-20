@@ -28,8 +28,8 @@ UninstallBranchProcess::UninstallBranchProcess(const char* oldBranchMcf, const c
 	m_szInstallPath = inspath;
 	m_szInstallScript = installScript;
 
-	m_pOldBranchMcf = NULL;
-	m_pNewBranchMcf = NULL;
+	m_pOldBranchMcf = nullptr;
+	m_pNewBranchMcf = nullptr;
 
 	m_uiLastProg = 0;
 }
@@ -83,8 +83,8 @@ void UninstallBranchProcess::run()
 	{
 	}
 
-	m_pOldBranchMcf=NULL;
-	m_pNewBranchMcf=NULL;
+	m_pOldBranchMcf=nullptr;
+	m_pNewBranchMcf=nullptr;
 
 	mcfDelFactory(newMcf);
 	mcfDelFactory(oldMcf);

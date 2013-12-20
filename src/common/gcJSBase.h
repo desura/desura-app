@@ -183,7 +183,7 @@ JSObjHandle ToJSObject(ChromiumDLL::JavaScriptFactoryI* factory, const std::vect
 template <typename T>
 void setDefaultValue(T* &t)
 {
-	t = NULL;
+	t = nullptr;
 }
 
 template <typename T>
@@ -262,13 +262,13 @@ public:
 
 	void init()
 	{
-		m_pFunct0 = NULL;
-		m_pFunct1 = NULL;
-		m_pFunct2 = NULL;
-		m_pFunct3 = NULL;
-		m_pFunct4 = NULL;
-		m_pFunct5 = NULL;
-		m_pFunct6 = NULL;
+		m_pFunct0 = nullptr;
+		m_pFunct1 = nullptr;
+		m_pFunct2 = nullptr;
+		m_pFunct3 = nullptr;
+		m_pFunct4 = nullptr;
+		m_pFunct5 = nullptr;
+		m_pFunct6 = nullptr;
 	}
 
 	JSObjHandle operator()(ChromiumDLL::JavaScriptFactoryI *factory, ChromiumDLL::JavaScriptContextI* context, JSObjHandle obj, size_t argc, JSObjHandle* argv)
@@ -276,7 +276,7 @@ public:
 		if (argc < m_uiNumParams)
 			throw gcException(ERR_V8, "Not enough paramaters supplied for javascript function call!");
 
-		JSObjHandle ret(NULL);
+		JSObjHandle ret(nullptr);
 
 		A a;
 		B b;
@@ -440,13 +440,13 @@ public:
 
 	void init()
 	{
-		m_pFunct0 = NULL;
-		m_pFunct1 = NULL;
-		m_pFunct2 = NULL;
-		m_pFunct3 = NULL;
-		m_pFunct4 = NULL;
-		m_pFunct5 = NULL;
-		m_pFunct6 = NULL;
+		m_pFunct0 = nullptr;
+		m_pFunct1 = nullptr;
+		m_pFunct2 = nullptr;
+		m_pFunct3 = nullptr;
+		m_pFunct4 = nullptr;
+		m_pFunct5 = nullptr;
+		m_pFunct6 = nullptr;
 	}
 
 	JSObjHandle operator()(ChromiumDLL::JavaScriptFactoryI *factory, ChromiumDLL::JavaScriptContextI* context, JSObjHandle obj, size_t argc, JSObjHandle* argv)
@@ -606,12 +606,12 @@ public:
 
 	void init()
 	{
-		m_pFunct0 = NULL;
-		m_pFunct1 = NULL;
-		m_pFunct2 = NULL;
-		m_pFunct3 = NULL;
-		m_pFunct4 = NULL;
-		m_pFunct5 = NULL;
+		m_pFunct0 = nullptr;
+		m_pFunct1 = nullptr;
+		m_pFunct2 = nullptr;
+		m_pFunct3 = nullptr;
+		m_pFunct4 = nullptr;
+		m_pFunct5 = nullptr;
 	}
 
 	JSObjHandle operator()(ChromiumDLL::JavaScriptFactoryI *factory, ChromiumDLL::JavaScriptContextI* context, JSObjHandle obj, size_t argc, JSObjHandle* argv)
@@ -619,9 +619,9 @@ public:
 		if (argc < m_uiNumParams+1)
 			throw gcException(ERR_V8, "Not enough parameters supplied for javascript function call!");
 
-		JSObjHandle ret(NULL);
+		JSObjHandle ret(nullptr);
 
-		O* o = NULL;
+		O* o = nullptr;
 		if (argv[0]->isObject())
 			o = argv[0]->getUserObject<O>();
 
@@ -773,12 +773,12 @@ public:
 
 	void init()
 	{
-		m_pFunct0 = NULL;
-		m_pFunct1 = NULL;
-		m_pFunct2 = NULL;
-		m_pFunct3 = NULL;
-		m_pFunct4 = NULL;
-		m_pFunct5 = NULL;
+		m_pFunct0 = nullptr;
+		m_pFunct1 = nullptr;
+		m_pFunct2 = nullptr;
+		m_pFunct3 = nullptr;
+		m_pFunct4 = nullptr;
+		m_pFunct5 = nullptr;
 	}
 
 	JSObjHandle operator()(ChromiumDLL::JavaScriptFactoryI *factory, ChromiumDLL::JavaScriptContextI* context, JSObjHandle obj, size_t argc, JSObjHandle* argv)
@@ -786,9 +786,9 @@ public:
 		if (argc < m_uiNumParams+1)
 			throw gcException(ERR_V8, "Not enough parameters supplied for javascript function call!");
 
-		JSObjHandle ret(NULL);
+		JSObjHandle ret(nullptr);
 
-		O* o = NULL;
+		O* o = nullptr;
 		if (argv[0]->isObject())
 			o = argv[0]->getUserObject<O>();
 

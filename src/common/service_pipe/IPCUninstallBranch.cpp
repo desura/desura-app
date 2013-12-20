@@ -29,7 +29,7 @@ REG_IPC_CLASS( IPCUninstallBranch );
 IPCUninstallBranch::IPCUninstallBranch(IPC::IPCManager* mang, uint32 id, DesuraId itemId) : IPC::IPCClass(mang, id, itemId)
 {
 	registerFunctions();
-	m_pThread = NULL;
+	m_pThread = nullptr;
 }
 
 IPCUninstallBranch::~IPCUninstallBranch()

@@ -53,13 +53,13 @@ UserThreadManager::~UserThreadManager()
 		Thread::UserThreadI*	ut = dynamic_cast<Thread::UserThreadI*>(m_vThreadList[x]);	
 
 		if (us)
-			us->setThreadManager(NULL);
+			us->setThreadManager(nullptr);
 
 		if (mt)
-			mt->setThreadManager(NULL);
+			mt->setThreadManager(nullptr);
 
 		if (ut)
-			ut->setThreadManager(NULL);
+			ut->setThreadManager(nullptr);
 	}
 }
 

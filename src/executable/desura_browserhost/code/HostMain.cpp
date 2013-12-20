@@ -62,7 +62,7 @@ namespace BootLoaderUtil
 	void SetCurrentDir()
 	{
 		char exePath[255];
-		GetModuleFileName(NULL, exePath, 255);
+		GetModuleFileName(nullptr, exePath, 255);
 
 		size_t exePathLen = strlen(exePath);
 		for (size_t x=exePathLen; x>0; x--)
@@ -79,11 +79,11 @@ namespace BootLoaderUtil
 	void WaitForDebugger()
 	{
 		HMODULE kernel32_dll = GetModuleHandle("kernel32.dll");
-		if (kernel32_dll != NULL)
+		if (kernel32_dll != nullptr)
 		{
 			WaitForDebuggerFunc waitfor_debugger = (WaitForDebuggerFunc)GetProcAddress(kernel32_dll, "IsDebuggerPresent");
 	
-			if (waitfor_debugger != NULL) 
+			if (waitfor_debugger != nullptr) 
 			{
 				while( !waitfor_debugger() )
 					Sleep( 500 );

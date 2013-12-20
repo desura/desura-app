@@ -45,14 +45,14 @@ public:
 	TabPanel( wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 500,300 ), long style = wxWANTS_CHARS )
 		: T( parent, id, pos, size, style )
 	{
-		m_pTabHandler = NULL;
+		m_pTabHandler = nullptr;
 	}
 
 
 	TabPanel( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = "", const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 500,300 ), long style = wxWANTS_CHARS )
 		: T( parent, id, title, pos, size, style )
 	{
-		m_pTabHandler = NULL;
+		m_pTabHandler = nullptr;
 	}
 
 	~TabPanel()

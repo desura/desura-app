@@ -35,7 +35,7 @@ namespace ItemTask
 VSInstallMissing::VSInstallMissing()
 {
 	m_bFinished = false;
-	m_pIPCIM = NULL;
+	m_pIPCIM = nullptr;
 }
 
 VSInstallMissing::~VSInstallMissing()
@@ -50,7 +50,7 @@ VSInstallMissing::~VSInstallMissing()
 		m_pIPCIM->onErrorEvent -= delegate(&onErrorEvent);
 
 		m_pIPCIM->destroy();
-		m_pIPCIM = NULL;
+		m_pIPCIM = nullptr;
 	}
 
 }

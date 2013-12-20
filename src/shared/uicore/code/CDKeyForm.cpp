@@ -94,7 +94,7 @@ void CDKeyForm::cleanUpPages()
 		m_pPage->Show(false);
 		m_pPage->Close();
 		m_pPage->dispose();
-		m_pPage = NULL;
+		m_pPage = nullptr;
 	}
 }
 

@@ -47,7 +47,7 @@ unsigned int GetOSId()
 	// Call GetNativeSystemInfo if supported or GetSystemInfo otherwise.
 	pGNSI = (PGNSI) GetProcAddress(GetModuleHandle(TEXT("kernel32.dll")), "GetNativeSystemInfo");
 
-	if (NULL != pGNSI)
+	if (nullptr != pGNSI)
 		pGNSI(&si);
 	else 
 		GetSystemInfo(&si);

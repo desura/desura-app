@@ -189,7 +189,7 @@ bool UMcfFile::verifyFile(FILEHANDLE hFile, uint64 baseOffset)
 	LARGE_INTEGER mov;
 	mov.QuadPart = baseOffset + getOffSet();
 
-	if (SetFilePointerEx(hFile, mov, NULL, FILE_BEGIN) == 0)
+	if (SetFilePointerEx(hFile, mov, nullptr, FILE_BEGIN) == 0)
 		return false;
 #else
 	fseek(hFile, baseOffset + getOffSet(), SEEK_SET);

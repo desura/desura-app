@@ -44,8 +44,8 @@ BaseItemTask::BaseItemTask(uint32 type, const char* name, UserCore::Item::ItemHa
 	m_bIsStopped = false;
 	m_bIsPaused = false;
 
-	m_pWebCore = NULL;
-	m_pUserCore = NULL;
+	m_pWebCore = nullptr;
+	m_pUserCore = nullptr;
 	m_szName = name;
 }
 
@@ -123,7 +123,7 @@ UserCore::Item::ItemHandle* BaseItemTask::getItemHandle()
 UserCore::Item::ItemInfo* BaseItemTask::getItemInfo()
 {
 	if (!m_pHandle)
-		return NULL;
+		return nullptr;
 
 	return m_pHandle->getItemInfoNorm();
 }
@@ -133,7 +133,7 @@ UserCore::Item::ItemInfo* BaseItemTask::getParentItemInfo()
 	UserCore::Item::ItemInfo* item = getItemInfo();
 
 	if (!m_pUserCore || !item)
-		return NULL;
+		return nullptr;
 
 	return dynamic_cast<UserCore::Item::ItemInfo*>(m_pUserCore->getItemManager()->findItemInfo(item->getParentId()));
 }

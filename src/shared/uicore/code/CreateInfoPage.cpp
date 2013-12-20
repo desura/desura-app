@@ -37,7 +37,7 @@ END_EVENT_TABLE()
 
 CreateInfoPage::CreateInfoPage( wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style ) : BasePage( parent, id, pos, size, style )
 {
-	m_tbItemFiles = NULL;
+	m_tbItemFiles = nullptr;
 
 	wxFlexGridSizer* fgSizer1;
 	fgSizer1 = new wxFlexGridSizer( 4, 1, 0, 0 );

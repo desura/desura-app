@@ -59,7 +59,7 @@ public:
 	GatherInfoThread(UI::Forms::ItemForm* parent, DesuraId id, MCFBranch branch)
 	{
 		m_idItemId = id;
-		m_pThread = NULL;
+		m_pThread = nullptr;
 		m_pParent = parent;
 		m_McfBranch = branch;
 	}
@@ -261,14 +261,14 @@ ItemForm::ItemForm(wxWindow* parent, const char* action, const char* id) : gcFra
 	this->SetSizer(m_bsSizer);
 	this->Layout();
 
-	m_pItemHandle = NULL;
+	m_pItemHandle = nullptr;
 	centerOnParent();
 
 	m_szName = id;
 	SetTitle(gcWString(L"{0} {1}", Managers::GetString(L"#IF_TITLE"), m_szName));
 
 	m_iaLastAction = IA_NONE;
-	m_pGIThread = NULL;
+	m_pGIThread = nullptr;
 
 	onVerifyAfterHashFailEvent += guiDelegate(this, &ItemForm::verifyAfterHashFail, MODE_PENDING_WAIT);
 	
@@ -277,7 +277,7 @@ ItemForm::ItemForm(wxWindow* parent, const char* action, const char* id) : gcFra
 #endif 
 	
 	m_bIsInit = false;
-	m_pDialog = NULL;
+	m_pDialog = nullptr;
 }
 
 ItemForm::~ItemForm()
@@ -303,7 +303,7 @@ void ItemForm::cleanUpCallbacks()
 		{
 //			*m_pItemHandle->getChangeStageEvent() -= guiDelegate(this, &ItemForm::onStageChange, MODE_PENDING_WAIT);
 			*m_pItemHandle->getErrorEvent() -= guiDelegate(this, &ItemForm::onError);
-			m_pItemHandle->setFactory(NULL);
+			m_pItemHandle->setFactory(nullptr);
 		}
 	}	
 }
@@ -363,7 +363,7 @@ void ItemForm::init(INSTALL_ACTION action, MCFBranch branch, MCFBuild build, boo
 	if (m_pItemHandle)
 		*m_pItemHandle->getErrorEvent() += guiDelegate(this, &ItemForm::onError);
 
-	UserCore::Item::ItemInfoI* item = NULL;
+	UserCore::Item::ItemInfoI* item = nullptr;
 
 	if (m_pItemHandle)
 		item = m_pItemHandle->getItemInfo();
@@ -587,7 +587,7 @@ void ItemForm::setPaused(bool state)
 
 void ItemForm::setTitle(const wchar_t* key)
 {
-	UserCore::Item::ItemInfoI* item = m_pItemHandle?m_pItemHandle->getItemInfo():NULL;
+	UserCore::Item::ItemInfoI* item = m_pItemHandle?m_pItemHandle->getItemInfo():nullptr;
 	if (item)
 	{
 		m_szName = gcWString(item->getName());
@@ -793,7 +793,7 @@ void ItemForm::cleanUpPages()
 
 		m_pPage->Show(false);
 		m_pPage->Close();
-		m_pPage = NULL;
+		m_pPage = nullptr;
 	}
 }
 
@@ -889,10 +889,10 @@ void ItemForm::launchError(gcException& e)
 	switch (e.getErrId())
 	{
 		case ERR_NO32LIBS:
-			gcErrorBox(g_pMainApp->getMainWindow(), "#MF_ERRTITLE", "#MF_ERROR_NO32LIBS", e, NULL);
+			gcErrorBox(g_pMainApp->getMainWindow(), "#MF_ERRTITLE", "#MF_ERROR_NO32LIBS", e, nullptr);
 			return;
 		case ERR_NOBITTEST:
-			gcErrorBox(g_pMainApp->getMainWindow(), "#MF_ERRTITLE", "#MF_ERROR_NOBITTEST", e, NULL);
+			gcErrorBox(g_pMainApp->getMainWindow(), "#MF_ERRTITLE", "#MF_ERROR_NOBITTEST", e, nullptr);
 			return;
 	}
 #endif
@@ -952,7 +952,7 @@ void ItemForm::getInstallHelper(UserCore::Item::Helper::InstallerHandleHelperI**
 void ItemForm::onModalClose(wxCloseEvent& event)
 {
 	if (m_pDialog && m_pDialog->GetId() == event.GetId())
-		m_pDialog = NULL;
+		m_pDialog = nullptr;
 }
 
 
@@ -984,7 +984,7 @@ void ItemForm::onSelectBranch(std::pair<bool, MCFBranch> &info)
 		
 	if (m_pDialog)
 	{
-		m_pDialog = NULL;
+		m_pDialog = nullptr;
 		prompt->Close();
 	}
 }
@@ -1001,7 +1001,7 @@ void ItemForm::onShowComplexPrompt(bool &shouldContinue)
 	
 	if (m_pDialog)
 	{
-		m_pDialog = NULL;
+		m_pDialog = nullptr;
 		prompt->Close();
 	}
 }
@@ -1039,7 +1039,7 @@ void ItemForm::onShowInstallPrompt(SIPArg &args)
 	
 	if (m_pDialog)
 	{
-		m_pDialog = NULL;
+		m_pDialog = nullptr;
 		prompt->Close();
 	}
 }
@@ -1082,7 +1082,7 @@ public:
 	
 	virtual const wchar_t* getToolTip(uint32 index)
 	{
-		return NULL;
+		return nullptr;
 	}
 	
 	virtual void performAction(uint32 index)
@@ -1102,7 +1102,7 @@ void ItemForm::onShowToolPrompt(std::pair<bool, uint32> &args)
 		name = item->getName();	
 
 
-	const char* tool = NULL;
+	const char* tool = nullptr;
 	
 	switch (args.second)
 	{

@@ -134,12 +134,12 @@ public:
 
 	virtual ChromiumDLL::JSObjHandle getValue(const char* key)
 	{
-		return NULL;
+		return nullptr;
 	}
 
 	virtual ChromiumDLL::JSObjHandle getValue(int index)
 	{
-		return NULL;
+		return nullptr;
 	}
 
 	virtual bool setValue(const char* key, ChromiumDLL::JSObjHandle value)
@@ -175,12 +175,12 @@ public:
 
 	virtual ChromiumDLL::JavaScriptExtenderI* getFunctionHandler()
 	{
-		return NULL;
+		return nullptr;
 	}
 
 	virtual ChromiumDLL::JSObjHandle executeFunction(ChromiumDLL::JavaScriptFunctionArgs* args)
 	{
-		return NULL;
+		return nullptr;
 	}
 
 	void addRef()
@@ -206,7 +206,7 @@ public:
 		v8::HandleScope handle_scope;
 
 		if (m_v8Object->IsObject() == false)
-			return NULL;
+			return nullptr;
 
 		v8::Local<v8::Object> obj = m_v8Object->ToObject();
 		v8::Local<v8::String> key = v8::String::New("ScriptCore::UserData");
@@ -214,7 +214,7 @@ public:
 		if(obj->Has(key))
 			return v8::External::Cast(*(obj->Get(key)))->Value();
 
-		return NULL;
+		return nullptr;
 	}
 
 
@@ -306,7 +306,7 @@ public:
 	virtual ChromiumDLL::JSObjHandle CreateFunction(const char* name, ChromiumDLL::JavaScriptExtenderI* handler)
 	{
 		v8::HandleScope handle_scope;
-		return NULL;
+		return nullptr;
 	}
 
 	virtual ChromiumDLL::JSObjHandle CreateException(const char* value)
@@ -361,7 +361,7 @@ public:
 			jsargs.argc = args.Length();
 			jsargs.object = obj;
 			jsargs.argv = argv;
-			jsargs.context = NULL;
+			jsargs.context = nullptr;
 
 			ChromiumDLL::JSObjHandle ret = handler->m_pExtender->execute(&jsargs);
 			delete [] argv;
@@ -389,8 +389,8 @@ private:
 };
 
 
-std::vector<ChromiumDLL::JavaScriptExtenderI*> *g_vJSExtenderList=NULL;
-v8::ExtensionConfiguration* g_pExtenderConfig = NULL;
+std::vector<ChromiumDLL::JavaScriptExtenderI*> *g_vJSExtenderList=nullptr;
+v8::ExtensionConfiguration* g_pExtenderConfig = nullptr;
 
 
 void RegisterJSExtender(ChromiumDLL::JavaScriptExtenderI* scheme)

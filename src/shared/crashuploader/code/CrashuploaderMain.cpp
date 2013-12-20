@@ -58,7 +58,7 @@ public:
 			return;
 
 		size_t size = 512;
-		char* temp = NULL;
+		char* temp = nullptr;
 
 		va_list arglist;
 		va_start( arglist, format );
@@ -109,7 +109,7 @@ extern "C"
 {
 	CEXPORT bool UploadCrash(const char* file, const char* user, int build, int branch)
 	{
-		return UploadDump(file, user, build, branch, NULL);
+		return UploadDump(file, user, build, branch, nullptr);
 	}
 
 	CEXPORT bool UploadCrashProg(const char* file, const char* user, int build, int branch, DelegateI<Prog_s>* progress)
@@ -206,7 +206,7 @@ bool UploadDump(const char* file, const char* user, int build, int branch, Deleg
 	log.write("---------------------------------------\r\n");
 
 	time_t ltime; /* calendar time */
-	ltime=time(NULL); /* get current cal time */
+	ltime=time(nullptr); /* get current cal time */
 
 	
 #if defined(WIN32) && !defined(__MINGW32__)

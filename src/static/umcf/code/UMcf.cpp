@@ -34,7 +34,7 @@ class FileHandle
 public:
 	FileHandle(const char* path, uint64 offset)
 	{
-		hFileSrc = CreateFileA(path, GENERIC_READ, FILE_SHARE_READ, NULL, OPEN_EXISTING, 0, NULL);
+		hFileSrc = CreateFileA(path, GENERIC_READ, FILE_SHARE_READ, nullptr, OPEN_EXISTING, 0, nullptr);
 
 		if (offset != 0)
 			FileSeek(hFileSrc, offset);
@@ -42,7 +42,7 @@ public:
 
 	FileHandle(const wchar_t* path, uint64 offset)
 	{
-		hFileSrc = CreateFileW(path, GENERIC_READ, FILE_SHARE_READ, NULL, OPEN_EXISTING, 0, NULL);
+		hFileSrc = CreateFileW(path, GENERIC_READ, FILE_SHARE_READ, nullptr, OPEN_EXISTING, 0, nullptr);
 
 		if (offset != 0)
 			FileSeek(hFileSrc, offset);
@@ -90,7 +90,7 @@ public:
 
 	bool isValid()
 	{
-		return (hFileSrc != NULL);
+		return (hFileSrc != nullptr);
 	}
 
 	FILE* hFileSrc;
@@ -108,7 +108,7 @@ const wchar_t* problemFiles[] =
 	L"mfc100.dll",
 	L"msvcp100.dll",
 	L"msvcr100.dll",
-	NULL,
+	nullptr,
 };
 
 const wchar_t* problemFilesPath[] =
@@ -120,19 +120,19 @@ const wchar_t* problemFilesPath[] =
 	L"bin\\mfc100.dll",
 	L"bin\\msvcp100.dll",
 	L"bin\\msvcr100.dll",
-	NULL,
+	nullptr,
 };
 #else
 const wchar_t* problemFiles[] =
 {
 	L"desura",
-	NULL,
+	nullptr,
 };
 
 const wchar_t* problemFilesPath[] =
 {
 	L"bin/desura",
-	NULL,
+	nullptr,
 };
 #endif
 
@@ -203,7 +203,7 @@ uint8 UMcf::parseXml(const XML::gcXMLElement &xmlElement)
 void UMcf::removeOldFiles(const wchar_t* installPath)
 {
 	size_t y=0;
-	while (problemFilesPath[y] != NULL)
+	while (problemFilesPath[y] != nullptr)
 	{
 		wchar_t src[255] = {0};
 		Safe::snwprintf(src, 255, L"%s\\%s_old", installPath, problemFilesPath[y]);
@@ -215,7 +215,7 @@ void UMcf::removeOldFiles(const wchar_t* installPath)
 void UMcf::moveOldFiles(const wchar_t* installPath, const wchar_t* fileName)
 {
 	size_t y=0;
-	while (problemFiles[y] != NULL)
+	while (problemFiles[y] != nullptr)
 	{
 		if (Safe::wcsicmp(fileName, problemFiles[y])==0)
 		{
@@ -370,7 +370,7 @@ void UMcf::parseUpdateXml(const XML::gcXMLDocument &xmlDocument)
 //checks local files. returns true if they are good false if they are bad
 bool UMcf::checkFiles()
 {
-	return checkFiles(NULL);
+	return checkFiles(nullptr);
 }
 
 //checks local files. returns true if they are good false if they are bad
@@ -470,7 +470,7 @@ void UMcf::setRegValues()
 	Safe::snprintf(appid, 100, "%d", m_sHeader->getId());
 	Safe::snprintf(build, 100, "%d", m_sHeader->getBuild());
 
-	GetModuleFileName(NULL, exePath, 255);
+	GetModuleFileName(nullptr, exePath, 255);
 
 	size_t exePathLen = strlen(exePath);
 	for (size_t x=exePathLen; x>0; x--)
@@ -530,8 +530,8 @@ bool UMcf::isUpdateNewer()
 	if (res != ERROR_SUCCESS)
 		return true;
 
-	DWORD err1 = RegQueryValueEx(hk, "appid", NULL, &dwType,(LPBYTE)&lszAppId, &dwSize);
-	DWORD err2 = RegQueryValueEx(hk, "appver", NULL, &dwType,(LPBYTE)&lszBuild, &dwSize);
+	DWORD err1 = RegQueryValueEx(hk, "appid", nullptr, &dwType,(LPBYTE)&lszAppId, &dwSize);
+	DWORD err2 = RegQueryValueEx(hk, "appver", nullptr, &dwType,(LPBYTE)&lszBuild, &dwSize);
 	RegCloseKey(hk);
 
 	if (err1 != ERROR_SUCCESS || err2 != ERROR_SUCCESS)

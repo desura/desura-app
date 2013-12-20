@@ -77,7 +77,7 @@ CreateProgPage::CreateProgPage( wxWindow* parent, wxWindowID id, const wxPoint& 
 	this->Layout();
 
 
-	m_pThread = NULL;
+	m_pThread = nullptr;
 	m_bThreadPaused = false;
 
 	gcFrame* par = dynamic_cast<gcFrame*>(GetParent());

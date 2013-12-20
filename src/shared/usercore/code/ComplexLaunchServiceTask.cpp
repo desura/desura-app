@@ -50,7 +50,7 @@ enum
 
 ComplexLaunchServiceTask::ComplexLaunchServiceTask(UserCore::Item::ItemHandle *handle, bool clean, MCFBranch branch, MCFBuild build, UserCore::Item::Helper::InstallerHandleHelperI* ihh) : BaseItemServiceTask(UserCore::Item::ItemHandleI::STAGE_INSTALL_COMPLEX, "ComplexLaunch", handle, branch, build)
 {
-	m_pIPCIM = NULL;
+	m_pIPCIM = nullptr;
 	m_iTier = 0;
 	m_iMode = 0;
 	m_bClean = clean;
@@ -71,7 +71,7 @@ ComplexLaunchServiceTask::~ComplexLaunchServiceTask()
 		m_pIPCIM->onErrorEvent -= delegate(this, &ComplexLaunchServiceTask::onError);
 		
 		m_pIPCIM->destroy();
-		m_pIPCIM = NULL;
+		m_pIPCIM = nullptr;
 	}
 }
 
@@ -163,7 +163,7 @@ bool ComplexLaunchServiceTask::initService()
 	else
 	{
 		UserCore::Item::ItemInfo *pParentItem = getParentItemInfo();
-		gcException eParentNull(ERR_BADITEM, "Parent was NULL");
+		gcException eParentNull(ERR_BADITEM, "Parent was nullptr");
 
 		if (!pParentItem)
 		{

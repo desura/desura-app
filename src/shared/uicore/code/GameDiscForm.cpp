@@ -64,7 +64,7 @@ GameDiskForm::GameDiskForm(wxWindow* parent, const char* exe, bool cdkey) : gcFr
 
 	m_bHasSeenCDKey = cdkey;
 	m_szExe = exe;
-	m_pItem = NULL;
+	m_pItem = nullptr;
 
 	centerOnParent();
 }

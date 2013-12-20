@@ -65,7 +65,7 @@ public:
 
 	//! Gets the item info form the id number
 	//!
-	//! @return ItemInfo if found or NULL if not
+	//! @return ItemInfo if found or nullptr if not
 	//!
 	UserCore::Item::ItemInfoI* getItemInfo();
 

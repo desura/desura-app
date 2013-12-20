@@ -87,12 +87,12 @@ public:
 	T* findItem(uint64 hash)
 	{
 		if (m_mItemMap.size() == 0)
-			return NULL;
+			return nullptr;
 
 		typename std::map<uint64,T*>::iterator it = m_mItemMap.find(hash);
 
 		if (it == m_mItemMap.end())
-			return NULL;
+			return nullptr;
 
 		return it->second;
 	}
@@ -118,7 +118,7 @@ public:
 			count++;
 		}
 
-		return NULL;
+		return nullptr;
 	}
 
 	uint32 getCount(){return (uint32)m_mItemMap.size();}

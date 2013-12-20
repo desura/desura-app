@@ -154,14 +154,14 @@ public:
 	void genXml(XML::gcXMLElement &xmlElement);
 	bool verifyFile(FILEHANDLE hFile, uint64 baseOffset);
 
-	uint8 readMCFAndSave(FILEHANDLE hFile, const wchar_t* path, uint64 offset, DelegateI<ProgressCB> *del = NULL);
+	uint8 readMCFAndSave(FILEHANDLE hFile, const wchar_t* path, uint64 offset, DelegateI<ProgressCB> *del = nullptr);
 	uint8 saveFile(const wchar_t *dir);
 
 protected:
 	bool verify(const char* hash);
 
-	uint8 saveData(FILEHANDLE hSrc, FILEHANDLE hSink, uint64 offset, DelegateI<ProgressCB> *del = NULL);
-	uint8 decompressAndSave(FILEHANDLE hSrc, FILEHANDLE hSink, uint64 offset, DelegateI<ProgressCB> *del = NULL);
+	uint8 saveData(FILEHANDLE hSrc, FILEHANDLE hSink, uint64 offset, DelegateI<ProgressCB> *del = nullptr);
+	uint8 decompressAndSave(FILEHANDLE hSrc, FILEHANDLE hSink, uint64 offset, DelegateI<ProgressCB> *del = nullptr);
 
 private:
 	gcWString m_szName;

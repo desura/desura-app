@@ -207,7 +207,7 @@ void BranchInstallInfo::loadDb(sqlite3x::sqlite3_connection* db)
 			gcString userargs = reader.getstring(5);
 			uint32 rank = reader.getint(6);
 
-			ExeInfo *ei = NULL;
+			ExeInfo *ei = nullptr;
 
 			for (auto exe : m_vExeList)
 			{
@@ -378,7 +378,7 @@ ProcessResult BranchInstallInfo::processSettings(const XML::gcXMLElement &setNod
 			}
 			else
 			{
-				char* CheckRes = NULL;
+				char* CheckRes = nullptr;
 				try
 				{
 					pWildCard->constructPath(vInsChecks[0].check.c_str(), &CheckRes);
@@ -394,9 +394,9 @@ ProcessResult BranchInstallInfo::processSettings(const XML::gcXMLElement &setNod
 			}
 		}
 
-		char *iPathRes = NULL;
-		char* insPrim = NULL;
-		char* insPrimRes = NULL;
+		char *iPathRes = nullptr;
+		char* insPrim = nullptr;
+		char* insPrimRes = nullptr;
 		
 		setNode.GetChild("installprimary", insPrim);
 
@@ -406,7 +406,7 @@ ProcessResult BranchInstallInfo::processSettings(const XML::gcXMLElement &setNod
 			if (iPathRes)
 				setPath(iPathRes);
 			else
-				Warning(gcString("ItemInfo: Install path for {0} is NULL.\n"));
+				Warning(gcString("ItemInfo: Install path for {0} is nullptr.\n"));
 		}
 		catch (gcException &)
 		{
@@ -443,7 +443,7 @@ ProcessResult BranchInstallInfo::processSettings(const XML::gcXMLElement &setNod
 
 UserCore::Item::Misc::ExeInfoI* BranchInstallInfo::getActiveExe()
 {
-	UserCore::Item::Misc::ExeInfoI* ei = NULL;
+	UserCore::Item::Misc::ExeInfoI* ei = nullptr;
 
 	for (auto exe : m_vExeList)
 	{
@@ -507,7 +507,7 @@ void BranchInstallInfo::getExeList(std::vector<UserCore::Item::Misc::ExeInfoI*> 
 uint32 BranchInstallInfo::getExeCount(bool setActive)
 {
 	uint32 count = 0;
-	ExeInfo *ei = NULL;
+	ExeInfo *ei = nullptr;
 
 	for (auto exe : m_vExeList)
 	{
@@ -637,10 +637,10 @@ void BranchInstallInfo::processExes(const XML::gcXMLElement &setNode, WildcardMa
 		if (name.size() == 0)
 			name = "Play";
 
-		char* ePathRes = NULL;
-		char* argsRes = NULL;
+		char* ePathRes = nullptr;
+		char* argsRes = nullptr;
 
-		ExeInfo* ei = NULL;
+		ExeInfo* ei = nullptr;
 
 		for (auto exe : m_vExeList)
 		{
@@ -976,7 +976,7 @@ namespace UnitTest
 		m_BranchInstallInfo.m_vValidFiles.push_back("path_a\\check_a.txt");
 
 		WildcardManager wildcard;
-		auto res = processSettings(doc.RootElement(), &wildcard, false, false, NULL);
+		auto res = processSettings(doc.RootElement(), &wildcard, false, false, nullptr);
 
 		ASSERT_TRUE(res.found);
 		ASSERT_FILEEQ("path_a\\check_a.txt", res.insCheck.c_str());
@@ -994,7 +994,7 @@ namespace UnitTest
 		setInstallInfo("path_a", "path_a\\check_a.txt", "insprim");
 
 		WildcardManager wildcard;
-		auto res = processSettings(doc.RootElement(), &wildcard, false, false, NULL);
+		auto res = processSettings(doc.RootElement(), &wildcard, false, false, nullptr);
 
 		ASSERT_TRUE(res.found);
 		ASSERT_FILEEQ("path_a\\check_a.txt", res.insCheck.c_str());
@@ -1012,7 +1012,7 @@ namespace UnitTest
 		setInstallInfo("path_a", "path_a\\check_a.txt", "insprim");
 
 		WildcardManager wildcard;
-		auto res = processSettings(doc.RootElement(), &wildcard, false, false, NULL);
+		auto res = processSettings(doc.RootElement(), &wildcard, false, false, nullptr);
 
 		ASSERT_TRUE(res.found);
 		ASSERT_FILEEQ("path_b\\check_b.txt", res.insCheck.c_str());
@@ -1034,7 +1034,7 @@ namespace UnitTest
 		setInstallInfo("path_a", "path_a\\check_a.txt", "insprim");
 
 		WildcardManager wildcard;
-		auto res = processSettings(doc.RootElement(), &wildcard, false, false, NULL);
+		auto res = processSettings(doc.RootElement(), &wildcard, false, false, nullptr);
 
 		ASSERT_TRUE(res.found);
 		ASSERT_FILEEQ("path_a\\check_b.txt", res.insCheck.c_str());

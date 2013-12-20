@@ -29,7 +29,7 @@ REG_IPC_CLASS( IPCInstallMcf );
 IPCInstallMcf::IPCInstallMcf(IPC::IPCManager* mang, uint32 id, DesuraId itemId) : IPC::IPCClass(mang, id, itemId)
 {
 	registerFunctions();
-	m_pThread = NULL;
+	m_pThread = nullptr;
 }
 
 IPCInstallMcf::~IPCInstallMcf()

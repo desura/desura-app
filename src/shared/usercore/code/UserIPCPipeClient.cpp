@@ -33,12 +33,12 @@ UserIPCPipeClient::UserIPCPipeClient(const char* user, const char* appDataPath, 
 #ifdef WIN32
 	onDisconnectEvent += delegate(this, &UserIPCPipeClient::onDisconnect);
 #else
-	m_pServer = NULL;
+	m_pServer = nullptr;
 #endif
 	m_szUser = user;
 	m_szAppDataPath = appDataPath;
 	m_bUploadDumps = uploadDumps;
-	m_pServiceMain = NULL;
+	m_pServiceMain = nullptr;
 }
 
 UserIPCPipeClient::~UserIPCPipeClient()
@@ -56,7 +56,7 @@ UserIPCPipeClient::~UserIPCPipeClient()
 	if (m_pServer)
 	{
 		m_pServer->destroy();
-		m_pServer = NULL;
+		m_pServer = nullptr;
 	}
 #endif
 }
@@ -64,7 +64,7 @@ UserIPCPipeClient::~UserIPCPipeClient()
 #ifdef WIN32
 void UserIPCPipeClient::restart()
 {
-	m_pServiceMain = NULL;
+	m_pServiceMain = nullptr;
 	IPC::PipeClient::restart();
 	start();
 }

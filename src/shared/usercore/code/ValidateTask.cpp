@@ -51,7 +51,7 @@ ValidateTask::ValidateTask(UserCore::Item::ItemHandle* handle, MCFBranch branch,
 	m_CurMcfIndex = 0;
 	m_TotalFileCount = 0;
 
-	m_CurrentMcf = NULL;
+	m_CurrentMcf = nullptr;
 }
 
 ValidateTask::~ValidateTask()
@@ -89,7 +89,7 @@ void ValidateTask::doRun()
 		return;
 
 	if (!curBranch)
-		throw gcException(ERR_NULLHANDLE, "Current branch is NULL");
+		throw gcException(ERR_NULLHANDLE, "Current branch is nullptr");
 
 	gcString savePath = mm->getMcfPath(getItemId(), curBranch->getBranchId(), build);
 		
@@ -160,7 +160,7 @@ void ValidateTask::doRun()
 
 	m_CurrentMcf = &m_hMCFile;
 	m_hMCFile->preAllocateFile();
-	m_CurrentMcf = NULL;
+	m_CurrentMcf = nullptr;
 
 	if (isStopped())
 		return;
@@ -241,7 +241,7 @@ bool ValidateTask::checkExistingMcf(gcString savePath)
 
 	m_CurrentMcf = &mcfTemp;
 	mcfTemp->parseMCF();
-	m_CurrentMcf = NULL;
+	m_CurrentMcf = nullptr;
 
 	if (isStopped())
 		return false;
@@ -259,7 +259,7 @@ bool ValidateTask::checkExistingMcf(gcString savePath)
 	}
 
 	uint32 count = 0;
-	m_hMCFile->getPatchStats(mcfTemp.handle(), NULL, &count);
+	m_hMCFile->getPatchStats(mcfTemp.handle(), nullptr, &count);
 
 	// we might have a diff mcf here
 	if (count != 0)
@@ -271,7 +271,7 @@ bool ValidateTask::checkExistingMcf(gcString savePath)
 
 	m_CurrentMcf = &mcfTemp;
 	verify = mcfTemp->verifyMCF();
-	m_CurrentMcf = NULL;
+	m_CurrentMcf = nullptr;
 
 	McfHandle curMcf;
 	bool useCurMcf = false;
@@ -285,7 +285,7 @@ bool ValidateTask::checkExistingMcf(gcString savePath)
 			m_CurrentMcf = &curMcf;
 			curMcf->parseFolder(m_szInstallPath.c_str(), false, true);
 			curMcf->hashFiles(mcfTemp.handle());
-			m_CurrentMcf = NULL;
+			m_CurrentMcf = nullptr;
 
 			useCurMcf = true;
 		}
@@ -339,7 +339,7 @@ void ValidateTask::copyLocalMcfs(MCFBranch branch, MCFBuild build)
 		try
 		{
 			tempMcf->parseMCF();
-			m_hMCFile->getPatchStats(tempMcf.handle(), NULL, &count);
+			m_hMCFile->getPatchStats(tempMcf.handle(), nullptr, &count);
 		}
 		catch (gcException &)
 		{
@@ -389,7 +389,7 @@ void ValidateTask::copyLocalFiles()
 	if (getItemInfo()->isComplex())
 		return;
 
-	UTIL::FS::Path tempPath(getUserCore()->getAppDataPath(), gcString("{0}_{1}.mcf", getItemId().toInt64(), time(NULL)), false);
+	UTIL::FS::Path tempPath(getUserCore()->getAppDataPath(), gcString("{0}_{1}.mcf", getItemId().toInt64(), time(nullptr)), false);
 	tempPath += "temp";
 
 	McfHandle curMcf;
@@ -405,7 +405,7 @@ void ValidateTask::copyLocalFiles()
 		curMcf->parseFolder(m_szInstallPath.c_str(), false, true);
 		curMcf->hashFiles(m_hMCFile.handle());
 
-		m_CurrentMcf = NULL;
+		m_CurrentMcf = nullptr;
 	}
 	catch (gcException &e)
 	{
@@ -417,7 +417,7 @@ void ValidateTask::copyLocalFiles()
 	{
 		m_CurMcfIndex = 2;
 		m_TotalFileCount = 0;
-		m_hMCFile->getPatchStats(curMcf.handle(), NULL, &m_TotalFileCount);
+		m_hMCFile->getPatchStats(curMcf.handle(), nullptr, &m_TotalFileCount);
 		
 		if (m_TotalFileCount != m_hMCFile->getFileCount())
 		{

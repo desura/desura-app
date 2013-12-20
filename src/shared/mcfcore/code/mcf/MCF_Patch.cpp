@@ -179,7 +179,7 @@ void MCF::copyMissingFiles(MCFI *sourceMcf)
 
 	std::vector<mcfDif_s> vSame;
 	std::vector<mcfDif_s>  vProcessList;
-	findChanges( temp, &vSame, NULL, NULL);
+	findChanges( temp, &vSame, nullptr, nullptr);
 
 	if (vSame.size() == 0)
 		return;
@@ -408,7 +408,7 @@ void MCF::makeBackPatchMCF(MCFI* backFile, const char* path)
 	MCF *temp = static_cast<MCF*>(backFile);
 
 	std::vector<mcfDif_s> vSame;
-	findChanges( temp, &vSame, NULL, NULL);
+	findChanges( temp, &vSame, nullptr, nullptr);
 
 	for (size_t x=0; x<vSame.size(); x++)
 	{
@@ -462,7 +462,7 @@ void MCF::markFiles(MCFI* inMcf, bool tagSame, bool tagChanged, bool tagDeleted,
 	std::vector<mcfDif_s> vDel;
 	std::vector<mcfDif_s> vNew;
 
-	findChanges(temp, tagSame?&vSame:NULL, tagChanged?&vDiff:NULL, tagDeleted?&vDel:NULL, tagNew?&vNew:NULL);
+	findChanges(temp, tagSame?&vSame:nullptr, tagChanged?&vDiff:nullptr, tagDeleted?&vDel:nullptr, tagNew?&vNew:nullptr);
 
 	for (size_t x=0; x<m_pFileList.size(); x++ )
 		m_pFileList[x]->delFlag( MCFCore::MCFFileI::FLAG_SAVE );
@@ -488,7 +488,7 @@ void MCF::markChanged(MCFI* inMcf)
 	MCF *temp = static_cast<MCF*>(inMcf);
 
 	std::vector<mcfDif_s> vSame;
-	findChanges( temp, &vSame, NULL, NULL);
+	findChanges( temp, &vSame, nullptr, nullptr);
 
 	for (size_t x=0; x<m_pFileList.size(); x++ )
 	{
@@ -514,7 +514,7 @@ void MCF::getPatchStats(MCFI* inMcf, uint64* dlSize, uint32* fileCount)
 	uint64 sameSize = 0;
 
 	std::vector<mcfDif_s> vSame;
-	findChanges(temp, &vSame, NULL, NULL);
+	findChanges(temp, &vSame, nullptr, nullptr);
 
 	for (size_t x=0; x<vSame.size(); x++)
 		sameSize += m_pFileList[vSame[x].thisMcf]->getCurSize();
@@ -534,7 +534,7 @@ void MCF::makePatch(MCFI* file)
 	MCF *temp = static_cast<MCF*>(file);
 
 	std::vector<mcfDif_s> vSame;
-	findChanges( temp, &vSame, NULL, NULL);
+	findChanges( temp, &vSame, nullptr, nullptr);
 
 	for (size_t x=0; x<vSame.size(); x++)
 	{
@@ -661,7 +661,7 @@ void MCF::createCourgetteDiffs(MCFI* oldMcf, const char* outPath)
 	std::vector<mcfDif_s> vSame;
 	std::vector<mcfDif_s> vNew;
 
-	findChanges(temp, &vSame, &vDiff, &vNew, NULL);
+	findChanges(temp, &vSame, &vDiff, &vNew, nullptr);
 
 	if (vDiff.size() == 0)
 	{
@@ -767,7 +767,7 @@ void MCF::createCourgetteDiff(CourgetteInstance* ci, UTIL::MISC::Buffer &oldBuff
 	if (!res)
 		throw gcException(ERR_BADSTATUS, res, "Failed to create diff. Bad response!");
 
-	worker.write(NULL, 0, true);
+	worker.write(nullptr, 0, true);
 
 	while (worker.getLastStatus() != BZ_STREAM_END)
 		worker.doWork();
@@ -822,7 +822,7 @@ void MCF::extractFile(const char* mcfPath, std::shared_ptr<MCFFile>& file, UTIL:
 			out += outSize;
 		};
 
-		worker.write(NULL, 0, true);
+		worker.write(nullptr, 0, true);
 
 		do
 		{

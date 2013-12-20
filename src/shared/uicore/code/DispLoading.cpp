@@ -39,7 +39,7 @@ DispLoading::DispLoading(wxWindow *parent, wxString text, const wxSize &size) : 
 		m_imgAnimation->SetAnimation(wxAnimation(spinImg));
 #endif
 	Connect( wxEVT_PAINT, wxPaintEventHandler( DispLoading::onPaint ));
-	Connect( wxEVT_ERASE_BACKGROUND, wxEraseEventHandler( DispLoading::onEraseBG ), NULL, this);
+	Connect( wxEVT_ERASE_BACKGROUND, wxEraseEventHandler( DispLoading::onEraseBG ), nullptr, this);
 	Connect( wxEVT_IDLE, wxIdleEventHandler( DispLoading::onIdle ) );
 }
 

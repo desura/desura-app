@@ -44,10 +44,10 @@ namespace MCFCore
 const char* g_vExcludeFileList[] = 
 {
 	"Thumbs.db",
-	NULL
+	nullptr
 };
 
-//! This is a list of folders not to include when making a MCF. Last item must be NULL
+//! This is a list of folders not to include when making a MCF. Last item must be nullptr
 const char* g_vExcludeDirList[] =
 {
 	".",
@@ -55,10 +55,10 @@ const char* g_vExcludeDirList[] =
 	".svn",
 	".git",
 	".hg",
-	NULL
+	nullptr
 };
 
-//! This is a list of file extentions that shouldnt be compressed inside the MCF. Last item must be NULL
+//! This is a list of file extentions that shouldnt be compressed inside the MCF. Last item must be nullptr
 const char* g_vNoCompressList[] =
 {
 	"zip",
@@ -68,7 +68,7 @@ const char* g_vNoCompressList[] =
 	"gzip",
 	"iso",
 	"pk3",
-	NULL
+	nullptr
 };
 
 void ReplaceAllStr(std::string searchStr, std::string replaceStr, std::string &str)
@@ -598,7 +598,7 @@ void MCFFile::delFile()
 
 bool MCFFile::hashCheckFile()
 {
-	return hashCheckFile(NULL);
+	return hashCheckFile(nullptr);
 }
 
 bool MCFFile::hashCheckFile(std::string* retHash)

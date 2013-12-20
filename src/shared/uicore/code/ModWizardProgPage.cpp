@@ -70,7 +70,7 @@ MWProgressPage::MWProgressPage( wxWindow* parent, wxWindowID id, const wxPoint& 
 	this->SetSizer( fgSizer3 );
 	this->Layout();
 
-	m_pThread = NULL;
+	m_pThread = nullptr;
 	m_bStopped = false;
 	m_bAddToAccount = true;
 
@@ -81,7 +81,7 @@ MWProgressPage::MWProgressPage( wxWindow* parent, wxWindowID id, const wxPoint& 
 	if (par)
 		par->setProgressState(gcFrame::P_NORMAL);
 
-	GetParent()->Connect( wxEVT_CLOSE_WINDOW, wxCloseEventHandler( MWProgressPage::onClose ), NULL, this );
+	GetParent()->Connect( wxEVT_CLOSE_WINDOW, wxCloseEventHandler( MWProgressPage::onClose ), nullptr, this );
 }
 
 MWProgressPage::~MWProgressPage()
@@ -91,7 +91,7 @@ MWProgressPage::~MWProgressPage()
 
 void MWProgressPage::dispose()
 {
-	GetParent()->Disconnect( wxEVT_CLOSE_WINDOW, wxCloseEventHandler( MWProgressPage::onClose ), NULL, this );
+	GetParent()->Disconnect( wxEVT_CLOSE_WINDOW, wxCloseEventHandler( MWProgressPage::onClose ), nullptr, this );
 	m_bStopped = true;
 	safe_delete(m_pThread);
 }

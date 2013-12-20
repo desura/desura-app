@@ -91,7 +91,7 @@ protected:
 			}	
 			else
 			{
-				pProvider->setProvider(NULL);
+				pProvider->setProvider(nullptr);
 			}
 
 			g_pMainApp->logIn(m_szUsername.c_str(), m_szPassword.c_str());
@@ -130,7 +130,7 @@ public:
 
 		setColors(linkColor, hoverColor);
 		showFocusBox(hoverColor);
-		init(NULL);
+		init(nullptr);
 	
 		Bind(wxEVT_CHAR, &LoginLink::onChar, this);
 	}
@@ -157,10 +157,10 @@ static CVar gc_allow_wm_positioning("gc_allow_wm_positioning", "true");
 LoginForm::LoginForm(wxWindow* parent) 
 	: gcFrame(parent, wxID_ANY, Managers::GetString(L"#LF_TITLE"), wxDefaultPosition, wxSize(420,246), wxCAPTION|wxCLOSE_BOX|wxSYSTEM_MENU|wxWANTS_CHARS|wxMINIMIZE_BOX, true)
 {
-	m_comboProvider = NULL;
+	m_comboProvider = nullptr;
 
 	m_bAutoLogin = false;
-	m_pNewAccount = NULL;
+	m_pNewAccount = nullptr;
 
 	Bind(wxEVT_COMMAND_TEXT_ENTER, &LoginForm::onTextBoxEnter, this);
 	Bind(wxEVT_CLOSE_WINDOW, &LoginForm::onClose, this);
@@ -431,7 +431,7 @@ LoginForm::LoginForm(wxWindow* parent)
 			m_imgAvatar->setImage(avatar);
 	}
 
-	m_pLogThread = NULL;
+	m_pLogThread = nullptr;
 	m_bSavePos = true;
 	m_bMouseDrag = false;
 
@@ -469,7 +469,7 @@ wxRect LoginForm::getWindowsBorderRect() const
 	DWORD dwStyle =   ::GetWindowLong((HWND)GetHWND(), GWL_STYLE);
 	DWORD dwExStyle = ::GetWindowLong((HWND)GetHWND(), GWL_EXSTYLE);
 	::GetClientRect((HWND)GetHWND(), &rect);
-	::AdjustWindowRectEx(&rect, dwStyle, ::GetMenu((HWND)GetHWND()) != NULL, dwExStyle);
+	::AdjustWindowRectEx(&rect, dwStyle, ::GetMenu((HWND)GetHWND()) != nullptr, dwExStyle);
 
 	int x=rect.left*-1;
 	int y=rect.top*-1;
@@ -499,10 +499,10 @@ void LoginForm::setFrameRegion()
 
 	// Windows takes ownership of the region, so
 	// we'll have to make a copy of the region to give to it.
-	DWORD noBytes = ::GetRegionData(GetHrgnOf(region), 0, NULL);
+	DWORD noBytes = ::GetRegionData(GetHrgnOf(region), 0, nullptr);
 	RGNDATA *rgnData = (RGNDATA*) new char[noBytes];
 	::GetRegionData(GetHrgnOf(region), noBytes, rgnData);
-	HRGN hrgn = ::ExtCreateRegion(NULL, noBytes, rgnData);
+	HRGN hrgn = ::ExtCreateRegion(nullptr, noBytes, rgnData);
 	delete[] (char*) rgnData;
 
 	// Now call the shape API with the new region.
@@ -652,8 +652,8 @@ void LoginForm::onTextChange(wxCommandEvent& event)
 
 void LoginForm::autoLogin()
 {
-	char* user = NULL;
-	char* pass = NULL;
+	char* user = nullptr;
+	char* pass = nullptr;
 
 	try
 	{
@@ -982,7 +982,7 @@ void LoginForm::onNewAccount()
 
 	m_pNewAccount = &naf;
 	naf.ShowModal();
-	m_pNewAccount = NULL;
+	m_pNewAccount = nullptr;
 }
 
 void LoginForm::newAccountLogin(const char* username, const char* cookie)
@@ -1020,7 +1020,7 @@ void LoginForm::newAccountLoginError(const char* szErrorMessage)
 
 void LoginForm::onAltLoginClick(wxCommandEvent& event)
 {
-	const char* szProvider = NULL;
+	const char* szProvider = nullptr;
 
 	if (event.GetId() == m_butTwitter->GetId())
 		szProvider = "twitter";
@@ -1036,7 +1036,7 @@ void LoginForm::onAltLoginClick(wxCommandEvent& event)
 
 void LoginForm::onAltLogin(const char* szProvider)
 {
-	if (szProvider == NULL)
+	if (szProvider == nullptr)
 		return;
 
 	gcString strApiUrl;
@@ -1048,5 +1048,5 @@ void LoginForm::onAltLogin(const char* szProvider)
 
 	m_pNewAccount = &naf;
 	naf.ShowModal();
-	m_pNewAccount = NULL;
+	m_pNewAccount = nullptr;
 }

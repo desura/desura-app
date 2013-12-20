@@ -40,7 +40,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>
 #include "util/gcDDE.h"
 #include <shobjidl.h>
 
-ITaskbarList3* g_pITBL3= NULL;
+ITaskbarList3* g_pITBL3= nullptr;
 HINSTANCE g_hInstDLL;
 
 
@@ -65,7 +65,7 @@ BOOL WINAPI DllMain(HINSTANCE hinstDLL, DWORD fdwReason, LPVOID lpvReserved)
 #endif
 
 void ShutdownWebControl();
-MainAppI* g_pMainApp = NULL;
+MainAppI* g_pMainApp = nullptr;
 
 uint64 g_uiMainThreadId = 0;
 
@@ -131,7 +131,7 @@ protected:
 			FD_ZERO(&rfds);
 			FD_SET(socketListen, &rfds);
 			
-			int sretval = select(socketListen + 1, &rfds, NULL, NULL, &tv);
+			int sretval = select(socketListen + 1, &rfds, nullptr, nullptr, &tv);
 
 			if (sretval == -1) // error
 			{
@@ -387,7 +387,7 @@ bool WindowsShutdown(wxWindowMSW *win, WXUINT nMsg, WXWPARAM wParam, WXLPARAM lP
 bool HandleTaskBarMsg(wxWindowMSW *win, WXUINT nMsg, WXWPARAM wParam, WXLPARAM lParam)
 {
 	if (!g_pITBL3)
-		CoCreateInstance(CLSID_TaskbarList, NULL, CLSCTX_ALL, IID_ITaskbarList3, (void**)&g_pITBL3);
+		CoCreateInstance(CLSID_TaskbarList, nullptr, CLSCTX_ALL, IID_ITaskbarList3, (void**)&g_pITBL3);
 
 	return false;
 }
@@ -400,11 +400,11 @@ class Desura : public wxApp
 public:
 	Desura()
 	{
-		m_pChecker = NULL;
+		m_pChecker = nullptr;
 #ifdef WIN32
-		m_pServer = NULL;
+		m_pServer = nullptr;
 #else
-		m_pListenThread = NULL;
+		m_pListenThread = nullptr;
 #endif
 	}
 	
@@ -514,7 +514,7 @@ public:
 			if (g_pITBL3)
 			{
 				 g_pITBL3->Release();
-				 g_pITBL3 = NULL;
+				 g_pITBL3 = nullptr;
 			}
 		}
 		
@@ -522,7 +522,7 @@ public:
 		wxWindow::MSWUnregisterMessageHandler(WM_QUERYENDSESSION, &WindowsShutdown);
 #endif
 
-		g_pMainApp = NULL;
+		g_pMainApp = nullptr;
 
 		return wxApp::OnExit();
 	}

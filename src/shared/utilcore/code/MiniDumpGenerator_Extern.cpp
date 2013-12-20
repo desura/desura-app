@@ -58,7 +58,7 @@ int MiniDumpGenerator_Extern::generate()
 		return -1;
 
 	char exePath[255];
-	GetModuleFileNameExA(process, NULL, exePath, 255);
+	GetModuleFileNameExA(process, nullptr, exePath, 255);
 
 	UTIL::FS::Path path(exePath, "", true);
 	m_szRootPath = path.getFolderPath();
@@ -110,7 +110,7 @@ bool MiniDumpGenerator_Extern::saveDump(MINIDUMPWRITEDUMP pDump, HANDLE process,
 												MiniDumpWithUnloadedModules ); 
 
 	//write the dump
-	BOOL bOK = pDump(process, processId, hFile, mdt, NULL, NULL, &mci);
+	BOOL bOK = pDump(process, processId, hFile, mdt, nullptr, nullptr, &mci);
 	return bOK?true:false;
 }
 
@@ -164,7 +164,7 @@ HANDLE MiniDumpGenerator_Extern::findProcess(DWORD &processId)
 		}
 	}
 
-	return NULL;
+	return nullptr;
 }
 
 ///////////////////////////////////////////////////////////////////////////////

@@ -22,7 +22,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>
 
 ChangeDirForm::ChangeDirForm(wxWindow* parent, const char* dest, UserCore::UserI* user) : gcFrame(parent, wxID_ANY, "#CDF_TITLE", wxDefaultPosition, wxSize( 370,100 ), wxCAPTION|wxTAB_TRAVERSAL)
 {
-	m_pThread = NULL;
+	m_pThread = nullptr;
 	m_uiLastStage = -1;
 
 	SetTitle(Managers::GetString(L"#CDF_TITLE"));
@@ -115,7 +115,7 @@ void ChangeDirForm::onComplete()
 void ChangeDirForm::restartDesura()
 {
 	char exePath[255];
-	GetModuleFileNameA(NULL, exePath, 255);
+	GetModuleFileNameA(nullptr, exePath, 255);
 
 	UTIL::FS::Path path = UTIL::FS::PathWithFile(exePath);
 

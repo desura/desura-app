@@ -109,8 +109,8 @@ namespace FS
 	//! @param src Folder to copy
 	//! @param dest of folder
 	//!
-	void copyFolder(const Path& src, const Path& dest, std::vector<std::string> *vIgnoreList = NULL, bool copyOverExisting = true);
-	inline void copyFolder(std::string src, std::string dest, std::vector<std::string> *vIgnoreList = NULL, bool copyOverExisting = true)
+	void copyFolder(const Path& src, const Path& dest, std::vector<std::string> *vIgnoreList = nullptr, bool copyOverExisting = true);
+	inline void copyFolder(std::string src, std::string dest, std::vector<std::string> *vIgnoreList = nullptr, bool copyOverExisting = true)
 	{
 		copyFolder(UTIL::FS::Path(src, "", false), UTIL::FS::Path(dest, "", false), vIgnoreList, copyOverExisting);
 	}

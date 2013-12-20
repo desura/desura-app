@@ -61,7 +61,7 @@ HRESULT SetPrivilege(HANDLE hToken, LPCTSTR lpszPrivilege, DWORD dwAttributes=SE
 	HRESULT hr=S_OK;
 	LUID luid;
 
-	if (LookupPrivilegeValue(NULL, lpszPrivilege, &luid ))
+	if (LookupPrivilegeValue(nullptr, lpszPrivilege, &luid ))
 	{
 		TOKEN_PRIVILEGES tp;
 		tp.PrivilegeCount = 1;
@@ -70,7 +70,7 @@ HRESULT SetPrivilege(HANDLE hToken, LPCTSTR lpszPrivilege, DWORD dwAttributes=SE
 
 		// Enable the privilege or disable all privileges.
 
-		if (!AdjustTokenPrivileges(hToken, FALSE, &tp, sizeof(TOKEN_PRIVILEGES), (PTOKEN_PRIVILEGES) NULL, (PDWORD) NULL))
+		if (!AdjustTokenPrivileges(hToken, FALSE, &tp, sizeof(TOKEN_PRIVILEGES), (PTOKEN_PRIVILEGES) nullptr, (PDWORD) nullptr))
 			hr=HRESULT_FROM_WIN32(GetLastError());
 	}
 	else
@@ -146,15 +146,15 @@ inline HRESULT GetProcessIL(DWORD dwProcessId, LPDWORD pdwProcessIL)
 		DWORD dwIL=SECURITY_MANDATORY_HIGH_RID;
 		if(bVista)
 		{//Vista
-			HANDLE hToken=NULL;
+			HANDLE hToken=nullptr;
 			HANDLE hProcess=OpenProcess(PROCESS_ALL_ACCESS, FALSE, dwProcessId);
 			if(hProcess)
 			{
 				if(OpenProcessToken(hProcess, TOKEN_ALL_ACCESS, &hToken))
 				{
-					PTOKEN_MANDATORY_LABEL pTIL=NULL;
+					PTOKEN_MANDATORY_LABEL pTIL=nullptr;
 					DWORD dwSize=0;
-					if (!GetTokenInformation(hToken, TokenIntegrityLevel, NULL, 0, &dwSize) 
+					if (!GetTokenInformation(hToken, TokenIntegrityLevel, nullptr, 0, &dwSize) 
 						&& ERROR_INSUFFICIENT_BUFFER==GetLastError() && dwSize)
 						pTIL=(PTOKEN_MANDATORY_LABEL)HeapAlloc(GetProcessHeap(), 0, dwSize);
 
@@ -217,7 +217,7 @@ HRESULT CreateProcessWithExplorerIL(LPWSTR szProcessName, LPWSTR szCmdLine, LPWS
 		DWORD dwCurIL=SECURITY_MANDATORY_HIGH_RID; 
 		DWORD dwExplorerID=0, dwExplorerIL=SECURITY_MANDATORY_HIGH_RID;
 
-		HWND hwndShell=::FindWindowA("Progman", NULL);
+		HWND hwndShell=::FindWindowA("Progman", nullptr);
 		if(hwndShell)
 			GetWindowThreadProcessId(hwndShell, &dwExplorerID);
 		
@@ -233,7 +233,7 @@ HRESULT CreateProcessWithExplorerIL(LPWSTR szProcessName, LPWSTR szCmdLine, LPWS
 				{
 					if(OpenProcessToken(hProcess, TOKEN_ALL_ACCESS, &hToken))
 					{
-						if(!DuplicateTokenEx(hToken, TOKEN_ALL_ACCESS, NULL,
+						if(!DuplicateTokenEx(hToken, TOKEN_ALL_ACCESS, nullptr,
 							SecurityImpersonation, TokenPrimary, &hNewToken))
 							hr=HRESULT_FROM_WIN32(GetLastError());
 						if(SUCCEEDED(hr))
@@ -260,7 +260,7 @@ HRESULT CreateProcessWithExplorerIL(LPWSTR szProcessName, LPWSTR szCmdLine, LPWS
 
 
 
-								LPFN_CreateProcessWithTokenW fnCreateProcessWithTokenW=NULL;
+								LPFN_CreateProcessWithTokenW fnCreateProcessWithTokenW=nullptr;
 								HINSTANCE hmodAdvApi32=LoadLibraryA("AdvApi32");
 
 								if(hmodAdvApi32)
@@ -269,7 +269,7 @@ HRESULT CreateProcessWithExplorerIL(LPWSTR szProcessName, LPWSTR szCmdLine, LPWS
 
 								if(fnCreateProcessWithTokenW)
 								{
-									bRet=fnCreateProcessWithTokenW(hNewToken, 0, NULL, cmdArg, 0, NULL, szWorkingDir, &StartupInfo, &ProcInfo);
+									bRet=fnCreateProcessWithTokenW(hNewToken, 0, nullptr, cmdArg, 0, nullptr, szWorkingDir, &StartupInfo, &ProcInfo);
 
 									if(!bRet)
 										hr=HRESULT_FROM_WIN32(GetLastError());
@@ -316,7 +316,7 @@ HRESULT CreateProcessWithExplorerIL(LPWSTR szProcessName, LPWSTR szCmdLine, LPWS
 
 	if(SUCCEEDED(hr) && !ProcInfo.dwProcessId)
 	{// 2K | XP | Vista & !UAC
-		bRet = CreateProcessW(NULL, cmdArg, NULL, NULL, FALSE, 0, NULL, szWorkingDir, &StartupInfo, &ProcInfo);
+		bRet = CreateProcessW(nullptr, cmdArg, nullptr, nullptr, FALSE, 0, nullptr, szWorkingDir, &StartupInfo, &ProcInfo);
 
 		if(!bRet)
 			hr=HRESULT_FROM_WIN32(GetLastError());

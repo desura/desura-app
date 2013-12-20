@@ -93,7 +93,7 @@ PasswordReminder::PasswordReminder(wxWindow* parent) : gcDialog(parent, wxID_ANY
 	this->SetSizer( fgSizer2 );
 	this->Layout();
 
-	m_pThread = NULL;
+	m_pThread = nullptr;
 }
 
 PasswordReminder::~PasswordReminder()

@@ -284,7 +284,7 @@ std::shared_ptr<SFTWorkerBuffer> SFTController::getBlock(uint32 id, uint32 &stat
 	SFTWorkerInfo* worker = findWorker(id);
 	assert(worker);
 
-	std::shared_ptr<SFTWorkerBuffer> temp = NULL;
+	std::shared_ptr<SFTWorkerBuffer> temp = nullptr;
 
 	worker->mutex.lock();
 		status = worker->status;
@@ -311,7 +311,7 @@ std::shared_ptr<MCFCore::MCFFile> SFTController::newTask(uint32 id)
 	assert(worker);
 
 	if (worker->status != SF_STATUS_NULL)
-		return NULL;
+		return nullptr;
 
 	worker->status = SF_STATUS_WAITTASK;
 
@@ -323,7 +323,7 @@ std::shared_ptr<MCFCore::MCFFile> SFTController::newTask(uint32 id)
 	{
 		m_pUPThread->stopThread(id);
 		worker->status = SF_STATUS_STOP;
-		return NULL;
+		return nullptr;
 	}
 
 	m_pFileMutex.lock();
@@ -374,7 +374,7 @@ void SFTController::endTask(uint32 id, uint32 status, gcException e)
 	}
 
 	worker->status = SF_STATUS_NULL;
-	worker->curFile = NULL;
+	worker->curFile = nullptr;
 
 	worker->mutex.lock();
 	worker->vBuffer.clear();
@@ -385,7 +385,7 @@ void SFTController::endTask(uint32 id, uint32 status, gcException e)
 SFTWorkerInfo* SFTController::findWorker(uint32 id)
 {
 	if (id >= m_vWorkerList.size())
-		return NULL;
+		return nullptr;
 
 	for (size_t x=0; x<m_vWorkerList.size(); x++)
 	{
@@ -393,7 +393,7 @@ SFTWorkerInfo* SFTController::findWorker(uint32 id)
 			return m_vWorkerList[x];
 	}
 
-	return NULL;
+	return nullptr;
 }
 
 

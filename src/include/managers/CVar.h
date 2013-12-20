@@ -48,7 +48,7 @@ public:
 	//! @param flags Flags as outlined above
 	//! @param callBack Function to call when value changes. Return true to accept, false to reject
 	//! @param userCallBack Function to call when value changes with user data. Return true to accept, false to reject
-	CVar(const char* name, const char* defVal, int32 flags = CFLAG_NOFLAGS, CVarCallBackFn callBack = NULL);
+	CVar(const char* name, const char* defVal, int32 flags = CFLAG_NOFLAGS, CVarCallBackFn callBack = nullptr);
 	CVar(const char* name, const char* defVal, int32 flags, CVarUserCallBackFn userCallBack);
 	~CVar();
 

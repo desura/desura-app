@@ -55,7 +55,7 @@ void PipeServer::run()
 
 void PipeServer::setUpPipes()
 {
-	PACL pNewAcl = NULL;
+	PACL pNewAcl = nullptr;
 	SECURITY_ATTRIBUTES sa;
 	SECURITY_DESCRIPTOR sd;
 
@@ -70,10 +70,10 @@ void PipeServer::setUpPipes()
 	for (int i = 0; i < m_uiNumPipes*2; i+=2) 
 	{ 
 		// Create an event object for this instance. 
-		m_hEventsArr[i] = CreateEvent(NULL, TRUE, TRUE, NULL);
-		m_hEventsArr[i+1] = CreateEvent(NULL, TRUE, TRUE, NULL);
+		m_hEventsArr[i] = CreateEvent(nullptr, TRUE, TRUE, nullptr);
+		m_hEventsArr[i+1] = CreateEvent(nullptr, TRUE, TRUE, nullptr);
 
-		if (m_hEventsArr[i] == NULL || m_hEventsArr[i+1] == NULL) 
+		if (m_hEventsArr[i] == nullptr || m_hEventsArr[i+1] == nullptr) 
 			throw gcException(ERR_IPC, gcString("CreateEvent failed with {0}.\n", GetLastError()));
 
 		PipeInst *p = new PipeInst();
@@ -82,10 +82,10 @@ void PipeServer::setUpPipes()
 		p->send.oOverlap.hEvent = m_hEventsArr[i];
 		p->recv.oOverlap.hEvent = m_hEventsArr[i+1];
 
-		p->send.hPipe = CreateNamedPipe(m_szSendName.c_str(), PIPE_ACCESS, PIPE_MODE, PIPE_UNLIMITED_INSTANCES, BUFSIZE, BUFSIZE, PIPE_TIMEOUT, m_bChangeAccess?&sa:NULL);
+		p->send.hPipe = CreateNamedPipe(m_szSendName.c_str(), PIPE_ACCESS, PIPE_MODE, PIPE_UNLIMITED_INSTANCES, BUFSIZE, BUFSIZE, PIPE_TIMEOUT, m_bChangeAccess?&sa:nullptr);
 		DWORD sErr = GetLastError();
 
-		p->recv.hPipe = CreateNamedPipe(m_szRecvName.c_str(), PIPE_ACCESS, PIPE_MODE, PIPE_UNLIMITED_INSTANCES, BUFSIZE, BUFSIZE, PIPE_TIMEOUT, m_bChangeAccess?&sa:NULL);
+		p->recv.hPipe = CreateNamedPipe(m_szRecvName.c_str(), PIPE_ACCESS, PIPE_MODE, PIPE_UNLIMITED_INSTANCES, BUFSIZE, BUFSIZE, PIPE_TIMEOUT, m_bChangeAccess?&sa:nullptr);
 		DWORD rErr = GetLastError();
 
 		// Call the subroutine to connect to the new client
@@ -114,7 +114,7 @@ void PipeServer::createAccessRights(PACL pNewAcl, SECURITY_ATTRIBUTES &sa, SECUR
 		throw gcException(ERR_PIPE, GetLastError(), "LocalAlloc failed");
 	}
 
-	if(!CreateWellKnownSid(WinWorldSid, NULL, TheSID, &SidSize))
+	if(!CreateWellKnownSid(WinWorldSid, nullptr, TheSID, &SidSize))
 	{
 		LocalFree(TheSID);
 		throw gcException(ERR_PIPE, GetLastError(), "CreateWellKnownSid failed");
@@ -126,7 +126,7 @@ void PipeServer::createAccessRights(PACL pNewAcl, SECURITY_ATTRIBUTES &sa, SECUR
 	DWORD dSize = 255;
 	SID_NAME_USE rSidNameUse;
 
-	if (!LookupAccountSid(NULL, TheSID, everyone, &eSize, domain, &dSize, &rSidNameUse))
+	if (!LookupAccountSid(nullptr, TheSID, everyone, &eSize, domain, &dSize, &rSidNameUse))
 	{
 		LocalFree(TheSID);
 		throw gcException(ERR_PIPE, GetLastError(), "LookupAccountSid failed");
@@ -137,7 +137,7 @@ void PipeServer::createAccessRights(PACL pNewAcl, SECURITY_ATTRIBUTES &sa, SECUR
 	// Build the ACE.
 	BuildExplicitAccessWithName(&ea, everyone, GENERIC_READ|GENERIC_WRITE, SET_ACCESS, NO_INHERITANCE);
 
-	if (SetEntriesInAcl(1, &ea, NULL, &pNewAcl) != ERROR_SUCCESS)
+	if (SetEntriesInAcl(1, &ea, nullptr, &pNewAcl) != ERROR_SUCCESS)
 		throw gcException(ERR_PIPE, GetLastError(), "SetEntriesInAcl failed");
 
 	// Initialize a NEW Security Descriptor.

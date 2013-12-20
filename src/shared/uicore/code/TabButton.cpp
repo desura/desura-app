@@ -55,12 +55,12 @@ tabButton::tabButton( wxWindow* parent, wxWindowID id, const wxPoint& pos, const
 	Connect( wxEVT_LEFT_DOWN, wxMouseEventHandler( tabButton::onMouseDown ) );
 	Connect( wxEVT_MOTION, wxMouseEventHandler( tabButton::onMouseEvent ));
 
-	m_labTitle->Connect( wxEVT_MOTION, wxMouseEventHandler( tabButton::onMouseEvent ), NULL, this );
-	m_labTitle->Connect( wxEVT_ENTER_WINDOW, wxMouseEventHandler( tabButton::onMouseOver ), NULL, this );
-	m_labTitle->Connect( wxEVT_LEAVE_WINDOW, wxMouseEventHandler( tabButton::onMouseOut ), NULL, this );
-	m_labTitle->Connect( wxEVT_LEFT_DOWN, wxMouseEventHandler( tabButton::onMouseDown ), NULL, this );
+	m_labTitle->Connect( wxEVT_MOTION, wxMouseEventHandler( tabButton::onMouseEvent ), nullptr, this );
+	m_labTitle->Connect( wxEVT_ENTER_WINDOW, wxMouseEventHandler( tabButton::onMouseOver ), nullptr, this );
+	m_labTitle->Connect( wxEVT_LEAVE_WINDOW, wxMouseEventHandler( tabButton::onMouseOut ), nullptr, this );
+	m_labTitle->Connect( wxEVT_LEFT_DOWN, wxMouseEventHandler( tabButton::onMouseDown ), nullptr, this );
 	
-	parent->Connect( wxEVT_MOTION, wxMouseEventHandler( tabButton::onMouseEvent ), NULL, this);
+	parent->Connect( wxEVT_MOTION, wxMouseEventHandler( tabButton::onMouseEvent ), nullptr, this);
 
 	this->SetSizer( bSizer4 );
 	this->Layout();

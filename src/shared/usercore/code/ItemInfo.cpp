@@ -404,7 +404,7 @@ void ItemInfo::loadBranchXmlData(const XML::gcXMLElement &branch)
 	if (id == 0)
 		return;
 
-	BranchInfo* bi = NULL;
+	BranchInfo* bi = nullptr;
 	bool found = false;
 
 	for (size_t x=0; x<m_vBranchList.size(); x++)
@@ -672,7 +672,7 @@ void ItemInfo::processSettings(uint32 platform, const XML::gcXMLElement &setNode
 	if (it != m_mBranchInstallInfo.end())
 	{
 		uint32 flags = 0;
-		char* cip = NULL;
+		char* cip = nullptr;
 
 		getUserCore()->getItemManager()->getCIP(m_iId, &cip);
 
@@ -917,34 +917,34 @@ bool ItemInfo::compare(const char* filter)
 	std::transform(f.begin(), f.end(), f.begin(), tolower);
 	std::transform(dev.begin(), dev.end(), dev.begin(), tolower);
 
-	if (strstr(dev.c_str(), f.c_str())!=NULL)
+	if (strstr(dev.c_str(), f.c_str())!=nullptr)
 		return true;
 
 
 	gcString name(m_szName);
 	std::transform(name.begin(), name.end(), name.begin(), tolower);
 
-	if (strstr(name.c_str(), f.c_str())!=NULL)
+	if (strstr(name.c_str(), f.c_str())!=nullptr)
 		return true;
 
 
 	gcString sname(m_szShortName);
 	std::transform(sname.begin(), sname.end(), sname.begin(), tolower);
 
-	if (strstr(sname.c_str(), f.c_str())!=NULL)
+	if (strstr(sname.c_str(), f.c_str())!=nullptr)
 		return true;
 
 
 	gcString theme(m_szTheme);
 	std::transform(theme.begin(), theme.end(), theme.begin(), tolower);
-	if (strstr(theme.c_str(), f.c_str())!=NULL)
+	if (strstr(theme.c_str(), f.c_str())!=nullptr)
 		return true;
 
 	gcString genre(m_szGenre);
 	std::transform(genre.begin(), genre.end(), genre.begin(), tolower);
 
 
-	if (strstr(genre.c_str(), f.c_str())!=NULL)
+	if (strstr(genre.c_str(), f.c_str())!=nullptr)
 		return true;
 
 	return false;	
@@ -961,7 +961,7 @@ void ItemInfo::processUpdateXml(const XML::gcXMLElement &node)
 		if (id == 0)
 			return;
 
-		BranchInfo* bi = NULL;
+		BranchInfo* bi = nullptr;
 
 		for (size_t x=0; x<m_vBranchList.size(); x++)
 		{
@@ -1237,7 +1237,7 @@ void ItemInfo::setLinkInfo(const char* exe, const char* args)
 
 MCFBranch ItemInfo::getBestBranch(MCFBranch branch)
 {
-	BranchInfoI* bi = NULL;
+	BranchInfoI* bi = nullptr;
 
 	if (branch.isGlobal())
 	{
@@ -1362,7 +1362,7 @@ MCFBranch ItemInfo::selectBestBranch(const std::vector<BranchInfo*> &list)
 BranchInfoI* ItemInfo::getBranch(uint32 index)
 {
 	if ((int32)index >= m_vBranchList.size())
-		return NULL;
+		return nullptr;
 
 	return m_vBranchList[index];
 }
@@ -1370,7 +1370,7 @@ BranchInfoI* ItemInfo::getBranch(uint32 index)
 BranchInfoI* ItemInfo::getCurrentBranch()
 {
 	if (m_INBranchIndex == UINT_MAX)
-		return NULL;
+		return nullptr;
 
 	return m_vBranchList[m_INBranchIndex];
 }
@@ -1378,7 +1378,7 @@ BranchInfoI* ItemInfo::getCurrentBranch()
 BranchInfo* ItemInfo::getCurrentBranchFull()
 {
 	if (m_INBranchIndex == UINT_MAX)
-		return NULL;
+		return nullptr;
 
 	return m_vBranchList[m_INBranchIndex];
 }
@@ -1391,7 +1391,7 @@ BranchInfoI* ItemInfo::getBranchById(uint32 id)
 			return m_vBranchList[x];
 	}
 
-	return NULL;
+	return nullptr;
 }
 
 
@@ -1415,7 +1415,7 @@ BranchInstallInfo* ItemInfo::getBranchOrCurrent(MCFBranch branch)
 		return m_mBranchInstallInfo.begin()->second;
 
 	if (!bi)
-		return NULL;
+		return nullptr;
 
 	return bi->getInstallInfo();
 }
@@ -1425,7 +1425,7 @@ const char* ItemInfo::getPath(MCFBranch branch)
 	BranchInstallInfo* bi = getBranchOrCurrent(branch);
 
 	if (!bi)
-		return NULL;
+		return nullptr;
 
 	return bi->getPath();
 }
@@ -1435,7 +1435,7 @@ const char* ItemInfo::getInsPrimary(MCFBranch branch)
 	BranchInstallInfo* bi = getBranchOrCurrent(branch);
 
 	if (!bi)
-		return NULL;
+		return nullptr;
 
 	return bi->getInsPrimary();
 }
@@ -1455,7 +1455,7 @@ const char* ItemInfo::getInstalledVersion(MCFBranch branch)
 	BranchInstallInfo* bi = getBranchOrCurrent(branch);
 
 	if (!bi)
-		return NULL;
+		return nullptr;
 
 	return bi->getInstalledVersion();
 }
@@ -1545,7 +1545,7 @@ UserCore::Item::Misc::ExeInfoI* ItemInfo::getActiveExe(MCFBranch branch)
 	BranchInstallInfo* bi = getBranchOrCurrent(branch);
 
 	if (!bi)
-		return NULL;
+		return nullptr;
 
 	return bi->getActiveExe();
 }

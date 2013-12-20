@@ -202,7 +202,7 @@ wxTreeItemId McfViewerForm::recCreateNodes(const wchar_t* path, size_t pathSize,
 	if (!path)
 		return lastNode;
 
-	const wchar_t *nextPath = NULL;
+	const wchar_t *nextPath = nullptr;
 
 	size_t x=0;
 		

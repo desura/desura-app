@@ -330,7 +330,7 @@ void ThreadPool::onThreadComplete()
 
 BaseTask* ThreadPool::getTask()
 {
-	BaseTask* task = NULL;
+	BaseTask* task = nullptr;
 
 	m_TaskMutex.lock();
 

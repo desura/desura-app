@@ -37,7 +37,7 @@ REG_IPC_CLASS( IPCUpdateApp );
 IPCUpdateApp::IPCUpdateApp(IPC::IPCManager* mang, uint32 id, DesuraId itemId) : IPC::IPCClass(mang, id, itemId)
 {
 	registerFunctions();
-	m_pThread = NULL;
+	m_pThread = nullptr;
 }
 
 IPCUpdateApp::~IPCUpdateApp()

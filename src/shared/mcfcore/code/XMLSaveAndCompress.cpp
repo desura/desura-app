@@ -24,7 +24,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>
 XMLSaveAndCompress::XMLSaveAndCompress(UTIL::FS::FileHandle *fh, bool compress) : m_BZ2Worker(UTIL::MISC::BZ2_COMPRESS), m_fhFile(fh)
 {
 	m_bCompress = compress;
-	m_szReadBuf = NULL;
+	m_szReadBuf = nullptr;
 
 	if (compress)
 		m_szReadBuf = new char[BUFFSIZE+1];

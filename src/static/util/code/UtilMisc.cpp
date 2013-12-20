@@ -62,12 +62,12 @@ uint8 getCoreCount()
 	mib[1] = HW_AVAILCPU;  // alternatively, try HW_NCPU;
 
 	/* get the number of CPUs from the system */
-	sysctl(mib, 2, &numCPU, &len, NULL, 0);
+	sysctl(mib, 2, &numCPU, &len, nullptr, 0);
 
 	if( numCPU < 1 ) 
 	{
 		 mib[1] = HW_NCPU;
-		 sysctl( mib, 2, &numCPU, &len, NULL, 0 );
+		 sysctl( mib, 2, &numCPU, &len, nullptr, 0 );
 
 		 if( numCPU < 1 )
 		 {
@@ -266,7 +266,7 @@ std::string genTimeString(uint8 hours, uint8 mins, uint32 rate)
 
 	if (rate != 0)
 	{
-		const char *rateExt = NULL;
+		const char *rateExt = nullptr;
 
 		uint32 unit = 0;
 		double dRate = rate;
@@ -732,7 +732,7 @@ class CMDArgInternal
 public:
 	CMDArgInternal()
 	{
-		m_pszArgv = NULL;
+		m_pszArgv = nullptr;
 	}
 
 	~CMDArgInternal()

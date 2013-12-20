@@ -155,7 +155,7 @@ void WildcardManager::constructPath(const char* path, char **res, uint8 *depth)
 			AutoDelete<char> tad(temp);
 			AutoDelete<WildcardInfo> wad;
 
-			WildcardInfo* wcInfo = NULL;
+			WildcardInfo* wcInfo = nullptr;
 
 			if (Safe::stricmp(temp, "TEMP") == 0)
 			{
@@ -195,7 +195,7 @@ void WildcardManager::constructPath(const char* path, char **res, uint8 *depth)
 			}
 			else if (wcInfo->m_szPath != "")
 			{
-				char* newPath = NULL;
+				char* newPath = nullptr;
 
 				constructPath(wcInfo->m_szPath.c_str(), &newPath, depth);
 
@@ -268,7 +268,7 @@ void WildcardManager::resolveWildCard(WildcardInfo *wcInfo)
 	{
 		//if (wildcardCheck(wcInfo->m_szPath.c_str()))
 		//	Warning("Wildcard check failed on [%s]\n", string);
-		char* path = NULL;
+		char* path = nullptr;
 
 		try
 		{
@@ -393,7 +393,7 @@ void WildcardManager::compactWildCards()
 
 		if (wildcardCheck(temp->m_szPath.c_str()))
 		{
-			char* szPath = NULL;
+			char* szPath = nullptr;
 
 			try
 			{

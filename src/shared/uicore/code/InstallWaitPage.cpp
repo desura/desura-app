@@ -190,12 +190,12 @@ void InstallWaitPage::onProgressUpdate(uint32& progress)
 			}
 		}
 
-		ItemPanel* ip = NULL;
+		ItemPanel* ip = nullptr;
 
 		if (index != UINT_MAX)
 		{
 			ip = oldList[index];
-			oldList[index] = NULL;
+			oldList[index] = nullptr;
 		}
 		else
 		{

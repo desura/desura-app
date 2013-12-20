@@ -26,7 +26,7 @@ EULAForm::EULAForm(wxWindow* parent) : gcFrame(parent, wxID_ANY, wxT("End User L
 	Bind(wxEVT_COMMAND_BUTTON_CLICKED, &EULAForm::onButtonPressed, this);
 	Bind(wxEVT_CLOSE_WINDOW, &EULAForm::onFormClose, this);
 
-	m_ieBrowser = NULL;
+	m_ieBrowser = nullptr;
 
 	m_labInfo = new wxStaticText( this, wxID_ANY, Managers::GetString(L"#EULA_LABEL"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_butAgree = new gcButton( this, wxID_ANY, Managers::GetString(L"#AGREE"), wxDefaultPosition, wxDefaultSize, 0 );

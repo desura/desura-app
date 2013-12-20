@@ -30,9 +30,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>
 
 gcWebHost::gcWebHost(wxWindow* parent, const char* defaultUrl, const char* hostName) : gcPanel(parent, wxID_ANY)
 {
-	m_pBrowser = NULL;
-	m_pPipeClient = NULL;
-	m_MenuInfo = NULL;
+	m_pBrowser = nullptr;
+	m_pPipeClient = nullptr;
+	m_MenuInfo = nullptr;
 
 	m_szHostName = hostName;
 	m_szDefaultUrl = defaultUrl;
@@ -134,7 +134,7 @@ void gcWebHost::onBrowserDisconnect()
 	if (m_pBrowser)
 		m_pBrowser->destroy();
 
-	m_pBrowser = NULL;
+	m_pBrowser = nullptr;
 	safe_delete(m_pPipeClient);
 }
 

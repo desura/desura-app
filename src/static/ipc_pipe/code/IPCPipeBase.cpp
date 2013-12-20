@@ -49,7 +49,7 @@ namespace IPC
 {
 
 #ifdef IPC_DEBUG
-FILE* fh = NULL;
+FILE* fh = nullptr;
 #endif
 
 PipeBase::PipeBase(const char* pipeName, const char* threadName) : BaseThread(threadName)
@@ -285,7 +285,7 @@ bool PipeBase::performWrite(PipeData* data, IPCManager* mng)
 	}
 #endif
 
-	BOOL fSuccess = WriteFile( data->hPipe, data->buffer, data->size, NULL, &data->oOverlap); 
+	BOOL fSuccess = WriteFile( data->hPipe, data->buffer, data->size, nullptr, &data->oOverlap); 
 
 	if (fSuccess) 
 	{ 

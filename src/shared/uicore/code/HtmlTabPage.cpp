@@ -42,8 +42,8 @@ DesuraJSBinding *GetJSBinding();
 
 HtmlTabPage::HtmlTabPage(wxWindow* parent, gcString homePage, PAGE area) : baseTabPage( parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL|wxNO_BORDER )
 {
-	m_pWebControl = NULL;
-	m_pWebPanel = NULL;
+	m_pWebControl = nullptr;
+	m_pWebPanel = nullptr;
 
 	m_szHomePage = homePage;
 
@@ -105,7 +105,7 @@ void HtmlTabPage::killControlBar()
 	m_pControlBar->onFullSearchEvent -= guiDelegate(this, &HtmlTabPage::onFullSearch);
 
 	m_pControlBar->Destroy();
-	m_pControlBar = NULL;
+	m_pControlBar = nullptr;
 }
 
 BaseToolBarControl* HtmlTabPage::getToolBarControl()

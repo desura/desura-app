@@ -67,7 +67,7 @@ public:
 	//!
 	//! @return true if no other instances are running
 	//!
-	virtual bool singleInstantCheck(const char* args = NULL)=0;
+	virtual bool singleInstantCheck(const char* args = nullptr)=0;
 	
 	//! Kills single instance check
 	//!

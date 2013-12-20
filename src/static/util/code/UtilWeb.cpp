@@ -34,9 +34,9 @@ class MemoryStruct
 public:
 	MemoryStruct()
 	{
-		memory = NULL;
+		memory = nullptr;
 		size = 0;
-		obj=NULL;
+		obj=nullptr;
 	}
 
 	~MemoryStruct()
@@ -259,7 +259,7 @@ static void *myrealloc(void *ptr, size_t size)
 {
   /* There might be a realloc() out there that doesn't like reallocing
 
-	 NULL pointers, so we take care of it here */
+	 nullptr pointers, so we take care of it here */
   if(ptr)
 	return realloc(ptr, size);
   else
@@ -307,7 +307,7 @@ void HttpHInternal::init(bool useSsl)
 	m_uiOffset = 0;
 	m_uiSize = 0;
 
-	m_hFile = NULL;
+	m_hFile = nullptr;
 	addHeader("Expect: ");
 }
 
@@ -430,10 +430,10 @@ void HttpHInternal::setUpProxy()
 	BOOL res = WinHttpGetIEProxyConfigForCurrentUser(&ieProxyConfig);
 
 	//if we got the proxy settings and we dont need it return
-	if (res && ieProxyConfig.fAutoDetect == false && ieProxyConfig.lpszAutoConfigUrl == NULL && ieProxyConfig.lpszProxy == NULL)
+	if (res && ieProxyConfig.fAutoDetect == false && ieProxyConfig.lpszAutoConfigUrl == nullptr && ieProxyConfig.lpszProxy == nullptr)
 		return;
 
-	if (ieProxyConfig.lpszAutoConfigUrl != NULL && ieProxyConfig.lpszProxy != NULL)
+	if (ieProxyConfig.lpszAutoConfigUrl != nullptr && ieProxyConfig.lpszProxy != nullptr)
 	{
 		autoProxyOptions.dwFlags |= WINHTTP_AUTOPROXY_CONFIG_URL;
 		autoProxyOptions.lpszAutoConfigUrl = ieProxyConfig.lpszAutoConfigUrl;
@@ -446,7 +446,7 @@ void HttpHInternal::setUpProxy()
 		// here we reset fAutoProxy in case an auto-proxy isn't actually
 		// configured for this url
 
-		HINTERNET hiOpen = WinHttpOpen(NULL, WINHTTP_ACCESS_TYPE_DEFAULT_PROXY, WINHTTP_NO_PROXY_NAME, WINHTTP_NO_PROXY_BYPASS, 0);
+		HINTERNET hiOpen = WinHttpOpen(nullptr, WINHTTP_ACCESS_TYPE_DEFAULT_PROXY, WINHTTP_NO_PROXY_NAME, WINHTTP_NO_PROXY_BYPASS, 0);
 
 		if (!hiOpen)
 			return;
@@ -460,14 +460,14 @@ void HttpHInternal::setUpProxy()
 	gcString noProxy;
 	gcString noProxyRaw;
 
-	if (autoProxyInfo.lpszProxy != NULL)
+	if (autoProxyInfo.lpszProxy != nullptr)
 	{
 		// set proxy options for libcurl based on autoProxyInfo
 		g_bNeedProxy = true;
 		proxy = gcString(autoProxyInfo.lpszProxy);
 		noProxyRaw = gcString(autoProxyInfo.lpszProxyBypass);
 	}
-	else if (ieProxyConfig.lpszProxy != NULL)
+	else if (ieProxyConfig.lpszProxy != nullptr)
 	{
 		// based on ieProxyConfig
 		g_bNeedProxy = true;
@@ -509,9 +509,9 @@ void HttpHInternal::setUpProxy()
 curl_slist_s* HttpHInternal::setUpHeaders()
 {
 	if (m_vHeaders.size() == 0)
-		return NULL;
+		return nullptr;
 
-	curl_slist_s *headers = NULL;
+	curl_slist_s *headers = nullptr;
 
 	for (size_t x=0; x<m_vHeaders.size(); x++)
 		headers = curl_slist_append(headers, m_vHeaders[x].c_str());
@@ -607,8 +607,8 @@ uint8 HttpHInternal::postWeb()
 	lock();
 	setUp();
 
-	curl_httppost *formPost = NULL; 
-	curl_httppost *formLast = NULL;
+	curl_httppost *formPost = nullptr; 
+	curl_httppost *formLast = nullptr;
 
 	if (m_vFormPost.size() > 0)
 	{
@@ -658,7 +658,7 @@ uint8 HttpHInternal::getFtp()
 	if (m_szPass != "")
 		curl_easy_setopt(m_pCurlHandle, CURLOPT_PASSWORD, m_szPass.c_str());
 
-	curl_slist_s* commands = NULL;
+	curl_slist_s* commands = nullptr;
 	commands = curl_slist_append(commands, gcString("REST {0}", m_uiOffset).c_str());
 	commands = curl_slist_append(commands, gcString("XCHK {0}", m_uiSize).c_str());
 	curl_easy_setopt(m_pCurlHandle, CURLOPT_QUOTE, commands);
@@ -760,7 +760,7 @@ const char* HttpHInternal::getData()
 	if (m_pMemStruct)
 		return m_pMemStruct->memory;
 
-	return NULL;
+	return nullptr;
 }
 
 
@@ -795,7 +795,7 @@ void HttpHInternal::cleanUp(bool delUrl)
 	  if (m_pMemStruct->memory)
 	  {
 		  free (m_pMemStruct->memory);
-		  m_pMemStruct->memory = NULL;
+		  m_pMemStruct->memory = nullptr;
 	  }
 
 	  m_pMemStruct->size = 0;

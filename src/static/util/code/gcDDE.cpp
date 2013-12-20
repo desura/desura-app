@@ -32,7 +32,7 @@ gcDDEServer::gcDDEServer()
 {
 	GetDDEManager()->init();
 	GetDDEManager()->addServer(this);
-	m_szName = NULL;
+	m_szName = nullptr;
 }
 
 gcDDEServer::~gcDDEServer()
@@ -49,7 +49,7 @@ bool gcDDEServer::create(const char* name)
     if ( !hsz )
         return false;
 
-    bool success = (DdeNameService(GetDDEManager()->getDDEInst(), hsz, (HSZ) NULL, DNS_REGISTER) != NULL);
+    bool success = (DdeNameService(GetDDEManager()->getDDEInst(), hsz, (HSZ) nullptr, DNS_REGISTER) != nullptr);
 
     if (!success)
     {
@@ -67,7 +67,7 @@ HDDEDATA gcDDEServer::acceptConnection(const char* topic, HCONV conv)
 
 	if (connection)
 	{
-		connection->setInfo( NULL, topic, this);
+		connection->setInfo( nullptr, topic, this);
 		m_vConnections.push_back(connection);
 
 		GetDDEManager()->m_pCurConnecting = connection;
@@ -91,7 +91,7 @@ void gcDDEServer::removeConnection(gcDDEConnection *connection)
 	{
 		if (m_vConnections[x] == connection)
 		{
-			m_vConnections[x] = NULL;
+			m_vConnections[x] = nullptr;
 			break;
 		}
 	}
@@ -105,7 +105,7 @@ gcDDEConnection* gcDDEServer::findConnection(HCONV conv)
 			return m_vConnections[x];
 	}
 
-	return NULL;
+	return nullptr;
 }
 
 ////////////////////////////////////////////////////////////////////////////////////
@@ -129,14 +129,14 @@ gcDDEConnection *gcDDEClient::makeConnection(const char* server, const char* top
     HSZ hszServer = GetDDEManager()->atomFromString(server);
 
     if ( !hszServer )
-        return NULL;
+        return nullptr;
 
     HSZ hszTopic = GetDDEManager()->atomFromString(topic);
 
     if ( !hszTopic )
-        return NULL;
+        return nullptr;
 
-    HCONV hConv = ::DdeConnect(GetDDEManager()->getDDEInst(), hszServer, hszTopic, (PCONVCONTEXT) NULL);
+    HCONV hConv = ::DdeConnect(GetDDEManager()->getDDEInst(), hszServer, hszTopic, (PCONVCONTEXT) nullptr);
 
     if ( !hConv )
     {
@@ -153,7 +153,7 @@ gcDDEConnection *gcDDEClient::makeConnection(const char* server, const char* top
         }
     }
 
-    return NULL;
+    return nullptr;
 }
 
 gcDDEConnection *gcDDEClient::onMakeConnection()
@@ -170,7 +170,7 @@ void gcDDEClient::removeConnection(gcDDEConnection *connection)
 	{
 		if (m_vConnections[x] == connection)
 		{
-			m_vConnections[x] = NULL;
+			m_vConnections[x] = nullptr;
 			break;
 		}
 	}
@@ -184,7 +184,7 @@ gcDDEConnection* gcDDEClient::findConnection(HCONV conv)
 			return m_vConnections[x];
 	}
 
-	return NULL;
+	return nullptr;
 }
 
 ////////////////////////////////////////////////////////////////////////////////////
@@ -193,11 +193,11 @@ gcDDEConnection* gcDDEClient::findConnection(HCONV conv)
 
 gcDDEConnection::gcDDEConnection()
 {
-	m_pClient = NULL;
-	m_pServer = NULL;
+	m_pClient = nullptr;
+	m_pServer = nullptr;
 
-	m_hConv = NULL;
-	m_szTopic = NULL;
+	m_hConv = nullptr;
+	m_szTopic = nullptr;
 
 	m_bConnected = false;
 }	
@@ -255,15 +255,15 @@ HDDEDATA gcDDEConnection::handlePoke(HSZ hszItem, HDDEDATA hData)
 
 	if (!hData)
 	{
-		onPoke(item_name, NULL, 0);
+		onPoke(item_name, nullptr, 0);
 		return (HDDEDATA)DDE_FACK;
 	}
 
-	DWORD len = DdeGetData(hData, NULL, 0, 0);
+	DWORD len = DdeGetData(hData, nullptr, 0, 0);
 
 	if (len == 0)
 	{
-		onPoke(item_name, NULL, 0);
+		onPoke(item_name, nullptr, 0);
 		return (HDDEDATA)DDE_FACK;
 	}
 

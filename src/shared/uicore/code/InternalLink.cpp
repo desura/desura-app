@@ -51,7 +51,7 @@ T* findForm( DesuraId id, std::vector<wxFrame*>& vSubForms )
 		}
 	}
 
-	return NULL;
+	return nullptr;
 }
 
 #define FINDFORM( id, type )									\
@@ -179,17 +179,17 @@ void InternalLink::handleInternalLink(const char* link)
 	
 	if (strncmp("desura://", link, 9) == 0)
 	{
-		char* str = NULL;
+		char* str = nullptr;
 		Safe::strcpy(&str, link+9, 255);
 
-		char* context = NULL;
+		char* context = nullptr;
 
 		char* token = Safe::strtok(str, "/", &context);
 
 		while (token)
 		{
 			list.push_back(gcString(token));
-			token = Safe::strtok(NULL, "/", &context);
+			token = Safe::strtok(nullptr, "/", &context);
 		}
 
 		safe_delete(str);
@@ -525,7 +525,7 @@ void InternalLink::closeForm(int32 wxId)
 			{
 				if (it->second && it->second->GetId() == wxId)
 				{
-					it->second = NULL;
+					it->second = nullptr;
 					break;
 				}
 			}
@@ -609,12 +609,12 @@ public:
 		else if (index == 2)
 			return Managers::GetString(L"#IF_PRELOADLAUNCH_INSTALLOTHER");
 
-		return NULL;
+		return nullptr;
 	}
 
 	virtual const wchar_t* getToolTip(uint32 index)
 	{
-		return NULL;
+		return nullptr;
 	}
 
 	virtual void performAction(uint32 index)
@@ -744,7 +744,7 @@ UI::Forms::ItemForm* InternalLink::showItemForm(DesuraId id, UI::Forms::INSTALL_
 	UserCore::Item::ItemInfoI* item = GetUserCore()->getItemManager()->findItemInfo( id );
 
 	if (!item && action != UI::Forms::IA_INSTALL && action != UI::Forms::IA_INSTALL_TESTMCF)
-		return NULL;
+		return nullptr;
 
 	UI::Forms::ItemForm *form = findForm<UI::Forms::ItemForm>(id, m_vSubForms);
 	
@@ -806,7 +806,7 @@ bool InternalLink::checkForPreorder(DesuraId id)
 		}
 	}		
 
-	if (item->getCurrentBranch() == NULL && hasPreorder)
+	if (item->getCurrentBranch() == nullptr && hasPreorder)
 	{
 		showPreorderPrompt(id, false);
 		return true;
@@ -1309,7 +1309,7 @@ void InternalLink::onUploadTrigger(ut& info)
 
 void InternalLink::showUpdateLogApp(uint32 version)
 {
-	ChangeLogForm * temp = NULL;
+	ChangeLogForm * temp = nullptr;
 
 	for (size_t x=0; x<m_vSubForms.size(); x++)
 	{

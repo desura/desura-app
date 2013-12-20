@@ -33,21 +33,21 @@ void changeServiceAccess(const char* szName)
 {
 	assert(szName);
 
-	SC_HANDLE scm = NULL;
-	SC_HANDLE Service = NULL;
+	SC_HANDLE scm = nullptr;
+	SC_HANDLE Service = nullptr;
 
 	BOOL                 bDaclPresent   = FALSE;
 	BOOL                 bDaclDefaulted = FALSE;
 	DWORD                dwSize         = 0;
 	EXPLICIT_ACCESS      ea;
-	PACL                 pacl           = NULL;
-	PACL                 pNewAcl        = NULL;
-	PSECURITY_DESCRIPTOR psd            = NULL;
+	PACL                 pacl           = nullptr;
+	PACL                 pNewAcl        = nullptr;
+	PSECURITY_DESCRIPTOR psd            = nullptr;
 	SECURITY_DESCRIPTOR  sd;
 
 
 	//open connection to SCM
-	scm = OpenSCManager(NULL, NULL, SC_MANAGER_CONNECT);
+	scm = OpenSCManager(nullptr, nullptr, SC_MANAGER_CONNECT);
 
 	if (!scm)
 		throw gcException(ERR_NULLSCMANAGER, GetLastError(), "Failed to open the Service Control Manager");
@@ -97,7 +97,7 @@ void changeServiceAccess(const char* szName)
 			throw gcException(ERR_SERVICE, GetLastError(), gcString("LocalAlloc failed for  service: {0}", szName));
 		}
 
-		if(!CreateWellKnownSid(WinWorldSid, NULL, TheSID, &SidSize))
+		if(!CreateWellKnownSid(WinWorldSid, nullptr, TheSID, &SidSize))
 		{
 			LocalFree(TheSID);
 			throw gcException(ERR_SERVICE, GetLastError(), gcString("CreateWellKnownSid failed for  service: {0}", szName));
@@ -109,7 +109,7 @@ void changeServiceAccess(const char* szName)
 		DWORD dSize = 255;
 		SID_NAME_USE rSidNameUse;
 
-		if (!LookupAccountSid(NULL, TheSID, everyone, &eSize, domain, &dSize, &rSidNameUse))
+		if (!LookupAccountSid(nullptr, TheSID, everyone, &eSize, domain, &dSize, &rSidNameUse))
 		{
 			LocalFree(TheSID);
 			throw gcException(ERR_SERVICE, GetLastError(), gcString("LookupAccountSid failed for  service: {0}", szName));
@@ -167,7 +167,7 @@ void enableService(const char* szName)
 	SC_HANDLE scm, Service;
 	
 	//open connection to SCM
-	scm = OpenSCManager(NULL, NULL, SC_MANAGER_CONNECT);
+	scm = OpenSCManager(nullptr, nullptr, SC_MANAGER_CONNECT);
 
 	if (!scm)
 		throw gcException(ERR_NULLSCMANAGER, GetLastError(), "Failed to open the Service Control Manager");
@@ -180,7 +180,7 @@ void enableService(const char* szName)
 		throw gcException(ERR_NULLSERVICE, GetLastError(), gcString("Failed to open service: {0}", szName));
 	}
 
-	BOOL res = ChangeServiceConfig(Service, SERVICE_NO_CHANGE, SERVICE_DEMAND_START, SERVICE_NO_CHANGE, NULL, NULL, NULL, NULL, NULL, NULL, NULL);
+	BOOL res = ChangeServiceConfig(Service, SERVICE_NO_CHANGE, SERVICE_DEMAND_START, SERVICE_NO_CHANGE, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr);
 
 	CloseServiceHandle(scm);
 	CloseServiceHandle(Service); 
@@ -195,7 +195,7 @@ BOOL doStartService(SC_HANDLE Service, const char* szName, std::vector<std::stri
 
 	if (args.size() == 0)
 	{
-		res = StartService(Service, 0, NULL);
+		res = StartService(Service, 0, nullptr);
 	}
 	else
 	{
@@ -223,7 +223,7 @@ void startService(const char* szName, std::vector<std::string> &args)
 	DWORD dwWaitTime;
 	
 	//open connection to SCM
-	scm = OpenSCManager(NULL, NULL, SC_MANAGER_CONNECT);
+	scm = OpenSCManager(nullptr, nullptr, SC_MANAGER_CONNECT);
 
 	if (!scm)
 		throw gcException(ERR_NULLSCMANAGER, GetLastError(), "Failed to open the Service Control Manager");
@@ -332,7 +332,7 @@ void stopService(const char* szName)
 	SERVICE_STATUS ssStatus; 
 	
 	//open connection to SCM
-	scm = OpenSCManager(NULL, NULL, SC_MANAGER_CONNECT);
+	scm = OpenSCManager(nullptr, nullptr, SC_MANAGER_CONNECT);
 
 	if (!scm)
 		throw gcException(ERR_NULLSCMANAGER, GetLastError(), "Failed to open the Service Control Manager");
@@ -379,7 +379,7 @@ void installService(const char* szName, const char* szPath, const char* szDispNa
 	SC_HANDLE scm; 
 
 	//open connection to SCM
-	scm = OpenSCManager(NULL, NULL, SC_MANAGER_CREATE_SERVICE);
+	scm = OpenSCManager(nullptr, nullptr, SC_MANAGER_CREATE_SERVICE);
 
 	if (!scm)
 		throw gcException(ERR_NULLSCMANAGER, GetLastError(), "Failed to open the Service Control Manager");
@@ -394,11 +394,11 @@ void installService(const char* szName, const char* szPath, const char* szDispNa
 		SERVICE_DEMAND_START,		//service start type
 		SERVICE_ERROR_NORMAL,		//error control type
 		wPath.c_str(),				//service path
-		NULL,						//no load ordering group 
-		NULL,						//no tag identifier
-		NULL,						//no dependencies	
-		NULL,						//LocalSystem account
-		NULL);						//no password
+		nullptr,						//no load ordering group 
+		nullptr,						//no tag identifier
+		nullptr,						//no dependencies	
+		nullptr,						//LocalSystem account
+		nullptr);						//no password
 
 	if(!newService)
 	{
@@ -421,7 +421,7 @@ void uninstallService(const char* szName)
 	gcWString wName(szName);
 
 	//Open connection to SCM
-	scm = OpenSCManager(NULL, NULL, SC_MANAGER_CREATE_SERVICE);
+	scm = OpenSCManager(nullptr, nullptr, SC_MANAGER_CREATE_SERVICE);
 	if (!scm)
 		throw gcException(ERR_NULLSCMANAGER, GetLastError(), gcString("Failed to open the Service Control Manager"));
 
@@ -483,7 +483,7 @@ SERVICE_STATUS_E queryService(const char* szName)
 	gcWString wName(szName);
 
 	//Open connection to SCM
-	scm = OpenSCManager(NULL, NULL, SC_MANAGER_CONNECT);
+	scm = OpenSCManager(nullptr, nullptr, SC_MANAGER_CONNECT);
 	if (!scm)
 		throw gcException(ERR_NULLSCMANAGER, GetLastError(), gcString("Failed to open the Service Control Manager"));
 

@@ -102,7 +102,7 @@ public:
 	gcString constructPath(const char* path, bool fixPath = true)
 	{
 		gcString ret;
-		char *szPathOut = NULL;
+		char *szPathOut = nullptr;
 
 		try
 		{

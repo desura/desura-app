@@ -372,7 +372,7 @@ public:
 		else
 			wc = HttpHandle(GCUPLOAD_URL_STAGE);
 
-		char* changeLog = NULL;
+		char* changeLog = nullptr;
 		UTIL::FS::readWholeFile(args[4], &changeLog);
 
 		wc->addPostText("token", args[0].c_str());

@@ -20,7 +20,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>
 #include "ServiceCore.h"
 #include "IPCPipeServer.h"
 
-ServiceCore* g_pServiceCore = NULL;
+ServiceCore* g_pServiceCore = nullptr;
 void StopLogging();
 
 void SetCrashSettings(const wchar_t* user, bool upload)
@@ -34,15 +34,15 @@ void SetCrashSettings(const wchar_t* user, bool upload)
 
 ServiceCore::ServiceCore()
 {
-	m_pIPCServer = NULL;
-	m_pDisconnect = NULL;
+	m_pIPCServer = nullptr;
+	m_pDisconnect = nullptr;
 
 	g_pServiceCore = this;
 }
 
 ServiceCore::~ServiceCore()
 {
-	g_pServiceCore = NULL;
+	g_pServiceCore = nullptr;
 	stopPipe();
 }
 

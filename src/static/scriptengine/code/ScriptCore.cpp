@@ -180,7 +180,7 @@ public:
 
 ScriptCore::ScriptCore(ScriptTaskRunnerI* runner)
 {
-	m_pTaskRunner = NULL;
+	m_pTaskRunner = nullptr;
 	m_uiItemId = -1;
 	m_pTaskRunner = runner;
 
@@ -249,7 +249,7 @@ void ScriptCore::executeScript(const char* file)
 	if (!file || !UTIL::FS::isValidFile(file))
 		throw gcException(ERR_INVALID, "File does not exist");
 
-	char* out = NULL;
+	char* out = nullptr;
 	size_t size = UTIL::FS::readWholeFile(file, &out);
 
 	runTask(new RunScript(m_pInternal, file, out, size));

@@ -38,13 +38,13 @@ ChromiumDLL::JSObjHandle findEventFunction(const gcString &name, ChromiumDLL::JS
 	::Thread::AutoLock al(&m_EventLock);
 
 	if (!g_bMapValid)
-		return NULL;
+		return nullptr;
 
 	if (g_EventMap.find(name) != g_EventMap.end())
 		return g_EventMap[name];
 
 	if (!root.get() || root->isNull())
-		return NULL;
+		return nullptr;
 
 	if (g_EventMap.find("__desura__") == g_EventMap.end())
 		g_EventMap["__desura__"] = root->getValue("desura");
@@ -112,7 +112,7 @@ public:
 
 		if (funct.get())
 		{
-			ChromiumDLL::JSObjHandle* argv = NULL;
+			ChromiumDLL::JSObjHandle* argv = nullptr;
 
 			if (m_uiNumArgs > 0)
 				argv = new ChromiumDLL::JSObjHandle[m_uiNumArgs];
@@ -124,12 +124,12 @@ public:
 				argv[1] = m_pContext->getFactory()->CreateString(m_szArg2.c_str());
 
 			ChromiumDLL::JavaScriptFunctionArgs args;
-			args.function = NULL;
+			args.function = nullptr;
 			args.context = m_pContext;
 			args.argc = m_uiNumArgs;
 			args.argv = argv;
-			args.factory = NULL;
-			args.object = NULL;
+			args.factory = nullptr;
+			args.object = nullptr;
 
 			ChromiumDLL::JSObjHandle ret = funct->executeFunction(&args);
 			delete [] argv;
@@ -160,7 +160,7 @@ ItemTabPage::ItemTabPage(wxWindow* parent, gcWString homePage) : HtmlTabPage(par
 	m_pItemControlBar = new ItemToolBarControl(parent);
 	m_pItemControlBar->onSearchEvent += guiDelegate(this, &ItemTabPage::onSearch);
 
-	m_pWebControl = NULL;
+	m_pWebControl = nullptr;
 
 	if (m_pWebControl)
 	{

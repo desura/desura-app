@@ -38,13 +38,13 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 }
 
 
-CDesuraWinApp* CDesuraWinApp::gs_pWinApp = NULL;
+CDesuraWinApp* CDesuraWinApp::gs_pWinApp = nullptr;
 
 
 CDesuraWinApp::CDesuraWinApp()
-	: m_hInstance(NULL)
+	: m_hInstance(nullptr)
 	, m_nCmdShow(0)
-	, m_lpCmdLine(NULL)
+	, m_lpCmdLine(nullptr)
 {
 	gs_pWinApp = this;
 }
@@ -52,7 +52,7 @@ CDesuraWinApp::CDesuraWinApp()
 CDesuraWinApp::~CDesuraWinApp()
 {
 	if (gs_pWinApp == this)
-		gs_pWinApp = NULL;
+		gs_pWinApp = nullptr;
 }
 
 void CDesuraWinApp::Init(HINSTANCE hInstance, int nCmdShow, const char* lpCmdLine)

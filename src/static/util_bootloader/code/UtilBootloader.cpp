@@ -109,10 +109,10 @@ void GetLastFolder(char* dest, size_t destSize, const char* src)
 bool RestartAsNormal(const char* args)
 {
 	wchar_t name[255];
-	GetModuleFileNameW(NULL, name, 255);
+	GetModuleFileNameW(nullptr, name, 255);
 
 	wchar_t szWorkingDir[255];
-	GetModuleFileNameW(NULL, szWorkingDir, 255);
+	GetModuleFileNameW(nullptr, szWorkingDir, 255);
 
 	size_t exePathLen = Safe::wcslen(szWorkingDir, 255);
 	for (size_t x=exePathLen; x>0; x--)
@@ -141,7 +141,7 @@ bool RestartAsNormal(const char* args)
 bool RestartAsAdmin(const char* args)
 {
 	char exePath[255];
-	GetModuleFileName(NULL, exePath, 255);
+	GetModuleFileName(nullptr, exePath, 255);
 
 	size_t exePathLen = strlen(exePath);
 	for (size_t x=exePathLen; x>0; x--)
@@ -153,7 +153,7 @@ bool RestartAsAdmin(const char* args)
 	}
 
 	char name[255];
-	GetModuleFileName(NULL, name, 255);
+	GetModuleFileName(nullptr, name, 255);
 
 	char restartArgs[255];
 	
@@ -162,14 +162,14 @@ bool RestartAsAdmin(const char* args)
 	else
 		restartArgs[0] =0;
 
-	INT_PTR r = (INT_PTR)ShellExecute(NULL, "runas", name, restartArgs, exePath, SW_SHOW);
+	INT_PTR r = (INT_PTR)ShellExecute(nullptr, "runas", name, restartArgs, exePath, SW_SHOW);
 	return !(r < 32);
 }
 
 bool Restart(const char* args, bool wait)
 {
 	char exePath[255];
-	GetModuleFileName(NULL, exePath, 255);
+	GetModuleFileName(nullptr, exePath, 255);
 
 	size_t exePathLen = strlen(exePath);
 	for (size_t x=exePathLen; x>0; x--)
@@ -181,7 +181,7 @@ bool Restart(const char* args, bool wait)
 	}
 
 	char name[255];
-	GetModuleFileName(NULL, name, 255);
+	GetModuleFileName(nullptr, name, 255);
 
 	PROCESS_INFORMATION ProcInfo = {0};
 	STARTUPINFO StartupInfo = {0};
@@ -193,7 +193,7 @@ bool Restart(const char* args, bool wait)
 	else
 		_snprintf_s(launchArg, 255, _TRUNCATE, "\"%s\"%s", name, wait?" -wait":"");
 
-	BOOL res = CreateProcess(NULL, launchArg, NULL, NULL, false, NORMAL_PRIORITY_CLASS, NULL, exePath, &StartupInfo, &ProcInfo );
+	BOOL res = CreateProcess(nullptr, launchArg, nullptr, nullptr, false, NORMAL_PRIORITY_CLASS, nullptr, exePath, &StartupInfo, &ProcInfo );
 
 	CloseHandle(ProcInfo.hProcess);
 	CloseHandle(ProcInfo.hThread);
@@ -204,7 +204,7 @@ bool Restart(const char* args, bool wait)
 bool StartProcess(const char* name, const char* args)
 {
 	char exePath[255];
-	GetModuleFileName(NULL, exePath, 255);
+	GetModuleFileName(nullptr, exePath, 255);
 
 	size_t exePathLen = strlen(exePath);
 	for (size_t x=exePathLen; x>0; x--)
@@ -225,7 +225,7 @@ bool StartProcess(const char* name, const char* args)
 	else
 		_snprintf_s(launchArg, 255, _TRUNCATE, "\"%s\\%s\" -wait", exePath, name);
 
-	BOOL res = CreateProcess(NULL, launchArg, NULL, NULL, false, NORMAL_PRIORITY_CLASS, NULL, exePath, &StartupInfo, &ProcInfo );
+	BOOL res = CreateProcess(nullptr, launchArg, nullptr, nullptr, false, NORMAL_PRIORITY_CLASS, nullptr, exePath, &StartupInfo, &ProcInfo );
 
 	CloseHandle(ProcInfo.hProcess);
 	CloseHandle(ProcInfo.hThread);
@@ -237,11 +237,11 @@ bool StartProcess(const char* name, const char* args)
 void WaitForDebugger()
 {
 	HMODULE kernel32_dll = GetModuleHandle("kernel32.dll");
-	if (kernel32_dll != NULL)
+	if (kernel32_dll != nullptr)
 	{
 		WaitForDebuggerFunc waitfor_debugger = (WaitForDebuggerFunc)GetProcAddress(kernel32_dll, "IsDebuggerPresent");
 	
-		if (waitfor_debugger != NULL) 
+		if (waitfor_debugger != nullptr) 
 		{
 			while( !waitfor_debugger() )
 				Sleep( 500 );
@@ -307,7 +307,7 @@ void WaitForOtherInstance(HINSTANCE hinstant)
 void SetCurrentDir()
 {
 	char exePath[255];
-	GetModuleFileName(NULL, exePath, 255);
+	GetModuleFileName(nullptr, exePath, 255);
 
 	size_t exePathLen = strlen(exePath);
 	for (size_t x=exePathLen; x>0; x--)
@@ -333,15 +333,15 @@ void PreReadImage(const char* file_path)
 		// Vista+ branch. On these OSes, the forced reads through the DLL actually
 		// slows warm starts. The solution is to sequentially read file contents
 		// with an optional cap on total amount to read.
-		HANDLE file = CreateFile(file_path,GENERIC_READ,FILE_SHARE_READ | FILE_SHARE_WRITE | FILE_SHARE_DELETE,NULL,OPEN_EXISTING,FILE_FLAG_SEQUENTIAL_SCAN, NULL);
+		HANDLE file = CreateFile(file_path,GENERIC_READ,FILE_SHARE_READ | FILE_SHARE_WRITE | FILE_SHARE_DELETE,nullptr,OPEN_EXISTING,FILE_FLAG_SEQUENTIAL_SCAN, nullptr);
 
 		if (file != INVALID_HANDLE_VALUE)
 			return;
 
 		// Default to 1MB sequential reads.
-		LPVOID buffer = ::VirtualAlloc(NULL, actual_step_size, MEM_COMMIT, PAGE_READWRITE);
+		LPVOID buffer = ::VirtualAlloc(nullptr, actual_step_size, MEM_COMMIT, PAGE_READWRITE);
 
-		if (buffer == NULL)
+		if (buffer == nullptr)
 		{
 			CloseHandle(file);
 			return;
@@ -350,7 +350,7 @@ void PreReadImage(const char* file_path)
 		DWORD len;
 		size_t total_read = 0;
 
-		while (::ReadFile(file, buffer, actual_step_size, &len, NULL) && len > 0) 
+		while (::ReadFile(file, buffer, actual_step_size, &len, nullptr) && len > 0) 
 		{
 			total_read += static_cast<size_t>(len);
 		}
@@ -363,7 +363,7 @@ void PreReadImage(const char* file_path)
 		// WinXP branch. Here, reading the DLL from disk doesn't do
 		// what we want so instead we pull the pages into memory by loading
 		// the DLL and touching pages at a stride.
-		HMODULE dll_module = ::LoadLibraryExA(file_path, NULL, LOAD_WITH_ALTERED_SEARCH_PATH|DONT_RESOLVE_DLL_REFERENCES);
+		HMODULE dll_module = ::LoadLibraryExA(file_path, nullptr, LOAD_WITH_ALTERED_SEARCH_PATH|DONT_RESOLVE_DLL_REFERENCES);
 
 		if (!dll_module)
 			return;

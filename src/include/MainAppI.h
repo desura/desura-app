@@ -122,7 +122,7 @@ public:
 	virtual bool isOffline()=0;
 	virtual bool isLoggedIn()=0;
 
-	virtual void processWildCards(WCSpecialInfo &info, wxWindow* parent = NULL)=0;
+	virtual void processWildCards(WCSpecialInfo &info, wxWindow* parent = nullptr)=0;
 
 	virtual void loadUrl(const char* url, PAGE page)=0;
 

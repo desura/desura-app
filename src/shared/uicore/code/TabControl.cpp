@@ -56,7 +56,7 @@ tabButton* TabControl::getTab(int32 id)
 		}
 	}
 
-	return NULL;
+	return nullptr;
 }
 
 void TabControl::addPage(const char* tabName, int32 id)

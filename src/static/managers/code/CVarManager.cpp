@@ -24,7 +24,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>
 	#include <shlobj.h>
 #endif
 
-CVarManager* g_pCVarMang = NULL;
+CVarManager* g_pCVarMang = nullptr;
 
 
 void InitCVarManger()

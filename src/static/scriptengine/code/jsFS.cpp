@@ -25,7 +25,7 @@ void FromJSObject(UTIL::FS::FileHandle* &jsItem, JSObjHandle& arg)
 	if (arg->isObject())
 		jsItem = arg->getUserObject<UTIL::FS::FileHandle>();
 	else
-		jsItem = NULL;
+		jsItem = nullptr;
 }
 
 FileSystemJSBinding::FileSystemJSBinding() : DesuraJSBase("fs", "installer_binding_fs.js")
@@ -116,7 +116,7 @@ void* FileSystemJSBinding::OpenFileForWrite(gcString file)
 		Warning(gcString("Failed to to open file in scriptcore: {0}\n", e));
 	}
 
-	return NULL;
+	return nullptr;
 }
 
 bool FileSystemJSBinding::WriteFile(UTIL::FS::FileHandle* handle, gcString string)

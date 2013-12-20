@@ -46,7 +46,7 @@ namespace MCFCore
 		{
 			return static_cast<void*>(MCFCore::GetDPReporter());
 		}
-		return NULL;
+		return nullptr;
 	}
 
 	CEXPORT void FactoryDelete(void *p, const char* name)

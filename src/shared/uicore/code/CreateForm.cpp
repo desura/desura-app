@@ -34,7 +34,7 @@ CreateMCFForm::CreateMCFForm( wxWindow* parent, wxWindowID id, const wxString& t
 	this->SetSizer( m_bsSizer );
 	this->Layout();
 
-	m_pPage = NULL;
+	m_pPage = nullptr;
 
 	m_bPromptClose = true;
 	centerOnParent();
@@ -184,6 +184,6 @@ void CreateMCFForm::cleanUpPages()
 		m_pPage->Show(false);
 		m_pPage->Close();
 		m_pPage->dispose();
-		m_pPage = NULL;
+		m_pPage = nullptr;
 	}
 }

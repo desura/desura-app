@@ -73,16 +73,16 @@ ItemHandle::ItemHandle(ItemInfo* itemInfo, UserCore::User* user)
 	m_pUserCore = user;
 
 	m_bLock = false;
-	m_pLockObject = NULL;
+	m_pLockObject = nullptr;
 
-	m_pThread = NULL;
-	m_pFactory = NULL;
+	m_pThread = nullptr;
+	m_pFactory = nullptr;
 	m_pItemInfo = itemInfo;
 
 	m_uiStage = STAGE_NONE;
 
 	m_pEventHandler = new ItemHandleEvents(m_vHelperList);
-	m_pGroup = NULL;
+	m_pGroup = nullptr;
 }
 
 ItemHandle::~ItemHandle()
@@ -200,7 +200,7 @@ void ItemHandle::releaseLock(void* obj)
 	if (m_pLockObject != obj)
 		return;
 
-	m_pLockObject = NULL;
+	m_pLockObject = nullptr;
 	m_bLock = false;
 }
 
@@ -394,7 +394,7 @@ void ItemHandle::goToStageInstallTools(bool launch)
 
 void ItemHandle::goToStageGatherInfo(MCFBranch branch, MCFBuild build, UserCore::ItemTask::GI_FLAGS flags)
 {
-	Helper::GatherInfoHandlerHelperI* helper = NULL;
+	Helper::GatherInfoHandlerHelperI* helper = nullptr;
 	
 	if (m_pFactory)
 		m_pFactory->getGatherInfoHelper(&helper);
@@ -498,7 +498,7 @@ bool ItemHandle::getComplexLock()
 		return true;
 
 
-	UserCore::Item::ItemHandle* obj = NULL;
+	UserCore::Item::ItemHandle* obj = nullptr;
 
 	if (isComplex)
 	{
@@ -602,7 +602,7 @@ void ItemHandle::goToStageInstallComplex(MCFBranch branch, MCFBuild build, bool 
 
 	if (getItemInfo()->isComplex())
 	{
-		Helper::InstallerHandleHelperI* helper = NULL;
+		Helper::InstallerHandleHelperI* helper = nullptr;
 
 		if (m_pFactory)
 			m_pFactory->getInstallHelper(&helper);
@@ -622,7 +622,7 @@ void ItemHandle::goToStageInstall(const char* path, MCFBranch branch)
 {
 	if (!getItemInfo()->isComplex())
 	{
-		Helper::InstallerHandleHelperI* helper = NULL;
+		Helper::InstallerHandleHelperI* helper = nullptr;
 
 		if (m_pFactory)
 			m_pFactory->getInstallHelper(&helper);
@@ -640,7 +640,7 @@ void ItemHandle::stopThread()
 
 	m_pUserCore->getThreadPool()->queueTask(new UserCore::Task::DeleteThread(m_pUserCore, m_pThread));
 
-	m_pThread = NULL;
+	m_pThread = nullptr;
 	m_bStopped = true;
 
 	m_ThreadMutex.writeUnlock();
@@ -663,7 +663,7 @@ void ItemHandle::registerTask(UserCore::ItemTask::BaseItemTask* task)
 
 
 	m_ThreadMutex.readLock();
-	bool nullThread = (m_pThread == NULL);
+	bool nullThread = (m_pThread == nullptr);
 	m_ThreadMutex.readUnlock();
 
 	if (nullThread)
@@ -1049,7 +1049,7 @@ bool ItemHandle::launch(Helper::ItemLaunchHelperI* helper, bool offline, bool ig
 			}
 		}		
 
-		if (getItemInfo()->getCurrentBranch() == NULL && hasPreorder)
+		if (getItemInfo()->getCurrentBranch() == nullptr && hasPreorder)
 		{
 			helper->showPreOrderPrompt();
 			res = false;
@@ -1277,7 +1277,7 @@ void ItemHandle::getStatusStr(LanguageManagerI & pLangMng, char* buffer, uint32 
 				if (bi && bi->isPreOrder())
 					stateMsg = "#IS_PRELOADED_STATUS";
 			}
-			else if (m_pItemInfo->getCurrentBranch() == NULL && hasPreorder)
+			else if (m_pItemInfo->getCurrentBranch() == nullptr && hasPreorder)
 			{
 				stateMsg = "#IS_PREORDER_STATUS";
 			}

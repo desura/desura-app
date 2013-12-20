@@ -33,7 +33,7 @@ ToolInstallThread::ToolInstallThread(ToolManager* toolManager, ::Thread::Mutex &
 	: ::Thread::BaseThread("Tool Install Thread"), m_mTransactions(transactions), m_MapLock(mapLock)
 {
 	m_WinHandle = handle;
-	m_pIPCClient = NULL;
+	m_pIPCClient = nullptr;
 
 	m_CurrentInstall = -1;
 	m_szUserName = userName;
@@ -91,7 +91,7 @@ void ToolInstallThread::startIPC()
 	if (m_pIPCClient)
 		return;
 
-	time_t t = time(NULL);
+	time_t t = time(nullptr);
 	gcString id("{0}", t);
 
 	m_pIPCClient = new ToolIPCPipeClient(m_szUserName.c_str(), true, id.c_str(), m_WinHandle);

@@ -76,7 +76,7 @@ public:
 	virtual void scroll(int x, int y, int delta, unsigned int flags){;}
 	virtual int* getBrowserHandle(){return 0;}
 
-	virtual ChromiumDLL::JavaScriptContextI* getJSContext(){return NULL;}
+	virtual ChromiumDLL::JavaScriptContextI* getJSContext(){return nullptr;}
 
 private:
 	gcPanel* m_pParent;

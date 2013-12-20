@@ -40,9 +40,9 @@ public:
 	BaseUserThread(const char* name, DesuraId id) : Base(name)
 	{
 		m_iId = id;
-		m_pWebCore = NULL;
-		m_pUserCore = NULL;
-		m_pThreadManager = NULL;
+		m_pWebCore = nullptr;
+		m_pUserCore = nullptr;
+		m_pThreadManager = nullptr;
 	}
 
 	virtual ~BaseUserThread()
@@ -144,7 +144,7 @@ public:
 	UserCore::Item::ItemInfo* getItemInfo()
 	{
 		if (!m_pUserCore || !m_iId.isOk())
-			return NULL;
+			return nullptr;
 
 		return dynamic_cast<UserCore::Item::ItemInfo*>(m_pUserCore->getItemManager()->findItemInfo(m_iId));
 	}
@@ -154,7 +154,7 @@ public:
 		UserCore::Item::ItemInfo* item = getItemInfo();
 
 		if (!m_pUserCore || !item)
-			return NULL;
+			return nullptr;
 
 		return dynamic_cast<UserCore::Item::ItemInfo*>(m_pUserCore->getItemManager()->findItemInfo(item->getParentId()));
 	}

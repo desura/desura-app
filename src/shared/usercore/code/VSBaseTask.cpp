@@ -35,9 +35,9 @@ VSBaseTask::VSBaseTask()
 {
 	m_bIsStopped = false;
 
-	m_pHandle = NULL;
-	m_pWebCore = NULL;
-	m_pUserCore = NULL;
+	m_pHandle = nullptr;
+	m_pWebCore = nullptr;
+	m_pUserCore = nullptr;
 
 	m_Result = RES_NONE;
 }
@@ -128,7 +128,7 @@ UserCore::Item::ItemInfo* VSBaseTask::getParentItemInfo()
 	UserCore::Item::ItemInfo* item = getItemInfo();
 
 	if (!m_pUserCore || !item)
-		return NULL;
+		return nullptr;
 
 	return dynamic_cast<UserCore::Item::ItemInfo*>(m_pUserCore->getItemManager()->findItemInfo(item->getParentId()));
 }

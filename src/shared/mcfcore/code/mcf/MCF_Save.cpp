@@ -53,7 +53,7 @@ public:
 	OutBuffer& operator=(OutBuffer& o)
 	{
 		m_szBuffer = o.m_szBuffer;
-		o.m_szBuffer = NULL;
+		o.m_szBuffer = nullptr;
 
 		m_uiBuffSize = o.m_uiBuffSize;
 		o.m_uiBuffSize = 0;
@@ -185,7 +185,7 @@ void MCF::dlHeaderFromWeb()
 		throw lastE;
 
 	uint32 bz2BuffLen = getHeader()->getXmlSize()*25;
-	char* bz2Buff = NULL;
+	char* bz2Buff = nullptr;
 
 	if ( isCompressed() )
 	{
@@ -268,7 +268,7 @@ void MCF::dlFilesFromWeb( )
 
 void MCF::parseFolder(const char *path, bool hashFile, bool reportProgress)
 {
-	parseFolder(NULL, path);
+	parseFolder(nullptr, path);
 
 	if (hashFile)
 	{
@@ -320,7 +320,7 @@ void MCF::parseFolder(const char *filePath, const char *oPath)
 	if (!UTIL::FS::isValidFolder(path))
 		throw gcException(ERR_BADPATH, gcString("The file path was invalid [{0}]", path.getFullPath()));
 
-	UTIL::FS::getAllFiles(path, fileList, NULL);
+	UTIL::FS::getAllFiles(path, fileList, nullptr);
 	UTIL::FS::getAllFolders(path, dirList);
 
 	if (fileList.size() == 0 && dirList.size() == 0)
@@ -534,7 +534,7 @@ void MCF::optimiseAndSaveMcf(MCFI* prevMcf, const char* path)
 	std::vector<mcfDif_s> vNew;
 	std::vector<mcfDif_s> vSame;
 
-	this->findChanges(mcf, &vSame, &vDiff, NULL, &vNew);
+	this->findChanges(mcf, &vSame, &vDiff, nullptr, &vNew);
 
 	MCF dest;
 	dest.setFile(path);

@@ -58,11 +58,11 @@ public:
 		ChromiumDLL::JSObjHandle res = m_pContext->getFactory()->CreateInt(m_iResult);
 
 		ChromiumDLL::JavaScriptFunctionArgs args;
-		args.function = NULL;
+		args.function = nullptr;
 		args.context = m_pContext;
 		args.argc = 1;
 		args.argv = &res;
-		args.factory = NULL;
+		args.factory = nullptr;
 		args.object = m_pThis;
 
 		ChromiumDLL::JSObjHandle ret = m_pFunction->executeFunction(&args);
@@ -110,7 +110,7 @@ public:
 			m_pCRC->destroy();
 		}
 
-		m_pCRC = NULL;
+		m_pCRC = nullptr;
 		return processed;
 	}
 
@@ -142,7 +142,7 @@ public:
 
 	virtual bool preExecuteValidation(const char* function, uint32 functionHash, JSObjHandle object, size_t argc, JSObjHandle* argv)
 	{
-		return (m_pParent != NULL);
+		return (m_pParent != nullptr);
 	}
 
 	virtual JavaScriptExtenderI* clone()
@@ -200,7 +200,7 @@ public:
 
 	virtual bool preExecuteValidation(const char* function, uint32 functionHash, JSObjHandle object, size_t argc, JSObjHandle* argv)
 	{
-		return (m_pParent != NULL);
+		return (m_pParent != nullptr);
 	}
 
 	virtual JavaScriptExtenderI* clone()

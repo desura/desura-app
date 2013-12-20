@@ -26,7 +26,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>
 void ImageCache::init(const char* appDataPath)
 {
 	m_szAppDataPath = appDataPath;
-	m_LastUpdateTime = time(NULL);
+	m_LastUpdateTime = time(nullptr);
 }
 
 void ImageCache::loadFromDb()
@@ -68,7 +68,7 @@ void ImageCache::saveToDb()
 		//trans.commit();
 
 		m_vUpdateList.clear();
-		m_LastUpdateTime = time(NULL) + 5*60;
+		m_LastUpdateTime = time(nullptr) + 5*60;
 	}
 	catch(std::exception &ex) 
 	{
@@ -83,7 +83,7 @@ void ImageCache::updateImagePath(const char* path, uint32 hash)
 	m_mImageMap[hash] = path;
 	m_vUpdateList.push_back(hash);
 
-	if (m_LastUpdateTime < time(NULL))
+	if (m_LastUpdateTime < time(nullptr))
 		saveToDb();
 
 	m_ImgMutex.unlock();

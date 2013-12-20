@@ -36,8 +36,8 @@ void OnPipeDisconnect();
 
 CGCServiceApp::CGCServiceApp()
 {
-	m_pServiceCore = NULL;
-	m_Fh = NULL;
+	m_pServiceCore = nullptr;
+	m_Fh = nullptr;
 }
 
 CGCServiceApp::~CGCServiceApp()
@@ -65,7 +65,7 @@ bool CGCServiceApp::start(int argc, char** argv)
 		}
 	}
 
-	if (!SetDllPath(wdir.size()?wdir.c_str():NULL))
+	if (!SetDllPath(wdir.size()?wdir.c_str():nullptr))
 	{
 		log("Failed to set dll path. :(\n");
 		return false;
@@ -134,7 +134,7 @@ void CGCServiceApp::stop()
 	if (m_Fh)
 		fclose(m_Fh);
 
-	m_Fh = NULL;
+	m_Fh = nullptr;
 }
 
 void CGCServiceApp::log(const char* msg)

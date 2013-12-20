@@ -32,7 +32,7 @@ public:
 	StripMenuButton(wxWindow *parent, wxString text, const wxSize &size = wxDefaultSize);
 	~StripMenuButton();
 
-	void init(const char* image, const char* overlay = NULL, int32 spacing = -1);
+	void init(const char* image, const char* overlay = nullptr, int32 spacing = -1);
 
 	void setOffset(uint32 val){m_uiOffset = val;}
 	uint32 getOffset(){return m_uiOffset;}

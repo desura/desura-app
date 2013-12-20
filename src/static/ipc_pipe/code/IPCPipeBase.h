@@ -163,7 +163,7 @@ protected:
 	public:
 		LoopbackInfo()
 		{
-			buffer = NULL;
+			buffer = nullptr;
 			size = 0;
 			id = 0;
 		}

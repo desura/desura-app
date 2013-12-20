@@ -57,7 +57,7 @@ void WGTWorker::reportError(gcException &e, gcString provider)
 void WGTWorker::run()
 {
 	m_szUrl = m_pProvMng->getUrl(m_uiId);
-	if (m_szUrl == "NULL")
+	if (m_szUrl == "nullptr")
 	{
 		Warning(gcString("Mcf Download Thread [{0}] failed to get valid url for download.\n", m_uiId));
 		return;
@@ -140,7 +140,7 @@ bool WGTWorker::writeData(char* data, uint32 size)
 	if (!m_pCurBlock)
 		return false;
 
-	MCFCore::Thread::Misc::WGTBlock* block = NULL;
+	MCFCore::Thread::Misc::WGTBlock* block = nullptr;
 
 	m_pCurBlock->m_Lock.lock();
 
@@ -235,7 +235,7 @@ void WGTWorker::doDownload()
 		if (!m_pCurBlock)
 		{
 			if (status != MCFCore::Thread::BaseMCFThread::SF_STATUS_STOP)
-				Warning(gcString("The block was NULL for Mcf Download thread {0}\n", m_uiId));
+				Warning(gcString("The block was nullptr for Mcf Download thread {0}\n", m_uiId));
 
 			return;
 		}
@@ -243,7 +243,7 @@ void WGTWorker::doDownload()
 
 	try
 	{
-		if (m_szUrl.size() == 0 || m_szUrl == "NULL")
+		if (m_szUrl.size() == 0 || m_szUrl == "nullptr")
 			throw gcException(ERR_MCFSERVER, "No more download servers to use.");
 
 		if (!m_pMcfCon->isConnected())
@@ -286,7 +286,7 @@ void WGTWorker::doDownload()
 	if (m_pCurBlock->size == 0)
 	{
 		m_pCT->workerFinishedSuperBlock(m_uiId);
-		m_pCurBlock = NULL;
+		m_pCurBlock = nullptr;
 	}
 }
 
@@ -322,7 +322,7 @@ void WGTWorker::takeProgressOff()
 	m_pCurBlock->done = 0;
 
 	m_pCT->workerFinishedSuperBlock(m_uiId);
-	m_pCurBlock = NULL;
+	m_pCurBlock = nullptr;
 }
 
 void WGTWorker::onProgress(uint32& prog)
@@ -334,7 +334,7 @@ void WGTWorker::requestNewUrl(gcException& e)
 {
 	m_szUrl = m_pProvMng->requestNewUrl(m_uiId, e.getSecErrId(), e.getErrMsg());
 
-	if (m_szUrl != "NULL")
+	if (m_szUrl != "nullptr")
 	{
 		m_iAttempt = 0;
 		m_pMcfCon->disconnect();

@@ -35,7 +35,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>
 #include <Shellapi.h>
 
 #include <Sddl.h>
-#define getSystemPath(id, path) SHGetFolderPathW(NULL, id , NULL, SHGFP_TYPE_CURRENT, path);
+#define getSystemPath(id, path) SHGetFolderPathW(nullptr, id , nullptr, SHGFP_TYPE_CURRENT, path);
 
 namespace UTIL
 {
@@ -53,7 +53,7 @@ bool is64OS()
 	BOOL bIsWow64 = FALSE;
 	fnIsWow64Process = (LPFN_ISWOW64PROCESS) GetProcAddress(GetModuleHandle(TEXT("kernel32")),"IsWow64Process");
   
-	if (NULL != fnIsWow64Process)
+	if (nullptr != fnIsWow64Process)
 	{
 		if (!fnIsWow64Process(GetCurrentProcess(),&bIsWow64))
 		{
@@ -135,14 +135,14 @@ std::string getRegValue(const std::string &regIndex, bool use64bit)
 
 	if (res == ERROR_SUCCESS)
 	{
-		DWORD err = RegQueryValueExW(hk, parts[2].c_str(), NULL, &dwType, NULL, &dwSize);
+		DWORD err = RegQueryValueExW(hk, parts[2].c_str(), nullptr, &dwType, nullptr, &dwSize);
 
 		if (dwSize != 0)
 		{
 			wchar_t* buff = new wchar_t[(dwSize/sizeof(wchar_t))+1];
 			dwSize += 1;
 
-			err = RegQueryValueExW(hk, parts[2].c_str(), NULL, &dwType, (LPBYTE)buff, &dwSize);
+			err = RegQueryValueExW(hk, parts[2].c_str(), nullptr, &dwType, (LPBYTE)buff, &dwSize);
 			resStr = gcString(gcWString(buff, dwSize));
 
 			safe_delete(buff);
@@ -175,13 +175,13 @@ int getRegValueInt(const std::string &regIndex, bool use64bit)
 	int resInt = 0;
 	if (res == ERROR_SUCCESS)
 	{
-		DWORD err = RegQueryValueExW(hk, parts[2].c_str(), NULL, &dwType, NULL, &dwSize);
+		DWORD err = RegQueryValueExW(hk, parts[2].c_str(), nullptr, &dwType, nullptr, &dwSize);
 
 		if (dwSize != 0)
 		{
 			dwSize += 1;
 
-			err = RegQueryValueExW(hk, parts[2].c_str(), NULL, &dwType, (PBYTE)&resInt, &dwSize);
+			err = RegQueryValueExW(hk, parts[2].c_str(), nullptr, &dwType, (PBYTE)&resInt, &dwSize);
 		}
 
 		RegCloseKey(hk);
@@ -207,13 +207,13 @@ void setRegValue(const std::string &regIndex, const std::string &value, bool exp
 
 	DWORD dwSize	= (DWORD)(v.size()+1) * sizeof(wchar_t);
 	DWORD flags		= KEY_WRITE|(use64bit?KEY_WOW64_64KEY:0);
-	DWORD res		= RegCreateKeyEx(rootKey, parts[1].c_str(), 0, NULL, REG_OPTION_NON_VOLATILE, flags, NULL, &hk, NULL) ;
+	DWORD res		= RegCreateKeyEx(rootKey, parts[1].c_str(), 0, nullptr, REG_OPTION_NON_VOLATILE, flags, nullptr, &hk, nullptr) ;
 	DWORD regType	= expandStr?REG_EXPAND_SZ:REG_SZ;
 
 
 	if (res == ERROR_SUCCESS)
 	{
-		DWORD err = RegSetValueExW(hk, parts[2].c_str(), NULL, regType, (LPBYTE)v.c_str(), dwSize);
+		DWORD err = RegSetValueExW(hk, parts[2].c_str(), 0, regType, (LPBYTE)v.c_str(), dwSize);
 		RegCloseKey(hk);
 	}
 }
@@ -228,11 +228,11 @@ void setRegBinaryValue(const std::string &regIndex, const char* blob, size_t siz
 
 	HKEY hk;
 	DWORD flags		= KEY_WRITE|(use64bit?KEY_WOW64_64KEY:0);
-	DWORD res		= RegCreateKeyEx(rootKey, parts[1].c_str(), 0, NULL, REG_OPTION_NON_VOLATILE, flags, NULL, &hk, NULL) ;
+	DWORD res		= RegCreateKeyEx(rootKey, parts[1].c_str(), 0, nullptr, REG_OPTION_NON_VOLATILE, flags, nullptr, &hk, nullptr) ;
 
 	if (res == ERROR_SUCCESS)
 	{
-		DWORD err = RegSetValueExW(hk, parts[2].c_str(), NULL, REG_BINARY, (PBYTE)blob, size);
+		DWORD err = RegSetValueExW(hk, parts[2].c_str(), 0, REG_BINARY, (PBYTE)blob, size);
 		RegCloseKey(hk);
 	}
 }
@@ -247,12 +247,12 @@ void setRegValue(const std::string &regIndex, uint32 value, bool use64bit)
 
 	HKEY hk;
 	DWORD flags		= KEY_WRITE|(use64bit?KEY_WOW64_64KEY:0);
-	DWORD res		= RegCreateKeyEx(rootKey, parts[1].c_str(), 0, NULL, REG_OPTION_NON_VOLATILE, flags, NULL, &hk, NULL) ;
+	DWORD res		= RegCreateKeyEx(rootKey, parts[1].c_str(), 0, nullptr, REG_OPTION_NON_VOLATILE, flags, nullptr, &hk, nullptr) ;
 	DWORD dwValue	= value;
 
 	if (res == ERROR_SUCCESS)
 	{
-		DWORD err = RegSetValueExW(hk, parts[2].c_str(), NULL, REG_DWORD, (PBYTE)&dwValue, sizeof(PDWORD));
+		DWORD err = RegSetValueExW(hk, parts[2].c_str(), 0, REG_DWORD, (PBYTE)&dwValue, sizeof(PDWORD));
 		RegCloseKey(hk);
 	}
 }
@@ -350,7 +350,7 @@ void getAllRegKeys(const std::string &regIndex, std::vector<std::string> &regKey
 		do
 		{
 			nameSize = 255;
-			res = RegEnumKeyEx(hk, x, name, &nameSize, NULL, NULL, NULL, NULL);
+			res = RegEnumKeyEx(hk, x, name, &nameSize, nullptr, nullptr, nullptr, nullptr);
 
 			if (res == ERROR_SUCCESS)
 				regKeys.push_back(gcString(std::wstring(name, nameSize)));
@@ -386,7 +386,7 @@ void getAllRegValues(const std::string &regIndex, std::vector<std::string> &regK
 		do
 		{
 			nameSize = 255;
-			res = RegEnumValue(hk, x, name, &nameSize, NULL, NULL, NULL, NULL);
+			res = RegEnumValue(hk, x, name, &nameSize, nullptr, nullptr, nullptr, nullptr);
 
 			if (res == ERROR_SUCCESS)
 				regKeys.push_back(gcString(std::wstring(name, nameSize)));
@@ -412,7 +412,7 @@ uint64 getFreeSpace(const char* path)
 	Safe::strncpy(drive, 4, path, 3);
 	drive[3] = '\0';
 
-	GetDiskFreeSpaceExA(drive, NULL, NULL, (PULARGE_INTEGER)&i64FreeBytes);
+	GetDiskFreeSpaceExA(drive, nullptr, nullptr, (PULARGE_INTEGER)&i64FreeBytes);
 	return (uint64)i64FreeBytes;
 }
   
@@ -423,7 +423,7 @@ uint32 getHDDSerial()
 	char volName[MAX_PATH+1];
 	DWORD serial;
 
-	GetVolumeInformationA( NULL, volName, MAX_PATH, &serial, NULL, NULL, NULL, 0);
+	GetVolumeInformationA( nullptr, volName, MAX_PATH, &serial, nullptr, nullptr, nullptr, 0);
 
 	return serial;
 }
@@ -457,8 +457,8 @@ uint32 validateCert(const wchar_t* pwszSourceFile, char* message, size_t size)
 	memset(&FileData, 0, sizeof(FileData));
 	FileData.cbStruct = sizeof(WINTRUST_FILE_INFO);
 	FileData.pcwszFilePath = pwszSourceFile;
-	FileData.hFile = NULL;
-	FileData.pgKnownSubject = NULL;
+	FileData.hFile = nullptr;
+	FileData.pgKnownSubject = nullptr;
 
 	/*
 	WVTPolicyGUID specifies the policy to apply on the file
@@ -490,10 +490,10 @@ uint32 validateCert(const wchar_t* pwszSourceFile, char* message, size_t size)
 	WinTrustData.cbStruct = sizeof(WinTrustData);
 	
 	// Use default code signing EKU.
-	WinTrustData.pPolicyCallbackData = NULL;
+	WinTrustData.pPolicyCallbackData = nullptr;
 
 	// No data to pass to SIP.
-	WinTrustData.pSIPClientData = NULL;
+	WinTrustData.pSIPClientData = nullptr;
 
 	// Disable WVT UI.
 	WinTrustData.dwUIChoice = WTD_UI_NONE;
@@ -508,10 +508,10 @@ uint32 validateCert(const wchar_t* pwszSourceFile, char* message, size_t size)
 	WinTrustData.dwStateAction = 0;
 
 	// Not applicable for default verification of embedded signature.
-	WinTrustData.hWVTStateData = NULL;
+	WinTrustData.hWVTStateData = nullptr;
 
 	// Not used.
-	WinTrustData.pwszURLReference = NULL;
+	WinTrustData.pwszURLReference = nullptr;
 
 	// Default.
 	WinTrustData.dwProvFlags = WTD_SAFER_FLAG;
@@ -526,7 +526,7 @@ uint32 validateCert(const wchar_t* pwszSourceFile, char* message, size_t size)
 
 	// WinVerifyTrust verifies signatures as specified by the GUID 
 	// and Wintrust_Data.
-	lStatus = WinVerifyTrust(NULL, &WVTPolicyGUID, &WinTrustData);
+	lStatus = WinVerifyTrust(nullptr, &WVTPolicyGUID, &WinTrustData);
 
 	if (!message)
 		return lStatus;
@@ -606,13 +606,13 @@ bool isMsiInstalled(const char* productCode)
 
 void createShortCut(const wchar_t *path, const char* exe, const char* workingDir, const char* args, bool flagAsNonPinned, const char* icon)
 {
-	IShellLinkA* out = NULL;
-	CoInitialize(NULL);
+	IShellLinkA* out = nullptr;
+	CoInitialize(nullptr);
 
-	if (CoCreateInstance(CLSID_ShellLink, NULL, CLSCTX_INPROC_SERVER, IID_IShellLinkA, (void**)&out) == S_OK)
+	if (CoCreateInstance(CLSID_ShellLink, nullptr, CLSCTX_INPROC_SERVER, IID_IShellLinkA, (void**)&out) == S_OK)
 	{
-		IPersistFile* pIPF = NULL;
-		IPropertyStore* pIPS = NULL;
+		IPersistFile* pIPF = nullptr;
+		IPropertyStore* pIPS = nullptr;
 
 		bool isPersistFile = (out->QueryInterface(IID_IPersistFile, (void**)&pIPF) == S_OK);
 		bool isPropStore = (out->QueryInterface(IID_IPropertyStore, (void**)&pIPS) == S_OK);
@@ -678,7 +678,7 @@ bool launchExe(const char* exe, const char* args, bool elevateIfNeeded, HWND ele
 		//turn on error boxes for launching exe's
 		UINT oldErrMode = SetErrorMode(0);
 
-		res = CreateProcessA(NULL, const_cast<char*>(cmd.c_str()), NULL, NULL, FALSE, 0, NULL, folderPath.c_str(), &si, &pi);
+		res = CreateProcessA(nullptr, const_cast<char*>(cmd.c_str()), nullptr, nullptr, FALSE, 0, nullptr, folderPath.c_str(), &si, &pi);
 		lastError = GetLastError();
 
 		SetErrorMode(oldErrMode);
@@ -721,11 +721,11 @@ bool launchExe(const char* exe, const char* args, bool elevateIfNeeded, HWND ele
 
 void changeFolderPermissions(const std::wstring& dir)
 {
-	wchar_t* localDir = NULL;
-	PACL pDacl = NULL;
-	PACL pNewDACL = NULL;
-	PSID psid = NULL;
-	PSECURITY_DESCRIPTOR ppSecurityDescriptor = NULL;
+	wchar_t* localDir = nullptr;
+	PACL pDacl = nullptr;
+	PACL pNewDACL = nullptr;
+	PSID psid = nullptr;
+	PSECURITY_DESCRIPTOR ppSecurityDescriptor = nullptr;
 
 	wchar_t everyone[255] = {0};
 	wchar_t domain[255] = {0};
@@ -746,7 +746,7 @@ void changeFolderPermissions(const std::wstring& dir)
 	AutoDeleteLocal<PSID> adPsid(&psid);
 
 	// Get the current Security Info for the path
-	res = GetNamedSecurityInfo(localDir, SE_FILE_OBJECT, DACL_SECURITY_INFORMATION, NULL, NULL, &pDacl, NULL, &ppSecurityDescriptor);
+	res = GetNamedSecurityInfo(localDir, SE_FILE_OBJECT, DACL_SECURITY_INFORMATION, nullptr, nullptr, &pDacl, nullptr, &ppSecurityDescriptor);
 
 	if (res != ERROR_SUCCESS)
 		throw gcException(ERR_WIN, res, gcString("Failed to GetNamedSecurityInfo on folder [{0}].", localDir));
@@ -754,10 +754,10 @@ void changeFolderPermissions(const std::wstring& dir)
 	if(!(psid = LocalAlloc(LMEM_FIXED, SidSize)))
 		throw gcException(ERR_SERVICE, GetLastError(), gcString("Failed to LocalAlloc on folder [{0}].", localDir));
 
-	if(!CreateWellKnownSid(WinWorldSid, NULL, psid, &SidSize))
+	if(!CreateWellKnownSid(WinWorldSid, nullptr, psid, &SidSize))
 		throw gcException(ERR_SERVICE, GetLastError(), gcString("Failed to CreateWellKnownSid on folder [{0}].", localDir));
 
-	if (!LookupAccountSid(NULL, psid, everyone, &eSize, domain, &dSize, &rSidNameUse))
+	if (!LookupAccountSid(nullptr, psid, everyone, &eSize, domain, &dSize, &rSidNameUse))
 		throw gcException(ERR_SERVICE, GetLastError(), gcString("Failed to LookupAccountSid on folder [{0}].", localDir));
 
 	BuildExplicitAccessWithName(&ExplicitAccess, everyone, GENERIC_ALL|DELETE, SET_ACCESS, CONTAINER_INHERIT_ACE|OBJECT_INHERIT_ACE);
@@ -765,7 +765,7 @@ void changeFolderPermissions(const std::wstring& dir)
 	if (SetEntriesInAcl(1, &ExplicitAccess, pDacl, &pNewDACL))
 		throw gcException(ERR_WIN, GetLastError(), gcString("Failed to SetEntriesInAcl on folder [{0}].", localDir));
 
-	res = SetNamedSecurityInfo(localDir, SE_FILE_OBJECT, DACL_SECURITY_INFORMATION, NULL, NULL, pNewDACL, NULL);
+	res = SetNamedSecurityInfo(localDir, SE_FILE_OBJECT, DACL_SECURITY_INFORMATION, nullptr, nullptr, pNewDACL, nullptr);
 
 	if (res != ERROR_SUCCESS)
 		throw gcException(ERR_WIN, GetLastError(), gcString("Failed to SetNamedSecurityInfo on folder [{0}].", localDir));
@@ -834,7 +834,7 @@ void extractIconCB(const char* exe, UTIL::CB::CallbackI* callback)
 	pStream->Release();
 }
 
-const char g_cBadChars[] = {
+static std::vector<char> g_cBadChars = {
 	'\\',
 	'/',
 	':',
@@ -843,8 +843,7 @@ const char g_cBadChars[] = {
 	'"',
 	'<',
 	'>',
-	'|',
-	NULL
+	'|'
 };
 
 std::string sanitiseFileName(const char* name)
@@ -852,35 +851,19 @@ std::string sanitiseFileName(const char* name)
 	if (!name)
 		return "";
 
-	std::string out;
+	gcString out;
 	size_t size = strlen(name);
 	out.reserve(size);
 
 	for (size_t x=0; x<size; x++)
 	{
-		size_t y=0;
-		bool bad = false;
-
-		while (g_cBadChars[y])
-		{
-			if (g_cBadChars[y] == name[x])
-			{
-				bad = true;
-				break;
-			}
-
-			y++;
-		}
+		bool bad = std::find(begin(g_cBadChars), end(g_cBadChars), name[x]) != end(g_cBadChars);
 
 		if (!bad)
 			out.push_back(name[x]);
 	}
 
-	//remove any spaces on the end
-	while (out.size() > 0 && out[out.size()-1] == ' ')
-		out.pop_back();
-
-	return out;
+	return out.trim();
 }
 
 bool runAs(const char* command, const char* area)

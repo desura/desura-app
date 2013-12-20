@@ -157,7 +157,7 @@ IPCParameterI* IPCClass::callFunction(const char* name, bool async, std::vector<
 	
 	safe_delete(data);
 
-	IPCParameterI* ret = NULL;
+	IPCParameterI* ret = nullptr;
 
 	if (async)
 	{
@@ -227,7 +227,7 @@ IPCParameterI* IPCClass::callLoopback(const char* name, bool async, std::vector<
 	
 	safe_delete(data);
 
-	IPCParameterI* ret = NULL;
+	IPCParameterI* ret = nullptr;
 
 	if (async)
 	{
@@ -314,7 +314,7 @@ void IPCClass::handleFunctionCall(const char* buff, uint32 size, bool async)
 	std::map<uint32,NetworkFunctionI*>::iterator it;
 	it = m_mFunc.find(fch->functionHash);
 
-	IPCParameterI* ret = NULL;
+	IPCParameterI* ret = nullptr;
 
 	if (it != m_mFunc.end())
 	{
@@ -420,7 +420,7 @@ void IPCClass::sendLoopbackMessage(uint8 type, const char* buff, uint32 size)
 void IPCClass::destroy()
 {
 	if (!m_pManager->isDisconnected())
-		sendMessage( MT_KILL, NULL, 0 );
+		sendMessage( MT_KILL, nullptr, 0 );
 
 	m_pManager->destroyClass(this);
 }

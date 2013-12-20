@@ -38,7 +38,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>
 typedef BOOL (WINAPI* SetDllDirectoryFunc)(LPCTSTR);
 #endif
 
-IPCServiceMain* servicemain = NULL;
+IPCServiceMain* servicemain = nullptr;
 
 #ifndef DESURA_CLIENT
 
@@ -59,7 +59,7 @@ gcString GetSpecialPath(int32 key)
 		return std::string(str.getData(), str.getSize());
 	}
 
-	return "SERVICE CORE IS NULL";
+	return "SERVICE CORE IS nullptr";
 }
 
 void PrintfMsg(const char* format, ...)
@@ -129,7 +129,7 @@ IPCServiceMain::IPCServiceMain(IPC::IPCManager* mang, uint32 id, DesuraId itemId
 	servicemain = this;
 
 #ifndef DESURA_CLIENT
-	m_pServiceThread = NULL;
+	m_pServiceThread = nullptr;
 #endif
 }
 
@@ -198,9 +198,9 @@ IPC::PBlob IPCServiceMain::getSpecialPath(int32 key)
 	switch (key)
 	{
 	case 1:
-		SHGetFolderPath(NULL, CSIDL_PERSONAL, NULL, SHGFP_TYPE_CURRENT, path);
+		SHGetFolderPath(nullptr, CSIDL_PERSONAL, nullptr, SHGFP_TYPE_CURRENT, path);
 	case 2:
-		SHGetFolderPath(NULL, CSIDL_APPDATA, NULL, SHGFP_TYPE_CURRENT, path);
+		SHGetFolderPath(nullptr, CSIDL_APPDATA, nullptr, SHGFP_TYPE_CURRENT, path);
 	};
 
 #endif

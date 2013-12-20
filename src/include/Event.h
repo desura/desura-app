@@ -100,7 +100,7 @@ public:
 		assertType();
 
 		m_bCancel = false;
-		m_pCurDelegate = NULL;
+		m_pCurDelegate = nullptr;
 	}
 
 	EventBase(const EventBase<TArg, TDel>& e)
@@ -111,7 +111,7 @@ public:
 			m_vDelegates.push_back(e.m_vDelegates[x]->clone());
 
 		m_bCancel = false;
-		m_pCurDelegate = NULL;
+		m_pCurDelegate = nullptr;
 	}
 
 	~EventBase()
@@ -143,7 +143,7 @@ public:
 
 			m_pCurDelegate = m_vDelegates[x];
 			m_pCurDelegate->operator()(a);
-			m_pCurDelegate = NULL;
+			m_pCurDelegate = nullptr;
 	
 			if (m_bCancel)
 				break;
@@ -164,7 +164,7 @@ public:
 
 			m_pCurDelegate = m_vDelegates[x];
 			m_pCurDelegate->operator()();
-			m_pCurDelegate = NULL;
+			m_pCurDelegate = nullptr;
 
 			if (m_bCancel)
 				break;
@@ -542,8 +542,8 @@ public:
 protected:
 	ObjDelegateBase()
 	{
-		m_pObj = NULL;
-		m_pFunct = NULL;
+		m_pObj = nullptr;
+		m_pFunct = nullptr;
 	}
 
 	void init(TObj* t, TFunct f)

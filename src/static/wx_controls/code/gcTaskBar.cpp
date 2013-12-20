@@ -41,7 +41,7 @@ class gcTaskBarIconWindow : public wxGuiDelegateImplementation<wxFrame>
 {
 public:
 #ifdef WIN32
-	gcTaskBarIconWindow(gcTaskBarIcon *icon) : wxGuiDelegateImplementation<wxFrame>(NULL, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0), m_icon(icon)
+	gcTaskBarIconWindow(gcTaskBarIcon *icon) : wxGuiDelegateImplementation<wxFrame>(nullptr, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0), m_icon(icon)
 	{
 		// Taskbar restart msg will be sent to us if the icon needs to be redrawn
 		gs_msgRestartTaskbar = RegisterWindowMessage(wxT("TaskbarCreated"));
@@ -117,7 +117,7 @@ gcTaskBarIcon::gcTaskBarIcon() : wxTaskBarIcon()
 	
 	m_pEvents = m_win;
 #else
-	m_pEvents = new gcFrame(NULL, wxID_ANY);
+	m_pEvents = new gcFrame(nullptr, wxID_ANY);
 	m_pEvents->Show(false);
 
 	m_pEvents->Bind(wxEVT_CLOSE_WINDOW, &gcTaskBarIcon::onEventClose, this);
@@ -159,7 +159,7 @@ void gcTaskBarIcon::onEventClose(wxCloseEvent& event)
 	if (frame)
 		frame->cleanUpEvents();
 
-	m_pEvents = NULL;
+	m_pEvents = nullptr;
 	event.Skip();
 }
 
@@ -200,7 +200,7 @@ void gcTaskBarIcon::deregisterDelegate(wxDelegate* d)
 wxEvtHandler* gcTaskBarIcon::GetEventHandler()
 {
 	if (!m_pEvents)
-		return NULL;
+		return nullptr;
 
 	return m_pEvents->GetEventHandler();
 }
@@ -295,7 +295,7 @@ bool gcTaskBarIcon::ShowBalloon(const wxString& title, const wxString& text, uns
 	}
 	return ok;
 #elif defined(NIX)
-	const char* icon = NULL;
+	const char* icon = nullptr;
 	
 	if ( flags & wxICON_INFORMATION )
 		icon = "dialog-information";
@@ -310,7 +310,7 @@ bool gcTaskBarIcon::ShowBalloon(const wxString& title, const wxString& text, uns
 			text.c_str(),
 			icon);
 	
-	notify_notification_show(notification, NULL);
+	notify_notification_show(notification, nullptr);
 	
 	return true;
 #else

@@ -96,7 +96,7 @@ protected:
 
 	void unloadDll()
 	{
-		m_pFactory = NULL;
+		m_pFactory = nullptr;
 		m_ScriptCore.unload();
 		m_ScriptCore = SharedObjectLoader();
 	}
@@ -165,7 +165,7 @@ class CourgettFileBuffer : public CourgetteBufferI
 public:
 	CourgettFileBuffer(const char* file)
 	{
-		buff = NULL;
+		buff = nullptr;
 		size = UTIL::FS::readWholeFile(file, &buff);
 	}
 
@@ -192,7 +192,7 @@ private:
 
 CourgetteInstance::CourgetteInstance()
 {
-	m_pCourgette = NULL;
+	m_pCourgette = nullptr;
 
 	try
 	{

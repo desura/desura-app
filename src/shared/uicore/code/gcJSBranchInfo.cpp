@@ -28,7 +28,7 @@ void FromJSObject(UserCore::Item::BranchInfoI* &branch, JSObjHandle& arg)
 	if (arg->isObject())
 		branch = arg->getUserObject<UserCore::Item::BranchInfoI>();
 	else
-		branch = NULL;
+		branch = nullptr;
 }
 
 REGISTER_JSEXTENDER(DesuraJSBranchInfo);
@@ -61,7 +61,7 @@ bool DesuraJSBranchInfo::preExecuteValidation(const char* function, uint32 funct
 	if (argc == 0)
 		return false;
 
-	UserCore::Item::BranchInfoI* branch = NULL;
+	UserCore::Item::BranchInfoI* branch = nullptr;
 	FromJSObject(branch, argv[0]);
 
 	return isValidBranch(branch);

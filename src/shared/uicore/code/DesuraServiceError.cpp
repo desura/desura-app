@@ -90,7 +90,7 @@ DesuraServiceError::DesuraServiceError( wxWindow* parent, wxWindowID id, const w
 	this->SetSizer( fgSizer1 );
 	this->Layout();
 
-	m_pThread = NULL;
+	m_pThread = nullptr;
 
 	onFinishEvent += guiDelegate(this, &DesuraServiceError::onFinish);
 	onErrorEvent += guiDelegate(this, &DesuraServiceError::onError);

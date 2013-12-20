@@ -81,7 +81,7 @@ namespace UTIL
 	inline char* BZ2CBuff(uint32* destLen, char* source, uint32 sourceLen)
 	{
 		if (!destLen)
-			return NULL;
+			return nullptr;
 
 		if (*destLen == 0)
 			*destLen = sourceLen* 15;

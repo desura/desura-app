@@ -55,7 +55,7 @@ int BreadCrump::addItem(const char* text, uint32 id)
 	gcWString name(text);
 
 	StripMenuButton *temp = new StripMenuButton(this, name.c_str(), wxSize(-1, 19));
-	temp->init("#breadcrumb_bg", NULL, 10);
+	temp->init("#breadcrumb_bg", nullptr, 10);
 
 	temp->setHoverCol( wxColor(GetGCThemeManager()->getColor("hyperlinkbreadcrumb", "hov-fg")));
 	temp->setNormalCol( wxColor(GetGCThemeManager()->getColor("hyperlinkbreadcrumb", "fg")));
@@ -97,7 +97,7 @@ void BreadCrump::clear()
 	for (size_t x=0; x<m_vButtons.size(); x++)
 	{
 		m_vButtons[x]->getButton()->Destroy();
-		m_vButtons[x] = NULL;
+		m_vButtons[x] = nullptr;
 	}
 
 	m_vButtons.clear();

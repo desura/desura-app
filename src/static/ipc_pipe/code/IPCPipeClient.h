@@ -37,7 +37,7 @@ public:
 	//!
 	//! @param name Pipename
 	//!
-	PipeClient(const char* name, LoopbackProcessor* loopbackProcessor = NULL, uint32 managerId = 0);
+	PipeClient(const char* name, LoopbackProcessor* loopbackProcessor = nullptr, uint32 managerId = 0);
 
 	//! Desructor
 	//!

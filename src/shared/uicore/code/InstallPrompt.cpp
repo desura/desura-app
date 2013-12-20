@@ -110,9 +110,9 @@ InstallPrompt::InstallPrompt( wxWindow* parent, wxWindowID id, const wxString& t
 	this->Layout();
 
 #ifdef WIN32
-	textA->Connect( wxEVT_LEFT_DOWN, wxMouseEventHandler( InstallPrompt::onMouseDown ), NULL, this );
-	textB->Connect( wxEVT_LEFT_DOWN, wxMouseEventHandler( InstallPrompt::onMouseDown ), NULL, this );
-	textC->Connect( wxEVT_LEFT_DOWN, wxMouseEventHandler( InstallPrompt::onMouseDown ), NULL, this );
+	textA->Connect( wxEVT_LEFT_DOWN, wxMouseEventHandler( InstallPrompt::onMouseDown ), nullptr, this );
+	textB->Connect( wxEVT_LEFT_DOWN, wxMouseEventHandler( InstallPrompt::onMouseDown ), nullptr, this );
+	textC->Connect( wxEVT_LEFT_DOWN, wxMouseEventHandler( InstallPrompt::onMouseDown ), nullptr, this );
 #endif
 
 	
@@ -178,7 +178,7 @@ void InstallPrompt::onButtonClick(wxCommandEvent& event)
 	if (event.GetId() == m_butExplorer->GetId())
 	{
 #ifdef WIN32
-		ShellExecute(NULL, L"open", m_szPath.c_str(), NULL, NULL, SW_SHOWDEFAULT);
+		ShellExecute(nullptr, L"open", m_szPath.c_str(), nullptr, nullptr, SW_SHOWDEFAULT);
 #else
 		UTIL::LIN::launchFolder(gcString(m_szPath).c_str());
 #endif

@@ -26,7 +26,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>
 #include "common/windows/guid_string.h"
 #include <branding/branding.h>
 
-google_breakpad::ExceptionHandler* MiniDumpGenerator::s_pExceptionHandler = NULL;
+google_breakpad::ExceptionHandler* MiniDumpGenerator::s_pExceptionHandler = nullptr;
 
 class FilterWrapper
 {
@@ -71,7 +71,7 @@ MiniDumpGenerator::MiniDumpGenerator()
 		return;
 		
 	setDumpLevel(3);
-	m_pCrashCallback = NULL;
+	m_pCrashCallback = nullptr;
 	m_bCreatedHandle = true;
 	
 	wchar_t szDumpPath[MAX_PATH];
@@ -85,7 +85,7 @@ MiniDumpGenerator::~MiniDumpGenerator()
 	if (m_bCreatedHandle)
 	{
 		delete s_pExceptionHandler;
-		s_pExceptionHandler = NULL;
+		s_pExceptionHandler = nullptr;
 	}
 }
 
@@ -106,7 +106,7 @@ void MiniDumpGenerator::setUser(const wchar_t* user)
 
 	if (!user)
 	{
-		m_szUser = NULL;
+		m_szUser = nullptr;
 	}
 	else
 	{
@@ -164,17 +164,17 @@ void MiniDumpGenerator::setDumpLevel(unsigned char level)
 void MiniDumpGenerator::getDumpPath(wchar_t *buffer, size_t bufSize)
 {
 	wchar_t comAppPath[MAX_PATH];
-	SHGetFolderPathW(NULL, CSIDL_COMMON_APPDATA , NULL, SHGFP_TYPE_CURRENT, comAppPath);
+	SHGetFolderPathW(nullptr, CSIDL_COMMON_APPDATA , nullptr, SHGFP_TYPE_CURRENT, comAppPath);
 
 	//COMMONAPP_PATH
 	_snwprintf_s(buffer, bufSize, _TRUNCATE, L"%s\\Desura", comAppPath);
-	CreateDirectoryW(buffer, NULL);
+	CreateDirectoryW(buffer, nullptr);
 
 	_snwprintf_s(buffer, bufSize, _TRUNCATE, L"%s\\Desura\\DesuraApp", comAppPath);
-	CreateDirectoryW(buffer, NULL);
+	CreateDirectoryW(buffer, nullptr);
 
 	_snwprintf_s(buffer, bufSize, _TRUNCATE, L"%s\\Desura\\DesuraApp\\dumps", comAppPath);
-	CreateDirectoryW(buffer, NULL);
+	CreateDirectoryW(buffer, nullptr);
 }
 
 bool MiniDumpGenerator::filter(FilterWrapper* fw)
@@ -206,7 +206,7 @@ bool MiniDumpGenerator::complete(const wchar_t* dump_path, const wchar_t* minidu
 											"The information in the dump will help the developers fix the issue in \n"
 											"future releases.");
 
-		::MessageBox(NULL, msg, PRODUCT_NAME " Crash", MB_OK);
+		::MessageBox(nullptr, msg, PRODUCT_NAME " Crash", MB_OK);
 	}
 
 	return succeeded;
@@ -215,7 +215,7 @@ bool MiniDumpGenerator::complete(const wchar_t* dump_path, const wchar_t* minidu
 bool MiniDumpGenerator::dumpreport(const wchar_t* file)
 {
 	wchar_t exePath[255];
-	GetModuleFileNameW(NULL, exePath, 255);
+	GetModuleFileNameW(nullptr, exePath, 255);
 
 	size_t exePathLen = wcslen(exePath);
 	for (size_t x=exePathLen; x>0; x--)
@@ -251,7 +251,7 @@ bool MiniDumpGenerator::dumpreport(const wchar_t* file)
 		wcscat_s(launchArg, 512, m_szUser);
 	}
 
-	BOOL res = CreateProcessW(NULL, launchArg, NULL, NULL, false, NORMAL_PRIORITY_CLASS, NULL, exePath, &StartupInfo, &ProcInfo );
+	BOOL res = CreateProcessW(nullptr, launchArg, nullptr, nullptr, false, NORMAL_PRIORITY_CLASS, nullptr, exePath, &StartupInfo, &ProcInfo );
 
 	return res?true:false;
 }

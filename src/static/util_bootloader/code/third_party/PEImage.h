@@ -102,7 +102,7 @@ class PEImage {
   WORD GetNumSections() const;
 
   // Returns the header for a given section.
-  // returns NULL if there is no such section.
+  // returns nullptr if there is no such section.
   PIMAGE_SECTION_HEADER GetSectionHeader(UINT section) const;
 
   // Returns the size of a given directory entry.
@@ -114,7 +114,7 @@ class PEImage {
   // Returns the section header for a given address.
   // Use: s = image.GetImageSectionFromAddr(a);
   // Post: 's' is the section header of the section that contains 'a'
-  //       or NULL if there is no such section.
+  //       or nullptr if there is no such section.
   PIMAGE_SECTION_HEADER GetImageSectionFromAddr(PVOID address) const;
 
   // Returns the section header for a given section.
@@ -130,7 +130,7 @@ class PEImage {
   // Use: e = image.GetExportEntry(f);
   // Pre: 'f' is either a zero terminated string or ordinal
   // Post: 'e' is a pointer to the export directory entry
-  //       that contains 'f's export RVA, or NULL if 'f'
+  //       that contains 'f's export RVA, or nullptr if 'f'
   //       is not exported from this image
   PDWORD GetExportEntry(LPCSTR name) const;
 

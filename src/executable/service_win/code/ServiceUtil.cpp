@@ -28,7 +28,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>
 const char* g_szValidExeNames[] =
 {
 	"desura.exe",
-	NULL,
+	nullptr,
 };
 
 bool FindWorkingDir(std::string &out)
@@ -126,8 +126,8 @@ uint32 ValidateCert(const wchar_t* pwszSourceFile, char* message, size_t size)
 	memset(&FileData, 0, sizeof(FileData));
 	FileData.cbStruct = sizeof(WINTRUST_FILE_INFO);
 	FileData.pcwszFilePath = pwszSourceFile;
-	FileData.hFile = NULL;
-	FileData.pgKnownSubject = NULL;
+	FileData.hFile = nullptr;
+	FileData.pgKnownSubject = nullptr;
 
 	/*
 	WVTPolicyGUID specifies the policy to apply on the file
@@ -159,10 +159,10 @@ uint32 ValidateCert(const wchar_t* pwszSourceFile, char* message, size_t size)
 	WinTrustData.cbStruct = sizeof(WinTrustData);
 	
 	// Use default code signing EKU.
-	WinTrustData.pPolicyCallbackData = NULL;
+	WinTrustData.pPolicyCallbackData = nullptr;
 
 	// No data to pass to SIP.
-	WinTrustData.pSIPClientData = NULL;
+	WinTrustData.pSIPClientData = nullptr;
 
 	// Disable WVT UI.
 	WinTrustData.dwUIChoice = WTD_UI_NONE;
@@ -177,10 +177,10 @@ uint32 ValidateCert(const wchar_t* pwszSourceFile, char* message, size_t size)
 	WinTrustData.dwStateAction = 0;
 
 	// Not applicable for default verification of embedded signature.
-	WinTrustData.hWVTStateData = NULL;
+	WinTrustData.hWVTStateData = nullptr;
 
 	// Not used.
-	WinTrustData.pwszURLReference = NULL;
+	WinTrustData.pwszURLReference = nullptr;
 
 	// Default.
 	WinTrustData.dwProvFlags = WTD_SAFER_FLAG;
@@ -195,7 +195,7 @@ uint32 ValidateCert(const wchar_t* pwszSourceFile, char* message, size_t size)
 
 	// WinVerifyTrust verifies signatures as specified by the GUID 
 	// and Wintrust_Data.
-	lStatus = WinVerifyTrust(NULL, &WVTPolicyGUID, &WinTrustData);
+	lStatus = WinVerifyTrust(nullptr, &WVTPolicyGUID, &WinTrustData);
 
 	if (!message)
 		return lStatus;

@@ -21,11 +21,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>
 #include "LogCallback.h"
 
 #include "LogBones.cpp"
-//LogCallback* g_pLogCallback = NULL;
+//LogCallback* g_pLogCallback = nullptr;
 //void LogMsg(int type, std::string msg, Color* col);
 //void LogMsg(int type, std::wstring msg, Color* col);
 
-void DESURA_Msg(const char* msg, Color *col = NULL)
+void DESURA_Msg(const char* msg, Color *col = nullptr)
 {
 	if (!msg)
 		return;
@@ -33,7 +33,7 @@ void DESURA_Msg(const char* msg, Color *col = NULL)
 	LogMsg(MT_MSG, msg, col);
 }
 
-void DESURA_Msg_W(const wchar_t* msg, Color *col = NULL)
+void DESURA_Msg_W(const wchar_t* msg, Color *col = nullptr)
 {
 	if (!msg)
 		return;
@@ -46,7 +46,7 @@ void DESURA_Warn(const char* msg)
 	if (!msg)
 		return;
 
-	LogMsg(MT_WARN, msg, NULL);
+	LogMsg(MT_WARN, msg, nullptr);
 }
 
 void DESURA_Warn_W(const wchar_t* msg)
@@ -54,7 +54,7 @@ void DESURA_Warn_W(const wchar_t* msg)
 	if (!msg)
 		return;
 
-	LogMsg(MT_WARN, msg, NULL);
+	LogMsg(MT_WARN, msg, nullptr);
 }
 
 void DESURA_Debug(const char* msg)
@@ -63,7 +63,7 @@ void DESURA_Debug(const char* msg)
 	if (!msg)
 		return;
 
-	LogMsg(MT_MSG, msg, NULL);
+	LogMsg(MT_MSG, msg, nullptr);
 #endif
 }
 
@@ -73,7 +73,7 @@ void DESURA_Debug_W(const wchar_t* msg)
 	if (!msg)
 		return;
 
-	LogMsg(MT_MSG, msg, NULL);
+	LogMsg(MT_MSG, msg, nullptr);
 #endif
 }
 
@@ -100,9 +100,9 @@ void InitLogging()
 
 void DestroyLogging()
 {
-	RegDLLCB_MCF(NULL);
-	RegDLLCB_WEBCORE(NULL);
-	RegDLLCB_USERCORE(NULL);
+	RegDLLCB_MCF(nullptr);
+	RegDLLCB_WEBCORE(nullptr);
+	RegDLLCB_USERCORE(nullptr);
 
 	safe_delete(g_pLogCallback);
 }

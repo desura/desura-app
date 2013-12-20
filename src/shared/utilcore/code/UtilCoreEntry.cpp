@@ -29,7 +29,7 @@ extern wxFrame* g_pMainApp;
 extern "C" CEXPORT UICoreI* GetInterface();
 
 WXDLLIMPEXP_BASE void wxSetInstance(HINSTANCE hInst);
-HHOOK hIISHook = NULL;
+HHOOK hIISHook = nullptr;
 
 LRESULT CALLBACK CallWndProc(int nCode,WPARAM wParam, LPARAM lParam)
 {
@@ -40,10 +40,10 @@ LRESULT CALLBACK CallWndProc(int nCode,WPARAM wParam, LPARAM lParam)
 	{
 		GetInterface()->closeMainWindow();
 
-		if (hIISHook != NULL)
+		if (hIISHook != nullptr)
 			UnhookWindowsHookEx(hIISHook);
 
-		hIISHook = NULL;
+		hIISHook = nullptr;
 	}
 
 	return CallNextHookEx(hIISHook, nCode, wParam, lParam);
@@ -62,10 +62,10 @@ public:
 
 	~UICore()
 	{
-		if (hIISHook != NULL)
+		if (hIISHook != nullptr)
 			UnhookWindowsHookEx(hIISHook);
 
-		hIISHook = NULL;
+		hIISHook = nullptr;
 	}
 
 	void setDesuraVersion(const char* version)
@@ -136,13 +136,13 @@ public:
 			g_pMainApp->Close(true);
 	}
 
-	void restart(const char* args = NULL)
+	void restart(const char* args = nullptr)
 	{
 	}
 
 	const char* getAppVersion()
 	{
-		return NULL;
+		return nullptr;
 	}
 
 	void setExitCode(int32 exitCode)

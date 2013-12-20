@@ -40,7 +40,7 @@ HGTController::HGTController(const char* url, MCFCore::MCF* caller, const char* 
 
 	setPriority(BELOW_NORMAL);
 
-	m_pCurBlock = NULL;
+	m_pCurBlock = nullptr;
 }
 
 HGTController::~HGTController()

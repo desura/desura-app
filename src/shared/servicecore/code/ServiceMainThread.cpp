@@ -60,7 +60,7 @@ void ServiceMainThread::run()
 {
 	while (!isStopped())
 	{
-		TaskI* task = NULL;
+		TaskI* task = nullptr;
 
 		m_vLock.lock();
 

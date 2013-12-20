@@ -33,8 +33,8 @@ GCUpdateProcess::GCUpdateProcess(const char* mcfpath, const char* inspath, bool 
 	m_szIPath = gcWString(inspath);
 	m_szMCFPath= gcWString(mcfpath);
 
-	m_pUMcf = NULL;
-	m_pOldMcf = NULL;
+	m_pUMcf = nullptr;
+	m_pOldMcf = nullptr;
 }
 
 
@@ -79,7 +79,7 @@ void GCUpdateProcess::run()
 void GCUpdateProcess::install()
 {
 	if (m_szIPath == L"" || m_szMCFPath == L"")
-		throw gcException(ERR_BADPATH,"One of the paths for install was NULL.");
+		throw gcException(ERR_BADPATH,"One of the paths for install was nullptr.");
 
 	m_pUMcf = new UMcf();
 	m_pUMcf->setFile(m_szMCFPath.c_str());
@@ -165,12 +165,12 @@ bool GCUpdateProcess::fixDataDir()
 {
 #ifdef WIN32
 	wchar_t comAppPathW[MAX_PATH];
-	SHGetFolderPathW(NULL, CSIDL_COMMON_APPDATA , NULL, SHGFP_TYPE_CURRENT, comAppPathW);
+	SHGetFolderPathW(nullptr, CSIDL_COMMON_APPDATA , nullptr, SHGFP_TYPE_CURRENT, comAppPathW);
 
 	char comAppPathA[MAX_PATH];
-	SHGetFolderPathA(NULL, CSIDL_COMMON_APPDATA , NULL, SHGFP_TYPE_CURRENT, comAppPathA);
+	SHGetFolderPathA(nullptr, CSIDL_COMMON_APPDATA , nullptr, SHGFP_TYPE_CURRENT, comAppPathA);
 
-	UTIL::FS::copyFolder(comAppPathA, gcString(comAppPathW), NULL, false);
+	UTIL::FS::copyFolder(comAppPathA, gcString(comAppPathW), nullptr, false);
 	UTIL::FS::delFolder(comAppPathA);
 #endif
 	return true;

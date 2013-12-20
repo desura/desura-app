@@ -29,7 +29,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>
 class gcComboBox : public wxComboBox
 {
 public:
-	gcComboBox(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& value = L"", const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize, int n = 0, const wxString choices[] = NULL, long style = 0);
+	gcComboBox(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& value = L"", const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize, int n = 0, const wxString choices[] = nullptr, long style = 0);
 
 	void applyTheme();
 };

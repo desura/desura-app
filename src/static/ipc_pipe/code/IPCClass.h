@@ -126,13 +126,13 @@ public:
 
 	void init()
 	{
-		m_pFunct0 = NULL;
-		m_pFunct1 = NULL;
-		m_pFunct2 = NULL;
-		m_pFunct3 = NULL;
-		m_pFunct4 = NULL;
-		m_pFunct5 = NULL;
-		m_pFunct6 = NULL;
+		m_pFunct0 = nullptr;
+		m_pFunct1 = nullptr;
+		m_pFunct2 = nullptr;
+		m_pFunct3 = nullptr;
+		m_pFunct4 = nullptr;
+		m_pFunct5 = nullptr;
+		m_pFunct6 = nullptr;
 	}
 
 	IPCParameterI* call(char* buff, uint32 size, uint8 numP)
@@ -157,7 +157,7 @@ public:
 		vPList.push_back(f);
 	
 		char* buffPos = buff;
-		IPCParameter* msg = NULL;
+		IPCParameter* msg = nullptr;
 
 		for (uint8 x=0; x<m_uiNumParams; x++)
 		{
@@ -166,7 +166,7 @@ public:
 			buffPos += sizeofStruct(msg);
 		}
 	
-		IPCParameterI* ret = NULL;
+		IPCParameterI* ret = nullptr;
 
 		try
 		{
@@ -312,13 +312,13 @@ public:
 
 	void init()
 	{
-		m_pFunct0 = NULL;
-		m_pFunct1 = NULL;
-		m_pFunct2 = NULL;
-		m_pFunct3 = NULL;
-		m_pFunct4 = NULL;
-		m_pFunct5 = NULL;
-		m_pFunct6 = NULL;
+		m_pFunct0 = nullptr;
+		m_pFunct1 = nullptr;
+		m_pFunct2 = nullptr;
+		m_pFunct3 = nullptr;
+		m_pFunct4 = nullptr;
+		m_pFunct5 = nullptr;
+		m_pFunct6 = nullptr;
 	}
 
 	IPCParameterI* call(char* buff, uint32 size, uint8 numP)
@@ -343,7 +343,7 @@ public:
 		vPList.push_back(f);
 	
 		char* buffPos = buff;
-		IPCParameter* msg = NULL;
+		IPCParameter* msg = nullptr;
 
 		for (uint8 x=0; x<m_uiNumParams; x++)
 		{
@@ -590,7 +590,7 @@ public:
 	//! @param f Paramater six
 	//! @return Result
 	//!
-	IPCParameterI* callFunction(const char* name, bool async=false, IPCParameterI* a = NULL, IPCParameterI* b = NULL, IPCParameterI* c = NULL, IPCParameterI* d = NULL, IPCParameterI* e = NULL, IPCParameterI* f = NULL);
+	IPCParameterI* callFunction(const char* name, bool async=false, IPCParameterI* a = nullptr, IPCParameterI* b = nullptr, IPCParameterI* c = nullptr, IPCParameterI* d = nullptr, IPCParameterI* e = nullptr, IPCParameterI* f = nullptr);
 	
 	//! Calls a function on the other side of the IPC. Needs to be public due to helper function. Shouldnt be called directly
 	//!
@@ -614,7 +614,7 @@ public:
 	//! @param f Paramater six
 	//! @return Result
 	//!
-	IPCParameterI* callLoopback(const char* name, bool async=false, IPCParameterI* a = NULL, IPCParameterI* b = NULL, IPCParameterI* c = NULL, IPCParameterI* d = NULL, IPCParameterI* e = NULL, IPCParameterI* f = NULL);
+	IPCParameterI* callLoopback(const char* name, bool async=false, IPCParameterI* a = nullptr, IPCParameterI* b = nullptr, IPCParameterI* c = nullptr, IPCParameterI* d = nullptr, IPCParameterI* e = nullptr, IPCParameterI* f = nullptr);
 	
 	//! Calls a function on this side from IPC thread. Needs to be public due to helper function. Shouldnt be called directly
 	//!

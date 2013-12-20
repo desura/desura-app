@@ -79,7 +79,7 @@ std::string getHashFromFile(FILE* file, uint64 size)
 
 #ifdef WIN32
 		DWORD dwRead = 0;
-		ReadFile(file, buffer, buffSize, &dwRead, NULL);
+		ReadFile(file, buffer, buffSize, &dwRead, nullptr);
 #else
 		uint32 dwRead = fread(buffer, 1, buffSize, file);
 #endif

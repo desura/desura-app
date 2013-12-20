@@ -63,7 +63,7 @@ BootLoader::BootLoader()
 	WaitForDebugger();
 #endif
 
-	m_pUICore = NULL;
+	m_pUICore = nullptr;
 }
 
 BootLoader::~BootLoader()
@@ -74,7 +74,7 @@ void BootLoader::InitInstance()
 {
 	if (BootLoaderUtil::GetOSId() == WINDOWS_PRE2000)
 	{
-		::MessageBox(NULL, PRODUCT_NAME " needs Windows XP or better to run.", PRODUCT_NAME " Error: Old Windows", MB_OK);
+		::MessageBox(nullptr, PRODUCT_NAME " needs Windows XP or better to run.", PRODUCT_NAME " Error: Old Windows", MB_OK);
 		return;
 	}
 
@@ -105,7 +105,7 @@ void BootLoader::loadUICore()
 
 	if (!BootLoaderUtil::SetDllDir(".\\bin"))
 	{
-		::MessageBox(NULL, "Failed to set the DLL path to the bin folder.", PRODUCT_NAME ": ERROR!",  MB_OK);
+		::MessageBox(nullptr, "Failed to set the DLL path to the bin folder.", PRODUCT_NAME ": ERROR!",  MB_OK);
 		exit(-100);			
 	}
 
@@ -118,7 +118,7 @@ void BootLoader::loadUICore()
 	if (!m_hUICore.load(dllname))
 	{
 		DWORD err = GetLastError();
-		::MessageBox(NULL, "Failed to load utilcore.dll", PRODUCT_NAME ": ERROR!",  MB_OK);
+		::MessageBox(nullptr, "Failed to load utilcore.dll", PRODUCT_NAME ": ERROR!",  MB_OK);
 		exit(-200);
 	}
 	
@@ -126,7 +126,7 @@ void BootLoader::loadUICore()
 
 	if (!UICoreGetInterface)
 	{
-		::MessageBox(NULL, "Failed to load wxWidgets mappings in utilcore.dll", PRODUCT_NAME ": ERROR!", MB_OK);
+		::MessageBox(nullptr, "Failed to load wxWidgets mappings in utilcore.dll", PRODUCT_NAME ": ERROR!", MB_OK);
 		exit(-500);
 	} 
 

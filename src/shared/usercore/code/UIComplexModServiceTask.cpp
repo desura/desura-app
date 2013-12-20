@@ -44,7 +44,7 @@ namespace ItemTask
 
 UIComplexModServiceTask::UIComplexModServiceTask(UserCore::Item::ItemHandle* handle, MCFBranch installBranch, MCFBuild installBuild) : UIBaseServiceTask(UserCore::Item::ItemHandleI::STAGE_UNINSTALL_COMPLEX, "UnInstallComplex", handle, installBranch, installBuild)
 {
-	m_pIPCCL = NULL;
+	m_pIPCCL = nullptr;
 
 	m_bRemoveAll = false;
 	m_bRemoveAcc = false;
@@ -64,7 +64,7 @@ UIComplexModServiceTask::~UIComplexModServiceTask()
 		m_pIPCCL->onErrorEvent -= delegate((UIBaseServiceTask*)this, &UIBaseServiceTask::onServiceError);
 
 		m_pIPCCL->destroy();
-		m_pIPCCL = NULL;
+		m_pIPCCL = nullptr;
 	}
 }
 

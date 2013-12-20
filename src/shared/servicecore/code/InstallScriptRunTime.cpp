@@ -53,7 +53,7 @@ void FromJSObject(ServiceItem* &jsItem, JSObjHandle& arg)
 	if (arg->isObject())
 		jsItem = dynamic_cast<ServiceItem*>(arg->getUserObject<ScriptCoreItemI>());
 	else
-		jsItem = NULL;
+		jsItem = nullptr;
 }
 
 class ItemExtender : public DesuraJSBase<ItemExtender>
@@ -71,7 +71,7 @@ public:
 		if (item)
 			return item->m_szInstallPath;
 
-		return "[NULL ITEM]";
+		return "[nullptr ITEM]";
 	}
 
 	gcString GetSpecialPath(int32 key)
@@ -85,7 +85,7 @@ public:
 		if (Safe::stricmp("PROGRAM_FILES", wildcard.c_str()) == 0)
 		{
 			wchar_t path[MAX_PATH]  = {0};
-			SHGetFolderPathW(NULL, CSIDL_PROGRAM_FILES, NULL, SHGFP_TYPE_CURRENT, path);
+			SHGetFolderPathW(nullptr, CSIDL_PROGRAM_FILES, nullptr, SHGFP_TYPE_CURRENT, path);
 			return path;
 		}
 		else if (Safe::stricmp("DOCUMENTS", wildcard.c_str()) == 0)
@@ -102,7 +102,7 @@ public:
 		else if (Safe::stricmp("APP_DATA", wildcard.c_str())==0)
 		{
 			wchar_t path[MAX_PATH]  = {0};
-			SHGetFolderPathW(NULL, CSIDL_COMMON_APPDATA, NULL, SHGFP_TYPE_CURRENT, path);
+			SHGetFolderPathW(nullptr, CSIDL_COMMON_APPDATA, nullptr, SHGFP_TYPE_CURRENT, path);
 			return path;
 		}
 		else if (Safe::stricmp("USER_APP_DATA", wildcard.c_str())==0)
@@ -120,8 +120,8 @@ public:
 	ScriptCore()
 	{
 		m_uiInstanceCount = 0;
-		m_pFactory = NULL;
-		m_pSetup = NULL;
+		m_pFactory = nullptr;
+		m_pSetup = nullptr;
 	}
 
 	ScriptCoreI* newInstance()
@@ -222,8 +222,8 @@ protected:
 		if (m_pSetup)
 			m_pSetup->cleanUp();
 
-		m_pSetup = NULL;
-		m_pFactory = NULL;
+		m_pSetup = nullptr;
+		m_pFactory = nullptr;
 		m_ScriptCore.unload();
 		m_ScriptCore = SharedObjectLoader();
 	}
@@ -244,7 +244,7 @@ ScriptCore g_ScriptCore;
 
 InstallScriptRunTime::InstallScriptRunTime(const char* scriptFile, const char* installPath)
 {
-	m_pRunTime = NULL;
+	m_pRunTime = nullptr;
 	loadScript(scriptFile, installPath);
 }
 
@@ -285,7 +285,7 @@ void InstallScriptRunTime::loadScript(const char* scriptFile, const char* instal
 		if (m_pRunTime)
 			g_ScriptCore.destroyInstance(m_pRunTime);
 
-		m_pRunTime = NULL;
+		m_pRunTime = nullptr;
 	}
 }
 

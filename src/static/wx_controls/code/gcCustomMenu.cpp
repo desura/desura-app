@@ -51,7 +51,7 @@ public:
 	gcImageHandle CheckFocus;
 };
 
-MenuColors* g_MColors = NULL;
+MenuColors* g_MColors = nullptr;
 
 class AutoDeleteMC
 {

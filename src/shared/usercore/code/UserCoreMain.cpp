@@ -51,7 +51,7 @@ extern "C"
 			return (void *)&UserCore::User::getLoginInfo;
 		}
 
-		return NULL;
+		return nullptr;
 	}
 
 }

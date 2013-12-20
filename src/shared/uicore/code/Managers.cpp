@@ -80,7 +80,7 @@ UserCore::UserThreadManagerI* GetThreadManager()
 	if (GetUserCore())
 		return GetUserCore()->getThreadManager();
 
-	return NULL;	
+	return nullptr;	
 }
 
 UserCore::UploadManagerI* GetUploadMng()
@@ -88,7 +88,7 @@ UserCore::UploadManagerI* GetUploadMng()
 	if (GetUserCore())
 		return GetUserCore()->getUploadManager();
 
-	return NULL;
+	return nullptr;
 }
 
 void InitLocalManagers()

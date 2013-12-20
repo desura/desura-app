@@ -157,7 +157,7 @@ static gcUnitTestWatcher *g_pTestWatcher = SetupTestWatcher();
 
 gcUnitTestForm::gcUnitTestForm(wxWindow* parent) 
 	: gcDialog(parent, wxID_ANY, wxT("Unit Tests Results"), wxDefaultPosition, wxSize(500, 354), wxCAPTION | wxDEFAULT_FRAME_STYLE | wxTAB_TRAVERSAL)
-	, m_pThread(NULL)
+	, m_pThread(nullptr)
 	, m_ImageList(16, 16)
 	, m_bShouldClose(false)
 {

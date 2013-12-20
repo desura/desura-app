@@ -135,7 +135,7 @@ DesuraControl::DesuraControl(gcFrame* parent, bool offline, const char* szProvid
 	}
 	else
 	{
-		m_bButtonStrip = NULL;
+		m_bButtonStrip = nullptr;
 		fgSizer4->Add( 5, 0, 1, wxEXPAND, 5 );
 	}
 
@@ -412,7 +412,7 @@ void DesuraControl::setBaseTabPage(PAGE pageId, baseTabPage *page)
 	if (page)
 		m_vTabInfo[pageId]->header = page->getToolBarControl();
 	else
-		m_vTabInfo[pageId]->header = NULL;
+		m_vTabInfo[pageId]->header = nullptr;
 
 	if (m_vTabInfo[pageId]->page)
 		m_vTabInfo[pageId]->page->Show(shouldShowPage);

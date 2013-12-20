@@ -31,7 +31,7 @@ namespace ItemTask
 UIBranchServiceTask::UIBranchServiceTask(UserCore::Item::ItemHandle* handle, MCFBranch installBranch, MCFBuild installBuild, bool test) 
 	: UIBaseServiceTask(UserCore::Item::ItemHandleI::STAGE_UNINSTALL_BRANCH, "UnInstallBranch", handle, installBranch, installBuild)
 {
-	m_pIPCIM = NULL;
+	m_pIPCIM = nullptr;
 	m_bTestInstall = test;
 }
 
@@ -46,7 +46,7 @@ UIBranchServiceTask::~UIBranchServiceTask()
 		m_pIPCIM->onErrorEvent -= delegate((UIBaseServiceTask*)this, &UIBaseServiceTask::onServiceError);
 
 		m_pIPCIM->destroy();
-		m_pIPCIM = NULL;
+		m_pIPCIM = nullptr;
 	}
 }
 

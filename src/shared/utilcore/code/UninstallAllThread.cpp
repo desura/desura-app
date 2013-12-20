@@ -293,7 +293,7 @@ void UninstallAllThread::removeDesuraSettings()
 	std::vector<UTIL::FS::Path> fileList;
 	std::vector<UTIL::FS::Path> folderList;
 
-	UTIL::FS::getAllFiles(dbDir, fileList, NULL);
+	UTIL::FS::getAllFiles(dbDir, fileList, nullptr);
 	UTIL::FS::getAllFolders(dbDir, folderList);
 
 	for (size_t x=0; x<fileList.size(); x++)

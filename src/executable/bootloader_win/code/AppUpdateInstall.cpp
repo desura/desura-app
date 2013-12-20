@@ -65,7 +65,7 @@ AppUpdateInstall::AppUpdateInstall(ProgressReportI* progressReport, bool testMod
 	m_pPrivates->m_szInsPath = ".\\test_install\\";
 #endif
 
-	m_pEvent = CreateEvent(NULL, true, false, NULL);
+	m_pEvent = CreateEvent(nullptr, true, false, nullptr);
 }
 
 AppUpdateInstall::~AppUpdateInstall()
@@ -201,7 +201,7 @@ void AppUpdateInstall::onError(gcException& e)
 	{
 		char mbmsg[255];
 		Safe::snprintf(mbmsg, 255, PRODUCT_NAME " has had a critical error while updating.\n\n%s [%d.%d]", e.getErrMsg(), e.getErrId(), e.getSecErrId());
-		::MessageBox(NULL, mbmsg, PRODUCT_NAME " Critical Update Error", MB_OK);
+		::MessageBox(nullptr, mbmsg, PRODUCT_NAME " Critical Update Error", MB_OK);
 	}
 	else
 	{

@@ -88,7 +88,7 @@ const XML::gcXMLElement WebCoreClass::loginToServer(std::string url, std::string
 DesuraId WebCoreClass::nameToId(const char* name, const char* type)
 {
 	if (!name)
-		throw gcException(ERR_BADITEM, "The name is NULL");
+		throw gcException(ERR_BADITEM, "The name is nullptr");
 
 	gcString key("{0}-{1}", name, type);
 	uint32 hash = UTIL::MISC::RSHash_CSTR(key.c_str());
@@ -150,7 +150,7 @@ DesuraId WebCoreClass::nameToId(const char* name, const char* type)
 DesuraId WebCoreClass::hashToId(const char* itemHashId)
 {
 	if (!itemHashId)
-		throw gcException(ERR_BADITEM, "The hash is NULL");
+		throw gcException(ERR_BADITEM, "The hash is nullptr");
 
 
 	try 

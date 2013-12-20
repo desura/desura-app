@@ -34,11 +34,11 @@ UploadInfoThread::UploadInfoThread(DesuraId id, const char* key, const char* pat
 	m_bErrored = false;
 
 	m_uiProgress = 0;
-	m_pThread = NULL;
+	m_pThread = nullptr;
 
-	m_pWebCore = NULL;
-	m_pUser = NULL;
-	m_pUploadManager = NULL;
+	m_pWebCore = nullptr;
+	m_pUser = nullptr;
+	m_pUploadManager = nullptr;
 
 	m_pUploadThreadInfo = new UploadThreadInfo(id, path, key, start);
 

@@ -76,7 +76,7 @@ const char* UploadManager::findUpload(const char* key)
 	if (temp && !temp->isDeleted())
 		return temp->getFile();
 	
-	return NULL;
+	return nullptr;
 }
 
 //lazy delete

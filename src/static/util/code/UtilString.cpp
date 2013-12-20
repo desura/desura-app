@@ -388,7 +388,7 @@ const char base64_chars[] =
 	'u','v','w','x','y','z',
 	'0','1','2','3','4','5','6','7','8','9',
 	'+','/',
-	(char)NULL,
+	(char)nullptr,
 };
 
 static inline bool is_base64(unsigned char c)
@@ -581,7 +581,7 @@ std::unique_ptr<unsigned char[]> base64_decode(const std::string &encoded_string
 	outlen = of.vOut.size();
 
 	if (outlen == 0)
-		return NULL;
+		return nullptr;
 
 	auto ret = std::make_unique<unsigned char[]>(outlen);
 

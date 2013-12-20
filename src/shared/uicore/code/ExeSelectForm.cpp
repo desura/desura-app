@@ -109,7 +109,7 @@ void ExeSelectForm::setInfo(DesuraId id)
 	std::vector<UserCore::Item::Misc::ExeInfoI*> vExeList;
 	item->getExeList(vExeList);
 
-	gcButton* def = NULL;
+	gcButton* def = nullptr;
 
 	for (size_t x=0; x<vExeList.size(); x++)
 	{

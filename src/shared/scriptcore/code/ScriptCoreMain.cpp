@@ -37,7 +37,7 @@ public:
 	ScriptCoreSetup()
 	{
 		m_bCleanUp = false;
-		m_pThread = NULL;
+		m_pThread = nullptr;
 	}
 
 	~ScriptCoreSetup()
@@ -114,7 +114,7 @@ namespace SCore
 			return (ScriptCoreSetupI*)&g_Setup;
 		}
 
-		return NULL;
+		return nullptr;
 	}
 }
 

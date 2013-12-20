@@ -47,8 +47,8 @@ void CDKeyManager::getCDKeyForCurrentBranch(DesuraId id, UserCore::Misc::CDKeyCa
 	if (!callback)
 		return;
 
-	UserCore::Item::ItemInfoI* info = NULL;
-	UserCore::Item::BranchInfo* binfo = NULL;
+	UserCore::Item::ItemInfoI* info = nullptr;
+	UserCore::Item::BranchInfo* binfo = nullptr;
 
 	try
 	{
@@ -135,8 +135,8 @@ bool CDKeyManager::hasCDKeyForCurrentBranch(DesuraId id)
 
 void CDKeyManager::onCDKeyComplete(UserCore::Task::CDKeyEventInfo<gcString> &info)
 {
-	UserCore::Item::ItemInfoI* iinfo = NULL;
-	UserCore::Item::BranchInfo* binfo = NULL;
+	UserCore::Item::ItemInfoI* iinfo = nullptr;
+	UserCore::Item::BranchInfo* binfo = nullptr;
 
 	iinfo = m_pUser->getItemManager()->findItemInfo(info.id);
 	

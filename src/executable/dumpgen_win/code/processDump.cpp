@@ -161,7 +161,7 @@ UINT __stdcall UploadDump(void* dumpInfo)
 
 	UploadCrashFn uploadCrash = sol.getFunction<UploadCrashFn>("UploadCrash");
 
-	if (uploadCrash == NULL)
+	if (uploadCrash == nullptr)
 	{
 		di->m_szComplete = true;
 		return -2;
@@ -180,7 +180,7 @@ UINT __stdcall UploadDump(void* dumpInfo)
 bool RestartDesura(const char* args)
 {
 	char exePath[255];
-	GetModuleFileName(NULL, exePath, 255);
+	GetModuleFileName(nullptr, exePath, 255);
 
 	size_t exePathLen = strlen(exePath);
 	for (size_t x=exePathLen; x>0; x--)
@@ -198,7 +198,7 @@ bool RestartDesura(const char* args)
 	const char* exeName = "desura.exe";
 
 	_snprintf_s(launchArg, 512, _TRUNCATE, "%s %s", exeName, args?args:"");
-	BOOL res = CreateProcess(NULL, launchArg, NULL, NULL, false, NORMAL_PRIORITY_CLASS, NULL, exePath, &StartupInfo, &ProcInfo);
+	BOOL res = CreateProcess(nullptr, launchArg, nullptr, nullptr, false, NORMAL_PRIORITY_CLASS, nullptr, exePath, &StartupInfo, &ProcInfo);
 
 	CloseHandle(ProcInfo.hProcess);
 	CloseHandle(ProcInfo.hThread);
@@ -217,11 +217,11 @@ void GetBuildBranch(int &build, int &branch)
 	DWORD err1 = RegOpenKeyEx(HKEY_LOCAL_MACHINE, "SOFTWARE\\Desura\\DesuraApp", 0, KEY_QUERY_VALUE, &hk);
 
 	lszValue[0] = 0;
-	DWORD err2 = RegQueryValueEx(hk, "appid", NULL, &dwType,(LPBYTE)&lszValue, &dwSize);
+	DWORD err2 = RegQueryValueEx(hk, "appid", nullptr, &dwType,(LPBYTE)&lszValue, &dwSize);
 	branch = atoi(lszValue);
 
 	lszValue[0] = 0;
-	DWORD err3 = RegQueryValueEx(hk, "appver", NULL, &dwType,(LPBYTE)&lszValue, &dwSize);
+	DWORD err3 = RegQueryValueEx(hk, "appver", nullptr, &dwType,(LPBYTE)&lszValue, &dwSize);
 	build = atoi(lszValue);
 
 	RegCloseKey(hk);

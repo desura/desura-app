@@ -24,12 +24,12 @@ IMPLEMENT_DYNAMIC_CLASS(wxGuiDelegateEvent, wxNotifyEvent)
 
 wxGuiDelegateEvent::wxGuiDelegateEvent() : wxNotifyEvent(wxEVT_GUIDELEGATE, 0)
 {
-	m_pDelegate = NULL;
+	m_pDelegate = nullptr;
 }
 
 wxGuiDelegateEvent::wxGuiDelegateEvent(std::shared_ptr<InvokeI> invoker, int winId) : wxNotifyEvent(wxEVT_GUIDELEGATE, winId)
 {
-	m_pDelegate = NULL;
+	m_pDelegate = nullptr;
 	m_spDelegate = invoker;
 }
 

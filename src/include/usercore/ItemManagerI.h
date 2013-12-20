@@ -71,7 +71,7 @@ public:
 	//! @param pWildCard Wildcard manager
 	//! @param reset used for installs. Tells it to only look at the first install path
 	//!
-	virtual void retrieveItemInfo(DesuraId id, uint32 statusOveride = 0, WildcardManager* pWildCard = NULL, MCFBranch mcfBranch = MCFBranch(), MCFBuild mcfBuild = MCFBuild(), bool reset = false)=0;
+	virtual void retrieveItemInfo(DesuraId id, uint32 statusOveride = 0, WildcardManager* pWildCard = nullptr, MCFBranch mcfBranch = MCFBranch(), MCFBuild mcfBuild = MCFBuild(), bool reset = false)=0;
 
 	//! Gets item info from the web and saves it into the user using a new thread
 	//!

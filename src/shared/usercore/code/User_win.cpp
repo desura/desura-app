@@ -58,7 +58,7 @@ void User::saveLoginInfo()
 
 	DATA_BLOB out;
 
-	if (CryptProtectData(&db, NULL, &secret, NULL, NULL, CRYPTPROTECT_UI_FORBIDDEN, &out))
+	if (CryptProtectData(&db, nullptr, &secret, nullptr, nullptr, CRYPTPROTECT_UI_FORBIDDEN, &out))
 	{
 		UTIL::FS::Path path(UTIL::OS::getLocalAppDataPath(), L"userinfo.upi", false);
 
@@ -128,7 +128,7 @@ void User::getLoginInfo(char** username, char** passhash)
 
 	DATA_BLOB out;
 
-	if (CryptUnprotectData(&db, NULL, &secret, NULL, NULL, CRYPTPROTECT_UI_FORBIDDEN, &out))
+	if (CryptUnprotectData(&db, nullptr, &secret, nullptr, nullptr, CRYPTPROTECT_UI_FORBIDDEN, &out))
 	{
 		char* plaintext = (char*)out.pbData;
 

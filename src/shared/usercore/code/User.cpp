@@ -57,18 +57,18 @@ User::User()
 	m_bLocked = false;
 	m_pWaitCond = new ::Thread::WaitCondition();
 	
-	m_pPipeClient = NULL;
-	m_pThreadPool = NULL;
-	m_pWebCore = NULL;
-	m_pThreadManager = NULL;
-	m_pUploadManager = NULL;
-	m_pUThread = NULL;
-	m_pItemManager = NULL;
-	m_pToolManager = NULL;
-	m_pGameExplorerManager = NULL;
-	m_pCDKeyManager = NULL;
-	m_pBannerDownloadManager = NULL;
-	m_pCIPManager = NULL;
+	m_pPipeClient = nullptr;
+	m_pThreadPool = nullptr;
+	m_pWebCore = nullptr;
+	m_pThreadManager = nullptr;
+	m_pUploadManager = nullptr;
+	m_pUThread = nullptr;
+	m_pItemManager = nullptr;
+	m_pToolManager = nullptr;
+	m_pGameExplorerManager = nullptr;
+	m_pCDKeyManager = nullptr;
+	m_pBannerDownloadManager = nullptr;
+	m_pCIPManager = nullptr;
 	
 	m_bAdmin = false;
 	m_bDelayLoading = false;
@@ -102,7 +102,7 @@ User::~User()
 	safe_delete(m_pWaitCond);
 
 	m_pWebCore->destroy();
-	m_pWebCore = NULL;
+	m_pWebCore = nullptr;
 
 	DelMCFManager();
 }
@@ -125,7 +125,7 @@ void User::unlockDelete()
 
 void User::init(const char* appDataPath)
 {
-	init(appDataPath, NULL);
+	init(appDataPath, nullptr);
 }
 
 void User::init(const char* appDataPath, const char* szProviderUrl)
@@ -197,7 +197,7 @@ void User::init()
 	m_pThreadManager->setUserCore(this);
 
 	m_iUserId = 0;
-	m_pUThread = NULL;
+	m_pUThread = nullptr;
 	m_bAdmin = false;
 	m_bDelayLoading = false;
 
@@ -212,7 +212,7 @@ void User::init()
 #endif
 
 	m_pCIPManager = new CIPManager(this);
-	m_pPipeClient = NULL;
+	m_pPipeClient = nullptr;
 
 	m_bDownloadingUpdate = false;
 	onNeedWildCardEvent += delegate(this, &User::onNeedWildCardCB);
@@ -222,7 +222,7 @@ void User::init()
 	m_iPms = 0;
 	m_iCartItems = 0;
 #ifdef WIN32
-	m_WinHandle = NULL;
+	m_WinHandle = nullptr;
 #endif
 }
 
@@ -289,11 +289,11 @@ void User::appNeedUpdate(uint32 appver, uint32 appbuild)
 const char* User::getCVarValue(const char* cvarName)
 {
 	if (!cvarName)
-		return NULL;
+		return nullptr;
 		
 	UserCore::Misc::CVar_s temp;
 	temp.name = cvarName;
-	temp.value = NULL;
+	temp.value = nullptr;
 
 	onNeedCvarEvent(temp);
 	return temp.value;
@@ -331,14 +331,14 @@ void User::onNeedWildCardCB(WCSpecialInfo& info)
 	if (Safe::stricmp("PROGRAM_FILES", info.name.c_str()) == 0)
 	{
 		wchar_t path[MAX_PATH]  = {0};
-		SHGetFolderPathW(NULL, CSIDL_PROGRAM_FILES, NULL, SHGFP_TYPE_CURRENT, path);
+		SHGetFolderPathW(nullptr, CSIDL_PROGRAM_FILES, nullptr, SHGFP_TYPE_CURRENT, path);
 		info.result = path;
 		info.handled = true;
 	}
 	else if (Safe::stricmp("DOCUMENTS", info.name.c_str()) == 0)
 	{
 		wchar_t path[MAX_PATH] = {0};
-		SHGetFolderPathW(NULL, CSIDL_PERSONAL, NULL, SHGFP_TYPE_CURRENT, path);
+		SHGetFolderPathW(nullptr, CSIDL_PERSONAL, nullptr, SHGFP_TYPE_CURRENT, path);
 		info.result = path;
 		info.handled = true;
 	}
@@ -355,14 +355,14 @@ void User::onNeedWildCardCB(WCSpecialInfo& info)
 	else if (Safe::stricmp("APP_DATA", info.name.c_str())==0)
 	{
 		wchar_t path[MAX_PATH]  = {0};
-		SHGetFolderPathW(NULL, CSIDL_COMMON_APPDATA, NULL, SHGFP_TYPE_CURRENT, path);
+		SHGetFolderPathW(nullptr, CSIDL_COMMON_APPDATA, nullptr, SHGFP_TYPE_CURRENT, path);
 		info.result = path;
 		info.handled = true;
 	}
 	else if (Safe::stricmp("USER_APP_DATA", info.name.c_str())==0)
 	{
 		wchar_t path[MAX_PATH]  = {0};
-		SHGetFolderPathW(NULL, CSIDL_APPDATA, NULL, SHGFP_TYPE_CURRENT, path);
+		SHGetFolderPathW(nullptr, CSIDL_APPDATA, nullptr, SHGFP_TYPE_CURRENT, path);
 		info.result = path;
 		info.handled = true;
 	}

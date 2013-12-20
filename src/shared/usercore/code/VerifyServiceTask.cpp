@@ -65,7 +65,7 @@ VerifyServiceTask::VerifyServiceTask(UserCore::Item::ItemHandle* handle, MCFBran
 	m_bError = false;
 	m_uiLastPercent = 0;
 
-	m_pCurTask = NULL;
+	m_pCurTask = nullptr;
 
 	m_McfBranch = branch;
 	m_McfBuild = build;
@@ -166,7 +166,7 @@ void VerifyServiceTask::doRun()
 	if (m_bCheckTools)
 		end = !checkTools();
 
-	finishVerify(UserCore::Misc::VerifyComplete::V_COMPLETE, NULL, end);
+	finishVerify(UserCore::Misc::VerifyComplete::V_COMPLETE, nullptr, end);
 }
 
 bool VerifyServiceTask::checkFiles()
@@ -293,7 +293,7 @@ bool VerifyServiceTask::checkMcfDownload(gcString &path)
 	{
 	}
 
-	m_pCurTask = NULL;
+	m_pCurTask = nullptr;
 	return res;
 }
 
@@ -313,7 +313,7 @@ bool VerifyServiceTask::checkMcf(bool &completeMcf)
 	{
 	}
 
-	m_pCurTask = NULL;
+	m_pCurTask = nullptr;
 	return res;
 }
 
@@ -333,7 +333,7 @@ bool VerifyServiceTask::checkInstall(bool completeMcf)
 	{
 	}
 
-	m_pCurTask = NULL;
+	m_pCurTask = nullptr;
 
 	if (res)
 	{
@@ -387,7 +387,7 @@ bool VerifyServiceTask::downloadMissingFiles()
 		return false;
 	}
 
-	m_pCurTask = NULL;
+	m_pCurTask = nullptr;
 	return res;
 }
 
@@ -409,7 +409,7 @@ bool VerifyServiceTask::installMissingFiles()
 	{
 	}
 
-	m_pCurTask = NULL;
+	m_pCurTask = nullptr;
 	return res;
 }
 

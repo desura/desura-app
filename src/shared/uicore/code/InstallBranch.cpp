@@ -196,7 +196,7 @@ int InstallBranch::setInfo(DesuraId id, bool selectBranch)
 	gcWString itemName = pItemInfo->getName();
 	
 	DesuraId par = pItemInfo->getParentId();
-	UserCore::Item::ItemInfoI *parInfo = NULL;
+	UserCore::Item::ItemInfoI *parInfo = nullptr;
 	if (par.isOk())
 	{
 		parInfo = GetUserCore()->getItemManager()->findItemInfo(par);

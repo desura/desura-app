@@ -93,7 +93,7 @@ CEXPORT void* FactoryBuilder(const char* name)
 		return (void*)&genUserAgent;
 	}
 
-	return NULL;
+	return nullptr;
 }
 
 extern "C"

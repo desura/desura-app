@@ -32,7 +32,7 @@ namespace UserCore
 CIPManager::CIPManager(User* user)
 {
 	m_pUser = user;
-	m_pThread = NULL;
+	m_pThread = nullptr;
 	m_bRefreshComplete = false;
 
 	createCIPDbTables(user->getAppDataPath());

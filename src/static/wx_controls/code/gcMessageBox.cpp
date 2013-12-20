@@ -71,7 +71,7 @@ int gcMessageBox(wxWindow *parent, const wxString& message, const wxString& capt
 
 
 gcMessageDialog::gcMessageDialog(wxWindow* parent, const wxString& message, const wxString& caption, long style, const wxPoint& pos) 
-	: gcDialog(NULL, wxID_ANY, caption, pos, wxDefaultSize, wxCAPTION|wxWANTS_CHARS ) //PARENT MUST BE LEFT NULL. Crashes other wise.
+	: gcDialog(nullptr, wxID_ANY, caption, pos, wxDefaultSize, wxCAPTION|wxWANTS_CHARS ) //PARENT MUST BE LEFT nullptr. Crashes other wise.
 {
 	if (style&(wxYES))
 		m_bButtonList.push_back(new gcButton(this, wxID_YES, Managers::GetString(L"#YES"), wxDefaultPosition, wxDefaultSize, wxWANTS_CHARS));
@@ -158,7 +158,7 @@ gcMessageDialog::gcMessageDialog(wxWindow* parent, const wxString& message, cons
 	this->Raise();
 #endif
 
-	m_pHelper = NULL;
+	m_pHelper = nullptr;
 	Bind(wxEVT_COMMAND_BUTTON_CLICKED, &gcMessageDialog::onButtonClick, this);
 	Bind(wxEVT_CHAR, &gcMessageDialog::onChar, this);
 

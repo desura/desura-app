@@ -125,7 +125,7 @@ public:
 
 	void endCB(UTIL::CB::CallbackI* callback)
 	{
-		write(NULL, 0, true);
+		write(nullptr, 0, true);
 
 		do
 		{
@@ -152,7 +152,7 @@ protected:
 			return;
 
 		if (strm.avail_in == 0)
-			strm.next_in = NULL;
+			strm.next_in = nullptr;
 		else
 			strm.next_in = &m_DataInStream[0];
 
@@ -212,7 +212,7 @@ protected:
 			strm.avail_in = m_DataInStream.size();
 
 			if (strm.avail_in == 0)
-				strm.next_in = NULL;
+				strm.next_in = nullptr;
 			else
 				strm.next_in = &m_DataInStream[0];
 

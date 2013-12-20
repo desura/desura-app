@@ -48,7 +48,7 @@ public:
 	//!
 	virtual const wchar_t* getLabel(uint32 index)=0;
 	
-	//! Get the tool tip for button at index. Can be NULL
+	//! Get the tool tip for button at index. Can be nullptr
 	//!
 	virtual const wchar_t* getToolTip(uint32 index)=0;
 	
@@ -59,10 +59,10 @@ public:
 
 //! Shows an error message box. Title and prompt can be language strings (starting with #) that will be looked up
 //!
-void gcErrorBox(wxWindow *parent, const char* title, const char* prompt, const gcException &e, HelperButtonsI* helper=NULL);
+void gcErrorBox(wxWindow *parent, const char* title, const char* prompt, const gcException &e, HelperButtonsI* helper=nullptr);
 
 //! Shows a message box
-int gcMessageBox(wxWindow *parent, const wxString& message, const wxString& caption = wxT("Desura"), long style = wxICON_EXCLAMATION|wxOK, HelperButtonsI* helper=NULL);
+int gcMessageBox(wxWindow *parent, const wxString& message, const wxString& caption = wxT("Desura"), long style = wxICON_EXCLAMATION|wxOK, HelperButtonsI* helper=nullptr);
 
 class gcImageControl;
 class gcButton;

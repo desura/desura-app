@@ -33,7 +33,7 @@ UIServiceTask::UIServiceTask(UserCore::Item::ItemHandle* handle, bool removeAll,
 	m_bRemoveAll = removeAll;
 	m_bRemoveAcc = removeAcc;
 
-	m_pIPCUI = NULL;
+	m_pIPCUI = nullptr;
 	m_bRunning = false;
 }
 
@@ -49,7 +49,7 @@ UIServiceTask::~UIServiceTask()
 		m_pIPCUI->onErrorEvent -= delegate(this, &UIServiceTask::onServiceError);
 
 		m_pIPCUI->destroy();
-		m_pIPCUI = NULL;
+		m_pIPCUI = nullptr;
 	}
 }
 

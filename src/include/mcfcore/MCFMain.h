@@ -36,21 +36,21 @@ class McfHandle
 public:
 	McfHandle()
 	{
-		m_pMcf = NULL;
+		m_pMcf = nullptr;
 	}
 
 	McfHandle(MCFCore::MCFI *MCF)
 	{
-		m_pMcf = NULL;
+		m_pMcf = nullptr;
 		setHandle(MCF);
 	}
 
 	McfHandle(const McfHandle &handle)
 	{
-		m_pMcf = NULL;
+		m_pMcf = nullptr;
 		setHandle(handle.m_pMcf);
 		
-		handle.m_pMcf = NULL;
+		handle.m_pMcf = nullptr;
 	}
 
 	~McfHandle()
@@ -58,7 +58,7 @@ public:
 		if (m_pMcf)
 			MCFCore::FactoryDelete(m_pMcf, MCF_FACTORY);
 
-		m_pMcf = NULL;
+		m_pMcf = nullptr;
 	}
 
 	MCFCore::MCFI* operator ->()
@@ -77,7 +77,7 @@ public:
 	MCFCore::MCFI* releaseHandle()
 	{
 		MCFCore::MCFI* temp = m_pMcf;
-		m_pMcf = NULL;
+		m_pMcf = nullptr;
 		return temp;
 	}
 

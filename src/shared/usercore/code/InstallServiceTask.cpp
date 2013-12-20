@@ -47,7 +47,7 @@ InstallServiceTask::InstallServiceTask(UserCore::Item::ItemHandle* handle, const
 	m_bHasError = false;
 	m_bInstalling = false;
 	m_bHashMissMatch = false;
-	m_pIPCIM = NULL;
+	m_pIPCIM = nullptr;
 	m_pIHH = ihh;
 }
 

@@ -19,7 +19,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>
 #include "Common.h"
 #include "UtilFunction.h"
 
-std::vector<UtilFunction*> *gs_FunctionList = NULL; 
+std::vector<UtilFunction*> *gs_FunctionList = nullptr; 
 
 void AddFunction(UtilFunction* function)
 {

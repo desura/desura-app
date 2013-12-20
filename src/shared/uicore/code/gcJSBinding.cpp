@@ -107,7 +107,7 @@ private:
 JSObjHandle DesuraJSBinding::getLocalString(ChromiumDLL::JavaScriptFactoryI *m_pFactory, ChromiumDLL::JavaScriptContextI* context, JSObjHandle object, std::vector<JSObjHandle> &args)
 {
 	if (!m_pFactory)
-		return NULL;
+		return nullptr;
 	
 	gcString buff;
 	FromJSObject(buff, args[0]);
@@ -157,7 +157,7 @@ JSObjHandle DesuraJSBinding::getLocalString(ChromiumDLL::JavaScriptFactoryI *m_p
 void* DesuraJSBinding::getItemInfoFromId(gcString szId)
 {
 	if (!GetUserCore() || !GetUserCore()->getItemManager())
-		return NULL;
+		return nullptr;
 
 	DesuraId id(UTIL::MISC::atoll(szId.c_str()));
 	return GetUserCore()->getItemManager()->findItemInfo(id);
@@ -406,7 +406,7 @@ const char* g_ValidImageList[] =
 	"gif",
 	"jpg",
 	"jpeg",
-	NULL,
+	nullptr,
 };
 
 bool DesuraJSBinding::isValidIcon(gcString url)
@@ -491,10 +491,10 @@ CONCOMMAND( cc_addlink, "gc_link_add" )
 void* DesuraJSBinding::addLink(gcString name, gcString exe, gcString args)
 {
 	if (name == "" || !UTIL::FS::isValidFile(exe))
-		return NULL;
+		return nullptr;
 
 	if (!GetUserCore() || !GetUserCore()->getItemManager())
-		return NULL;
+		return nullptr;
 
 	DesuraId id = GetUserCore()->getItemManager()->addLink(name.c_str(), exe.c_str(), args.c_str());
 	return GetUserCore()->getItemManager()->findItemInfo(id);

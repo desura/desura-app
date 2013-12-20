@@ -40,7 +40,7 @@ public:
 
 CDKInfo::CDKInfo(wxWindow* parent, const char* exe, bool launch) : BasePage(parent)
 {
-	m_butActivate = NULL;
+	m_butActivate = nullptr;
 	m_szExe = exe;
 	m_bLaunch = launch;
 

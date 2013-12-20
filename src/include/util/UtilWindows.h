@@ -197,7 +197,7 @@ namespace WIN
 	//! @param size Error message buffer size
 	//! @return Cert status
 	//!
-	uint32 validateCert(const wchar_t* file, char* message = NULL, size_t size = 0);
+	uint32 validateCert(const wchar_t* file, char* message = nullptr, size_t size = 0);
 
 	//! Checks to see if a point is on visable screen
 	//!
@@ -230,7 +230,7 @@ namespace WIN
 	//! @param flagAsNonPinned Mark the shortcut as non pinnable in the start menu
 	//! @param icon Path to icon, default is the first exe icon
 	//!
-	void createShortCut(const wchar_t *path, const char* exe, const char* workingDir, const char* args, bool flagAsNonPinned = false, const char* icon = NULL);
+	void createShortCut(const wchar_t *path, const char* exe, const char* workingDir, const char* args, bool flagAsNonPinned = false, const char* icon = nullptr);
 
 	//! Starts an exe 
 	//!
@@ -240,7 +240,7 @@ namespace WIN
 	//!
 	//! Will throw exceptions
 	//!
-	bool launchExe(const char* exePath, const char* args=NULL, bool elevateIfNeeded = false, HWND elevationHandle = (HWND)0);
+	bool launchExe(const char* exePath, const char* args=nullptr, bool elevateIfNeeded = false, HWND elevationHandle = (HWND)0);
 
 	//! Changes a folder to be writable by all users
 	//!
@@ -256,7 +256,7 @@ namespace WIN
 
 	//! Gets the path to the windows install folder
 	//!
-	gcWString getWindowsPath(const wchar_t *extra = NULL);
+	gcWString getWindowsPath(const wchar_t *extra = nullptr);
 
 	template <typename T>
 	void extractIcon(const char* exe, const T &callback)

@@ -61,7 +61,7 @@ CDProcess::CDProcess(wxWindow* parent) : gcPanel(parent, wxID_ANY, wxDefaultPosi
 	this->SetSizer( fgSizer5 );
 	this->Layout();
 
-	m_pThread = NULL;
+	m_pThread = nullptr;
 }
 
 CDProcess::~CDProcess()

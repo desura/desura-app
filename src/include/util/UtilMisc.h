@@ -343,7 +343,7 @@ namespace MISC
 		CMDArgs(const char* args);
 		~CMDArgs();
 
-		void addValue(const char* name, const char* value = NULL);
+		void addValue(const char* name, const char* value = nullptr);
 
 		bool hasArg(const char* name);
 		bool hasValue(const char* name);

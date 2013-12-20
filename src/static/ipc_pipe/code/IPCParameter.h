@@ -314,7 +314,7 @@ void param_delete(T*& ptr)
 {
 	if (ptr)
 		delete ptr;
-	ptr = NULL;
+	ptr = nullptr;
 }
 
 template <typename T>

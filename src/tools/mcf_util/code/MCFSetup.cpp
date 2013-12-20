@@ -27,8 +27,8 @@ typedef void (*DFACT)(void*, const char*);
 typedef const char* (*VFACT)();
 
 
-BFACT buildFactory = NULL;
-DFACT delFactory = NULL;
+BFACT buildFactory = nullptr;
+DFACT delFactory = nullptr;
 
 SharedObjectLoader g_hMcfCore;
 
@@ -77,7 +77,7 @@ void InitFactory()
 MCFCore::MCFI* mcfFactory()
 {
     if (!buildFactory)
-        return NULL;
+        return nullptr;
 
     void* temp = buildFactory(MCF_FACTORY);
 

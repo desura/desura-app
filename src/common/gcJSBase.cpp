@@ -21,7 +21,7 @@ JSDelegateI::~JSDelegateI()
 
 gcString getString(JSObjHandle& arg)
 {
-	int size = arg->getStringValue(NULL, 0);
+	int size = arg->getStringValue(nullptr, 0);
 
 	if (size == 0)
 		return "";
@@ -206,7 +206,7 @@ DesuraJSBaseNonTemplate::DesuraJSBaseNonTemplate(const char* name, const char* b
 	m_szBindingFile = gcString("{2}{1}bindings{1}{0}", bindingFile, DIRS_STR,
 		UTIL::OS::getDataPath());
 
-	m_pContext = NULL;
+	m_pContext = nullptr;
 }
 
 DesuraJSBaseNonTemplate::~DesuraJSBaseNonTemplate()
@@ -222,7 +222,7 @@ const char* DesuraJSBaseNonTemplate::getName()
 
 const char* DesuraJSBaseNonTemplate::getRegistrationCode()
 {
-	char* buff=NULL;
+	char* buff=nullptr;
 	uint32 size = 0;
 
 	try
@@ -246,7 +246,7 @@ JSObjHandle DesuraJSBaseNonTemplate::execute(ChromiumDLL::JavaScriptFunctionArgs
 	try
 	{
 		if (!args->factory || !args->function)
-			return NULL;
+			return nullptr;
 
 		uint32 id = UTIL::MISC::RSHash_CSTR(args->function, strlen(args->function));
 		uint32 index = find(id);
@@ -255,7 +255,7 @@ JSObjHandle DesuraJSBaseNonTemplate::execute(ChromiumDLL::JavaScriptFunctionArgs
 			throw gcException(ERR_INVALID, "Function not found");
 
 		if (!preExecuteValidation(args->function, id, args->object, args->argc, args->argv))
-			return NULL;
+			return nullptr;
 
 		return m_mDelegateList[index].second->operator()(args->factory, args->context, args->object, args->argc, args->argv);
 	}

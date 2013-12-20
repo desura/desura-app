@@ -34,7 +34,7 @@ MainMenuButton::MainMenuButton(wxWindow* parent, bool offline) : gcImageButton(p
 	setDefaultImage("#menu_button");
 	setHoverImage("#menu_button_hover");
 	
-	m_mainMenu = NULL;
+	m_mainMenu = nullptr;
 	createMenu(offline);
 
 	m_bIgnoreNextClick = false;

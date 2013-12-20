@@ -30,7 +30,7 @@ bool setFirewallAllow(const char* exePath, const char* name)
 	if (!UTIL::FS::isValidFile(exePath))
 		return false;
 
-	CoInitialize(NULL);
+	CoInitialize(nullptr);
 
 	WinXPSP2FireWall fw;
 	fw.Initialize();
@@ -47,7 +47,7 @@ void delFirewallAllow(const char* exePath)
 	if (!UTIL::FS::isValidFile(exePath))
 		return;
 
-	CoInitialize(NULL);
+	CoInitialize(nullptr);
 
 	WinXPSP2FireWall fw;
 	fw.Initialize();

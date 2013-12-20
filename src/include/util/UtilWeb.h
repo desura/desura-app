@@ -144,14 +144,14 @@ public:
 };
 
 
-HttpHandleI* newHttpHandle(const char* url = NULL, bool useSsl = false);
+HttpHandleI* newHttpHandle(const char* url = nullptr, bool useSsl = false);
 
 class HttpHandle
 {
 public:
 	HttpHandle()
 	{
-		m_pWC = NULL;
+		m_pWC = nullptr;
 	}
 
 	HttpHandle(const char* url, bool useSsl = false)
@@ -162,7 +162,7 @@ public:
 	HttpHandle(HttpHandle &handle)
 	{
 		m_pWC = handle.m_pWC;
-		handle.m_pWC = NULL;
+		handle.m_pWC = nullptr;
 	}
 
 	~HttpHandle()
@@ -188,7 +188,7 @@ public:
 			m_pWC->del();
 
 		m_pWC = handle.m_pWC;
-		handle.m_pWC = NULL;
+		handle.m_pWC = nullptr;
 
 		return *this;
 	}

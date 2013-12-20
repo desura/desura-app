@@ -101,7 +101,7 @@ namespace LIN
 	bool launchProcess(const char* exe, const std::map<std::string, std::string> &info = std::map<std::string, std::string>());
 
 	// Launch a process in $PATH
-	bool launchProcessXDG(const char* exe, const char* libPath = NULL);
+	bool launchProcessXDG(const char* exe, const char* libPath = nullptr);
 
 	bool launchFolder(const char* path);
 

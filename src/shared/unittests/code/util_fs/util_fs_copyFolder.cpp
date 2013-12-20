@@ -1,8 +1,8 @@
 
 #include <gtest/gtest.h>
 
-// interface: void copyFolder(Path src, Path dest, std::vector<std::string> *vIgnoreList = NULL, bool copyOverExisting = true);
-//            void copyFolder(std::string src, std::string dest, std::vector<std::string> *vIgnoreList = NULL, bool copyOverExisting = true)
+// interface: void copyFolder(Path src, Path dest, std::vector<std::string> *vIgnoreList = nullptr, bool copyOverExisting = true);
+//            void copyFolder(std::string src, std::string dest, std::vector<std::string> *vIgnoreList = nullptr, bool copyOverExisting = true)
 
 // set up test env for util_fs testing
 #define TEST_DIR "copyFolder"

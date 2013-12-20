@@ -37,21 +37,21 @@ class LogCallback
 public:
 	LogCallback()
 	{
-		m_cbMsg = NULL;
-		m_cbMsgW = NULL;
-		m_cbWarn = NULL;
-		m_cbWarnW = NULL;
-		m_cbDebug = NULL;
-		m_cbDebugW = NULL;
+		m_cbMsg = nullptr;
+		m_cbMsgW = nullptr;
+		m_cbWarn = nullptr;
+		m_cbWarnW = nullptr;
+		m_cbDebug = nullptr;
+		m_cbDebugW = nullptr;
 	}
 
-	void Msg(const char* msg, Color* col = NULL)
+	void Msg(const char* msg, Color* col = nullptr)
 	{
 		if (m_cbMsg)
 			m_cbMsg(msg, col);
 	}
 
-	void Msg_W(const wchar_t* msg, Color* col = NULL)
+	void Msg_W(const wchar_t* msg, Color* col = nullptr)
 	{
 		if (m_cbMsgW)
 			m_cbMsgW(msg, col);

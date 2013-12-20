@@ -50,8 +50,8 @@ UpdateThreadOld::UpdateThreadOld(EventV *onForcePollEvent, bool loadLoginItems)
 	if (m_pOnForcePollEvent)
 		*m_pOnForcePollEvent += delegate(this, &UpdateThreadOld::onForcePoll);
 
-	m_pUser = NULL;
-	m_pWebCore = NULL;
+	m_pUser = nullptr;
+	m_pWebCore = nullptr;
 
 	m_bLoadLoginItems = loadLoginItems;
 }
@@ -63,7 +63,7 @@ void UpdateThreadOld::onStop()
 	if (m_pOnForcePollEvent)
 		*m_pOnForcePollEvent -= delegate(this, &UpdateThreadOld::onForcePoll);
 
-	m_pOnForcePollEvent = NULL;
+	m_pOnForcePollEvent = nullptr;
 }
 
 void UpdateThreadOld::init()

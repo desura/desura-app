@@ -65,7 +65,7 @@ class ItemForm : public gcFrame,
 	public UserCore::Item::Helper::ItemHandleFactoryI
 {
 public:
-	ItemForm(wxWindow* parent, const char* action = NULL, const char* id = NULL);
+	ItemForm(wxWindow* parent, const char* action = nullptr, const char* id = nullptr);
 	~ItemForm();
 
 	void finishUninstall(bool complete, bool account);

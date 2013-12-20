@@ -136,7 +136,7 @@ void ToolManager::onSpecialCheck(WCSpecialInfo &info)
 		UTIL::FS::Path path(m_pUser->getAppDataPath(), "", false);
 		path += "temp";
 		
-		time_t t = time(NULL) + GetTickCount();
+		time_t t = time(nullptr) + GetTickCount();
 		gcSleep(1000);
 		path += gcString("{0}", t);
 

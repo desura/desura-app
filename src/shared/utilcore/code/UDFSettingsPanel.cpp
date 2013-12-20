@@ -56,7 +56,7 @@ UDFSettingsPanel::UDFSettingsPanel(wxWindow* parent) : wxPanel(parent, wxID_ANY,
 
 
 	char path[255] = {0};
-	GetModuleFileNameA(NULL, path, 255);
+	GetModuleFileNameA(nullptr, path, 255);
 
 	m_tbUninstallLoc = new wxTextCtrl( this, wxID_ANY, UTIL::FS::PathWithFile(path).getFolderPath(), wxDefaultPosition, wxDefaultSize, wxTE_READONLY );
 

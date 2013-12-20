@@ -38,8 +38,8 @@ enum MSG_TYPE
 	MT_DEBUG,
 };
 
-void LogMsg(int type, std::string msg, Color *col = NULL);
-void LogMsg(int type, std::wstring msg, Color *col = NULL);
+void LogMsg(int type, std::string msg, Color *col = nullptr);
+void LogMsg(int type, std::wstring msg, Color *col = nullptr);
 
 
 template<typename CT>

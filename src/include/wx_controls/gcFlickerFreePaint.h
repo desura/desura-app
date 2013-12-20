@@ -88,7 +88,7 @@ protected:
 	void init()
 	{
 #ifdef NIX
-		if(T::m_widget == NULL)
+		if(T::m_widget == nullptr)
 			return;
 #endif
 		this->Bind( wxEVT_SIZE, &gcFlickerFreePaint::onResize, this);

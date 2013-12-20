@@ -59,7 +59,7 @@ void UploadPrepThread::doRun()
 	std::string hash = UTIL::MISC::hashFile(path.getFullPath().c_str());
 	uint64 fileSize = UTIL::FS::getFileSize(path);
 
-	char* key = NULL;
+	char* key = nullptr;
 
 	try
 	{

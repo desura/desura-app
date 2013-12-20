@@ -100,7 +100,7 @@ MainForm::MainForm(wxWindow* parent, bool offline, const char* szProvider)
 	SetMinSize( wxSize(700,370) );
 
 	m_iMode = MODE_UNINT;
-	m_wxAboutForm = NULL;	
+	m_wxAboutForm = nullptr;	
 
 	m_pDesuraControl = new DesuraControl(this, offline, szProvider);
 
@@ -401,12 +401,12 @@ void MainForm::goOffline()
 
 void MainForm::onSubFormClose(uint32 formId)
 {
-	wxWindow* win = NULL;
+	wxWindow* win = nullptr;
 
 	if (m_wxAboutForm && m_wxAboutForm->GetId() == (int)formId)
 	{
 		win = m_wxAboutForm;
-		m_wxAboutForm = NULL;
+		m_wxAboutForm = nullptr;
 	}
 
 	if (!win)
@@ -414,7 +414,7 @@ void MainForm::onSubFormClose(uint32 formId)
 
 	win->Show(false);
 	win->Destroy();
-	win = NULL;
+	win = nullptr;
 }
 
 void MainForm::onIconize(wxIconizeEvent& event )

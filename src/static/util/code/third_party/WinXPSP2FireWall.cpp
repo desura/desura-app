@@ -14,7 +14,7 @@
 
 WinXPSP2FireWall::WinXPSP2FireWall(void)
 {
-	m_pFireWallProfile = NULL;
+	m_pFireWallProfile = nullptr;
 }
 
 WinXPSP2FireWall::~WinXPSP2FireWall(void)
@@ -25,8 +25,8 @@ WinXPSP2FireWall::~WinXPSP2FireWall(void)
 FW_ERROR_CODE WinXPSP2FireWall::Initialize()
 {
 	HRESULT hr = S_FALSE;
-	INetFwMgr* fwMgr = NULL;
-	INetFwPolicy* fwPolicy = NULL;
+	INetFwMgr* fwMgr = nullptr;
+	INetFwPolicy* fwPolicy = nullptr;
 
 	FW_ERROR_CODE ret = FW_NOERROR;
 	try
@@ -35,7 +35,7 @@ FW_ERROR_CODE WinXPSP2FireWall::Initialize()
 			throw FW_ERR_INITIALIZED;
 
 		// Create an instance of the firewall settings manager.
-		hr = CoCreateInstance( CLSID_NetFwMgr, NULL, CLSCTX_INPROC_SERVER, IID_INetFwMgr, (void**)&fwMgr );
+		hr = CoCreateInstance( CLSID_NetFwMgr, nullptr, CLSCTX_INPROC_SERVER, IID_INetFwMgr, (void**)&fwMgr );
 
 		if( FAILED( hr ))
 			throw FW_ERR_CREATE_SETTING_MANAGER;
@@ -70,7 +70,7 @@ FW_ERROR_CODE WinXPSP2FireWall::Uninitialize()
 	if( m_pFireWallProfile )
 	{
 		m_pFireWallProfile->Release();
-		m_pFireWallProfile = NULL;
+		m_pFireWallProfile = nullptr;
 	}
 
 	return FW_NOERROR;
@@ -84,7 +84,7 @@ FW_ERROR_CODE WinXPSP2FireWall::IsWindowsFirewallOn( BOOL& bOn )
 
 	try
 	{
-		if( m_pFireWallProfile == NULL )
+		if( m_pFireWallProfile == nullptr )
 			throw FW_ERR_INITIALIZED;
 
 		hr = m_pFireWallProfile->get_FirewallEnabled( &bFWEnabled );
@@ -108,7 +108,7 @@ FW_ERROR_CODE WinXPSP2FireWall::TurnOnWindowsFirewall()
 
 	try
 	{
-		if( m_pFireWallProfile == NULL )
+		if( m_pFireWallProfile == nullptr )
 			throw FW_ERR_INITIALIZED;
 
 		// Check whether the firewall is off
@@ -139,7 +139,7 @@ FW_ERROR_CODE WinXPSP2FireWall::TurnOffWindowsFirewall()
 	HRESULT hr;
 	try
 	{
-		if( m_pFireWallProfile == NULL )
+		if( m_pFireWallProfile == nullptr )
 			throw FW_ERR_INITIALIZED;
 
 		// Check whether the firewall is off
@@ -168,18 +168,18 @@ FW_ERROR_CODE WinXPSP2FireWall::IsAppEnabled( const wchar_t* lpszProcessImageFil
 {
 	FW_ERROR_CODE ret = FW_NOERROR;
 	HRESULT hr;
-	BSTR bstrFWProcessImageFileName = NULL;
+	BSTR bstrFWProcessImageFileName = nullptr;
 	VARIANT_BOOL bFWEnabled;
-	INetFwAuthorizedApplication* pFWApp = NULL;
-	INetFwAuthorizedApplications* pFWApps = NULL;
+	INetFwAuthorizedApplication* pFWApp = nullptr;
+	INetFwAuthorizedApplications* pFWApps = nullptr;
 	
 	bEnable = FALSE;
 	try
 	{
-		if( m_pFireWallProfile == NULL )
+		if( m_pFireWallProfile == nullptr )
 			throw FW_ERR_INITIALIZED;
 
-		if( lpszProcessImageFileName == NULL )
+		if( lpszProcessImageFileName == nullptr )
 			throw FW_ERR_INVALID_ARG;
 
 		hr = m_pFireWallProfile->get_AuthorizedApplications( &pFWApps );
@@ -227,16 +227,16 @@ FW_ERROR_CODE WinXPSP2FireWall::AddApplication( const wchar_t* lpszProcessImageF
 	FW_ERROR_CODE ret = FW_NOERROR;
 	HRESULT hr;
 	BOOL bAppEnable;
-	BSTR bstrProcessImageFileName = NULL;
-	BSTR bstrRegisterName = NULL;
-	INetFwAuthorizedApplication* pFWApp = NULL;
-	INetFwAuthorizedApplications* pFWApps = NULL;
+	BSTR bstrProcessImageFileName = nullptr;
+	BSTR bstrRegisterName = nullptr;
+	INetFwAuthorizedApplication* pFWApp = nullptr;
+	INetFwAuthorizedApplications* pFWApps = nullptr;
 
 	try
 	{
-		if( m_pFireWallProfile == NULL )
+		if( m_pFireWallProfile == nullptr )
 			throw FW_ERR_INITIALIZED;
-		if( lpszProcessImageFileName == NULL || lpszRegisterName  == NULL )
+		if( lpszProcessImageFileName == nullptr || lpszRegisterName  == nullptr )
 			throw FW_ERR_INVALID_ARG;
 
 		// First of all, check the application is already authorized;
@@ -253,7 +253,7 @@ FW_ERROR_CODE WinXPSP2FireWall::AddApplication( const wchar_t* lpszProcessImageF
 				throw FW_ERR_AUTH_APPLICATIONS;
 
 			// Create an instance of an authorized application
-			hr = CoCreateInstance( CLSID_NetFwAuthorizedApplication, NULL, CLSCTX_INPROC_SERVER, IID_INetFwAuthorizedApplication, (void**)&pFWApp);
+			hr = CoCreateInstance( CLSID_NetFwAuthorizedApplication, nullptr, CLSCTX_INPROC_SERVER, IID_INetFwAuthorizedApplication, (void**)&pFWApp);
 			if( FAILED( hr ))
 				throw FW_ERR_CREATE_APP_INSTANCE;
 
@@ -303,14 +303,14 @@ FW_ERROR_CODE WinXPSP2FireWall::RemoveApplication( const wchar_t* lpszProcessIma
 	FW_ERROR_CODE ret = FW_NOERROR;
 	HRESULT hr;
 	BOOL bAppEnable;
-	BSTR bstrProcessImageFileName = NULL;
-	INetFwAuthorizedApplications* pFWApps = NULL;
+	BSTR bstrProcessImageFileName = nullptr;
+	INetFwAuthorizedApplications* pFWApps = nullptr;
 
 	try
 	{
-		if( m_pFireWallProfile == NULL )
+		if( m_pFireWallProfile == nullptr )
 			throw FW_ERR_INITIALIZED;
-		if( lpszProcessImageFileName == NULL )
+		if( lpszProcessImageFileName == nullptr )
 			throw FW_ERR_INVALID_ARG;
 
 		FW_ERROR_CODE  nError = this->IsAppEnabled( lpszProcessImageFileName, bAppEnable );
@@ -349,14 +349,14 @@ FW_ERROR_CODE WinXPSP2FireWall::IsPortEnabled( LONG lPortNumber, NET_FW_IP_PROTO
 {
 	FW_ERROR_CODE ret = FW_NOERROR;
 	VARIANT_BOOL bFWEnabled;
-	INetFwOpenPort* pFWOpenPort = NULL;
-	INetFwOpenPorts* pFWOpenPorts = NULL;
+	INetFwOpenPort* pFWOpenPort = nullptr;
+	INetFwOpenPorts* pFWOpenPorts = nullptr;
 	HRESULT hr;
 
 	bEnable = FALSE;
 	try
 	{
-		if( m_pFireWallProfile == NULL )
+		if( m_pFireWallProfile == nullptr )
 			throw FW_ERR_INITIALIZED;
 
 		// Retrieve the open ports collection
@@ -392,14 +392,14 @@ FW_ERROR_CODE WinXPSP2FireWall::IsPortEnabled( LONG lPortNumber, NET_FW_IP_PROTO
 FW_ERROR_CODE WinXPSP2FireWall::AddPort( LONG lPortNumber, NET_FW_IP_PROTOCOL ipProtocol, const wchar_t* lpszRegisterName )
 {
 	FW_ERROR_CODE ret = FW_NOERROR;
-	INetFwOpenPort* pFWOpenPort = NULL;
-	INetFwOpenPorts* pFWOpenPorts = NULL;
-	BSTR bstrRegisterName = NULL;
+	INetFwOpenPort* pFWOpenPort = nullptr;
+	INetFwOpenPorts* pFWOpenPorts = nullptr;
+	BSTR bstrRegisterName = nullptr;
 	HRESULT hr;
 
 	try
 	{
-		if( m_pFireWallProfile == NULL )
+		if( m_pFireWallProfile == nullptr )
 			throw FW_ERR_INITIALIZED;
 		BOOL bEnablePort;
 		FW_ERROR_CODE nError = IsPortEnabled( lPortNumber, ipProtocol, bEnablePort);
@@ -415,7 +415,7 @@ FW_ERROR_CODE WinXPSP2FireWall::AddPort( LONG lPortNumber, NET_FW_IP_PROTOCOL ip
 				throw FW_ERR_GLOBAL_OPEN_PORTS;
 
 			// Create an instance of an open port
-			hr = CoCreateInstance( CLSID_NetFwOpenPort, NULL, CLSCTX_INPROC_SERVER, IID_INetFwOpenPort, (void**)&pFWOpenPort);
+			hr = CoCreateInstance( CLSID_NetFwOpenPort, nullptr, CLSCTX_INPROC_SERVER, IID_INetFwOpenPort, (void**)&pFWOpenPort);
 			if( FAILED( hr ))
 				throw FW_ERR_CREATE_PORT_INSTANCE;
 
@@ -461,12 +461,12 @@ FW_ERROR_CODE WinXPSP2FireWall::AddPort( LONG lPortNumber, NET_FW_IP_PROTOCOL ip
 FW_ERROR_CODE WinXPSP2FireWall::RemovePort( LONG lPortNumber, NET_FW_IP_PROTOCOL ipProtocol )
 {
 	FW_ERROR_CODE ret = FW_NOERROR;
-	INetFwOpenPorts* pFWOpenPorts = NULL;
+	INetFwOpenPorts* pFWOpenPorts = nullptr;
 	HRESULT hr;
 
 	try
 	{
-		if( m_pFireWallProfile == NULL )
+		if( m_pFireWallProfile == nullptr )
 			throw FW_ERR_INITIALIZED;
 		BOOL bEnablePort;
 		FW_ERROR_CODE nError = IsPortEnabled( lPortNumber, ipProtocol, bEnablePort);
@@ -506,7 +506,7 @@ FW_ERROR_CODE WinXPSP2FireWall::IsExceptionNotAllowed( BOOL& bNotAllowed )
 
 	try
 	{
-		if( m_pFireWallProfile == NULL )
+		if( m_pFireWallProfile == nullptr )
 			throw FW_ERR_INITIALIZED;
 
 		VARIANT_BOOL bExNotAllowed;
@@ -535,7 +535,7 @@ FW_ERROR_CODE WinXPSP2FireWall::SetExceptionNotAllowed( BOOL bNotAllowed )
 
 	try
 	{
-		if( m_pFireWallProfile == NULL )
+		if( m_pFireWallProfile == nullptr )
 			throw FW_ERR_INITIALIZED;
 		HRESULT hr = m_pFireWallProfile->put_ExceptionsNotAllowed( bNotAllowed ? VARIANT_TRUE : VARIANT_FALSE );
 
@@ -557,7 +557,7 @@ FW_ERROR_CODE WinXPSP2FireWall::IsNotificationDiabled( BOOL& bDisabled )
 	bDisabled = FALSE;
 	try
 	{
-		if( m_pFireWallProfile == NULL )
+		if( m_pFireWallProfile == nullptr )
 			throw FW_ERR_INITIALIZED;
 
 		VARIANT_BOOL bNotifyDisable;
@@ -584,7 +584,7 @@ FW_ERROR_CODE WinXPSP2FireWall::SetNotificationDiabled( BOOL bDisabled )
 
 	try
 	{
-		if( m_pFireWallProfile == NULL )
+		if( m_pFireWallProfile == nullptr )
 			throw FW_ERR_INITIALIZED;
 
 		HRESULT hr = m_pFireWallProfile->put_NotificationsDisabled( bDisabled ? VARIANT_TRUE : VARIANT_FALSE );
@@ -606,7 +606,7 @@ FW_ERROR_CODE WinXPSP2FireWall::IsUnicastResponsesToMulticastBroadcastDisabled( 
 	bDisabled = FALSE;
 	try
 	{
-		if( m_pFireWallProfile == NULL )
+		if( m_pFireWallProfile == nullptr )
 			throw FW_ERR_INITIALIZED;
 
 		VARIANT_BOOL bUniMultiDisabled;
@@ -633,7 +633,7 @@ FW_ERROR_CODE WinXPSP2FireWall::SetUnicastResponsesToMulticastBroadcastDisabled(
 
 	try
 	{
-		if( m_pFireWallProfile == NULL )
+		if( m_pFireWallProfile == nullptr )
 			throw FW_ERR_INITIALIZED;
 
 		HRESULT hr = m_pFireWallProfile->put_UnicastResponsesToMulticastBroadcastDisabled( bDisabled ? VARIANT_TRUE : VARIANT_FALSE );

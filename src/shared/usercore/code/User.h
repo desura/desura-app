@@ -410,7 +410,7 @@ inline ::Thread::ThreadPool* User::getThreadPool()
 inline IPCServiceMain* User::getServiceMain()
 {
 	if (!m_pPipeClient)
-		return NULL;
+		return nullptr;
 
 	return m_pPipeClient->getServiceMain();
 }

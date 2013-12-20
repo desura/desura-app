@@ -213,7 +213,7 @@ void MCF::addFile(std::shared_ptr<MCFCore::MCFFile>& file)
 MCFCore::MCFFileI* MCF::getMCFFile(uint32 index)
 {
 	if (index >= m_pFileList.size())
-		return NULL;
+		return nullptr;
 
 	return m_pFileList[index].get();
 }
@@ -423,7 +423,7 @@ bool MCF::verifyInstall(const char* path, bool flagMissing, bool useDiffs)
 
 			m_pFileList[x]->setDir(path);
 			m_pFileList[x]->verifyFile(useDiffs);
-			m_pFileList[x]->setDir(NULL);
+			m_pFileList[x]->setDir(nullptr);
 
 			if ( !m_pFileList[x]->isComplete() )
 			{
@@ -445,7 +445,7 @@ bool MCF::verifyInstall(const char* path, bool flagMissing, bool useDiffs)
 		}
 		catch (gcException &)
 		{
-			m_pFileList[x]->setDir(NULL);
+			m_pFileList[x]->setDir(nullptr);
 			throw;
 		}
 	}
@@ -476,7 +476,7 @@ void MCF::removeFiles(const char* szPath, bool removeNonSave)
 
 		m_pFileList[x]->setDir(szPath);
 		m_pFileList[x]->delFile();
-		m_pFileList[x]->setDir(NULL);
+		m_pFileList[x]->setDir(nullptr);
 	}
 
 	UTIL::FS::Path path(szPath, "", false);
@@ -506,7 +506,7 @@ bool MCF::isComplete(MCFI* exsitingFiles)
 	MCF *temp = static_cast<MCF*>(exsitingFiles);
 
 	std::vector<mcfDif_s> vSame;
-	findChanges(temp, &vSame, NULL, NULL);
+	findChanges(temp, &vSame, nullptr, nullptr);
 
 	bool res = true;
 

@@ -227,7 +227,7 @@ bool EventHandler::onLoadError(const char* errorMsg, const char* url, char* buff
 	if (!UTIL::FS::isValidFile(UTIL::FS::PathWithFile(errorpage)))
 		return false;
 
-	char* fileBuff = NULL;
+	char* fileBuff = nullptr;
 
 	try
 	{
@@ -292,7 +292,7 @@ bool EventHandler::HandlePopupMenu(ChromiumDLL::ChromiumMenuInfoI* menuInfo)
 gcMenu* EventHandler::createMenu(ChromiumDLL::ChromiumMenuInfoI* menuInfo)
 {
 	gcMenu *menu = new gcMenu();
-	gcMenu *custom = NULL;
+	gcMenu *custom = nullptr;
 
 	if (menuInfo->getCustomCount() > 0)
 	{
@@ -306,7 +306,7 @@ gcMenu* EventHandler::createMenu(ChromiumDLL::ChromiumMenuInfoI* menuInfo)
 			if (!custom)
 				custom = new gcMenu();
 
-			gcMenuItem *menuItem = NULL;
+			gcMenuItem *menuItem = nullptr;
 
 			switch (item->getType())
 			{
@@ -435,7 +435,7 @@ gcMenu* EventHandler::createMenu(ChromiumDLL::ChromiumMenuInfoI* menuInfo)
 			}
 
 			menu = custom;
-			custom = NULL;
+			custom = nullptr;
 		}
 		else
 		{

@@ -52,7 +52,7 @@ void FileHandle::open(const char* fileName, FILE_MODE mode, uint64 offset)
 
 	m_uiOffset = offset;
 
-	HANDLE fh = NULL;
+	HANDLE fh = nullptr;
 
 	DWORD dwDesiredAccess  = GENERIC_READ;
 	DWORD dwShareMode = FILE_SHARE_READ;
@@ -81,7 +81,7 @@ void FileHandle::open(const char* fileName, FILE_MODE mode, uint64 offset)
 	}
 
 	gcWString file(fileName);
-	fh = CreateFileW(file.c_str(), dwDesiredAccess, dwShareMode, NULL, dwCreationDisposition, 0, NULL);
+	fh = CreateFileW(file.c_str(), dwDesiredAccess, dwShareMode, nullptr, dwCreationDisposition, 0, nullptr);
 
 	if (!fh || fh == INVALID_HANDLE_VALUE)
 		throw gcException(ERR_INVALIDFILE, GetLastError(), gcString("Failed to open the file '{0}'", fileName));
@@ -107,7 +107,7 @@ void FileHandle::close()
 	if (m_hFileHandle)
 		CloseHandle(m_hFileHandle);
 
-	m_hFileHandle = NULL;
+	m_hFileHandle = nullptr;
 	m_bIsOpen = false;
 }
 
@@ -117,7 +117,7 @@ void FileHandle::read(char* buff, uint32 size)
 		throw gcException(ERR_NULLHANDLE);
 
 	DWORD dwRead = 0;
-	uint8 readRet = ReadFile(m_hFileHandle, buff, size, &dwRead, NULL);
+	uint8 readRet = ReadFile(m_hFileHandle, buff, size, &dwRead, nullptr);
 
 	int err = GetLastError();
 
@@ -137,7 +137,7 @@ void FileHandle::write(const char* buff, uint32 size)
 		throw gcException(ERR_NULLHANDLE);
 
 	DWORD dwWrite = 0;
-	uint8 writeRet = WriteFile(m_hFileHandle, buff, size, &dwWrite, NULL);
+	uint8 writeRet = WriteFile(m_hFileHandle, buff, size, &dwWrite, nullptr);
 
 	int err = GetLastError();
 
@@ -161,7 +161,7 @@ void FileHandle::seek(uint64 pos)
 	LARGE_INTEGER mov;
 	mov.QuadPart = m_uiOffset + pos;
 
-	BOOL res = SetFilePointerEx(m_hFileHandle, mov, NULL, FILE_BEGIN);
+	BOOL res = SetFilePointerEx(m_hFileHandle, mov, nullptr, FILE_BEGIN);
 
 	if (res == 0)
 		throw gcException(ERR_FAILEDSEEK, GetLastError());

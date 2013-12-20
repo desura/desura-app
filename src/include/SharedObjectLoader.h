@@ -43,7 +43,7 @@ public:
 
 	SharedObjectLoader()
 	{
-		m_hHandle = NULL;
+		m_hHandle = nullptr;
 		m_bHasFailed = false;
 	}
 
@@ -52,7 +52,7 @@ public:
 		m_hHandle = sol.m_hHandle;
 		m_bHasFailed = sol.m_bHasFailed;
 
-		sol.m_hHandle = NULL;
+		sol.m_hHandle = nullptr;
 		sol.m_bHasFailed = false;
 	}
 
@@ -92,21 +92,21 @@ public:
 		FreeLibrary(m_hHandle);
 #endif
 
-		m_hHandle = NULL;
+		m_hHandle = nullptr;
 	}
 
 	template <typename T>
 	T getFunction(const char* functionName)
 	{
 		if (!m_hHandle)
-			return NULL;
+			return nullptr;
 #ifdef NIX
 		char* error;
 		T fun = (T)dlsym(m_hHandle, functionName);
-		if ((error = dlerror()) != NULL)
+		if ((error = dlerror()) != nullptr)
 		{
 			printf("%s:%d - Error getting function %s: '%s'\n", __FILE__, __LINE__, functionName, dlerror());
-			return NULL;
+			return nullptr;
 		}
 
 #else

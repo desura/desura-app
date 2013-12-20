@@ -142,8 +142,8 @@ typedef void (BaseInstallPage::*onCompleteStrFn)(gcString&);
 
  BaseInstallPage::BaseInstallPage(wxWindow* parent) : BasePage(parent)
  {
-	 m_pItemHandle = NULL;
-	 m_pIHH = NULL;
+	 m_pItemHandle = nullptr;
+	 m_pIHH = nullptr;
  }
 
  BaseInstallPage::~BaseInstallPage()

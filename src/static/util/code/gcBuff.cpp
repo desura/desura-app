@@ -39,7 +39,7 @@ gcBuff::gcBuff(gcBuff &buff)
 
 	if (size == 0)
 	{
-		m_cBuff = NULL;
+		m_cBuff = nullptr;
 		m_uiSize = 0;
 	}
 	else
@@ -54,7 +54,7 @@ gcBuff::gcBuff(gcBuff *buff)
 {
 	if (!buff || buff->size() == 0)
 	{
-		m_cBuff = NULL;
+		m_cBuff = nullptr;
 		m_uiSize = 0;
 	}
 	else

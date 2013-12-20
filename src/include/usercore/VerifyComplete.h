@@ -45,7 +45,7 @@ public:
 		vStatus = V_COMPLETE;
 	}
 
-	VerifyComplete(VSTATUS status, const char* file = NULL)
+	VerifyComplete(VSTATUS status, const char* file = nullptr)
 	{
 		if (file)
 			szFile = gcString(file);

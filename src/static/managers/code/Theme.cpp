@@ -32,7 +32,7 @@ const char* Theme::getImage(const char* id)
 	if (img)
 		return img->path.c_str();
 
-	return NULL;
+	return nullptr;
 }
 
 const char* Theme::getWebPage(const char* id)
@@ -42,7 +42,7 @@ const char* Theme::getWebPage(const char* id)
 	if (web)
 		return web->path.c_str();
 
-	return NULL;
+	return nullptr;
 }
 
 Color Theme::getColor(const char* name, const char* id)
@@ -68,7 +68,7 @@ SpriteRect* Theme::getSpriteRect(const char* id, const char* rectId)
 	ThemeSpriteInfo* sprite = SpriteList::findItem(id);
 
 	if (!sprite)
-		return NULL;
+		return nullptr;
 
 	return sprite->findItem(rectId);
 }

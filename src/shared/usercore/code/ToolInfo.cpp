@@ -154,7 +154,7 @@ void ToolInfo::parseXml(const XML::gcXMLElement &toolInfoNode, WildcardManager* 
 	if (!wildcardManager)
 		return;
 
-	char* res = NULL;
+	char* res = nullptr;
 	wildcardManager->constructPath(m_szArgs.c_str(), &res, false);
 
 	m_szArgs = res;
@@ -178,7 +178,7 @@ void ToolInfo::parseXml(const XML::gcXMLElement &toolInfoNode, WildcardManager* 
 		if (check.empty())
 			return;
 
-		char* res = NULL;
+		char* res = nullptr;
 
 		try
 		{

@@ -51,7 +51,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>
 #define Log( s ) ;
 
 bool g_bRestart = false;
-char* g_szArgs = NULL;
+char* g_szArgs = nullptr;
 
 
 extern void InstallService();
@@ -86,7 +86,7 @@ const char* g_UpdateReasons[] =
 	"Service needs change of location",
 	"User data path is incorrect",
 	"Service Hash is bad",
-	NULL
+	nullptr
 };
 
 class BootLoader : public Desurium::CDesuraWinApp
@@ -154,7 +154,7 @@ BootLoader::BootLoader()
 	InitCommonControls();
 
 	m_bHasAdminRights = false;
-	m_pUICore = NULL;
+	m_pUICore = nullptr;
 	m_bRetCode = false;
 }
 
@@ -272,7 +272,7 @@ bool BootLoader::preLaunchCheck(UTIL::MISC::CMDArgs &args)
 
 	if (args.hasArg("testcrash"))
 	{
-		BootLoader *ai = NULL;
+		BootLoader *ai = nullptr;
 		//ai->AssertValid();
 	}
 
@@ -280,7 +280,7 @@ bool BootLoader::preLaunchCheck(UTIL::MISC::CMDArgs &args)
 
 	if (osid == WINDOWS_PRE2000)
 	{
-		::MessageBox(NULL, PRODUCT_NAME " needs Windows XP or better to run.", PRODUCT_NAME " Error: Old Windows", MB_OK);
+		::MessageBox(nullptr, PRODUCT_NAME " needs Windows XP or better to run.", PRODUCT_NAME " Error: Old Windows", MB_OK);
 		return false;
 	}
 	else if (osid == WINDOWS_XP || osid == WINDOWS_XP64)
@@ -412,7 +412,7 @@ void BootLoader::restartAsAdmin(int needupdate)
 	{
 		char msg[255];
 		_snprintf_s(msg, 255, _TRUNCATE, "Failed to restart " PRODUCT_NAME " with admin rights [Update: %d].", needupdate);
-		::MessageBox(NULL, msg, PRODUCT_NAME " Critical Error", MB_OK);
+		::MessageBox(nullptr, msg, PRODUCT_NAME " Critical Error", MB_OK);
 	}
 }
 
@@ -473,7 +473,7 @@ void BootLoader::loadUICore()
 {
 	if (!BootLoaderUtil::SetDllDir(".\\bin"))
 	{
-		::MessageBox(NULL, "Failed to set the DLL path to the bin folder.", PRODUCT_NAME ": ERROR!",  MB_OK);
+		::MessageBox(nullptr, "Failed to set the DLL path to the bin folder.", PRODUCT_NAME ": ERROR!",  MB_OK);
 		exit(-100);			
 	}
 
@@ -484,7 +484,7 @@ void BootLoader::loadUICore()
 	if (!m_hUICore.load(dllname))
 	{
 		DWORD err = GetLastError();
-		::MessageBox(NULL, "Failed to load uicore.dll", PRODUCT_NAME ": ERROR!",  MB_OK);
+		::MessageBox(nullptr, "Failed to load uicore.dll", PRODUCT_NAME ": ERROR!",  MB_OK);
 		exit(-200);
 	}
 	
@@ -492,7 +492,7 @@ void BootLoader::loadUICore()
 
 	if (!UICoreGetInterface)
 	{
-		::MessageBox(NULL, "Failed to load wxWidgets mappings in uicore.dll", PRODUCT_NAME ": ERROR!", MB_OK);
+		::MessageBox(nullptr, "Failed to load wxWidgets mappings in uicore.dll", PRODUCT_NAME ": ERROR!", MB_OK);
 		exit(-500);
 	} 
 

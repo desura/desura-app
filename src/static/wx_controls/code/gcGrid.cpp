@@ -45,7 +45,7 @@ void gcGrid::CreateGrid(int numRows, int numCols, wxGrid::wxGridSelectionModes s
 
 		for (int32 x=0; x<numRows*numCols; x++)
 		{
-			m_vToolTipGrid.push_back(NULL);
+			m_vToolTipGrid.push_back(nullptr);
 		}
 	}
 }
@@ -64,10 +64,10 @@ void gcGrid::setToolTip(int32 col, int32 row, const wchar_t* text)
 const wchar_t* gcGrid::getToolTip(int32 col, int32 row)
 {
 	if (col < 0 || row < 0 || col > this->GetNumberCols() || row > this->GetNumberRows())
-		return NULL;
+		return nullptr;
 
 	uint32 pos = this->GetNumberRows()*col+row;
-	return m_vToolTipGrid[pos]?m_vToolTipGrid[pos]->c_str():NULL;
+	return m_vToolTipGrid[pos]?m_vToolTipGrid[pos]->c_str():nullptr;
 }
 
 void gcGrid::onSelSelect( wxGridEvent& event )
@@ -110,7 +110,7 @@ void gcGrid::showToolTip(int32 col, int32 row)
 		}
 		else
 		{
-			this->GetGridWindow()->SetToolTip(NULL);
+			this->GetGridWindow()->SetToolTip(nullptr);
 		}
 
 		

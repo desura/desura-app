@@ -106,7 +106,7 @@ bool ItemHandle::createDesktopShortcut()
 #endif
 
 	UTIL::FS::delFile(path);
-	UTIL::WIN::createShortCut(gcWString(path).c_str(), link.c_str(), workingDir.c_str(), "", false, (icon.size()>0)?icon.c_str():NULL);
+	UTIL::WIN::createShortCut(gcWString(path).c_str(), link.c_str(), workingDir.c_str(), "", false, (icon.size()>0)?icon.c_str():nullptr);
 
 	return UTIL::FS::isValidFile(path);
 }

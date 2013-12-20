@@ -58,7 +58,7 @@ public:
 		id = i;
 		workThread = new WGTWorker(con, i, pProvMng, fileAuth);
 		workThread->setPriority(::Thread::BaseThread::BELOW_NORMAL);
-		curBlock = NULL;
+		curBlock = nullptr;
 		ammountDone = 0;
 		status = MCFCore::Thread::BaseMCFThread::SF_STATUS_CONTINUE;
 	}
@@ -328,7 +328,7 @@ bool WGTController::checkBlock(Misc::WGTBlock *block, uint32 workerId)
 	gcString appData = UTIL::OS::getAppDataPath(L"crc");
 
 	UTIL::FS::Path logFile(appData, "crc_log.txt", false);
-	UTIL::FS::Path outFile(appData, gcString("block_{0}_{1}.bin", block->fileOffset, time(NULL)), false);
+	UTIL::FS::Path outFile(appData, gcString("block_{0}_{1}.bin", block->fileOffset, time(nullptr)), false);
 
 	outFile += m_pHeader->getDesuraId().toString();
 
@@ -688,7 +688,7 @@ Misc::WGTSuperBlock* WGTController::newTask(uint32 id, uint32 &status)
 	status = worker->status;
 
 	if (worker->status != SF_STATUS_CONTINUE)
-		return NULL;
+		return nullptr;
 
 	if (worker->curBlock)
 		return worker->curBlock;
@@ -707,7 +707,7 @@ Misc::WGTSuperBlock* WGTController::newTask(uint32 id, uint32 &status)
 		//get thread running again.
 		m_WaitCondition.notify();
 
-		return NULL;
+		return nullptr;
 	}
 
 	m_pFileMutex.lock();
@@ -730,11 +730,11 @@ void WGTController::workerFinishedSuperBlock(uint32 id)
 	WGTWorkerInfo* worker = findWorker(id);
 	assert(worker);
 
-	Misc::WGTSuperBlock* block = NULL;
+	Misc::WGTSuperBlock* block = nullptr;
 
 	worker->mutex.lock();
 	block = worker->curBlock;
-	worker->curBlock = NULL;
+	worker->curBlock = nullptr;
 	worker->status = SF_STATUS_CONTINUE;
 	worker->mutex.unlock();
 
@@ -835,7 +835,7 @@ void WGTController::reportNegProgress(uint32 id, uint64 ammount)
 WGTWorkerInfo* WGTController::findWorker(uint32 id)
 {
 	if (id >= m_vWorkerList.size())
-		return NULL;
+		return nullptr;
 
 	for (size_t x=0; x<m_vWorkerList.size(); x++)
 	{
@@ -843,7 +843,7 @@ WGTWorkerInfo* WGTController::findWorker(uint32 id)
 			return m_vWorkerList[x];
 	}
 
-	return NULL;
+	return nullptr;
 }
 
 void WGTController::onStop()

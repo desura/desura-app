@@ -38,7 +38,7 @@ enum
 };
 
 
-TaskBarIcon *g_pTaskIcon = NULL;
+TaskBarIcon *g_pTaskIcon = nullptr;
 
 CONCOMMAND(testpopup, "testpopup")
 {
@@ -129,7 +129,7 @@ TaskBarIcon::TaskBarIcon(wxWindow *parent) : gcTaskBarIcon()
 
 TaskBarIcon::~TaskBarIcon()
 {
-	g_pTaskIcon = NULL;
+	g_pTaskIcon = nullptr;
 
 #ifndef UI_HIDE_MODS
 	safe_delete(m_pModMenu);

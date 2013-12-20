@@ -287,7 +287,7 @@ namespace XML
 		template <typename T>
 		void WriteChild(const char* name, T* val)
 		{
-			if (val == NULL)
+			if (val == nullptr)
 				WriteChild(name, "");
 			else
 				WriteChild(name, gcString("{0}", val).c_str());

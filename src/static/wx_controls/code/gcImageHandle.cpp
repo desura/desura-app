@@ -22,8 +22,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>
 
 gcImageHandle::gcImageHandle()
 {
-	m_pMang = NULL;
-	m_pImg = NULL;
+	m_pMang = nullptr;
+	m_pImg = nullptr;
 	m_uiHash = 0;
 }
 

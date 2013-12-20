@@ -69,7 +69,7 @@ void JSPrint(const v8::Handle<v8::Value>& arg, F messageFunct)
 	}
 	else if (arg->IsNull())
 	{
-		messageFunct("[NULL]");
+		messageFunct("[nullptr]");
 	}
 	else if (arg->IsUndefined())
 	{

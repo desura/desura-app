@@ -125,7 +125,7 @@ CreateMCFOverview::CreateMCFOverview( wxWindow* parent, wxWindowID id, const wxP
 	this->Layout();
 
 	m_labPath->SetCursor(wxCURSOR_HAND);
-	m_labPath->Connect( wxEVT_LEFT_DOWN, wxMouseEventHandler( CreateMCFOverview::onMouseDown ), NULL, this );
+	m_labPath->Connect( wxEVT_LEFT_DOWN, wxMouseEventHandler( CreateMCFOverview::onMouseDown ), nullptr, this );
 }
 
 CreateMCFOverview::~CreateMCFOverview()
@@ -140,7 +140,7 @@ void CreateMCFOverview::dispose()
 void CreateMCFOverview::onMouseDown( wxMouseEvent& event )
 {
 #ifdef WIN32
-	ShellExecuteA(NULL, "explore" , m_szFolderPath.c_str(), NULL, NULL, SW_SHOWNORMAL);
+	ShellExecuteA(nullptr, "explore" , m_szFolderPath.c_str(), nullptr, nullptr, SW_SHOWNORMAL);
 #else
 	UTIL::LIN::launchFolder(m_szFolderPath.c_str());
 #endif
@@ -161,7 +161,7 @@ void CreateMCFOverview::onButtonClick( wxCommandEvent& event )
 	else if (event.GetId() == m_butViewFile->GetId())
 	{
 #ifdef WIN32
-		ShellExecuteA(NULL, "explore" , m_szFolderPath.c_str(), NULL, NULL, SW_SHOWNORMAL);
+		ShellExecuteA(nullptr, "explore" , m_szFolderPath.c_str(), nullptr, nullptr, SW_SHOWNORMAL);
 #else
 	UTIL::LIN::launchFolder(m_szFolderPath.c_str());
 #endif

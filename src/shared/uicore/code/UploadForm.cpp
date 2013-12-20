@@ -33,9 +33,9 @@ UploadMCFForm::UploadMCFForm( wxWindow* parent, wxWindowID id, const wxString& t
 	this->SetSizer( m_bsSizer );
 	this->Layout();
 
-	m_pItemInfo = NULL;
+	m_pItemInfo = nullptr;
 	m_uiInternId = 0;
-	m_pPage = NULL;
+	m_pPage = nullptr;
 	m_bTrueClose = true;
 
 	centerOnParent();
@@ -182,6 +182,6 @@ void UploadMCFForm::cleanUpPages()
 		m_pPage->Show(false);
 		m_pPage->Close();
 		m_pPage->dispose();
-		m_pPage = NULL;
+		m_pPage = nullptr;
 	}
 }

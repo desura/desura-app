@@ -164,7 +164,7 @@ bool CheckNetfxVersionUsingMscoree(const char *pszNetfxVersionToCheck)
 	HRESULT hr = S_OK;
 
 	// Check input parameter
-	if (NULL == pszNetfxVersionToCheck)
+	if (nullptr == pszNetfxVersionToCheck)
 		return false;
 
 
@@ -223,7 +223,7 @@ bool CheckNetfxVersionUsingMscoree(const char *pszNetfxVersionToCheck)
 		DWORD dwRuntimeInfoFlags = RUNTIME_INFO_DONT_RETURN_DIRECTORY | GetProcessorArchitectureFlag();
 
 		// Check for the requested .NET Framework version
-		hr = pfnGETREQUESTEDRUNTIMEINFO(NULL, version.c_str(), NULL, STARTUP_LOADER_OPTIMIZATION_MULTI_DOMAIN_HOST, NULL, szDirectory, CountOf(szDirectory), &dwDirectoryLength, szRetrievedVersion, CountOf(szRetrievedVersion), &dwLength);
+		hr = pfnGETREQUESTEDRUNTIMEINFO(nullptr, version.c_str(), nullptr, STARTUP_LOADER_OPTIMIZATION_MULTI_DOMAIN_HOST, 0, szDirectory, CountOf(szDirectory), &dwDirectoryLength, szRetrievedVersion, CountOf(szRetrievedVersion), &dwLength);
 
 		// Restore the previous error mode
 		SetErrorMode(uOldErrorMode);
@@ -247,7 +247,7 @@ Results:        DWORD processor architecture flag
 ******************************************************************/
 DWORD GetProcessorArchitectureFlag()
 {
-	HMODULE hmodKernel32 = NULL;
+	HMODULE hmodKernel32 = nullptr;
 	typedef void (WINAPI *PFnGetNativeSystemInfo) (LPSYSTEM_INFO);
 	PFnGetNativeSystemInfo pfnGetNativeSystemInfo;
 
@@ -258,11 +258,11 @@ DWORD GetProcessorArchitectureFlag()
 
 	// Attempt to load kernel32.dll
 	hmodKernel32 = LoadLibraryA("Kernel32.dll");
-	if (NULL != hmodKernel32)
+	if (nullptr != hmodKernel32)
 	{
 		// If the DLL loaded correctly, get the proc address for GetNativeSystemInfo
 		pfnGetNativeSystemInfo = (PFnGetNativeSystemInfo) GetProcAddress(hmodKernel32, "GetNativeSystemInfo");
-		if (NULL != pfnGetNativeSystemInfo)
+		if (nullptr != pfnGetNativeSystemInfo)
 		{
 			// Call GetNativeSystemInfo if it exists
 			(*pfnGetNativeSystemInfo)(&sSystemInfo);
@@ -309,8 +309,8 @@ Results:        true if the build number in the registry is greater
 bool CheckNetfxBuildNumber(const char *pszNetfxRegKeyName, const char *pszNetfxRegKeyValue, const int iRequestedVersionMajor, const int iRequestedVersionMinor, const int iRequestedVersionBuild, const int iRequestedVersionRevision)
 {
 	char szRegValue[MAX_PATH];
-	char *pszToken = NULL;
-	char *pszNextToken = NULL;
+	char *pszToken = nullptr;
+	char *pszNextToken = nullptr;
 	int iVersionPartCounter = 0;
 	int iRegistryVersionMajor = 0;
 	int iRegistryVersionMinor = 0;
@@ -319,7 +319,7 @@ bool CheckNetfxBuildNumber(const char *pszNetfxRegKeyName, const char *pszNetfxR
 	bool bRegistryRetVal = false;
 
 	// Attempt to retrieve the build number registry value
-	bRegistryRetVal = RegistryGetValue(HKEY_LOCAL_MACHINE, pszNetfxRegKeyName, pszNetfxRegKeyValue, NULL, (LPBYTE)szRegValue, MAX_PATH);
+	bRegistryRetVal = RegistryGetValue(HKEY_LOCAL_MACHINE, pszNetfxRegKeyName, pszNetfxRegKeyValue, 0, (LPBYTE)szRegValue, MAX_PATH);
 
 	if (bRegistryRetVal)
 	{
@@ -408,7 +408,7 @@ Results:        true if the .NET Framework 1.0 is installed
 bool IsNetfx10Installed()
 {
 	char szRegValue[MAX_PATH];
-	return (RegistryGetValue(HKEY_LOCAL_MACHINE, g_szNetfx10RegKeyName, g_szNetfx10RegKeyValue, NULL, (LPBYTE)szRegValue, MAX_PATH));
+	return (RegistryGetValue(HKEY_LOCAL_MACHINE, g_szNetfx10RegKeyName, g_szNetfx10RegKeyValue, 0, (LPBYTE)szRegValue, MAX_PATH));
 }
 
 
@@ -427,7 +427,7 @@ bool IsNetfx11Installed()
 	bool bRetValue = false;
 	DWORD dwRegValue=0;
 
-	if (RegistryGetValue(HKEY_LOCAL_MACHINE, g_szNetfx11RegKeyName, g_szNetfxStandardRegValueName, NULL, (LPBYTE)&dwRegValue, sizeof(DWORD)))
+	if (RegistryGetValue(HKEY_LOCAL_MACHINE, g_szNetfx11RegKeyName, g_szNetfxStandardRegValueName, 0, (LPBYTE)&dwRegValue, sizeof(DWORD)))
 	{
 		if (1 == dwRegValue)
 			bRetValue = true;
@@ -452,7 +452,7 @@ bool IsNetfx20Installed()
 	bool bRetValue = false;
 	DWORD dwRegValue=0;
 
-	if (RegistryGetValue(HKEY_LOCAL_MACHINE, g_szNetfx20RegKeyName, g_szNetfxStandardRegValueName, NULL, (LPBYTE)&dwRegValue, sizeof(DWORD)))
+	if (RegistryGetValue(HKEY_LOCAL_MACHINE, g_szNetfx20RegKeyName, g_szNetfxStandardRegValueName, 0, (LPBYTE)&dwRegValue, sizeof(DWORD)))
 	{
 		if (1 == dwRegValue)
 			bRetValue = true;
@@ -478,7 +478,7 @@ bool IsNetfx30Installed()
 	DWORD dwRegValue=0;
 
 	// Check that the InstallSuccess registry value exists and equals 1
-	if (RegistryGetValue(HKEY_LOCAL_MACHINE, g_szNetfx30RegKeyName, g_szNetfx30RegValueName, NULL, (LPBYTE)&dwRegValue, sizeof(DWORD)))
+	if (RegistryGetValue(HKEY_LOCAL_MACHINE, g_szNetfx30RegKeyName, g_szNetfx30RegValueName, 0, (LPBYTE)&dwRegValue, sizeof(DWORD)))
 	{
 		if (1 == dwRegValue)
 			bRetValue = true;
@@ -507,7 +507,7 @@ bool IsNetfx35Installed()
 	DWORD dwRegValue=0;
 
 	// Check that the Install registry value exists and equals 1
-	if (RegistryGetValue(HKEY_LOCAL_MACHINE, g_szNetfx35RegKeyName, g_szNetfxStandardRegValueName, NULL, (LPBYTE)&dwRegValue, sizeof(DWORD)))
+	if (RegistryGetValue(HKEY_LOCAL_MACHINE, g_szNetfx35RegKeyName, g_szNetfxStandardRegValueName, 0, (LPBYTE)&dwRegValue, sizeof(DWORD)))
 	{
 		if (1 == dwRegValue)
 			bRetValue = true;
@@ -535,7 +535,7 @@ bool IsNetfx40ClientInstalled()
 	bool bRetValue = false;
 	DWORD dwRegValue=0;
 
-	if (RegistryGetValue(HKEY_LOCAL_MACHINE, g_szNetfx40ClientRegKeyName, g_szNetfxStandardRegValueName, NULL, (LPBYTE)&dwRegValue, sizeof(DWORD)))
+	if (RegistryGetValue(HKEY_LOCAL_MACHINE, g_szNetfx40ClientRegKeyName, g_szNetfxStandardRegValueName, 0, (LPBYTE)&dwRegValue, sizeof(DWORD)))
 	{
 		if (1 == dwRegValue)
 			bRetValue = true;
@@ -563,7 +563,7 @@ bool IsNetfx40FullInstalled()
 	bool bRetValue = false;
 	DWORD dwRegValue=0;
 
-	if (RegistryGetValue(HKEY_LOCAL_MACHINE, g_szNetfx40FullRegKeyName, g_szNetfxStandardRegValueName, NULL, (LPBYTE)&dwRegValue, sizeof(DWORD)))
+	if (RegistryGetValue(HKEY_LOCAL_MACHINE, g_szNetfx40FullRegKeyName, g_szNetfxStandardRegValueName, 0, (LPBYTE)&dwRegValue, sizeof(DWORD)))
 	{
 		if (1 == dwRegValue)
 			bRetValue = true;

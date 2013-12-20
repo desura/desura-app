@@ -207,7 +207,7 @@ void DisplayContextMenu(gcWebControlI* m_pParent, ContextClientDataI* ccd, gcMen
 	HWND hwnd = m_pParent->getBrowserHWND();
 	HookHwnd hook(hwnd);
 
-	int res = TrackPopupMenu((HMENU)menu->GetHMenu(), TPM_LEFTALIGN|TPM_RIGHTBUTTON|TPM_RETURNCMD|TPM_RECURSE, xPos, yPos, 0, hwnd, NULL);
+	int res = TrackPopupMenu((HMENU)menu->GetHMenu(), TPM_LEFTALIGN|TPM_RIGHTBUTTON|TPM_RETURNCMD|TPM_RECURSE, xPos, yPos, 0, hwnd, nullptr);
 	safe_delete(menu);
 
 	ccd->processResult(res);
@@ -220,7 +220,7 @@ void EventHandler::displayMenu(ChromiumDLL::ChromiumMenuInfoI* menuInfo, gcMenu 
 		
 	{
 		HookHwnd hook((HWND)menuInfo->getHWND());
-		res = TrackPopupMenu((HMENU)menu->GetHMenu(), TPM_LEFTALIGN|TPM_RIGHTBUTTON|TPM_RETURNCMD|TPM_RECURSE|TPM_NONOTIFY, x, y, 0, (HWND)menuInfo->getHWND(), NULL);
+		res = TrackPopupMenu((HMENU)menu->GetHMenu(), TPM_LEFTALIGN|TPM_RIGHTBUTTON|TPM_RETURNCMD|TPM_RECURSE|TPM_NONOTIFY, x, y, 0, (HWND)menuInfo->getHWND(), nullptr);
 	}
 
 	if (res == MENU_ID_VIEWPBROWSER)

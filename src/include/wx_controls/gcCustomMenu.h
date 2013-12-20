@@ -30,12 +30,12 @@ class MenuItemInfo;
 class gcMenuItem : public wxMenuItem
 {
 public:
-	gcMenuItem(wxMenu *parentMenu = NULL,
+	gcMenuItem(wxMenu *parentMenu = nullptr,
 				int id = wxID_SEPARATOR,
 				const wxString& name = wxEmptyString,
 				const wxString& help = wxEmptyString,
 				wxItemKind kind = wxITEM_NORMAL,
-				wxMenu *subMenu = NULL);
+				wxMenu *subMenu = nullptr);
 
 #ifdef WIN32
 	// virtual functions to implement drawing (return true if processed)

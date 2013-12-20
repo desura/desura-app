@@ -179,7 +179,7 @@ ItemToolBarControl::ItemToolBarControl(wxWindow* parent) : BaseToolBarControl(pa
 	m_pSearch->onSearchEvent += delegate(&onSearchEvent);
 	m_pSearch->onFullSearchEvent += delegate(&onSearchEvent);
 #else
-	m_pSearch = NULL;
+	m_pSearch = nullptr;
 #endif
 
 	m_pFGContentSizer = new wxFlexGridSizer( 1, 10, 0, 0 );

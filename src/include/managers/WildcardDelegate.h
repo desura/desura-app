@@ -121,7 +121,7 @@ DelegateI<WCSpecialInfo>* wcDelegate(TObj* pObj)
 	if (!pan && !frm)
 	{
 		assert(false);
-		return NULL;
+		return nullptr;
 	}
 
 	return new WildCardDelegate<TObj>(pObj);

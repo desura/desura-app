@@ -68,7 +68,7 @@ void WebCoreClass::enableDebugging(bool state)
 
 void WebCoreClass::init(const char* appDataPath)
 {
-	init(appDataPath, NULL);
+	init(appDataPath, nullptr);
 }
 
 void WebCoreClass::init(const char* appDataPath, const char* szProviderUrl)

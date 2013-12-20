@@ -29,7 +29,7 @@ InstallProcess::InstallProcess(const char* mcfpath, const char* inspath, const c
 	m_uiWorkerCount = workercount;
 	m_bDelFiles = delfiles;
 
-	m_pMcfHandle = NULL;
+	m_pMcfHandle = nullptr;
 	m_bHashMissMatch = false;
 	m_bMakeWriteable = makeWriteable;
 
@@ -55,7 +55,7 @@ void InstallProcess::run()
 {
 	if (m_szIPath == "" || m_szMCFPath == "")
 	{
-		gcException errNullPath(ERR_BADPATH, gcString("One of the paths for install was NULL. [I:{0} M:{1}]", m_szIPath, m_szMCFPath));
+		gcException errNullPath(ERR_BADPATH, gcString("One of the paths for install was nullptr. [I:{0} M:{1}]", m_szIPath, m_szMCFPath));
 		onErrorEvent(errNullPath);
 		onFinishEvent();
 		return;
@@ -107,7 +107,7 @@ void InstallProcess::run()
 		onErrorEvent(except);
 	}
 
-	m_pMcfHandle=NULL;
+	m_pMcfHandle=nullptr;
 	mcfDelFactory(mcfHandle);
 
 	if (m_bHashMissMatch)

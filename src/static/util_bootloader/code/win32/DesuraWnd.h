@@ -121,7 +121,7 @@ namespace Desurium
 	{
 	public:
 		CFont()
-			: m_hFont(NULL)
+			: m_hFont(nullptr)
 		{
 		}
 
@@ -232,7 +232,7 @@ namespace Desurium
 		BOOL SetWindowPos(int x, int y, int cx, int cy, UINT uFlags)
 		{
 			assert(m_hWND);
-			return ::SetWindowPos(m_hWND, NULL, x, y, cx, cy, uFlags);
+			return ::SetWindowPos(m_hWND, nullptr, x, y, cx, cy, uFlags);
 		}
 
 		void ClientToScreen(CPoint &point)

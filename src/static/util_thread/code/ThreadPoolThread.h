@@ -57,7 +57,7 @@ public:
 	//!
 	//! @return True if has task, false if not
 	//!
-	bool hasTask(){return (m_pTask != NULL);}
+	bool hasTask(){return (m_pTask != nullptr);}
 
 	//! ALerts thread of a new task
 	//!

@@ -47,7 +47,7 @@ public:
 	{
 		m_uiMcfBuild = build;
 		m_uiMcfBranch = branch;
-		m_pUploadManager = NULL;
+		m_pUploadManager = nullptr;
 	}
 
 	//need to stop here before we delete the mcf

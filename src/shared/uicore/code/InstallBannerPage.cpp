@@ -264,7 +264,7 @@ void InstallBannerPage::onDownloadProvider(UserCore::Misc::GuiDownloadProvider& 
 			if (strcmp(m_vDownloadProv[x]->getUrl(), dp.provider.getUrl()) == 0)
 			{
 				delete m_vDownloadProv[x];
-				m_vDownloadProv[x] = NULL;
+				m_vDownloadProv[x] = nullptr;
 				break;
 			}
 		}

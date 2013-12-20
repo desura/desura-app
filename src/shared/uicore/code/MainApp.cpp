@@ -66,14 +66,14 @@ const char* GetUICoreVersion()
 }
 
 //this is the handle to webcore and related functions
-UserCore::UserI* g_pUserHandle = NULL;
+UserCore::UserI* g_pUserHandle = nullptr;
 
 WebCore::WebCoreI* GetWebCore()
 {
 	if (g_pUserHandle)
 		return g_pUserHandle->getWebCore();
 
-	return NULL;
+	return nullptr;
 }
 
 UserCore::UserI* GetUserCore()
@@ -110,7 +110,7 @@ public:
 	UserCore::UserI* m_pUser;
 };
 
-DeleteUserThread* g_pDeleteThread = NULL;
+DeleteUserThread* g_pDeleteThread = nullptr;
 
 class AutoDelDeleteThread
 {
@@ -133,7 +133,7 @@ const char* g_szSafeList[] =
 	"google.com",
 	".lindenlab.com",
 	"lindenlab.com",
-	NULL,
+	nullptr,
 };
 
 static bool isSafeUrl(const wxString &server, const wxString &safeUrl)
@@ -206,9 +206,9 @@ MainApp::MainApp()
 {
 	Bind(wxEVT_CLOSE_WINDOW, &MainApp::onClose, this);
 
-	m_wxLoginForm = NULL;
-	m_wxTBIcon = NULL;
-	m_wxMainForm = NULL;
+	m_wxLoginForm = nullptr;
+	m_wxTBIcon = nullptr;
+	m_wxMainForm = nullptr;
 	
 	m_bQuiteMode = false;
 	m_bLoggedIn = false;
@@ -222,10 +222,10 @@ MainApp::MainApp()
 		gc_corecount.setValue(0);
 	}
 
-	m_pOfflineDialog = NULL;
-	m_pInternalLink = NULL;
+	m_pOfflineDialog = nullptr;
+	m_pInternalLink = nullptr;
 #ifdef WITH_GTEST
-	m_UnitTestForm = NULL;
+	m_UnitTestForm = nullptr;
 #endif
 	onLoginAcceptedEvent += guiDelegate(this, &MainApp::onLoginAcceptedCB);
 	onInternalLinkEvent += guiDelegate(this, &MainApp::onInternalLink);
@@ -266,7 +266,7 @@ MainApp::~MainApp()
 	safe_delete(g_pDeleteThread);
 #endif
 
-	g_pUserHandle = NULL;
+	g_pUserHandle = nullptr;
 	safe_delete(m_wxTBIcon);
 
 	DestroyManagers();
@@ -302,7 +302,7 @@ void MainApp::Init(int argc, wxCmdLineArgsArray &argv)
 		}
 	}
 
-	//char *comAppPath = NULL;
+	//char *comAppPath = nullptr;
 	//UTIL::OS::getAppDataPath(&comAppPath);
 	//UTIL::FS::recMakeFolder(comAppPath);
 	//safe_delete(comAppPath);
@@ -413,7 +413,7 @@ void MainApp::logOut(bool bShowLogin, bool autoLogin)
 		if (g_pUserHandle)
 		{
 			UserCore::UserI* user = g_pUserHandle;
-			g_pUserHandle = NULL;
+			g_pUserHandle = nullptr;
 
 			user->logOut(!autoLogin);
 
@@ -440,20 +440,20 @@ void MainApp::logOut(bool bShowLogin, bool autoLogin)
 	HideLogForm();
 
 	DeleteCookies();
-	SetCrashDumpSettings(NULL, true);
+	SetCrashDumpSettings(nullptr, true);
 }
 
 void MainApp::goOffline()
 {
 	if (!m_pOfflineDialog)
-		m_pOfflineDialog = new gcMessageDialog(NULL, Managers::GetString(L"#MF_OFFLINE"), Managers::GetString(L"#MF_OFFLINE_TITLE"), wxYES_NO | wxICON_QUESTION);
+		m_pOfflineDialog = new gcMessageDialog(nullptr, Managers::GetString(L"#MF_OFFLINE"), Managers::GetString(L"#MF_OFFLINE_TITLE"), wxYES_NO | wxICON_QUESTION);
 
 	int ans = m_pOfflineDialog->ShowModal();
 
 	if (m_pOfflineDialog)
 	{
 		m_pOfflineDialog->Destroy();
-		m_pOfflineDialog = NULL;
+		m_pOfflineDialog = nullptr;
 
 		if (ans == wxID_YES)
 			offlineMode();
@@ -552,7 +552,7 @@ void MainApp::closeMainForm()
 		return;
 
 	wxFrame* temp = m_wxMainForm;
-	m_wxMainForm = NULL;
+	m_wxMainForm = nullptr;
 
 	temp->Show(false);
 	temp->Close(true);
@@ -579,7 +579,7 @@ void MainApp::onLoginAcceptedCB(std::pair<bool,bool> &loginInfo)
 	{
 		m_wxLoginForm->Show(false);
 		m_wxLoginForm->Destroy();
-		m_wxLoginForm = NULL;
+		m_wxLoginForm = nullptr;
 	}
 
 	if (saveLoginInfo)
@@ -666,7 +666,7 @@ void MainApp::showMainForm(bool raise, bool show)
 	{
 		m_wxLoginForm->Show(false);
 		m_wxLoginForm->Destroy();
-		m_wxLoginForm = NULL;
+		m_wxLoginForm = nullptr;
 	}
 
 	if (!m_wxMainForm)
@@ -865,25 +865,25 @@ namespace UnitTest
 
 	TEST(MainApp, SafeUrlNormal)
 	{
-		ASSERT_TRUE(isSafeUrl("http://desura.com", NULL));
-		ASSERT_TRUE(isSafeUrl("http://www.desura.com", NULL));
-		ASSERT_TRUE(isSafeUrl("http://api.desura.com", NULL));
+		ASSERT_TRUE(isSafeUrl("http://desura.com", nullptr));
+		ASSERT_TRUE(isSafeUrl("http://www.desura.com", nullptr));
+		ASSERT_TRUE(isSafeUrl("http://api.desura.com", nullptr));
 
-		ASSERT_TRUE(isSafeUrl("http://google.com", NULL));
-		ASSERT_TRUE(isSafeUrl("http://www.google.com", NULL));
-		ASSERT_TRUE(isSafeUrl("http://stuff.google.com", NULL));
+		ASSERT_TRUE(isSafeUrl("http://google.com", nullptr));
+		ASSERT_TRUE(isSafeUrl("http://www.google.com", nullptr));
+		ASSERT_TRUE(isSafeUrl("http://stuff.google.com", nullptr));
 
-		ASSERT_TRUE(isSafeUrl("http://paypal.com", NULL));
-		ASSERT_TRUE(isSafeUrl("http://www.paypal.com", NULL));
-		ASSERT_TRUE(isSafeUrl("http://stuff.paypal.com", NULL));
+		ASSERT_TRUE(isSafeUrl("http://paypal.com", nullptr));
+		ASSERT_TRUE(isSafeUrl("http://www.paypal.com", nullptr));
+		ASSERT_TRUE(isSafeUrl("http://stuff.paypal.com", nullptr));
 
-		ASSERT_TRUE(isSafeUrl("http://lindenlab.com", NULL));
-		ASSERT_TRUE(isSafeUrl("http://www.lindenlab.com", NULL));
-		ASSERT_TRUE(isSafeUrl("http://stuff.lindenlab.com", NULL));
+		ASSERT_TRUE(isSafeUrl("http://lindenlab.com", nullptr));
+		ASSERT_TRUE(isSafeUrl("http://www.lindenlab.com", nullptr));
+		ASSERT_TRUE(isSafeUrl("http://stuff.lindenlab.com", nullptr));
 
-		ASSERT_FALSE(isSafeUrl("http://desura.blah.com", NULL));
-		ASSERT_FALSE(isSafeUrl("http://www.desura.blah.com", NULL));
-		ASSERT_FALSE(isSafeUrl("http://api.desura.blah.com", NULL));
+		ASSERT_FALSE(isSafeUrl("http://desura.blah.com", nullptr));
+		ASSERT_FALSE(isSafeUrl("http://www.desura.blah.com", nullptr));
+		ASSERT_FALSE(isSafeUrl("http://api.desura.blah.com", nullptr));
 	}
 
 	TEST(MainApp, SafeUrlStaging)

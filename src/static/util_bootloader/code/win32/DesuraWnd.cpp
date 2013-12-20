@@ -25,7 +25,7 @@ using namespace Desurium;
 
 
 CBitmap::CBitmap()
-: m_hBitmap(NULL)
+: m_hBitmap(nullptr)
 {
 }
 
@@ -62,7 +62,7 @@ int CBitmap::GetBitmap(BITMAP *pBitmap)
 
 
 CDC::CDC()
-	: m_hDC(NULL)
+	: m_hDC(nullptr)
 {
 }
 
@@ -167,7 +167,7 @@ CPaintDC::~CPaintDC()
 
 CDesuraWnd::CDesuraWnd(bool bHookEvents)
 	: m_bHookEvents(bHookEvents)
-	, m_pParent(NULL)
+	, m_pParent(nullptr)
 {
 }
 
@@ -175,10 +175,10 @@ bool CDesuraWnd::Create(const char* szClassName, const char*, DWORD dwStyl, cons
 {
 	m_pParent = pParent;
 
-	m_hWND = ::CreateWindow(szClassName, "", dwStyl | WS_CHILD | WS_VISIBLE, rect.left, rect.top, rect.width(), rect.height(), pParent->GetSafeHwnd(), NULL, GetInstanceHandle(), 0);
+	m_hWND = ::CreateWindow(szClassName, "", dwStyl | WS_CHILD | WS_VISIBLE, rect.left, rect.top, rect.width(), rect.height(), pParent->GetSafeHwnd(), nullptr, GetInstanceHandle(), 0);
 	::SetWindowLong(m_hWND, GWL_ID, nID);
 
-	return m_hWND != NULL;
+	return m_hWND != nullptr;
 }
 
 bool CDesuraWnd::Create(CDesuraWnd *pParent, const CRect& rect, UINT nID, DWORD dwStyle)
@@ -200,7 +200,7 @@ CDesuraWnd* CDesuraWnd::GetParent()
 
 HCURSOR CDesuraWnd::LoadStandardCursor(const char* szResourceId)
 {
-	return ::LoadCursor(NULL, szResourceId);
+	return ::LoadCursor(nullptr, szResourceId);
 }
 
 bool CDesuraWnd::RegisterClass(WNDCLASS *pClass)
@@ -208,7 +208,7 @@ bool CDesuraWnd::RegisterClass(WNDCLASS *pClass)
 	return !!::RegisterClass(pClass);
 }
 
-HINSTANCE CDesuraWnd::gs_hInstance = NULL;
+HINSTANCE CDesuraWnd::gs_hInstance = nullptr;
 
 void CDesuraWnd::SetInstanceHandle(HINSTANCE hInstance)
 {
@@ -223,7 +223,7 @@ HINSTANCE CDesuraWnd::GetInstanceHandle()
 
 void CDesuraWnd::BeginThread(ThreadFn funct, void* pData)
 {
-	CreateThread(NULL, 0, (LPTHREAD_START_ROUTINE)funct, pData, 0, NULL);
+	CreateThread(nullptr, 0, (LPTHREAD_START_ROUTINE)funct, pData, 0, nullptr);
 }
 
 void CDesuraWnd::OnPaint()
@@ -259,7 +259,7 @@ void CDesuraWnd::OnMouseLeave()
 
 
 
-CDesuraDialog* CDesuraDialog::gs_pCurrentDialog = NULL;
+CDesuraDialog* CDesuraDialog::gs_pCurrentDialog = nullptr;
 
 
 CDesuraDialog::CDesuraDialog(int nResourceId)
@@ -271,7 +271,7 @@ CDesuraDialog::CDesuraDialog(int nResourceId)
 INT_PTR CDesuraDialog::DoModal()
 {
 	gs_pCurrentDialog = this;
-	INT_PTR nRes = ::DialogBoxParam(GetInstanceHandle(), MAKEINTRESOURCE(m_nResourceId), NULL, &CDesuraDialog::WinProc, (LPARAM)SW_SHOW);
+	INT_PTR nRes = ::DialogBoxParam(GetInstanceHandle(), MAKEINTRESOURCE(m_nResourceId), nullptr, &CDesuraDialog::WinProc, (LPARAM)SW_SHOW);
 
 	DWORD err = GetLastError();
 
@@ -279,7 +279,7 @@ INT_PTR CDesuraDialog::DoModal()
 	{
 		char msg[255];
 		_snprintf_s(msg, 255, _TRUNCATE, "Failed to show dialog %d", err);
-		::MessageBox(NULL, msg, PRODUCT_NAME " Critical Error", MB_OK);
+		::MessageBox(nullptr, msg, PRODUCT_NAME " Critical Error", MB_OK);
 	}
 
 	return nRes;
@@ -287,7 +287,7 @@ INT_PTR CDesuraDialog::DoModal()
 
 void CDesuraDialog::EndDialog(int nResult)
 {
-	gs_pCurrentDialog = NULL;
+	gs_pCurrentDialog = nullptr;
 	::EndDialog(GetSafeHwnd(), nResult);
 }
 

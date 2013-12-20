@@ -59,7 +59,7 @@ IPC::IPCParameterI* newParameterMacro(IPC::PBlob val)
 namespace IPC
 {
 
-std::map<uint32, newFunc> *g_vParameterType = NULL;
+std::map<uint32, newFunc> *g_vParameterType = nullptr;
 
 class AutoCleanUp
 {
@@ -112,7 +112,7 @@ PVoid::PVoid()
 char* PVoid::serialize(uint32 &size)
 {
 	size = 0;
-	return NULL;
+	return nullptr;
 }
 
 uint32 PVoid::deserialize(const char* buffer, uint32 size)
@@ -345,12 +345,12 @@ uint64 PDouble::getValue(bool dup)
 
 PString::PString()
 {
-	m_szValue = NULL;
+	m_szValue = nullptr;
 }
 
 PString::PString(const char* v)
 {
-	m_szValue = NULL;
+	m_szValue = nullptr;
 
 	if (v)
 	{
@@ -374,7 +374,7 @@ char* PString::serialize(uint32 &size)
 	if (!m_szValue)
 	{
 		size = 0;
-		return NULL;
+		return nullptr;
 	}
 
 	uint32 strsize = strlen(m_szValue);
@@ -382,7 +382,7 @@ char* PString::serialize(uint32 &size)
 	if (strsize == 0)
 	{
 		size = 0;
-		return NULL;
+		return nullptr;
 	}
 
 	size = strsize+4;
@@ -423,7 +423,7 @@ uint64 PString::getValue(bool dup)
 {
 	if (dup)
 	{
-		char *res = NULL;
+		char *res = nullptr;
 		Safe::strcpy(&res, m_szValue, 255);
 		return (uint64)res;
 	}
@@ -487,7 +487,7 @@ uint32 PException::deserialize(const char* buffer, uint32 size)
 	uint32 e1;
 	uint32 e2;
 	uint32 msgSize = 0;
-	char* msg = NULL;
+	char* msg = nullptr;
 
 	if (size < 8)
 		return 0;
@@ -529,14 +529,14 @@ uint64 PException::getValue(bool dup)
 
 PBlob::PBlob()
 {
-	m_szData = NULL;
+	m_szData = nullptr;
 	m_uiSize = 0;
 }
 
 PBlob::PBlob(const PBlob& e)
 {
 	m_uiSize = e.getSize();
-	m_szData = NULL;
+	m_szData = nullptr;
 
 	if (m_uiSize > 0)
 	{
@@ -549,7 +549,7 @@ PBlob::PBlob(PBlob* blob)
 {
 	m_uiSize = blob->getSize();
 
-	m_szData = NULL;
+	m_szData = nullptr;
 
 	if (m_uiSize > 0)
 	{
@@ -563,7 +563,7 @@ PBlob::PBlob(uint64 val)
 	PBlob* blob = (PBlob*)val;
 
 	m_uiSize = blob->getSize();
-	m_szData = NULL;
+	m_szData = nullptr;
 
 	if (m_uiSize > 0)
 	{
@@ -575,7 +575,7 @@ PBlob::PBlob(uint64 val)
 PBlob::PBlob(const char* data, uint32 size)
 {
 	m_uiSize = size;
-	m_szData = NULL;
+	m_szData = nullptr;
 
 	if (size > 0)
 	{

@@ -78,7 +78,7 @@ ProviderManager::~ProviderManager()
 
 gcString ProviderManager::getUrl(uint32 id)
 {
-	gcString url("NULL");
+	gcString url("nullptr");
 	std::vector<uint32> validList;
 
 	m_WaitMutex.lock();

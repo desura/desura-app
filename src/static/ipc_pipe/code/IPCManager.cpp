@@ -26,7 +26,7 @@ namespace IPC
 {
 
 
-std::map<uint32, newClassFunc> *g_pmIPCClassList = NULL;
+std::map<uint32, newClassFunc> *g_pmIPCClassList = nullptr;
 
 class AutoCleanUp
 {
@@ -223,13 +223,13 @@ IPCManager::IPCManager(LoopbackProcessor* loopbackProcessor, uint32 managerId, c
 #ifdef WIN32
 	m_hEvent = INVALID_HANDLE_VALUE;
 #else
-	m_hEvent = NULL;
+	m_hEvent = nullptr;
 #endif
 
 	m_bDisconnected = false;
 
-	m_pEventThread = NULL;
-	m_pCallThread = NULL;
+	m_pEventThread = nullptr;
+	m_pCallThread = nullptr;
 
 	m_uiManagerId = managerId;
 	m_pLoopbackProcessor = loopbackProcessor;
@@ -244,7 +244,7 @@ IPCManager::IPCManager(LoopbackProcessor* loopbackProcessor, uint32 managerId, c
 #ifdef WIN32
 	m_hEvent = INVALID_HANDLE_VALUE;
 #else
-	m_hEvent = NULL;
+	m_hEvent = nullptr;
 #endif
 }
 
@@ -258,7 +258,7 @@ IPCManager::~IPCManager()
 WeakPtr<IPCClass> IPCManager::createClass(const char* name)
 {
 	if (!g_pmIPCClassList)
-		throw gcException(ERR_IPC, "Class list is NULL");
+		throw gcException(ERR_IPC, "Class list is nullptr");
 
 	uint32 hash = UTIL::MISC::RSHash_CSTR(name);
 	std::map<uint32, newClassFunc>::iterator it = g_pmIPCClassList->find(hash);
@@ -293,9 +293,9 @@ WeakPtr<IPCClass> IPCManager::createClass(const char* name)
 
 	SmartPtr<IPCParameterI> ret(lock->result);
 
-	if (ret.get() == NULL)
+	if (ret.get() == nullptr)
 	{
-		throw gcException(ERR_IPC, "Return is NULL");
+		throw gcException(ERR_IPC, "Return is nullptr");
 	}
 	else if (ret->getType() == PException::getTypeS())
 	{
@@ -423,7 +423,7 @@ void IPCManager::stop()
 {
 
 	if (!m_bDisconnected)
-		sendMessage(NULL, 0, 0, MT_STOP);
+		sendMessage(nullptr, 0, 0, MT_STOP);
 }
 
 
@@ -583,7 +583,7 @@ void IPCManager::sendLoopbackMessage(const char* buff, uint32 size, uint32 id, u
 
 bool IPCManager::getMessageToSend(char* buffer, uint32 buffSize, uint32& msgSize)
 {
-	PipeMessage *msg = NULL;
+	PipeMessage *msg = nullptr;
 
 	m_mVectorMutex.lock();
 	if (m_vPipeMsgs.size() > 0)

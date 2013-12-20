@@ -87,18 +87,18 @@ int main(int argc, char** argv)
 		ServiceTable[0].lpServiceName = SERVICE_NAME;
 		ServiceTable[0].lpServiceProc = (LPSERVICE_MAIN_FUNCTION)ServiceMain;
 
-		ServiceTable[1].lpServiceName = NULL;
-		ServiceTable[1].lpServiceProc = NULL;
+		ServiceTable[1].lpServiceName = nullptr;
+		ServiceTable[1].lpServiceProc = nullptr;
 
 		StartServiceCtrlDispatcher(ServiceTable);
 	}
 }
 
-HANDLE g_WaitEvent = NULL;
+HANDLE g_WaitEvent = nullptr;
 
 void ServiceMain(int argc, char** argv) 
 { 
-	g_WaitEvent = CreateEvent(NULL, false, false, NULL);
+	g_WaitEvent = CreateEvent(nullptr, false, false, nullptr);
 
     g_ServiceStatus.dwServiceType        = SERVICE_WIN32; 
     g_ServiceStatus.dwCurrentState       = SERVICE_START_PENDING; 
@@ -128,7 +128,7 @@ void ServiceMain(int argc, char** argv)
 	g_ServiceApp.stop();
 
 	CloseHandle(g_WaitEvent);
-	g_WaitEvent = NULL;
+	g_WaitEvent = nullptr;
 }
 
 void ControlHandler(DWORD request) 

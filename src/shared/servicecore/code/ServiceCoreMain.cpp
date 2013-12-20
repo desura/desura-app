@@ -70,7 +70,7 @@ namespace SCore
 		}
 #endif
 
-		return NULL;
+		return nullptr;
 	}
 }
 

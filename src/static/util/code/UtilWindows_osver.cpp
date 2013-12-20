@@ -103,7 +103,7 @@ OS_VERSION getOSId()
 	// Call GetNativeSystemInfo if supported or GetSystemInfo otherwise.
 	pGNSI = (PGNSI) GetProcAddress(GetModuleHandleA(TEXT("kernel32.dll")), "GetNativeSystemInfo");
 
-	if (NULL != pGNSI)
+	if (nullptr != pGNSI)
 		pGNSI(&si);
 	else 
 		GetSystemInfo(&si);
@@ -187,7 +187,7 @@ void getOSString(char* dest, size_t destSize)
 	// Call GetNativeSystemInfo if supported or GetSystemInfo otherwise.
 	pGNSI = (PGNSI) GetProcAddress(GetModuleHandleA(TEXT("kernel32.dll")), "GetNativeSystemInfo");
 
-	if (NULL != pGNSI)
+	if (nullptr != pGNSI)
 		pGNSI(&si);
 	else 
 		GetSystemInfo(&si);

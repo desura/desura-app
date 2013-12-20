@@ -92,7 +92,7 @@ gcWebControl::gcWebControl(wxWindow* parent, const char* defaultUrl, const char*
 
 gcWebControl::~gcWebControl()
 {
-	m_pChromeBrowser->setEventCallback(NULL);
+	m_pChromeBrowser->setEventCallback(nullptr);
 	m_pChromeBrowser->destroy();
 
 	safe_delete(m_pEventHandler);

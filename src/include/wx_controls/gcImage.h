@@ -37,7 +37,7 @@ public:
 		BOTH,
 	};
 
-	static void tileImg( wxBitmap &target, wxBitmap src, wxColor* fillBg = NULL, TILE_DIR dir = HOZ);
+	static void tileImg( wxBitmap &target, wxBitmap src, wxColor* fillBg = nullptr, TILE_DIR dir = HOZ);
 };
 
 #endif //DESURA_GCIMAGE_H

@@ -28,7 +28,7 @@ UninstallProcess::UninstallProcess(const char* mcfpath, const char* inspath, con
 	m_szIPath = gcString(inspath);
 	m_szInstallScript = installScript;
 
-	m_pMcfHandle = NULL;
+	m_pMcfHandle = nullptr;
 	m_uiLastProg = 0;
 }
 
@@ -43,7 +43,7 @@ void UninstallProcess::run()
 {
 	if (m_szIPath == "" || m_szMCFPath == "")
 	{
-		gcException errPathNull(ERR_BADPATH, gcString("One of the paths for uninstall was NULL [IP: {0} MCF: {1}].", m_szIPath, m_szMCFPath));
+		gcException errPathNull(ERR_BADPATH, gcString("One of the paths for uninstall was nullptr [IP: {0} MCF: {1}].", m_szIPath, m_szMCFPath));
 		onErrorEvent(errPathNull);
 		return;
 	}
@@ -69,7 +69,7 @@ void UninstallProcess::run()
 		onErrorEvent(except);
 	}
 
-	m_pMcfHandle=NULL;
+	m_pMcfHandle=nullptr;
 	mcfDelFactory(mcfHandle);
 
 	onCompleteEvent();

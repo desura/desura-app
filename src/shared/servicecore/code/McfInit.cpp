@@ -28,8 +28,8 @@ typedef void (*DFACT)(void*, const char*);
 
 SharedObjectLoader g_pMCFCore;
 
-BFACT buildFactory = NULL;
-DFACT delFactory = NULL;
+BFACT buildFactory = nullptr;
+DFACT delFactory = nullptr;
 
 
 void initFactory()
@@ -77,7 +77,7 @@ MCFCore::MCFI* mcfFactory()
 		initFactory();
 
 	if (!buildFactory)
-        return NULL;
+        return nullptr;
 
     void* temp = buildFactory(MCF_FACTORY);
 
@@ -95,8 +95,8 @@ void mcfDelFactory(void* p)
 
 void shutDownFactory()
 {
-	buildFactory = NULL;
-	delFactory = NULL;
+	buildFactory = nullptr;
+	delFactory = nullptr;
 	DestroyLogging();
 }
 
@@ -108,7 +108,7 @@ namespace MCFCore
 			initFactory();
 
 		if (!buildFactory)
-			return NULL;
+			return nullptr;
 
 		return buildFactory(name);
 	}

@@ -24,7 +24,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>
 CVar::CVar(const char* name, const char* defVal, int32 flags, CVarCallBackFn callBack) : BaseItem(name)
 {
 	m_cbCallBack = callBack;
-	m_cbCallBackUser = NULL;
+	m_cbCallBackUser = nullptr;
 
 	init(name, defVal, flags);
 }
@@ -32,7 +32,7 @@ CVar::CVar(const char* name, const char* defVal, int32 flags, CVarCallBackFn cal
 CVar::CVar(const char* name, const char* defVal, int32 flags, CVarUserCallBackFn callBack) : BaseItem(name)
 {
 	m_cbCallBackUser = callBack;
-	m_cbCallBack = NULL;
+	m_cbCallBack = nullptr;
 
 	init(name, defVal, flags);
 }
@@ -45,7 +45,7 @@ CVar::~CVar()
 
 void CVar::init(const char* name, const char* defVal, int32 flags)
 {
-	m_pUserData = NULL;
+	m_pUserData = nullptr;
 
 	m_szData = defVal;
 	m_szDefault = defVal;
@@ -122,7 +122,7 @@ const char* CVar::getString() const
 	checkOsValid();
 
 	if (m_szData.length() == 0 || m_szData[0] == '\0')
-		return NULL;
+		return nullptr;
 
 	return m_szData.c_str();
 }

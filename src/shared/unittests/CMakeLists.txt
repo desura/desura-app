@@ -16,8 +16,13 @@ file(GLOB Sources code/util/gcBuff_test.cpp
 
 #code/util/UtilLinux_test.cpp
 
+if(WIN32)
+	file(GLOB WIN_Sources code/util/UtilWindowsTest.cpp
+	)
 
-add_library(unittest SHARED ${Sources})
+endif()
+
+add_library(unittest SHARED ${Sources} ${WIN_Sources})
 
 target_link_libraries(unittest
   util

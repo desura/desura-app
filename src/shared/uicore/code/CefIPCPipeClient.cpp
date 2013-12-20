@@ -125,7 +125,7 @@ void CefIPCPipeClient::stopService()
 
 IPCBrowser* CefIPCPipeClient::createBrowser(HWND hwnd, const char* defaultUrl)
 {
-	IPCBrowser* ret = NULL;
+	IPCBrowser* ret = nullptr;
 
 	try
 	{
@@ -137,7 +137,7 @@ IPCBrowser* CefIPCPipeClient::createBrowser(HWND hwnd, const char* defaultUrl)
 		if (ret)
 			ret->destroy();
 
-		ret = NULL;
+		ret = nullptr;
 	}
 
 	return ret;

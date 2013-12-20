@@ -291,7 +291,7 @@ void safe_deleteA(T*& ptr)
 {
 	if (ptr)
 		delete [] ptr;
-	ptr = NULL;
+	ptr = nullptr;
 }
 
 inline void safe_delete(char*& ptr)
@@ -329,7 +329,7 @@ void safe_delete(T*& ptr)
 {
 	if (ptr)
 		delete ptr;
-	ptr = NULL;
+	ptr = nullptr;
 }
 
 template <typename T>
@@ -391,7 +391,7 @@ class AutoDelete
 public:
 	AutoDelete()
 	{
-		m_pPointer = NULL;
+		m_pPointer = nullptr;
 	}
 
 	AutoDelete(T* t)
@@ -415,7 +415,7 @@ public:
 		{
 			safe_delete(m_pPointer);
 			m_pPointer = o.m_pPointer;
-			o.m_pPointer = NULL;
+			o.m_pPointer = nullptr;
 		}
 
 		return *this;
@@ -447,7 +447,7 @@ public:
 	~AutoDeleteLocal()
 	{
 		LocalFree(*AutoDelete<T>::m_pPointer);
-		AutoDelete<T>::m_pPointer = NULL;
+		AutoDelete<T>::m_pPointer = nullptr;
 	}
 
 	AutoDeleteLocal<T>& operator=(AutoDeleteLocal<T>& o)
@@ -456,7 +456,7 @@ public:
 		{
 			LocalFree(*AutoDelete<T>::m_pPointer);
 			AutoDelete<T>::m_pPointer = o.m_pPointer;
-			o.m_pPointer = NULL;
+			o.m_pPointer = nullptr;
 		}
 
 		return *this;
@@ -720,7 +720,7 @@ namespace Safe
 	inline FILE* fopen(const char* file, const char* args)
 	{
 	#ifdef WIN32
-		FILE* fileHandle = NULL;
+		FILE* fileHandle = nullptr;
 		fopen_s(&fileHandle, file, args);
 		return fileHandle;
 	#else

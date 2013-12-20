@@ -209,7 +209,7 @@ inline const char* BranchInfo::getInstallScriptPath()
 	if (m_szInstallScript.size() > 0)
 		return m_szInstallScript.c_str();
 
-	return NULL;
+	return nullptr;
 }
 
 }

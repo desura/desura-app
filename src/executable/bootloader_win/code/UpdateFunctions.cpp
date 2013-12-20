@@ -143,7 +143,7 @@ int NeedUpdate()
 void SetRegValues()
 {
 	char mod[255];
-	GetModuleFileName(NULL, mod, 255);
+	GetModuleFileName(nullptr, mod, 255);
 
 	UTIL::FS::Path path = UTIL::FS::PathWithFile(mod);
 
@@ -204,7 +204,7 @@ void InstallService()
 class ServiceInstaller : public AppUpdateInstall
 {
 public:
-	ServiceInstaller() : AppUpdateInstall(NULL, false)
+	ServiceInstaller() : AppUpdateInstall(nullptr, false)
 	{
 	}
 
@@ -252,7 +252,7 @@ bool ServiceUpdate(bool validService)
 		std::wstring appPath = UTIL::OS::getCommonProgramFilesPath();
 
 		if (!FolderExists(appPath.c_str()))
-			CreateDirectoryW(appPath.c_str(), NULL);
+			CreateDirectoryW(appPath.c_str(), nullptr);
 
 		std::wstring newService = UTIL::OS::getCommonProgramFilesPath(L"desura_service.exe");
 		std::wstring curService = UTIL::OS::getCurrentDir(L"desura_service.exe");
@@ -270,7 +270,7 @@ bool ServiceUpdate(bool validService)
 class DataMover : public AppUpdateInstall
 {
 public:
-	DataMover() : AppUpdateInstall(NULL, false)
+	DataMover() : AppUpdateInstall(nullptr, false)
 	{
 	}
 
@@ -319,7 +319,7 @@ bool FixServiceDisabled()
 	}
 	catch (gcException)
 	{
-		MessageBox(NULL, "The service desura needs to use to install content is disabled. \n\nPlease enable it via msconfig (\"" PRODUCT_NAME " Install Service\").", PRODUCT_NAME ": Failed to enable service", MB_OK|MB_ICONEXCLAMATION);
+		MessageBox(nullptr, "The service desura needs to use to install content is disabled. \n\nPlease enable it via msconfig (\"" PRODUCT_NAME " Install Service\").", PRODUCT_NAME ": Failed to enable service", MB_OK|MB_ICONEXCLAMATION);
 		return false;
 	}
 

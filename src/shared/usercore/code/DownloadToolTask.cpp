@@ -42,7 +42,7 @@ DownloadToolTask::DownloadToolTask(UserCore::User* user, UserCore::ToolInfo* too
 	m_uiPercent = 0;
 	m_bStopped = false;
 
-	m_pHttpHandle = NULL;
+	m_pHttpHandle = nullptr;
 }
 
 DownloadToolTask::~DownloadToolTask()
@@ -99,7 +99,7 @@ void DownloadToolTask::downloadTool()
 	hh->setUserAgent(getUserCore()->getWebCore()->getUserAgent());
 	hh->getWeb();
 
-	m_pHttpHandle = NULL;
+	m_pHttpHandle = nullptr;
 	m_fhFile.close();
 }
 

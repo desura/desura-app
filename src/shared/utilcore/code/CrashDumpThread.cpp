@@ -39,8 +39,8 @@ CrashDumpThread::CrashDumpThread() : Thread::BaseThread("CrashDump Thread")
 
 	m_szDumpPath = path.getFullPath();
 
-	uploadCrash = NULL;
-	uploadCrashProg = NULL;
+	uploadCrash = nullptr;
+	uploadCrashProg = nullptr;
 
 	m_bSecond = false;
 }

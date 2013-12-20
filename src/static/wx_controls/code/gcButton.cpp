@@ -74,7 +74,7 @@ void gcButton::init(const wxSize& size, const wxString &text)
 	m_szText = text;
 #endif
 
-	m_szCurImage = NULL;
+	m_szCurImage = nullptr;
 		
 	m_bHovering = false;
 	m_bDepressed = false;

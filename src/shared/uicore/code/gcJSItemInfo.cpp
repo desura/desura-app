@@ -31,7 +31,7 @@ REGISTER_JSEXTENDER(DesuraJSItemInfo);
 	if (arg->isObject())
 		item = arg->getUserObject<UserCore::Item::ItemInfoI>();
 	else
-		item = NULL;
+		item = nullptr;
 }*/ // In gcJSBinding.cpp
 
 
@@ -145,7 +145,7 @@ bool DesuraJSItemInfo::preExecuteValidation(const char* function, uint32 functio
 	if (argv[0]->isObject() == false)
 		return false;
 
-	UserCore::Item::ItemInfoI* item = NULL;
+	UserCore::Item::ItemInfoI* item = nullptr;
 	FromJSObject(item, argv[0]);
 
 	return isItemValid(item);

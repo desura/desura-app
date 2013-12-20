@@ -70,7 +70,7 @@ bool McfInfoSort ( mcfInfo* elem1, mcfInfo* elem2 )
 namespace UserCore
 {
 
-MCFManager* g_pMCFManager = NULL;
+MCFManager* g_pMCFManager = nullptr;
 
 void InitMCFManager(const char* appDataPath, const char* mcfDataPath)
 {

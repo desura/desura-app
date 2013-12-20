@@ -145,8 +145,8 @@ const static char* errMsg [] =
 	"Failed to compress the data using BZIP2 because out buffer is full",
 	"Failed to decompress the data using BZIP2",	// 15
 	"The data was invalid",
-	"The file path was NULL or invalid",
-	"The file header was NULL or invalid",
+	"The file path was nullptr or invalid",
+	"The file header was nullptr or invalid",
 	"Cannot find the primary node in the XML",
 	"The thread had a generic error",			// 20
 	"The save thread had an generic error",
@@ -156,13 +156,13 @@ const static char* errMsg [] =
 	"Duplicate source detected",				// 25
 	"Download from web failed",
 	"The buffer is to small",
-	"The source file is NULL or invalid",
-	"The destination file is NULL or invalid",
+	"The source file is nullptr or invalid",
+	"The destination file is nullptr or invalid",
 	"The library hasn't been loaded yet",		// 30
 	"Failed to load library",
 	"The web control is in use by another thread",
-	"The curl handle for this web control is NULL",
-	"The URL is ether NULL or incorrect",
+	"The curl handle for this web control is nullptr",
+	"The URL is ether nullptr or incorrect",
 	"Bad ID",									// 35
 	"Bad XML",
 	"Bad response",
@@ -173,7 +173,7 @@ const static char* errMsg [] =
 	"Bad item",
 	"Bad password or user name",
 	"WebCore hasn't been initialised",
-	"NULL pointers to either WebCore or UserCore",	// 45
+	"nullptr pointers to either WebCore or UserCore",	// 45
 	"The parent item is not installed!",
 	"The file is not an MCF file",
 	"The item size is to big or out of bounds",
@@ -253,7 +253,7 @@ public:
 		assign(e.getErrMsg());
 	}
 
-	gcException(ERROR_ID errId, int32 secErrId, const char* message = NULL)
+	gcException(ERROR_ID errId, int32 secErrId, const char* message = nullptr)
 	{
 		setErrId(errId, secErrId);
 
@@ -277,7 +277,7 @@ public:
 			assign(message.c_str());
 	}
 
-	gcException(ERROR_ID errId, const char* message = NULL)
+	gcException(ERROR_ID errId, const char* message = nullptr)
 	{
 		setErrId(errId, 0);
 

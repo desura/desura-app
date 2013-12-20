@@ -35,8 +35,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>
 std::string GetAppPath(std::string extra = "");
 std::string GetAppDataPath(std::string extra = "");
 bool ChangeToAppDir();
-bool FileExists(const char* file = NULL);
-bool DeleteFile(const char* file = NULL);
-bool DeleteFile(const wchar_t* file = NULL);
+bool FileExists(const char* file = nullptr);
+bool DeleteFile(const char* file = nullptr);
+bool DeleteFile(const wchar_t* file = nullptr);
 
 #endif

@@ -95,7 +95,7 @@ FIBITMAP* GenericLoader(const char* lpszPathName, int flag)
 	if((fif != FIF_UNKNOWN) && FreeImage_FIFSupportsReading(fif)) 
 		return FreeImage_Load(fif, lpszPathName, flag);
 
-	return NULL;
+	return nullptr;
 }
 
 
@@ -133,7 +133,7 @@ bool loadImgLib()
 
 	if (g_ImgLib.hasFailed())
 	{
-		FreeImage_Unload = NULL;
+		FreeImage_Unload = nullptr;
 		g_FreeImageMutex.unlock();
 		return false;
 	}

@@ -46,10 +46,10 @@ ToolManager::ToolManager(UserCore::User* user) : BaseManager(true)
 	m_iLastCustomToolId= -1;
 	m_tJSEngineExpireTime = 0;
 
-	m_pToolThread = NULL;
-	m_pFactory = NULL;
+	m_pToolThread = nullptr;
+	m_pFactory = nullptr;
 
-	m_tJSEngineExpireTime = time(NULL);
+	m_tJSEngineExpireTime = time(nullptr);
 }
 
 ToolManager::~ToolManager()
@@ -151,7 +151,7 @@ void ToolManager::saveItems()
 
 void ToolManager::removeTransaction(ToolTransactionId ttid, bool forced)
 {
-	Misc::ToolTransInfo* info = NULL;
+	Misc::ToolTransInfo* info = nullptr;
 
 	m_MapLock.lock();
 
