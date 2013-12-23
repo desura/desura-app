@@ -40,12 +40,12 @@ namespace UserCore
 			virtual ~ValidateTask();
 
 		protected:
-			void doRun();
+			void doRun() override;
 
-			virtual void onStop();
-			virtual void onPause();
-			virtual void onUnpause();
-			virtual void cancel();
+			void onStop() override;
+			void onPause() override;
+			void onUnpause() override;
+			void cancel() override;
 
 			void onError(gcException &e);
 			void onComplete(gcString &savePath);
