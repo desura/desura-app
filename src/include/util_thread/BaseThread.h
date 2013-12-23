@@ -25,23 +25,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>
 namespace Thread
 {
 
-class ReadWriteMutex
-{
-public:
-	ReadWriteMutex();
-	~ReadWriteMutex();
-
-	void readLock();
-	void readUnlock();
-
-	void writeLock();
-	void writeUnlock();
-
-private:
-	class ReadWriteMutexPrivates;
-	ReadWriteMutexPrivates* m_pPrivates;
-};
-
 class WaitCondition
 {
 public:

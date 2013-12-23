@@ -277,27 +277,27 @@ void ItemHandle::setPaused(bool state, bool forced)
 	{
 		bool verify = false;
 
-		m_ThreadMutex.readLock();
-
-		if (state)
 		{
-			if (m_pThread && m_pThread->hasTaskToRun())
+			std::lock_guard<std::mutex> guard(m_ThreadMutex);
+
+			if (state)
 			{
-				getItemInfo()->addSFlag(UserCore::Item::ItemInfoI::STATUS_PAUSED);
-				m_pThread->pause();
+				if (m_pThread && m_pThread->hasTaskToRun())
+				{
+					getItemInfo()->addSFlag(UserCore::Item::ItemInfoI::STATUS_PAUSED);
+					m_pThread->pause();
+				}
+			}
+			else
+			{
+				getItemInfo()->delSFlag(UserCore::Item::ItemInfoI::STATUS_PAUSED);
+
+				if (m_pThread && m_pThread->hasTaskToRun())
+					m_pThread->unpause();
+				else if (startUpCheck())
+					verify = true;
 			}
 		}
-		else
-		{
-			getItemInfo()->delSFlag(UserCore::Item::ItemInfoI::STATUS_PAUSED);
-
-			if (m_pThread && m_pThread->hasTaskToRun())
-				m_pThread->unpause();
-			else if (startUpCheck())
-				verify = true;
-		}
-
-		m_ThreadMutex.readUnlock();
 
 		if (verify)
 			verifyOveride();
@@ -444,12 +444,13 @@ void ItemHandle::goToStageUninstall(bool complete, bool account)
 {
 	setPaused(false, true);
 
-	m_ThreadMutex.readLock();
+	{
+		std::lock_guard<std::mutex> guard(m_ThreadMutex);
 
-	if (m_pThread)
-		m_pThread->purge();
-
-	m_ThreadMutex.readUnlock();
+		if (m_pThread)
+			m_pThread->purge();
+	}
+	
 
 	if (HasAllFlags(getItemInfo()->getStatus(), UserCore::Item::ItemInfoI::STATUS_INSTALLCOMPLEX))
 	{
@@ -636,14 +637,12 @@ void ItemHandle::goToStageInstall(const char* path, MCFBranch branch)
 
 void ItemHandle::stopThread()
 {
-	m_ThreadMutex.writeLock();
+	std::lock_guard<std::mutex> guard(m_ThreadMutex);
 
 	m_pUserCore->getThreadPool()->queueTask(new UserCore::Task::DeleteThread(m_pUserCore, m_pThread));
 
 	m_pThread = nullptr;
 	m_bStopped = true;
-
-	m_ThreadMutex.writeUnlock();
 }
 
 
@@ -660,15 +659,10 @@ void ItemHandle::registerTask(UserCore::ItemTask::BaseItemTask* task)
 		return;
 
 	m_pEventHandler->registerTask(task);
+	std::lock_guard<std::mutex> guard(m_ThreadMutex);
 
-
-	m_ThreadMutex.readLock();
-	bool nullThread = (m_pThread == nullptr);
-	m_ThreadMutex.readUnlock();
-
-	if (nullThread)
+	if (m_pThread == nullptr)
 	{
-		m_ThreadMutex.writeLock();
 		if (!m_pThread)
 		{
 			m_pThread = new ItemThread(this);
@@ -682,12 +676,9 @@ void ItemHandle::registerTask(UserCore::ItemTask::BaseItemTask* task)
 
 			m_bStopped = false;
 		}
-		m_ThreadMutex.writeUnlock();
 	}
 	
-	m_ThreadMutex.readLock();
 	m_pThread->queueTask(task);
-	m_ThreadMutex.readUnlock();
 }
 
 void ItemHandle::addHelper(Helper::ItemHandleHelperI* helper)
@@ -751,12 +742,12 @@ bool ItemHandle::verify(bool files, bool tools, bool hooks)
 
 void ItemHandle::verifyOveride()
 {
-	m_ThreadMutex.readLock();
+	{
+		std::lock_guard<std::mutex> guard(m_ThreadMutex);
 
-	if (m_pThread)
-		m_pThread->purge();
-
-	m_ThreadMutex.readUnlock();
+		if (m_pThread)
+			m_pThread->purge();
+	}
 
 	goToStageVerify(MCFBranch(), MCFBuild(), true, false, false);
 }
@@ -1192,12 +1183,10 @@ void ItemHandle::cancelCurrentStage()
 
 	setPaused(false);
 
-	m_ThreadMutex.readLock();
+	std::lock_guard<std::mutex> guard(m_ThreadMutex);
 
 	if (m_pThread)
 		m_pThread->cancelCurrentTask();
-
-	m_ThreadMutex.readUnlock();
 }
 
 void ItemHandle::getStatusStr(LanguageManagerI & pLangMng, char* buffer, uint32 buffsize)
@@ -1321,12 +1310,10 @@ bool ItemHandle::setTaskGroup(ItemTaskGroup* group, bool force)
 	{
 		setPaused(false, true);
 
-		m_ThreadMutex.readLock();
+		std::lock_guard<std::mutex> guard(m_ThreadMutex);
 
 		if (m_pThread)
 			m_pThread->purge();
-
-		m_ThreadMutex.readUnlock();
 	}
 
 	m_pGroup = group;

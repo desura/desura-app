@@ -25,19 +25,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>
 #include <condition_variable>
 #include <chrono>
 
-#include "util_thread/ReadWriteMutex.h"
-
 #define MS_VC_EXCEPTION 0x406D1388
 
 #ifdef NIX
 	#include <sys/prctl.h>
 #endif
 
-
-
-
-namespace Thread
-{
+using namespace Thread;
 
 
 void waitOnMutex(std::condition_variable &waitCond, std::mutex &waitMutex)
@@ -55,43 +49,6 @@ bool timedWaitOnMutex(std::condition_variable &waitCond, std::mutex &waitMutex, 
 	return waitCond.wait_for(lock, span) == std::cv_status::timeout;
 }
 
-
-class ReadWriteMutex::ReadWriteMutexPrivates
-{
-public:
-	Thread::Internal::ReadWriteMutex m_Mutex;
-};
-
-
-ReadWriteMutex::ReadWriteMutex()
-{
-	m_pPrivates = new ReadWriteMutexPrivates();
-}
-
-ReadWriteMutex::~ReadWriteMutex()
-{
-	safe_delete(m_pPrivates);
-}
-
-void ReadWriteMutex::readLock()
-{
-	m_pPrivates->m_Mutex.acquireReadLock();
-}
-
-void ReadWriteMutex::readUnlock()
-{
-	m_pPrivates->m_Mutex.releaseReadLock();
-}
-
-void ReadWriteMutex::writeLock()
-{
-	m_pPrivates->m_Mutex.acquireWriteLock();
-}
-
-void ReadWriteMutex::writeUnlock()
-{
-	m_pPrivates->m_Mutex.releaseWriteLock();
-}
 
 
 class WaitCondition::WaitConditionPrivates
@@ -398,6 +355,4 @@ uint64 BaseThread::GetCurrentThreadId()
 #else
 	return (uint64)pthread_self();
 #endif
-}
-
 }

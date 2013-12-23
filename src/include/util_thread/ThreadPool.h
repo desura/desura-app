@@ -115,8 +115,8 @@ private:
 	std::deque<BaseTask*> m_vTaskList;
 
 	std::mutex m_TaskMutex;
-	ReadWriteMutex m_ForcedMutex;
-	ReadWriteMutex m_ThreadMutex;
+	std::mutex m_ForcedMutex;
+	std::mutex m_ThreadMutex;
 
 	WaitCondition m_WaitCondition;
 };

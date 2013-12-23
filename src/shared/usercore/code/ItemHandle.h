@@ -193,7 +193,7 @@ private:
 	uint32 m_uiHelperId;
 	uint32 m_uiStage;
 
-	::Thread::ReadWriteMutex m_ThreadMutex;
+	std::mutex m_ThreadMutex;
 	UserCore::Item::ItemThread *m_pThread;
 	UserCore::Item::ItemInfo* m_pItemInfo;
 	UserCore::User* m_pUserCore;

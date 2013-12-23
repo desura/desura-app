@@ -38,15 +38,17 @@ public:
 	Thread::BaseTask* m_pTask;
 };
 
-namespace Thread
-{
+using namespace Thread;
+
+
 
 BaseTask::~BaseTask()
 {
 
 }
 
-ThreadPool::ThreadPool(uint8 num) : BaseThread( "Thread Pool" )
+ThreadPool::ThreadPool(uint8 num) 
+	: BaseThread( "Thread Pool" )
 {
 	if (num == 0)
 		m_uiCount = 2;
@@ -68,25 +70,29 @@ ThreadPool::~ThreadPool()
 	safe_delete(m_vTaskList);
 	m_TaskMutex.unlock();
 
-	m_ThreadMutex.writeLock();
-		for (size_t x=0; x<m_vThreadList.size(); x++)
+	{
+		std::lock_guard<std::mutex> guardThread(m_ThreadMutex);
+
+		for (auto thread : m_vThreadList)
 		{
-			m_vThreadList[x]->onCompleteEvent -= delegate(this, &ThreadPool::onThreadComplete);
-			m_vThreadList[x]->stop();
+			thread->onCompleteEvent -= delegate(this, &ThreadPool::onThreadComplete);
+			thread->stop();
 		}
 
 		safe_delete(m_vThreadList);
-	m_ThreadMutex.writeUnlock();
+	}
 
-	m_ForcedMutex.writeLock();
-		for (size_t x=0; x<m_vForcedList.size(); x++)
+	{
+		std::lock_guard<std::mutex> guardForced(m_ForcedMutex);
+
+		for (auto forced : m_vForcedList)
 		{
-			m_vForcedList[x]->onCompleteEvent -= delegate(this, &ThreadPool::onThreadComplete);
-			m_vForcedList[x]->stop();
+			forced->onCompleteEvent -= delegate(this, &ThreadPool::onThreadComplete);
+			forced->stop();
 		}
 
-		safe_delete(m_vForcedList);
-	m_ForcedMutex.writeUnlock();
+		safe_delete(m_vForcedList);	
+	}
 }
 
 void ThreadPool::blockTasks()
@@ -102,29 +108,27 @@ void ThreadPool::unBlockTasks()
 void ThreadPool::purgeTasks()
 {
 	{
-		m_TaskMutex.lock();
+		std::lock_guard<std::mutex> guardTask(m_TaskMutex);
 
-		m_ThreadMutex.readLock();
+		{
+			std::lock_guard<std::mutex> guardThread(m_ThreadMutex);
 
-			for (size_t x=0; x<m_vThreadList.size(); x++)
+			for (auto thread : m_vThreadList)
+				thread->stopTask();
+		}
+
+		{
+			std::lock_guard<std::mutex> guardForced(m_ForcedMutex);
+			for (auto forced : m_vForcedList)
 			{
-				m_vThreadList[x]->stopTask();
-			}
-
-		m_ThreadMutex.readUnlock();
-		m_ForcedMutex.writeLock();
-
-			for (size_t x=0; x<m_vForcedList.size(); x++)
-			{
-				m_vForcedList[x]->stop();
-				m_vForcedList[x]->onCompleteEvent -= delegate(this, &ThreadPool::onThreadComplete);
+				forced->stop();
+				forced->onCompleteEvent -= delegate(this, &ThreadPool::onThreadComplete);
 			}
 
 			safe_delete(m_vForcedList);
-		m_ForcedMutex.writeUnlock();
+		}
 
 		safe_delete(m_vTaskList);
-		m_TaskMutex.unlock();
 	}
 
 	while (activeThreads() > 0)
@@ -143,9 +147,10 @@ void ThreadPool::queueTask(BaseTask *task)
 		return;
 	}
 
-	m_TaskMutex.lock();
-	m_vTaskList.push_back(task);
-	m_TaskMutex.unlock();
+	{
+		std::lock_guard<std::mutex> guardTask(m_TaskMutex);
+		m_vTaskList.push_back(task);
+	}
 
 	//get thread running again.
 	m_WaitCondition.notify();
@@ -157,7 +162,7 @@ void ThreadPool::forceTask(BaseTask *task)
 	if (!task)
 		return;
 
-	m_ForcedMutex.writeLock();
+	std::lock_guard<std::mutex> guardForced(m_ForcedMutex);
 
 	ThreadPoolThread *thread = new ThreadPoolThread(new ThreadPoolTaskSource(task), true);
 	thread->onCompleteEvent += delegate(this, &ThreadPool::onThreadComplete);
@@ -165,9 +170,6 @@ void ThreadPool::forceTask(BaseTask *task)
 	m_vForcedList.push_back( thread );
 
 	thread->start();
-
-
-	m_ForcedMutex.writeUnlock();
 }
 
 void ThreadPool::run()
@@ -203,55 +205,44 @@ void ThreadPool::run()
 uint8 ThreadPool::activeThreads()
 {
 	uint8 count = 0;
+	std::lock_guard<std::mutex> guardThread(m_ThreadMutex);
 
-	m_ThreadMutex.readLock();
-
-	for (size_t x=0; x<m_vThreadList.size(); x++)
+	for (auto thread : m_vThreadList)
 	{
-		if (!m_vThreadList[x])
+		if (!thread)
 			continue;
 
-		if (m_vThreadList[x]->hasTask())
+		if (thread->hasTask())
 			count++;
 	}
-
-	m_ThreadMutex.readUnlock();
 
 	return count;
 }
 
 void ThreadPool::startNewTasks()
 {
-	m_TaskMutex.lock();
-	m_ThreadMutex.readLock();
+	std::lock_guard<std::mutex> guardThread(m_ThreadMutex);
 
-	for (size_t x=0; x<m_vThreadList.size(); x++)
+	for (auto thread : m_vThreadList)
 	{
-		if (m_vTaskList.size() == 0)
-			break;
-
-		if (!m_vThreadList[x])
-			continue;
-
-		if (!m_vThreadList[x]->hasTask())
-			m_vThreadList[x]->newTask();
+		if (!thread->hasTask())
+			thread->newTask();
 	}
-
-	m_ThreadMutex.readUnlock();
-	m_TaskMutex.unlock();
 }
 
 void ThreadPool::onPause()
 {
-	m_ThreadMutex.readLock();
-		for (size_t x=0; x<m_vThreadList.size(); x++)
-			m_vThreadList[x]->pause();
-	m_ThreadMutex.readUnlock();
+	{
+		std::lock_guard<std::mutex> guardThread(m_ThreadMutex);
+		for (auto thread : m_vThreadList)
+			thread->pause();
+	}
 
-	m_ForcedMutex.readLock();
-		for (size_t x=0; x<m_vForcedList.size(); x++)
-			m_vForcedList[x]->pause();
-	m_ForcedMutex.readUnlock();
+	{
+		std::lock_guard<std::mutex> guardForced(m_ForcedMutex);
+		for (auto forced : m_vForcedList)
+			forced->pause();
+	}
 
 	//get thread running again.
 	m_WaitCondition.notify();
@@ -259,15 +250,17 @@ void ThreadPool::onPause()
 
 void ThreadPool::onUnpause()
 {
-	m_ThreadMutex.readLock();
-		for (size_t x=0; x<m_vThreadList.size(); x++)
-			m_vThreadList[x]->unpause();
-	m_ThreadMutex.readUnlock();
+	{
+		std::lock_guard<std::mutex> guardThread(m_ThreadMutex);
+		for (auto thread : m_vThreadList)
+			thread->unpause();
+	}
 
-	m_ForcedMutex.readLock();
-		for (size_t x=0; x<m_vForcedList.size(); x++)
-			m_vForcedList[x]->unpause();
-	m_ForcedMutex.readUnlock();
+	{
+		std::lock_guard<std::mutex> guardForced(m_ForcedMutex);
+		for (auto forced : m_vForcedList)
+			forced->unpause();
+	}
 
 	//get thread running again.
 	m_WaitCondition.notify();
@@ -275,15 +268,17 @@ void ThreadPool::onUnpause()
 
 void ThreadPool::onStop()
 {
-	m_ThreadMutex.readLock();
-		for (size_t x=0; x<m_vThreadList.size(); x++)
-			m_vThreadList[x]->stop();
-	m_ThreadMutex.readUnlock();
+	{
+		std::lock_guard<std::mutex> guardThread(m_ThreadMutex);
+		for (auto thread : m_vThreadList)
+			thread->stop();
+	}
 
-	m_ForcedMutex.readLock();
-	for (size_t x=0; x<m_vForcedList.size(); x++)
-		m_vForcedList[x]->stop();
-	m_ForcedMutex.readUnlock();
+	{
+		std::lock_guard<std::mutex> guardForced(m_ForcedMutex);
+		for (auto forced : m_vForcedList)
+			forced->stop();
+	}
 
 	//get thread running again.
 	m_WaitCondition.notify();
@@ -291,7 +286,7 @@ void ThreadPool::onStop()
 
 void ThreadPool::removedForced()
 {
-	m_ForcedMutex.writeLock();
+	std::lock_guard<std::mutex> guardForced(m_ForcedMutex);
 
 	if (m_vForcedList.size() > 0)
 	{
@@ -307,7 +302,6 @@ void ThreadPool::removedForced()
 			}
 		}
 
-
 		std::vector<size_t>::reverse_iterator it = delVect.rbegin();
 		while (it != delVect.rend())
 		{
@@ -315,8 +309,6 @@ void ThreadPool::removedForced()
 			it++;
 		}
 	}
-
-	m_ForcedMutex.writeUnlock();
 }
 
 void ThreadPool::onThreadComplete()
@@ -331,8 +323,7 @@ void ThreadPool::onThreadComplete()
 BaseTask* ThreadPool::getTask()
 {
 	BaseTask* task = nullptr;
-
-	m_TaskMutex.lock();
+	std::lock_guard<std::mutex> guardTask(m_TaskMutex);
 
 	if (m_vTaskList.size() > 0)
 	{
@@ -340,9 +331,6 @@ BaseTask* ThreadPool::getTask()
 		m_vTaskList.pop_front();
 	}
 
-	m_TaskMutex.unlock();
-
 	return task;
 }
 
-}
