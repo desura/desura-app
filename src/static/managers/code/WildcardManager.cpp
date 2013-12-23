@@ -23,7 +23,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>
 #include "XMLMacros.h"
 
 
-static Thread::Mutex m_WCMutex;
+static std::mutex m_WCMutex;
 
 WildcardManager::WildcardManager() : BaseManager( true )
 {

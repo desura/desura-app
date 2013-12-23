@@ -82,7 +82,7 @@ protected:
 
 private:
 	UserCore::UserI* m_pUserCore;
-	::Thread::Mutex m_mMutex;
+	std::mutex m_mMutex;
 };
 
 }

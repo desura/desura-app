@@ -114,7 +114,7 @@ private:
 	std::vector<ThreadPoolThread*> m_vThreadList;
 	std::deque<BaseTask*> m_vTaskList;
 
-	Mutex m_TaskMutex;
+	std::mutex m_TaskMutex;
 	ReadWriteMutex m_ForcedMutex;
 	ReadWriteMutex m_ThreadMutex;
 

@@ -106,7 +106,7 @@ private:
 	FactoryFn m_pFactory;
 
 	SharedObjectLoader m_ScriptCore;
-	::Thread::Mutex m_ScriptLock;
+	std::mutex m_ScriptLock;
 };
 
 Courgette g_Courgette;

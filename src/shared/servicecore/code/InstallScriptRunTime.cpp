@@ -235,7 +235,7 @@ private:
 	ScriptCoreSetupI* m_pSetup;
 
 	SharedObjectLoader m_ScriptCore;
-	::Thread::Mutex m_ScriptLock;
+	std::mutex m_ScriptLock;
 
 	ItemExtender m_Extender;
 };

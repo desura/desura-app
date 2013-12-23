@@ -235,7 +235,7 @@ void ShutdownWebControl()
 	UnloadCEFDll();
 }
 
-static Thread::Mutex g_RootUrlMutex;
+static std::mutex g_RootUrlMutex;
 static gcString g_strRootUrl = "desura.com";
 
 void DeleteCookies()
@@ -246,7 +246,7 @@ void DeleteCookies()
 	gcString urlRoot;
 
 	{
-		Thread::AutoLock a(g_RootUrlMutex);
+		std::lock_guard<std::mutex> a(g_RootUrlMutex);
 		urlRoot = g_strRootUrl;
 	}
 
@@ -282,7 +282,7 @@ void SetCookies()
 	gcString urlRoot;
 
 	{
-		Thread::AutoLock a(g_RootUrlMutex);
+		std::lock_guard<std::mutex> a(g_RootUrlMutex);
 
 		if (GetWebCore())
 			g_strRootUrl = GetWebCore()->getUrl(WebCore::Root);

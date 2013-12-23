@@ -46,7 +46,7 @@ bool AddItemExtender(ChromiumDLL::JavaScriptExtenderI* extender)
 
 
 std::map<uint32, ScriptCoreItemI*> g_ItemMap;
-::Thread::Mutex g_ItemLock;
+std::mutex g_ItemLock;
 
 std::vector<ChromiumDLL::JavaScriptExtenderI*> g_vExtenderList;
 

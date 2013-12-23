@@ -207,8 +207,8 @@ protected:
 private:
 	int32 m_mClassId;
 
-	Thread::Mutex m_ClassMutex;
-	Thread::Mutex m_mVectorMutex;
+	std::mutex m_ClassMutex;
+	std::mutex m_mVectorMutex;
 
 	std::vector<SmartPtr<IPCClass> > m_vClassList;
 	std::vector<PipeMessage*> m_vPipeMsgs;

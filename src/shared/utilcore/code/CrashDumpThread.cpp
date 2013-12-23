@@ -97,7 +97,7 @@ void CrashDumpThread::uploadDump(const char* dumpFile)
 
 void CrashDumpThread::run()
 {
-	Thread::AutoLock al(m_DelMutex);
+	std::lock_guard<std::mutex> al(m_DelMutex);
 
 	if (!loadCrashReporter())
 	{

@@ -50,10 +50,10 @@ protected:
 	void removeTask(UserCore::Task::CDKeyTask* task);
 
 private:
-	::Thread::Mutex m_MapLock;
+	std::mutex m_MapLock;
 	CDKeyList m_mCDKeyCallbackList;
 
-	::Thread::Mutex m_TaskListLock;
+	std::mutex m_TaskListLock;
 	CDKeyTaskList m_vCDKeyTaskList;
 
 	UserCore::User* m_pUser;

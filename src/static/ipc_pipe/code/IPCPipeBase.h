@@ -149,14 +149,14 @@ protected:
 	SendFn sendMsg;
 	
 	
-	::Thread::Mutex m_RecvLock;
+	std::mutex m_RecvLock;
 	std::deque<PipeData*> m_vRecvBuffer;
 	
 	::Thread::WaitCondition m_WaitCond;
 	
 #endif
 	
-	::Thread::Mutex m_LoopbackLock;
+	std::mutex m_LoopbackLock;
 	
 	class LoopbackInfo
 	{

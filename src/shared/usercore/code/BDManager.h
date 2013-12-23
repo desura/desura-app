@@ -54,7 +54,7 @@ protected:
 	void onBannerComplete(UserCore::Task::BannerCompleteInfo& bci);
 
 private:
-	::Thread::Mutex m_BannerLock;
+	std::mutex m_BannerLock;
 	std::map<UserCore::Task::DownloadBannerTask*, UserCore::Misc::BannerNotifierI*> m_mDownloadBannerTask;
 
 	UserCore::User* m_pUser;

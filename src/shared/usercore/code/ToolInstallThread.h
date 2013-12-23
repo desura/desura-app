@@ -50,9 +50,9 @@ class ToolInstallThread : public ::Thread::BaseThread
 {
 public:
 #ifdef WIN32
-	ToolInstallThread(ToolManager* toolManager, ::Thread::Mutex &mapLock, std::map<ToolTransactionId, ToolTransInfo*> &transactions, const char* userName, HWND handle);
+	ToolInstallThread(ToolManager* toolManager, std::mutex &mapLock, std::map<ToolTransactionId, ToolTransInfo*> &transactions, const char* userName, HWND handle);
 #else
-	ToolInstallThread(ToolManager* toolManager, ::Thread::Mutex &mapLock, std::map<ToolTransactionId, ToolTransInfo*> &transactions);
+	ToolInstallThread(ToolManager* toolManager, std::mutex &mapLock, std::map<ToolTransactionId, ToolTransInfo*> &transactions);
 #endif
 
 	~ToolInstallThread();
@@ -85,11 +85,11 @@ protected:
 	bool preInstallStart();
 
 private:
-	::Thread::Mutex &m_MapLock;
+	std::mutex &m_MapLock;
 	std::map<ToolTransactionId, Misc::ToolTransInfo*> &m_mTransactions;
 
 	::Thread::WaitCondition m_InstallWait;
-	::Thread::Mutex m_InstallLock;
+	std::mutex m_InstallLock;
 	
 	std::deque<ToolTransactionId> m_dvInstallQue;
 

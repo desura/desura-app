@@ -91,7 +91,7 @@ protected:
 
 	MCFCore::MCFHeaderI* m_pHeader;
 	MCFCore::Thread::UpdateProgThread *m_pUPThread;
-	::Thread::Mutex m_pFileMutex;
+	std::mutex m_pFileMutex;
 
 	std::vector<std::shared_ptr<MCFCore::MCFFile>> &m_rvFileList;
 	std::vector<int32> m_vFileList;

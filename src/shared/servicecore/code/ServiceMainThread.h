@@ -45,7 +45,7 @@ protected:
 	void onStop();
 
 private:
-	::Thread::Mutex m_vLock;
+	std::mutex m_vLock;
 	std::deque<TaskI*> m_vJobList;
 
 	::Thread::WaitCondition m_WaitCond;

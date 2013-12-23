@@ -34,7 +34,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>
 #endif
 
 #ifdef WIN32
-static ::Thread::Mutex g_TimerLock;
+static std::mutex g_TimerLock;
 static std::map<int32, gcSpinningBar*> g_SpinnerMap;
 
 static VOID CALLBACK TimerProc(HWND hwnd, UINT uMsg, UINT_PTR idEvent, DWORD dwTime)

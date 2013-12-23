@@ -333,7 +333,7 @@ private:
 	std::vector<std::shared_ptr<MCFCore::MCFFile>> m_pFileList;
 	std::vector<std::shared_ptr<const MCFCore::Misc::DownloadProvider>> m_vProviderList;
 
-	::Thread::Mutex m_mThreadMutex;
+	std::mutex m_mThreadMutex;
 };
 
 

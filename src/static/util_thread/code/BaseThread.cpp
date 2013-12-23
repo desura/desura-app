@@ -94,39 +94,6 @@ void ReadWriteMutex::writeUnlock()
 }
 
 
-
-
-class Mutex::MutexPrivates
-{
-public:
-	std::mutex m_WaitMutex;
-};
-
-
-Mutex::Mutex()
-{
-	m_pPrivates = new MutexPrivates();
-}
-
-Mutex::~Mutex()
-{
-	safe_delete(m_pPrivates);
-}
-
-void Mutex::lock()
-{
-	if (m_pPrivates)
-		m_pPrivates->m_WaitMutex.lock();
-}
-
-void Mutex::unlock()
-{
-	if (m_pPrivates)
-		m_pPrivates->m_WaitMutex.unlock();
-}
-
-
-
 class WaitCondition::WaitConditionPrivates
 {
 public:

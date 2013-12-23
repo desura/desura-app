@@ -183,7 +183,7 @@ private:
 		event.invoke();
 	}
 
-	::Thread::Mutex m_ListLock;
+	std::mutex m_ListLock;
 	std::vector<wxDelegate*> m_vDelgateList;
 };
 
@@ -386,7 +386,7 @@ protected:
 			ObjDelegate<TObj, TArg>::m_pObj->registerDelegate(this);
 	}
 	
-	::Thread::Mutex m_InvokerMutex;
+	std::mutex m_InvokerMutex;
 	PrimInvoker<TObj, TArg> *m_pInvoker;
 };
 
@@ -476,7 +476,7 @@ private:
 		m_InvokerMutex.unlock();
 	}
 
-	::Thread::Mutex m_InvokerMutex;
+	std::mutex m_InvokerMutex;
 	PrimInvoker<TObj, TArg> *m_pInvoker;
 };
 
@@ -691,7 +691,7 @@ protected:
 			ObjDelegateV<TObj>::m_pObj->registerDelegate(this);
 	}
 	
-	::Thread::Mutex m_InvokerMutex;
+	std::mutex m_InvokerMutex;
 	InvokerV<TObj> *m_pInvoker;
 };
 

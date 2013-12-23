@@ -151,10 +151,10 @@ private:
 
 	ACTION m_Action;
 
-	::Thread::Mutex m_ListLock;
+	std::mutex m_ListLock;
 	std::vector<UserCore::Item::ItemHandle*> m_vWaitingList;
 
-	::Thread::Mutex m_TaskListLock;
+	std::mutex m_TaskListLock;
 	std::vector<UserCore::ItemTask::BaseItemTask*> m_vTaskList;
 
 	UserCore::ItemManager* m_pItemManager;

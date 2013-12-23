@@ -77,7 +77,7 @@ public:
 	Misc::WGTSuperBlock* curBlock;
 	WGTWorker* workThread;
 
-	::Thread::Mutex mutex;
+	std::mutex mutex;
 	std::deque<Misc::WGTBlock*> vBuffer;
 };
 
@@ -622,7 +622,7 @@ bool WGTController::stealBlocks()
 
 	for (size_t x=0; x<m_vWorkerList.size(); x++)
 	{
-		::Thread::AutoLock al(m_vWorkerList[x]->mutex);
+		std::lock_guard<std::mutex> al(m_vWorkerList[x]->mutex);
 
 		if (!m_vWorkerList[x]->curBlock)
 			continue;

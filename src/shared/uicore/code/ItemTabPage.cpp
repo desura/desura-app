@@ -27,7 +27,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>
 
 #include "cef_desura_includes/ChromiumBrowserI.h"
 
-::Thread::Mutex m_EventLock;
+std::mutex m_EventLock;
 std::map<gcString, ChromiumDLL::JSObjHandle> g_EventMap;
 
 bool g_bGlobalItemUpdate = false;
@@ -35,7 +35,7 @@ bool g_bMapValid = false;
 
 ChromiumDLL::JSObjHandle findEventFunction(const gcString &name, ChromiumDLL::JSObjHandle root)
 {
-	::Thread::AutoLock al(&m_EventLock);
+	std::lock_guard<std::mutex> al(m_EventLock);
 
 	if (!g_bMapValid)
 		return nullptr;

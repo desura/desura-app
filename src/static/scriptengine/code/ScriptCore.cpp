@@ -110,7 +110,7 @@ private:
 	gcException m_Exception;
 	::Thread::WaitCondition m_Wait;
 	::Thread::WaitCondition m_WaitDestory;
-	::Thread::Mutex m_DelLock;
+	std::mutex m_DelLock;
 };
 
 class InitV8 : public ScriptTask

@@ -42,50 +42,6 @@ private:
 	ReadWriteMutexPrivates* m_pPrivates;
 };
 
-class Mutex
-{
-public:
-	Mutex();
-	~Mutex();
-
-	void lock();
-	void unlock();
-
-private:
-	class MutexPrivates;
-	MutexPrivates* m_pPrivates;
-};
-
-class AutoLock
-{
-public:
-	AutoLock(Mutex& mutex)
-	{
-		m_Mutex = &mutex;
-
-		if (m_Mutex)
-			m_Mutex->lock();
-	}
-
-	AutoLock(Mutex* mutex)
-	{
-		m_Mutex = mutex;
-
-		if (m_Mutex)
-			m_Mutex->lock();
-	}
-
-	~AutoLock()
-	{
-		if (m_Mutex)
-			m_Mutex->unlock();
-	}
-
-private:
-	Mutex* m_Mutex;
-};
-
-
 class WaitCondition
 {
 public:

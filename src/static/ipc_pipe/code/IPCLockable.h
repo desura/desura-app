@@ -92,7 +92,7 @@ private:
 	volatile bool m_bTriggered;
 
 	Thread::WaitCondition waitCond;
-	Thread::Mutex delMutex;
+	std::mutex delMutex;
 };
 
 
@@ -211,7 +211,7 @@ private:
 
 	uint32 m_uiIdCount;
 	std::vector<IPCLock*> m_vLockList;
-	Thread::Mutex m_lockMutex;
+	std::mutex m_lockMutex;
 };
 
 }

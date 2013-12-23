@@ -142,10 +142,10 @@ private:
 	UserCore::User* m_pUser;
 	ToolTransactionId m_uiLastTransId; 
 
-	::Thread::Mutex m_MapLock;
+	std::mutex m_MapLock;
 	std::map<ToolTransactionId, Misc::ToolTransInfo*> m_mTransactions;
 
-	::Thread::Mutex m_DownloadLock;
+	std::mutex m_DownloadLock;
 	std::map<uint64, UserCore::Task::DownloadToolTask*> m_mDownloads;
 
 
@@ -163,7 +163,7 @@ private:
 	FactoryFn m_pFactory;
 
 	SharedObjectLoader m_ScriptCore;
-	::Thread::Mutex m_ScriptLock;
+	std::mutex m_ScriptLock;
 
 	int32 m_iLastCustomToolId;
 	time_t m_tJSEngineExpireTime;

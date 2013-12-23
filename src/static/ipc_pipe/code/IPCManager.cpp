@@ -201,7 +201,7 @@ protected:
 		m_WaitCond.notify();
 	}
 
-	Thread::Mutex m_mVectorMutex;
+	std::mutex m_mVectorMutex;
 	Thread::WaitCondition m_WaitCond;
 	std::vector<ProcessData*> m_vItemList;
 };
@@ -269,7 +269,7 @@ WeakPtr<IPCClass> IPCManager::createClass(const char* name)
 	uint32 id = 0;
 	SmartPtr<IPCClass> ipcc;
 	{
-		Thread::AutoLock al(&m_ClassMutex);
+		std::lock_guard<std::mutex> al(m_ClassMutex);
 
 		id = m_mClassId;
 
@@ -307,7 +307,7 @@ WeakPtr<IPCClass> IPCManager::createClass(const char* name)
 	}
 
 
-	Thread::AutoLock al(&m_ClassMutex);
+	std::lock_guard<std::mutex> al(m_ClassMutex);
 	m_vClassList.push_back(ipcc);
 
 	return ipcc;
@@ -323,7 +323,7 @@ IPCParameterI* IPCManager::createClass(uint32 hash, uint32 id)
 		return new PException(e);
 	}
 
-	Thread::AutoLock al(&m_ClassMutex);
+	std::lock_guard<std::mutex> al(m_ClassMutex);
 	m_vClassList.push_back(SmartPtr<IPCClass>(it->second(this, id, m_uiItemId)));
 
 	return new PBool((void*)true);
@@ -331,7 +331,7 @@ IPCParameterI* IPCManager::createClass(uint32 hash, uint32 id)
 
 void IPCManager::destroyClass(IPCClass* obj)
 {
-	Thread::AutoLock al(&m_ClassMutex);
+	std::lock_guard<std::mutex> al(m_ClassMutex);
 
 	for (size_t x=0; x<m_vClassList.size(); x++)
 	{
@@ -348,7 +348,7 @@ void IPCManager::destroyClass(uint32 id)
 	SmartPtr<IPCClass> obj;
 
 	{
-		Thread::AutoLock al(&m_ClassMutex);
+		std::lock_guard<std::mutex> al(m_ClassMutex);
 
 		for (size_t x=0; x<m_vClassList.size(); x++)
 		{
@@ -445,7 +445,7 @@ void IPCManager::recvMessage(IPCMessage* msg)
 		}
 		else if (msg->type == MT_FUNCTIONRETURN)
 		{
-			Thread::AutoLock al(&m_ClassMutex);
+			std::lock_guard<std::mutex> al(m_ClassMutex);
 
 			for (size_t x=0; x<m_vClassList.size(); x++)
 			{
@@ -459,7 +459,7 @@ void IPCManager::recvMessage(IPCMessage* msg)
 		else
 		{
 			// as event callbacks often block we need to offload them to another thread
-			Thread::AutoLock al(&m_ClassMutex);
+			std::lock_guard<std::mutex> al(m_ClassMutex);
 			SmartPtr<IPCClass> outClass;
 
 			for (size_t x=0; x<m_vClassList.size(); x++)
@@ -645,7 +645,7 @@ DesuraId IPCManager::setItemHashId(const char* itemHashId)
 
 void IPCManager::informClassesOfDisconnect()
 {
-	Thread::AutoLock al(&m_ClassMutex);
+	std::lock_guard<std::mutex> al(m_ClassMutex);
 
 	gcException e(ERR_PIPE, "Pipe Disconnected. IPC Failed.");
 

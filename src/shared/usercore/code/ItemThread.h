@@ -77,8 +77,8 @@ private:
 
 	::Thread::WaitCondition m_WaitCond;
 
-	::Thread::Mutex m_TaskMutex;
-	::Thread::Mutex m_DeleteMutex;
+	std::mutex m_TaskMutex;
+	std::mutex m_DeleteMutex;
 
 	bool m_bRunningTask;
 	bool m_bDeleteCurrentTask;

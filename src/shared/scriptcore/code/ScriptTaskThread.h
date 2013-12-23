@@ -44,7 +44,7 @@ private:
 	ScriptTaskI* m_pLastTask = nullptr;
 
 	::Thread::WaitCondition m_WaitCond;
-	::Thread::Mutex m_LockMutex;
+	std::mutex m_LockMutex;
 
 	std::deque<ScriptTaskI*> m_TaskQue;
 };

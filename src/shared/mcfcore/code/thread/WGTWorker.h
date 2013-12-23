@@ -105,14 +105,14 @@ private:
 	uint32 m_iAttempt = 0;
 	uint32 m_uiId = 0;
 
-	::Thread::Mutex m_DeleteMutex;
+	std::mutex m_DeleteMutex;
 
 	MCFCore::Thread::WGTControllerI *m_pCT = nullptr;
 	MCFCore::Thread::Misc::WGTSuperBlock *m_pCurBlock = nullptr;
 	MCFCore::Misc::ProviderManager *m_pProvMng = nullptr;
 
 
-	::Thread::Mutex m_ErrorMutex;
+	std::mutex m_ErrorMutex;
 	bool m_bError = false;
 	gcException m_Error;
 };

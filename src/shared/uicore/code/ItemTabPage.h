@@ -72,7 +72,7 @@ protected:
 	virtual void onFind();
 
 private:
-	::Thread::Mutex m_UploadMutex;
+	std::mutex m_UploadMutex;
 	std::map<std::string, uint32> m_vUploadProgress;
 
 	bool m_bNotifiedOfLowSpace;

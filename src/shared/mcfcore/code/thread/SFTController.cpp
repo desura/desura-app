@@ -45,7 +45,7 @@ public:
 	uint32 id = 0;
 	uint32 status = 0;
 
-	::Thread::Mutex mutex;
+	std::mutex mutex;
 
 	std::shared_ptr<MCFCore::MCFFile> curFile;
 	std::unique_ptr<SFTWorker> workThread;

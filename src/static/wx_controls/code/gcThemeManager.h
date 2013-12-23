@@ -98,7 +98,7 @@ protected:
 	void newImgHandle(uint32 hash);
 	void desposeImgHandle(uint32 hash);
 
-	Thread::Mutex m_WaitMutex;
+	std::mutex m_WaitMutex;
 	friend class gcImageHandle;
 };
 

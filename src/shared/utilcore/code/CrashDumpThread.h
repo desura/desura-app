@@ -60,7 +60,7 @@ private:
 	uint32 m_bSecond;
 	SharedObjectLoader sol;
 
-	::Thread::Mutex m_DelMutex;
+	std::mutex m_DelMutex;
 };
 
 #endif //DESURA_CRASHDUMPTHREAD_H

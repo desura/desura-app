@@ -414,7 +414,7 @@ void ToolManager::onToolDLComplete(DesuraId id)
 	eraseDownload(id);
 
 	{
-		::Thread::AutoLock al(&m_MapLock);
+		std::lock_guard<std::mutex> al(m_MapLock);
 		for_each([id](Misc::ToolTransInfo* info){
 			info->onDLComplete(id);
 		});
@@ -430,7 +430,7 @@ void ToolManager::onToolDLError(DesuraId id, gcException &e)
 	if (e.getErrId() == ERR_USERCANCELED)
 		return;
 
-	::Thread::AutoLock al(&m_MapLock);
+	std::lock_guard<std::mutex> al(m_MapLock);
 
 	for_each([id, e](Misc::ToolTransInfo* info){
 		info->onDLError(id, e);
@@ -439,7 +439,7 @@ void ToolManager::onToolDLError(DesuraId id, gcException &e)
 
 void ToolManager::onToolDLProgress(DesuraId id, UserCore::Misc::ToolProgress &prog)
 {
-	::Thread::AutoLock al(&m_MapLock);
+	std::lock_guard<std::mutex> al(m_MapLock);
 
 	for_each([id, &prog](Misc::ToolTransInfo* info){
 		info->onDLProgress(id, prog);

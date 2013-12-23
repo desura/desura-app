@@ -177,10 +177,10 @@ private:
 
 	User* m_pUser;
 
-	::Thread::Mutex m_BranchLock;
+	std::mutex m_BranchLock;
 	std::map<MCFBranch, DesuraId> m_mBranchMapping;
 
-	::Thread::Mutex m_FavLock;
+	std::mutex m_FavLock;
 	std::vector<DesuraId> m_vFavList;
 };
 

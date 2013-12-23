@@ -84,7 +84,7 @@ public:
 	size_t done;
 
 	std::deque<WGTBlock*> vBlockList;
-	::Thread::Mutex m_Lock;
+	std::mutex m_Lock;
 };
 
 

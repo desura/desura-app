@@ -211,9 +211,9 @@ private:
 	TaskBarIcon* m_wxTBIcon; 
 
 	InternalLink *m_pInternalLink;
-	::Thread::Mutex m_NewsLock;
+	std::mutex m_NewsLock;
 
-	::Thread::Mutex m_UserLock;
+	std::mutex m_UserLock;
 
 	friend void cc_NewsTest_cc_func(std::vector<gcString> &argv);
 	friend void cc_GiftTest_cc_func(std::vector<gcString> &argv);

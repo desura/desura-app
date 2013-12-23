@@ -251,7 +251,7 @@ MainApp::~MainApp()
 
 	//delete user first so threads will not die when they try to access webcore
 	//should be deleted on logout but just to make sure
-	Thread::AutoLock a(m_UserLock);
+	std::lock_guard<std::mutex> a(m_UserLock);
 	
 	if (m_wxTBIcon)
 		m_wxTBIcon->deregEvents();
@@ -363,7 +363,7 @@ bool MainApp::isQuietMode()
 
 void MainApp::logIn(const char* user, const char* pass)
 {
-	Thread::AutoLock a(m_UserLock);
+	std::lock_guard<std::mutex> a(m_UserLock);
 
 	safe_delete(g_pUserHandle);
 
@@ -409,7 +409,7 @@ void MainApp::logOut(bool bShowLogin, bool autoLogin)
 	safe_delete(m_pInternalLink);
 
 	{
-		Thread::AutoLock a(m_UserLock);
+		std::lock_guard<std::mutex> a(m_UserLock);
 		if (g_pUserHandle)
 		{
 			UserCore::UserI* user = g_pUserHandle;
@@ -481,7 +481,7 @@ void MainApp::offlineMode()
 	closeMainForm();
 
 	{
-		Thread::AutoLock a(m_UserLock);
+		std::lock_guard<std::mutex> a(m_UserLock);
 
 		gcString path = UTIL::OS::getAppDataPath();
 		safe_delete(g_pUserHandle);

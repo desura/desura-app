@@ -44,7 +44,7 @@ private:
 
 	std::vector<uint32> m_vUpdateList;
 
-	::Thread::Mutex m_ImgMutex;
+	std::mutex m_ImgMutex;
 	gcString m_szAppDataPath;
 };
 
