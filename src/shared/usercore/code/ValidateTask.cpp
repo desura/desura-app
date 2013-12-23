@@ -32,26 +32,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>
 #include "util/UtilLinux.h"
 #endif
 
-namespace UserCore
-{
-namespace ItemTask
-{
+using namespace UserCore::ItemTask;
 
-ValidateTask::ValidateTask(UserCore::Item::ItemHandle* handle, MCFBranch branch, MCFBuild build) : BaseItemTask(UserCore::Item::ItemHandleI::STAGE_VALIDATE, "Validate", handle, branch, build)
+ValidateTask::ValidateTask(UserCore::Item::ItemHandle* handle, MCFBranch branch, MCFBuild build) 
+	: BaseItemTask(UserCore::Item::ItemHandleI::STAGE_VALIDATE, "Validate", handle, branch, build)
 {
 	onErrorEvent += delegate(this, &ValidateTask::onError);
-
-	m_bLeaveLocalFiles = false;
-
-	m_bInError = false;
-	m_bUnAuthed = false;
-	m_bUpdating = false;
-	m_bLocalMcf = false;
-
-	m_CurMcfIndex = 0;
-	m_TotalFileCount = 0;
-
-	m_CurrentMcf = nullptr;
 }
 
 ValidateTask::~ValidateTask()
@@ -113,7 +99,7 @@ void ValidateTask::doRun()
 
 	if (m_bLocalMcf)
 	{
-		setAction(CHECK_EXISTINGMCF);
+		setAction(ACTION::CHECK_EXISTINGMCF);
 
 		try
 		{
@@ -144,19 +130,19 @@ void ValidateTask::doRun()
 
 	getUserCore()->updateUninstallInfo(getItemId(), m_hMCFile->getINSize());
 
-	setAction(CHECK_LOCALMCFS);
+	setAction(ACTION::CHECK_LOCALMCFS);
 	copyLocalMcfs(branch, build);
 
 	if (m_bLeaveLocalFiles)
 	{
-		setAction(CHECK_LOCALFILES);
+		setAction(ACTION::CHECK_LOCALFILES);
 		copyLocalFiles();
 	}
 
 	if (m_bUnAuthed)
 		m_hMCFile->getHeader()->addFlags(MCFCore::MCFHeaderI::FLAG_NOCLEANUP);
 
-	setAction(PRE_ALLOCATING);
+	setAction(ACTION::PRE_ALLOCATING);
 
 	m_CurrentMcf = &m_hMCFile;
 	m_hMCFile->preAllocateFile();
@@ -499,7 +485,7 @@ void ValidateTask::onProgress(MCFCore::Misc::ProgressInfo& p)
 		multi = -1;
 	}
 
-	if (m_Action == CHECK_LOCALMCFS)
+	if (m_Action == ACTION::CHECK_LOCALMCFS)
 	{
 		uint32 baseDone = 0;
 
@@ -521,7 +507,7 @@ void ValidateTask::onProgress(MCFCore::Misc::ProgressInfo& p)
 		}
 		p.flag = 1 + (1<<4);
 	}
-	else if (m_Action == CHECK_EXISTINGMCF)
+	else if (m_Action == ACTION::CHECK_EXISTINGMCF)
 	{
 		uint32 curPer = p.percent/2;
 
@@ -531,7 +517,7 @@ void ValidateTask::onProgress(MCFCore::Misc::ProgressInfo& p)
 		p.percent = base*(multi+1) + curPer/divid;
 		p.flag = 2 + (m_CurMcfIndex<<4);
 	}
-	else if (m_Action == CHECK_LOCALFILES)
+	else if (m_Action == ACTION::CHECK_LOCALFILES)
 	{
 		uint32 curPer = p.percent/3;
 
@@ -543,7 +529,7 @@ void ValidateTask::onProgress(MCFCore::Misc::ProgressInfo& p)
 		p.percent = base*(multi+2) + curPer/divid;
 		p.flag = 3 + (m_CurMcfIndex<<4);
 	}
-	else if (m_Action == PRE_ALLOCATING)
+	else if (m_Action == ACTION::PRE_ALLOCATING)
 	{
 		p.flag = 4 + (m_CurMcfIndex<<4);
 	}
@@ -586,10 +572,4 @@ void ValidateTask::cancel()
 {
 	onStop();
 	getItemHandle()->resetStage(true);
-}
-
-
-
-
-}
 }
