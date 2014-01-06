@@ -33,8 +33,10 @@ public:
 	ChangeDirForm(wxWindow* parent, const char* dest, UserCore::UserI* user);
 	~ChangeDirForm();
 
-protected:
 	void start(const char* dest, UserCore::UserI* user);
+
+protected:
+	friend class LanguageTestDialog;
 
 	void onError(gcException &e);
 	void onStageChange(uint32 &stage);

@@ -48,7 +48,7 @@ enum
 	T_UPDATEREMOVE,
 };
 
-ComplexLaunchServiceTask::ComplexLaunchServiceTask(UserCore::Item::ItemHandle *handle, bool clean, MCFBranch branch, MCFBuild build, UserCore::Item::Helper::InstallerHandleHelperI* ihh) : BaseItemServiceTask(UserCore::Item::ItemHandleI::STAGE_INSTALL_COMPLEX, "ComplexLaunch", handle, branch, build)
+ComplexLaunchServiceTask::ComplexLaunchServiceTask(UserCore::Item::ItemHandle *handle, bool clean, MCFBranch branch, MCFBuild build, UserCore::Item::Helper::InstallerHandleHelperI* ihh) : BaseItemServiceTask(UserCore::Item::ITEM_STAGE::STAGE_INSTALL_COMPLEX, "ComplexLaunch", handle, branch, build)
 {
 	m_pIPCIM = nullptr;
 	m_iTier = 0;

@@ -56,7 +56,8 @@ public:
 	virtual void onVerifyComplete(UserCore::Misc::VerifyComplete& info);
 	virtual void onPause(bool &state);
 
-	void setInfo(DesuraId id);
+	void setInfo(DesuraId id, UserCore::Item::ItemInfoI* pItemInfo);
+	void setInfo(UserCore::Item::ItemHandleI* pItemHandle);
 
 	void pause(bool state);
 	void nonBlockStop();

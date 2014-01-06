@@ -50,6 +50,8 @@ public:
 	void newAccountLoginError(const char* szErrorMessage);
 
 protected:
+	friend class LanguageTestDialog;
+
 	gcTextCtrl* m_tbUsername;
 	gcTextCtrl* m_tbPassword;
 	gcTextCtrl* m_tbPasswordDisp;
@@ -127,6 +129,9 @@ private:
 	wxPoint m_StartDrag;
 
 	wxDialog* m_pNewAccount;
+
+	//Used for language testing
+	bool m_bDisabled = false;
 };
 
 #endif

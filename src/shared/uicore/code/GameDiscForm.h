@@ -26,6 +26,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>
 
 namespace UserCore
 {
+	class ItemManagerI;
 	namespace Item
 	{
 		class ItemInfoI;
@@ -38,7 +39,7 @@ public:
 	GameDiskForm(wxWindow* parent, const char* exe, bool cdkey);
 	~GameDiskForm();
 
-	void setInfo(DesuraId id);
+	void setInfo(DesuraId id, UserCore::ItemManagerI* pItemManager = nullptr);
 
 	DesuraId getItemId();
 

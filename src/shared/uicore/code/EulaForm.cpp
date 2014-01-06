@@ -21,8 +21,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>
 #include "MainApp.h"
 
 
-EULAForm::EULAForm(wxWindow* parent) : gcFrame(parent, wxID_ANY, wxT("End User License Agreement"), wxDefaultPosition, wxSize(600, 250), wxDEFAULT_FRAME_STYLE|wxTAB_TRAVERSAL)
+EULAForm::EULAForm(wxWindow* parent, UserCore::ItemManagerI* pItemManager) 
+	: gcFrame(parent, wxID_ANY, wxT("End User License Agreement"), wxDefaultPosition, wxSize(600, 250), wxDEFAULT_FRAME_STYLE|wxTAB_TRAVERSAL)
+	, m_pItemManager(pItemManager)
 {
+	if (!m_pItemManager)
+		m_pItemManager = m_pItemManager;
+
 	Bind(wxEVT_COMMAND_BUTTON_CLICKED, &EULAForm::onButtonPressed, this);
 	Bind(wxEVT_CLOSE_WINDOW, &EULAForm::onFormClose, this);
 
@@ -79,7 +84,7 @@ void EULAForm::onFormClose( wxCloseEvent& event )
 bool EULAForm::setInfo(DesuraId id)
 {
 	m_uiInternId = id;
-	UserCore::Item::ItemInfoI* item = GetUserCore()->getItemManager()->findItemInfo( id );
+	UserCore::Item::ItemInfoI* item = m_pItemManager->findItemInfo( id );
 
 	if (!item)
 	{
@@ -109,7 +114,7 @@ void EULAForm::onButtonPressed(wxCommandEvent& event)
 {
 	if (event.GetId() == m_butAgree->GetId())
 	{
-		UserCore::Item::ItemInfoI* item = GetUserCore()->getItemManager()->findItemInfo( m_uiInternId );
+		UserCore::Item::ItemInfoI* item = m_pItemManager->findItemInfo( m_uiInternId );
 
 		if (item)
 		{

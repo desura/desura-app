@@ -26,21 +26,22 @@ extern ConCommand cc_restart_wait;
 extern const char* GetAppVersion();
 
 
-GCUpdateInfo::GCUpdateInfo( wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos, const wxSize& size, long style ) : gcFrame( parent, id, title, pos, size, style )
+GCUpdateInfo::GCUpdateInfo(wxWindow* parent)
+	: gcFrame(parent, wxID_ANY, wxT("#UF_TITLE"), wxDefaultPosition, wxSize( 445,300 ), wxDEFAULT_FRAME_STYLE|wxTAB_TRAVERSAL)
 {
 	Bind(wxEVT_CLOSE_WINDOW, &GCUpdateInfo::onFormClose, this);
 	Bind(wxEVT_COMMAND_BUTTON_CLICKED, &GCUpdateInfo::onButClick, this);
 
 	SetTitle(Managers::GetString(L"#UF_TITLE"));
 
-	m_labInfo = new wxStaticText( this, wxID_ANY, Managers::GetString(L"#DESURA_UPDATE"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_labInfo = new wxStaticText( this, wxID_ANY, Managers::GetString(L"#UF_INFO"), wxDefaultPosition, wxDefaultSize, 0 );
 
 	m_ieBrowser = new gcMiscWebControl( this, "about:blank", "DesuraUpdate");
 	m_ieBrowser->SetBackgroundColour( wxSystemSettings::GetColour( wxSYS_COLOUR_ACTIVECAPTION ) );
 	m_ieBrowser->onPageLoadEvent += guiDelegate(this, &GCUpdateInfo::onPageLoad);
 
-	m_butRestartNow = new gcButton( this, wxID_ANY, Managers::GetString(L"#RESTART_NOW"), wxDefaultPosition, wxSize( 100,-1 ), 0 );
-	m_butRestartLater = new gcButton( this, wxID_ANY, Managers::GetString(L"#RESTART_LATER"), wxDefaultPosition, wxSize( 100,-1 ), 0 );
+	m_butRestartNow = new gcButton( this, wxID_ANY, Managers::GetString(L"#UF_RESTART_NOW"), wxDefaultPosition, wxSize( 100,-1 ), 0 );
+	m_butRestartLater = new gcButton( this, wxID_ANY, Managers::GetString(L"#UF_RESTART_LATER"), wxDefaultPosition, wxSize( 100,-1 ), 0 );
 
 
 	wxBoxSizer* bSizer1;

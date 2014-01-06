@@ -26,10 +26,15 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>
 
 class BasePage;
 
+namespace UserCore
+{
+	class ItemManagerI;
+}
+
 class CDKeyForm : public gcFrame 
 {
 public:
-	CDKeyForm(wxWindow* parent, const char* exe, bool launch = false);
+	CDKeyForm(wxWindow* parent, const char* exe, bool launch = false, UserCore::ItemManagerI* pItemManager = nullptr);
 	~CDKeyForm();
 	
 	void setInfo(DesuraId id);
@@ -42,12 +47,16 @@ protected:
 	void cleanUpPages();
 
 private:
+	friend class LanguageTestDialog;
+
 	DesuraId m_ItemId;
 	bool m_bLaunch;
 	gcString m_szExe;
 
 	BasePage* m_pPage;	
 	wxBoxSizer* m_bsSizer;
+
+	UserCore::ItemManagerI* m_pItemManager;
 };
 
 #endif //DESURA_CDKEYFORM_H

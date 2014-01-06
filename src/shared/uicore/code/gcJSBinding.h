@@ -26,6 +26,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>
 
 namespace UserCore
 {
+	class ItemManagerI;
+
 	namespace Item
 	{
 		class ItemInfoI;
@@ -38,7 +40,12 @@ public:
 	DesuraJSBinding();
 	~DesuraJSBinding();
 
+	static UserCore::ItemManagerI* getItemManager();
+
 protected:
+	friend class LanguageTestDialog;
+	static UserCore::ItemManagerI* gs_pItemManager;
+
 	JSObjHandle getLocalString(ChromiumDLL::JavaScriptFactoryI *m_pFactory, ChromiumDLL::JavaScriptContextI* context, JSObjHandle object, std::vector<JSObjHandle> &args);
 
 	void* getItemInfoFromId(gcString id);

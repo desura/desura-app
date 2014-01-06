@@ -23,24 +23,35 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>
 #include "usercore/ItemInfoI.h"
 #include "usercore/ItemManagerI.h"
 
-BasePage::BasePage( wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style ) : gcPanel( parent, id, pos, size, style )
+BasePage::BasePage(wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style, UserCore::ItemManagerI* pItemManager) 
+	: gcPanel( parent, id, pos, size, style )
+	, m_pItemManager(pItemManager)
 {
-	m_uiMCFBuild = 0;
-	m_uiMCFBranch = 0;
+	if (!m_pItemManager && GetUserCore())
+		m_pItemManager = GetUserCore()->getItemManager();
+}
+
+BasePage::BasePage(wxWindow* parent, UserCore::ItemManagerI* pItemManager)
+	: BasePage(parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL, pItemManager)
+{
 }
 
 void BasePage::setInfo(DesuraId id)
 {
+	setInfo(id, m_pItemManager->findItemInfo(id));
+}
+
+void BasePage::setInfo(DesuraId id, UserCore::Item::ItemInfoI* pItemInfo)
+{
 	m_iInternId = id;
+	m_pItemInfo = pItemInfo;
 
-	UserCore::Item::ItemInfoI *item = GetUserCore()->getItemManager()->findItemInfo(id);
-
-	if (item && item->getIcon() && UTIL::FS::isValidFile(UTIL::FS::PathWithFile(item->getIcon())))
+	if (pItemInfo && pItemInfo->getIcon() && UTIL::FS::isValidFile(UTIL::FS::PathWithFile(pItemInfo->getIcon())))
 	{
 		gcFrame *frame = dynamic_cast<gcFrame*>(GetParent());
 		
 		if (frame)
-			frame->setIcon(item->getIcon());
+			frame->setIcon(pItemInfo->getIcon());
 	}
 }
 
@@ -52,5 +63,8 @@ void BasePage::setMCFInfo(MCFBranch branch, MCFBuild build)
 
 UserCore::Item::ItemInfoI* BasePage::getItemInfo()
 {
-	return GetUserCore()->getItemManager()->findItemInfo(m_iInternId);
+	if (m_pItemInfo)
+		return m_pItemInfo;
+
+	return m_pItemManager->findItemInfo(m_iInternId);
 }

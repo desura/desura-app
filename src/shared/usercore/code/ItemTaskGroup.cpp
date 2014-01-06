@@ -68,8 +68,13 @@ void ItemTaskGroup::cancelAll()
 {
 	m_ListLock.lock();
 
-	for (size_t x=0; x<m_vWaitingList.size(); x++)
-		m_vWaitingList[x]->setTaskGroup(nullptr);
+	for (auto i : m_vWaitingList)
+	{
+		auto handle = dynamic_cast<ItemHandle*>(i);
+
+		if (handle)
+			handle->setTaskGroup(nullptr);
+	}
 
 	m_vWaitingList.clear();
 	m_ListLock.unlock();
@@ -372,7 +377,7 @@ void ItemTaskGroup::deregisterItemTask(UserCore::ItemTask::BaseItemTask* task)
 	m_TaskListLock.unlock();
 }
 
-uint32 ItemTaskGroup::getPos(UserCore::Item::ItemHandle* item)
+uint32 ItemTaskGroup::getPos(UserCore::Item::ItemHandleI* item)
 {
 	uint32 res = 0;
 

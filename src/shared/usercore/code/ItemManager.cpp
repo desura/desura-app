@@ -1464,7 +1464,7 @@ void ItemManager::checkItems()
 	if (!group)
 		return;
 
-	group->sort([](UserCore::Item::ItemHandle* a, UserCore::Item::ItemHandle* b) -> bool {
+	group->sort([](UserCore::Item::ItemHandleI* a, UserCore::Item::ItemHandleI* b) -> bool {
 
 		bool ap = HasAnyFlags(a->getItemInfo()->getStatus(), (UserCore::Item::ItemInfoI::STATUS_DOWNLOADING|UserCore::Item::ItemInfoI::STATUS_INSTALLING));
 		bool bp = HasAnyFlags(b->getItemInfo()->getStatus(), (UserCore::Item::ItemInfoI::STATUS_DOWNLOADING|UserCore::Item::ItemInfoI::STATUS_INSTALLING));

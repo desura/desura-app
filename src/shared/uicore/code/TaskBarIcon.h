@@ -38,7 +38,7 @@ class TaskBarIcon : public gcTaskBarIcon //, gcCustomMenu
 friend class windowReg;
 
 public:
-	TaskBarIcon(wxWindow *parent);
+	TaskBarIcon(wxWindow *parent, UserCore::ItemManagerI* pItemManager = nullptr);
 	~TaskBarIcon();
 
 	void regEvents();
@@ -47,7 +47,9 @@ public:
 	void showGiftPopup(std::vector<UserCore::Misc::NewsItem*>& itemList);
 
 protected:
+	friend class LanguageTestDialog;
 	wxMenu* CreatePopupMenu();
+	wxMenu* CreatePopupMenu(bool bOffline);
 
 	void onBallonClick(wxTaskBarIconEvent &event);
 	void onMenuSelect( wxCommandEvent& event );

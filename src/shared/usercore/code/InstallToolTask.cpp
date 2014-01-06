@@ -30,7 +30,7 @@ namespace ItemTask
 {
 
 
-InstallToolTask::InstallToolTask(UserCore::Item::ItemHandle* handle, bool launch) : BaseItemTask(UserCore::Item::ItemHandleI::STAGE_INSTALLTOOL, "InstallTool", handle, MCFBranch(), MCFBuild())
+InstallToolTask::InstallToolTask(UserCore::Item::ItemHandle* handle, bool launch) : BaseItemTask(UserCore::Item::ITEM_STAGE::STAGE_INSTALLTOOL, "InstallTool", handle, MCFBranch(), MCFBuild())
 {
 	m_bInError = false;
 	m_ToolTTID = UINT_MAX;

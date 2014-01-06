@@ -30,7 +30,7 @@ class SplitInfo;
 class CDKInfo : public BasePage 
 {
 public:
-	CDKInfo(wxWindow* parent, const char* exe, bool launch);
+	CDKInfo(wxWindow* parent, const char* exe, bool launch, UserCore::ItemManagerI* pItemManager);
 	~CDKInfo();
 
 	void dispose(){;}

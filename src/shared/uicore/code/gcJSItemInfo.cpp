@@ -23,6 +23,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>
 #include "usercore/ItemInfoI.h"
 #include "usercore/ItemHandleI.h"
 
+#include "gcJSBinding.h"
+
 REGISTER_JSEXTENDER(DesuraJSItemInfo);
 
 
@@ -258,7 +260,7 @@ gcString DesuraJSItemInfo::getItemShortName(UserCore::Item::ItemInfoI* item)
 
 gcString DesuraJSItemInfo::getItemStatusStr(UserCore::Item::ItemInfoI* item)
 {
-	UserCore::Item::ItemHandleI* handle = GetUserCore()->getItemManager()->findItemHandle(item->getId());
+	UserCore::Item::ItemHandleI* handle = DesuraJSBinding::getItemManager()->findItemHandle(item->getId());
 
 	char buff[255] = {0};
 	handle->getStatusStr(GetLanguageManager(), buff, 255);
@@ -451,18 +453,18 @@ void DesuraJSItemInfo::setItemUserArgs(UserCore::Item::ItemInfoI* item, std::vec
 
 bool DesuraJSItemInfo::isItemBusy(UserCore::Item::ItemInfoI* item)
 {
-	UserCore::Item::ItemHandleI* handle = GetUserCore()->getItemManager()->findItemHandle(item->getId());
+	UserCore::Item::ItemHandleI* handle = DesuraJSBinding::getItemManager()->findItemHandle(item->getId());
 	return handle && handle->isInStage();
 }
 
 bool DesuraJSItemInfo::createItemDesktopShortcut(UserCore::Item::ItemInfoI* item)
 {
-	UserCore::Item::ItemHandleI* handle = GetUserCore()->getItemManager()->findItemHandle(item->getId());
+	UserCore::Item::ItemHandleI* handle = DesuraJSBinding::getItemManager()->findItemHandle(item->getId());
 	return handle && handle->createDesktopShortcut();
 }
 
 bool DesuraJSItemInfo::createItemMenuEntry(UserCore::Item::ItemInfoI* item)
 {
-	UserCore::Item::ItemHandleI* handle = GetUserCore()->getItemManager()->findItemHandle(item->getId());
+	UserCore::Item::ItemHandleI* handle = DesuraJSBinding::getItemManager()->findItemHandle(item->getId());
 	return handle && handle->createMenuEntry();
 }

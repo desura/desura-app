@@ -142,7 +142,7 @@ bool ItemThread::performTask()
 	m_bDeleteCurrentTask = false;
 	m_DeleteMutex.unlock();
 
-	uint32 taskType = task->getTaskType();
+	ITEM_STAGE taskType = task->getTaskType();
 
 	m_DeleteMutex.lock();
 	m_pCurrentTask = task;

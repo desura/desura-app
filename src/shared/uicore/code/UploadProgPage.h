@@ -43,10 +43,12 @@ public:
 
 	void dispose();
 
-	void setInfo(DesuraId id, uint32 hash, uint32 start);
+	void setInfo(DesuraId id, UserCore::Item::ItemInfoI* pItemInfo, uint32 hash, uint32 start);
 	void run();
 
 protected:
+	friend class LanguageTestDialog;
+
 	void uploadDone();
 	void onButClick( wxCommandEvent& event );
 

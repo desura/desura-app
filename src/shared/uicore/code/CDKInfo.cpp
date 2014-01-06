@@ -38,7 +38,8 @@ public:
 };
 
 
-CDKInfo::CDKInfo(wxWindow* parent, const char* exe, bool launch) : BasePage(parent)
+CDKInfo::CDKInfo(wxWindow* parent, const char* exe, bool launch, UserCore::ItemManagerI* pItemManager) 
+	: BasePage(parent, pItemManager)
 {
 	m_butActivate = nullptr;
 	m_szExe = exe;
@@ -103,7 +104,7 @@ CDKInfo::CDKInfo(wxWindow* parent, const char* exe, bool launch) : BasePage(pare
 	this->SetSizer( fgSizer1 );
 	this->Layout();
 
-	setParentSize(-1, 120);
+	setParentSize(-1, 140);
 	Bind(wxEVT_COMMAND_BUTTON_CLICKED, &CDKInfo::onButtonClicked, this);
 
 	m_uiCurIndex = 0;
@@ -148,8 +149,6 @@ void CDKInfo::setInfo(DesuraId id, const char* key)
 
 		Layout();
 		Refresh(false);
-
-		setParentSize(-1, 140);
 	}
 }
 

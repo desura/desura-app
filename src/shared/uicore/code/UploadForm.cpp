@@ -18,25 +18,24 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>
 
 #include "Common.h"
 #include "UploadForm.h"
-#include "UploadPrompt.h"
 #include "MainApp.h"
-
-extern CVar gc_uploadprompt;
 
 BEGIN_EVENT_TABLE( UploadMCFForm, gcFrame )
 	EVT_CLOSE( UploadMCFForm::onFormClose )
 END_EVENT_TABLE()
 
-UploadMCFForm::UploadMCFForm( wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos, const wxSize& size, long style ) : gcFrame( parent, id, title, pos, size, style )
+UploadMCFForm::UploadMCFForm(wxWindow* parent, UserCore::ItemManagerI* pItemManager) 
+	: gcFrame(parent, wxID_ANY, wxT("Uploading Item"), wxDefaultPosition, wxSize( 370,130 ), wxCAPTION|wxCLOSE_BOX|wxFRAME_FLOAT_ON_PARENT|wxSYSTEM_MENU)
+	, m_pItemManager(pItemManager)
 {
+	if (!m_pItemManager)
+		m_pItemManager = GetUserCore()->getItemManager();
+
+
 	m_bsSizer = new wxBoxSizer( wxVERTICAL );
+
 	this->SetSizer( m_bsSizer );
 	this->Layout();
-
-	m_pItemInfo = nullptr;
-	m_uiInternId = 0;
-	m_pPage = nullptr;
-	m_bTrueClose = true;
 
 	centerOnParent();
 }
@@ -59,33 +58,35 @@ void UploadMCFForm::onFormClose( wxCloseEvent& event )
 
 void UploadMCFForm::updateInfo(uint32& itemId)
 {
-	UserCore::Item::ItemInfoI *item = GetUserCore()->getItemManager()->findItemInfo(m_uiInternId);
-	if (item)
-	{
-		setTitle(item->getName());
+	m_pItemInfo = m_pItemManager->findItemInfo(m_uiInternId);
 
-		if (item->getIcon())
-			setIcon(item->getIcon());
+	if (m_pItemInfo)
+	{
+		setTitle(m_pItemInfo->getName());
+
+		if (m_pItemInfo->getIcon())
+			setIcon(m_pItemInfo->getIcon());
 
 		if (m_pPage)
 			m_pPage->setInfo(m_uiInternId);
 
-		*GetUserCore()->getItemsAddedEvent() -= guiDelegate(this, &UploadMCFForm::updateInfo);
+		if (GetUserCore())
+			*GetUserCore()->getItemsAddedEvent() -= guiDelegate(this, &UploadMCFForm::updateInfo);
 	}
 }
 
 void UploadMCFForm::setInfo(DesuraId id)
 {
-	UserCore::Item::ItemInfoI *item = GetUserCore()->getItemManager()->findItemInfo(id);
+	m_pItemInfo = m_pItemManager->findItemInfo(id);
 
-	if (!item)
+	if (!m_pItemInfo)
 	{	
-		if (!GetUserCore()->isAdmin())
+		if (GetUserCore() && !GetUserCore()->isAdmin())
 		{
 			Close();
 			return;
 		}
-		else
+		else if (GetUserCore())
 		{
 			*GetUserCore()->getItemsAddedEvent() += guiDelegate(this, &UploadMCFForm::updateInfo);
 			GetUserCore()->getItemManager()->retrieveItemInfoAsync(id);
@@ -94,20 +95,20 @@ void UploadMCFForm::setInfo(DesuraId id)
 
 	m_uiInternId = id;
 
-	if (!item)
+	if (!m_pItemInfo)
 	{
-		gcWString title(L"Upload MCF for {0} [Admin override]", id.getItem());
-		this->SetTitle(title.c_str());
+		gcString szId("{0}", id.getItem());
+		setTitle(szId.c_str(), L"#UPLOAD_MCF_TITILE_ADMIN");
 	}
 	else
 	{
-		setTitle(item->getName());
+		setTitle(m_pItemInfo->getName());
 	}
 }
 
-void UploadMCFForm::setTitle(const char* name)
+void UploadMCFForm::setTitle(const char* szItemName, const wchar_t* szFormat)
 {
-	this->SetTitle(gcWString(L"Upload MCF: {0}", name));
+	SetTitle(gcWString(Managers::GetString(szFormat), szItemName));
 }
 
 void UploadMCFForm::setInfo_path(DesuraId id, const char* path)
@@ -126,19 +127,19 @@ void UploadMCFForm::showInfo()
 {
 	cleanUpPages();
 
-	UploadInfoPage *pPage = new UploadInfoPage( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
+	UploadInfoPage *pPage = new UploadInfoPage(this);
 
 	if (!m_szPath.empty() && m_szKey.empty())
 	{
-		pPage->setInfo_path(m_uiInternId, m_szPath.c_str());
+		pPage->setInfo_path(m_uiInternId, m_pItemInfo, m_szPath.c_str());
 	}
 	else if (!m_szKey.empty() && m_szPath.empty())
 	{
-		pPage->setInfo_key(m_uiInternId, m_szKey.c_str());
+		pPage->setInfo_key(m_uiInternId, m_pItemInfo, m_szKey.c_str());
 	}
 	else if (m_szKey.empty() && m_szPath.empty())
 	{
-		pPage->setInfo(m_uiInternId);
+		pPage->setInfo(m_uiInternId, m_pItemInfo);
 	}
 	else
 	{
@@ -160,7 +161,7 @@ void UploadMCFForm::showProg(uint32 hash, uint32 start)
 	cleanUpPages();
 
 	UploadProgPage *pPage = new UploadProgPage(this);
-	pPage->setInfo(m_uiInternId, hash, start);
+	pPage->setInfo(m_uiInternId, m_pItemInfo, hash, start);
 
 	m_pPage = pPage;
 	m_bsSizer->Add( m_pPage, 1, wxEXPAND, 5 );

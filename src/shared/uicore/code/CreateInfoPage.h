@@ -38,17 +38,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>
 class CreateInfoPage : public BasePage 
 {
 public:
-#ifdef WIN32
-	CreateInfoPage( wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 400,100 ), long style = wxTAB_TRAVERSAL );
-#else // Linux has no custom border, sizes are wrong
-	CreateInfoPage( wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 445,100 ), long style = wxTAB_TRAVERSAL );
-#endif
+	CreateInfoPage(wxWindow* parent);
 	~CreateInfoPage();
 
-	void dispose();
+	void dispose() override;
 
-	void setInfo(DesuraId id);
-	void run(){;}
+	void setInfo(DesuraId id, UserCore::Item::ItemInfoI* pItemInfo) override;
+	void run() override {}
 	
 protected:
 

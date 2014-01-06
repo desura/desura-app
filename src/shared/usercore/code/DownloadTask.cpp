@@ -34,7 +34,7 @@ namespace UserCore
 namespace ItemTask
 {
 
-DownloadTask::DownloadTask(UserCore::Item::ItemHandle* handle, const char* mcfPath) : BaseItemTask(UserCore::Item::ItemHandleI::STAGE_DOWNLOAD, "Download", handle)
+DownloadTask::DownloadTask(UserCore::Item::ItemHandle* handle, const char* mcfPath) : BaseItemTask(UserCore::Item::ITEM_STAGE::STAGE_DOWNLOAD, "Download", handle)
 {
 	onErrorEvent += delegate(this, &DownloadTask::onError);
 	m_bInError = false;

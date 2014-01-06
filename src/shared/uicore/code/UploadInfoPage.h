@@ -54,16 +54,18 @@ public:
 	UploadInfoPage( wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 400,100 ), long style = wxTAB_TRAVERSAL );
 	~UploadInfoPage();
 
-	void dispose();
+	void dispose() override;
 
 	//this is used to resume uploads
-	void setInfo(DesuraId id);
-	void setInfo_path(DesuraId id, const char* path);
-	void setInfo_key(DesuraId id, const char* key);
+	void setInfo(DesuraId id, UserCore::Item::ItemInfoI* pItemInfo) override;
+	void setInfo_path(DesuraId id, UserCore::Item::ItemInfoI* pItemInfo, const char* path);
+	void setInfo_key(DesuraId id, UserCore::Item::ItemInfoI* pItemInfo, const char* key);
 
-	void run(){;}
+	void run() override {}
 
 protected:
+	friend class LanguageTestDialog;
+
 	void showDialog();
 
 	gcStaticText* m_labText;

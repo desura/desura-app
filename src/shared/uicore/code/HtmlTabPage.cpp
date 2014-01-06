@@ -61,7 +61,8 @@ HtmlTabPage::HtmlTabPage(wxWindow* parent, gcString homePage, PAGE area) : baseT
 	m_SearchArea = area;
 	m_pControlBar->onButtonClickedEvent += guiDelegate(this, &HtmlTabPage::onButtonClicked);
 
-	GetUserCore()->getCIPManager()->getItemsUpdatedEvent() += guiDelegate(this, &HtmlTabPage::onCIPUpdate);
+	if (GetUserCore())
+		GetUserCore()->getCIPManager()->getItemsUpdatedEvent() += guiDelegate(this, &HtmlTabPage::onCIPUpdate);
 }
 
 HtmlTabPage::~HtmlTabPage()

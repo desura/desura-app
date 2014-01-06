@@ -20,7 +20,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>
 #include "ChangeDirForm.h"
 
 
-ChangeDirForm::ChangeDirForm(wxWindow* parent, const char* dest, UserCore::UserI* user) : gcFrame(parent, wxID_ANY, "#CDF_TITLE", wxDefaultPosition, wxSize( 370,100 ), wxCAPTION|wxTAB_TRAVERSAL)
+ChangeDirForm::ChangeDirForm(wxWindow* parent) 
+	: gcFrame(parent, wxID_ANY, "#CDF_TITLE", wxDefaultPosition, wxSize( 370,100 ), wxCAPTION|wxTAB_TRAVERSAL)
 {
 	m_pThread = nullptr;
 	m_uiLastStage = -1;

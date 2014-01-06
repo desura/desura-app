@@ -23,7 +23,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>
 #include <wx/uri.h>
 
 
-NewsForm::NewsForm(wxWindow* parent) : gcFrame(parent, wxID_ANY, "[News Form]", wxDefaultPosition, wxSize( 670,600 ), wxDEFAULT_FRAME_STYLE|wxTAB_TRAVERSAL)
+NewsForm::NewsForm(wxWindow* parent) 
+	: gcFrame(parent, wxID_ANY, "[News Form]", wxDefaultPosition, wxSize( 670,600 ), wxDEFAULT_FRAME_STYLE|wxTAB_TRAVERSAL)
 {
 	Bind(wxEVT_CLOSE_WINDOW, &NewsForm::onFormClose, this);
 	Bind(wxEVT_COMMAND_BUTTON_CLICKED, &NewsForm::onButClick, this);
@@ -64,7 +65,6 @@ NewsForm::NewsForm(wxWindow* parent) : gcFrame(parent, wxID_ANY, "[News Form]", 
 
 NewsForm::~NewsForm()
 {
-	safe_delete(m_vItemList);
 }
 
 void NewsForm::setAsGift()
@@ -73,16 +73,23 @@ void NewsForm::setAsGift()
 	SetTitle(m_szTitle.c_str());
 }
 
-void NewsForm::loadNewsItems(std::vector<UserCore::Misc::NewsItem*> &itemList)
+void NewsForm::loadNewsItems(const std::vector<UserCore::Misc::NewsItem*> &itemList)
 {
-	for (size_t x=0; x<itemList.size(); x++)
+	for (auto i : itemList)
 	{
-		if (!itemList[x])
+		if (!i)
 			continue;
 
-		UserCore::Misc::NewsItem* temp = new UserCore::Misc::NewsItem(itemList[x]);
-		m_vItemList.push_back(temp);
+		m_vItemList.push_back(*i);
 	}
+
+	loadSelection();
+}
+
+void NewsForm::loadNewsItems(const std::vector<UserCore::Misc::NewsItem> &itemList)
+{
+	for (auto i : itemList)
+		m_vItemList.push_back(i);
 
 	loadSelection();
 }
@@ -119,12 +126,12 @@ void NewsForm::loadSelection()
 	if (m_uiSelected >=  m_vItemList.size())
 		m_uiSelected = 0;
 
-	gcWString url(L"{0}?url={1}", m_szLoadingUrl, UTIL::STRING::urlEncode(m_vItemList[m_uiSelected]->szUrl));
+	gcWString url(L"{0}?url={1}", m_szLoadingUrl, UTIL::STRING::urlEncode(m_vItemList[m_uiSelected].szUrl));
 	m_ieBrowser->loadUrl(url.c_str());
 	
 	Layout();
 
-	SetTitle(gcWString(L"{0} {1}", m_szTitle, m_vItemList[m_uiSelected]->szTitle));
+	SetTitle(gcWString(L"{0} {1}", m_szTitle, m_vItemList[m_uiSelected].szTitle));
 
 	if (m_vItemList.size() == 1)
 	{

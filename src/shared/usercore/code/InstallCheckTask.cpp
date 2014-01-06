@@ -25,7 +25,7 @@ namespace UserCore
 namespace ItemTask
 {
 
-InstallCheckTask::InstallCheckTask(UserCore::Item::ItemHandle *handle) : BaseItemTask(UserCore::Item::ItemHandleI::STAGE_INSTALL_CHECK, "InstallCheck", handle)
+InstallCheckTask::InstallCheckTask(UserCore::Item::ItemHandle *handle) : BaseItemTask(UserCore::Item::ITEM_STAGE::STAGE_INSTALL_CHECK, "InstallCheck", handle)
 {
 }
 

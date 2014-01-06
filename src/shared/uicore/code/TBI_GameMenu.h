@@ -24,9 +24,19 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>
 
 #include "TBI_BaseMenu.h"
 
+namespace UserCore
+{
+	class ItemManagerI;
+}
+
 class TBIGameMenu : public TBIBaseMenu
 {
 public:
+	TBIGameMenu(UserCore::ItemManagerI* pItemManager)
+		: m_pItemManager(pItemManager)
+	{
+	}
+
 	virtual wxMenu* createMenu(uint32 &lastMenuId);
 	virtual void onMenuSelect(wxCommandEvent& event);
 
@@ -34,6 +44,7 @@ public:
 
 private:
 	std::map<int32, DesuraId> m_IdMapList;
+	UserCore::ItemManagerI* m_pItemManager;
 };
 
 #endif //DESURA_TBI_GAMEMENU_H

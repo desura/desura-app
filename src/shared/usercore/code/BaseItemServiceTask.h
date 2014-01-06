@@ -35,7 +35,7 @@ namespace ItemTask
 class BaseItemServiceTask : public BaseItemTask
 {
 public:
-	BaseItemServiceTask(uint32 type, const char* name, UserCore::Item::ItemHandle* handle, MCFBranch branch = MCFBranch(), MCFBuild = MCFBuild());
+	BaseItemServiceTask(UserCore::Item::ITEM_STAGE type, const char* name, UserCore::Item::ItemHandle* handle, MCFBranch branch = MCFBranch(), MCFBuild = MCFBuild());
 	~BaseItemServiceTask();
 
 	bool hasStarted();

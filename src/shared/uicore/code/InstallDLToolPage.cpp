@@ -57,7 +57,7 @@ InstallDLToolPage::InstallDLToolPage(wxWindow* parent) : BaseInstallPage(parent)
 	this->SetSizer( fgSizer1 );
 	this->Layout();
 
-	this->setParentSize(-1, 120);
+	this->setParentSize(-1, 140);
 
 	gcFrame* par = dynamic_cast<gcFrame*>(GetParent());
 	if (par)
@@ -103,7 +103,7 @@ void InstallDLToolPage::onMcfProgress(MCFCore::Misc::ProgressInfo& info)
 		std::string done = UTIL::MISC::niceSizeStr(info.doneAmmount, true);
 		std::string total = UTIL::MISC::niceSizeStr(info.totalAmmount);
 
-		m_pbProgress->setCaption(gcString("{0} of {1}", done, total));
+		m_pbProgress->setCaption(gcString(Managers::GetString("#PROGRESS_INFO"), done, total));
 	}
 
 	gcFrame* par = dynamic_cast<gcFrame*>(GetParent());

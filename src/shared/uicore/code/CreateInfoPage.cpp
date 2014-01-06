@@ -33,9 +33,8 @@ BEGIN_EVENT_TABLE( CreateInfoPage, BasePage )
 	EVT_TEXT( wxID_ANY, CreateInfoPage::onTextChange )
 END_EVENT_TABLE()
 
-
-
-CreateInfoPage::CreateInfoPage( wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style ) : BasePage( parent, id, pos, size, style )
+CreateInfoPage::CreateInfoPage(wxWindow* parent) 
+	: BasePage(parent, wxID_ANY, wxDefaultPosition, wxSize( 445,100 ), wxTAB_TRAVERSAL)
 {
 	m_tbItemFiles = nullptr;
 
@@ -103,8 +102,6 @@ void CreateInfoPage::onTextChange( wxCommandEvent& event )
 	validateInput();
 }
 
-
-
 void CreateInfoPage::onButtonClicked( wxCommandEvent& event )
 {
 	if (event.GetId() == m_butCreate->GetId())
@@ -166,11 +163,9 @@ bool CreateInfoPage::validatePath(wxTextCtrl* ctrl, bool type)
 	else
 		ctrl->SetForegroundColour( *wxRED );
 
-
 	ctrl->Refresh();
 	return doesExsist;
 }
-
 
 void CreateInfoPage::resetAllValues()
 {
@@ -178,15 +173,13 @@ void CreateInfoPage::resetAllValues()
 	m_butCreate->Enable( false );
 }
 
-void CreateInfoPage::setInfo(DesuraId id)
+void CreateInfoPage::setInfo(DesuraId id, UserCore::Item::ItemInfoI* pItemInfo)
 {
-	UserCore::Item::ItemInfoI *item = GetUserCore()->getItemManager()->findItemInfo(id);
-
-	if (!item && !GetUserCore()->isAdmin())
+	if (!pItemInfo && GetUserCore() && !GetUserCore()->isAdmin())
 	{	
 		GetParent()->Close();
 		return;
 	}
 
-	BasePage::setInfo(id);
+	BasePage::setInfo(id, pItemInfo);
 }

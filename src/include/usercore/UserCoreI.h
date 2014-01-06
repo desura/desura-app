@@ -23,6 +23,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>
 #endif
 
 #include "usercore/NewsItem.h"
+#include "usercore/ItemHandleI.h"
 #include "usercore/ItemInfoI.h"
 #include "usercore/ItemManagerI.h"
 
@@ -34,9 +35,11 @@ class IPCServiceMain;
 #define USERCORE					"USERCORE_INTERFACE_001"
 #define USERCORE_VER				"USERCORE_VERSION"
 #define USERCORE_GETLOGIN			"USERCORE_GETLOGIN"
+#define USERCORE_GETITEMSTATUS		"USERCORE_GETITEMSTATUS"
 
 typedef const char* (*UserCoreVersionFN)();
 typedef void *UserCoreGetLoginFN(char**, char**);
+typedef void (*GetStatusStrFn)(UserCore::Item::ItemHandleI* pItemHandle, UserCore::Item::ItemInfoI *pItemInfo, UserCore::Item::ITEM_STAGE nStage, UserCore::Item::ItemTaskGroupI* pTaskGroup, LanguageManagerI &pLangMng, char* buffer, uint32 buffsize);
 
 namespace Thread
 {

@@ -48,10 +48,12 @@ public:
 	LanguageManager();
 	~LanguageManager();
 
-	virtual const char* getString(const char* name);
-	virtual const wchar_t* getString(const wchar_t* name);
+	const char* getString(const char* name) override;
+	const wchar_t* getString(const wchar_t* name) override;
 
-	virtual bool loadFromFile(const char* file);
+	bool loadFromFile(const char* file) override;
+
+	void unloadAll() override;
 };
 
 

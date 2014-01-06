@@ -58,8 +58,8 @@ public:
 
 	bool hasTaskToRun();
 
-	Event<uint32> onTaskCompleteEvent;
-	Event<uint32> onTaskStartEvent;
+	Event<ITEM_STAGE> onTaskCompleteEvent;
+	Event<ITEM_STAGE> onTaskStartEvent;
 
 protected:
 	void run();

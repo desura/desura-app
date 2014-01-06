@@ -152,11 +152,18 @@ typedef void (BaseInstallPage::*onCompleteStrFn)(gcString&);
  }
 
  
-void BaseInstallPage::setInfo(DesuraId id)
+void BaseInstallPage::setInfo(DesuraId id, UserCore::Item::ItemInfoI* pItemInfo)
 {
-	BasePage::setInfo(id);
-	m_pItemHandle = GetUserCore()->getItemManager()->findItemHandle(id);
+	setInfo(GetUserCore()->getItemManager()->findItemHandle(id));
+}
 
+void BaseInstallPage::setInfo(UserCore::Item::ItemHandleI* pItemHandle)
+{
+	assert(pItemHandle);
+
+	m_pItemHandle = pItemHandle;
+	BasePage::setInfo(pItemHandle->getItemInfo()->getId(), pItemHandle->getItemInfo());
+	
 	init();
 	registerHandle();
 }

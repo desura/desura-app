@@ -41,9 +41,9 @@ ICheckFinishPage::ICheckFinishPage(wxWindow* parent) : BaseInstallPage(parent)
 	fgSizer3->SetFlexibleDirection( wxBOTH );
 	fgSizer3->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
 	
-	m_labInfo = new wxStaticText( this, wxID_ANY, Managers::GetString(L"#IC_FOUND"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_labInfo = new wxStaticText( this, wxID_ANY, Managers::GetString(L"#IF_CHECK_FOUND"), wxDefaultPosition, wxDefaultSize, 0 );
 
-	m_butCIP	= new gcButton( this, wxID_ANY, Managers::GetString(L"#IC_CIP"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_butCIP	= new gcButton( this, wxID_ANY, Managers::GetString(L"#IF_CHECK_CIP"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_butTryAgain = new gcButton( this, wxID_ANY, Managers::GetString(L"#TRYAGAIN"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_butLaunch = new gcButton( this, wxID_ANY, Managers::GetString(L"#LAUNCH"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_butClose = new gcButton( this, wxID_ANY, Managers::GetString(L"#CLOSE"), wxDefaultPosition, wxDefaultSize, 0 );
@@ -82,12 +82,12 @@ void ICheckFinishPage::init()
 			m_butTryAgain->Show(false);
 			m_butCIP->Show(false);
 
-			msg = gcWString(L"{0} {1}", item->getName(), Managers::GetString(L"#IC_FOUND") );
+			msg = gcWString(L"{0} {1}", item->getName(), Managers::GetString(L"#IF_CHECK_FOUND") );
 		}
 		else
 		{
 			m_butLaunch->Show(false);
-			msg = gcWString(L"{0} {1}", item->getName(), Managers::GetString(L"#IC_NOTFOUND") );
+			msg = gcWString(L"{0} {1}", item->getName(), Managers::GetString(L"#IF_CHECK_NOTFOUND") );
 		}
 
 		m_labInfo->SetLabel(msg);
@@ -97,7 +97,7 @@ void ICheckFinishPage::init()
 	else
 	{
 		gcException e(ERR_NULLHANDLE, "Null item for install check.");
-		gcErrorBox(this, "#IC_ERRTITLE", "#IC_ERROR", e);
+		gcErrorBox(this, "#IF_CHECK_ERRTITLE", "#IF_CHECK_ERROR", e);
 		GetParent()->Close();
 	}
 }

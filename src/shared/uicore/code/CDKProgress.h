@@ -38,14 +38,16 @@ public:
 	void run();
 
 protected:
+	friend class LanguageTestDialog;
+
 	Event<gcString> onCompleteEvent;
 	Event<gcException> onErrorEvent;
 
 	void onComplete(gcString& cdKey);
 	void onError(gcException& e);
 
-	virtual void onCDKeyComplete(DesuraId id, gcString &cdKey);
-	virtual void onCDKeyError(DesuraId id, gcException& e);
+	void onCDKeyComplete(DesuraId id, gcString &cdKey) override;
+	void onCDKeyError(DesuraId id, gcException& e) override;
 
 private:
 	wxStaticText* m_labInfo;
@@ -53,6 +55,8 @@ private:
 
 	gcSpinningBar* m_pbProgress;
 	gcButton* m_butClose;
+
+	bool m_bOutstandingRequest = false;
 };
 
 

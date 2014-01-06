@@ -30,6 +30,7 @@ namespace ItemFormPage
 InstallINCPage::InstallINCPage(wxWindow* parent) : InstallINPage(parent)
 {
 	m_uiLastFlag = -1;
+	m_labLabel->SetLabel("");
 }
 
 void InstallINCPage::onMcfProgress(MCFCore::Misc::ProgressInfo& info)

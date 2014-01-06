@@ -24,9 +24,21 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>
 
 #include "TBI_BaseMenu.h"
 
+
+namespace UserCore
+{
+	class ItemManagerI;
+}
+
+
 class TBIUpdateMenu : public TBIBaseMenu
 {
 public:
+	TBIUpdateMenu(UserCore::ItemManagerI* pItemManager)
+		: m_pItemManager(pItemManager)
+	{
+	}
+
 	virtual wxMenu* createMenu(uint32 &lastMenuId);
 	virtual void onMenuSelect(wxCommandEvent& event);
 
@@ -44,6 +56,8 @@ private:
 	uint32 modUpdateCount;
 
 	gcWString m_szMenuName;
+
+	UserCore::ItemManagerI* m_pItemManager;
 };
 
 #endif //DESURA_TBI_UPDATEMENU_H

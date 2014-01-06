@@ -32,7 +32,6 @@ LaunchItemDialog::LaunchItemDialog( wxWindow* parent, wxWindowID id, const wxStr
 	this->SetSizeHints( wxDefaultSize, wxDefaultSize );
 	
 	m_labItemName = new wxStaticText( this, wxID_ANY, wxT("The [item], [name],"), wxDefaultPosition, wxDefaultSize, 0 );
-	m_staticText1 = new wxStaticText( this, wxID_ANY, Managers::GetString(L"#LI_LABEL"), wxDefaultPosition, wxSize( -1,-1 ), 0 );
 	m_butLaunch = new gcButton( this, wxID_ANY, Managers::GetString(L"#LAUNCH"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_butCancel = new gcButton( this, wxID_ANY, Managers::GetString(L"#CANCEL"), wxDefaultPosition, wxDefaultSize, 0 );
 
@@ -46,7 +45,7 @@ LaunchItemDialog::LaunchItemDialog( wxWindow* parent, wxWindowID id, const wxStr
 	wxBoxSizer* bSizer3 = new wxBoxSizer( wxHORIZONTAL );
 	
 	bSizer3->Add( m_labItemName, 0, wxTOP|wxBOTTOM|wxLEFT, 5 );
-	bSizer3->Add( m_staticText1, 0, wxALL, 5 );
+
 	
 	
 	wxBoxSizer* bSizer2 = new wxBoxSizer( wxHORIZONTAL );
@@ -86,7 +85,7 @@ void LaunchItemDialog::setInfo(UserCore::Item::ItemInfoI* item)
 
 	m_uiInternId = item->getId();
 
-	m_labItemName->SetLabel(gcWString(L"The {0}, {1},", m_uiInternId.getTypeString(), item->getName()));
+	m_labItemName->SetLabel(gcWString(Managers::GetString(L"#LI_LABEL"), m_uiInternId.getTypeString(), item->getName()));
 	SetTitle(gcWString(L"{0} {1}..", Managers::GetString(L"#LAUNCH"), item->getName()));
 }
 

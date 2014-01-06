@@ -64,8 +64,8 @@ public:
 	void startAction(UserCore::Item::ItemHandle* item);
 	UserCore::ItemTask::BaseItemTask* newTask(ItemHandle* handle);
 
-	uint32 getPos(UserCore::Item::ItemHandle* item);
-	uint32 getCount();
+	uint32 getPos(UserCore::Item::ItemHandleI* item) override;
+	uint32 getCount() override;
 
 	template <typename F>
 	void sort(F f)
@@ -106,7 +106,8 @@ protected:
 	class GroupItemTask :  public UserCore::ItemTask::BaseItemTask
 	{
 	public:
-		GroupItemTask(ItemHandle* handle, ItemTaskGroup* group) : BaseItemTask(UserCore::Item::ItemHandleI::STAGE_WAIT, "TaskGroup", handle)
+		GroupItemTask(ItemHandle* handle, ItemTaskGroup* group) 
+			: BaseItemTask(UserCore::Item::ITEM_STAGE::STAGE_WAIT, "TaskGroup", handle)
 		{
 			m_pGroup = group;
 			m_pGroup->registerItemTask(this);
@@ -152,7 +153,7 @@ private:
 	ACTION m_Action;
 
 	std::mutex m_ListLock;
-	std::vector<UserCore::Item::ItemHandle*> m_vWaitingList;
+	std::vector<UserCore::Item::ItemHandleI*> m_vWaitingList;
 
 	std::mutex m_TaskListLock;
 	std::vector<UserCore::ItemTask::BaseItemTask*> m_vTaskList;

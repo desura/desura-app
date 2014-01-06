@@ -42,7 +42,7 @@ namespace ItemTask
 {
 
 
-UIComplexModServiceTask::UIComplexModServiceTask(UserCore::Item::ItemHandle* handle, MCFBranch installBranch, MCFBuild installBuild) : UIBaseServiceTask(UserCore::Item::ItemHandleI::STAGE_UNINSTALL_COMPLEX, "UnInstallComplex", handle, installBranch, installBuild)
+UIComplexModServiceTask::UIComplexModServiceTask(UserCore::Item::ItemHandle* handle, MCFBranch installBranch, MCFBuild installBuild) : UIBaseServiceTask(UserCore::Item::ITEM_STAGE::STAGE_UNINSTALL_COMPLEX, "UnInstallComplex", handle, installBranch, installBuild)
 {
 	m_pIPCCL = nullptr;
 

@@ -41,18 +41,20 @@ namespace UserCore
 class CreateProgPage : public BasePage 
 {
 public:
-	CreateProgPage( wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( -1,-1 ), long style = wxTAB_TRAVERSAL );
+	CreateProgPage(wxWindow* parent);
 	~CreateProgPage();
 
-	void dispose();
+	void dispose() override;
 
-	void setInfo(DesuraId id, const char* path);
-	void run();
+	void setInfo(DesuraId id, UserCore::Item::ItemInfoI* pItemInfo, const char* path);
+	void run() override;
 		
 	void setPercent(uint32 per);
 	void finished();
 
 protected:
+	friend class LanguageTestDialog;
+
 	gcStaticText* m_staticText3;
 	wxStaticText* m_labPercent;
 	gcSpinnerProgBar* m_pbProgress;

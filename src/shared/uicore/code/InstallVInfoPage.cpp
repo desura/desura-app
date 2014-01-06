@@ -67,12 +67,7 @@ InstallVerifyInfoPage::InstallVerifyInfoPage(wxWindow* parent) : BaseInstallPage
 
 	this->SetSizer( fgSizer2 );
 	this->Layout();
-
-#ifdef WIN32
-	this->setParentSize(-1, 160);
-#else
 	this->setParentSize(-1, 200);
-#endif
 }
 
 InstallVerifyInfoPage::~InstallVerifyInfoPage()

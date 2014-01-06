@@ -395,6 +395,8 @@ bool HandleTaskBarMsg(wxWindowMSW *win, WXUINT nMsg, WXWPARAM wParam, WXLPARAM l
 
 CVar gc_enable_api_debugging("gc_enable_api_debugging", "0", CFLAG_NOSAVE);
 
+extern ConCommand cc_languagetest;
+
 class Desura : public wxApp
 {
 public:
@@ -426,6 +428,7 @@ public:
 		g_uiMainThreadId = Thread::BaseThread::GetCurrentThreadId();
 
 		gcString link;
+		auto bLanguageTest = false;
 
 		for (int x=0; x<argc; x++)
 		{
@@ -434,6 +437,9 @@ public:
 
 			if (argv[x] == "--debugapi")
 				gc_enable_api_debugging.setValue(true);
+
+			if (argv[x] == "--languagetest")
+				bLanguageTest = true;
 		}
 
 #ifdef WIN32
@@ -474,6 +480,14 @@ public:
 		g_pMainApp = ma; 
 
 		ma->Init(argc, argv);
+
+		if (bLanguageTest)
+		{
+			ma->m_iMode = MODE_OFFLINE;
+			cc_languagetest();
+			return false;
+		}
+
 		ma->run();
 		wxLog::SetActiveTarget(new DesuraLog());
 		

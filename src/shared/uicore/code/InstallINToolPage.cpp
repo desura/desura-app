@@ -23,16 +23,15 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>
 #include "usercore/UserCoreI.h"
 #include "usercore/ToolManagerI.h"
 
-namespace UI
-{
-namespace Forms
-{
-namespace ItemFormPage
-{
+using namespace UI::Forms::ItemFormPage;
 
-
-InstallINToolPage::InstallINToolPage(wxWindow* parent) : BaseInstallPage(parent)
+InstallINToolPage::InstallINToolPage(wxWindow* parent, UserCore::ToolManagerI* pToolManager) 
+	: BaseInstallPage(parent)
+	, m_pToolManager(pToolManager)
 {
+	if (!m_pToolManager)
+		m_pToolManager = GetUserCore()->getToolManager();
+
 	Bind(wxEVT_COMMAND_BUTTON_CLICKED, &InstallINToolPage::onButtonPressed, this);
 
 	m_labLabel = new gcStaticText( this, wxID_ANY, Managers::GetString(L"#IF_INTOOL_WAIT_OTHER"), wxDefaultPosition, wxDefaultSize, 0 );
@@ -58,7 +57,7 @@ InstallINToolPage::InstallINToolPage(wxWindow* parent) : BaseInstallPage(parent)
 	this->SetSizer( fgSizer1 );
 	this->Layout();
 
-	this->setParentSize(-1, 120);
+	this->setParentSize(-1, 140);
 
 	m_bCompleted = false;
 
@@ -105,7 +104,7 @@ void InstallINToolPage::onMcfProgress(MCFCore::Misc::ProgressInfo& info)
 	{
 		DesuraId id(info.totalAmmount);
 
-		std::string name = GetUserCore()->getToolManager()->getToolName(id);
+		std::string name = m_pToolManager->getToolName(id);
 		m_labLabel->SetLabel(gcWString(Managers::GetString(L"#IF_INTOOL_LABEL"), name));
 	}
 	else if (info.flag == 2)
@@ -121,13 +120,9 @@ void InstallINToolPage::onMcfProgress(MCFCore::Misc::ProgressInfo& info)
 
 		m_pbProgress->setProgress(info.percent);
 
-		gcString progLabel("{0} of {1}", info.doneAmmount, info.totalAmmount);
+		gcString progLabel(Managers::GetString("#PROGRESS_INFO"), info.doneAmmount, info.totalAmmount);
 		m_pbProgress->setCaption(progLabel);
 	}
 
 	Update();
-}
-
-}
-}
 }

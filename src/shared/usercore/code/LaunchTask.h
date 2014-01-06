@@ -40,7 +40,7 @@ namespace ItemTask
 class LaunchTask : public BaseItemTask
 {
 public:
-	LaunchTask(UserCore::Item::ItemHandle *handle)  : BaseItemTask(UserCore::Item::ItemHandleI::STAGE_LAUNCH, "Launch", handle)
+	LaunchTask(UserCore::Item::ItemHandle *handle)  : BaseItemTask(UserCore::Item::ITEM_STAGE::STAGE_LAUNCH, "Launch", handle)
 	{
 	}
 

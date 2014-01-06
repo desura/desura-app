@@ -135,7 +135,11 @@ void MainForm::initPages(bool offline)
 	{
 		for (size_t x=GAMES; x<END_PAGE; x++)
 		{
-			gcWString url = GetWebCore()->getUrl(g_uiUrlList[x]);
+			gcWString url;
+			
+			if (GetWebCore())
+				url = GetWebCore()->getUrl(g_uiUrlList[x]);
+
 			HtmlTabPage* page = new HtmlTabPage(m_pDesuraControl, url, (PAGE)x);
 			m_vPageList.push_back(page);
 

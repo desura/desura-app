@@ -79,6 +79,8 @@ public:
 	void onActiveToggle(bool state);
 
 protected:
+	friend class LanguageTestDialog;
+
 	void createMenu(bool offline = false);
 	void onMouseClick(wxCommandEvent& event);
 	void onBlur(wxFocusEvent& event);

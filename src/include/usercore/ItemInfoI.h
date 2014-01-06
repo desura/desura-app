@@ -57,32 +57,32 @@ public:
 	enum ITEM_STATUS
 	{
 		STATUS_UNKNOWN		= 0,		//!< unknown status
-		STATUS_INSTALLED	= 1<<1,		//!< item is installed on the computer
-		STATUS_ONACCOUNT	= 1<<2,		//!< item is on the users account
-		STATUS_ONCOMPUTER	= 1<<3,		//!< item is local to the user
-		STATUS_READY		= 1<<4,		//!< item is ready to go
-		STATUS_UPDATING		= 1<<5,		//!< item is updating atm
-		STATUS_DOWNLOADING	= 1<<6,		//!< item is downloading atm
-		STATUS_INSTALLING	= 1<<7,		//!< item is installing atm
-		STATUS_UPLOADING	= 1<<8,		//!< item is uploading atm
-		STATUS_VERIFING		= 1<<9,		//!< item is verifing atm
-		STATUS_DEVELOPER	= 1<<10,	//!< user is a dev for this item
-		STATUS_STUB			= 1<<11,	//!< means it has info but no branches on this platform
-		//STATUS_FULL			= 1<<12,	//!< means it has full info
-		STATUS_UPDATEAVAL	= 1<<13,	//!< means this item has an update for it
-		STATUS_DELETED		= 1<<14,	//!< means the item is deleted (safe delete)
-		STATUS_NONDOWNLOADABLE = 1<<15,	//!< means this item cant be downloaded
-		STATUS_NEEDCLEANUP	= 1<<16,	//!< means the item needs a clean up for its MCF files
-		STATUS_PAUSED		= 1<<17,	//!< means the item is paused in its current process
-		STATUS_UNAUTHED		= 1<<18,	//!< means the current install is not authed yet
-		STATUS_PAUSABLE		= 1<<19,	//!< item can be paused at the current stage
-		STATUS_INSTALLCOMPLEX = 1<<20,	//!< item has complex install
-		STATUS_LINK			= 1<<21,	//!< item is a link and is not managed by Desura
-		//STATUS_ACCEPTED_EULA= 1<<22,	//!< User agreed to eula
-		STATUS_GLOBAL		= 1<<23,	//!< Global item (for tools)
-		STATUS_LAUNCHED		= 1<<24,	//!< Has this item been launched
-		STATUS_DLC			= 1<<25,	//!< Game has downloadable content
-		STATUS_PRELOADED	= 1<<26,	//!< Item has been preordered and downloaded
+		STATUS_INSTALLED	= (1<<1),		//!< item is installed on the computer
+		STATUS_ONACCOUNT	= (1<<2),		//!< item is on the users account
+		STATUS_ONCOMPUTER	= (1<<3),		//!< item is local to the user
+		STATUS_READY		= (1<<4),		//!< item is ready to go
+		STATUS_UPDATING		= (1<<5),		//!< item is updating atm
+		STATUS_DOWNLOADING	= (1<<6),		//!< item is downloading atm
+		STATUS_INSTALLING	= (1<<7),		//!< item is installing atm
+		STATUS_UPLOADING	= (1<<8),		//!< item is uploading atm
+		STATUS_VERIFING		= (1<<9),		//!< item is verifing atm
+		STATUS_DEVELOPER	= (1<<10),	//!< user is a dev for this item
+		STATUS_STUB			= (1<<11),	//!< means it has info but no branches on this platform
+		//STATUS_FULL			= (1<<12),	//!< means it has full info
+		STATUS_UPDATEAVAL	= (1<<13),	//!< means this item has an update for it
+		STATUS_DELETED		= (1<<14),	//!< means the item is deleted (safe delete)
+		STATUS_NONDOWNLOADABLE = (1<<15),	//!< means this item cant be downloaded
+		STATUS_NEEDCLEANUP	= (1<<16),	//!< means the item needs a clean up for its MCF files
+		STATUS_PAUSED		= (1<<17),	//!< means the item is paused in its current process
+		STATUS_UNAUTHED		= (1<<18),	//!< means the current install is not authed yet
+		STATUS_PAUSABLE		= (1<<19),	//!< item can be paused at the current stage
+		STATUS_INSTALLCOMPLEX = (1<<20),	//!< item has complex install
+		STATUS_LINK			= (1<<21),	//!< item is a link and is not managed by Desura
+		//STATUS_ACCEPTED_EULA= (1<<22),	//!< User agreed to eula
+		STATUS_GLOBAL		= (1<<23),	//!< Global item (for tools)
+		STATUS_LAUNCHED		= (1<<24),	//!< Has this item been launched
+		STATUS_DLC			= (1<<25),	//!< Game has downloadable content
+		STATUS_PRELOADED	= (1<<26),	//!< Item has been preordered and downloaded
 	};
 
 	enum ITEM_PERMISSION

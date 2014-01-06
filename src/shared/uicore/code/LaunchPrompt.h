@@ -41,7 +41,6 @@ public:
 
 protected:
 	wxStaticText* m_labItemName;
-	wxStaticText* m_staticText1;
 	
 	gcButton* m_butLaunch;
 	gcButton* m_butCancel;

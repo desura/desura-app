@@ -89,7 +89,7 @@ void ICheckProgressPage::onComplete(uint32&)
 
 void ICheckProgressPage::onError(gcException& e)
 {
-	gcErrorBox(this, "#IC_ERRTITLE", "#IC_ERROR", e);
+	gcErrorBox(nullptr, "#IF_CHECK_ERRTITLE", "#IF_CHECK_ERROR", e);
 	GetParent()->Close();
 }
 

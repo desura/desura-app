@@ -31,12 +31,17 @@ class GatherInfoThread;
 
 typedef std::pair<UserCore::Item::Helper::ACTION, gcString> SIPArg;
 
+namespace UserCore
+{
+	class ToolManagerI;
+}
+
 namespace UI
 {
 namespace Forms
 {
 
-enum INSTALL_ACTION
+enum class INSTALL_ACTION
 {
 	IA_NONE,
 	IA_INSTALL,
@@ -73,7 +78,7 @@ public:
 
 	void setItemId(DesuraId id);
 
-	void init(INSTALL_ACTION action, MCFBranch branch = MCFBranch(), MCFBuild build = MCFBuild(), bool showForm = true);
+	void init(INSTALL_ACTION action, MCFBranch branch = MCFBranch(), MCFBuild build = MCFBuild(), bool showForm = true, UserCore::Item::ItemHandleI* pItemHandle = nullptr);
 	void newAction(INSTALL_ACTION action, MCFBranch branch = MCFBranch(), MCFBuild build = MCFBuild(), bool showForm = true);
 	void setPaused(bool state = true);
 
@@ -100,7 +105,7 @@ protected:
 	void uninstall();
 
 	void setTitle(const wchar_t* key);
-	void onStageChange(uint32 &stage);
+	void onStageChange(UserCore::Item::ITEM_STAGE &stage);
 
 	void onFormClose(wxCloseEvent& event);
 	void onModalClose(wxCloseEvent& event);
@@ -148,6 +153,9 @@ protected:
 
 	void cleanUpCallbacks();
 
+	friend class LanguageTestDialog;
+	static void showLaunchError();
+
 private:
 	GatherInfoThread* m_pGIThread;
 
@@ -164,6 +172,8 @@ private:
 	bool m_bIsInit;
 	
 	wxDialog* m_pDialog;
+
+	UserCore::ToolManagerI* m_pToolManager = nullptr;
 };
 
 }

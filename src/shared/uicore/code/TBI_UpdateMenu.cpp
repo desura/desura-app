@@ -104,8 +104,14 @@ void TBIUpdateMenu::calcUpdates()
 	gameUpdateCount = 0;
 	modUpdateCount = 0;
 
+	if (!m_pItemManager && GetUserCore())
+		m_pItemManager = GetUserCore()->getItemManager();
+
+	if (!m_pItemManager)
+		return;
+
 	std::vector<UserCore::Item::ItemInfoI*> gList;
-	user->getItemManager()->getGameList(gList);
+	m_pItemManager->getGameList(gList);
 
 	for (size_t x=0; x<gList.size(); x++)
 	{
@@ -113,7 +119,7 @@ void TBIUpdateMenu::calcUpdates()
 			gameUpdateCount++;
 
 		std::vector<UserCore::Item::ItemInfoI*> mList;
-		user->getItemManager()->getModList(gList[x]->getId(), mList);
+		m_pItemManager->getModList(gList[x]->getId(), mList);
 
 		for (size_t y=0; y<mList.size(); y++)
 		{

@@ -23,9 +23,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>
 
 //""
 
-ExeSelectForm::ExeSelectForm(wxWindow* parent, bool hasSeenCDKey) : gcFrame(parent, wxID_ANY, "#ES_TITLE", wxDefaultPosition, wxSize( 370,150 ), wxCAPTION|wxCLOSE_BOX|wxSYSTEM_MENU|wxWANTS_CHARS|wxMINIMIZE_BOX)
+ExeSelectForm::ExeSelectForm(wxWindow* parent, bool hasSeenCDKey, UserCore::ItemManagerI* pItemManager) 
+	: gcFrame(parent, wxID_ANY, "#ES_TITLE", wxDefaultPosition, wxSize( 370,150 ), wxCAPTION|wxCLOSE_BOX|wxSYSTEM_MENU|wxWANTS_CHARS|wxMINIMIZE_BOX)
+	, m_pItemManager(pItemManager)
+	, m_bHasSeenCDKey(hasSeenCDKey)
 {
-	m_bHasSeenCDKey = hasSeenCDKey;
+	if (!m_pItemManager)
+		m_pItemManager = GetUserCore()->getItemManager();
 
 	m_labInfo = new wxStaticText(this, wxID_ANY, "", wxDefaultPosition, wxDefaultSize, 0 );
 	m_pButtonSizer = new wxFlexGridSizer( 8, 2, 0, 0 );
@@ -69,7 +73,7 @@ void ExeSelectForm::onButtonClick(wxCommandEvent& event)
 	{
 		if (m_vButtonList[x]->GetId() == event.GetId())
 		{
-			UserCore::Item::ItemInfoI *item = GetUserCore()->getItemManager()->findItemInfo(m_Id);
+			UserCore::Item::ItemInfoI *item = m_pItemManager->findItemInfo(m_Id);
 
 			std::vector<UserCore::Item::Misc::ExeInfoI*> vExeList;
 			item->getExeList(vExeList);
@@ -86,7 +90,7 @@ void ExeSelectForm::setInfo(DesuraId id)
 {
 	m_Id = id;
 
-	UserCore::Item::ItemInfoI *item = GetUserCore()->getItemManager()->findItemInfo(id);
+	UserCore::Item::ItemInfoI *item = m_pItemManager->findItemInfo(id);
 
 	if (!item)
 	{	
@@ -111,9 +115,9 @@ void ExeSelectForm::setInfo(DesuraId id)
 
 	gcButton* def = nullptr;
 
-	for (size_t x=0; x<vExeList.size(); x++)
+	for (auto exe : vExeList)
 	{
-		gcWString name(vExeList[x]->getName());
+		gcWString name(exe->getName());
 		gcButton* but = new gcButton(this, wxID_ANY, name, wxDefaultPosition, wxSize(150, -1));
 		m_vButtonList.push_back(but);
 

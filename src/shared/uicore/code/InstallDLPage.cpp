@@ -49,6 +49,8 @@ InstallDLPage::InstallDLPage(wxWindow* parent) : InstallBannerPage(parent, true)
 	m_bPaused = false;
 	m_bError = false;
 	m_bInit = true;
+
+	this->setParentSize(-1, 240);
 }
 
 InstallDLPage::~InstallDLPage()
@@ -86,7 +88,7 @@ void InstallDLPage::onPause(bool &state)
 	}
 	else
 	{
-		m_labInfo->SetLabel(Managers::GetString(L"#UDF_UNKNOWNPAUSE"));
+		m_labInfo->SetLabel(Managers::GetString(L"#PAUSED"));
 		m_butPause->SetLabel(Managers::GetString(L"#RESUME"));
 
 		if (par)
@@ -103,7 +105,7 @@ void InstallDLPage::onComplete(gcString& path)
 	if (par)
 		par->setProgressState(gcFrame::P_NONE);
 
-	m_labInfo->SetLabel(wxT("Completed"));
+	m_labInfo->SetLabel(Managers::GetString(L"#COMPLTETED"));
 }
 
 
@@ -152,10 +154,11 @@ void InstallDLPage::onError(gcException& e)
 
 	m_bError = true;
 
-	DownloadErrorHelper helper(getItemId());
-
 	if (!getItemHandle()->shouldPauseOnError())
+	{
+		DownloadErrorHelper helper(getItemId());
 		gcErrorBox(GetParent(), "#IF_DLERRTITLE", "#IF_DLERROR", e, &helper);
+	}
 }
 
 void InstallDLPage::onMcfProgress(MCFCore::Misc::ProgressInfo& info)
@@ -188,7 +191,7 @@ void InstallDLPage::onMcfProgress(MCFCore::Misc::ProgressInfo& info)
 				std::string done = UTIL::MISC::niceSizeStr(info.doneAmmount, true);
 				std::string total = UTIL::MISC::niceSizeStr(info.totalAmmount);
 
-				m_pbProgress->setCaption(gcString("{0} of {1}", done, total));
+				m_pbProgress->setCaption(gcString(Managers::GetString("#PROGRESS_INFO"), done, total));
 			}
 		}
 

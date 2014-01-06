@@ -39,10 +39,15 @@ class ChromiumMenuInfoFromMem;
 
 //unused is because gcWebHost is typedef as this under linux
 
+
+class gcWebControl;
+typedef ChromiumDLL::ChromiumBrowserI* (*CreateBrowserFn)(gcWebControl *pControl, const char* loadUrl);
+
 class gcWebControl : public gcPanel, public gcWebControlI
 {
 public:
 	gcWebControl(wxWindow* parent, const char* defaultUrl, const char* unused="");
+	gcWebControl(wxWindow* parent, const char* defaultUrl, CreateBrowserFn createBrowserFn);
 	~gcWebControl();
 
 	virtual void loadUrl(const gcString& url);

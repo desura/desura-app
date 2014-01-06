@@ -109,7 +109,7 @@ void InstallDVPage::onError(gcException& e)
 	m_labInfo->SetLabel( Managers::GetString(L"#IF_GERROR_LABEL") );
 	m_butCancel->SetLabel(Managers::GetString(L"#CLOSE"));
 
-	gcErrorBox(GetParent(), "#IF_VALIDATE_TITLE", "#IF_VALIDATE_ERROR", e);
+	gcErrorBox(GetParent(), "#IF_VALIDATE_ERROR_TITLE", "#IF_VALIDATE_ERROR", e);
 }
 
 void InstallDVPage::onMcfProgress(MCFCore::Misc::ProgressInfo& info)
@@ -144,7 +144,7 @@ void InstallDVPage::onMcfProgress(MCFCore::Misc::ProgressInfo& info)
 		gcString label;
 		
 		if (stage == 4)
-			label = gcString("{0} of {1}", UTIL::MISC::niceSizeStr(info.doneAmmount), UTIL::MISC::niceSizeStr(info.totalAmmount));
+			label = gcString(Managers::GetString("#PROGRESS_INFO"), UTIL::MISC::niceSizeStr(info.doneAmmount), UTIL::MISC::niceSizeStr(info.totalAmmount));
 		else
 			label = gcString(Managers::GetString(L"#IF_VALIDATE_LABEL"), info.doneAmmount, info.totalAmmount, (uint32)section);
 

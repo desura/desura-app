@@ -58,8 +58,11 @@ BEGIN_EVENT_TABLE( DesuraServiceError, gcDialog )
 	EVT_BUTTON( wxID_ANY, DesuraServiceError::onButtonClicked )
 END_EVENT_TABLE()
 
-DesuraServiceError::DesuraServiceError( wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos, const wxSize& size, long style ) : gcDialog( parent, id, title, pos, size, style )
+DesuraServiceError::DesuraServiceError(wxWindow* parent) 
+	: gcDialog(parent, wxID_ANY, PRODUCT_NAME_CATW(L" Service Error"), wxDefaultPosition,  wxSize( 370,127 ), wxCAPTION|wxCLOSE_BOX|wxSYSTEM_MENU|wxTAB_TRAVERSAL)
 {
+	SetTitle(Managers::GetString(L"#DS_TITLE"));
+
 	this->SetSizeHints( wxDefaultSize, wxDefaultSize );
 	
 	wxFlexGridSizer* fgSizer1;

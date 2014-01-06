@@ -31,7 +31,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>
 /// Create MCF dialog
 ///////////////////////////////////////////////////////////////////////////////
 
-CreateProgPage::CreateProgPage( wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style ) : BasePage( parent, id, pos, size, style )
+CreateProgPage::CreateProgPage(wxWindow* parent) 
+	: BasePage(parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL)
 {
 	Bind(wxEVT_COMMAND_BUTTON_CLICKED, &CreateProgPage::onButtonClick, this); 
 
@@ -156,17 +157,15 @@ void CreateProgPage::onButtonClick( wxCommandEvent& event )
 	}
 }
 
-void CreateProgPage::setInfo(DesuraId id, const char* path)
+void CreateProgPage::setInfo(DesuraId id, UserCore::Item::ItemInfoI* pItemInfo, const char* path)
 {
-	UserCore::Item::ItemInfoI *item = GetUserCore()->getItemManager()->findItemInfo(id);
-
-	if (!item && !GetUserCore()->isAdmin())
+	if (!pItemInfo && GetUserCore() && !GetUserCore()->isAdmin())
 	{	
 		GetParent()->Close();
 		return;
 	}
 
-	BasePage::setInfo(id);
+	BasePage::setInfo(id, pItemInfo);
 
 	m_szFolderPath = gcString(path);
 	Refresh();
@@ -180,7 +179,7 @@ void CreateProgPage::run()
 	Show(true);
 	Raise();
 
-	if (m_pThread)
+	if (m_pThread || !GetThreadManager())
 		return;
 
 	m_pThread = GetThreadManager()->newCreateMCFThread(getItemId(), m_szFolderPath.c_str());
@@ -210,7 +209,7 @@ void CreateProgPage::finished()
 void CreateProgPage::onComplete(gcString& path)
 {
 	gcFrame* par = dynamic_cast<gcFrame*>(GetParent());
-	gcException eFailCrtMCF(ERR_BADPATH, "Failed to create MCF");
+	
 	if (par)
 		par->setProgressState(gcFrame::P_NONE);
 
@@ -223,6 +222,7 @@ void CreateProgPage::onComplete(gcString& path)
 	}
 	else
 	{
+		gcException eFailCrtMCF(ERR_BADPATH, "Failed to create MCF");
 		onError(eFailCrtMCF);
 	}
 }
@@ -233,7 +233,7 @@ void CreateProgPage::onError(gcException& e)
 	if (par)
 		par->setProgressState(gcFrame::P_ERROR);
 
-	gcErrorBox(this, "#CF_ERRTITLE", "#CF_ERROR", e);
+	gcErrorBox(nullptr, "#CF_ERRTITLE", "#CF_ERROR", e);
 
 	CreateMCFForm* temp = dynamic_cast<CreateMCFForm*>(GetParent());
 

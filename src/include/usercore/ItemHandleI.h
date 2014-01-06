@@ -46,6 +46,32 @@ public:
 	virtual ACTION getAction()=0;
 	virtual void getItemList(std::vector<UserCore::Item::ItemHandleI*> &list)=0;
 	virtual void cancelAll()=0;
+
+	virtual uint32 getPos(UserCore::Item::ItemHandleI* item)=0;
+	virtual uint32 getCount()=0;
+};
+
+
+enum class ITEM_STAGE
+{
+	STAGE_NONE,
+	STAGE_CLOSE,
+	STAGE_DOWNLOAD,
+	STAGE_GATHERINFO,
+	STAGE_INSTALL,
+	STAGE_INSTALL_CHECK,
+	STAGE_INSTALL_COMPLEX,
+	STAGE_UNINSTALL,
+	STAGE_UNINSTALL_BRANCH,
+	STAGE_UNINSTALL_COMPLEX,
+	STAGE_UNINSTALL_PATCH,
+	STAGE_UNINSTALL_UPDATE,
+	STAGE_VERIFY,
+	STAGE_LAUNCH,
+	STAGE_DOWNLOADTOOL,
+	STAGE_INSTALLTOOL,
+	STAGE_VALIDATE,
+	STAGE_WAIT,
 };
 
 class ItemHandleI
@@ -75,7 +101,7 @@ public:
 
 	//! Gets the current stage
 	//!
-	virtual uint32 getStage()=0;
+	virtual ITEM_STAGE getStage()=0;
 
 	//! Cancels the current stage
 	//! 
@@ -83,7 +109,7 @@ public:
 
 	virtual UserCore::Item::ItemInfoI* getItemInfo()=0;
 
-	virtual Event<uint32>* getChangeStageEvent()=0;
+	virtual Event<ITEM_STAGE>* getChangeStageEvent()=0;
 	virtual Event<gcException>* getErrorEvent()=0;
 
 	//! Gets the item status string
@@ -106,29 +132,6 @@ public:
 	//! Creates the launch scripts
 	virtual void installLaunchScripts()=0;
 #endif
-
-
-	enum STAGES
-	{
-		STAGE_NONE,
-		STAGE_CLOSE,
-		STAGE_DOWNLOAD,
-		STAGE_GATHERINFO,
-		STAGE_INSTALL,
-		STAGE_INSTALL_CHECK,
-		STAGE_INSTALL_COMPLEX,
-		STAGE_UNINSTALL,
-		STAGE_UNINSTALL_BRANCH,
-		STAGE_UNINSTALL_COMPLEX,
-		STAGE_UNINSTALL_PATCH,
-		STAGE_UNINSTALL_UPDATE,
-		STAGE_VERIFY,
-		STAGE_LAUNCH,
-		STAGE_DOWNLOADTOOL,
-		STAGE_INSTALLTOOL,
-		STAGE_VALIDATE,
-		STAGE_WAIT,
-	};
 };
 
 }

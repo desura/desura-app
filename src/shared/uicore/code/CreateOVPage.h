@@ -30,19 +30,15 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>
 class CreateMCFOverview : public BasePage 
 {
 public:
-#ifdef WIN32
-	CreateMCFOverview( wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 370,148 ), long style = wxTAB_TRAVERSAL );
-#else // Linux needs more room as there is no custom border
-	CreateMCFOverview( wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 415,148 ), long style = wxTAB_TRAVERSAL );
-#endif
+	CreateMCFOverview(wxWindow* parent);
 	~CreateMCFOverview();
 
-	void dispose();
-	void setInfo(DesuraId itemId, const char* path);
+	void dispose() override;
+	void setInfo(DesuraId itemId, UserCore::Item::ItemInfoI* pItemInfo, const char* path);
 
 	Event<ut> onUploadTriggerEvent;
 
-	void run(){;}
+	void run() override {}
 
 protected:
 	

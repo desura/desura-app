@@ -31,7 +31,8 @@ namespace ItemTask
 {
 
 
-UIBaseServiceTask::UIBaseServiceTask(uint32 stage, const char* taskname, UserCore::Item::ItemHandle* handle, MCFBranch installBranch, MCFBuild installBuild) : BaseItemServiceTask(stage, taskname, handle, installBranch, installBuild)
+UIBaseServiceTask::UIBaseServiceTask(UserCore::Item::ITEM_STAGE stage, const char* taskname, UserCore::Item::ItemHandle* handle, MCFBranch installBranch, MCFBuild installBuild) 
+	: BaseItemServiceTask(stage, taskname, handle, installBranch, installBuild)
 {
 }
 

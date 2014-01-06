@@ -106,7 +106,7 @@ void UpdateInfoForm::setInfo(DesuraId id, bool launch)
 
 	m_cbReminder->SetValue(m_bLaunch && item->getOptions() & UserCore::Item::ItemInfoI::OPTION_NOTREMINDUPDATE);
 
-	SetLabel(gcWString(L"{0} {1}", Managers::GetString(L"#UI_TITLE"), item->getName()));
+	SetLabel(gcWString(Managers::GetString(L"#UI_TITLE"), item->getName()));
 
 	m_ieBrowser->loadUrl(gcWString(L"{0}/{1}/{2}/changelog", GetWebCore()->getUrl(WebCore::Root), id.getTypeString(), item->getShortName()));
 }

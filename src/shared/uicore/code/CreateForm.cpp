@@ -28,27 +28,27 @@ BEGIN_EVENT_TABLE( CreateMCFForm, gcFrame )
 	EVT_CLOSE( CreateMCFForm::onFormClose )
 END_EVENT_TABLE()
 
-CreateMCFForm::CreateMCFForm( wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos, const wxSize& size, long style ) : gcFrame( parent, id, title, pos, size, style )
+CreateMCFForm::CreateMCFForm(wxWindow* parent, UserCore::ItemManagerI* pItemManager) 
+	: gcFrame(parent, wxID_ANY, wxT("Creating MCF"), wxDefaultPosition, wxSize( 415,120 ), wxCAPTION|wxCLOSE_BOX|wxFRAME_FLOAT_ON_PARENT|wxSYSTEM_MENU)
+	, m_bsSizer(new wxBoxSizer(wxVERTICAL))
+	, m_pItemManager(pItemManager)
 {
-	m_bsSizer = new wxBoxSizer( wxVERTICAL );
+	if (!m_pItemManager)
+		m_pItemManager = GetUserCore()->getItemManager();
+
 	this->SetSizer( m_bsSizer );
 	this->Layout();
 
-	m_pPage = nullptr;
-
-	m_bPromptClose = true;
 	centerOnParent();
 }
 
 CreateMCFForm::~CreateMCFForm()
 {
 	if (GetUserCore())
-	{
 		*GetUserCore()->getItemsAddedEvent() -= guiDelegate(this, &CreateMCFForm::updateInfo);
-	}
 }
 
-void CreateMCFForm::onFormClose( wxCloseEvent& event )
+void CreateMCFForm::onFormClose(wxCloseEvent& event)
 {
 	if (m_bPromptClose)
 	{
@@ -65,7 +65,8 @@ void CreateMCFForm::onFormClose( wxCloseEvent& event )
 
 void CreateMCFForm::updateInfo(uint32& count)
 {
-	UserCore::Item::ItemInfoI *item = GetUserCore()->getItemManager()->findItemInfo(m_uiInternId);
+	UserCore::Item::ItemInfoI *item = m_pItemManager->findItemInfo(m_uiInternId);
+
 	if (item)
 	{
 		setTitle(item->getName());
@@ -74,27 +75,30 @@ void CreateMCFForm::updateInfo(uint32& count)
 			setIcon(item->getIcon());
 
 		if (m_pPage)
-			m_pPage->setInfo(m_uiInternId);
+			m_pPage->setInfo(m_uiInternId, item);
 
-		*GetUserCore()->getItemsAddedEvent() -= guiDelegate(this, &CreateMCFForm::updateInfo);
+		if (GetUserCore())
+			*GetUserCore()->getItemsAddedEvent() -= guiDelegate(this, &CreateMCFForm::updateInfo);
 	}
 }
 
 void CreateMCFForm::setInfo(DesuraId id)
 {
-	UserCore::Item::ItemInfoI *item = GetUserCore()->getItemManager()->findItemInfo(id);
+	UserCore::Item::ItemInfoI *item = m_pItemManager->findItemInfo(id);
 
 	if (!item)
 	{	
-		if (!GetUserCore()->isAdmin())
+		if (GetUserCore() && !GetUserCore()->isAdmin())
 		{
 			Close();
 			return;
 		}
 		else
 		{
-			*GetUserCore()->getItemsAddedEvent() += guiDelegate(this, &CreateMCFForm::updateInfo);
-			GetUserCore()->getItemManager()->retrieveItemInfoAsync(id);
+			if (GetUserCore())
+				*GetUserCore()->getItemsAddedEvent() += guiDelegate(this, &CreateMCFForm::updateInfo);
+
+			m_pItemManager->retrieveItemInfoAsync(id);
 		}
 	}
 
@@ -102,7 +106,8 @@ void CreateMCFForm::setInfo(DesuraId id)
 
 	if (!item)
 	{
-		SetTitle(gcWString(L"Create MCF for {0} [Admin override]", id.getItem()));
+		gcString szId("{0}", id.getItem());
+		setTitle(szId.c_str(), L"#CREATE_MCF_TITILE_ADMIN");
 	}
 	else
 	{
@@ -110,17 +115,17 @@ void CreateMCFForm::setInfo(DesuraId id)
 	}
 }
 
-void CreateMCFForm::setTitle(const char* name)
+void CreateMCFForm::setTitle(const char* szItemName, const wchar_t* szFormat)
 {
-	SetTitle(gcWString(L"Create MCF: {0}", name));
+	SetTitle(gcWString(Managers::GetString(szFormat), szItemName));
 }
 
 void CreateMCFForm::showInfo()
 {
 	cleanUpPages();
 
-	CreateInfoPage *pPage = new CreateInfoPage( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
-	pPage->setInfo(m_uiInternId);
+	CreateInfoPage *pPage = new CreateInfoPage(this);
+	pPage->setInfo(m_uiInternId, m_pItemManager->findItemInfo(m_uiInternId));
 
 	m_bPromptClose = false;
 
@@ -134,8 +139,8 @@ void CreateMCFForm::showProg(const char* path)
 {
 	cleanUpPages();
 
-	CreateProgPage* pPage = new CreateProgPage( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
-	pPage->setInfo(m_uiInternId, path);
+	CreateProgPage* pPage = new CreateProgPage(this);
+	pPage->setInfo(m_uiInternId, m_pItemManager->findItemInfo(m_uiInternId), path);
 
 	m_bPromptClose = true;
 
@@ -149,19 +154,13 @@ void CreateMCFForm::showOverView(const char* path)
 {
 	cleanUpPages();
 
-	CreateMCFOverview* pPage = new CreateMCFOverview( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
-	pPage->setInfo(m_uiInternId, path);
+	CreateMCFOverview* pPage = new CreateMCFOverview(this);
+	pPage->setInfo(m_uiInternId, m_pItemManager->findItemInfo(m_uiInternId), path);
 	pPage->onUploadTriggerEvent += delegate(&onUploadTriggerEvent);
 	m_bPromptClose = false;
 
 	m_pPage = pPage;
 	m_bsSizer->Add( m_pPage, 1, wxEXPAND, 5 );
-
-#ifdef WIN32
-	this->SetSize(-1, -1, 370, 150);
-#else
-	this->SetSize(-1, -1, 415, 150);
-#endif
 
 	Layout();
 }
@@ -175,15 +174,15 @@ void CreateMCFForm::cleanUpPages()
 {
 	m_bsSizer->Clear(false);
 
-	if (m_pPage)
-	{
-		CreateMCFOverview* temp = dynamic_cast<CreateMCFOverview*>(m_pPage);
-		if (temp)
-			temp->onUploadTriggerEvent -= delegate(&onUploadTriggerEvent);
+	if (!m_pPage)
+		return;
 
-		m_pPage->Show(false);
-		m_pPage->Close();
-		m_pPage->dispose();
-		m_pPage = nullptr;
-	}
+	CreateMCFOverview* temp = dynamic_cast<CreateMCFOverview*>(m_pPage);
+	if (temp)
+		temp->onUploadTriggerEvent -= delegate(&onUploadTriggerEvent);
+
+	m_pPage->Show(false);
+	m_pPage->Close();
+	m_pPage->dispose();
+	m_pPage = nullptr;
 }

@@ -266,6 +266,9 @@ void ItemTabPage::constuctBrowser()
 	m_pWebControl->onPageLoadEvent += delegate(&m_pItemControlBar->onPageEndLoadingEvent);
 	m_pWebControl->onPageLoadEvent += delegate(this, &ItemTabPage::doneLoading);
 
+	if (!GetUserCore())
+		return;
+
 	UserCore::ItemManagerI *im = GetUserCore()->getItemManager();
 
 	if (im)
@@ -329,7 +332,7 @@ void ItemTabPage::onButtonClicked(int32& id)
 
 void ItemTabPage::doneLoading()
 {
-	if (GetUserCore()->isDelayLoading())
+	if (GetUserCore() && GetUserCore()->isDelayLoading())
 		postEvent("onDelayLoad");
 }
 
