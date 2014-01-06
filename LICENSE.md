@@ -63,3 +63,11 @@ and information where copyright notices are usually included, for
 example, after your own copyright notice acknowledging your use of the
 artwork, in a text file distributed with your program, in your
 application's About window, or on a credits page for your work.
+
+Third Party Code
+==============
+
+For convenience, some third party sources have been incorporated 
+under the 'third_party' directory.  Those sources are covered by 
+their own licenses, and and not included in the licensing described 
+above.
