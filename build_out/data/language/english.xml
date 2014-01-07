@@ -558,6 +558,7 @@
 		<str name="#CHROME_VIEWIMAGE">View Image in Browser</str>
 		<str name="#CHROME_INSPECTELEMENT">Inspect Element</str>
 		<str name="#CHROME_NORMALMENU">Normal Menu</str>
+		<str name="#CHROME_COPYURL">Copy Url</str>
 		<str name="#BH_NO_LOAD">Failed to load browser library. Please check console for error message.</str>
 			
 		<!-- Properties -->

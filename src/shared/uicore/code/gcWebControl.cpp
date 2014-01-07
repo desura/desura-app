@@ -25,6 +25,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>
 #include "gcWebFakeBrowser.h"
 
 #include <branding/branding.h>
+#include "wx/clipbrd.h"
 
 #ifdef WIN32
 ChromiumDLL::ChromiumBrowserI* NewChromiumBrowser(HWND hwnd, const char* name, const char* loadUrl);
@@ -193,6 +194,20 @@ void gcWebControl::onMenuClicked(wxCommandEvent& event)
 		case MENU_ID_ZOOM_NORMAL:	m_pChromeBrowser->zoomNormal(); break;
 		case MENU_ID_ZOOM_PLUS:		m_pChromeBrowser->zoomIn(); break;
 		case MENU_ID_INSPECTELEMENT: m_pChromeBrowser->showInspector(); break;
+
+		case MENU_ID_VIEWPBROWSER:
+		case MENU_ID_VIEWLBROWSER:
+		case MENU_ID_VIEWIBROWSER:
+			gcLaunchDefaultBrowser(m_pEventHandler->getLastMenuUrl());
+			break;
+
+		case MENU_ID_COPYURL:
+			if (wxTheClipboard->Open())
+			{
+				wxTheClipboard->SetData(new wxURLDataObject(m_pEventHandler->getLastMenuUrl()));
+				wxTheClipboard->Close();
+			}
+			break;
 	}
 }
 

@@ -66,6 +66,7 @@ enum MenuEvents
 	MENU_ID_ZOOM_NORMAL,
 	MENU_ID_ZOOM_PLUS,
 	MENU_ID_INSPECTELEMENT,
+	MENU_ID_COPYURL,
 
 	MENU_ID_CUSTOMACTION, //must be last
 };
@@ -87,25 +88,25 @@ public:
 	EventHandler(gcWebControlI* parent);
 	~EventHandler();
 
-	virtual bool onNavigateUrl(const char* url, bool isMain);
-	virtual void onPageLoadStart();
-	virtual void onPageLoadEnd();
+	bool onNavigateUrl(const char* url, bool isMain) override;
+	void onPageLoadStart() override;
+	void onPageLoadEnd() override;
 
-	virtual bool onJScriptAlert(const char* msg);
-	virtual bool onJScriptConfirm(const char* msg, bool* result);
-	virtual bool onJScriptPrompt(const char* msg, const char* defualtVal, bool* handled, char result[255]);
+	bool onJScriptAlert(const char* msg) override;
+	bool onJScriptConfirm(const char* msg, bool* result) override;
+	bool onJScriptPrompt(const char* msg, const char* defualtVal, bool* handled, char result[255]) override;
 
-	virtual bool onKeyEvent(ChromiumDLL::KeyEventType type, int code, int modifiers, bool isSystemKey);
+	bool onKeyEvent(ChromiumDLL::KeyEventType type, int code, int modifiers, bool isSystemKey) override;
 
-	virtual void onLogConsoleMsg(const char* message, const char* source, int line);
+	void onLogConsoleMsg(const char* message, const char* source, int line) override;
 
-	virtual void launchLink(const char* url);
-	virtual bool onLoadError(const char* errorMsg, const char* url, char* buff, size_t size);
+	void launchLink(const char* url) override;
+	bool onLoadError(const char* errorMsg, const char* url, char* buff, size_t size) override;
 
-	virtual void HandleWndProc(int message, int wparam, int lparam);
-	virtual bool HandlePopupMenu(ChromiumDLL::ChromiumMenuInfoI* menuInfo);
+	void HandleWndProc(int message, int wparam, int lparam) override;
+	bool HandlePopupMenu(ChromiumDLL::ChromiumMenuInfoI* menuInfo) override;
 
-	virtual void HandleJSBinding(ChromiumDLL::JavaScriptObjectI* jsObject, ChromiumDLL::JavaScriptFactoryI* factory);
+	void HandleJSBinding(ChromiumDLL::JavaScriptObjectI* jsObject, ChromiumDLL::JavaScriptFactoryI* factory) override;
 
 	uint32 getLastX()
 	{
@@ -123,14 +124,24 @@ public:
 	void ForwardPopupMenu(ChromiumMenuInfoFromMem* menu);
 	gcMenu* createMenu(ChromiumDLL::ChromiumMenuInfoI* menuInfo);
 
+	gcWString getLastMenuUrl()
+	{
+		std::lock_guard<std::mutex> guard(m_UrlLock);
+		return m_strLastMenuUrl;
+	}
+
 protected:
 	void displayMenu(ChromiumDLL::ChromiumMenuInfoI* menuInfo, gcMenu *menu, int32 x, int32 y);
+	void setupLastMenuUrl(ChromiumDLL::ChromiumMenuInfoI* menuInfo);
 
 private:
 	uint32 m_uiLastContextMenuX;
 	uint32 m_uiLastContextMenuY;
 
 	gcWebControlI* m_pParent;
+
+	std::mutex m_UrlLock;
+	gcWString m_strLastMenuUrl;
 };
 
 
