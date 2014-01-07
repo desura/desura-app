@@ -100,7 +100,7 @@ public:
 	UserCore::Item::ItemInfo* findItemInfoNorm(DesuraId id);
 	UserCore::Item::ItemHandle* findItemHandleNorm(DesuraId id);
 
-	void enableSave(){m_bEnableSave = true;}
+	void enableSave();
 	UserCore::Item::ItemTaskGroup* newTaskGroup(uint32 type);
 
 	virtual DesuraId addLink(const char* name, const char* exe, const char* args);
@@ -111,6 +111,8 @@ public:
 	
 	virtual void regenLaunchScripts();
 	
+	void saveItem(UserCore::Item::ItemInfoI* pItem) override;
+
 protected:
 	class ParseInfo;
 

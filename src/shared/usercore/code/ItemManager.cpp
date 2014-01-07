@@ -57,8 +57,7 @@ public:
 	InfoMap modMap;
 };
 
-namespace UserCore
-{
+using namespace UserCore;
 
 
 class ItemManager::ParseInfo
@@ -1632,4 +1631,32 @@ void ItemManager::regenLaunchScripts()
 #endif
 }
 
+void ItemManager::saveItem(UserCore::Item::ItemInfoI* pItem)
+{
+	if (!m_bEnableSave)
+		return;
+
+	auto pItemNorm = dynamic_cast<UserCore::Item::ItemInfo*>(pItem);
+
+	VERIFY_OR_RETURN(pItemNorm, );
+
+	try
+	{
+		gcString szItemDb = getItemInfoDb(m_szAppPath.c_str());
+		sqlite3x::sqlite3_connection db(szItemDb.c_str());
+		pItemNorm->saveDbFull(&db);
+	}
+	catch (std::exception &e)
+	{
+		Warning(gcString("Failed to save item to db: {0}\n", e.what()));
+	}
+}
+
+void ItemManager::enableSave()
+{
+	if (m_bEnableSave)
+		return;
+
+	m_bEnableSave = true; 
+	saveItems(); 
 }

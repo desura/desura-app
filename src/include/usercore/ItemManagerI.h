@@ -212,6 +212,9 @@ public:
 	
 	//! Linux only
 	virtual void regenLaunchScripts()=0;
+
+	//! Save item to the db
+	virtual void saveItem(UserCore::Item::ItemInfoI* pItem)=0;
 };
 
 
