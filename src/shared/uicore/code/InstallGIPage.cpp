@@ -28,13 +28,7 @@ $/LicenseInfo$
 #include "usercore/ItemHandleI.h"
 
 
-
-namespace UI
-{
-namespace Forms
-{
-namespace ItemFormPage
-{
+using namespace UI::Forms::ItemFormPage;
 
 
 InstallGIPage::InstallGIPage(wxWindow* parent) : BaseInstallPage(parent)
@@ -138,8 +132,11 @@ void InstallGIPage::onError(gcException& e)
 
 void InstallGIPage::onProgressUpdate(uint32& prog)
 {
-	if (prog == 40)
+	if (prog >= 40 && !m_bSetNewLable)
+	{
 		m_labInfo->SetLabel(Managers::GetString(L"#IF_CHECKINGIR"));
+		m_bSetNewLable = true;
+	}
 
 	m_pbProgress->setProgress(prog);
 
@@ -147,12 +144,6 @@ void InstallGIPage::onProgressUpdate(uint32& prog)
 	if (par)
 		par->setProgress(prog);
 }
-
-
-}
-}
-}
-
 
 
 

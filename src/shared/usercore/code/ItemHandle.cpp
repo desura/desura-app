@@ -55,15 +55,13 @@ $/LicenseInfo$
 class BlankTask : public UserCore::ItemTask::BaseItemTask
 {
 public:
-	BlankTask(UserCore::Item::ItemHandle* handle, uint32 type) : BaseItemTask(type, "", handle)
+	BlankTask(UserCore::Item::ItemHandle* handle, UserCore::Item::ITEM_STAGE type) 
+		: BaseItemTask(type, "", handle)
 	{
 	}
 
 	virtual void doRun()
 	{
-#ifdef WIN32
-		int a=1;
-#endif
 	}
 };
 
@@ -86,7 +84,7 @@ ItemHandle::ItemHandle(ItemInfo* itemInfo, UserCore::User* user)
 	m_pFactory = nullptr;
 	m_pItemInfo = itemInfo;
 
-	m_uiStage = STAGE_NONE;
+	m_uiStage = ITEM_STAGE::STAGE_NONE;
 
 	m_pEventHandler = new ItemHandleEvents(m_vHelperList);
 	m_pGroup = nullptr;
@@ -225,7 +223,7 @@ void ItemHandle::delHelper(Helper::ItemHandleHelperI* helper)
 	}
 }
 
-Event<uint32>* ItemHandle::getChangeStageEvent()
+Event<ITEM_STAGE>* ItemHandle::getChangeStageEvent()
 {
 	return &onChangeStageEvent;
 }
@@ -237,7 +235,7 @@ Event<gcException>* ItemHandle::getErrorEvent()
 
 bool ItemHandle::isInStage()
 {
-	return m_uiStage != STAGE_NONE && m_uiStage != STAGE_CLOSE && m_uiStage != STAGE_LAUNCH;
+	return m_uiStage != ITEM_STAGE::STAGE_NONE && m_uiStage != ITEM_STAGE::STAGE_CLOSE && m_uiStage != ITEM_STAGE::STAGE_LAUNCH;
 }
 
 bool ItemHandle::isStopped()
@@ -263,17 +261,17 @@ void ItemHandle::setPausable(bool state)
 		getItemInfo()->delSFlag(UserCore::Item::ItemInfoI::STATUS_PAUSABLE);
 }
 
-void ItemHandle::stop(bool block)
-{
-	if (!block)
-	{
-		 m_bStopped = true;
-	}
-	else
-	{
-		stopThread();
-	}
-}
+//void ItemHandle::stop(bool block)
+//{
+//	if (!block)
+//	{
+//		 m_bStopped = true;
+//	}
+//	else
+//	{
+//		stopThread();
+//	}
+//}
 
 void ItemHandle::setPaused(bool state, bool forced)
 {
@@ -318,7 +316,7 @@ void ItemHandle::setPaused(bool state)
 	setPaused(state, false);
 }
 
-void ItemHandle::setStage(uint32 stage)
+void ItemHandle::setStage(ITEM_STAGE stage)
 {
 	m_pEventHandler->reset();
 	m_uiStage = stage;
@@ -333,20 +331,20 @@ void ItemHandle::setStage(uint32 stage)
 	m_pItemInfo->getInfoChangeEvent()->operator()(info);
 }
 
-void ItemHandle::onTaskStart(uint32 &stage)
+void ItemHandle::onTaskStart(ITEM_STAGE &stage)
 {
-	if (stage == STAGE_NONE)
+	if (stage == ITEM_STAGE::STAGE_NONE)
 	{
-		m_uiStage = STAGE_NONE;
+		m_uiStage = ITEM_STAGE::STAGE_NONE;
 		return;
 	}
 
 	setStage(stage);
 }
 
-void ItemHandle::onTaskComplete(uint32 &stage)
+void ItemHandle::onTaskComplete(ITEM_STAGE &stage)
 {
-	if (stage == STAGE_NONE)
+	if (stage == ITEM_STAGE::STAGE_NONE)
 	{
 		releaseComplexLock();
 		stopThread();
@@ -378,9 +376,9 @@ void ItemHandle::resetStage(bool close)
 void ItemHandle::completeStage(bool close)
 {
 	if (close)
-		registerTask(new BlankTask(this, STAGE_CLOSE));
+		registerTask(new BlankTask(this, ITEM_STAGE::STAGE_CLOSE));
 
-	registerTask(new BlankTask(this, STAGE_NONE));
+	registerTask(new BlankTask(this, ITEM_STAGE::STAGE_NONE));
 }
 
 
@@ -1162,7 +1160,7 @@ bool ItemHandle::startUpCheck()
 
 bool ItemHandle::uninstall(Helper::ItemUninstallHelperI* helper, bool complete, bool account)
 {
-	if (m_uiStage == STAGE_UNINSTALL)
+	if (m_uiStage == ITEM_STAGE::STAGE_UNINSTALL)
 		return true;
 
 	if (isInStage())
@@ -1175,7 +1173,7 @@ bool ItemHandle::uninstall(Helper::ItemUninstallHelperI* helper, bool complete, 
 	return true;
 }
 
-uint32 ItemHandle::getStage()
+ITEM_STAGE ItemHandle::getStage()
 {
 	return m_uiStage;
 }
@@ -1185,7 +1183,7 @@ void ItemHandle::cancelCurrentStage()
 	if (!isInStage())
 		return;
 
-	if (getStage() == UserCore::Item::ItemHandleI::STAGE_NONE || getStage() == UserCore::Item::ItemHandleI::STAGE_CLOSE)
+	if (getStage() == UserCore::Item::ITEM_STAGE::STAGE_NONE || getStage() == UserCore::Item::ITEM_STAGE::STAGE_CLOSE)
 		return;
 
 	setPaused(false);
@@ -1198,13 +1196,19 @@ void ItemHandle::cancelCurrentStage()
 
 void ItemHandle::getStatusStr(LanguageManagerI & pLangMng, char* buffer, uint32 buffsize)
 {
+	getStatusStr_s(this, m_pItemInfo, m_uiStage, m_pGroup, pLangMng, buffer, buffsize);
+}
+
+void ItemHandle::getStatusStr_s(UserCore::Item::ItemHandleI* pItemHandle, UserCore::Item::ItemInfoI *pItemInfo, UserCore::Item::ITEM_STAGE nStage
+																, UserCore::Item::ItemTaskGroupI* pTaskGroup, LanguageManagerI & pLangMng, char* buffer, uint32 buffsize)
+{
 	gcString temp;
 
-	uint32 status = m_pItemInfo->getStatus();
+	uint32 status = pItemInfo->getStatus();
 
-	if (!m_pItemInfo->isDownloadable())
+	if (!pItemInfo->isDownloadable())
 	{
-		if (m_pItemInfo->isInstalled())
+		if (pItemInfo->isInstalled())
 			temp = gcString(pLangMng.getString("#IS_INSTALLED"));
 		else
 			temp = gcString(pLangMng.getString("#IS_NOTINSTALLED"));
@@ -1214,29 +1218,29 @@ void ItemHandle::getStatusStr(LanguageManagerI & pLangMng, char* buffer, uint32 
 		bool skip = false;
 		const char* stateMsg;
 
-		if (m_uiStage == UserCore::Item::ItemHandleI::STAGE_DOWNLOADTOOL)
+		if (nStage == UserCore::Item::ITEM_STAGE::STAGE_DOWNLOADTOOL)
 		{
 			stateMsg = "#IS_DOWNLOADINGTOOL";
 		}
-		else if (m_uiStage == UserCore::Item::ItemHandleI::STAGE_INSTALLTOOL)
+		else if (nStage == UserCore::Item::ITEM_STAGE::STAGE_INSTALLTOOL)
 		{
 			stateMsg = "#IS_INSTALLINGTOOL";
 		}
-		else if (m_uiStage == UserCore::Item::ItemHandleI::STAGE_LAUNCH)
+		else if (nStage == UserCore::Item::ITEM_STAGE::STAGE_LAUNCH)
 		{
 			skip = true;
 			temp = pLangMng.getString("#IS_LAUNCHING");
 		}
-		else if (m_uiStage == UserCore::Item::ItemHandleI::STAGE_VALIDATE)
+		else if (nStage == UserCore::Item::ITEM_STAGE::STAGE_VALIDATE)
 		{
 			stateMsg = pLangMng.getString("#IS_VALIDATE");
 		}
-		else if (m_uiStage == UserCore::Item::ItemHandleI::STAGE_WAIT && m_pGroup)
+		else if (nStage == UserCore::Item::ITEM_STAGE::STAGE_WAIT && pTaskGroup)
 		{
 			skip = true;
-			temp = gcString(pLangMng.getString("#IS_WAIT"), m_pGroup->getPos(this), m_pGroup->getCount());
+			temp = gcString(pLangMng.getString("#IS_WAIT"), pTaskGroup->getPos(pItemHandle), pTaskGroup->getCount());
 		}
-		else if (status & UserCore::Item::ItemInfoI::STATUS_VERIFING || m_uiStage == UserCore::Item::ItemHandleI::STAGE_VERIFY)
+		else if (status & UserCore::Item::ItemInfoI::STATUS_VERIFING || nStage == UserCore::Item::ITEM_STAGE::STAGE_VERIFY)
 		{
 			stateMsg = "#IS_VERIFY";
 		}
@@ -1244,11 +1248,11 @@ void ItemHandle::getStatusStr(LanguageManagerI & pLangMng, char* buffer, uint32 
 		{
 			stateMsg = "#IS_UPDATING";
 		}
-		else if (status & UserCore::Item::ItemInfoI::STATUS_DOWNLOADING || m_uiStage == UserCore::Item::ItemHandleI::STAGE_DOWNLOAD)
+		else if (status & UserCore::Item::ItemInfoI::STATUS_DOWNLOADING || nStage == UserCore::Item::ITEM_STAGE::STAGE_DOWNLOAD)
 		{
 			stateMsg = "#IS_DOWNLOADING";
 		}
-		else if (status & UserCore::Item::ItemInfoI::STATUS_INSTALLING || m_uiStage == UserCore::Item::ItemHandleI::STAGE_INSTALL)
+		else if (status & UserCore::Item::ItemInfoI::STATUS_INSTALLING || nStage == UserCore::Item::ITEM_STAGE::STAGE_INSTALL)
 		{
 			stateMsg = "#IS_INSTALLING";
 		}
@@ -1256,9 +1260,9 @@ void ItemHandle::getStatusStr(LanguageManagerI & pLangMng, char* buffer, uint32 
 		{
 			bool hasPreorder = false;
 
-			for (size_t x=0; x<m_pItemInfo->getBranchCount(); x++)
+			for (size_t x=0; x<pItemInfo->getBranchCount(); x++)
 			{
-				if (m_pItemInfo->getBranch(x)->isPreOrder())
+				if (pItemInfo->getBranch(x)->isPreOrder())
 				{
 					hasPreorder = true;
 					break;
@@ -1269,11 +1273,11 @@ void ItemHandle::getStatusStr(LanguageManagerI & pLangMng, char* buffer, uint32 
 			{
 				stateMsg = "#IS_READY";
 
-				UserCore::Item::BranchInfoI* bi = m_pItemInfo->getCurrentBranch();
+				UserCore::Item::BranchInfoI* bi = pItemInfo->getCurrentBranch();
 				if (bi && bi->isPreOrder())
 					stateMsg = "#IS_PRELOADED_STATUS";
 			}
-			else if (m_pItemInfo->getCurrentBranch() == nullptr && hasPreorder)
+			else if (pItemInfo->getCurrentBranch() == nullptr && hasPreorder)
 			{
 				stateMsg = "#IS_PREORDER_STATUS";
 			}
@@ -1295,7 +1299,7 @@ void ItemHandle::getStatusStr(LanguageManagerI & pLangMng, char* buffer, uint32 
 			if (status & UserCore::Item::ItemInfoI::STATUS_PAUSED)
 				stateMsg = "#IS_PAUSED";
 
-			temp = gcString("{0:u}% - {1}", m_pItemInfo->getPercent(), pLangMng.getString(stateMsg));
+			temp = gcString("{0:u}% - {1}", pItemInfo->getPercent(), pLangMng.getString(stateMsg));
 		}
 	}
 
@@ -1331,7 +1335,7 @@ bool ItemHandle::setTaskGroup(ItemTaskGroup* group, bool force)
 	}
 	else
 	{
-		if (getStage() == UserCore::Item::ItemHandleI::STAGE_WAIT)
+		if (getStage() == UserCore::Item::ITEM_STAGE::STAGE_WAIT)
 			cancelCurrentStage();
 	}
 	

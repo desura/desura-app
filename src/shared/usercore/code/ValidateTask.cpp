@@ -42,7 +42,7 @@ $/LicenseInfo$
 using namespace UserCore::ItemTask;
 
 ValidateTask::ValidateTask(UserCore::Item::ItemHandle* handle, MCFBranch branch, MCFBuild build) 
-	: BaseItemTask(UserCore::Item::ItemHandleI::STAGE_VALIDATE, "Validate", handle, branch, build)
+	: BaseItemTask(UserCore::Item::ITEM_STAGE::STAGE_VALIDATE, "Validate", handle, branch, build)
 {
 	onErrorEvent += delegate(this, &ValidateTask::onError);
 }

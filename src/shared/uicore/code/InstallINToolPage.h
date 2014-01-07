@@ -32,6 +32,11 @@ $/LicenseInfo$
 #include "BaseInstallPage.h"
 #include "wx_controls/gcSpinnerProgBar.h"
 
+namespace UserCore
+{
+	class ToolManagerI;
+}
+
 namespace UI
 {
 namespace Forms
@@ -42,7 +47,7 @@ namespace ItemFormPage
 class InstallINToolPage : public BaseInstallPage 
 {
 public:
-	InstallINToolPage(wxWindow* parent);
+	InstallINToolPage(wxWindow* parent, UserCore::ToolManagerI* pToolManager = nullptr);
 	~InstallINToolPage();
 
 protected:
@@ -60,6 +65,7 @@ protected:
 
 private:
 	bool m_bCompleted;
+	UserCore::ToolManagerI* m_pToolManager = nullptr;
 };
 
 }

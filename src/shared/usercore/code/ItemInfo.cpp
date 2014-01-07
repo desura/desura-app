@@ -553,16 +553,7 @@ void ItemInfo::loadXmlData(uint32 platform, const XML::gcXMLElement &xmlNode, ui
 	m_iChangedFlags |= UM::ItemInfoI::CHANGED_INFO;
 	broughtCheck();
 
-	try
-	{
-		gcString szItemDb = getItemInfoDb(getUserCore()->getAppDataPath());
-		sqlite3x::sqlite3_connection db(szItemDb.c_str());
-		saveDbFull(&db);
-	}
-	catch (std::exception &e)
-	{
-		Warning(gcString("Failed to save item to db: {0}\n", e.what()));
-	}
+	m_pUserCore->getItemManager()->saveItem(this);
 
 	resumeCallBack();
 	triggerCallBack();

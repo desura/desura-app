@@ -37,7 +37,7 @@ class DSEThread;
 class DesuraServiceError : public gcDialog 
 {
 public:
-	DesuraServiceError( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = PRODUCT_NAME_CATW(L" Service Error"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 370,127 ), long style = wxCAPTION|wxCLOSE_BOX|wxSYSTEM_MENU|wxTAB_TRAVERSAL);
+	DesuraServiceError(wxWindow* parent);
 	~DesuraServiceError();
 
 	void run();
@@ -48,6 +48,8 @@ public:
 	int ShowModal();
 
 protected:
+	friend class LanguageTestDialog;
+
 	wxStaticText* m_labInfo;
 	gcButton* m_butReconnect;
 	gcButton* m_butLogout;

@@ -195,6 +195,8 @@ protected:
 	EventV onNotifyGiftUpdateEvent;
 
 private:
+	friend class Desura;
+
 	gcMessageDialog *m_pOfflineDialog;
 
 	std::vector<UserCore::Misc::NewsItem*> m_vNewsItems;

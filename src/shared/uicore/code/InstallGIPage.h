@@ -71,6 +71,9 @@ protected:
 	uint8 validate();
 	void checkRequirements();
 
+private:
+	bool m_bSetNewLable = false;
+
 };
 
 }

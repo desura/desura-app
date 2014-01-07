@@ -31,10 +31,15 @@ $/LicenseInfo$
 
 #include "wx_controls/gcControls.h"
 
+namespace UserCore
+{
+	class ItemManagerI;
+}
+
 class ExeSelectForm : public gcFrame 
 {
 public:
-	ExeSelectForm(wxWindow* parent, bool hasSeenCDKey);
+	ExeSelectForm(wxWindow* parent, bool hasSeenCDKey, UserCore::ItemManagerI* pItemManager = nullptr);
 	~ExeSelectForm();
 
 	DesuraId getItemId(){return m_Id;}
@@ -52,6 +57,8 @@ private:
 
 	std::vector<gcButton*> m_vButtonList;
 	DesuraId m_Id;
+
+	UserCore::ItemManagerI* m_pItemManager;
 };
 
 

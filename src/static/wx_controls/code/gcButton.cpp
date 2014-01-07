@@ -379,6 +379,10 @@ void gcButton::doPaint(wxDC* dc)
 
 	int h = GetSize().GetHeight();
 	int w = GetSize().GetWidth();
+
+	if (h == 0 || w == 0)
+		return;
+
 #ifdef WIN32 // unused AFAIK
 	int ih = m_imgHandle->GetSize().GetHeight();
 #endif

@@ -37,7 +37,7 @@ namespace ItemTask
 {
 
 GatherInfoTask::GatherInfoTask(UserCore::Item::ItemHandle* handle, MCFBranch branch, MCFBuild build, UserCore::Item::Helper::GatherInfoHandlerHelperI *helper, uint32 flags) 
-	: BaseItemTask(UserCore::Item::ItemHandleI::STAGE_GATHERINFO, "GatherInfo", handle, branch, build)
+	: BaseItemTask(UserCore::Item::ITEM_STAGE::STAGE_GATHERINFO, "GatherInfo", handle, branch, build)
 {
 	m_pGIHH = helper;
 	onErrorEvent += delegate(this, &GatherInfoTask::onError);

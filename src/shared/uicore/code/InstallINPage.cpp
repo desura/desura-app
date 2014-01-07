@@ -28,13 +28,7 @@ $/LicenseInfo$
 
 #include "MainApp.h"
 
-namespace UI
-{
-namespace Forms
-{
-namespace ItemFormPage
-{
-
+using namespace UI::Forms::ItemFormPage;
 
 InstallINPage::InstallINPage(wxWindow* parent) : BaseInstallPage(parent)
 {
@@ -71,7 +65,7 @@ InstallINPage::InstallINPage(wxWindow* parent) : BaseInstallPage(parent)
 	this->SetSizer( fgSizer1 );
 	this->Layout();
 
-	this->setParentSize(-1, 120);
+	this->setParentSize(-1, 140);
 
 	m_bPaused = false;
 	m_bCompleted = false;
@@ -123,11 +117,13 @@ void InstallINPage::onComplete(uint32& res)
 	
 	UserCore::Item::BranchInfoI *bi = getItemInfo()->getCurrentBranch();
 
+	m_butPause->Enable(true);
+	m_butPause->SetLabel(Managers::GetString(L"#CLOSE"));
+
 	if (bi && bi->isPreOrder())
 	{
-		m_butPause->Show(false);
+		m_butHide->Show(false);
 		m_labInfo->SetLabel(Managers::GetString(L"#IF_COMPLETEPREORDER"));
-		m_butHide->Enable(false);
 	}
 	else 
 	{
@@ -175,7 +171,7 @@ void InstallINPage::onPause(bool &state)
 
 	if (!state)
 	{
-		m_labInfo->SetLabel(Managers::GetString(L"#UDF_UNKNOWNPAUSE"));
+		m_labInfo->SetLabel(Managers::GetString(L"#PAUSED"));
 		m_butPause->SetLabel(Managers::GetString(L"#PAUSE"));
 		m_bPaused = false;
 
@@ -190,8 +186,4 @@ void InstallINPage::onPause(bool &state)
 		if (par)
 			par->setProgressState(gcFrame::P_PAUSED);
 	}
-}
-
-}
-}
 }

@@ -149,7 +149,7 @@ void PasswordReminder::onButtonClicked( wxCommandEvent& event )
 	}
 	else
 	{
-		EndModal(0);
+		Close();
 	}
 }
 

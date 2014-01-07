@@ -34,21 +34,17 @@ REGISTER_JSEXTENDER(DesuraJSBinding);
 
 void FromJSObject(UserCore::Item::ItemInfoI* &item, JSObjHandle& arg)
 {
-	if (!GetUserCore())
-		return;
-
 	if (arg->isObject() == false)
 		return;
 
 	item = arg->getUserObject<UserCore::Item::ItemInfoI>();
 }
 
+UserCore::ItemManagerI* DesuraJSBinding::gs_pItemManager = nullptr;
 
 DesuraJSBinding::DesuraJSBinding() : DesuraJSBase("app", "native_binding.js")
 {
 	REGISTER_JS_FUNCTION( getLocalString, DesuraJSBinding );
-
-	
 	REG_SIMPLE_JS_FUNCTION( getItemInfoFromId, DesuraJSBinding );
 	REG_SIMPLE_JS_FUNCTION( getDevItems, DesuraJSBinding );
 	REG_SIMPLE_JS_FUNCTION( getGames, DesuraJSBinding );
@@ -97,7 +93,13 @@ DesuraJSBinding::~DesuraJSBinding()
 {
 }
 
+UserCore::ItemManagerI* DesuraJSBinding::getItemManager()
+{
+	if (!gs_pItemManager)
+		gs_pItemManager = GetUserCore()->getItemManager();
 
+	return gs_pItemManager;
+}
 
 template <typename T>
 class FormatWrapper : public Template::FormatArgC<char, T>
@@ -163,22 +165,22 @@ JSObjHandle DesuraJSBinding::getLocalString(ChromiumDLL::JavaScriptFactoryI *m_p
 
 void* DesuraJSBinding::getItemInfoFromId(gcString szId)
 {
-	if (!GetUserCore() || !GetUserCore()->getItemManager())
+	if (!getItemManager())
 		return nullptr;
 
 	DesuraId id(UTIL::MISC::atoll(szId.c_str()));
-	return GetUserCore()->getItemManager()->findItemInfo(id);
+	return getItemManager()->findItemInfo(id);
 }
 
 std::vector<void*> DesuraJSBinding::getDevItems()
 {
 	std::vector<void*> ret;
 
-	if (!GetUserCore() || !GetUserCore()->getItemManager())
+	if (!getItemManager())
 		return ret;
 
 	std::vector<UserCore::Item::ItemInfoI*> gList;
-	GetUserCore()->getItemManager()->getDevList(gList);
+	getItemManager()->getDevList(gList);
 
 	for (size_t x=0; x<gList.size(); x++)
 		ret.push_back(gList[x]);
@@ -190,11 +192,11 @@ std::vector<void*> DesuraJSBinding::getGames()
 {
 	std::vector<void*> ret;
 
-	if (!GetUserCore() || !GetUserCore()->getItemManager())
+	if (!getItemManager())
 		return ret;
 
 	std::vector<UserCore::Item::ItemInfoI*> gList;
-	GetUserCore()->getItemManager()->getGameList(gList);
+	getItemManager()->getGameList(gList);
 
 	for (size_t x=0; x<gList.size(); x++)
 		ret.push_back(gList[x]);
@@ -206,11 +208,11 @@ std::vector<void*> DesuraJSBinding::getMods(UserCore::Item::ItemInfoI* game)
 {
 	std::vector<void*> ret;
 
-	if (!game || !GetUserCore() || !GetUserCore()->getItemManager())
+	if (!game || !getItemManager())
 		return ret;
 
 	std::vector<UserCore::Item::ItemInfoI*> mList;
-	GetUserCore()->getItemManager()->getModList(game->getId(), mList);
+	getItemManager()->getModList(game->getId(), mList);
 
 	for (size_t x=0; x<mList.size(); x++)
 		ret.push_back(mList[x]);
@@ -222,11 +224,11 @@ std::vector<void*> DesuraJSBinding::getLinks()
 {
 	std::vector<void*> ret;
 
-	if (!GetUserCore() || !GetUserCore()->getItemManager())
+	if (!getItemManager())
 		return ret;
 
 	std::vector<UserCore::Item::ItemInfoI*> gList;
-	GetUserCore()->getItemManager()->getLinkList(gList);
+	getItemManager()->getLinkList(gList);
 
 	for (size_t x=0; x<gList.size(); x++)
 		ret.push_back(gList[x]);
@@ -238,11 +240,11 @@ std::vector<void*> DesuraJSBinding::getFavorites()
 {
 	std::vector<void*> ret;
 
-	if (!GetUserCore() || !GetUserCore()->getItemManager())
+	if (!getItemManager())
 		return ret;
 
 	std::vector<UserCore::Item::ItemInfoI*> gList;
-	GetUserCore()->getItemManager()->getFavList(gList);
+	getItemManager()->getFavList(gList);
 
 	for (size_t x=0; x<gList.size(); x++)
 		ret.push_back(gList[x]);
@@ -254,11 +256,11 @@ std::vector<void*> DesuraJSBinding::getRecent()
 {
 	std::vector<void*> ret;
 
-	if (!GetUserCore() || !GetUserCore()->getItemManager())
+	if (!getItemManager())
 		return ret;
 
 	std::vector<UserCore::Item::ItemInfoI*> gList;
-	GetUserCore()->getItemManager()->getRecentList(gList);
+	getItemManager()->getRecentList(gList);
 
 	for (size_t x=0; x<gList.size(); x++)
 		ret.push_back(gList[x]);
@@ -292,11 +294,11 @@ std::vector<void*> DesuraJSBinding::getNewItems()
 {
 	std::vector<void*> ret;
 
-	if (!GetUserCore() || !GetUserCore()->getItemManager())
+	if (!getItemManager())
 		return ret;
 
 	std::vector<UserCore::Item::ItemInfoI*> gList;
-	GetUserCore()->getItemManager()->getNewItems(gList);
+	getItemManager()->getNewItems(gList);
 
 	for (size_t x=0; x<gList.size(); x++)
 		ret.push_back(gList[x]);
@@ -490,7 +492,7 @@ CONCOMMAND( cc_addlink, "gc_link_add" )
 	}
 	else
 	{
-		DesuraId id = GetUserCore()->getItemManager()->addLink(vArgList[1].c_str(), vArgList[2].c_str(), vArgList[3].c_str());
+		DesuraId id = DesuraJSBinding::getItemManager()->addLink(vArgList[1].c_str(), vArgList[2].c_str(), vArgList[3].c_str());
 		Msg(gcString("Added link id: {0}\n", id.toInt64()));
 	}
 }
@@ -500,11 +502,11 @@ void* DesuraJSBinding::addLink(gcString name, gcString exe, gcString args)
 	if (name == "" || !UTIL::FS::isValidFile(exe))
 		return nullptr;
 
-	if (!GetUserCore() || !GetUserCore()->getItemManager())
+	if (!getItemManager())
 		return nullptr;
 
-	DesuraId id = GetUserCore()->getItemManager()->addLink(name.c_str(), exe.c_str(), args.c_str());
-	return GetUserCore()->getItemManager()->findItemInfo(id);
+	DesuraId id = getItemManager()->addLink(name.c_str(), exe.c_str(), args.c_str());
+	return getItemManager()->findItemInfo(id);
 }
 
 void DesuraJSBinding::delLink(UserCore::Item::ItemInfoI* item)
@@ -512,18 +514,18 @@ void DesuraJSBinding::delLink(UserCore::Item::ItemInfoI* item)
 	if (item->getId().getType() != DesuraId::TYPE_LINK)
 		return;
 
-	if (!GetUserCore() || !GetUserCore()->getItemManager())
+	if (!getItemManager())
 		return;
 
-	GetUserCore()->getItemManager()->removeItem(item->getId());	
+	getItemManager()->removeItem(item->getId());	
 }
 
 void DesuraJSBinding::updateLink(UserCore::Item::ItemInfoI* item, gcString args)
 {
-	if (!GetUserCore() || !GetUserCore()->getItemManager())
+	if (!getItemManager())
 		return;
 
-	GetUserCore()->getItemManager()->updateLink(item->getId(), args.c_str());
+	getItemManager()->updateLink(item->getId(), args.c_str());
 }
 
 void DesuraJSBinding::login(gcString username, gcString loginCookie)

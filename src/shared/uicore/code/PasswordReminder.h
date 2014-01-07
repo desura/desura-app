@@ -43,7 +43,10 @@ public:
 #ifdef NIX
 	bool Show(const bool show = true);
 #endif
+
 protected:
+	friend class LanguageTestDialog;
+
 	void onTextBoxEnter( wxCommandEvent& event );
 	void onButtonClicked( wxCommandEvent& event );
 	bool isEmailValid();

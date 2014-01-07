@@ -36,7 +36,7 @@ class gcPanel;
 class gcWebFakeBrowser : public ChromiumDLL::ChromiumBrowserI
 {
 public:
-	gcWebFakeBrowser(gcPanel* parent);
+	gcWebFakeBrowser(wxWindow* parent);
 
 	virtual void destroy();
 	virtual void onFocus(){;}
@@ -86,7 +86,7 @@ public:
 	virtual ChromiumDLL::JavaScriptContextI* getJSContext(){return nullptr;}
 
 private:
-	gcPanel* m_pParent;
+	wxWindow* m_pParent;
 	gcWString m_szNoLoadString;
 };
 

@@ -47,7 +47,8 @@ template <typename T>
 class gcMiscWebControlBase : public T
 {
 public:
-	gcMiscWebControlBase(wxWindow* parent, const char* defaultUrl, const char* hostName) : T(parent, defaultUrl, hostName)
+	gcMiscWebControlBase(wxWindow* parent, const char* defaultUrl, const char* hostName) 
+		: T(parent, defaultUrl, hostName)
 	{
 		m_szLoadingPage = GetGCThemeManager()->getWebPage("loading");
 		m_szCurrentUrl = defaultUrl;

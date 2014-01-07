@@ -36,7 +36,7 @@ namespace ItemTask
 
 
 UIUpdateServiceTask::UIUpdateServiceTask(UserCore::Item::ItemHandle* handle, const char* path, MCFBuild lastBuild) 
-	: UIBaseServiceTask(UserCore::Item::ItemHandleI::STAGE_UNINSTALL_UPDATE, "UnInstallUpdate", handle, MCFBranch(), lastBuild)
+	: UIBaseServiceTask(UserCore::Item::ITEM_STAGE::STAGE_UNINSTALL_UPDATE, "UnInstallUpdate", handle, MCFBranch(), lastBuild)
 {
 	m_pIPCIM = nullptr;
 	m_szPath = path;

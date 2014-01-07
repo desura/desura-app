@@ -99,9 +99,8 @@ int GetSteamUsers(wxChoice *cbBox)
 	}
 	else
 	{
-		std::for_each(vUsers.begin(), vUsers.end(), [cbBox](gcString &path) -> void {
+		for (auto path : vUsers)
 			cbBox->Append(path);
-		});
 	}
 
 	return nCount;
@@ -111,6 +110,7 @@ int GetSteamUsers(wxChoice *cbBox)
 SteamUserDialog::SteamUserDialog(wxWindow* parent) 
 	: gcDialog(parent, wxID_ANY, wxT("Select Steam Account"), wxDefaultPosition, wxSize(300, 250), wxCAPTION | wxSTAY_ON_TOP | wxTAB_TRAVERSAL)
 {
+	SetTitle(Managers::GetString(L"#STEAM_TITLE"));
 	this->SetSizeHints( wxDefaultSize, wxDefaultSize );
 
 	wxArrayString m_cbSteamUserChoices;
@@ -118,7 +118,7 @@ SteamUserDialog::SteamUserDialog(wxWindow* parent)
 	m_cbSteamUser = new gcChoice( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, m_cbSteamUserChoices, 0 );
 	m_cbSteamUser->SetSelection( 0 );
 
-	m_labInfo = new wxStaticText( this, wxID_ANY, Managers::GetString(L"#STEAMWARN"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_labInfo = new wxStaticText( this, wxID_ANY, Managers::GetString(L"#STEAM_WARN"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_labInfo->Wrap( 240 );
 	m_butOk = new gcButton( this, wxID_ANY, Managers::GetString(L"#OK"), wxDefaultPosition, wxDefaultSize, 0 );
 

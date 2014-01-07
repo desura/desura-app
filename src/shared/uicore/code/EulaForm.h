@@ -33,10 +33,15 @@ $/LicenseInfo$
 #include "wx/wx.h"
 #include "gcMiscWebControl.h"
 
+namespace UserCore
+{
+	class ItemManagerI;
+}
+
 class EULAForm : public gcFrame 
 {
 public:
-	EULAForm(wxWindow* parent);
+	EULAForm(wxWindow* parent, UserCore::ItemManagerI* pItemManager = nullptr);
 	~EULAForm();
 
 	bool setInfo(DesuraId id);
@@ -60,6 +65,8 @@ protected:
 private:
 	DesuraId m_uiInternId;
 	bool m_bLoadingProperPage;
+
+	UserCore::ItemManagerI* m_pItemManager = nullptr;
 };
 
 #endif //DESURA_EULAFORM_H

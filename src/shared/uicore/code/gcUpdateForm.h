@@ -39,11 +39,7 @@ $/LicenseInfo$
 class GCUpdateInfo : public gcFrame 
 {
 public:
-#ifdef WIN32
-	GCUpdateInfo( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = wxT("UF_TITLE"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 400,300 ), long style = wxDEFAULT_FRAME_STYLE|wxTAB_TRAVERSAL );
-#else // LINUX ISNT BIG ENOUGH TODO
-	GCUpdateInfo( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = wxT("UF_TITLE"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 445,300 ), long style = wxDEFAULT_FRAME_STYLE|wxTAB_TRAVERSAL );
-#endif
+	GCUpdateInfo(wxWindow* parent);
 	~GCUpdateInfo();
 
 	void setInfo(uint32 appver);

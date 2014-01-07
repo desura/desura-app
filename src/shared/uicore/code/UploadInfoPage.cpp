@@ -241,40 +241,38 @@ bool UploadInfoPage::validatePath(wxTextCtrl* ctrl, bool type)
 
 void UploadInfoPage::resetAllValues()
 {
-	//m_dpFile->SetPath(wxT(""));
-	m_butUpload->Enable( false );
-
-	UserCore::Item::ItemInfoI *item = GetUserCore()->getItemManager()->findItemInfo(getItemId());
+	m_butUpload->Enable(false);
 
 	gcString filePath;
-	gcString cachePath = GetUserCore()->getMcfCachePath();
+	gcString cachePath;
+	
+	if (GetUserCore())
+		cachePath = GetUserCore()->getMcfCachePath();
 
-	if (!item)
+	if (!m_pItemInfo)
 		filePath = gcString("{0}{1}temp{1}", cachePath, DIRS_STR);
 	else
-		filePath = gcString("{0}{2}{1}", cachePath, item->getId().getFolderPathExtension().c_str(), DIRS_STR);
+		filePath = gcString("{0}{2}{1}", cachePath, m_pItemInfo->getId().getFolderPathExtension().c_str(), DIRS_STR);
 
 	gcWString wfilePath(filePath);
 	m_tbItemFile->SetValue(wfilePath.c_str());
 }
 
-void UploadInfoPage::setInfo(DesuraId id)
+void UploadInfoPage::setInfo(DesuraId id, UserCore::Item::ItemInfoI* pItemInfo)
 {
-	UserCore::Item::ItemInfoI *item = GetUserCore()->getItemManager()->findItemInfo(id);
-
-	if (!item && !GetUserCore()->isAdmin())
+	if (!pItemInfo && GetUserCore() && !GetUserCore()->isAdmin())
 	{	
 		Close();
 		return;
 	}
 
-	BasePage::setInfo(id);
+	BasePage::setInfo(id, pItemInfo);
 	resetAllValues();
 }
 
-void UploadInfoPage::setInfo_key(DesuraId id, const char* key)
+void UploadInfoPage::setInfo_key(DesuraId id, UserCore::Item::ItemInfoI* pItemInfo, const char* key)
 {
-	setInfo(id);
+	setInfo(id, pItemInfo);
 
 	if (key)
 	{
@@ -283,9 +281,9 @@ void UploadInfoPage::setInfo_key(DesuraId id, const char* key)
 	}
 }
 
-void UploadInfoPage::setInfo_path(DesuraId id, const char* path)
+void UploadInfoPage::setInfo_path(DesuraId id, UserCore::Item::ItemInfoI* pItemInfo, const char* path)
 {
-	setInfo(id);
+	setInfo(id, pItemInfo);
 	if (path)
 	{
 		m_tbItemFile->SetValue(gcString(path));
@@ -307,15 +305,13 @@ void UploadInfoPage::setInfo_path(DesuraId id, const char* path)
 
 void UploadInfoPage::onResume()
 {
-	UserCore::Item::ItemInfoI *item = GetUserCore()->getItemManager()->findItemInfo(getItemId());
-
-	if (!item && !GetUserCore()->isAdmin())
+	if (!m_pItemInfo && GetUserCore() && !GetUserCore()->isAdmin())
 	{	
 		Close();
 		return;
 	}
 
-	m_tbItemFile->SetLabel( Managers::GetString(L"#UDF_RESUMEDIR"));
+	m_tbItemFile->SetLabel(Managers::GetString(L"#UDF_RESUMEDIR"));
 
 	m_butUpload->Enable(false);
 	m_tbItemFile->Enable(false);
@@ -326,12 +322,15 @@ void UploadInfoPage::onResume()
 	safe_delete(m_pUpInfo);
 	m_pUpInfo = new WebCore::Misc::ResumeUploadInfo();
 
-	m_pResumeThread = GetThreadManager()->newUploadResumeThread(getItemId(), m_szKey.c_str(), m_pUpInfo);
+	if (GetThreadManager())
+	{
+		m_pResumeThread = GetThreadManager()->newUploadResumeThread(getItemId(), m_szKey.c_str(), m_pUpInfo);
 
-	*m_pResumeThread->getErrorEvent() += guiDelegate(this, &UploadInfoPage::onError);
-	*m_pResumeThread->getCompleteStringEvent() += guiDelegate(this, &UploadInfoPage::onResumeCompleteCB);
+		*m_pResumeThread->getErrorEvent() += guiDelegate(this, &UploadInfoPage::onError);
+		*m_pResumeThread->getCompleteStringEvent() += guiDelegate(this, &UploadInfoPage::onResumeCompleteCB);
 
-	m_pResumeThread->start();
+		m_pResumeThread->start();
+	}
 
 	Show();
 	Raise();
@@ -339,7 +338,7 @@ void UploadInfoPage::onResume()
 
 void UploadInfoPage::onResumeComplete(const char* path)
 {
-	if (path && strcmp(path, "nullptr") != 0)
+	if (path && strcmp(path, "NULL") != 0)
 	{
 		initUpload(path, m_pUpInfo->upsize);
 	}

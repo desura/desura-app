@@ -35,13 +35,14 @@ wxMenu* TBIGameMenu::createMenu(uint32 &lastMenuId)
 	gcMenu* menu = new gcMenu();
 	m_IdMapList.clear();
 
-	UserCore::UserI* user = GetUserCore();
+	if (!m_pItemManager && GetUserCore())
+		m_pItemManager = GetUserCore()->getItemManager();
 
-	if (!user)
+	if (!m_pItemManager)
 		return menu;
 
 	std::vector<UserCore::Item::ItemInfoI*> gList;
-	user->getItemManager()->getGameList(gList);
+	m_pItemManager->getGameList(gList);
 
 	std::sort(gList.begin(), gList.end(), [](UserCore::Item::ItemInfoI* left, UserCore::Item::ItemInfoI* right){
 		return strcmp(left->getName(), right->getName()) <= 0;

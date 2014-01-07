@@ -397,22 +397,16 @@ gcMenu* EventHandler::createMenu(ChromiumDLL::ChromiumMenuInfoI* menuInfo)
 			menu->Append(MENU_ID_ZOOM_MINUS, Managers::GetString(L"#CHROME_ZOOMOUT"));
 			menu->Append(MENU_ID_ZOOM_NORMAL, Managers::GetString(L"#CHROME_ZOOMNORMAL"));
 			menu->AppendSeparator();
-
-#ifndef NIX
 			menu->Append(MENU_ID_PRINT, Managers::GetString(L"#CHROME_PRINT"));
-#endif // LINUX TODO
 			menu->Append(MENU_ID_VIEWSOURCE, Managers::GetString(L"#CHROME_VIEWSOURCE"));
-
-#ifndef NIX
 			menu->AppendSeparator();
 			menu->Append(MENU_ID_VIEWPBROWSER, Managers::GetString(L"#CHROME_VIEWPAGE"));
-#endif // LINUX TODO
+			menu->Append(MENU_ID_COPYURL, Managers::GetString(L"#CHROME_COPYURL"));
 
 			back->Enable(HasAnyFlags(menuInfo->getEditFlags(), ChromiumDLL::ChromiumMenuInfoI::MENU_CAN_GO_BACK));
 			forward->Enable(HasAnyFlags(menuInfo->getEditFlags(), ChromiumDLL::ChromiumMenuInfoI::MENU_CAN_GO_FORWARD));
 		}
 
-#ifndef NIX	
 		if (HasAnyFlags(menuInfo->getTypeFlags(), ChromiumDLL::ChromiumMenuInfoI::MENUTYPE_LINK))
 		{
 			menu->Append(MENU_ID_VIEWLBROWSER, Managers::GetString(L"#CHROME_VIEWLINK"));
@@ -422,7 +416,6 @@ gcMenu* EventHandler::createMenu(ChromiumDLL::ChromiumMenuInfoI* menuInfo)
 		{
 			menu->Append(MENU_ID_VIEWIBROWSER, Managers::GetString(L"#CHROME_VIEWIMAGE"));
 		}
-#endif // LINUX TODO
 
 		if (gc_browserdebug.getBool())
 		{
@@ -456,9 +449,33 @@ gcMenu* EventHandler::createMenu(ChromiumDLL::ChromiumMenuInfoI* menuInfo)
 #ifdef NIX
 void EventHandler::displayMenu(ChromiumDLL::ChromiumMenuInfoI* menuInfo, gcMenu *menu, int32 x, int32 y)
 {
-	m_pParent->PopupMenu((wxMenu*)menu);
+	setupLastMenuUrl(menuInfo);
+	m_pParent->PopupMenu((wxMenu*)menu, x, y);
 }
 #endif
+
+void EventHandler::setupLastMenuUrl(ChromiumDLL::ChromiumMenuInfoI* menuInfo)
+{
+	std::lock_guard<std::mutex> guard(m_UrlLock);
+
+	m_strLastMenuUrl = menuInfo->getPageUrl();
+
+	if (HasAnyFlags(menuInfo->getTypeFlags(), ChromiumDLL::ChromiumMenuInfoI::MENUTYPE_PAGE))
+	{
+	}
+	else if (HasAnyFlags(menuInfo->getTypeFlags(), ChromiumDLL::ChromiumMenuInfoI::MENUTYPE_FRAME))
+	{
+		m_strLastMenuUrl = menuInfo->getFrameUrl();
+	}
+	else if (HasAnyFlags(menuInfo->getTypeFlags(), ChromiumDLL::ChromiumMenuInfoI::MENUTYPE_LINK))
+	{
+		m_strLastMenuUrl = menuInfo->getLinkUrl();
+	}
+	else if (HasAnyFlags(menuInfo->getTypeFlags(), ChromiumDLL::ChromiumMenuInfoI::MENUTYPE_IMAGE))
+	{
+		m_strLastMenuUrl = menuInfo->getImageUrl();
+	}
+}
 
 void EventHandler::clearCrumbs()
 {

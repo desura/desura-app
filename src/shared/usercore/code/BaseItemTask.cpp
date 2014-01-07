@@ -39,7 +39,7 @@ namespace UserCore
 namespace ItemTask
 {
 
-BaseItemTask::BaseItemTask(uint32 type, const char* name, UserCore::Item::ItemHandle* handle, MCFBranch branch, MCFBuild build)
+BaseItemTask::BaseItemTask(UserCore::Item::ITEM_STAGE type, const char* name, UserCore::Item::ItemHandle* handle, MCFBranch branch, MCFBuild build)
 {
 	m_uiType = type;
 
@@ -65,7 +65,7 @@ const char* BaseItemTask::getTaskName()
 	return m_szName.c_str();
 }
 
-uint32 BaseItemTask::getTaskType()
+UserCore::Item::ITEM_STAGE BaseItemTask::getTaskType()
 {
 	return m_uiType;
 }

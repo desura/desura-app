@@ -93,7 +93,8 @@ CONCOMMAND(testappupdate, "testappupdate")
 
 #endif
 
-TaskBarIcon::TaskBarIcon(wxWindow *parent) : gcTaskBarIcon()
+TaskBarIcon::TaskBarIcon(wxWindow *parent, UserCore::ItemManagerI* pItemManager) 
+	: gcTaskBarIcon()
 {
 	Bind(wxEVT_TASKBAR_BALLOON_CLICK, &TaskBarIcon::onBallonClick, this);
 	Bind(wxEVT_COMMAND_MENU_SELECTED, &TaskBarIcon::onMenuSelect, this);
@@ -121,11 +122,11 @@ TaskBarIcon::TaskBarIcon(wxWindow *parent) : gcTaskBarIcon()
 	m_iLastBallon = 0;
 
 #ifndef UI_HIDE_MODS
-	m_pModMenu = new TBIModMenu();
+	m_pModMenu = new TBIModMenu(pItemManager);
 #endif
-	m_pGameMenu = new TBIGameMenu();
+	m_pGameMenu = new TBIGameMenu(pItemManager);
 	m_pWindowMenu = new TBIWindowMenu();
-	m_pUpdateMenu = new TBIUpdateMenu();
+	m_pUpdateMenu = new TBIUpdateMenu(pItemManager);
 
 	m_uiLastCount = -1;
 	m_uiLastProg = 0;
@@ -190,12 +191,16 @@ void TaskBarIcon::onUserUpdate()
 wxMenu* TaskBarIcon::CreatePopupMenu()
 {
 	MainApp* temp = dynamic_cast<MainApp*>(m_wxParent);
+	return CreatePopupMenu(!temp || !temp->isLoggedIn());
+}
 
+wxMenu* TaskBarIcon::CreatePopupMenu(bool bOffline)
+{
 	gcMenu* menu = new gcMenu();
 	gcMenuItem* m_miDesura = new gcMenuItem(menu, mcMENU_MODCORE, wxT(PRODUCT_NAME));
 	gcMenuItem* m_miExit = new gcMenuItem(menu, mcMENU_EXIT, Managers::GetString(L"#TB_EXIT"));
 
-	if(!temp || !temp->isLoggedIn())
+	if (bOffline)
 	{
 		menu->Append(m_miDesura);
 		menu->Append(m_miExit);

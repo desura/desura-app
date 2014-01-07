@@ -42,7 +42,7 @@ public:
 	//! Constructor
 	//!
 	//! @param i News item id
-	//! @param c News item catagory
+	//! @param c News item category
 	//! @param t Title
 	//! @param u Url
 	//!

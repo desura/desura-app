@@ -43,7 +43,7 @@ $/LicenseInfo$
 class UploadMCFForm : public gcFrame 
 {
 public:
-	UploadMCFForm( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = wxT("Uploading Item"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 370,130 ), long style = wxCAPTION|wxCLOSE_BOX|wxFRAME_FLOAT_ON_PARENT|wxSYSTEM_MENU );
+	UploadMCFForm(wxWindow* parent, UserCore::ItemManagerI* pItemManager = nullptr);
 	~UploadMCFForm();
 
 	//this is used for a new upload
@@ -65,10 +65,12 @@ public:
 	void setTrueClose(){m_bTrueClose = true;}
 
 protected:
-	void setTitle(const char* name);
+	friend class LanguageTestDialog;
+
+	void setTitle(const char* szItemName, const wchar_t* szFormat = L"#UPLOAD_MCF_TITILE");
 	void updateInfo(uint32& itemId);
 
-	BasePage* m_pPage;	
+	BasePage* m_pPage = nullptr;
 	wxBoxSizer* m_bsSizer;
 
 	void onFormClose( wxCloseEvent& event );
@@ -76,13 +78,14 @@ protected:
 
 private:
 
-	bool m_bTrueClose;
+	bool m_bTrueClose = true;
 
 	gcString m_szKey;
 	gcString m_szPath;
 
 	DesuraId m_uiInternId;
-	UserCore::Item::ItemInfoI* m_pItemInfo;
+	UserCore::Item::ItemInfoI* m_pItemInfo = nullptr;
+	UserCore::ItemManagerI* m_pItemManager = nullptr;
 
 	DECLARE_EVENT_TABLE();
 };

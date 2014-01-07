@@ -52,6 +52,8 @@ public:
 	volatile bool isStopped(){return m_bStopped;}
 
 protected:
+	friend class LanguageTestDialog;
+
 	gcStaticText* m_labTitle;
 	gcStaticText* m_labInfo;
 	gcSpinnerProgBar* m_pbProgress;

@@ -750,7 +750,7 @@ UI::Forms::ItemForm* InternalLink::showItemForm(DesuraId id, UI::Forms::INSTALL_
 {
 	UserCore::Item::ItemInfoI* item = GetUserCore()->getItemManager()->findItemInfo( id );
 
-	if (!item && action != UI::Forms::IA_INSTALL && action != UI::Forms::IA_INSTALL_TESTMCF)
+	if (!item && action != UI::Forms::INSTALL_ACTION::IA_INSTALL && action != UI::Forms::INSTALL_ACTION::IA_INSTALL_TESTMCF)
 		return nullptr;
 
 	UI::Forms::ItemForm *form = findForm<UI::Forms::ItemForm>(id, m_vSubForms);
@@ -769,7 +769,7 @@ UI::Forms::ItemForm* InternalLink::showItemForm(DesuraId id, UI::Forms::INSTALL_
 
 void InternalLink::installCheck(DesuraId id)
 {
-	UI::Forms::ItemForm* form = showItemForm(id, UI::Forms::IA_INSTALL_CHECK);
+	UI::Forms::ItemForm* form = showItemForm(id, UI::Forms::INSTALL_ACTION::IA_INSTALL_CHECK);
 
 	if (!form)
 		Warning(gcString("Cant find item (or item not ready) for install check [{0}].\n", id.toInt64()));
@@ -779,7 +779,7 @@ void InternalLink::verifyItem(DesuraId id, Args args)
 {
 	bool showForm = args.getArgValue("show") != "false";
 
-	UI::Forms::ItemForm* form = showItemForm(id, UI::Forms::IA_VERIFY, showForm);
+	UI::Forms::ItemForm* form = showItemForm(id, UI::Forms::INSTALL_ACTION::IA_VERIFY, showForm);
 
 	if (!form)
 		Warning(gcString("Cant find item (or item not ready) for verify [{0}].\n", id.toInt64()));
@@ -789,7 +789,7 @@ void InternalLink::verifyItem(DesuraId id, Args args)
 
 void InternalLink::cleanComplexMod(DesuraId id)
 {
-	UI::Forms::ItemForm* form = showItemForm(id, UI::Forms::IA_CLEANCOMPLEX, true);
+	UI::Forms::ItemForm* form = showItemForm(id, UI::Forms::INSTALL_ACTION::IA_CLEANCOMPLEX, true);
 
 	if (!form)
 		Warning(gcString("Cant find item (or item not ready) for clean complex mod [{0}].\n", id.toInt64()));
@@ -847,7 +847,7 @@ void InternalLink::installItem(DesuraId id, Args args)
 	if (iBranch == 0 && !args.containsArg("skippreorder") && checkForPreorder(id))
 		return;
 	
-	UI::Forms::ItemForm* form = showItemForm(id, UI::Forms::IA_INSTALL, iBranch);
+	UI::Forms::ItemForm* form = showItemForm(id, UI::Forms::INSTALL_ACTION::IA_INSTALL, iBranch);
 
 	if (!form)
 		Warning(gcString("Cant find item (or item not ready) for install [{0}].\n", id.toInt64()));	
@@ -938,7 +938,7 @@ void InternalLink::launchItem(DesuraId id, Args args)
 		delFlag = true;
 	}
 
-	UI::Forms::ItemForm* form = showItemForm(id, UI::Forms::IA_LAUNCH);
+	UI::Forms::ItemForm* form = showItemForm(id, UI::Forms::INSTALL_ACTION::IA_LAUNCH);
 
 	if (!form)
 		Warning(gcString("Cant find item (or item not ready) for launch [{0}].\n", id.toInt64()));
@@ -951,7 +951,7 @@ void InternalLink::updateItem(DesuraId id, Args args)
 {
 	bool show = args.containsArg("show") && args.getArgValue("show") == "true";
 
-	UI::Forms::ItemForm* form = showItemForm(id, UI::Forms::IA_UPDATE, show);
+	UI::Forms::ItemForm* form = showItemForm(id, UI::Forms::INSTALL_ACTION::IA_UPDATE, show);
 
 	if (!form)
 		Warning(gcString("Cant find item (or item not ready) for update [{0}].\n", id.toInt64()));
@@ -972,7 +972,7 @@ void InternalLink::installTestMCF(DesuraId id, Args args)
 	if (build.size() > 0)
 		iBuild = MCFBuild::BuildFromInt(atoi(build.c_str()));
 
-	UI::Forms::ItemForm* form = showItemForm(id, UI::Forms::IA_INSTALL_TESTMCF, iBranch, iBuild);
+	UI::Forms::ItemForm* form = showItemForm(id, UI::Forms::INSTALL_ACTION::IA_INSTALL_TESTMCF, iBranch, iBuild);
 
 	if (!form)
 		Warning(gcString("Cant find item (or item not ready) for install test mcf [{0}].\n", id.toInt64()));
@@ -981,7 +981,7 @@ void InternalLink::installTestMCF(DesuraId id, Args args)
 
 void InternalLink::uninstallMCF(DesuraId id)
 {	
-	UI::Forms::ItemForm* form = showItemForm(id, UI::Forms::IA_UNINSTALL);
+	UI::Forms::ItemForm* form = showItemForm(id, UI::Forms::INSTALL_ACTION::IA_UNINSTALL);
 
 	if (!form)
 		Warning(gcString("Cant find item (or item not ready) for uninstall [{0}].\n", id.toInt64()));
@@ -1002,7 +1002,7 @@ void InternalLink::switchBranch(DesuraId id, Args args)
 	if (iBranch == 0)
 		return;
 
-	UI::Forms::ItemForm* form = showItemForm(id, UI::Forms::IA_SWITCH_BRANCH, iBranch);
+	UI::Forms::ItemForm* form = showItemForm(id, UI::Forms::INSTALL_ACTION::IA_SWITCH_BRANCH, iBranch);
 
 	if (!form)
 		Warning(gcString("Cant find item (or item not ready) for uninstall [{0}].\n", id.toInt64()));

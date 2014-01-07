@@ -38,7 +38,8 @@ BEGIN_EVENT_TABLE( CreateMCFOverview, BasePage )
 	EVT_BUTTON( wxID_ANY, CreateMCFOverview::onButtonClick )
 END_EVENT_TABLE()
 
-CreateMCFOverview::CreateMCFOverview( wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style ) : BasePage( parent, id, pos, size, style )
+CreateMCFOverview::CreateMCFOverview(wxWindow* parent) 
+	: BasePage(parent, wxID_ANY, wxDefaultPosition, wxSize( 415,148 ), wxTAB_TRAVERSAL)
 {
 	wxFlexGridSizer* fgSizer2;
 	fgSizer2 = new wxFlexGridSizer( 4, 1, 0, 0 );
@@ -179,27 +180,25 @@ void CreateMCFOverview::onButtonClick( wxCommandEvent& event )
 	}
 }
 
-void CreateMCFOverview::setInfo(DesuraId itemId, const char* szPath)
+void CreateMCFOverview::setInfo(DesuraId itemId, UserCore::Item::ItemInfoI* pItemInfo, const char* szPath)
 {
-	UserCore::Item::ItemInfoI *item = GetUserCore()->getItemManager()->findItemInfo(itemId);
-	
-	if (!item && !GetUserCore()->isAdmin())
+	if (!pItemInfo && GetUserCore() && !GetUserCore()->isAdmin())
 	{	
 		GetParent()->Close();
 		return;
 	}
 
-	BasePage::setInfo(itemId);
+	BasePage::setInfo(itemId, pItemInfo);
 	
-	if (item)
-		m_labInfo->SetLabel(gcWString(Managers::GetString(L"#CF_COMPLETE"), item->getName()));
+	if (pItemInfo)
+		m_labInfo->SetLabel(gcWString(Managers::GetString(L"#CF_COMPLETE"), pItemInfo->getName()));
 
 	UTIL::FS::Path path(szPath, "", true);
 	uint64 filesize = UTIL::FS::getFileSize(path);
 
 	m_szFolderPath = path.getFolderPath();
 	m_szPath = path.getFullPath();
-	m_pItem = item;
+	m_pItem = pItemInfo;
 
 	m_labName->SetLabel(path.getFile().getFile());
 	m_labSize->SetLabel(UTIL::MISC::niceSizeStr(filesize));

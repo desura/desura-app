@@ -60,6 +60,8 @@ $/LicenseInfo$
 	#include "managers/CVar.h"
 #endif
 
+using namespace UserCore::Item;
+
 class GatherInfoThread
 {
 public:
@@ -255,7 +257,8 @@ namespace UI
 namespace Forms
 {
 
-ItemForm::ItemForm(wxWindow* parent, const char* action, const char* id) : gcFrame( parent, wxID_ANY, L"[Install Form]", wxDefaultPosition, wxSize( 370,280 ), wxCAPTION|wxCLOSE_BOX|wxFRAME_FLOAT_ON_PARENT|wxSYSTEM_MENU|wxTAB_TRAVERSAL|wxMINIMIZE_BOX )
+ItemForm::ItemForm(wxWindow* parent, const char* action, const char* id) 
+	: gcFrame( parent, wxID_ANY, L"[Install Form]", wxDefaultPosition, wxSize( 370,280 ), wxCAPTION|wxCLOSE_BOX|wxFRAME_FLOAT_ON_PARENT|wxSYSTEM_MENU|wxTAB_TRAVERSAL|wxMINIMIZE_BOX )
 {
 	Bind(wxEVT_CLOSE_WINDOW, &ItemForm::onFormClose, this);
 
@@ -274,7 +277,7 @@ ItemForm::ItemForm(wxWindow* parent, const char* action, const char* id) : gcFra
 	m_szName = id;
 	SetTitle(gcWString(L"{0} {1}", Managers::GetString(L"#IF_TITLE"), m_szName));
 
-	m_iaLastAction = IA_NONE;
+	m_iaLastAction = INSTALL_ACTION::IA_NONE;
 	m_pGIThread = nullptr;
 
 	onVerifyAfterHashFailEvent += guiDelegate(this, &ItemForm::verifyAfterHashFail, MODE_PENDING_WAIT);
@@ -336,7 +339,7 @@ void ItemForm::newAction(INSTALL_ACTION action, MCFBranch branch, MCFBuild build
 	if (!isInit())
 		init(action, branch, build, showForm);
 
-	if (action == IA_UNINSTALL)
+	if (action == INSTALL_ACTION::IA_UNINSTALL)
 	{
 		if (m_pItemHandle)
 			m_pItemHandle->setPaused(true);
@@ -355,17 +358,20 @@ void ItemForm::setItemId(DesuraId id)
 	m_ItemId = id;
 }
 
-void ItemForm::init(INSTALL_ACTION action, MCFBranch branch, MCFBuild build, bool showForm)
+void ItemForm::init(INSTALL_ACTION action, MCFBranch branch, MCFBuild build, bool showForm, UserCore::Item::ItemHandleI* pItemHandle)
 {
 	m_bIsInit = true;
 
-	if (action == IA_NONE)
+	if (action == INSTALL_ACTION::IA_NONE)
 	{
 		Close();
 		return;
 	}
 
-	m_pItemHandle = GetUserCore()->getItemManager()->findItemHandle(m_ItemId);
+	if (pItemHandle)
+		m_pItemHandle = pItemHandle;
+	else
+		m_pItemHandle = GetUserCore()->getItemManager()->findItemHandle(m_ItemId);
 
 	if (m_pItemHandle)
 		*m_pItemHandle->getErrorEvent() += guiDelegate(this, &ItemForm::onError);
@@ -384,7 +390,7 @@ void ItemForm::init(INSTALL_ACTION action, MCFBranch branch, MCFBuild build, boo
 	{
 		if (!g_pMainApp->isOffline())
 		{
-			if (action == IA_INSTALL_TESTMCF)
+			if (action == INSTALL_ACTION::IA_INSTALL_TESTMCF)
 				branch = MCFBranch();
 
 			m_pGIThread = new GatherInfoThread(this, m_ItemId, branch);
@@ -405,7 +411,7 @@ void ItemForm::init(INSTALL_ACTION action, MCFBranch branch, MCFBuild build, boo
 		//if we are currently doing something when setFactory is called it will forward the last events on
 		if (m_pItemHandle->isInStage())
 		{
-			uint32 stage = m_pItemHandle->getStage();
+			auto stage = m_pItemHandle->getStage();
 			onStageChange(stage);
 
 			m_pItemHandle->setFactory(this);
@@ -420,7 +426,7 @@ void ItemForm::init(INSTALL_ACTION action, MCFBranch branch, MCFBuild build, boo
 
 		switch (action)
 		{
-			case IA_INSTALL_TESTMCF:
+			case INSTALL_ACTION::IA_INSTALL_TESTMCF:
 				if (installTestMcf(branch, build))
 				{
 					res = m_pItemHandle->install(branch, build, true);
@@ -428,49 +434,49 @@ void ItemForm::init(INSTALL_ACTION action, MCFBranch branch, MCFBuild build, boo
 				}
 				break;
 
-			case IA_CLEANCOMPLEX:
+			case INSTALL_ACTION::IA_CLEANCOMPLEX:
 				res = m_pItemHandle->cleanComplexMods();
 				break;
 
-			case IA_STARTUP_CHECK:
+			case INSTALL_ACTION::IA_STARTUP_CHECK:
 				res = m_pItemHandle->startUpCheck();
 				break;
 
-			case IA_SWITCH_BRANCH:
+			case INSTALL_ACTION::IA_SWITCH_BRANCH:
 				res = m_pItemHandle->switchBranch(branch);
 				break;
 
-			case IA_UPDATE:
+			case INSTALL_ACTION::IA_UPDATE:
 				setTitle(L"#IF_UPDATE");
 				m_pItemHandle->update();
 				res = true;
 				break;
 
-			case IA_INSTALL:
+			case INSTALL_ACTION::IA_INSTALL:
 				if (!item->getCurrentBranch() || branch != item->getCurrentBranch()->getBranchId())
 				{
 					res = m_pItemHandle->install(this, branch);
 					break;
 				}
 
-			case IA_VERIFY:
+			case INSTALL_ACTION::IA_VERIFY:
 				res = verifyItem();
 				break;
 
-			case IA_LAUNCH:
+			case INSTALL_ACTION::IA_LAUNCH:
 				res = launchItem();
 				break;
 
-			case IA_UNINSTALL:
+			case INSTALL_ACTION::IA_UNINSTALL:
 				uninstall();
 				res = true;
 				break;
 
-			case IA_INSTALL_CHECK:
+			case INSTALL_ACTION::IA_INSTALL_CHECK:
 				res = m_pItemHandle->installCheck();
 				break;
 				
-			case IA_NONE:
+			case INSTALL_ACTION::IA_NONE:
 				break;
 		};
 		
@@ -525,7 +531,7 @@ bool ItemForm::verifyItem()
 	cleanUpPages();
 
 	m_pPage =  new ItemFormPage::InstallVerifyInfoPage(this);
-	m_pPage->setInfo(m_pItemHandle->getItemInfo()->getId());
+	m_pPage->setInfo(m_pItemHandle);
 
 	setTitle(L"#IF_VERIFY");
 
@@ -548,7 +554,7 @@ bool ItemForm::launchItem()
 
 	if (offLine && !m_pItemHandle->getItemInfo()->isLaunchable())
 	{
-		gcErrorBox(g_pMainApp->getMainWindow(), "#MF_ERRTITLE", "#MF_ERROR", gcException(ERR_LAUNCH, Managers::GetString("#MF_OLNOTINSTALLED")));
+		showLaunchError();
 	}
 	else
 	{
@@ -570,7 +576,10 @@ bool ItemForm::launchItem()
 	return res;
 }
 
-
+void ItemForm::showLaunchError()
+{
+	gcErrorBox(g_pMainApp->getMainWindow(), "#MF_ERRTITLE", "#MF_ERROR", gcException(ERR_LAUNCH, Managers::GetString("#MF_OLNOTINSTALLED")));
+}
 
 
 
@@ -611,7 +620,7 @@ void ItemForm::uninstall()
 	cleanUpPages();
 
 	m_pPage =  new ItemFormPage::UninstallInfoPage(this);
-	m_pPage->setInfo(m_pItemHandle->getItemInfo()->getId());
+	m_pPage->setInfo(m_pItemHandle);
 
 	setTitle(L"#IF_UNINSTALL");
 
@@ -630,7 +639,7 @@ void ItemForm::finishInstallCheck()
 	cleanUpPages();
 
 	m_pPage =  new ItemFormPage::ICheckFinishPage(this);
-	m_pPage->setInfo(m_pItemHandle->getItemInfo()->getId());
+	m_pPage->setInfo(m_pItemHandle);
 
 	m_bsSizer->Add( m_pPage, 1, wxEXPAND, 0 );
 	Layout();
@@ -639,14 +648,14 @@ void ItemForm::finishInstallCheck()
 	m_pPage->init();
 }
 
-void ItemForm::onStageChange(uint32 &stage)
+void ItemForm::onStageChange(ITEM_STAGE &stage)
 {
-	if (stage == UserCore::Item::ItemHandleI::STAGE_CLOSE)
+	if (stage == ITEM_STAGE::STAGE_CLOSE)
 	{
 		Close();
 		return;
 	}
-	else if (stage == UserCore::Item::ItemHandleI::STAGE_LAUNCH)
+	else if (stage == ITEM_STAGE::STAGE_LAUNCH)
 	{
 		Show(false);
 		m_pItemHandle->launch(this, g_pMainApp->isOffline());
@@ -656,47 +665,47 @@ void ItemForm::onStageChange(uint32 &stage)
 
 	cleanUpPages();
 
-	if (stage == UserCore::Item::ItemHandleI::STAGE_INSTALL)
+	if (stage == ITEM_STAGE::STAGE_INSTALL)
 	{
 		setTitle(L"#IF_INSTALL");
 		m_pPage = new ItemFormPage::InstallINPage(this);
 	}
-	else if (stage == UserCore::Item::ItemHandleI::STAGE_INSTALL_COMPLEX)
+	else if (stage == ITEM_STAGE::STAGE_INSTALL_COMPLEX)
 	{
 		setTitle(L"#IF_INSTALL");
 		m_pPage = new ItemFormPage::InstallINCPage(this);
 	}
-	else if (stage == UserCore::Item::ItemHandleI::STAGE_DOWNLOAD)
+	else if (stage == ITEM_STAGE::STAGE_DOWNLOAD)
 	{
 		setTitle(L"#IF_DOWNLOAD");
 		m_pPage = new ItemFormPage::InstallDLPage(this);
 	}
-	else if (stage == UserCore::Item::ItemHandleI::STAGE_VERIFY)
+	else if (stage == ITEM_STAGE::STAGE_VERIFY)
 	{
 		setTitle(L"#IF_VERIFY");
 		m_pPage = new ItemFormPage::InstallVIPage(this);
 	}
-	else if (stage == UserCore::Item::ItemHandleI::STAGE_GATHERINFO)
+	else if (stage == ITEM_STAGE::STAGE_GATHERINFO)
 	{
 		setTitle(L"#IF_TITLE");
 		m_pPage = new ItemFormPage::InstallGIPage(this);
 	}
-	else if (stage == UserCore::Item::ItemHandleI::STAGE_UNINSTALL)
+	else if (stage == ITEM_STAGE::STAGE_UNINSTALL)
 	{
 		setTitle(L"#IF_UNINSTALL");
 		m_pPage = new ItemFormPage::UninstallProgressPage(this, L"#IF_UNINSTALL_LABEL");
 	}
-	else if (stage == UserCore::Item::ItemHandleI::STAGE_UNINSTALL_BRANCH)
+	else if (stage == ITEM_STAGE::STAGE_UNINSTALL_BRANCH)
 	{
 		setTitle(L"#IF_UNINSTALL_BRANCH");
 		m_pPage = new ItemFormPage::UninstallProgressPage(this, L"#IF_UNINSTALL_BRANCH_LABEL");
 	}
-	else if (stage == UserCore::Item::ItemHandleI::STAGE_UNINSTALL_PATCH || stage == UserCore::Item::ItemHandleI::STAGE_UNINSTALL_UPDATE)
+	else if (stage == ITEM_STAGE::STAGE_UNINSTALL_PATCH || stage == ITEM_STAGE::STAGE_UNINSTALL_UPDATE)
 	{
 		setTitle(L"#IF_UNINSTALL_PATCH");
 		m_pPage = new ItemFormPage::UninstallProgressPage(this, L"#IF_UNINSTALL_PATCH_LABEL");
 	}
-	else if (stage == UserCore::Item::ItemHandleI::STAGE_UNINSTALL_COMPLEX)
+	else if (stage == ITEM_STAGE::STAGE_UNINSTALL_COMPLEX)
 	{
 		if (m_pItemHandle)
 		{
@@ -710,27 +719,27 @@ void ItemForm::onStageChange(uint32 &stage)
 
 		m_pPage = new ItemFormPage::UninstallProgressPage(this, L"#IF_UNINSTALL_COMPLEX_LABEL");
 	}
-	else if (stage == UserCore::Item::ItemHandleI::STAGE_INSTALL_CHECK)
+	else if (stage == ITEM_STAGE::STAGE_INSTALL_CHECK)
 	{
 		setTitle(L"#IF_INSTALL_CHECK");
 		m_pPage = new ItemFormPage::ICheckProgressPage(this);
 	}
-	else if (stage == UserCore::Item::ItemHandleI::STAGE_DOWNLOADTOOL)
+	else if (stage == ITEM_STAGE::STAGE_DOWNLOADTOOL)
 	{
 		setTitle(L"#IF_DOWNLOADTOOL");
 		m_pPage = new ItemFormPage::InstallDLToolPage(this);
 	}
-	else if (stage == UserCore::Item::ItemHandleI::STAGE_INSTALLTOOL)
+	else if (stage == ITEM_STAGE::STAGE_INSTALLTOOL)
 	{
 		setTitle(L"#IF_INSTALLTOOL");
-		m_pPage = new ItemFormPage::InstallINToolPage(this);
+		m_pPage = new ItemFormPage::InstallINToolPage(this, m_pToolManager);
 	}
-	else if (stage == UserCore::Item::ItemHandleI::STAGE_VALIDATE)
+	else if (stage == ITEM_STAGE::STAGE_VALIDATE)
 	{
 		setTitle(L"#IF_VALIDATE_TITLE");
 		m_pPage = new ItemFormPage::InstallDVPage(this);
 	}
-	else if (stage == UserCore::Item::ItemHandleI::STAGE_WAIT)
+	else if (stage == ITEM_STAGE::STAGE_WAIT)
 	{
 		setTitle(L"#IF_WAIT_TITLE");
 		m_pPage = new ItemFormPage::InstallWaitPage(this);
@@ -738,11 +747,12 @@ void ItemForm::onStageChange(uint32 &stage)
 	else
 	{
 		//shouldnt get here!!!!!
+		assert(false);
 		return;
 	}
 
 	m_pPage->setMCFInfo(m_uiMCFBranch, m_uiMCFBuild);
-	m_pPage->setInfo(m_pItemHandle->getItemInfo()->getId());
+	m_pPage->setInfo(m_pItemHandle);
 
 	m_pPage->Show(true);
 
@@ -839,10 +849,7 @@ CVar gc_linux_disable_windows_warning("gc_linux_disable_windows_warning", "false
 
 void ItemForm::showWinLaunchDialog()
 {
-	//if (wxThread::IsMain())
-	//	onShowWinLaunchDialog();
-	//else
-		onShowWinLaunchDialogEvent();
+	onShowWinLaunchDialogEvent();
 }
 
 void ItemForm::onShowWinLaunchDialog() 
@@ -1152,11 +1159,11 @@ void ItemForm::onGatherInfoComplete()
 		gcWString msg;
 
 		if (m_pItemHandle->getItemInfo()->isInstalled())
-			msg = gcWString(L"{0} {1}", name, Managers::GetString(L"#IC_FOUND"));
+			msg = gcWString(L"{0} {1}", name, Managers::GetString(L"#IF_CHECK_FOUND"));
 		else
-			msg = gcWString(L"{0} {1}", name, Managers::GetString(L"#IC_NOTFOUND"));	
+			msg = gcWString(L"{0} {1}", name, Managers::GetString(L"#IF_CHECK_NOTFOUND"));	
 
-		gcMessageBox(this, msg, Managers::GetString(L"#IC_TITLE") );
+		gcMessageBox(this, msg, Managers::GetString(L"#IF_INSTALL_CHECK") );
 	}
 }
 

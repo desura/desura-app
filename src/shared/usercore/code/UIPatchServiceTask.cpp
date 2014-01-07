@@ -35,7 +35,7 @@ namespace ItemTask
 {
 
 
-UIPatchServiceTask::UIPatchServiceTask(UserCore::Item::ItemHandle* handle, MCFBranch installBranch, MCFBuild installBuild) : UIBaseServiceTask(UserCore::Item::ItemHandleI::STAGE_UNINSTALL_PATCH, "UnInstallPatch", handle, installBranch, installBuild)
+UIPatchServiceTask::UIPatchServiceTask(UserCore::Item::ItemHandle* handle, MCFBranch installBranch, MCFBuild installBuild) : UIBaseServiceTask(UserCore::Item::ITEM_STAGE::STAGE_UNINSTALL_PATCH, "UnInstallPatch", handle, installBranch, installBuild)
 {
 	m_pIPCIM = nullptr;
 }

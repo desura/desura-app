@@ -72,44 +72,47 @@ public:
 	ItemHandle(ItemInfo* itemInfo, UserCore::User* user);
 	~ItemHandle();
 
-	virtual void setFactory(Helper::ItemHandleFactoryI* factory);
+	void setFactory(Helper::ItemHandleFactoryI* factory) override;
 
-	virtual void addHelper(Helper::ItemHandleHelperI* helper);
-	virtual void delHelper(Helper::ItemHandleHelperI* helper);
+	void addHelper(Helper::ItemHandleHelperI* helper) override;
+	void delHelper(Helper::ItemHandleHelperI* helper) override;
 
-	virtual bool cleanComplexMods();
-	virtual bool verify(bool files, bool tools, bool hooks);
-	virtual bool update();
-	virtual bool install(Helper::ItemLaunchHelperI* helper, MCFBranch branch);
-	virtual bool install(MCFBranch branch, MCFBuild build, bool test = false);
-	virtual bool installCheck();
-	virtual bool launch(Helper::ItemLaunchHelperI* helper, bool offline = false, bool ignoreUpdate = false);
-	virtual bool switchBranch(MCFBranch branch);
-	virtual bool startUpCheck();
-	virtual bool uninstall(Helper::ItemUninstallHelperI* helper, bool complete, bool account);
-	virtual bool isInStage();
+	bool cleanComplexMods() override;
+	bool verify(bool files, bool tools, bool hooks) override;
+	bool update() override;
+	bool install(Helper::ItemLaunchHelperI* helper, MCFBranch branch) override;
+	bool install(MCFBranch branch, MCFBuild build, bool test = false) override;
+	bool installCheck() override;
+	bool launch(Helper::ItemLaunchHelperI* helper, bool offline = false, bool ignoreUpdate = false) override;
+	bool switchBranch(MCFBranch branch) override;
+	bool startUpCheck() override;
+	bool uninstall(Helper::ItemUninstallHelperI* helper, bool complete, bool account) override;
+	bool isInStage() override;
 
-	virtual uint32 getStage();
-	virtual void cancelCurrentStage();
-	virtual UserCore::Item::ItemInfoI* getItemInfo();
+	ITEM_STAGE getStage() override;
+	void cancelCurrentStage() override;
+	UserCore::Item::ItemInfoI* getItemInfo() override;
 
-	virtual void stop(bool block = true);
-	virtual void setPauseOnError(bool pause = true);
-	virtual bool shouldPauseOnError();
-	virtual bool isStopped();
+	//void stop(bool block = true) override;
 
-	virtual Event<uint32>* getChangeStageEvent();
-	virtual Event<gcException>* getErrorEvent();
+	void setPauseOnError(bool pause = true) override;
+	bool shouldPauseOnError() override;
+	bool isStopped() override;
 
-	virtual void getStatusStr(LanguageManagerI & pLangMng, char* buffer, uint32 buffsize);
-	virtual ItemTaskGroupI* getTaskGroup();
-	virtual void force();
+	Event<ITEM_STAGE>* getChangeStageEvent() override;
+	Event<gcException>* getErrorEvent() override;
 
-	virtual bool createDesktopShortcut();
-	virtual bool createMenuEntry();
+	void getStatusStr(LanguageManagerI & pLangMng, char* buffer, uint32 buffsize) override;
+	static void getStatusStr_s(UserCore::Item::ItemHandleI* pItemHandle, UserCore::Item::ItemInfoI *pItemInfo, UserCore::Item::ITEM_STAGE nStage, UserCore::Item::ItemTaskGroupI* pTaskGroup, LanguageManagerI & pLangMng, char* buffer, uint32 buffsize);
+
+	ItemTaskGroupI* getTaskGroup() override;
+	void force() override;
+
+	bool createDesktopShortcut() override;
+	bool createMenuEntry() override;
 
 #ifdef NIX
-	virtual void installLaunchScripts();
+	void installLaunchScripts() override;
 #endif
 
 	void setPausable(bool state = true);
@@ -160,12 +163,12 @@ public:
 	bool installPrivate(MCFBranch branch, MCFBuild build, UserCore::ItemTask::GI_FLAGS flags);
 
 protected:
-	Event<uint32> onChangeStageEvent;
+	Event<ITEM_STAGE> onChangeStageEvent;
 	Event<gcException> onErrorEvent;
 
 	void startGatherInfo();
 
-	void setStage(uint32 stage);
+	void setStage(ITEM_STAGE stage);
 	void registerTask(UserCore::ItemTask::BaseItemTask* task);
 
 	void stopThread();
@@ -179,8 +182,8 @@ protected:
 
 	bool launchForReal(Helper::ItemLaunchHelperI* helper, bool offline = false);
 
-	void onTaskStart(uint32 &stage);
-	void onTaskComplete(uint32 &stage);
+	void onTaskStart(ITEM_STAGE &stage);
+	void onTaskComplete(ITEM_STAGE &stage);
 
 	bool getComplexLock();
 	void releaseComplexLock();
@@ -198,7 +201,7 @@ private:
 	std::vector<Helper::ItemHandleHelperI*> m_vHelperList;
 
 	uint32 m_uiHelperId;
-	uint32 m_uiStage;
+	ITEM_STAGE m_uiStage;
 
 	std::mutex m_ThreadMutex;
 	UserCore::Item::ItemThread *m_pThread;

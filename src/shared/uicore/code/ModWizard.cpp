@@ -29,7 +29,8 @@ $/LicenseInfo$
 #include "MainApp.h"
 
 
-ModWizardForm::ModWizardForm(wxWindow* parent) : gcFrame(parent, wxID_ANY, wxT("#MW_TITLE"), wxDefaultPosition, wxSize( 370,160 ), wxCAPTION|wxCLOSE_BOX|wxFRAME_FLOAT_ON_PARENT|wxSYSTEM_MENU|wxTAB_TRAVERSAL)
+ModWizardForm::ModWizardForm(wxWindow* parent) 
+	: gcFrame(parent, wxID_ANY, wxT("#MW_TITLE"), wxDefaultPosition, wxSize( 370,160 ), wxCAPTION|wxCLOSE_BOX|wxFRAME_FLOAT_ON_PARENT|wxSYSTEM_MENU|wxTAB_TRAVERSAL)
 {
 	m_pPage = nullptr;
 
@@ -55,7 +56,10 @@ ModWizardForm::~ModWizardForm()
 
 void ModWizardForm::onFormClose( wxCloseEvent& event )
 {
-	g_pMainApp->closeForm(this->GetId());
+	if (!m_bDisabled)
+		g_pMainApp->closeForm(this->GetId());
+	else
+		event.Skip();
 }
 
 void ModWizardForm::finish()
@@ -67,7 +71,8 @@ void ModWizardForm::finish()
 	Layout();
 	Refresh();
 
-	m_pPage->run();
+	if (!m_bDisabled)
+		m_pPage->run();
 }
 
 void ModWizardForm::run(bool addToAccount)
@@ -82,7 +87,8 @@ void ModWizardForm::run(bool addToAccount)
 	Layout();
 	Refresh();
 
-	m_pPage->run();
+	if (!m_bDisabled)
+		m_pPage->run();
 }
 
 

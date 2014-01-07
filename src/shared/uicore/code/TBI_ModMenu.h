@@ -31,9 +31,19 @@ $/LicenseInfo$
 
 #include "TBI_BaseMenu.h"
 
+namespace UserCore
+{
+	class ItemManagerI;
+}
+
 class TBIModMenu : public TBIBaseMenu
 {
 public:
+	TBIModMenu(UserCore::ItemManagerI* pItemManager)
+		: m_pItemManager(pItemManager)
+	{
+	}
+
 	virtual wxMenu* createMenu(uint32 &lastMenuId);
 	virtual void onMenuSelect(wxCommandEvent& event);
 
@@ -41,6 +51,7 @@ public:
 
 private:
 	std::map<int32, DesuraId> m_IdMapList;
+	UserCore::ItemManagerI* m_pItemManager;
 };
 
 

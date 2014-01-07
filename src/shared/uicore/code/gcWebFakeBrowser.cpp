@@ -28,7 +28,7 @@ $/LicenseInfo$
 #include "wx_controls/gcPanel.h"
 #include "Managers.h"
 
-gcWebFakeBrowser::gcWebFakeBrowser(gcPanel* parent)
+gcWebFakeBrowser::gcWebFakeBrowser(wxWindow* parent)
 {
 	m_pParent = parent;
 	m_szNoLoadString = Managers::GetString(L"#BH_NO_LOAD");

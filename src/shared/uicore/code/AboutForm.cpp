@@ -32,20 +32,18 @@ $/LicenseInfo$
 #include "AboutPageMain.h"
 #include "AboutPageDev.h"
 
-#ifdef WIN32
-	static const int ABOUT_FORM_WIDTH = 295;
-	static const int ABOUT_FORM_HEIGHT = 412;
+
+#ifdef DESURA_OFFICIAL_BUILD
+	static const int ABOUT_FORM_WIDTH = 287;
+	static const int ABOUT_FORM_HEIGHT = 462;
 #else
-	#ifdef DESURA_OFFICIAL_BUILD
-		static const int ABOUT_FORM_WIDTH = 287;
-		static const int ABOUT_FORM_HEIGHT = 462;
-	#else
-		static const int ABOUT_FORM_WIDTH = 275;
-		static const int ABOUT_FORM_HEIGHT = 462;
-	#endif
-#endif	
+	static const int ABOUT_FORM_WIDTH = 287;
+	static const int ABOUT_FORM_HEIGHT = 462;
+#endif
+
 	
-AboutForm::AboutForm(wxWindow* parent) : gcDialog(parent, wxID_ANY, "About " PRODUCT_NAME, wxDefaultPosition, wxSize(ABOUT_FORM_WIDTH,ABOUT_FORM_HEIGHT), wxDEFAULT_DIALOG_STYLE)
+AboutForm::AboutForm(wxWindow* parent) 
+	: gcDialog(parent, wxID_ANY, "About " PRODUCT_NAME, wxDefaultPosition, wxSize(ABOUT_FORM_WIDTH,ABOUT_FORM_HEIGHT), wxDEFAULT_DIALOG_STYLE)
 {
 	Bind(wxEVT_COMMAND_BUTTON_CLICKED, &AboutForm::onButtonClicked, this);
 	Bind(wxEVT_CLOSE_WINDOW, &AboutForm::onFormClose, this);
@@ -104,6 +102,8 @@ void AboutForm::onFormClose( wxCloseEvent& event )
 
 	if (temp)
 		temp->onSubFormClose(this->GetId());
+	else
+		event.Skip();
 }
 
 void AboutForm::onButtonClicked( wxCommandEvent& event )

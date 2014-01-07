@@ -61,7 +61,7 @@ namespace ItemTask
 {
 
 VerifyServiceTask::VerifyServiceTask(UserCore::Item::ItemHandle* handle, MCFBranch branch, MCFBuild build, bool files, bool tools, bool hooks) 
-	: BaseItemTask(UserCore::Item::ItemHandleI::STAGE_VERIFY, "Verify", handle, branch, build)
+	: BaseItemTask(UserCore::Item::ITEM_STAGE::STAGE_VERIFY, "Verify", handle, branch, build)
 {
 	m_iTier = START;
 

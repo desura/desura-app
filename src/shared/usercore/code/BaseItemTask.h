@@ -30,6 +30,7 @@ $/LicenseInfo$
 #endif
 
 #include "usercore/ItemHelpersI.h"
+#include "usercore/ItemHandleI.h"
 #include "mcfcore/MCFMain.h"
 #include "mcfcore/MCFI.h"
 
@@ -54,7 +55,7 @@ namespace ItemTask
 class BaseItemTask
 {
 public:
-	BaseItemTask(uint32 type, const char* name, UserCore::Item::ItemHandle* handle, MCFBranch branch = MCFBranch(), MCFBuild build = MCFBuild());
+	BaseItemTask(UserCore::Item::ITEM_STAGE type, const char* name, UserCore::Item::ItemHandle* handle, MCFBranch branch = MCFBranch(), MCFBuild build = MCFBuild());
 	virtual ~BaseItemTask();
 
 	void setWebCore(WebCore::WebCoreI *wc);
@@ -79,7 +80,7 @@ public:
 	Event<gcString> onCompleteStrEvent;
 
 	const char* getTaskName();
-	uint32 getTaskType();
+	UserCore::Item::ITEM_STAGE getTaskType();
 
 	UserCore::Item::ItemHandle* getItemHandle();
 
@@ -113,7 +114,7 @@ private:
 	WebCore::WebCoreI* m_pWebCore;
 	UserCore::UserI* m_pUserCore;
 
-	uint32 m_uiType;
+	UserCore::Item::ITEM_STAGE m_uiType;
 	gcString m_szName;
 };
 

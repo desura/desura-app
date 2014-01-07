@@ -223,6 +223,8 @@ void DisplayContextMenu(gcWebControlI* m_pParent, ContextClientDataI* ccd, gcMen
 
 void EventHandler::displayMenu(ChromiumDLL::ChromiumMenuInfoI* menuInfo, gcMenu *menu, int32 x, int32 y)
 {
+	setupLastMenuUrl(menuInfo);
+
 	int res = 0;
 		
 	{
@@ -230,31 +232,5 @@ void EventHandler::displayMenu(ChromiumDLL::ChromiumMenuInfoI* menuInfo, gcMenu 
 		res = TrackPopupMenu((HMENU)menu->GetHMenu(), TPM_LEFTALIGN|TPM_RIGHTBUTTON|TPM_RETURNCMD|TPM_RECURSE|TPM_NONOTIFY, x, y, 0, (HWND)menuInfo->getHWND(), nullptr);
 	}
 
-	if (res == MENU_ID_VIEWPBROWSER)
-	{
-		gcWString url;
-
-		if (HasAnyFlags(menuInfo->getTypeFlags(), ChromiumDLL::ChromiumMenuInfoI::MENUTYPE_PAGE))
-		{
-			url = menuInfo->getPageUrl();
-		}
-		else if (HasAnyFlags(menuInfo->getTypeFlags(), ChromiumDLL::ChromiumMenuInfoI::MENUTYPE_FRAME))
-		{
-			url = menuInfo->getFrameUrl();
-		}
-
-		gcLaunchDefaultBrowser(url);
-	}
-	else if (res == MENU_ID_VIEWLBROWSER)
-	{
-		gcLaunchDefaultBrowser(menuInfo->getLinkUrl());
-	}
-	else if (res == MENU_ID_VIEWIBROWSER)
-	{
-		gcLaunchDefaultBrowser(menuInfo->getImageUrl());
-	}
-	else
-	{
-		m_pParent->AddPendingEvent(wxCommandEvent(wxEVT_COMMAND_MENU_SELECTED, res));
-	}
+	m_pParent->AddPendingEvent(wxCommandEvent(wxEVT_COMMAND_MENU_SELECTED, res));
 }

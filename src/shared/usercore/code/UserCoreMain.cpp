@@ -44,18 +44,24 @@ extern "C"
 
 	CEXPORT void* FactoryBuilderUC(const char* name)
 	{
-		if (strcmp(USERCORE, name) == 0)
+		gcString strName(name);
+
+		if (strName == USERCORE)
 		{
 			UserCore::User* temp = new UserCore::User();
 			return temp;
 		}
-		else if (strcmp(USERCORE_VER, name) == 0)
+		else if (strName  == USERCORE_VER)
 		{
 			return (void *)&GetUserCoreVersion;
 		}
-		else if (strcmp(USERCORE_GETLOGIN, name) == 0)
+		else if (strName == USERCORE_GETLOGIN)
 		{
 			return (void *)&UserCore::User::getLoginInfo;
+		}
+		else if (strName == USERCORE_GETITEMSTATUS)
+		{
+			return (void*)&UserCore::Item::ItemHandle::getStatusStr_s;
 		}
 
 		return nullptr;

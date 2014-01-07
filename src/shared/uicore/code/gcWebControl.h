@@ -46,23 +46,29 @@ class ChromiumMenuInfoFromMem;
 
 //unused is because gcWebHost is typedef as this under linux
 
+
+class gcWebControl;
+typedef ChromiumDLL::ChromiumBrowserI* (*CreateBrowserFn)(gcWebControl *pControl, const char* loadUrl);
+
 class gcWebControl : public gcPanel, public gcWebControlI
 {
 public:
 	gcWebControl(wxWindow* parent, const char* defaultUrl, const char* unused="");
+	gcWebControl(wxWindow* parent, const char* defaultUrl, CreateBrowserFn createBrowserFn);
 	~gcWebControl();
 
-	virtual void loadUrl(const gcString& url);
-	virtual void loadString(const gcString& string);
-	virtual void executeJScript(const gcString& code);
+	void loadUrl(const gcString& url) override;
+	void loadString(const gcString& string) override;
+	void executeJScript(const gcString& code) override;
 
-	virtual bool refresh();
-	virtual bool stop();
-	virtual bool back();
-	virtual bool forward();
 
-	virtual void forceResize();
-	virtual void home();
+	bool refresh() override;
+	bool stop() override;
+	bool back() override;
+	bool forward() override;
+
+	void forceResize() override;
+	void home() override;
 
 	Event<int32> onContextSelectEvent;
 
@@ -72,14 +78,14 @@ public:
 
 	ChromiumDLL::JavaScriptContextI* getJSContext();
 
-	virtual void AddPendingEvent(const wxEvent &event)
+	void AddPendingEvent(const wxEvent &event) override
 	{
 		gcPanel::AddPendingEvent(event);
 	}
 	
-	virtual void PopupMenu(wxMenu* menu)
+	void PopupMenu(wxMenu* menu, int x, int y) override
 	{
-		gcPanel::PopupMenu(menu);
+		gcPanel::PopupMenu(menu, x, y);
 	}
 
 protected:
@@ -93,7 +99,7 @@ protected:
 
 	void onStartLoad();
 	void onPageLoad();
-	virtual void handleKeyEvent(int eventCode);
+	void handleKeyEvent(int eventCode) override;
 	
 	friend class EventHandler;
 

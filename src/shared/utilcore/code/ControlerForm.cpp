@@ -144,7 +144,10 @@ bool ControllerForm::init(int argc, wxCmdLineArgsArray &argv)
 		if (!setUpUserCore())
 			return false;
 
-		form = new ChangeDirForm(this, dir.c_str(), m_pUser);
+		auto cdf = new ChangeDirForm(this);
+
+		form = cdf;
+		cdf->start(dir.c_str(), m_pUser);
 	}
 
 	if (form)

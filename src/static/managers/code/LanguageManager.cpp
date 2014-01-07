@@ -133,4 +133,7 @@ bool LanguageManager::loadFromFile(const char* file)
 	return true;
 }
 
-
+void LanguageManager::unloadAll()
+{
+	removeAll();
+}

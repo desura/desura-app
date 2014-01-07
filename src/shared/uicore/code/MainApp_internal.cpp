@@ -120,7 +120,8 @@ void MainApp::showConsole()
 
 void MainApp::closeForm(int32 wxId)
 {
-	m_pInternalLink->closeForm(wxId);
+	if (m_pInternalLink)
+		m_pInternalLink->closeForm(wxId);
 }
 
 void MainApp::showPlay()

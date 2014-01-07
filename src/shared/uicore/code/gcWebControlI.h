@@ -77,7 +77,7 @@ public:
 
 	//! Callee is responsable for deleting menu
 	virtual void HandlePopupMenu(ChromiumMenuInfoFromMem* menu){};
-	virtual void PopupMenu(wxMenu* menu)=0;
+	virtual void PopupMenu(wxMenu* menu, int x, int y)=0;
 
 
 #ifdef WIN32

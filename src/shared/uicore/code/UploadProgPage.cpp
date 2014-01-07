@@ -110,6 +110,9 @@ UploadProgPage::~UploadProgPage()
 
 void UploadProgPage::dispose()
 {
+	if (!GetUploadMng())
+		return;
+
 	UserCore::Misc::UploadInfoThreadI* info = GetUploadMng()->findItem(m_uiUploadHash);
 
 	if (info)
@@ -121,9 +124,9 @@ void UploadProgPage::dispose()
 	}
 }
 
-void UploadProgPage::setInfo(DesuraId id, uint32 hash, uint32 start)
+void UploadProgPage::setInfo(DesuraId id, UserCore::Item::ItemInfoI* pItemInfo, uint32 hash, uint32 start)
 {
-	BasePage::setInfo(id);
+	BasePage::setInfo(id, pItemInfo);
 
 	m_iStart = start;
 	m_uiUploadHash = hash;
@@ -131,6 +134,9 @@ void UploadProgPage::setInfo(DesuraId id, uint32 hash, uint32 start)
 
 void UploadProgPage::run()
 {
+	if (!GetUploadMng())
+		return;
+
 	UserCore::Misc::UploadInfoThreadI* info = GetUploadMng()->findItem(m_uiUploadHash);
 	assert(info);
 
@@ -185,6 +191,9 @@ void UploadProgPage::onButClick( wxCommandEvent& event )
 
 void UploadProgPage::onChecked(wxCommandEvent& event)
 {
+	if (!GetUploadMng())
+		return;
+
 	UserCore::Misc::UploadInfoThreadI* info = GetUploadMng()->findItem(m_uiUploadHash);
 	assert(info);
 
@@ -235,7 +244,7 @@ void UploadProgPage::onComplete(uint32& status)
 
 	std::string done = UTIL::MISC::niceSizeStr(m_llTotalUpload, true);
 	std::string total = UTIL::MISC::niceSizeStr(m_llTotalUpload);
-	m_pbProgress->setCaption(gcString("{0} of {1}", done, total));
+	m_pbProgress->setCaption(gcString(Managers::GetString("#PROGRESS_INFO"), done, total));
 	m_pbProgress->setProgress(100);
 	m_pbProgress->setMileStone();
 
@@ -257,10 +266,14 @@ void UploadProgPage::onError(gcException& e)
 		par->setProgressState(gcFrame::P_ERROR);
 
 	gcErrorBox(GetParent(), "#UDF_ERRTITLE", "#UDF_ERROR", e);
-	UserCore::Misc::UploadInfoThreadI* info = GetUploadMng()->findItem(m_uiUploadHash);
 
-	if (info)
-		info->nonBlockStop();
+	if (GetUploadMng())
+	{
+		auto info = GetUploadMng()->findItem(m_uiUploadHash);
+
+		if (info)
+			info->nonBlockStop();
+	}
 
 	UploadMCFForm* temp = dynamic_cast<UploadMCFForm*>(GetParent());
 
@@ -287,7 +300,7 @@ void UploadProgPage::onProgress(UserCore::Misc::UploadInfo& info)
 
 	std::string done = UTIL::MISC::niceSizeStr(info.doneAmmount, true);
 	std::string total = UTIL::MISC::niceSizeStr(info.totalAmmount);
-	m_pbProgress->setCaption(gcString("{0} of {1}", done, total));
+	m_pbProgress->setCaption(gcString(Managers::GetString("#PROGRESS_INFO"), done, total));
 
 
 	if (info.paused)

@@ -35,7 +35,7 @@ namespace ItemTask
 {
 
 
-UIServiceTask::UIServiceTask(UserCore::Item::ItemHandle* handle, bool removeAll, bool removeAcc) : UIBaseServiceTask(UserCore::Item::ItemHandleI::STAGE_UNINSTALL, "UnInstall", handle)
+UIServiceTask::UIServiceTask(UserCore::Item::ItemHandle* handle, bool removeAll, bool removeAcc) : UIBaseServiceTask(UserCore::Item::ITEM_STAGE::STAGE_UNINSTALL, "UnInstall", handle)
 {
 	m_bRemoveAll = removeAll;
 	m_bRemoveAcc = removeAcc;

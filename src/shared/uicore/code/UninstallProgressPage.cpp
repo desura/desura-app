@@ -67,7 +67,7 @@ UninstallProgressPage::UninstallProgressPage(wxWindow* parent, wxString label) :
 	m_bRemoveAll = true;
 	m_bRemoveAcc = true;
 
-	this->setParentSize(-1, 120);
+	this->setParentSize(-1, 140);
 
 	gcFrame* par = dynamic_cast<gcFrame*>(GetParent());
 	if (par)

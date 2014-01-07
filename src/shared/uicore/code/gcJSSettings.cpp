@@ -127,9 +127,10 @@ std::vector<MapElementI*> DesuraJSSettings::getThemes()
 	return ret;
 }
 
-std::vector<MapElementI*> DesuraJSSettings::getLanguages()
+
+std::vector<std::map<gcString, gcString>> GetLanguages()
 {
-	std::vector<MapElementI*> ret;
+	std::vector<std::map<gcString, gcString>> ret;
 
 	std::vector<UTIL::FS::Path> fileList;
 	std::vector<std::string> filter;
@@ -174,8 +175,18 @@ std::vector<MapElementI*> DesuraJSSettings::getLanguages()
 		map["file"] = file;
 		map["name"] = name;
 	
-		ret.push_back(new MapElement<std::map<gcString, gcString>>(map));
+		ret.push_back(map);
 	}
+
+	return ret;
+}
+
+std::vector<MapElementI*> DesuraJSSettings::getLanguages()
+{
+	std::vector<MapElementI*> ret;
+	
+	for (auto lang : GetLanguages())
+		ret.push_back(new MapElement<std::map<gcString, gcString>>(lang));
 
 	return ret;
 }
@@ -204,7 +215,9 @@ std::vector<gcString> DesuraJSSettings::getSteamNames()
 std::vector<MapElementI*> DesuraJSSettings::getCurrentCIPItems()
 {
 	std::vector<UserCore::Misc::CIPItem> list;
-	GetUserCore()->getCIPManager()->getCIPList(list);
+
+	if (GetUserCore())
+		GetUserCore()->getCIPManager()->getCIPList(list);
 
 	std::vector<MapElementI*> ret;
 
@@ -225,7 +238,9 @@ std::vector<MapElementI*> DesuraJSSettings::getCurrentCIPItems()
 std::vector<MapElementI*> DesuraJSSettings::getAllCIPItems()
 {
 	std::vector<UserCore::Misc::CIPItem> list;
-	GetUserCore()->getCIPManager()->getItemList(list);
+
+	if (GetUserCore())
+		GetUserCore()->getCIPManager()->getItemList(list);
 
 	std::vector<MapElementI*> ret;
 
@@ -244,12 +259,17 @@ std::vector<MapElementI*> DesuraJSSettings::getAllCIPItems()
 
 void DesuraJSSettings::updateCIPList()
 {
-	GetUserCore()->getCIPManager()->refreshList();
+	if (GetUserCore())
+		GetUserCore()->getCIPManager()->refreshList();
 }
 
 void DesuraJSSettings::saveCIPList(std::vector<std::map<gcString, gcString>> savelist)
 {
 	std::vector<UserCore::Misc::CIPItem> list;
+
+	if (!GetUserCore())
+		return;
+
 	GetUserCore()->getCIPManager()->getCIPList(list);
 
 	for (size_t x=0; x<savelist.size(); x++)
@@ -284,7 +304,7 @@ bool DesuraJSSettings::isValidCIPPath(gcString path)
 
 gcWString DesuraJSSettings::browseCIPPath(gcWString name, gcWString path)
 {
-	wxDirDialog p(g_pMainApp->getMainWindow(), gcWString(L"{0} {1}", Managers::GetString(L"#CIP_BROWSE"), name), path, wxDIRP_DIR_MUST_EXIST);
+	wxDirDialog p(g_pMainApp->getMainWindow(), gcWString(Managers::GetString(L"#CIP_BROWSE"), name), path, wxDIRP_DIR_MUST_EXIST);
 
 	if (p.ShowModal() == wxID_OK)
 		return gcWString(p.GetPath().c_str().AsWChar());
@@ -318,7 +338,7 @@ bool DesuraJSSettings::isValidLinkBinary(gcString path)
 
 gcString DesuraJSSettings::browseLinkBinary(gcString name, gcString path)
 {
-	wxFileDialog p(g_pMainApp->getMainWindow(), gcWString(L"{0} {1}", Managers::GetString(L"#CIP_LINK_BROWSE"), name), path);
+	wxFileDialog p(g_pMainApp->getMainWindow(), gcWString(Managers::GetString(L"#CIP_LINK_BROWSE"), name), path);
 
 	if (p.ShowModal() == wxID_OK)
 		return gcString(p.GetPath().c_str().AsWChar());

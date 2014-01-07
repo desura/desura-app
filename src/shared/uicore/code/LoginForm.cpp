@@ -711,6 +711,12 @@ void LoginForm::onTextBoxEnter( wxCommandEvent& event )
 
 void LoginForm::onClose( wxCloseEvent& event )
 {
+	if (m_bDisabled)
+	{
+		event.Skip();
+		return;
+	}
+
 	Show(false);
 
 	// if we can veto means it wasnt forced by the parent
@@ -779,6 +785,9 @@ void LoginForm::doLogin(gcString user, gcString pass)
 
 		return;
 	}
+
+	if (m_bDisabled)
+		return;
 
 	if (m_comboProvider)
 		m_comboProvider->Disable();

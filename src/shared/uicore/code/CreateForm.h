@@ -44,11 +44,7 @@ $/LicenseInfo$
 class CreateMCFForm : public gcFrame 
 {
 public:
-#ifdef WIN32
-	CreateMCFForm( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = wxT("Creating MCF"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 370,120 ), long style = wxCAPTION|wxCLOSE_BOX|wxFRAME_FLOAT_ON_PARENT|wxSYSTEM_MENU );
-#else // Linux needs more room as there is no custom border
-	CreateMCFForm( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = wxT("Creating MCF"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 415,120 ), long style = wxCAPTION|wxCLOSE_BOX|wxFRAME_FLOAT_ON_PARENT|wxSYSTEM_MENU );
-#endif
+	CreateMCFForm(wxWindow* parent, UserCore::ItemManagerI* pItemManager = nullptr);
 	~CreateMCFForm();
 
 	void setInfo(DesuraId id);
@@ -65,18 +61,22 @@ public:
 	void cancelPrompt(){m_bPromptClose = false;}
 
 protected:
-	void setTitle(const char*);
+	friend class LanguageTestDialog;
+
+	void setTitle(const char* szItemName, const wchar_t* szFormat = L"#CREATE_MCF_TITILE");
 	void updateInfo(uint32&);
 	void onFormClose( wxCloseEvent& event );
 
-	BasePage* m_pPage;	
+	BasePage* m_pPage = nullptr;	
 	wxBoxSizer* m_bsSizer;
 
 	void cleanUpPages();
 
 private:
-	bool m_bPromptClose;
+	bool m_bPromptClose = true;
 	DesuraId m_uiInternId;
+
+	UserCore::ItemManagerI* m_pItemManager = nullptr;
 
 	DECLARE_EVENT_TABLE();
 };

@@ -28,7 +28,8 @@ $/LicenseInfo$
 #include "MainApp.h"
 
 
-GameDiskForm::GameDiskForm(wxWindow* parent, const char* exe, bool cdkey) : gcFrame(parent, wxID_ANY, wxT("{0}: Need Game Disk"), wxDefaultPosition, wxSize( 370,145 ), wxDEFAULT_FRAME_STYLE|wxTAB_TRAVERSAL)
+GameDiskForm::GameDiskForm(wxWindow* parent, const char* exe, bool cdkey) 
+	: gcFrame(parent, wxID_ANY, wxT("{0}: Need Game Disk"), wxDefaultPosition, wxSize( 370,145 ), wxDEFAULT_FRAME_STYLE|wxTAB_TRAVERSAL)
 {
 	this->SetSizeHints( wxDefaultSize, wxDefaultSize );
 
@@ -80,9 +81,12 @@ GameDiskForm::~GameDiskForm()
 {
 }
 
-void GameDiskForm::setInfo(DesuraId id)
+void GameDiskForm::setInfo(DesuraId id, UserCore::ItemManagerI* pItemManager)
 {
-	m_pItem = GetUserCore()->getItemManager()->findItemInfo(id);
+	if (!pItemManager)
+		pItemManager = GetUserCore()->getItemManager();
+
+	m_pItem = pItemManager->findItemInfo(id);
 
 	if (!m_pItem)
 	{
@@ -93,7 +97,7 @@ void GameDiskForm::setInfo(DesuraId id)
 	UserCore::Item::ItemInfoI* parent = m_pItem;
 
 	if (m_pItem->getId().getType() == DesuraId::TYPE_MOD && m_pItem->getParentId().isOk())
-		parent = GetUserCore()->getItemManager()->findItemInfo(m_pItem->getParentId());
+		parent = pItemManager->findItemInfo(m_pItem->getParentId());
 
 	if (!parent)
 		parent = m_pItem;

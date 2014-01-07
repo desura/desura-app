@@ -43,7 +43,7 @@ namespace ItemTask
 class UIBaseServiceTask : public BaseItemServiceTask
 {
 public:
-	UIBaseServiceTask(uint32 stage, const char* taskname, UserCore::Item::ItemHandle* handle, MCFBranch installBranch = MCFBranch(), MCFBuild installBuild = MCFBuild());
+	UIBaseServiceTask(UserCore::Item::ITEM_STAGE stage, const char* taskname, UserCore::Item::ItemHandle* handle, MCFBranch installBranch = MCFBranch(), MCFBuild installBuild = MCFBuild());
 	~UIBaseServiceTask();
 
 	virtual void onServiceError(gcException& e);

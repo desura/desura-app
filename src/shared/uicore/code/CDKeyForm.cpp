@@ -30,8 +30,13 @@ $/LicenseInfo$
 #include "CDKInfo.h"
 #include "CDKProgress.h"
 
-CDKeyForm::CDKeyForm(wxWindow* parent, const char* exe, bool launch) : gcFrame(parent, wxID_ANY, wxT("[Item]: CD Key"), wxDefaultPosition, wxSize(370,100), wxCAPTION|wxCLOSE_BOX|wxSYSTEM_MENU|wxTAB_TRAVERSAL)
+CDKeyForm::CDKeyForm(wxWindow* parent, const char* exe, bool launch, UserCore::ItemManagerI* pItemManager) 
+	: gcFrame(parent, wxID_ANY, Managers::GetString("#CDK_TITLE"), wxDefaultPosition, wxSize(370,140), wxCAPTION|wxCLOSE_BOX|wxSYSTEM_MENU|wxTAB_TRAVERSAL)
+	, m_pItemManager(pItemManager)
 {
+	if (!m_pItemManager)
+		m_pItemManager = GetUserCore()->getItemManager();
+
 	m_bLaunch = launch;
 	m_szExe = exe;
 
@@ -63,7 +68,7 @@ void CDKeyForm::finish(const char* cdKey)
 {
 	cleanUpPages();
 
-	CDKInfo *p =  new CDKInfo(this, m_szExe.c_str(), m_bLaunch);
+	CDKInfo *p =  new CDKInfo(this, m_szExe.c_str(), m_bLaunch, m_pItemManager);
 	p->setInfo(m_ItemId, cdKey);
 
 	m_pPage  = p;
@@ -78,7 +83,7 @@ void CDKeyForm::setInfo(DesuraId id)
 {
 	m_ItemId = id;
 
-	UserCore::Item::ItemInfoI *item = GetUserCore()->getItemManager()->findItemInfo(id);
+	UserCore::Item::ItemInfoI *item = m_pItemManager->findItemInfo(id);
 
 	if (!item)
 	{	
@@ -86,7 +91,7 @@ void CDKeyForm::setInfo(DesuraId id)
 		return;
 	}
 
-	this->SetTitle(gcString("{0}: CD Key", item->getName()));
+	this->SetTitle(gcString(Managers::GetString("#CDK_TITLE"), item->getName()));
 
 	m_pPage->setInfo(m_ItemId);
 	m_pPage->run();

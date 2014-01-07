@@ -63,7 +63,7 @@ CDKProgress::CDKProgress(wxWindow* parent, bool launch) : BasePage(parent)
 	this->Layout();
 
 
-	setParentSize(-1, 120);
+	setParentSize(-1, 140);
 	onCompleteEvent += guiDelegate(this, &CDKProgress::onComplete);
 	onErrorEvent += guiDelegate(this, &CDKProgress::onError);
 }
@@ -76,20 +76,24 @@ CDKProgress::~CDKProgress()
 void CDKProgress::run()
 {
 	GetUserCore()->getCDKeyManager()->getCDKeyForCurrentBranch(getItemId(), this);
+	m_bOutstandingRequest = true;
 }
 
 void CDKProgress::dispose()
 {
-	GetUserCore()->getCDKeyManager()->cancelRequest(getItemId(), this);
+	if (m_bOutstandingRequest)
+		GetUserCore()->getCDKeyManager()->cancelRequest(getItemId(), this);
 }
 
 void CDKProgress::onCDKeyComplete(DesuraId id, gcString &cdKey)
 {
+	m_bOutstandingRequest = false;
 	onCompleteEvent(cdKey);
 }
 
 void CDKProgress::onCDKeyError(DesuraId id, gcException& e)
 {
+	m_bOutstandingRequest = false;
 	onErrorEvent(e);
 }
 

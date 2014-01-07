@@ -32,34 +32,22 @@ $/LicenseInfo$
 #include "gcWebFakeBrowser.h"
 
 #include <branding/branding.h>
+#include "wx/clipbrd.h"
 
 #ifdef WIN32
 ChromiumDLL::ChromiumBrowserI* NewChromiumBrowser(HWND hwnd, const char* name, const char* loadUrl);
+
+static ChromiumDLL::ChromiumBrowserI* CreateBrowser(gcWebControl *pControl, const char* loadUrl)
+{
+	return NewChromiumBrowser((HWND)pControl->GetHWND(), PRODUCT_NAME, loadUrl);
+}
+
 #else
 ChromiumDLL::ChromiumBrowserI* NewChromiumBrowser(int* gtkWidget, const char* name, const char* loadUrl);
-#endif
 
-
-gcWebControl::gcWebControl(wxWindow* parent, const char* defaultUrl, const char* unused) : gcPanel(parent, wxID_ANY)
+static ChromiumDLL::ChromiumBrowserI* CreateBrowser(gcWebControl *pControl, const char* name, const char* loadUrl)
 {
-	Bind(wxEVT_MOUSEWHEEL, &gcWebControl::onMouseScroll, this);
-	Bind(wxEVT_SIZE, &gcWebControl::onResize, this);
-	Bind(wxEVT_COMMAND_MENU_SELECTED, &gcWebControl::onMenuClicked, this);
-	
-	Bind(wxEVT_ERASE_BACKGROUND, &gcWebControl::onPaintBg, this);
-	Bind(wxEVT_PAINT, &gcWebControl::onPaint, this);
-	Bind(wxEVT_SET_FOCUS, &gcWebControl::onFocus, this);	
-
-	m_bStartedLoading = false;
-	gcString loadingurl = gcString(GetGCThemeManager()->getWebPage("loading"));
-	loadingurl += gcString("?url={0}", UTIL::STRING::urlEncode(gcString(defaultUrl)));
-
-	m_pEventHandler = new EventHandler(this);
-
-#ifdef WIN32
-	m_pChromeBrowser = NewChromiumBrowser((HWND)GetHWND(), PRODUCT_NAME, loadingurl.c_str());
-#else
-	GtkWidget* gtkParent = this->GetConnectWidget();
+	GtkWidget* gtkParent = pControl->GetConnectWidget();
 	GtkWidget* vbox = gtk_vbox_new(FALSE, 0);
 	
 	if (!gtkParent)
@@ -82,8 +70,41 @@ gcWebControl::gcWebControl(wxWindow* parent, const char* defaultUrl, const char*
 	
 	gtk_container_add(GTK_CONTAINER(gtkParent), vbox);
 	
-	m_pChromeBrowser = NewChromiumBrowser((int*)vbox, PRODUCT_NAME, loadingurl.c_str());
+	m_pChromeBrowser = NewChromiumBrowser((int*)vbox, PRODUCT_NAME, loadUrl);
+}
 #endif
+
+
+
+
+
+
+gcWebControl::gcWebControl(wxWindow* parent, const char* defaultUrl, const char* unused)
+	: gcWebControl(parent, defaultUrl, &CreateBrowser)
+{
+}
+
+gcWebControl::gcWebControl(wxWindow* parent, const char* defaultUrl, CreateBrowserFn createBrowserFn)
+	: gcPanel(parent, wxID_ANY)
+{
+	Bind(wxEVT_MOUSEWHEEL, &gcWebControl::onMouseScroll, this);
+	Bind(wxEVT_SIZE, &gcWebControl::onResize, this);
+	Bind(wxEVT_COMMAND_MENU_SELECTED, &gcWebControl::onMenuClicked, this);
+	
+	Bind(wxEVT_ERASE_BACKGROUND, &gcWebControl::onPaintBg, this);
+	Bind(wxEVT_PAINT, &gcWebControl::onPaint, this);
+	Bind(wxEVT_SET_FOCUS, &gcWebControl::onFocus, this);	
+
+	m_bStartedLoading = false;
+	gcString loadingurl = gcString(GetGCThemeManager()->getWebPage("loading"));
+	loadingurl += gcString("?url={0}", UTIL::STRING::urlEncode(gcString(defaultUrl)));
+
+	m_pEventHandler = new EventHandler(this);
+
+	if (createBrowserFn)
+		m_pChromeBrowser = createBrowserFn(this, loadingurl.c_str());
+	else
+		m_pChromeBrowser = CreateBrowser(this, loadingurl.c_str());
 
 	if (!m_pChromeBrowser)
 		m_pChromeBrowser = new gcWebFakeBrowser(this);
@@ -180,6 +201,20 @@ void gcWebControl::onMenuClicked(wxCommandEvent& event)
 		case MENU_ID_ZOOM_NORMAL:	m_pChromeBrowser->zoomNormal(); break;
 		case MENU_ID_ZOOM_PLUS:		m_pChromeBrowser->zoomIn(); break;
 		case MENU_ID_INSPECTELEMENT: m_pChromeBrowser->showInspector(); break;
+
+		case MENU_ID_VIEWPBROWSER:
+		case MENU_ID_VIEWLBROWSER:
+		case MENU_ID_VIEWIBROWSER:
+			gcLaunchDefaultBrowser(m_pEventHandler->getLastMenuUrl());
+			break;
+
+		case MENU_ID_COPYURL:
+			if (wxTheClipboard->Open())
+			{
+				wxTheClipboard->SetData(new wxURLDataObject(m_pEventHandler->getLastMenuUrl()));
+				wxTheClipboard->Close();
+			}
+			break;
 	}
 }
 

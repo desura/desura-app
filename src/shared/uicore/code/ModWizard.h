@@ -52,8 +52,12 @@ protected:
 	void cleanUpPages();
 
 private:
+	friend class LanguageTestDialog;
+
 	BasePage* m_pPage;	
 	wxBoxSizer* m_bsSizer;
+
+	bool m_bDisabled = false;
 };
 
 

@@ -92,6 +92,7 @@ public:
 	virtual const wchar_t* getString(const wchar_t* name)=0;
 
 	virtual bool loadFromFile(const char* file)=0;
+	virtual void unloadAll()=0;
 
 protected:
 	virtual ~LanguageManagerI(){};

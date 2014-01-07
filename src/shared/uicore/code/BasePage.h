@@ -36,6 +36,8 @@ $/LicenseInfo$
 
 namespace UserCore
 {
+	class ItemManagerI;
+
 	namespace Item
 	{
 		class ItemInfoI;
@@ -43,18 +45,21 @@ namespace UserCore
 }
 
 
-//! Base class that repersents a basic page on a multipage form
+//! Base class that represents a basic page on a multi page form
 //!
 class BasePage : public gcPanel 
 {
 public:
-	BasePage( wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize, long style = wxTAB_TRAVERSAL );
+	BasePage(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize, long style = wxTAB_TRAVERSAL, UserCore::ItemManagerI* pItemManager = nullptr);
+	BasePage(wxWindow* parent, UserCore::ItemManagerI* pItemManager);
+
 
 	//! Sets the item info id
 	//!
 	//! @param id Item id
 	//!
-	virtual void setInfo(DesuraId id);
+	virtual void setInfo(DesuraId id) sealed;
+	virtual void setInfo(DesuraId id, UserCore::Item::ItemInfoI* pItemInfo);
 
 	//! Sets the mcf build number
 	//! Maybe this shouldnt be here?
@@ -93,8 +98,12 @@ public:
 
 protected:
 	DesuraId m_iInternId;
-	uint32 m_uiMCFBuild;
-	uint32 m_uiMCFBranch;
+
+	uint32 m_uiMCFBuild = 0;
+	uint32 m_uiMCFBranch = 0;
+
+	UserCore::ItemManagerI* m_pItemManager = nullptr;
+	UserCore::Item::ItemInfoI* m_pItemInfo = nullptr;
 };
 
 

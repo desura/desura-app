@@ -36,7 +36,7 @@ namespace ItemTask
 {
 
 
-DownloadToolTask::DownloadToolTask(UserCore::Item::ItemHandle* handle, uint32 ttid, const char* downloadPath, MCFBranch branch, MCFBuild build) : BaseItemTask(UserCore::Item::ItemHandleI::STAGE_DOWNLOADTOOL, "DownloadTool", handle, branch, build)
+DownloadToolTask::DownloadToolTask(UserCore::Item::ItemHandle* handle, uint32 ttid, const char* downloadPath, MCFBranch branch, MCFBuild build) : BaseItemTask(UserCore::Item::ITEM_STAGE::STAGE_DOWNLOADTOOL, "DownloadTool", handle, branch, build)
 {
 	m_szDownloadPath = downloadPath;
 	m_ToolTTID = ttid;
@@ -46,7 +46,7 @@ DownloadToolTask::DownloadToolTask(UserCore::Item::ItemHandle* handle, uint32 tt
 	m_bCancelled = false;
 }
 
-DownloadToolTask::DownloadToolTask(UserCore::Item::ItemHandle* handle, bool launch) : BaseItemTask(UserCore::Item::ItemHandleI::STAGE_DOWNLOADTOOL, "DownloadTool", handle, MCFBranch(), MCFBuild())
+DownloadToolTask::DownloadToolTask(UserCore::Item::ItemHandle* handle, bool launch) : BaseItemTask(UserCore::Item::ITEM_STAGE::STAGE_DOWNLOADTOOL, "DownloadTool", handle, MCFBranch(), MCFBuild())
 {
 	m_ToolTTID = UINT_MAX;
 	m_bLaunch = launch;
