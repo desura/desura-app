@@ -391,6 +391,8 @@ public:
 	bool isItemFavorite(DesuraId id) override { return false; }
 	void regenLaunchScripts() override { }
 
+	void saveItem(UserCore::Item::ItemInfoI *) override { }
+
 	LanguageStubItem m_Item;
 	LanguageStubItemHandle m_ItemHandle;
 };
@@ -559,6 +561,8 @@ public:
 	bool isKnownBranch(MCFBranch branch, DesuraId id) override { return false; }
 	bool isItemFavorite(DesuraId id) override { return false; }
 	void regenLaunchScripts() override { }
+
+	void saveItem(UserCore::Item::ItemInfoI *) override { }
 
 	std::vector<LanguageStubItem> m_vItems;
 	std::vector<LanguageStubItemHandle> m_vItemHandle;

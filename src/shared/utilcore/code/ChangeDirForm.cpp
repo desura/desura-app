@@ -45,8 +45,6 @@ ChangeDirForm::ChangeDirForm(wxWindow* parent)
 	this->Layout();
 	
 	this->Centre( wxBOTH );
-
-	start(dest, user);
 }
 
 ChangeDirForm::~ChangeDirForm()

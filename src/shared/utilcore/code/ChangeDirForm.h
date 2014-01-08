@@ -30,7 +30,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>
 class ChangeDirForm : public gcFrame
 {
 public:	
-	ChangeDirForm(wxWindow* parent, const char* dest, UserCore::UserI* user);
+	ChangeDirForm(wxWindow* parent);
 	~ChangeDirForm();
 
 	void start(const char* dest, UserCore::UserI* user);
