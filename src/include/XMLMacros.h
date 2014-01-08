@@ -69,14 +69,14 @@ namespace XML
 			};
 		}
 
-		std::string GetAtt(const char* name) const
+		gcString GetAtt(const char* name) const
 		{
 			gcString outVal;
 			GetAtt(name, outVal);
 			return outVal;
 		}
 
-		std::string GetText() const
+		gcString GetText() const
 		{
 			if (!m_pConstElement)
 				return "";
@@ -106,7 +106,7 @@ namespace XML
 				outVal = atoi(r.c_str());
 		}
 
-		std::string GetChild(const char* name) const
+		gcString GetChild(const char* name) const
 		{
 			gcString outVal;
 			GetChild(name, outVal);
@@ -387,7 +387,7 @@ namespace XML
 			return gcXMLElement(m_XmlDoc, m_XmlDoc.FirstChildElement());
 		}
 
-		gcXMLElement GetRoot(const std::string &strRoot)
+		gcXMLElement GetRoot(const std::string& strRoot)
 		{
 			return gcXMLElement(m_XmlDoc, m_XmlDoc.FirstChildElement(strRoot.c_str()));
 		}
@@ -397,21 +397,21 @@ namespace XML
 			return gcXMLElement(m_XmlDoc.FirstChildElement());
 		}
 
-		const gcXMLElement GetRoot(const std::string &strRoot) const
+		const gcXMLElement GetRoot(const std::string& strRoot) const
 		{
 			return gcXMLElement(m_XmlDoc.FirstChildElement(strRoot.c_str()));
 		}
 
 
 		//! Returns version
-		uint32 ProcessStatus(const std::string &strRoot) const
+		uint32 ProcessStatus(const std::string& strRoot) const
 		{
 			int s;
 			return ProcessStatus(strRoot, s);
 		}
 
 		//! Returns version
-		uint32 ProcessStatus(const std::string &strRoot, int &status) const
+		uint32 ProcessStatus(const std::string& strRoot, int &status) const
 		{
 			uint32 v = 1;
 
@@ -480,7 +480,7 @@ namespace XML
 			return m_XmlDoc.SaveFile(szPath) == tinyxml2::XML_SUCCESS;
 		}
 
-		std::string ToString(bool bCompact = false)
+		gcString ToString(bool bCompact = false)
 		{
 			tinyxml2::XMLPrinter printer(0, bCompact);
 			m_XmlDoc.Accept(&printer);
@@ -488,7 +488,7 @@ namespace XML
 			return std::string(printer.CStr(), printer.CStrSize());
 		}
 
-		std::wstring ToWString(bool bCompact = false)
+		gcWString ToWString(bool bCompact = false)
 		{
 			return gcWString(ToString(bCompact));
 		}
