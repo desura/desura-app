@@ -11,8 +11,12 @@ Desura
 ===================
 
 Desura is a gaming client that allows users to one click download and install games and game modification.
-For more information, visit http://www.moddb.com/groups/desura/forum/thread/open-sourcing-desura
+For more information, visit http://github.com/lindenlab/desura-app/wiki/
 
+This Desura project is the open source from which the commercial
+Desura product client is built. It can also be built as "Desurium" for
+private use and experimentation with new features and fixes. For
+information on the licensing of the project, see the LICENSE.md file.
 
 Build Desura on Linux
 ===================
