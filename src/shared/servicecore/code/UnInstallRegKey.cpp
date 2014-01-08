@@ -24,14 +24,12 @@ $/LicenseInfo$
 */
 
 #include "Common.h"
+
+#ifdef WIN32
+
 #include <branding/branding.h>
 #include "sqlite3x.hpp"
-
 #include "sql/ItemInfoSql.h"
-
-#ifdef NIX
-	#define localtime_s(a, b) localtime_r( (b), (a) )
-#endif
 
 gcString g_szAppDataPath;
 
@@ -56,7 +54,6 @@ public:
 	uint32 branch;
 };
 
-#ifdef WIN32
 void CreateIco(DesuraId id, std::string &icon)
 {
 	std::string desuraInstallPath = UTIL::OS::getConfigValue("HKEY_LOCAL_MACHINE\\SOFTWARE\\Desura\\DesuraApp\\InstallPath");
@@ -74,7 +71,6 @@ void CreateIco(DesuraId id, std::string &icon)
 	if (UTIL::MISC::convertToIco(icon, path.getFullPath()))
 		icon = path.getFullPath();
 }
-#endif
 
 bool GetUninstallInfo(DesuraId id, UninstallInfo &info)
 {
@@ -125,10 +121,8 @@ bool GetUninstallInfo(DesuraId id, UninstallInfo &info)
 		if (info.branch == 0 || info.build == 0)
 			return false;
 
-#ifdef WIN32
 		if (UTIL::FS::isValidFile(info.icon))
 			CreateIco(id, info.icon);
-#endif
 
 		{
 			sqlite3x::sqlite3_command cmd(db, "SELECT name FROM branchinfo WHERE branchid=? AND internalid=?;");
@@ -138,7 +132,7 @@ bool GetUninstallInfo(DesuraId id, UninstallInfo &info)
 			sqlite3x::sqlite3_reader reader = cmd.executereader();
 	
 			reader.read();
-			info.version	= gcString(reader.getstring(0));
+			info.version = gcString(reader.getstring(0));
 		}
 	}
 	catch (std::exception &e)
@@ -148,28 +142,6 @@ bool GetUninstallInfo(DesuraId id, UninstallInfo &info)
 
 	return true;
 }
-
-void GetListOfItems(std::vector<DesuraId> &list)
-{
-	try
-	{
-		sqlite3x::sqlite3_connection db(getItemInfoDb(g_szAppDataPath.c_str()).c_str());
-
-		sqlite3x::sqlite3_command cmd(db, "SELECT internalid FROM iteminfo;");
-		sqlite3x::sqlite3_reader reader = cmd.executereader();
-	
-		while (reader.read())
-		{
-			list.push_back(DesuraId(reader.getint64(0)));
-		}
-	}
-	catch (std::exception &e)
-	{
-		Warning(gcString("Failed to get list of items for uninstall update: {0}\n", e.what()));
-	}
-}
-
-
 
 void SetUninstallRegKey(UninstallInfo &info, uint64 installSize)
 {
@@ -193,7 +165,6 @@ void SetUninstallRegKey(UninstallInfo &info, uint64 installSize)
 
 	gcString company	= base + "RegCompany";
 	gcString icon		= base + "DisplayIcon";
-
 	gcString date		= base + "InstallDate";
 
 	time_t rawtime;
@@ -206,14 +177,10 @@ void SetUninstallRegKey(UninstallInfo &info, uint64 installSize)
 
 	std::string desuraExe = UTIL::OS::getConfigValue("HKEY_LOCAL_MACHINE\\SOFTWARE\\Desura\\DesuraApp\\InstallPath");
 
-#ifdef WIN32
 #ifdef DEBUG
 	desuraExe += "\\desura-d.exe";
 #else
 	desuraExe += "\\desura.exe";
-#endif
-#else
-	desuraExe += "/desura";
 #endif
 
 	if (!UTIL::FS::isValidFile(info.icon))
@@ -246,19 +213,14 @@ void SetUninstallRegKey(UninstallInfo &info, uint64 installSize)
 	UTIL::OS::setConfigValue(date, today);
 }
 
-
-
 void RemoveUninstallRegKey(DesuraId id)
 {
-#ifdef WIN32
 	gcString regKey("HKEY_LOCAL_MACHINE\\Software\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\Desura_{0}", id.toInt64());
 	UTIL::WIN::delRegTree(regKey.c_str());
-#endif
 }
 
 bool SetUninstallRegKey(DesuraId id, uint64 installSize)
 {
-#ifdef WIN32
 	UninstallInfo info;
 
 	if (!GetUninstallInfo(id, info))
@@ -266,78 +228,7 @@ bool SetUninstallRegKey(DesuraId id, uint64 installSize)
 
 	SetUninstallRegKey(info, installSize);
 	return true;
-#else
-	return false;
-#endif
 }
 
-void UpdateAllUninstallRegKey()
-{
-#ifdef WIN32
-	std::vector<DesuraId> list;
-	GetListOfItems(list);
 
-	std::vector<std::string> regKeys;
-	UTIL::WIN::getAllRegKeys("HKEY_LOCAL_MACHINE\\Software\\Microsoft\\Windows\\CurrentVersion\\Uninstall", regKeys);
-
-	std::vector<DesuraId> processed;
-
-	UTIL::MISC::loadImgLib();
-
-	for (size_t x=0; x<regKeys.size(); x++)
-	{
-		std::string key = regKeys[x];
-
-		size_t pos = key.find("Desura_");
-
-		if (pos != 0)
-			continue;
-
-		std::string szId = key.substr(7, -1);
-
-		DesuraId id( UTIL::MISC::atoll(szId.c_str()) );
-
-		if (!id.isOk())
-			continue;
-
-		processed.push_back(id);
-		bool del = true;
-
-		for (size_t y=0; y<list.size(); y++)
-		{
-			if (id == list[y])
-			{
-				del = false;
-				break;
-			}
-		}
-
-		if (!del)
-			del = !SetUninstallRegKey(id, 0);
-
-		if (del)
-			RemoveUninstallRegKey(id);	
-	}
-
-
-	for (size_t x=0; x<list.size(); x++)
-	{
-		bool skip = false;
-
-		for (size_t y=0; y<processed.size(); y++)
-		{
-			if (list[x] == processed[y])
-			{
-				skip = true;
-				break;
-			}
-		}
-
-		if (skip)
-			continue;
-
-		SetUninstallRegKey(list[x], 0);
-	}
 #endif
-
-}

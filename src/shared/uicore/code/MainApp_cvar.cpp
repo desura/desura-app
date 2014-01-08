@@ -105,12 +105,6 @@ extern const char* GetAppVersion();
 extern "C" const char* GetMCFCoreVersion();
 extern const char* GetUICoreVersion();
 
-CONCOMMAND(cc_updateuninstall, "update_uninstall")
-{
-	if (GetUserCore())
-		GetUserCore()->updateUninstallInfo();
-}
-
 CONCOMMAND(cc_clearwccache, "clear_namecache")
 {
 	if (GetWebCore())
@@ -286,7 +280,6 @@ CVar gc_uploaddumps("gc_uploaddumps", "1", CFLAG_USER, (CVarCallBackFn)&updoaddu
 CVar gc_destroymain("gc_destroymain", "0", CFLAG_USER);
 CVar gc_noloadtab("gc_noloadtab", "0", CFLAG_USER);
 CVar gc_silentlaunch("gc_silentlaunch", "0", CFLAG_USER);
-CVar gc_updateduninstall("gc_updateduninstall", "0");
 CVar gc_disable_wge("gc_disable_wge", "0", CVAR_WINDOWS_ONLY);
 CVar gc_admin_largeupload("gc_admin_largeupload", "0", CFLAG_ADMIN);
 CVar gc_ignore_fs_perms("gc_ignore_windows_permissions_against_marks_wishes", "1", CVAR_WINDOWS_ONLY);

@@ -29,6 +29,7 @@ $/LicenseInfo$
 #ifdef WIN32
 #include "shlobj.h"
 #include "GameExplorerManager.h"
+#include "UpdateUninstallTask_win.h"
 #endif
 
 #include "sqlite3x.hpp"
@@ -268,7 +269,13 @@ void User::doLogIn(const char* user, const char* pass, bool bTestOnly)
 		getServiceMain()->updateShortCuts();
 
 	if (!m_bDelayLoading)
+	{
 		m_pItemManager->enableSave();
+#ifdef WIN32
+		getThreadPool()->queueTask(new UpdateUninstallTask(this));
+#endif
+	}
+		
 
 #ifdef WIN32
 #ifdef DEBUG

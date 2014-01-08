@@ -91,6 +91,7 @@ if(WIN32)
                   code/ToolManager_Script.cpp
                   code/ToolManager_win.cpp
                   code/User_win.cpp
+				  code/UpdateUninstallTask_win.cpp
 )
 else()
   file(GLOB PlattformSources

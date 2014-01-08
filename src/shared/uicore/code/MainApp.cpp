@@ -58,7 +58,6 @@ extern void SetCookies();
 
 extern CVar gc_savelogin;
 extern CVar admin_developer;
-extern CVar gc_updateduninstall;
 
 gcString g_szUICoreVersion("{0}.{1}.{2}.{3}", VERSION_MAJOR, VERSION_MINOR, VERSION_BUILDNO, VERSION_EXTEND);
 
@@ -628,12 +627,6 @@ void MainApp::onLoginAcceptedCB(std::pair<bool,bool> &loginInfo)
 	{
 		m_pInternalLink->handleInternalLink(m_szDesuraCache.c_str());
 		m_szDesuraCache = "";
-	}
-
-	if (!gc_updateduninstall.getBool())
-	{
-		GetUserCore()->updateUninstallInfo();
-		gc_updateduninstall.setValue(true);
 	}
 
 	onLoginEvent();

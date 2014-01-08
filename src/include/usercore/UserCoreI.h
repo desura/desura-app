@@ -425,7 +425,7 @@ public:
 	virtual void setMainWindowHandle(HWND handle)=0;
 #endif
 
-	//! Updates the uninstall registry list
+	//! Do not use. Depreciated
 	//!
 	virtual void updateUninstallInfo()=0;
 

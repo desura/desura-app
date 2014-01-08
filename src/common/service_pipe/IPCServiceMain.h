@@ -57,13 +57,14 @@ public:
 	void updateBinaryRegKeyBlob(const char* key, IPC::PBlob blob);
 #endif
 
+#ifdef WIN32
 	void removeUninstallRegKey(uint64 id);
 	void setUninstallRegKey(uint64 id, uint64 installSize);
-	void updateAllUninstallRegKey();
 
 	void addDesuraToGameExplorer();
 	void addItemGameToGameExplorer(const char* name, const char* dllPath);
 	void removeGameFromGameExplorer(const char* dllPath, bool deleteDll = true);
+#endif
 
 	void updateShortCuts();
 

@@ -30,7 +30,9 @@ $/LicenseInfo$
 #include "User.h"
 #ifdef WIN32
 #include "GameExplorerManager.h"
+#include "UpdateUninstallTask_win.h"
 #endif
+
 #ifdef NIX
 #include "util/UtilLinux.h"
 #endif
@@ -341,6 +343,11 @@ void UpdateThreadOld::loadLoginItems()
 	}
 
 	im->enableSave();
+
+#ifdef WIN32
+	m_pUser->getThreadPool()->queueTask(new UpdateUninstallTask(m_pUser));
+#endif
+
 	m_pUser->getLoginItemsLoadedEvent()->operator()();
 }
 

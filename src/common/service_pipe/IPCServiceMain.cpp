@@ -161,13 +161,13 @@ void IPCServiceMain::registerFunctions()
 	REG_FUNCTION_VOID( IPCServiceMain, setAppDataPath );
 	REG_FUNCTION_VOID( IPCServiceMain, setCrashSettings );
 
+#ifdef WIN32
 	REG_FUNCTION_VOID( IPCServiceMain, removeUninstallRegKey);
 	REG_FUNCTION_VOID( IPCServiceMain, setUninstallRegKey);
-	REG_FUNCTION_VOID( IPCServiceMain, updateAllUninstallRegKey);
-
 	REG_FUNCTION_VOID( IPCServiceMain, addDesuraToGameExplorer);
 	REG_FUNCTION_VOID( IPCServiceMain, addItemGameToGameExplorer);
 	REG_FUNCTION_VOID( IPCServiceMain, removeGameFromGameExplorer);
+#endif
 
 	REG_FUNCTION_VOID( IPCServiceMain, updateShortCuts);
 	REG_FUNCTION_VOID( IPCServiceMain, fixFolderPermissions);
@@ -284,6 +284,7 @@ void IPCServiceMain::setCrashSettings(const char* user, bool upload)
 	IPC::functionCallAsync(this, "setCrashSettings", user, upload);
 }
 
+#ifdef WIN32
 void IPCServiceMain::removeUninstallRegKey(uint64 id)
 {
 	IPC::functionCallAsync(this, "removeUninstallRegKey", id);
@@ -292,11 +293,6 @@ void IPCServiceMain::removeUninstallRegKey(uint64 id)
 void IPCServiceMain::setUninstallRegKey(uint64 id, uint64 installSize)
 {
 	IPC::functionCallAsync(this, "setUninstallRegKey", id, installSize);
-}
-
-void IPCServiceMain::updateAllUninstallRegKey()
-{
-	IPC::functionCallAsync(this, "updateAllUninstallRegKey");
 }
 
 void IPCServiceMain::addDesuraToGameExplorer()
@@ -313,7 +309,7 @@ void IPCServiceMain::removeGameFromGameExplorer(const char* dllPath, bool delete
 {
 	IPC::functionCallAsync(this, "removeGameFromGameExplorer", dllPath, deleteDll);
 }
-
+#endif
 
 void IPCServiceMain::updateShortCuts()
 {
@@ -351,10 +347,6 @@ void IPCServiceMain::debug(const char* msg)
 {
 	IPC::functionCallAsync(this, "debug", msg);
 }
-
-
-
-
 
 void IPCServiceMain::startThread()
 {
@@ -400,22 +392,15 @@ void IPCServiceMain::fixFolderPermissions(const char* dir)
 }
 
 
-void RemoveUninstallRegKey(DesuraId id);
-bool SetUninstallRegKey(DesuraId id, uint64 installSize);
-void UpdateAllUninstallRegKey();
-
+void UpdateShortCuts();
 
 #ifdef WIN32
+void RemoveUninstallRegKey(DesuraId id);
+bool SetUninstallRegKey(DesuraId id, uint64 installSize);
+
 void AddDesuraToWIndowsGameExplorer();
 void AddGameToWindowsGameExplorer(const char* name, const char* dllPath);
 void RemoveGameFromWindowsGameExplorer(const char* dllPath, bool deleteDll);
-#else
-void AddDesuraToWIndowsGameExplorer(){}
-void AddGameToWindowsGameExplorer(const char* name, const char* dllPath){}
-void RemoveGameFromWindowsGameExplorer(const char* dllPath, bool deleteDll){}
-#endif
-
-void UpdateShortCuts();
 
 class RemoveUninstallTask : public TaskI
 {
@@ -461,20 +446,6 @@ public:
 	uint64 installSize;
 };
 
-class UpdateUninstallTask : public TaskI
-{
-public:
-	void doTask()
-	{
-		UpdateAllUninstallRegKey();
-	}
-
-	void destroy()
-	{
-		delete this;
-	}
-};
-
 class AddDesuraToWGETask : public TaskI
 {
 public:
@@ -488,23 +459,6 @@ public:
 		delete this;
 	}
 };
-
-class UpdateShortcutTask : public TaskI
-{
-public:
-	void doTask()
-	{
-		UpdateShortCuts();
-	}
-
-	void destroy()
-	{
-		delete this;
-	}
-};
-
-
-
 
 class AddToWGETask : public TaskI
 {
@@ -529,7 +483,6 @@ public:
 	gcString m_szName;
 };
 
-
 class RemoveFromWGETask : public TaskI
 {
 public:
@@ -553,7 +506,22 @@ public:
 	bool m_bDelete;
 };
 
+#endif
 
+
+class UpdateShortcutTask : public TaskI
+{
+public:
+	void doTask()
+	{
+		UpdateShortCuts();
+	}
+
+	void destroy()
+	{
+		delete this;
+	}
+};
 
 
 
@@ -588,7 +556,7 @@ void IPCServiceMain::updateBinaryRegKeyBlob(const char* key, IPC::PBlob blob)
 	}
 }
 
-
+#ifdef WIN32
 void IPCServiceMain::removeUninstallRegKey(uint64 id)
 {
 	startThread();
@@ -599,12 +567,6 @@ void IPCServiceMain::setUninstallRegKey(uint64 id, uint64 installSize)
 {
 	startThread();
 	m_pServiceThread->addTask(new SetUninstallTask(id, installSize));	
-}
-
-void IPCServiceMain::updateAllUninstallRegKey()
-{
-	startThread();
-	m_pServiceThread->addTask(new UpdateUninstallTask());	
 }
 
 void IPCServiceMain::addDesuraToGameExplorer()
@@ -624,6 +586,9 @@ void IPCServiceMain::removeGameFromGameExplorer(const char* dllPath, bool delete
 	startThread();
 	m_pServiceThread->addTask(new RemoveFromWGETask(dllPath, deleteDll));		
 }
+
+#endif
+
 
 void IPCServiceMain::updateShortCuts()
 {

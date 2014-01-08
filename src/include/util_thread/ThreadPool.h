@@ -45,7 +45,7 @@ public:
 
 	virtual const char* getName()=0;
 
-	//! Overide doTask to implement the functionality for the task
+	//! Override doTask to implement the functionality for the task
 	//!
 	virtual void doTask()=0;
 
