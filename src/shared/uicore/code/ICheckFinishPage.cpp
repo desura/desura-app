@@ -82,12 +82,12 @@ void ICheckFinishPage::init()
 			m_butTryAgain->Show(false);
 			m_butCIP->Show(false);
 
-			msg = gcWString(L"{0} {1}", item->getName(), Managers::GetString(L"#IF_CHECK_FOUND") );
+			msg = gcWString(Managers::GetString(L"#IF_CHECK_FOUND"), item->getName());
 		}
 		else
 		{
 			m_butLaunch->Show(false);
-			msg = gcWString(L"{0} {1}", item->getName(), Managers::GetString(L"#IF_CHECK_NOTFOUND") );
+			msg = gcWString(Managers::GetString(L"#IF_CHECK_NOTFOUND"), item->getName());
 		}
 
 		m_labInfo->SetLabel(msg);

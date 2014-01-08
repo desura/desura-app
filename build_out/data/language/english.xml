@@ -261,6 +261,13 @@
 		<str name="#IF_NOTFOUND_GAME">{0} is expansion for the game {1}. You must have the game installed before you can play.&#xA;&#xA;Please select an install method for {1}:</str>
 		<str name="#IF_ONCOMPUTER">Use version installed on this computer</str>
 		<str name="#IF_PRELOADLAUNCH">{0} has been {2} and cannot be launched at this time. It will be available to play in {1} {4} on {3}.</str>
+		<!-- 
+			{0} Item Name
+			{1} Number of days
+			{2} if preloaded #IF_PRELOADLAUNCH_PRELOADED or if preordered #IF_PRELOADLAUNCH_PREORDERED
+			{3} date/time when item is available
+			{4} if days == 1 #IF_PRELOADLAUNCH_WORD_DAY else #IF_PRELOADLAUNCH_WORD_DAYS
+		-->
 		<str name="#IF_PRELOADLAUNCH_TITLE">{0}</str>
 		<str name="#IF_PRELOADLAUNCH_WORD_DAY">day</str>
 		<str name="#IF_PRELOADLAUNCH_WORD_DAYS">days</str>
@@ -334,9 +341,9 @@
 		<str name="#IF_CHECK_ERRTITLE">Install Check Error</str>
 		<str name="#IF_CHECK_ERROR">There was an error during the install check process and it has been stopped.</str>	
 	
-		<str name="#IF_CHECK_NOTFOUND">was not found on your computer. Please ensure it is installed and you have run it at least once, then try again. Otherwise you can click the "custom install" button below and tell us where it is installed.</str>	
+		<str name="#IF_CHECK_NOTFOUND">{0} was not found on your computer. Please ensure it is installed and you have run it at least once, then try again. Otherwise you can click the "custom install" button below and tell us where it is installed.</str><!-- {0} item name -->
 		<str name="#IF_CHECK_CIP">Custom Install</str>
-		<str name="#IF_CHECK_FOUND">has been found and is now ready to go.</str>
+		<str name="#IF_CHECK_FOUND">{0} has been found and is now ready to go.</str><!-- {0} item name -->
 	
 		<str name="#IF_COMPLEXLABEL_INIT">{0} (Initilizing)</str>
 		<str name="#IF_COMPLEXREMOVE">Removing Old Files</str>
@@ -358,9 +365,9 @@
 		<str name="#IF_WAIT_TITLE">Waiting for items:</str>
 		<str name="#IF_WAIT_FORCE">Force</str>
 		<str name="#IF_WAIT_CANCELALL">Cancel All</str>
-		<str name="#IF_WAIT_INFO">{0} is waiting for other items to complete before it will start {1}.</str><!-- {0}: item name, {1}: action -->
+		<str name="#IF_WAIT_INFO">{0} is waiting for other items to complete before it will start {1}.</str><!-- {0}: item name, {1}: action (next two strings) -->
 		<str name="#IF_WAIT_ACTION_UNINSTALL">to Uninstall the item</str>
-		<str name="#IF_WAIT_ACTION_VERIFY">to Verify the item files</str>	
+		<str name="#IF_WAIT_ACTION_VERIFY">to Verify the item files</str>
 	
 	
 		<!-- Main Form -->
