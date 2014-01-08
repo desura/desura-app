@@ -40,7 +40,6 @@
 #   FORCE_BUNDLED_WXGTK  		ON: bundle wxGTK 3.0.0
 #                   OFF			OFF: use system wxGTK (has to be 2.9.5 or later)
 #   DEBUG_EXTERNAL  OFF                 same as DEBUG, but for externap deps
-#   WITH_ARES       ON                  build CURL with ares support (c-ares REQUIRED)
 #   DIR_TYPE        SINGLE              how should game data be stored?
 #                                       SINGLE:   in a single dir in $HOME
 #                                       XDG:      like the official xdg specification
@@ -145,10 +144,7 @@ if(NOT BUILD_ONLY_CEF)
     set(Boost_USE_STATIC_RUNTIME OFF)
   endif()
   find_package(Boost COMPONENTS date_time filesystem thread system ${Boost_ADDITION_LIBS})
-
-  if(NOT WITH_ARES)
-    find_package(CURL 7.19.1 ${REQUIRED_IF_OPTION})
-  endif()
+  find_package(CURL 7.19.1 ${REQUIRED_IF_OPTION})
 
   if(NOT WIN32)
     find_package(GTK2 REQUIRED)
