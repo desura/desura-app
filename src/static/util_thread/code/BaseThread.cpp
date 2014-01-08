@@ -269,7 +269,7 @@ void BaseThread::join()
 	if (!thread)
 		return;
 
-	if (thread->joinable())
+	if (thread->get_id() != std::thread::id() && thread->joinable())
 		thread->join();
 }
 
