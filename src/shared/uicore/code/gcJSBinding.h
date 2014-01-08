@@ -50,6 +50,7 @@ public:
 	static UserCore::ItemManagerI* getItemManager();
 
 protected:
+	friend class MainApp;
 	friend class LanguageTestDialog;
 	static UserCore::ItemManagerI* gs_pItemManager;
 

@@ -48,6 +48,7 @@ $/LicenseInfo$
 
 #include "InternalLink.h"
 #include "DesuraServiceError.h"
+#include "gcJSBinding.h"
 
 #ifdef WITH_GTEST
 #include "gcUnitTestPage.h"
@@ -419,7 +420,9 @@ void MainApp::logOut(bool bShowLogin, bool autoLogin)
 		if (g_pUserHandle)
 		{
 			UserCore::UserI* user = g_pUserHandle;
+
 			g_pUserHandle = nullptr;
+			DesuraJSBinding::gs_pItemManager = nullptr;
 
 			user->logOut(!autoLogin);
 
