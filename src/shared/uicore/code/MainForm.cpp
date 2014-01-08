@@ -87,11 +87,7 @@ static CVar gc_allow_wm_positioning("gc_allow_wm_positioning", "true");
 #endif
 
 MainForm::MainForm(wxWindow* parent, bool offline, const char* szProvider) 
-#ifdef NIX64
-	: gcFrame(parent, wxID_ANY, PRODUCT_NAME_CATW(L" 64"), wxDefaultPosition, wxSize(990, 690), wxDEFAULT_FRAME_STYLE, true )
-#else
 	: gcFrame(parent, wxID_ANY, wxT(PRODUCT_NAME), wxDefaultPosition, wxSize(990, 690), wxDEFAULT_FRAME_STYLE, true )
-#endif
 {
 	Bind(wxEVT_COMMAND_MENU_SELECTED, &MainForm::onMenuSelect, this);
 	Bind(wxEVT_CLOSE_WINDOW, &MainForm::onFormClose, this);
