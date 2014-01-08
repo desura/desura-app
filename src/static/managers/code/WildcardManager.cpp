@@ -52,7 +52,25 @@ WildcardManager::~WildcardManager()
 {
 }
 
+gcString WildcardManager::constructPath(const char* path, bool fixPath)
+{
+	gcString ret;
+	char *szPathOut = nullptr;
 
+	try
+	{
+		constructPath(path, &szPathOut, fixPath);
+		ret = szPathOut;
+		safe_delete(szPathOut);
+	}
+	catch (...)
+	{
+		safe_delete(szPathOut);
+		throw;
+	}
+
+	return ret;
+}
 	
 void WildcardManager::constructPath(const char* path, char **res, bool fixPath)
 {

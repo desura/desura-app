@@ -83,7 +83,7 @@ class CEXPORT WildcardManager : public BaseManager<WildcardInfo>
 public:
 	WildcardManager();
 	WildcardManager(WildcardManager* mng);
-	~WildcardManager();
+	virtual ~WildcardManager();
 
 	void load();
 	void unload();
@@ -98,26 +98,7 @@ public:
 	//! @param fixPath fix slashes to be os
 	//!
 	void constructPath(const char* path, char **res, bool fixPath = true);
-
-	gcString constructPath(const char* path, bool fixPath = true)
-	{
-		gcString ret;
-		char *szPathOut = nullptr;
-
-		try
-		{
-			constructPath(path, &szPathOut, fixPath);
-			ret = szPathOut;
-			safe_delete(szPathOut);
-		}
-		catch (...)
-		{
-			safe_delete(szPathOut);
-			throw;
-		}
-
-		return ret;
-	}
+	gcString constructPath(const char* path, bool fixPath = true);
 
 	//! this parses an xml feed.
 	uint8 parseXML(const XML::gcXMLElement &xmlElement);
