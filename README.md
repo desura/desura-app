@@ -21,6 +21,8 @@ information on the licensing of the project, see the LICENSE.md file.
 Build Desura on Linux
 ===================
 
+Note: Due to not being able to use all commits from the GPL3 version, linux builds are not currently working.
+
 Dependencies
 ------------
 
@@ -31,7 +33,7 @@ Required dependencies:
  * GCC (4.6 or later, multilib support for 32 bit compatibility on 64 bit systems)
  * cmake (2.8.5 or later)
  * PkgConfig (for building DEB and RPM packages)
- * Boost (date_time, filesystem, thread, system, test_exec_monitor, unit_test_framework)
+ * Boost (date_time, filesystem, system)
  * Freetype
  * GTK2
  * libX11 (with libXt)
