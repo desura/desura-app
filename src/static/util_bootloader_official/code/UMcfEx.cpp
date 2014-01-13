@@ -27,6 +27,8 @@ $/LicenseInfo$
 #include "Common.h"
 #include "UMcfEx.h"
 
+#include "XMLMacros.h"
+
 
 UMcfEx::UMcfEx()
 {
@@ -51,9 +53,7 @@ void UMcfEx::getUpdateInfo(bool saveXml)
 		exit(-1);
 	}
 
-	tinyxml2::XMLDocument doc;
-	doc.Parse(const_cast<char*>(wc->getData()), wc->getDataSize());
-
+	XML::gcXMLDocument doc(wc->getData(), wc->getDataSize());
 	parseUpdateXml(doc);
 
 	if (m_pFileList.size() == 0)

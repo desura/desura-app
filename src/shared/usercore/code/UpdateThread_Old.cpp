@@ -356,9 +356,9 @@ void UpdateThreadOld::loadLoginItems()
 
 void UpdateThreadOld::checkAppUpdate(const XML::gcXMLElement &uNode)
 {
-	TiXmlElement* appEl = uNode->FirstChildElement("app");
+	auto appEl = uNode.FirstChildElement("app");
 
-	if (!appEl)
+	if (!appEl.IsValid())
 		return;
 
 	UserCore::User *pUser = dynamic_cast<UserCore::User*>(m_pUser);
@@ -369,14 +369,14 @@ void UpdateThreadOld::checkAppUpdate(const XML::gcXMLElement &uNode)
 	uint32 mcfversion = 0;
 	uint32 appid = 0;
 
-	const char* id = appEl->Attribute("id");
-	const char* ver = appEl->GetText();
+	auto id = appEl.GetAtt("id");
+	auto ver = appEl.GetText();
 
-	if (id)
-		appid = atoi(id);
+	if (!id.empty())
+		appid = atoi(id.c_str());
 		
-	if (ver)
-		mcfversion = atoi(ver);
+	if (!ver.empty())
+		mcfversion = atoi(ver.c_str());
 
 	if (appid != 0 && mcfversion != 0 && !(appid == m_iAppId && mcfversion <= m_iAppVersion ) && !(appid == m_uiLastAppId && m_uiLastAppId >= mcfversion))
 		pUser->appNeedUpdate(appid, mcfversion);
