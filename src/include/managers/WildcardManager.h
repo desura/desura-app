@@ -85,7 +85,7 @@ namespace XML
 }
 
 //! Stores wild cards (path and special locations) and allows them to be resolved into full paths on the file system
-class CEXPORT WildcardManager : public BaseManager<WildcardInfo>
+class WildcardManager : public BaseManager<WildcardInfo>
 {
 public:
 	WildcardManager();

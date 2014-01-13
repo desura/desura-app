@@ -42,7 +42,7 @@ public:
 	wxFrame* m_pFrame;
 };
 
-class CEXPORT WindowManager : public BaseManager<WindowItem>, public WindowManagerI
+class WindowManager : public BaseManager<WindowItem>, public WindowManagerI
 {
 public:
 	WindowManager();

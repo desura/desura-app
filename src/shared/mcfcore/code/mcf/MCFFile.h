@@ -51,7 +51,7 @@ extern const char* g_vNoCompressList[];
 
 //! MCFFile represents one file that is stored inside a MCF
 //! 
-class CEXPORT MCFFile : public MCFFileI
+class MCFFile : public MCFFileI
 {
 public:
 	//! Normal Constuctor

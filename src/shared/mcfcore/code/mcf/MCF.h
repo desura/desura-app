@@ -69,7 +69,7 @@ namespace MISC
 	class UserCookies; 
 }
 
-class CEXPORT MCF : public MCFI
+class MCF : public MCFI
 {
 public:
 	MCF();
