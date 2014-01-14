@@ -49,7 +49,7 @@ Required dependencies:
  * Curl
 
 Optional dependencies (will be built by cmake if not existing):
-- wxWidgets (2.9.3 or later)
+- wxWidgets (3.0.0 or later)
 - Breakpad
 - CEF (Chromium Embedded)
 

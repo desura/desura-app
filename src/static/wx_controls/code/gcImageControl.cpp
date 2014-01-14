@@ -159,7 +159,7 @@ void gcImageControl::doPaint(wxDC* dc)
 		}
 
 		wxBitmap temp(m_imgHandle->Scale(w, h, wxIMAGE_QUALITY_HIGH));
-		
+
 		wxMemoryDC memDC;
 		memDC.SelectObject(temp);
 
@@ -250,7 +250,7 @@ bool SetShape(const wxRegion& region, wxWindow* frame)
     // Tell the window manager that the window has changed shape
     ReshapeCustomWindow((WindowRef)GetHandle());
     return true;
-    
+
 #elif defined(__WXGTK__)
 
 	GtkWidget* m_wxwindow = frame->m_wxwindow;
@@ -260,28 +260,26 @@ bool SetShape(const wxRegion& region, wxWindow* frame)
 	{
 		if (m_wxwindow && GTK_WIDGET_NO_WINDOW(m_wxwindow))
 			gtk_widget_shape_combine_mask(m_wxwindow, nullptr, 0, 0);
-			
+
 		if (m_widget && GTK_WIDGET_NO_WINDOW(m_widget))
 			gtk_widget_shape_combine_mask(m_widget, nullptr, 0, 0);
 	}
 	else
-	{	
+	{
 		wxBitmap bmp = ConvertRegionToBitmap(region);
 		bmp.SetMask(new wxMask(bmp, *wxBLACK));
 		
-		GdkBitmap* mask = bmp.GetMask()->GetBitmap();
+		GdkBitmap* mask = bmp.GetMask();
 
 		if (m_wxwindow)
 			gtk_widget_shape_combine_mask(m_wxwindow, mask, 0, 0);
-			
+
 		if (m_widget)
 			gtk_widget_shape_combine_mask(m_widget, mask, 0, 0);
 	}
-	
+
 	return true;
 #else
 	return false;
 #endif
 }
-
-
