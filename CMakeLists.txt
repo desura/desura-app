@@ -217,10 +217,10 @@ endmacro()
 
 if(WIN32)
   SetupDownloadUrl(CEF_BIN "cef_bin.zip" c9c0379579d9d26557ca8f4b42f937f2)
-  SetupDownloadUrl(DESURA_EXTRA_BIN "desura_extra_bin_v3.zip" acc8750cce91f23b20e1310686dac101) 
+  SetupDownloadUrl(DESURA_EXTRA_BIN "desura_extra_bin_v3.zip" 79bd00407c682c6b1dab5c7fb65ba72e) 
 endif()
 
-SetupDownloadUrl(BOOST "boost_1_55_0.zip" c618e030fd4882e4dbacf54baf824544)
+SetupDownloadUrl(BOOST "boost_1_55_0.zip" 8aca361a4713a1f491b0a5e33fee0f1f)
 SetupDownloadUrl(BREAKPAD "breakpad-850-r1.zip" b0061a854df1a0d285edc74c5ac37c42)
 SetupDownloadUrl(CEF "cef-291.tar.gz" 97e925e33f2d48cd50172247dbe40f30)
 SetupDownloadUrl(CHROMIUM "chromium-15.0.876.0.tar.bz2" 22c8e1db4d1c4b474c600dffbb5fdd0c)
