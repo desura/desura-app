@@ -6,13 +6,14 @@ OFFICIAL_BUILD=OFF
 
 clean() {
 	rm -rf build
+	rm -rf build_cef
 	rm -rf install
 	rm -rf build_package
 	echo 'Cleaned'
 }
 
 build_desura() {
-	if [ ! -d "build_package" ]; then
+	if [ ! -d "build" ]; then
 		mkdir build
 	fi
 	cd build
@@ -23,10 +24,10 @@ build_desura() {
 }
 
 build_cef() {
-	if [ ! -d "build" ]; then
-		mkdir build
+	if [ ! -d "build_cef" ]; then
+		mkdir build_cef
 	fi
-	cd build
+	cd build_cef
 	cmake .. -DCMAKE_INSTALL_PREFIX=$PREFIX -DBUILD_ONLY_CEF=ON || exit 1
 	make install $@
 	cd ..
