@@ -12,7 +12,7 @@ clean() {
 }
 
 build_desura() {
-	if [ ! -d "build_package" ]; then
+	if [ ! -d "build" ]; then
 		mkdir build
 	fi
 	cd build
