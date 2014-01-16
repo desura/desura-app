@@ -193,21 +193,31 @@ public:
 
 	static std::string to_iso_string(const time_t &t)
 	{
+#ifdef NIX
+		assert(false);
+		return "";
+#else
 		tm source = *localtime(&t);
 
 		std::ostringstream stream;
 		stream << std::put_time(&source, IOS_TIME_STR_FORMAT);
 		return stream.str();
+#endif
 	}
 
 	static gcTime from_iso_string(const std::string &str)
 	{
+#ifdef NIX
+		assert(false);
+		return gcTime();
+#else
 		tm source = {0};
 
 		std::istringstream stream(str);
 		stream >> std::get_time(&source, IOS_TIME_STR_FORMAT);
 
 		return gcTime(std::chrono::system_clock::from_time_t(mktime(&source)));
+#endif
 	}
 
 private:

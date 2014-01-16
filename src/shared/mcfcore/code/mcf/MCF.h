@@ -83,7 +83,7 @@ public:
 	//! 
 	//! @param file MCFFile to add
 	//!
-	void addFile(std::shared_ptr<MCFCore::MCFFile>& file);
+	void addFile(std::shared_ptr<MCFCore::MCFFile>&& file);
 
 	//! Finds a files index by its hash
 	//!
@@ -228,16 +228,6 @@ protected:
 		uint32 thisMcf;		//!< Index in first mcf
 		uint32 otherMcf;	//!< Index in second mcf
 	} mcfDif_s;
-
-	//! A struct that is used in the sorting of the mcf files
-	//!
-	struct file_sortkey
-	{
-		bool operator()(std::shared_ptr<MCFCore::MCFFile>& lhs, std::shared_ptr<MCFCore::MCFFile>& rhs)
-		{
-			return (lhs->getHash() < rhs->getHash());
-		}
-	};
 
 	Event<MCFCore::Misc::ProgressInfo> onProgressEvent;	//!< Progress event
 	Event<gcException> onErrorEvent;					//!< Error event

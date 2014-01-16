@@ -165,8 +165,6 @@ void UMcf::setFile(const wchar_t* file, uint64 offset)
 
 uint8 UMcf::parseXml(char* buff, size_t buffLen)
 {
-	std::unique_ptr<char[]> outbuff;
-
 	UTIL::MISC::BZ2Worker worker(UTIL::MISC::BZ2_DECOMPRESS);
 
 	if (!(m_sHeader->getFlags() & MCFCore::MCFHeaderI::FLAG_NOTCOMPRESSED))
@@ -176,9 +174,7 @@ uint8 UMcf::parseXml(char* buff, size_t buffLen)
 
 		buffLen = worker.getReadSize();
 
-		outbuff = std::make_unique<char[]>(buffLen);
-		buff = outbuff.get();
-
+		gcBuff buff(buffLen);
 		worker.read(buff, buffLen);
 	}
 
@@ -581,8 +577,11 @@ void UMcf::dumpXml(const wchar_t* path)
 
 	auto filesElFiles = mcfElFiles.NewElement( "files" );
 
-	for (size_t x=0; x<m_pFileList.size(); x++)
-		m_pFileList[x]->genXml(filesElFiles.NewElement("file"));
+	for (auto file : m_pFileList)
+	{
+		auto el = filesElFiles.NewElement("file");
+		file->genXml(el);
+	}
 
 	doc.SaveFile(gcString(path).c_str());
 }

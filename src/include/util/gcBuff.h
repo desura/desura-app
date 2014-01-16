@@ -34,21 +34,27 @@ class gcBuff
 public:
 	gcBuff(uint32 size);
 	gcBuff(const char* src, uint32 size);
-	gcBuff(gcBuff &buff);
+
+	gcBuff(const gcBuff &buff);
+	gcBuff(gcBuff &&buff);
 	gcBuff(gcBuff *buff);
+
 	~gcBuff();
 
-	char operator[] (uint32 i); 
+	char operator[] (uint32 i) const; 
 	operator char*();
 
 	void cpy(const char* src, uint32 size);
 
 	char* c_ptr(){return m_cBuff;}
-	uint32 size(){return m_uiSize;}
+	uint32 size() const {return m_uiSize;}
+
+	gcBuff& operator=(const gcBuff &buff);
+	gcBuff& operator=(gcBuff &&buff);
 
 private:
-	char* m_cBuff;
-	uint32 m_uiSize;
+	char* m_cBuff = nullptr;
+	uint32 m_uiSize = 0;
 
 };
 

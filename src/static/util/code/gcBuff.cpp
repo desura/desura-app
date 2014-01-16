@@ -40,37 +40,40 @@ gcBuff::gcBuff(const char* src, uint32 size)
 	cpy(src, size);
 }
 
-gcBuff::gcBuff(gcBuff &buff)
+gcBuff::gcBuff(const gcBuff &buff)
 {
 	uint32 size = buff.size();
 
-	if (size == 0)
-	{
-		m_cBuff = nullptr;
-		m_uiSize = 0;
-	}
-	else
+	if (size > 0)
 	{
 		m_cBuff = new char[size];
 		m_uiSize = size;
-		cpy(buff.c_ptr(), size);
+		cpy(buff.m_cBuff, size);
 	}
+}
+
+gcBuff::gcBuff(gcBuff &&buff)
+{
+	m_cBuff = buff.m_cBuff;
+	m_uiSize = buff.m_uiSize;
+
+	buff.m_cBuff = nullptr;
+	buff.m_uiSize = 0;
 }
 
 gcBuff::gcBuff(gcBuff *buff)
 {
-	if (!buff || buff->size() == 0)
+	if (!buff)
+		return;
+
+	uint32 size = buff->size();
+
+ 	if (size > 0)
 	{
-		m_cBuff = nullptr;
-		m_uiSize = 0;
-	}
-	else
-	{
-		uint32 size = buff->size();
 		m_cBuff = new char[size];
 		m_uiSize = size;
 		cpy(buff->c_ptr(), size);
-	}	
+	}
 }
 
 gcBuff::~gcBuff()
@@ -78,7 +81,7 @@ gcBuff::~gcBuff()
 	safe_delete(m_cBuff);
 }
 
-char gcBuff::operator[] (uint32 i)
+char gcBuff::operator[] (uint32 i) const
 {
 	if (i > m_uiSize)
 		return '\0';
@@ -100,5 +103,38 @@ void gcBuff::cpy(const char* src, uint32 size)
 		size = m_uiSize;
 
 	memcpy(m_cBuff, src, size);
+}
+
+gcBuff& gcBuff::operator=(const gcBuff &buff)
+{
+	if (&buff == this)
+		return *this;
+
+	if (buff.size() > m_uiSize)
+	{
+		safe_delete(m_cBuff);
+		m_cBuff = new char[buff.size()];
+	}
+
+	m_uiSize = buff.size();
+	cpy(buff.m_cBuff, m_uiSize);
+
+	return *this;
+}
+
+gcBuff& gcBuff::operator=(gcBuff &&buff)
+{
+	if (&buff == this)
+		return *this;
+
+	safe_delete(m_cBuff);
+
+	m_cBuff = buff.m_cBuff;
+	m_uiSize = buff.m_uiSize;
+
+	buff.m_cBuff = nullptr;
+	buff.m_uiSize = 0;
+
+	return *this;
 }
 

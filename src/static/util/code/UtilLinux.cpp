@@ -771,7 +771,7 @@ BinType getFileType(const char* buff, size_t buffSize)
 }
 
 
-const char g_cBadChars[] = {
+static const std::vector<char> g_cBadChars = {
 	'\\',
 	'/',
 	':',
@@ -782,8 +782,7 @@ const char g_cBadChars[] = {
 	'>',
 	'|',
 	'%',
-	'"',
-	NULL
+	'"'
 };
 
 gcString getAbsPath(const gcString& path)
@@ -823,15 +822,13 @@ std::string sanitiseFileName(const char* name)
 		size_t y=0;
 		bool bad = false;
 
-		while (g_cBadChars[y])
+		for (auto c : g_cBadChars)
 		{
-			if (g_cBadChars[y] == name[x])
+			if (c == name[x])
 			{
 				bad = true;
 				break;
 			}
-
-			y++;
 		}
 
 		if (!bad)

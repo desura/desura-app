@@ -385,7 +385,7 @@ std::string urlEncode(const std::string& c)
 
 
 
-const char base64_chars[] =
+static const std::vector<char> base64_chars =
 {
 	'A','B','C','D','E','F','G','H','I','J',
 	'K','L','M','N','O','P','Q','R','S','T',
@@ -394,8 +394,7 @@ const char base64_chars[] =
 	'k','l','m','n','o','p','q','r','s','t',
 	'u','v','w','x','y','z',
 	'0','1','2','3','4','5','6','7','8','9',
-	'+','/',
-	(char)nullptr,
+	'+','/'
 };
 
 static inline bool is_base64(unsigned char c)
@@ -452,7 +451,7 @@ void base64_decodeCB(const std::string &encoded_string, UTIL::CB::CallbackI* cal
 			{
 				size_t x=0;
 
-				while (base64_chars[x])
+				for (size_t x=0; x<base64_chars.size(); ++x)
 				{
 					if (base64_chars[x] == char_array_4[i])
 					{
@@ -579,26 +578,13 @@ public:
 };
 
 
-
-std::unique_ptr<unsigned char[]> base64_decode(const std::string &encoded_string, size_t &outlen)
+gcBuff base64_decode(const std::string &encoded_string)
 {
 	OutFunctor of;
 	base64_decode(encoded_string, of);
 
-	outlen = of.vOut.size();
-
-	if (outlen == 0)
-		return nullptr;
-
-	auto ret = std::make_unique<unsigned char[]>(outlen);
-
-	for (size_t x=0; x<outlen; x++)
-		ret[x] = of.vOut[x];
-
-	return ret;
+	return gcBuff((char*)of.vOut.data(), of.vOut.size());
 }
-
-
 
 std::string escape(const std::string &in)
 {

@@ -6,30 +6,38 @@
 include(FindPackageHandleStandardArgs)
 include(CheckCXXSourceCompiles)
 
-find_path(TINYXML_H_PATH NAMES tinyxml.h)
-find_library(TINYXML_LIB NAMES tinyxml libtinyxml)
-mark_as_advanced(TINYXML_H_PATH TINYXML_LIB)
+find_path(TINYXML2_H_PATH NAMES tinyxml2.h)
+find_library(TINYXML2_LIB NAMES tinyxml2 libtinyxml2)
+mark_as_advanced(TINYXML2_H_PATH TINYXML2_LIB)
 
-find_package_handle_standard_args(TINYXML DEFAULT_MSG TINYXML_LIB TINYXML_H_PATH)
+find_package_handle_standard_args(TINYXML DEFAULT_MSG TINYXML2_LIB TINYXML2_H_PATH)
 
 if (TINYXML_FOUND)
     # what API version do we have here?
-    set(CMAKE_REQUIRED_INCLUDES ${TINYXML_H_PATH})
-    set(CMAKE_REQUIRED_LIBRARIES ${TINYXML_LIB})
+    set(CMAKE_REQUIRED_INCLUDES ${TINYXML2_H_PATH})
+    set(CMAKE_REQUIRED_LIBRARIES ${TINYXML2_LIB})
     check_cxx_source_compiles("
-    #include <tinyxml.h>
+    #include <tinyxml2.h>
     int main() {
-        int i = TiXmlElement::TINYXML_ELEMENT;
+        tinyxml2::XMLError m_eXMLLoadError = tinyxml2::XML_ERROR_EMPTY_DOCUMENT;
         return 0;
     }"
     
     TINYXML_API_TEST)
+endif()
 
-    set (TINYXML_HAS_2_6_API ${TINYXML_API_TEST})
-    set (TINYXML_INCLUDE_DIR ${TINYXML_H_PATH})
+if (TINYXML_API_TEST)
+    set (TINYXML_INCLUDE_DIR ${TINYXML2_H_PATH})
     set (TINYXML_LIBRARIES ${TINYXML_LIB})
 else()
-    set (TINYXML_INCLUDE_DIR)
-    set (TINYXML_LIBRARIES)
+	if (TINYXML_FOUND)
+		message("-- System TinyXml2 found but is too old, using local tinyxml2")
+	else()
+		message("-- System TinyXml2 not found, using local tinyxml2")
+	endif()
+
+	set(TINYXML_FOUND)
+    set(TINYXML_INCLUDE_DIR)
+    set(TINYXML_LIBRARIES)
 endif()
 

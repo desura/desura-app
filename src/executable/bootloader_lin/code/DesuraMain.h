@@ -78,7 +78,7 @@ protected:
 	void onCrashShib(const char* path);
 	static bool onCrash(const char* path);
 	
-	void processCrash(CrashArg_s* args = nullptr);
+	void processCrash();
 	void setUser(const char* user);
 	
 	static void setCrashSettings(const char* user, bool upload);

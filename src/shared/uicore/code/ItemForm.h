@@ -35,6 +35,7 @@ $/LicenseInfo$
 #include "usercore/ItemHandleI.h"
 
 class GatherInfoThread;
+class LanguageTestDialog;
 
 typedef std::pair<UserCore::Item::Helper::ACTION, gcString> SIPArg;
 
@@ -102,7 +103,6 @@ public:
 	bool isInit();
 
 protected:
-
 	Event<bool> onVerifyAfterHashFailEvent;
 	void verifyAfterHashFail(bool& res);
 
