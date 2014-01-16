@@ -38,7 +38,7 @@
 #
 # unix-only options:
 #   FORCE_BUNDLED_WXGTK  		ON: bundle wxGTK 3.0.0
-#                   OFF			OFF: use system wxGTK (has to be 2.9.5 or later)
+#                   OFF			OFF: use system wxGTK (has to be 3.0.0 or later)
 #   DEBUG_EXTERNAL  OFF                 same as DEBUG, but for externap deps
 #   DIR_TYPE        SINGLE              how should game data be stored?
 #                                       SINGLE:   in a single dir in $HOME
@@ -52,8 +52,8 @@
 #   DESKTOP_ICON    desura              the value of Icon in the desktop file
 #
 # wxWidgets select correct  version
-#   wxWidgets_CONFIG_EXECUTABLE         path to wx-config (version 2.9.5 or later)
-#   wxWidgets_wxrc_EXECUTABLE           path to wxrc (version 2.9.5 or later)
+#   wxWidgets_CONFIG_EXECUTABLE         path to wx-config (version 3.0.0 or later)
+#   wxWidgets_wxrc_EXECUTABLE           path to wxrc (version 3.0.0 or later)
 #
 # windows-only options:
 #   BOOST_URL                           URL to boost archive

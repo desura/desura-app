@@ -1,6 +1,6 @@
 if(WIN32 AND NOT MINGW)
   ExternalProject_Add(
-    wxWidgets-custom
+    wxWidgets
     URL ${WXWIDGET_URL}
     URL_MD5 ${WXWIDGET_MD5}
     UPDATE_COMMAND ""
@@ -12,7 +12,7 @@ if(WIN32 AND NOT MINGW)
 
   if(DEBUG) 
     ExternalProject_Add_Step(
-      wxWidgets-custom
+      wxWidgets
       custom_build
       DEPENDEES configure
       DEPENDERS build
@@ -21,7 +21,7 @@ if(WIN32 AND NOT MINGW)
     )
   else()
     ExternalProject_Add_Step(
-      wxWidgets-custom
+      wxWidgets
       custom_build
       DEPENDEES configure
       DEPENDERS build
@@ -31,7 +31,7 @@ if(WIN32 AND NOT MINGW)
   endif()
   
   ExternalProject_Get_Property(
-    wxWidgets-custom
+    wxWidgets
     source_dir
   )
   set(wxWidgets_INSTALL_DIR ${source_dir})
@@ -41,11 +41,11 @@ if(WIN32 AND NOT MINGW)
   if(DEBUG)
     set(wxWidgets_INCLUDE_DIRS ${wxWidgets_INSTALL_DIR}/include ${wxWidgets_INSTALL_DIR}/include/msvc)
     set(wxWidgets_LIBRARIES ${wxWidgets_LIBRARY_DIRS}/wxmsw30ud.lib)
-    install_external_library(wxWidgets-custom "${wxWidgets_LIBRARY_DIRS}/wxmsw30ud_vc_desura.dll")
+    install_external_library(wxWidgets "${wxWidgets_LIBRARY_DIRS}/wxmsw30ud_vc_desura.dll")
   else()
     set(wxWidgets_INCLUDE_DIRS ${wxWidgets_INSTALL_DIR}/include ${wxWidgets_INSTALL_DIR}/include/msvc)
     set(wxWidgets_LIBRARIES ${wxWidgets_LIBRARY_DIRS}/wxmsw30u.lib)
-    install_external_library(wxWidgets-custom "${wxWidgets_LIBRARY_DIRS}/wxmsw30u_vc_desura.dll")
+    install_external_library(wxWidgets "${wxWidgets_LIBRARY_DIRS}/wxmsw30u_vc_desura.dll")
   endif()
   
 else()
@@ -68,7 +68,7 @@ else()
   endif()
 
   ExternalProject_Add(
-    wxWidgets-custom
+    wxWidgets
     URL ${WXWIDGET_URL}
     URL_MD5 ${WXWIDGET_MD5}
     UPDATE_COMMAND ""
@@ -84,14 +84,14 @@ else()
   if(DEBUG_EXTERNAL)
     set(wxWidgets_INCLUDE_DIRS  ${wxWidgets_INSTALL_DIR}/include/wx-3.0-desura ${wxWidgets_LIBRARY_DIRS}/wx/include/${WX_SETUP_INCLUDE_SUB_DEBUG})
     set(wxWidgets_LIBRARIES "${wxWidgets_LIBRARY_DIRS}/${WX_LIB_NAME_DEBUG}")
-    install_external_library(wxWidgets-custom ${wxWidgets_LIBRARY_DIRS}/${WX_LIB_NAME})
+    install_external_library(wxWidgets ${wxWidgets_LIBRARY_DIRS}/${WX_LIB_NAME})
   else()
     set(wxWidgets_INCLUDE_DIRS  ${wxWidgets_INSTALL_DIR}/include/wx-3.0-desura ${wxWidgets_LIBRARY_DIRS}/wx/include/${WX_SETUP_INCLUDE_SUB})
     set(wxWidgets_LIBRARIES "${wxWidgets_LIBRARY_DIRS}/${WX_LIB_NAME}")
-    install_external_library(wxWidgets-custom ${wxWidgets_LIBRARY_DIRS}/${WX_LIB_NAME})
+    install_external_library(wxWidgets ${wxWidgets_LIBRARY_DIRS}/${WX_LIB_NAME})
   endif()
   set(wxWidgets_BIN_DIR ${wxWidgets_INSTALL_DIR}/bin)
   set(wxWidgets_CONFIG_EXECUTABLE ${wxWidgets_BIN_DIR}/wx-config)
-  set_property(TARGET wxWidgets-custom PROPERTY FOLDER "ThirdParty")
+  set_property(TARGET wxWidgets PROPERTY FOLDER "ThirdParty")
 endif()
 
