@@ -449,17 +449,13 @@ void base64_decodeCB(const std::string &encoded_string, UTIL::CB::CallbackI* cal
 		{
 			for (i = 0; i <4; i++)
 			{
-				size_t x=0;
-
 				for (size_t x=0; x<base64_chars.size(); ++x)
 				{
-					if (base64_chars[x] == char_array_4[i])
-					{
-						char_array_4[i] = x;
-						break;
-					}
+					if (base64_chars[x] != char_array_4[i])
+						continue;
 
-					x++;
+					char_array_4[i] = x;
+					break;
 				}
 			}
 
@@ -481,17 +477,13 @@ void base64_decodeCB(const std::string &encoded_string, UTIL::CB::CallbackI* cal
 			if (j >= i)
 				char_array_4[j] = 0;
 
-			size_t x=0;
-
 			for (size_t x=0; x<base64_chars.size(); ++x)
 			{
-				if (base64_chars[x] == char_array_4[j])
-				{
-					char_array_4[j] = x;
-					break;
-				}
+				if (base64_chars[x] != char_array_4[j])
+					continue;
 
-				x++;
+				char_array_4[j] = x;
+				break;
 			}
 		}
 
