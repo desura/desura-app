@@ -212,9 +212,9 @@ uint64 MCF::getFileSize()
 	return size;
 }
 
-void MCF::addFile(std::shared_ptr<MCFCore::MCFFile>& file)
+void MCF::addFile(std::shared_ptr<MCFCore::MCFFile>&& file)
 {
-	m_pFileList.push_back(file);
+	m_pFileList.push_back(std::move(file));
 }
 
 MCFCore::MCFFileI* MCF::getMCFFile(uint32 index)
