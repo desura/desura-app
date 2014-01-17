@@ -314,7 +314,7 @@ bool InternalLink::switchTab(bool &badLink, std::vector<gcString> &list, const c
 		gcString url;
 		url.assign((char*)out.get(), outLen);
 
-		if (url.size() > 0 && url.find("http://") == 0)
+		if (url.size() > 0 && (url.find("http://") == 0 || url.find("https://") == 0))
 			g_pMainApp->loadUrl(url.c_str(), page);
 	}
 
