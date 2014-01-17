@@ -12,7 +12,7 @@ before_install:
   - cd curl-7.34.0
   - ./configure
   - make
-  - sudo install
+  - sudo make install
   - cd ..
   - wget http://www.cmake.org/files/v2.8/cmake-2.8.12.2.zip
   - unzip cmake-2.8.12.2
