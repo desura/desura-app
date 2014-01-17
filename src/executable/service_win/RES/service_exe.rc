@@ -2,7 +2,7 @@
 //
 #include "resource.h"
 
-#include "Winuser.h"
+#include "windows.h"
 
 #ifdef _WIN32
 LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
