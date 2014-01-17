@@ -88,13 +88,13 @@ class ListenThread : public Thread::BaseThread
 public:
 	ListenThread(MainApp* mainApp) : Thread::BaseThread("IPC Listen Thread")
 	{
-	
+
 		if (!mainApp)
 			return;
-			
+
 		g_pMainApp = mainApp;
 		m_bShouldStop = false;
-		
+
 		if ((socketListen = socket(AF_UNIX, SOCK_STREAM, 0)) == -1)
 		{
 			ERROR_OUTPUT("Failed to create socket");
@@ -121,12 +121,12 @@ public:
 			m_bShouldStop = true;
 			return;
 		}
-		
+
 		/* Wait up to five seconds. */
 		tv.tv_sec = 1;
 		tv.tv_usec = 0;
 	}
-	
+
 protected:
 	virtual void run()
 	{
@@ -134,10 +134,10 @@ protected:
 		{
 			if (m_bShouldStop)
 				return;
-					
+
 			FD_ZERO(&rfds);
 			FD_SET(socketListen, &rfds);
-			
+
 			int sretval = select(socketListen + 1, &rfds, nullptr, nullptr, &tv);
 
 			if (sretval == -1) // error
@@ -151,16 +151,16 @@ protected:
 				gcSleep(500);
 				continue;
 			}
-			
+
 			socklen_t t = sizeof(socketRemote);
 			if ((socketConnected = accept(socketListen, (struct sockaddr *)&socketRemote, &t)) == -1) {
 				ERROR_OUTPUT("Failed to accept connection");
 				exit(1);
 			}
-			
+
 			n = recv(socketConnected, str, PATH_MAX - 1, 0);
 			str[n] = '\0';
-			
+
 			gcString d(str);
 
 			std::vector<std::string> out;
@@ -201,17 +201,17 @@ protected:
 			}
 
 			close(socketConnected);
-			
+
 			gcSleep(500);
 		}
 	}
-	
+
 	virtual void onStop()
 	{
 		m_bShouldStop = true;
 		unlink(socketLocal.sun_path);
 	}
-	
+
 private:
 	volatile bool m_bShouldStop;
 	int socketListen, socketConnected, t, len;
@@ -240,61 +240,57 @@ public:
 		Warning(gcString("wx Assert: {0}\n", msg.mb_str()));
 		return true;
 	}
-	
-	virtual void SetLocale()
-	{
-		m_pOldTraits->SetLocale();
-	}
-	
+
 	virtual wxLog* CreateLogTarget()
 	{
 		return m_pOldTraits->CreateLogTarget();
 	}
-	
+
 	virtual wxMessageOutput* CreateMessageOutput()
 	{
 		return m_pOldTraits->CreateMessageOutput();
 	}
+
 	virtual wxFontMapper* CreateFontMapper()
 	{
 		return m_pOldTraits->CreateFontMapper();
 	}
-	
+
 	virtual wxRendererNative* CreateRenderer()
 	{
 		return m_pOldTraits->CreateRenderer();
 	}
-	
+
 	virtual bool HasStderr()
 	{
 		return m_pOldTraits->HasStderr();
 	}
-	
+
 	virtual wxEventLoopBase* CreateEventLoop()
 	{
 		return m_pOldTraits->CreateEventLoop();
 	}
-	
+
 	virtual wxTimerImpl* CreateTimerImpl(wxTimer* timer)
 	{
 		return m_pOldTraits->CreateTimerImpl(timer);
 	}
-	
+
 	virtual wxPortId GetToolkitVersion(int* a, int* b) const
 	{
 		return m_pOldTraits->GetToolkitVersion(a, b);
 	}
-	
+
 	virtual bool IsUsingUniversalWidgets() const
 	{
 		return m_pOldTraits->IsUsingUniversalWidgets();
 	}
-	
+
 	virtual wxString GetDesktopEnvironment() const
 	{
 		return m_pOldTraits->GetDesktopEnvironment();
 	}
-	
+
 private:
 	wxAppTraits* m_pOldTraits;
 };
@@ -373,7 +369,6 @@ public:
 	}
 };
 
-
 bool WindowsShutdown(wxWindowMSW *win, WXUINT nMsg, WXWPARAM wParam, WXLPARAM lParam)
 {
 	if (nMsg == WM_QUERYENDSESSION)
@@ -416,7 +411,7 @@ public:
 		m_pListenThread = nullptr;
 #endif
 	}
-	
+
 	~Desura()
 	{
 		safe_delete(m_pChecker);
@@ -425,7 +420,7 @@ public:
 #else
 		if (m_pListenThread)
 			m_pListenThread->stop();
-		
+
 		safe_delete(m_pListenThread);
 #endif
 	}
@@ -497,17 +492,17 @@ public:
 
 		ma->run();
 		wxLog::SetActiveTarget(new DesuraLog());
-		
+
 #ifdef NIX
 		SetTopWindow(ma);
 		m_pListenThread = new ListenThread(ma);
 		m_pListenThread->start();
-		
+
 		//house keeping
 		UTIL::FS::delFile(UTIL::LIN::expandPath("~/.desura_lock").c_str());
 		UTIL::FS::delFile(UTIL::LIN::expandPath("~/.desura_socket").c_str());
 		UTIL::FS::delFile(UTIL::LIN::expandPath("~/.desura_autologin").c_str());
-		
+
 		UTIL::FS::delFile(UTIL::LIN::expandPath("~/.desura/.socket").c_str());
 		UTIL::FS::delFile(UTIL::LIN::expandPath("~/.desura/.autologin").c_str());
 #endif
@@ -521,24 +516,24 @@ public:
 	virtual int OnExit()
 	{
 		ERROR_OUTPUT("OnExit wxAPP");
-		
+
 		safe_delete(m_pChecker);
 		ShutdownWebControl();
-		
+
 #ifdef WIN32
 		safe_delete(m_pServer);
 
 		if (UTIL::WIN::getOSId() == WINDOWS_7)
 		{
 			wxWindow::MSWUnregisterMessageHandler(m_wmTBC, &HandleTaskBarMsg);
-		
+
 			if (g_pITBL3)
 			{
 				 g_pITBL3->Release();
 				 g_pITBL3 = nullptr;
 			}
 		}
-		
+
 		wxWindow::MSWUnregisterMessageHandler(WM_ENDSESSION, &WindowsShutdown);
 		wxWindow::MSWUnregisterMessageHandler(WM_QUERYENDSESSION, &WindowsShutdown);
 #endif
@@ -560,7 +555,7 @@ public:
 	{
 		Warning(gcString("Assert: {0} [{1}] in file {2}: {3}\n", msg, cond, file, line));
 	}
-	
+
 #ifdef NIX
 	virtual wxAppTraits* CreateTraits()
 	{
@@ -580,12 +575,8 @@ private:
 
 IMPLEMENT_APP_NO_MAIN(Desura)
 
-
-
 CONCOMMAND(exitApp, "exit")
 {
 	if (g_pMainApp)
 		g_pMainApp->Close();
 }
-
-

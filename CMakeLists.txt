@@ -38,7 +38,7 @@
 #
 # unix-only options:
 #   FORCE_BUNDLED_WXGTK  		ON: bundle wxGTK 3.0.0
-#                   OFF			OFF: use system wxGTK (has to be 2.9.5 or later)
+#                   OFF			OFF: use system wxGTK (has to be 3.0.0 or later)
 #   DEBUG_EXTERNAL  OFF                 same as DEBUG, but for externap deps
 #   DIR_TYPE        SINGLE              how should game data be stored?
 #                                       SINGLE:   in a single dir in $HOME
@@ -52,8 +52,8 @@
 #   DESKTOP_ICON    desura              the value of Icon in the desktop file
 #
 # wxWidgets select correct  version
-#   wxWidgets_CONFIG_EXECUTABLE         path to wx-config (version 2.9.5 or later)
-#   wxWidgets_wxrc_EXECUTABLE           path to wxrc (version 2.9.5 or later)
+#   wxWidgets_CONFIG_EXECUTABLE         path to wx-config (version 3.0.0 or later)
+#   wxWidgets_wxrc_EXECUTABLE           path to wxrc (version 3.0.0 or later)
 #
 # windows-only options:
 #   BOOST_URL                           URL to boost archive
@@ -104,7 +104,11 @@ SET_PROPERTY(GLOBAL PROPERTY USE_FOLDERS ON)
 if(DEBUG)
   set(CMAKE_BUILD_TYPE Debug)
 else()
-  set(CMAKE_BUILD_TYPE Release)
+  if(OFFICIAL_BUILD)
+    set(CMAKE_BUILD_TYPE RelWithDebInfo)
+  else()
+    set(CMAKE_BUILD_TYPE Release)
+  endif()
 endif()
 
 ###############################################################################
@@ -212,28 +216,22 @@ macro(SetupDownloadUrl name url md5)
 endmacro()
 
 if(WIN32)
-  SetupDownloadUrl(BOOST "boost_1_53_0.zip" c618e030fd4882e4dbacf54baf824544)
   SetupDownloadUrl(CEF_BIN "cef_bin.zip" c9c0379579d9d26557ca8f4b42f937f2)
-  SetupDownloadUrl(DESURA_EXTRA_BIN "desura_extra_bin_v2.zip" acc8750cce91f23b20e1310686dac101) 
+  SetupDownloadUrl(DESURA_EXTRA_BIN "desura_extra_bin_v3.zip" 79bd00407c682c6b1dab5c7fb65ba72e) 
 endif()
 
+SetupDownloadUrl(BOOST "boost_1_55_0.zip" 8aca361a4713a1f491b0a5e33fee0f1f)
 SetupDownloadUrl(BREAKPAD "breakpad-850-r1.zip" b0061a854df1a0d285edc74c5ac37c42)
 SetupDownloadUrl(CEF "cef-291.tar.gz" 97e925e33f2d48cd50172247dbe40f30)
 SetupDownloadUrl(CHROMIUM "chromium-15.0.876.0.tar.bz2" 22c8e1db4d1c4b474c600dffbb5fdd0c)
-
-if(WIN32 OR NOT CURL_FOUND)
-  SetupDownloadUrl(CURL "curl-7.32.0.tar.bz2" 30d04b0a8c43c6770039d1bf033dfe79)
-endif()
-
+SetupDownloadUrl(CURL "curl-7.32.0.tar.bz2" 30d04b0a8c43c6770039d1bf033dfe79)
 SetupDownloadUrl(DEPOT_TOOLS "depot_tools-r1.zip" a27266b8d2388c4dc51645d1159dd0de)
 SetupDownloadUrl(GTEST "gtest-1.7.0.zip" 2d6ec8ccdf5c46b05ba54a9fd1d130d7)
 SetupDownloadUrl(V8 "v8-3.18.5.14.tar.bz2" 657802ea63c89190fd510ee1a2a719bf)
-
-#SetupDownloadUrl(WXWIDGET "wxWidgets-2.9.3.tar.bz2" 6b6003713289ea4d3cd9b49c5db5b721)
-SetupDownloadUrlCustom(WXWIDGET "http://sourceforge.net/projects/wxwindows/files/3.0.0/wxWidgets-3.0.0.tar.bz2/download" 241998efc12205172ed24c18788ea2cd)
+SetupDownloadUrl(WXWIDGET "wxWidgets-3.0.0.tar.bz2" 241998efc12205172ed24c18788ea2cd)
 
 ###############################################################################
-# build some externel projects
+# build some external projects
 ###############################################################################
 
 if(NOT BUILD_ONLY_CEF)

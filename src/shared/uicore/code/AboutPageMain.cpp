@@ -39,6 +39,13 @@ AboutMainPage::AboutMainPage(wxWindow* parent) : gcPanel(parent, wxID_ANY)
 
 	m_labBuild = new wxStaticText(this, wxID_ANY, gcWString(L"Build {0}.{1}", szAppid, szAppBuild), wxDefaultPosition, wxDefaultSize, 0 );
 	m_labBuild->Wrap( 270 );
+	m_labInfo = new wxStaticText( this, wxID_ANY, Managers::GetString(L"#AB_ABOUTINFO"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_labInfo->Wrap( 270 );
+	
+	gcWString copy("Desurium is open source software LGPL v2.1. \nGet source from: http://github.com/lindenlab/desura-app");
+
+	m_labCopyRight = new wxStaticText( this, wxID_ANY, copy.c_str(), wxDefaultPosition, wxSize(-1, 85), 0 );
+	m_labCopyRight->Wrap( 270 );
 
 
 	wxFlexGridSizer* fgSizer7;
@@ -47,46 +54,11 @@ AboutMainPage::AboutMainPage(wxWindow* parent) : gcPanel(parent, wxID_ANY)
 	fgSizer7->AddGrowableRow( 1 );
 	fgSizer7->SetFlexibleDirection( wxBOTH );
 	fgSizer7->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
-	
-
 	fgSizer7->Add( m_labBuild, 0, wxLEFT|wxRIGHT, 5 );
-
-	m_labInfo = new wxStaticText( this, wxID_ANY, Managers::GetString(L"#AB_ABOUTINFO"), wxDefaultPosition, wxDefaultSize, 0 );
-	m_labInfo->Wrap( 270 );
-	
-	
 	fgSizer7->Add( m_labInfo, 0, wxLEFT|wxALIGN_CENTER_VERTICAL, 5 );
-	
 	fgSizer7->Add(5,0,0,0,0);
-
-
-	gcString date = __DATE__;
-
-	std::vector<std::string> reduced;
-	std::vector<std::string> out;
-
-	UTIL::STRING::tokenize(date, out, " ");
-
-	for (size_t x=0; x<out.size(); x++)
-	{
-		if (out[x].size() > 0)
-			reduced.push_back(out[x]);
-	}
-
-	int offsetY = 0;
-#ifdef DESURA_OFFICIAL_BUILD
-	gcWString copy("\u00A9 {0} Desura Pty Ltd. All rights reserved. \nDesura is a trademark of Desura Pty Ltd.", reduced[2]);
-	offsetY = 50;
-#else
-	gcWString copy("Desurium is open source software GPL v3. \nGet source from: http://github.com/desura/Desurium");
-	offsetY = 85;
-#endif
-
-	m_labCopyRight = new wxStaticText( this, wxID_ANY, copy.c_str(), wxDefaultPosition, wxSize( -1,offsetY ), 0 );
-	m_labCopyRight->Wrap( 270 );
 	fgSizer7->Add( m_labCopyRight, 0, wxLEFT|wxRIGHT|wxEXPAND, 5 );
 	
-
 	this->SetSizer( fgSizer7 );
 	this->Layout();
 

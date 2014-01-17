@@ -49,7 +49,7 @@ Required dependencies:
  * Curl
 
 Optional dependencies (will be built by cmake if not existing):
-- wxWidgets (2.9.3 or later)
+- wxWidgets (3.0.0 or later)
 - Breakpad
 - CEF (Chromium Embedded)
 
@@ -62,15 +62,15 @@ Open Terminal in Desurium source directory and run:
 
 or you can speed up things by running:
 
-    ./build_desura.sh rebuild_all -j `getconf _NPROCESSORS_ONLN`
+    ./build_desura.sh -j `getconf _NPROCESSORS_ONLN`
 
 or you can build DEB package:
 
-    ./build_desura.sh pack_deb
+    ./build_desura.sh pack DEB
 
 or you can build RPM package:
 
-    ./build_desura.sh pack_rpm
+    ./build_desura.sh pack RPM
 
 Finally run Desurium using:
 
