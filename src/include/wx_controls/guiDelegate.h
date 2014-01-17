@@ -225,7 +225,9 @@ public:
 
 	~Invoker()
 	{
-		safe_delete(m_pDelegate);
+		if (m_pDelegate)
+			m_pDelegate->destroy();
+
 		safe_delete(m_pArg);
 	}
 
@@ -263,7 +265,9 @@ public:
 	~PrimInvoker()
 	{
 		m_pHelper.done();
-		safe_delete(m_pDelegate);
+		
+		if (m_pDelegate)
+			m_pDelegate->destroy();
 	}
 
 	void invoke()
@@ -572,7 +576,9 @@ public:
 	~InvokerV()
 	{
 		m_pEventHelper.done();
-		safe_delete(m_pDelegate);
+		
+		if (m_pDelegate)
+			m_pDelegate->destroy();
 	}
 
 	void invoke()
