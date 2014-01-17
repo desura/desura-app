@@ -235,58 +235,58 @@ public:
 		m_pOldTraits = oldTraits;
 	}
 
-	virtual bool ShowAssertDialog(const wxString &msg)
+	virtual bool ShowAssertDialog(const wxString &msg) override
 	{
 		Warning(gcString("wx Assert: {0}\n", msg.mb_str()));
 		return true;
 	}
 
-	virtual wxLog* CreateLogTarget()
+	virtual wxLog* CreateLogTarget() override
 	{
 		return m_pOldTraits->CreateLogTarget();
 	}
 
-	virtual wxMessageOutput* CreateMessageOutput()
+	virtual wxMessageOutput* CreateMessageOutput() override
 	{
 		return m_pOldTraits->CreateMessageOutput();
 	}
 
-	virtual wxFontMapper* CreateFontMapper()
+	virtual wxFontMapper* CreateFontMapper() override
 	{
 		return m_pOldTraits->CreateFontMapper();
 	}
 
-	virtual wxRendererNative* CreateRenderer()
+	virtual wxRendererNative* CreateRenderer() override
 	{
 		return m_pOldTraits->CreateRenderer();
 	}
 
-	virtual bool HasStderr()
+	virtual bool HasStderr() override
 	{
 		return m_pOldTraits->HasStderr();
 	}
 
-	virtual wxEventLoopBase* CreateEventLoop()
+	virtual wxEventLoopBase* CreateEventLoop() override
 	{
 		return m_pOldTraits->CreateEventLoop();
 	}
 
-	virtual wxTimerImpl* CreateTimerImpl(wxTimer* timer)
+	virtual wxTimerImpl* CreateTimerImpl(wxTimer* timer) override
 	{
 		return m_pOldTraits->CreateTimerImpl(timer);
 	}
 
-	virtual wxPortId GetToolkitVersion(int* a, int* b) const
+	virtual wxPortId GetToolkitVersion(int* a, int* b) const override
 	{
 		return m_pOldTraits->GetToolkitVersion(a, b);
 	}
 
-	virtual bool IsUsingUniversalWidgets() const
+	virtual bool IsUsingUniversalWidgets() const override
 	{
 		return m_pOldTraits->IsUsingUniversalWidgets();
 	}
 
-	virtual wxString GetDesktopEnvironment() const
+	virtual wxString GetDesktopEnvironment() const override
 	{
 		return m_pOldTraits->GetDesktopEnvironment();
 	}
@@ -301,7 +301,7 @@ private:
 class DesuraLog : public wxLog
 {
 public:
-	virtual void DoLogString(const wxChar *msg, time_t timestamp)
+	virtual void DoLogString(const wxChar *msg, time_t timestamp) override
 	{
 		Debug(gcString("{0}\n", msg));
 	}
@@ -412,7 +412,7 @@ public:
 #endif
 	}
 
-	~Desura()
+	virtual ~Desura()
 	{
 		safe_delete(m_pChecker);
 #ifdef WIN32
@@ -425,7 +425,7 @@ public:
 #endif
 	}
 
-	virtual bool OnInit()
+	virtual bool OnInit() override
 	{
 		g_uiMainThreadId = Thread::BaseThread::GetCurrentThreadId();
 
@@ -513,7 +513,7 @@ public:
 		return true;
 	}
 
-	virtual int OnExit()
+	virtual int OnExit() override
 	{
 		ERROR_OUTPUT("OnExit wxAPP");
 
@@ -544,20 +544,20 @@ public:
 	}
 
 #ifdef WIN32
-	virtual void ExitMainLoop()
+	virtual void ExitMainLoop() override
 	{
 		// instead of existing wxWidgets main loop, terminate the MFC one
 		::PostQuitMessage(0);
 	}
 #endif	
 
-	virtual void OnAssert(const wxChar *file, int line, const wxChar *cond, const wxChar *msg)
+	virtual void OnAssert(const wxChar *file, int line, const wxChar *cond, const wxChar *msg) override
 	{
 		Warning(gcString("Assert: {0} [{1}] in file {2}: {3}\n", msg, cond, file, line));
 	}
 
 #ifdef NIX
-	virtual wxAppTraits* CreateTraits()
+	virtual wxAppTraits* CreateTraits() override
 	{
 		return new gcAppTraits(wxApp::CreateTraits());
 	}
