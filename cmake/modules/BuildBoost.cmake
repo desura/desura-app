@@ -9,7 +9,7 @@ else()
   set(BOOST_EXTRA_BUILD_OPTS "")
 endif()
 
-set(BOOST_BJAM_LIBS_STATIC --with-filesystem --with-date_time)
+set(BOOST_BJAM_LIBS_STATIC --with-filesystem)
 set(BOOST_BJAM_LIBS ${BOOST_BJAM_LIBS_STATIC})
 
 if (WIN32 AND NOT MINGW)
@@ -68,7 +68,6 @@ else()
   set(BOOST_SUFFIX lib)
 endif()
 
-set(Boost_DATE_TIME_LIBRARY "${Boost_LIBRARY_DIR}/libboost_date_time-${BOOST_LIB_ADD_STRING}.${BOOST_SUFFIX}")
 set(Boost_FILESYSTEM_LIBRARY "${Boost_LIBRARY_DIR}/libboost_filesystem-${BOOST_LIB_ADD_STRING}.${BOOST_SUFFIX}")
 set(Boost_SYSTEM_LIBRARY "${Boost_LIBRARY_DIR}/libboost_system-${BOOST_LIB_ADD_STRING}.${BOOST_SUFFIX}")
 
@@ -109,7 +108,6 @@ if (WIN32)
 
   set_property(TARGET boost_s PROPERTY FOLDER "ThirdParty")
   
-  set(Boost_DATE_TIME_LIBRARY_S "${Boost_LIBRARY_DIR}/libboost_date_time-${BOOST_LIB_ADD_STRING}.${BOOST_SUFFIX}")
   set(Boost_FILESYSTEM_LIBRARY_S "${Boost_LIBRARY_DIR}/libboost_filesystem-${BOOST_LIB_ADD_STRING}.${BOOST_SUFFIX}")
   set(Boost_SYSTEM_LIBRARY_S "${Boost_LIBRARY_DIR}/libboost_system-${BOOST_LIB_ADD_STRING}.${BOOST_SUFFIX}")
 endif()
