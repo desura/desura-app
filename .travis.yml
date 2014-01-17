@@ -12,7 +12,6 @@ before_install:
   - cd cmake-2.8.12.2
   - cmake .
   - make
-  - sudo apt-get remove cmake
   - sudo make install
   - cd ..
 script:
