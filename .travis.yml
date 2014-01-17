@@ -12,7 +12,7 @@ before_install:
   - unzip cmake-2.8.12.2
   - cd cmake-2.8.12.2
   - chmod +x bootstrap
-  - ./boostrap
+  - ./bootstrap
   - make
   - sudo make install
   - cd ..
