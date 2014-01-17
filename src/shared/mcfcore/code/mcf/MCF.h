@@ -229,16 +229,6 @@ protected:
 		uint32 otherMcf;	//!< Index in second mcf
 	} mcfDif_s;
 
-	//! A struct that is used in the sorting of the mcf files
-	//!
-	struct file_sortkey
-	{
-		bool operator()(std::shared_ptr<MCFCore::MCFFile>& lhs, std::shared_ptr<MCFCore::MCFFile>& rhs)
-		{
-			return (lhs->getHash() < rhs->getHash());
-		}
-	};
-
 	Event<MCFCore::Misc::ProgressInfo> onProgressEvent;	//!< Progress event
 	Event<gcException> onErrorEvent;					//!< Error event
 	Event<MCFCore::Misc::DP_s> onProviderEvent;						//!< Provider event
