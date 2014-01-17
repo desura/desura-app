@@ -577,8 +577,11 @@ void UMcf::dumpXml(const wchar_t* path)
 
 	auto filesElFiles = mcfElFiles.NewElement( "files" );
 
-	for (size_t x=0; x<m_pFileList.size(); x++)
-		m_pFileList[x]->genXml(filesElFiles.NewElement("file"));
+	for (auto file : m_pFileList)
+	{
+		auto el = filesElFiles.NewElement("file");
+		file->genXml(el);
+	}
 
 	doc.SaveFile(gcString(path).c_str());
 }
