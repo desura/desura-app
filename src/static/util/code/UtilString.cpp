@@ -579,26 +579,13 @@ public:
 };
 
 
-
-std::unique_ptr<unsigned char[]> base64_decode(const std::string &encoded_string, size_t &outlen)
+gcBuff base64_decode(const std::string &encoded_string)
 {
 	OutFunctor of;
 	base64_decode(encoded_string, of);
 
-	outlen = of.vOut.size();
-
-	if (outlen == 0)
-		return nullptr;
-
-	auto ret = std::make_unique<unsigned char[]>(outlen);
-
-	for (size_t x=0; x<outlen; x++)
-		ret[x] = of.vOut[x];
-
-	return ret;
+	return gcBuff((char*)of.vOut.data(), of.vOut.size());
 }
-
-
 
 std::string escape(const std::string &in)
 {
