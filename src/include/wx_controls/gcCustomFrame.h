@@ -64,7 +64,7 @@ public:
 		wxSize s = this->GetSize() - this->GetClientSize();
 		m_uiTitleHeight = s.GetHeight();
 
-		if (m_uiTitleHeight < 0)
+		if (m_uiTitleHeight == -1)
 			m_uiTitleHeight = 0;
 #endif
 
