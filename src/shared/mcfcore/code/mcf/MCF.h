@@ -83,7 +83,7 @@ public:
 	//! 
 	//! @param file MCFFile to add
 	//!
-	void addFile(std::shared_ptr<MCFCore::MCFFile>& file);
+	void addFile(std::shared_ptr<MCFCore::MCFFile>&& file);
 
 	//! Finds a files index by its hash
 	//!
