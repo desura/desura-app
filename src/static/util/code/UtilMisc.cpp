@@ -678,7 +678,7 @@ void ConvertToArgs(const char* args, std::vector<std::string> &argv)
 			{
 				size_t end = x-1;
 
-				while (args[lastIndex] == '\'' && args[end] == '\'' || args[lastIndex] == '"' && args[end] == '"')
+				while ((args[lastIndex] == '\'' && args[end] == '\'') || (args[lastIndex] == '"' && args[end] == '"'))
 				{
 					lastIndex++;
 					end--;
