@@ -19,4 +19,6 @@ install_external_library(desura_extra_bin
   "${source_dir}/dbghelp-desura.dll"
   "${source_dir}/Desura_GDF.dll"
   "${source_dir}/FreeImage.dll"
-  "${source_dir}/GameuxInstallHelper.dll")
+  "${source_dir}/GameuxInstallHelper.dll"
+  "${source_dir}/msvcp120.dll"
+  "${source_dir}/msvcr120.dll")
