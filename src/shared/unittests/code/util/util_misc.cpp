@@ -19,6 +19,7 @@ or write to the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
 Linden Research, Inc., 945 Battery Street, San Francisco, CA  94111  USA
 $/LicenseInfo$
 */
+
 #include <gtest/gtest.h>
 
 #include "Common.h"
@@ -73,9 +74,8 @@ namespace UnitTest
 
 		unsigned int days = 9999;
 		unsigned int hours = 1000;
-		bool dtIsUTC = false;
 
-		UTIL::MISC::getTimeDiff(dateTime1.c_str(), dateTime2.c_str(), days, hours, dtIsUTC);
+		UTIL::MISC::getTimeDiff(dateTime1.c_str(), dateTime2.c_str(), days, hours);
 
 		int expected_days = 1;
 		int expected_hours = 0;
@@ -91,9 +91,8 @@ namespace UnitTest
 
 		unsigned int days = 9999;
 		unsigned int hours = 1000;
-		bool dtIsUTC = false;
 
-		UTIL::MISC::getTimeDiff(dateTime1.c_str(), dateTime2.c_str(), days, hours, dtIsUTC);
+		UTIL::MISC::getTimeDiff(dateTime1.c_str(), dateTime2.c_str(), days, hours);
 
 		int expected_days = 2;
 		int expected_hours = 0;
@@ -105,16 +104,15 @@ namespace UnitTest
 	TEST(UtilDateTime, fixDateTimeString_less_simple_day_diff_invalid_dates)
 	{
 		std::string dateTime1("20100731000000");
-		std::string dateTime2("20100805000000");
+		std::string dateTime2("20100805170000");
 
 		unsigned int days = 9999;
 		unsigned int hours = 1000;
-		bool dtIsUTC = false;
 
-		UTIL::MISC::getTimeDiff(dateTime1.c_str(), dateTime2.c_str(), days, hours, dtIsUTC);
+		UTIL::MISC::getTimeDiff(dateTime1.c_str(), dateTime2.c_str(), days, hours);
 
 		int expected_days = 5;
-		int expected_hours = 0;
+		int expected_hours = 17;
 
 		ASSERT_EQ(expected_days, days);
 		ASSERT_EQ(expected_hours, hours);
@@ -128,22 +126,32 @@ namespace UnitTest
 		unsigned int days = 9999;
 		unsigned int hours = 1000;
 
-		bool dtIsUTC = false;
-		UTIL::MISC::getTimeDiff(dateTime1.c_str(), dateTime2.c_str(), days, hours, dtIsUTC);
+		UTIL::MISC::getTimeDiff(dateTime1.c_str(), dateTime2.c_str(), days, hours);
 
 		int expected_days = 20;
 		int expected_hours = 0;
 
 		ASSERT_EQ(expected_days, days);
 		ASSERT_EQ(expected_hours, hours);
+	}
 
-		dtIsUTC = true;
-		UTIL::MISC::getTimeDiff(dateTime1.c_str(), dateTime2.c_str(), days, hours, dtIsUTC);
+	TEST(UtilDateTime, dateTimeToDisplay_simple_test)
+	{
+		// only do this for USA locales. Constructing locale here and using it to generate
+		// expected string is what happens in code being tested so not a good unit test
+		std::locale my_locale("");
+		if (my_locale.name().find("United States") != std::string::npos)
+		{
+			std::string input_string("20110708T201530");
+			std::string expected_result("07/08/11");
 
-		expected_days = 20;
-		expected_hours = 0;
+			std::string s = UTIL::MISC::dateTimeToDisplay(input_string.c_str());
 
-		ASSERT_EQ(expected_days, days);
-		ASSERT_EQ(expected_hours, hours);
+			ASSERT_STREQ(expected_result.c_str(), s.c_str());
+		}
+		else
+		{
+			std::cerr << "Warning - locale not USA - dateTimeToDisplay_simple_test not executing" << std::endl;
+		}
 	}
 }

@@ -154,7 +154,7 @@ namespace MISC
 	//! @param hours out number of hours between
 	//! @param dtIsUTC flag true/false if time is UTC or not
 	//!
-	void getTimeDiff(const char* dateTimeFirst, const char* dateTimeLast, uint32 &days, uint32 &hours, bool dtIsUTC);
+	void getTimeDiff(const char* dateTimeFirst, const char* dateTimeLast, uint32 &days, uint32 &hours);
 
 	//! Gets the time diff from the input datetime to now
 	//! 
@@ -163,7 +163,7 @@ namespace MISC
 	//! @param hours out number of hours between
 	//! @param dtIsUTC flag true/false if time is UTC or not
 	//!
-	void getTimeDiffFromNow(const char* dateTime, uint32 &days, uint32 &hours, bool dtIsUTC = false);
+	void getTimeDiffFromNow(const char* dateTime, uint32 &days, uint32 &hours);
 
 	//! Hashes a buffer using md5. 
 	//!
