@@ -2,7 +2,7 @@
 //
 #include "resource.h"
 
-#include "Winuser.h"
+#include "windows.h"
 
 /////////////////////////////////////////////////////////////////////////////
 // English (United States) resources

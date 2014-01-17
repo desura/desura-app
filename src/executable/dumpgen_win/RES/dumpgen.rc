@@ -1,7 +1,7 @@
 // Microsoft Visual C++ generated resource script.
 //
 #include "resource.h"
-#include "Winuser.h"
+#include "windows.h"
 #include "winres.h"
 
 #define APSTUDIO_READONLY_SYMBOLS
