@@ -415,22 +415,15 @@ void getTimeDiff(const char* dateTimeFirst, const char* dateTimeLast, uint32 &da
 	std::string date_str_first = fixDateTimeString(dateTimeFirst);
 	std::string date_str_last = fixDateTimeString(dateTimeLast);
 
-	try
-	{
-		gcTime first_time = gcTime::from_iso_string_alt(date_str_first);
+	gcTime first_time = gcTime::from_iso_string_alt(date_str_first);
 
-		gcTime last_time = gcTime::from_iso_string_alt(date_str_last);
+	gcTime last_time = gcTime::from_iso_string_alt(date_str_last);
 
-		gcDuration duration = last_time - first_time;
-		uint32 duration_hours = static_cast<uint32>(duration.hours());
+	gcDuration duration = last_time - first_time;
+	uint32 duration_hours = static_cast<uint32>(duration.hours());
 
-		days = duration_hours / 24;
-		hours = duration_hours - days * 24;
-	}
-	catch (...)
-	{
-		return;
-	}
+	days = duration_hours / 24;
+	hours = duration_hours - days * 24;
 }
 
 void getTimeDiffFromNow(const char* dateTime, uint32 &days, uint32 &hours)
