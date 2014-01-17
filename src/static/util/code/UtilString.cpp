@@ -385,7 +385,7 @@ std::string urlEncode(const std::string& c)
 
 
 
-const char base64_chars[] =
+static const std::vector<char> base64_chars =
 {
 	'A','B','C','D','E','F','G','H','I','J',
 	'K','L','M','N','O','P','Q','R','S','T',
@@ -394,8 +394,7 @@ const char base64_chars[] =
 	'k','l','m','n','o','p','q','r','s','t',
 	'u','v','w','x','y','z',
 	'0','1','2','3','4','5','6','7','8','9',
-	'+','/',
-	(char)nullptr,
+	'+','/'
 };
 
 static inline bool is_base64(unsigned char c)
@@ -450,17 +449,13 @@ void base64_decodeCB(const std::string &encoded_string, UTIL::CB::CallbackI* cal
 		{
 			for (i = 0; i <4; i++)
 			{
-				size_t x=0;
-
-				while (base64_chars[x])
+				for (size_t x=0; x<base64_chars.size(); ++x)
 				{
-					if (base64_chars[x] == char_array_4[i])
-					{
-						char_array_4[i] = x;
-						break;
-					}
+					if (base64_chars[x] != char_array_4[i])
+						continue;
 
-					x++;
+					char_array_4[i] = x;
+					break;
 				}
 			}
 
@@ -482,17 +477,13 @@ void base64_decodeCB(const std::string &encoded_string, UTIL::CB::CallbackI* cal
 			if (j >= i)
 				char_array_4[j] = 0;
 
-			size_t x=0;
-
-			while (base64_chars[x])
+			for (size_t x=0; x<base64_chars.size(); ++x)
 			{
-				if (base64_chars[x] == char_array_4[j])
-				{
-					char_array_4[j] = x;
-					break;
-				}
+				if (base64_chars[x] != char_array_4[j])
+					continue;
 
-				x++;
+				char_array_4[j] = x;
+				break;
 			}
 		}
 
