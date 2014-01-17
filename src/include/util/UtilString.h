@@ -146,10 +146,9 @@ namespace STRING
 	//! Decode a base 64 string into a buffer
 	//!
 	//! @param encoded_string String to decode
-	//! @param outLen Length of returned string
-	//! @return Decoded string (must delete)
+	//! @return Decoded string
 	//!
-	std::unique_ptr<unsigned char[]> base64_decode(const std::string &encoded_string, size_t &outlen);
+	gcBuff base64_decode(const std::string &encoded_string);
 
 	//! Encode a binary buffer into a base 64 string
 	//!
