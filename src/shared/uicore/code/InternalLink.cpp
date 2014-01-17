@@ -308,13 +308,12 @@ bool InternalLink::switchTab(bool &badLink, std::vector<gcString> &list, const c
 
 	if (page != ITEMS && list.size() >= 3 && list[2].size() > 0)
 	{
-		size_t outLen=0;
-		auto out = UTIL::STRING::base64_decode(list[2], outLen);
+		auto out = UTIL::STRING::base64_decode(list[2]);
+		auto outLen = out.size();
 
-		gcString url;
-		url.assign((char*)out.get(), outLen);
+		std::string url(out, outLen);
 
-		if (url.size() > 0)
+		if (!url.empty())
 		{
 			std::transform(begin(url), end(url), begin(url), std::tolower);
 			
