@@ -7,10 +7,12 @@ before_install:
   - sudo apt-add-repository 'deb http://repos.codelite.org/wx3.0/ubuntu/ precise universe'
   - sudo apt-get update
   - sudo apt-get install gcc-multilib libnotify-dev libboost1.48-dev libboost-filesystem1.48-dev libboost-system1.48-dev libgtest-dev libwxgtk3.0-dev
+  - sudo apt-get remove cmake  
   - wget http://www.cmake.org/files/v2.8/cmake-2.8.12.2.zip
   - unzip cmake-2.8.12.2
   - cd cmake-2.8.12.2
-  - cmake .
+  - chmod +x bootstrap
+  - ./boostrap
   - make
   - sudo make install
   - cd ..
