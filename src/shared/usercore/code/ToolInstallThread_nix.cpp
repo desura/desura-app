@@ -98,7 +98,7 @@ namespace UserCore
 namespace Misc
 {
 
-ToolInstallThread::ToolInstallThread(ToolManager* toolManager, ::Thread::Mutex &mapLock, std::map<ToolTransactionId, ToolTransInfo*> &transactions) 
+ToolInstallThread::ToolInstallThread(ToolManager* toolManager, std::mutex &mapLock, std::map<ToolTransactionId, ToolTransInfo*> &transactions) 
 	: ::Thread::BaseThread("Tool Install Thread"), m_MapLock(mapLock), m_mTransactions(transactions)
 {
 	m_CurrentInstall = -1;
