@@ -9,7 +9,7 @@ before_install:
   - sudo apt-get install gcc-multilib libnotify-dev libboost1.48-dev libboost-filesystem1.48-dev libboost-system1.48-dev libgtest-dev libwxgtk3.0-dev
   - wget http://curl.haxx.se/download/curl-7.34.0.tar.gz
   - tar xvfz curl-7.34.0.tar.gz
-  - cd curl-7.34.0.tar
+  - cd curl-7.34.0
   - ./configure
   - make
   - sudo install
