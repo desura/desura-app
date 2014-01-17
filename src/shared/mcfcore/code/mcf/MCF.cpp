@@ -34,8 +34,20 @@ $/LicenseInfo$
 
 #include "XMLSaveAndCompress.h"
 
-namespace MCFCore
+using namespace MCFCore;
+
+namespace 
 {
+	//! A struct that is used in the sorting of the mcf files
+	//!
+	struct file_sortkey
+	{
+		bool operator()(const std::shared_ptr<MCFCore::MCFFile>& lhs, const std::shared_ptr<MCFCore::MCFFile>& rhs)
+		{
+			return (lhs->getHash() < rhs->getHash());
+		}
+	};
+}
 
 typedef struct
 {
@@ -853,4 +865,3 @@ uint64 MCF::getFileOffset()
 	return m_uiFileOffset;
 }
 
-}

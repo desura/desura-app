@@ -83,19 +83,19 @@ public:
 	//!
 	//! @return Hash
 	//!
-	uint64 getHash(){return m_iHash;}
+	uint64 getHash() const {return m_iHash;}
 
 	//! Gets the last modified time stamp of the file. Format is YYYYMMDDHHMMSS i.e. 20090128180010
 	//!
 	//! @return TimeStamp
 	//!
-	uint64 getTimeStamp(){return m_iTimeStamp;}
+	uint64 getTimeStamp() const {return m_iTimeStamp;}
 
 	//! Gets the offset of this file inside the MCF
 	//!
 	//! @return Offset
 	//!
-	uint64 getOffSet(){return m_llOffset;}
+	uint64 getOffSet() const {return m_llOffset;}
 
 	//! Sets the name of the file
 	//!
@@ -229,20 +229,20 @@ public:
 	//!
 	//! @return Block size
 	//!
-	uint32 getBlockSize(){return m_iBlockSize;}
+	uint32 getBlockSize() const {return m_iBlockSize;}
 
 	//! gets the crc at an index
 	//!
 	//! @param index Index in the vector of the crc you want to get
 	//! @return Crc
 	//!
-	uint32 getCRC(uint32 index){return m_vCRCList[index];}
+	uint32 getCRC(uint32 index) const {return m_vCRCList[index];}
 
 	//! Gets the total crc count
 	//!
 	//! @return Crc count
 	//!
-	uint32 getCRCCount(){return m_vCRCList.size();}
+	uint32 getCRCCount() const {return m_vCRCList.size();}
 
 	//! Generates crc values from a MCF file
 	//!
