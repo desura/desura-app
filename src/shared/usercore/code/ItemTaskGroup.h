@@ -80,9 +80,8 @@ public:
 		if (m_bStarted)
 			return;
 
-		m_ListLock.lock();
+		std::lock_guard<std::mutex> guard(m_ListLock);
 		std::sort(m_vWaitingList.begin(), m_vWaitingList.end(), f);
-		m_ListLock.unlock();
 	}
 
 protected:
