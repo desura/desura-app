@@ -57,7 +57,7 @@ else()
   else()
     set(WX_SETUP_INCLUDE_SUB "gtk2-unicode-3.0-desura")
     set(WX_SETUP_INCLUDE_SUB_DEBUG ${WX_SETUP_INCLUDE_SUB})
-	set(WX_LIB_NAME "libwx_gtk2u_desura-3.0.so.3")
+	set(WX_LIB_NAME "libwx_gtk2u_desura-3.0.so")
 	set(WX_LIB_NAME_DEBUG ${WX_LIB_NAME})
   endif()
 
