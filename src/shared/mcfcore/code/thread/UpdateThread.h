@@ -33,7 +33,7 @@ $/LicenseInfo$
 #include "Event.h"
 #include "mcfcore/ProgressInfo.h"
 
-#include "util/gcTime.h "
+#include "util/gcTime.h"
 
 
 namespace MCFCore
