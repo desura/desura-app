@@ -45,54 +45,59 @@ $/LicenseInfo$
 #include <ctype.h>
 #endif
 
+using namespace MCFCore;
+
 namespace MCFCore
 {
-
-const char* g_vExcludeFileList[] = 
-{
-	"Thumbs.db",
-	nullptr
-};
-
-//! This is a list of folders not to include when making a MCF. Last item must be nullptr
-const char* g_vExcludeDirList[] =
-{
-	".",
-	"..",
-	".svn",
-	".git",
-	".hg",
-	nullptr
-};
-
-//! This is a list of file extentions that shouldnt be compressed inside the MCF. Last item must be nullptr
-const char* g_vNoCompressList[] =
-{
-	"zip",
-	"rar",
-	"bz2",
-	"tar",
-	"gzip",
-	"iso",
-	"pk3",
-	nullptr
-};
-
-void ReplaceAllStr(std::string searchStr, std::string replaceStr, std::string &str)
-{
-	size_t pos = 0;
-
-	do
+	const char* g_vExcludeFileList[] = 
 	{
-		pos = str.find(searchStr, pos);
-		
-		if (pos == std::string::npos)
-			break;
+		"Thumbs.db",
+		nullptr
+	};
 
-		str.replace(pos, searchStr.size(), replaceStr);
-		pos += searchStr.size();
+	//! This is a list of folders not to include when making a MCF. Last item must be nullptr
+	const char* g_vExcludeDirList[] =
+	{
+		".",
+		"..",
+		".svn",
+		".git",
+		".hg",
+		nullptr
+	};
+
+	//! This is a list of file extentions that shouldnt be compressed inside the MCF. Last item must be nullptr
+	const char* g_vNoCompressList[] =
+	{
+		"zip",
+		"rar",
+		"bz2",
+		"tar",
+		"gzip",
+		"iso",
+		"pk3",
+		nullptr
+	};
+}
+
+namespace 
+{
+	void ReplaceAllStr(std::string searchStr, std::string replaceStr, std::string &str)
+	{
+		size_t pos = 0;
+
+		do
+		{
+			pos = str.find(searchStr, pos);
+		
+			if (pos == std::string::npos)
+				break;
+
+			str.replace(pos, searchStr.size(), replaceStr);
+			pos += searchStr.size();
+		}
+		while (true);
 	}
-	while (true);
 }
 
 MCFFileI::~MCFFileI()
@@ -359,7 +364,13 @@ void MCFFile::loadXmlData(const XML::gcXMLElement &xmlElement)
 
 		for (size_t x=0; x<outSize; x+=4)
 		{
-			uint32 crc = (((uint32)buff[x])<<24) + (((uint32)buff[x+1])<<16) + (((uint32)buff[x+2])<<8) + (((uint32)buff[x+3])<<0);
+			//Need the masks as will optimise and use 16 bit reg with top 16 bits being garbage
+			auto a = (((uint32)buff[x+0])<<24) & 0xFF000000;
+			auto b = (((uint32)buff[x+1])<<16) & 0x00FF0000;
+			auto c = (((uint32)buff[x+2])<<8 ) & 0x0000FF00;
+			auto d = (((uint32)buff[x+3])<<0 ) & 0x000000FF;
+
+			uint32 crc = a + b + c + d;
 			m_vCRCList.push_back(crc);
 		}
 	}
@@ -870,4 +881,48 @@ void MCFFile::clearDiff()
 	m_szDiffHash = "";
 }
 
+#ifdef WITH_GTEST
+
+#include <gtest/gtest.h>
+
+static const char* gs_szTestFileXml = 
+"<files><file>"
+"    <name>market_g.png</name>"
+"    <path>gfx\\levels</path>"
+"    <flags>10</flags>"
+"    <tstamp>20110320141644</tstamp>"
+"    <offset>16961438</offset>"
+"    <size>3124022</size>"
+"    <csize>3108515</csize>"
+"    <nom_csum>0748dd495d664584f9ad94f7229d9fbf</nom_csum>"
+"    <com_csum>c43d4517b3dc7b63cc708b81515a0605</com_csum>"
+"    <crc blocksize=\"524288\">nULfctda/glmG9wFXm28yYk7sppBdcDu</crc>"
+"  </file></files>";
+
+namespace UnitTest
+{
+	TEST(MCFFile, XmlLoad)
+	{
+		XML::gcXMLDocument doc(gs_szTestFileXml, strlen(gs_szTestFileXml));
+
+		MCFFile file;
+		file.loadXmlData(doc.GetRoot("files").FirstChildElement("file"));
+
+		ASSERT_EQ(524288, file.getBlockSize());
+
+		ASSERT_EQ(6, file.getCRCCount());
+
+		ASSERT_EQ(0x9D42DF72, file.getCRC(0));
+		ASSERT_EQ(0xD75AFE09, file.getCRC(1));
+
+		ASSERT_EQ(0x661BDC05, file.getCRC(2));
+		ASSERT_EQ(0x5E6DBCC9, file.getCRC(3));
+
+		ASSERT_EQ(0x893BB29A, file.getCRC(4));
+		ASSERT_EQ(0x4175C0EE, file.getCRC(5));
+	}
+
 }
+
+
+#endif
