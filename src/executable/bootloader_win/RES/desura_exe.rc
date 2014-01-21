@@ -5,7 +5,7 @@
 #ifdef DESURA_OFFICIAL_BUILD
 #include "resource.h"
 #endif
-#include "Winuser.h"
+#include "windows.h"
 
 /////////////////////////////////////////////////////////////////////////////
 // English (U.S.) resources

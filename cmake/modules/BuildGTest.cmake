@@ -19,10 +19,12 @@ ExternalProject_Get_Property(
 
 
 set(GTEST_INCLUDE_DIRS "${source_dir}/include")
-if(WIN32)
 
+if(WIN32)
   if(DEBUG)
     set(GTEST_DIR "Debug")
+  else(CMAKE_BUILD_TYPE EQUAL "RelWithDebInfo")
+    set(GTEST_DIR "RelWithDebInfo")
   else()
     set(GTEST_DIR ".")
   endif()
