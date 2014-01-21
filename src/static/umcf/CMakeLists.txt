@@ -14,6 +14,8 @@ if(WIN32)
   SetSharedRuntime(umcf)
 endif()
 
+add_dependencies(umcf bzip2)
+
 SET_PROPERTY(TARGET umcf PROPERTY FOLDER "Static")
 
 if(WIN32)
@@ -24,5 +26,6 @@ if(WIN32)
   )
 
   SET_PROPERTY(TARGET umcf_s PROPERTY FOLDER "Static")
+  add_dependencies(umcf_s bzip2_s)
   SetStaticRuntime(umcf_s)
 endif()

@@ -1,6 +1,5 @@
 include_directories(
   ${CMAKE_CURRENT_SOURCE_DIR}/code
-  ${SQLITE3X_INCLUDE_DIRS}
 )
 
 file(GLOB Sources code/*.cpp)
@@ -10,6 +9,8 @@ if(WIN32)
     set(PLATFORM_LIBRARIES winhttp wintrust msi)
   endif()
 #  add_linker_flags(/NODEFAULTLIB:LIBCMT)
+else()
+	set(PLATFORM_LIBRARIES ${GTK2_LIBRARIES})
 endif()
 
 add_library(crashuploader SHARED ${Sources})
@@ -19,11 +20,12 @@ target_link_libraries(crashuploader
     util_fs
     util_web
     ${CURL_LIBRARIES}
-    ${GTK2_LIBRARIES}
     ${TINYXML_LIBRARIES}
     ${CMAKE_THREAD_LIBS_INIT}
     ${PLATFORM_LIBRARIES}
 )
+
+add_dependencies(crashuploader curl tinyxml2)
 
 if(WIN32)
   SetSharedRuntime(crashuploader)

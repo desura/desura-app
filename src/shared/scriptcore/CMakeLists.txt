@@ -23,6 +23,8 @@ target_link_libraries(scriptcore
 	${WINDOWS_LIBRARIES}
 )
 
+add_dependencies(scriptcore tinyxml2 v8)
+
 if(WIN32)
   SetSharedRuntime(scriptcore)
 endif()

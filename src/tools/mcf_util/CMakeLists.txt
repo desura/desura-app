@@ -27,6 +27,8 @@ target_link_libraries(mcf_util
   ${PLATFORM_LIBRARIES}
 )
 
+add_dependencies(mcf_util tinyxml2)
+
 if(WIN32)
   SetSharedRuntime(mcf_util)
 endif()

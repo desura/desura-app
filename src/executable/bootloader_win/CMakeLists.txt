@@ -3,7 +3,6 @@ include_directories(
   ${CMAKE_CURRENT_SOURCE_DIR}/RES
   ${COMMON_INCLUDE_DIRS}/service_pipe
   ${IPC_PIPE_INCLUDE_DIRS}
-  ${TINYXML_INCLUDEDIR}
   ${UTIL_BOOTLOADER_OFFICIAL_INCLUDE_DIRS}
   ${UTIL_BOOTLOADER_INCLUDE_DIRS}
 )
@@ -21,7 +20,6 @@ add_definitions(-D_WINDOWS
   -DNO_UTIL_FS
 )
 
-
 if (OFFICIAL_BUILD)
   set(OFFICIAL_DEP "util_bootloader_official_s")
 endif()
@@ -32,12 +30,10 @@ target_link_libraries(desura
   threads_s
   util_s
   util_bootloader_s
-  ${Boost_DATE_TIME_LIBRARY_S}
   mdump_s
   ${OFFICIAL_DEP}
   comctl32
 )
 
 SetStaticRuntime(desura)
-
 install_executable(desura)

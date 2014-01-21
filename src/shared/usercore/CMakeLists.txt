@@ -2,7 +2,6 @@ include_directories(
   ${CMAKE_CURRENT_SOURCE_DIR}/code
   ${COMMON_INCLUDE_DIRS}/service_pipe
   ${COMMON_INCLUDE_DIRS}/tool_pipe
-  ${Boost_INCLUDE_DIR}
   ${CEF_INCLUDE_DIRS}
   ${IPC_PIPE_INCLUDE_DIRS}
   ${SQLITE3X_INCLUDE_DIRS}
@@ -117,13 +116,14 @@ target_link_libraries(usercore
   util_fs
   util_web
   webcore
-  ${Boost_DATE_TIME_LIBRARY}
   ${CURL_LIBRARIES}
   ${SQLITE_LIBRARIES}
   ${SQLITE3X_LIBRARIES}
   ${TINYXML_LIBRARIES}
   ${WINDOWS_LIBRARIES}
 )
+
+add_dependencies(usercore curl tinyxml2 sqlite sqlite3x)
 
 if(WIN32)
   SetSharedRuntime(usercore)

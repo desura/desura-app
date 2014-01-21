@@ -16,6 +16,7 @@ if (WIN32)
 		${TINYXML_LIBRARIES_S}
 	)
 	
+	add_dependencies(util_bootloader_official_s tinyxml2_s)
 	SetStaticRuntime(util_bootloader_official_s)
 else()
 	target_link_libraries(util_bootloader_official_s
@@ -23,6 +24,8 @@ else()
 		util_web
 		${TINYXML_LIBRARIES}
 	)
+	
+	add_dependencies(util_bootloader_official_s tinyxml2)
 endif()
 
 SET(UTIL_BOOTLOADER_OFFICIAL_INCLUDE_DIRS ${CMAKE_CURRENT_SOURCE_DIR}/code ${CMAKE_CURRENT_SOURCE_DIR}/RES PARENT_SCOPE)
