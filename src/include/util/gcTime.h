@@ -220,6 +220,37 @@ public:
 #endif
 	}
 
+	static gcTime from_iso_string_alt(const std::string& str)
+	{
+		static const std::string template_str("20140115T123456");
+		if (str.length() != template_str.length())
+		{
+			return gcTime();
+		}
+
+		tm source = { 0 };
+
+		auto convertStringPart = [&str](size_t pos, size_t size)
+		{
+			std::string tok = str.substr(pos, size);
+			std::istringstream codec(tok);
+
+			int res = 0;
+			codec >> res;
+
+			return res;
+		};
+
+		source.tm_year = convertStringPart(0, 4) - 1900;
+		source.tm_mon = convertStringPart(4, 2) - 1;
+		source.tm_mday = convertStringPart(6, 2);
+		source.tm_hour = convertStringPart(9, 2);
+		source.tm_min = convertStringPart(11, 2);
+		source.tm_sec = convertStringPart(13, 2);
+
+		return gcTime(std::chrono::system_clock::from_time_t(mktime(&source)));
+	}
+
 private:
 	std::chrono::system_clock::time_point m_TimePoint;
 };

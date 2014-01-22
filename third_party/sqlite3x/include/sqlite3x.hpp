@@ -28,10 +28,9 @@
 
 #include <string>
 #include <stdexcept>
-#include <boost/utility.hpp>
 
 namespace sqlite3x {
-	class sqlite3_connection : boost::noncopyable {
+	class sqlite3_connection {
 	private:
 		friend class sqlite3_command;
 		friend class database_error;
@@ -43,6 +42,9 @@ namespace sqlite3x {
 		sqlite3_connection(const char *db);
 		sqlite3_connection(const wchar_t *db);
 		~sqlite3_connection();
+		
+		sqlite3_connection(const sqlite3_connection& con)=delete;
+		sqlite3_connection(sqlite3_connection&& con)=delete;
 
 		void open(const char *db);
 		void open(const wchar_t *db);
@@ -87,7 +89,7 @@ namespace sqlite3x {
 		std::string executeblob(const std::wstring &sql);
 	};
 
-	class sqlite3_transaction : boost::noncopyable {
+	class sqlite3_transaction {
 	private:
 		sqlite3_connection &con;
 		bool intrans;
@@ -95,6 +97,9 @@ namespace sqlite3x {
 	public:
 		sqlite3_transaction(sqlite3_connection &con, bool start=true);
 		~sqlite3_transaction();
+		
+		sqlite3_transaction(const sqlite3_transaction& con)=delete;
+		sqlite3_transaction(sqlite3_transaction&& con)=delete;		
 
 		void begin();
 		void commit();
@@ -103,7 +108,7 @@ namespace sqlite3x {
 
 	class sqlite3_reader;
 
-	class sqlite3_command : boost::noncopyable {
+	class sqlite3_command {
 	private:
 		friend class sqlite3_reader;
 
@@ -111,6 +116,9 @@ namespace sqlite3x {
 		struct sqlite3_stmt *stmt;
 		unsigned int refs;
 		int argc;
+		
+		sqlite3_command(const sqlite3_command& con)=delete;
+		sqlite3_command(sqlite3_command&& con)=delete;			
 
 	public:
 		sqlite3_command(sqlite3_connection &con, const char *sql);

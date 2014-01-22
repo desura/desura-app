@@ -77,11 +77,13 @@ target_link_libraries(util
   ${BZIP2_LIBRARIES}
   ${SQLITE3X_LIBRARIES}
   ${Boost_FILESYSTEM_LIBRARY}
-  ${Boost_DATE_TIME_LIBRARY}
   ${Boost_SYSTEM_LIBRARY}
   ${PLATFORM_LIBRARIES}
   ${WINDOWS_LIBRARIES}
 )
+
+add_dependencies(util boost sqlite3x bzip2)
+add_dependencies(util_web curl)
 
 if(WIN32)
   SetSharedRuntime(util)
@@ -99,7 +101,6 @@ if (WIN32)
 	  ${SQLITE3X_LIBRARIES_S}
 	  ${Boost_FILESYSTEM_LIBRARY_S}
       ${Boost_SYSTEM_LIBRARY_S}
-	  ${Boost_DATE_TIME_LIBRARY_S}
 	  ${PLATFORM_LIBRARIES}
 	  ${WINDOWS_LIBRARIES}
 	)
@@ -113,6 +114,9 @@ if (WIN32)
 		${WINDOWS_LIBRARIES}
 		${CURL_LIBRARIES_S}
 	)
+	
+	add_dependencies(util boost_s sqlite3x_s bzip2_s)
+	add_dependencies(util_web curl_s)	
 	
 	SET_PROPERTY(TARGET util_web_s                PROPERTY FOLDER "Static")
 	SetStaticRuntime(util_web_s)

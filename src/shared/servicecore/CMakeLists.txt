@@ -52,6 +52,8 @@ target_link_libraries(servicecore
 	${PLATFORM_LIBRARIES}
 )
 
+add_dependencies(servicecore bzip2 tinyxml2 sqlite sqlite3x)
+
 if(WIN32)
   SetSharedRuntime(servicecore)
 endif()

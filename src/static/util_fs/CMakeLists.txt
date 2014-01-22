@@ -19,6 +19,8 @@ target_link_libraries(util_fs
   ${Boost_SYSTEM_LIBRARY}
 )
 
+add_dependencies(util_fs boost)
+
 if(WIN32)
   SetSharedRuntime(util_fs)
 endif()

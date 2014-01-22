@@ -723,7 +723,7 @@ void InternalLink::showPreorderPrompt(DesuraId id, bool isPreload)
 	uint32 hours;
 	std::string time_available = UTIL::MISC::dateTimeToDisplay(str);
 
-	UTIL::MISC::getTimeDiffFromNow(str, days, hours, true);
+	UTIL::MISC::getTimeDiffFromNow(str, days, hours);
 
 	gcString title(Managers::GetString("#IF_PRELOADLAUNCH_TITLE"), item->getName());
 	gcString msg(Managers::GetString("#IF_PRELOADLAUNCH"), item->getName(), 

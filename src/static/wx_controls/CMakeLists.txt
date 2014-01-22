@@ -21,6 +21,8 @@ target_link_libraries(wx_controls
     ${wxWidgets_LIBRARIES}
 )
 
+add_dependencies(wx_controls boost wxWidgets)
+
 if(WIN32)
   SetSharedRuntime(wx_controls)
 endif()

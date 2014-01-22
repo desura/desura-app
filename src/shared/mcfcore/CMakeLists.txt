@@ -1,6 +1,5 @@
 include_directories(
   ${CMAKE_CURRENT_SOURCE_DIR}/code
-  ${Boost_INCLUDE_DIR}
   ${BZIP2_INCLUDE_DIR}
   ${COURGETTE_INCLUDE_DIRS}
 )
@@ -31,7 +30,6 @@ target_link_libraries(mcfcore
   util_fs
   util_web
   threads
-  ${Boost_DATE_TIME_LIBRARY}
   ${BZIP2_LIBRARIES}
   ${CURL_LIBRARIES}
   ${SQLITE_LIBRARIES}
@@ -40,6 +38,8 @@ target_link_libraries(mcfcore
   ${PLATFORM_LIBRARIES}
   ${CMAKE_THREAD_LIBS_INIT}
 )
+
+add_dependencies(mcfcore curl tinyxml2 bzip2 sqlite3x sqlite)
 
 if(WIN32)
   SetSharedRuntime(mcfcore)

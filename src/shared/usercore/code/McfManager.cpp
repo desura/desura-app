@@ -30,12 +30,7 @@ $/LicenseInfo$
 
 #include "mcfcore/MCFHeaderI.h"
 #include "mcfcore/MCFMain.h"
-
 #include "usercore/ItemInfoI.h"
-
-#include "boost/filesystem/operations.hpp"
-#include "boost/filesystem/path.hpp"
-namespace bfs = boost::filesystem;
 
 #define COUNT_MCFITEM "SELECT count(*) FROM sqlite_master WHERE name='mcfitem';"
 #define CREATE_MCFITEM "CREATE TABLE mcfitem(internalid INTEGER, mcfbuild INTEGER, path TEXT, branch INTEGER, flags INTEGER, PRIMARY KEY (internalid, mcfbuild, branch));"
