@@ -117,4 +117,7 @@ void CDProcess::onComplete()
 void CDProcess::onProgress(uint8 &prog)
 {
 	m_pbProgress->setProgress(prog);
+
+	if (prog >= 100)
+		m_butClose->SetLabel(Managers::GetString(L"#CLOSE"));
 }
