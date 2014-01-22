@@ -33,7 +33,7 @@ EULAForm::EULAForm(wxWindow* parent, UserCore::ItemManagerI* pItemManager)
 	, m_pItemManager(pItemManager)
 {
 	if (!m_pItemManager)
-		m_pItemManager = m_pItemManager;
+		m_pItemManager = GetUserCore()->getItemManager();
 
 	Bind(wxEVT_COMMAND_BUTTON_CLICKED, &EULAForm::onButtonPressed, this);
 	Bind(wxEVT_CLOSE_WINDOW, &EULAForm::onFormClose, this);
