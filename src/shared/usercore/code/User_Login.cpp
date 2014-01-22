@@ -278,13 +278,9 @@ void User::doLogIn(const char* user, const char* pass, bool bTestOnly)
 		
 
 #ifdef WIN32
-#ifdef DEBUG
-	gcString val("\"{0}\"", UTIL::OS::getCurrentDir(L"desura-d.exe"));
-#else
 	gcString val("\"{0}\"", UTIL::OS::getCurrentDir(L"desura.exe"));
-#endif
-
 	val +=  " \"%1\" -urllink";
+
 	updateRegKey("HKEY_CLASSES_ROOT\\Desura\\shell\\open\\command\\", val.c_str());
 #endif
 }

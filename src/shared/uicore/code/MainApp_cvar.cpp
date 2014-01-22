@@ -29,32 +29,6 @@ $/LicenseInfo$
 #include "Managers.h"
 #include "wx_controls/gcMessageBox.h"
 
-#ifdef DEBUG
-
-const wchar_t *modules[] = 
-{
-	L"desura-d.exe",
-	L"desura_service.exe",
-	L"bin\\uicore-d.dll",
-	L"bin\\usercore-d.dll",
-	L"bin\\webcore-d.dll",
-	L"bin\\mcfcore-d.dll",
-	L"bin\\servicecore_c-d.dll",
-};
-
-const char *modulesNames[] = 
-{
-	"desura-d.exe",
-	"desura_service.exe",
-	"uicore-d.dll",
-	"usercore-d.dll",
-	"webcore-d.dll",
-	"mcfcore-d.dll",
-	"servicecore_c-d.dll",
-};
-
-#else
-
 const wchar_t *modules[] = 
 {
 	L"desura.exe",
@@ -63,7 +37,7 @@ const wchar_t *modules[] =
 	L"bin\\usercore.dll",
 	L"bin\\webcore.dll",
 	L"bin\\mcfcore.dll",
-	L"bin\\servicecore_c.dll",
+	L"bin\\servicecore.dll",
 };
 
 const char *modulesNames[] = 
@@ -74,11 +48,8 @@ const char *modulesNames[] =
 	"usercore.dll",
 	"webcore.dll",
 	"mcfcore.dll",
-	"servicecore_c.dll",
+	"servicecore.dll",
 };
-
-#endif
-
 
 CONCOMMAND(cc_test_news, "test_news")
 {

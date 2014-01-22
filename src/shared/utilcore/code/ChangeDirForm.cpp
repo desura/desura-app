@@ -124,12 +124,7 @@ void ChangeDirForm::restartDesura()
 	GetModuleFileNameA(nullptr, exePath, 255);
 
 	UTIL::FS::Path path = UTIL::FS::PathWithFile(exePath);
-
-#ifdef DEBUG
-	path += UTIL::FS::File("desura-d.exe");
-#else
 	path += UTIL::FS::File("desura.exe");
-#endif
 
 	PROCESS_INFORMATION ProcInfo = {0};
 	STARTUPINFOA StartupInfo = {0};

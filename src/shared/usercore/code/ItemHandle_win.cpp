@@ -104,13 +104,8 @@ bool ItemHandle::createDesktopShortcut()
 		icon = "";
 	}
 
-#ifdef DEBUG
 	if (icon == "")
 		icon = UTIL::OS::getCurrentDir(L"\\desura.exe");
-#else
-	if (icon == "")
-		icon = UTIL::OS::getCurrentDir(L"\\desura-d.exe");
-#endif
 
 	UTIL::FS::delFile(path);
 	UTIL::WIN::createShortCut(gcWString(path).c_str(), link.c_str(), workingDir.c_str(), "", false, (icon.size()>0)?icon.c_str():nullptr);
