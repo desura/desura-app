@@ -1,6 +1,5 @@
 include_directories(
   ${CMAKE_CURRENT_SOURCE_DIR}/code
-  ${Boost_INCLUDE_DIR}
   ${BZIP2_INCLUDE_DIR}
   ${SQLITE3X_INCLUDE_DIRS}
 )
@@ -36,10 +35,11 @@ target_link_libraries(webcore
   ${CURL_LIBRARIES}
   ${TINYXML_LIBRARIES}
   ${SQLITE3X_LIBRARIES}
-  ${Boost_LIBRARIES}
   ${WINDOWS_LIBRARIES}
   ${CMAKE_THREAD_LIBS_INIT}
 )
+
+add_dependencies(webcore curl tinyxml2 bzip2 sqlite sqlite3x)
 
 if(WIN32)
   SetSharedRuntime(webcore)

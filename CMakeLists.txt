@@ -78,8 +78,12 @@
 # TODO: silent output for externel dependencies
 project(Desura)
 
-if(APPLE) # see #418
+if(APPLE) 
+  # see #418
   cmake_minimum_required(VERSION 2.8.10)
+elseif(WIN32)
+  #needed for x120_xp target
+  cmake_minimum_required(VERSION 2.8.12)
 else()
   cmake_minimum_required(VERSION 2.8.2)
 endif()

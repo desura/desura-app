@@ -17,6 +17,8 @@ target_link_libraries(mdump
 	${WINDOWS_LIBS}
 )
 
+add_dependencies(mdump breakpad)
+
 if(WIN32)
   SetSharedRuntime(mdump)
 endif()
@@ -31,5 +33,6 @@ if (WIN32)
 	)
 
 	SET_PROPERTY(TARGET mdump_s                PROPERTY FOLDER "Static")
+	add_dependencies(mdump_s breakpad_s)
 	SetStaticRuntime(mdump_s)
 endif()

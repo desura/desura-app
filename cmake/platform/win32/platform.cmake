@@ -2,6 +2,11 @@
 # set some windows specific variables
 ################################################################################
 
+if( MSVC_VERSION LESS 1800 )       # VC10-/VS2010- 
+    message(FATAL_ERROR "The project requires C++11 features. " 
+      "You need at least Visual Studio 12 (Microsoft Visual Studio 2013)") 
+endif()
+
 # some boost options
 add_definitions(-DBOOST_FILESYSTEM_VERSION=3 -DBOOST_ALL_NO_LIB=1)
 
@@ -27,12 +32,14 @@ if(MSVC12)
   add_compiler_flags(/FS)
 endif()
 
+set(CMAKE_GENERATOR_TOOLSET "v120_xp")
 set(WIN_TARGET 0x0502) # Windows XP SP2
 set(WIN_SDK_MIN 0x0600) # Windows Vista
 set(WIN_IE_VERSION 0x0603) # IE 6 SP2
 add_definitions(-DWINVER=${WIN_TARGET}
                 -D_WIN32_WINNT=${WIN_SDK_MIN}
-                -D_WIN32_IE=${WIN_IE_VERSION})
+                -D_WIN32_IE=${WIN_IE_VERSION}
+				-D_USING_V120_SDK71_)
 
 if(CMAKE_SIZEOF_VOID_P EQUAL 8)
   set(64BIT TRUE)

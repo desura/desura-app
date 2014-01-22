@@ -60,6 +60,8 @@ target_link_libraries(utilcore
 	${WINDOWS_LIBRARIES}
 )
 
+add_dependencies(utilcore wxWidgets tinyxml2 bzip2)
+
 if(WIN32)
   SetSharedRuntime(utilcore)
 endif()

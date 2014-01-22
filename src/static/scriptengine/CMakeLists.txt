@@ -20,6 +20,8 @@ target_link_libraries(scriptengine
     ${V8_LIBRARIES}
 )
 
+add_dependencies(scriptengine v8)
+
 if(WIN32)
   SetSharedRuntime(scriptengine)
 endif()

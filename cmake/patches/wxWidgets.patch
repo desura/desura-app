@@ -143,3 +143,17 @@ Index: src/msw/font.cpp
  }
  
  void wxNativeFontInfo::SetStyle(wxFontStyle style)
+Index: include/wx/tls.h
+===================================================================
+--- include/wx/tls.h	(revision 68296)
++++ include/wx/tls.h	(working copy)
+@@ -38,6 +38,9 @@
+ #endif // compilers
+ #endif // wxUSE_COMPILER_TLS
+ 
++//Desura: Windows xp hack for v120_xp (tls causes crashes)
++#undef wxHAS_COMPILER_TLS
++
+ // ----------------------------------------------------------------------------
+ // define wxTLS_TYPE()
+ // ----------------------------------------------------------------------------

@@ -178,6 +178,8 @@ target_link_libraries(uicore
     ${WINDOWS_LIBRARIES}
 )
 
+add_dependencies(uicore wxWidgets tinyxml2 sqlite sqlite3x)
+
 if(WIN32)
   SetSharedRuntime(uicore)
 endif()

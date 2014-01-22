@@ -30,6 +30,8 @@ target_link_libraries(ipc_pipe
     ${TINYXML_LIBRARIES}
 )
 
+add_dependencies(ipc_pipe tinyxml2)
+
 if(WIN32)
   SetSharedRuntime(ipc_pipe)
 endif()
@@ -46,5 +48,6 @@ if (WIN32)
 	)
 
 	SET_PROPERTY(TARGET ipc_pipe_s                PROPERTY FOLDER "Static")
+	add_dependencies(ipc_pipe_s tinyxml2_s)
 	SetStaticRuntime(ipc_pipe_s)
 endif()
