@@ -30,14 +30,8 @@ $/LicenseInfo$
 #include "MiniDumpGenerator_Extern.h"
 
 CVar gc_lastusername("gc_lastusername", "");
-
-#ifdef DEBUG
-	const char* g_szDesura = "desura-d.exe";
-	const char* g_szDesuraService = "desura_service.exe";
-#else
-	const char* g_szDesura = "desura.exe";
-	const char* g_szDesuraService = "desura_service.exe";
-#endif
+const char* g_szDesura = "desura.exe";
+const char* g_szDesuraService = "desura_service.exe";
 
 CrashDumpThread::CrashDumpThread() : Thread::BaseThread("CrashDump Thread")
 {
@@ -61,11 +55,7 @@ CrashDumpThread::~CrashDumpThread()
 
 bool CrashDumpThread::loadCrashReporter()
 {
-#ifdef DEBUG
-	if (!sol.load("crashuploader-d.dll"))
-#else
 	if (!sol.load("crashuploader.dll"))
-#endif
 		return false;
 
 	uploadCrash = sol.getFunction<UploadCrashFn>("UploadCrash");

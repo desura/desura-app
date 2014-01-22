@@ -175,13 +175,7 @@ void SetUninstallRegKey(UninstallInfo &info, uint64 installSize)
 
 	gcString today("{0}{1}{2}", (1900 + timeinfo.tm_year), timeinfo.tm_mon+1, timeinfo.tm_mday);
 
-	std::string desuraExe = UTIL::OS::getConfigValue("HKEY_LOCAL_MACHINE\\SOFTWARE\\Desura\\DesuraApp\\InstallPath");
-
-#ifdef DEBUG
-	desuraExe += "\\desura-d.exe";
-#else
-	desuraExe += "\\desura.exe";
-#endif
+	std::string desuraExe = UTIL::OS::getConfigValue("HKEY_LOCAL_MACHINE\\SOFTWARE\\Desura\\DesuraApp\\InstallPath") + "\\desura.exe";
 
 	if (!UTIL::FS::isValidFile(info.icon))
 		info.icon = desuraExe;
