@@ -155,7 +155,7 @@ public:
 
 		InitManagers();
 		InitLocalManagers();
-		InitLogging();
+		//InitLogging();
 
 		ControllerForm* cf = new ControllerForm();
 

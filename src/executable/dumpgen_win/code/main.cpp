@@ -67,8 +67,6 @@ protected:
 private:
 	SharedObjectLoader m_hUICore;
 	UICoreI* m_pUICore;
-
-	MiniDumpGenerator m_MDumpHandle;
 };
 
 BootLoader theApp;

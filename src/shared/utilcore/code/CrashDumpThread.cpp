@@ -142,7 +142,7 @@ void CrashDumpThread::uploadProgress(Prog_s& prog)
 	if (m_bSecond)
 		total += 50;
 
-	total += prog.ulnow*50/prog.ultotal;
+	total += (uint8)(prog.ulnow*50.0/prog.ultotal);
 	onProgressEvent(total);
 
 	prog.abort = isStopped();

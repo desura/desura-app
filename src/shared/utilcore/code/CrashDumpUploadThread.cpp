@@ -55,4 +55,7 @@ void CrashDumpUploadThread::run()
 		uint8 prog = x*100/files.size();
 		onProgressEvent(prog);
 	}
+
+	uint8 tot = 100;
+	onProgressEvent(tot);
 }
