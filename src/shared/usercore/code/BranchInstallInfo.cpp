@@ -893,7 +893,7 @@ namespace UnitTest
 			if (m_BranchInstallInfo.isInstalled())
 			{
 				if (nValidFileCount == -1)
-					ASSERT_GT(0, m_BranchInstallInfo.m_vInstallChecks.size());
+					ASSERT_NE(0, m_BranchInstallInfo.m_vInstallChecks.size());
 				else
 					ASSERT_EQ(nValidFileCount, m_BranchInstallInfo.m_vInstallChecks.size());
 			}
