@@ -112,7 +112,7 @@ void bz2CompressFile(const char* src, const char* dest)
 		uint32 readSize = buffSize;
 		if (fileSize - tot < buffSize)
 		{
-			readSize = fileSize - tot;
+			readSize = (int)(fileSize - tot);
 			endFile = true;
 		}
 

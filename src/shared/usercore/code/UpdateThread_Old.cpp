@@ -138,8 +138,8 @@ void UpdateThreadOld::doRun()
 
 		if (!isStopped())
 		{
-			auto saveSecs = (savetimer - now).seconds();
-			auto pollSecs = (timer - now).seconds();
+			auto saveSecs = (int)(savetimer - now).seconds();
+			auto pollSecs = (int)(timer - now).seconds();
 
 			m_WaitCond.wait(std::min(pollSecs, saveSecs)+1);
 		}
