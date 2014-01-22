@@ -16,7 +16,7 @@ target_link_libraries(desura_service
 )
 
 if(WIN32)
-  SetSharedRuntime(desura_service)
+  SetStaticRuntime(desura_service)
 endif()
 
 install_executable(desura_service)
