@@ -58,7 +58,7 @@ public:
 	//!
 	//! @param id Item id
 	//!
-	virtual void setInfo(DesuraId id) sealed;
+	virtual void setInfo(DesuraId id) final;
 	virtual void setInfo(DesuraId id, UserCore::Item::ItemInfoI* pItemInfo);
 
 	//! Sets the mcf build number

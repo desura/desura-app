@@ -304,7 +304,7 @@ void DesuraControl::setActivePage_ID(int32 id)
 
 void DesuraControl::setActivePage(PAGE index, bool reset)
 {
-	if (index == UNKNOWN_ITEM || m_iIndex == index)
+	if ((int)index == UNKNOWN_ITEM || m_iIndex == index)
 		return;
 
 	if (m_vTabInfo.size() == 0 || (size_t)index > m_vTabInfo.size()-1)

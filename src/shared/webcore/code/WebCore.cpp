@@ -295,6 +295,9 @@ gcString WebCoreClass::getUrl(WebCoreUrl id)
 	case ComplexModTutorial:
 		url += "/groups/desura/tutorials/complex-mod-installing";
 		break;
+
+	case Root:
+		break;
 	};
 
 	return  url;

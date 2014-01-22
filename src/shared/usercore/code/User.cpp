@@ -501,14 +501,18 @@ void User::updateUninstallInfo()
 
 void User::updateUninstallInfo(DesuraId id, uint64 installSize)
 {
+#ifdef WIN32
 	if (getServiceMain())
 		getServiceMain()->setUninstallRegKey(id.toInt64(), installSize);
+#endif
 }
 
 void User::removeUninstallInfo(DesuraId id)
 {
+#ifdef WIN32
 	if (getServiceMain())
 		getServiceMain()->removeUninstallRegKey(id.toInt64());
+#endif
 }
 
 void User::updateRegKey(const char* key, const char* value)

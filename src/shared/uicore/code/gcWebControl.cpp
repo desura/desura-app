@@ -45,13 +45,13 @@ static ChromiumDLL::ChromiumBrowserI* CreateBrowser(gcWebControl *pControl, cons
 #else
 ChromiumDLL::ChromiumBrowserI* NewChromiumBrowser(int* gtkWidget, const char* name, const char* loadUrl);
 
-static ChromiumDLL::ChromiumBrowserI* CreateBrowser(gcWebControl *pControl, const char* name, const char* loadUrl)
+static ChromiumDLL::ChromiumBrowserI* CreateBrowser(gcWebControl *pControl, const char* loadUrl)
 {
 	GtkWidget* gtkParent = pControl->GetConnectWidget();
 	GtkWidget* vbox = gtk_vbox_new(FALSE, 0);
 	
 	if (!gtkParent)
-		return;
+		return nullptr;
 	
 	GdkColor blackCol;
 	gdk_color_parse("black", &blackCol);
@@ -70,7 +70,7 @@ static ChromiumDLL::ChromiumBrowserI* CreateBrowser(gcWebControl *pControl, cons
 	
 	gtk_container_add(GTK_CONTAINER(gtkParent), vbox);
 	
-	m_pChromeBrowser = NewChromiumBrowser((int*)vbox, PRODUCT_NAME, loadUrl);
+	return NewChromiumBrowser((int*)vbox, PRODUCT_NAME, loadUrl);
 }
 #endif
 
