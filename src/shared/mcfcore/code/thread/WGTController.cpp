@@ -393,7 +393,7 @@ static bool WGTBlockSort(Misc::WGTBlock* a, Misc::WGTBlock* b)
 	return a->webOffset < b->webOffset;
 }
 
-static bool SortByOffset(std::shared_ptr<MCFCore::MCFFile>& a, std::shared_ptr<MCFCore::MCFFile>& b)
+static bool SortByOffset(const std::shared_ptr<MCFCore::MCFFile>& a, const std::shared_ptr<MCFCore::MCFFile>& b)
 {
 	return a->getOffSet() < b->getOffSet();
 }

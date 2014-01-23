@@ -30,6 +30,7 @@ $/LicenseInfo$
 #endif
 
 #include "cef_desura_includes/ChromiumBrowserI.h"
+#include "wx/window.h"
 
 class gcPanel;
 

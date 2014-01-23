@@ -49,6 +49,7 @@ namespace Item
 class ItemManagerI
 {
 public:
+	virtual ~ItemManagerI(){}
 
 	//! Loads the items from the file
 	//!

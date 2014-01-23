@@ -416,14 +416,13 @@ std::string UserEncodeString(const std::string& strKey, const std::string& strVa
 
 std::string UserDecodeString(const std::string& strKey, const std::string& strValue)
 {
-	size_t outLen = 0;
-	auto raw = UTIL::STRING::base64_decode(strValue, outLen);
+	auto raw = UTIL::STRING::base64_decode(strValue);
 
 #ifdef WIN32
 	DATA_BLOB db;
 
-	db.pbData = (BYTE*)raw.get();
-	db.cbData = outLen;
+	db.pbData = (BYTE*)raw.c_ptr();
+	db.cbData = raw.size();
 
 	DATA_BLOB secret;
 	secret.pbData = (BYTE*)strKey.c_str();
@@ -432,11 +431,15 @@ std::string UserDecodeString(const std::string& strKey, const std::string& strVa
 	DATA_BLOB out;
 
 	if (CryptUnprotectData(&db, nullptr, &secret, nullptr, nullptr, CRYPTPROTECT_UI_FORBIDDEN, &out))
-		return std::string((char*)out.pbData, out.cbData);
+	{
+		auto ret = std::string((char*)out.pbData, out.cbData);
+		LocalFree(out.pbData);
+		return ret;
+	}
 
 	return "";
 #else
-	return std::string(raw.data(), raw.size());
+	return std::string(raw.c_ptr(), raw.size());
 #endif
 }
 

@@ -292,7 +292,7 @@ void ContextMenuExtender::showContextMenu(int32 xPos, int32 yPos, std::vector<st
 void DisplayContextMenu(gcWebControlI* m_pParent, ContextClientDataI* ccd, gcMenu* menu, int32 xPos, int32 yPos)
 {
 	menu->SetClientObject((ContextClientData*)ccd);
-	m_pParent->PopupMenu((wxMenu*)menu);
+	m_pParent->PopupMenu((wxMenu*)menu, xPos, yPos);
 }
 #endif
 

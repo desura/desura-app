@@ -353,8 +353,8 @@ void MCFFile::loadXmlData(const XML::gcXMLElement &xmlElement)
 
 		gcString baseBuff(crcNode.GetText());
 
-		size_t outSize = 0;
-		auto buff = UTIL::STRING::base64_decode(baseBuff, outSize);
+		auto buff = UTIL::STRING::base64_decode(baseBuff);
+		auto outSize = buff.size();
 
 		if (outSize % 4 != 0)
 		{

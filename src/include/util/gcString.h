@@ -1173,7 +1173,7 @@ public:
 	{
 		std::basic_string<T> out;
 		Template::ConvertStdString(str.c_str(), out);
-		assign(out);
+		this->assign(out);
 	}
 
 	template<typename CT>
@@ -1184,7 +1184,7 @@ public:
 
 		std::basic_string<T> out;
 		Template::ConvertStdString(str, out);
-		assign(out);
+		this->assign(out);
 	}
 
 	template <typename CT, typename A>
@@ -1192,7 +1192,7 @@ public:
 	{
 		std::basic_string<T> t;
 		Template::ConvertStdString(tIn, t);
-		assign(Template::Format<T, A, Template::NullArg, Template::NullArg, Template::NullArg, Template::NullArg, Template::NullArg>(t.c_str(), a, Template::NullArg(), Template::NullArg(), Template::NullArg(), Template::NullArg(), Template::NullArg()));
+		this->assign(Template::Format<T, A, Template::NullArg, Template::NullArg, Template::NullArg, Template::NullArg, Template::NullArg>(t.c_str(), a, Template::NullArg(), Template::NullArg(), Template::NullArg(), Template::NullArg(), Template::NullArg()));
 	}
 
 	template <typename CT, typename A, typename B>
@@ -1200,7 +1200,7 @@ public:
 	{
 		std::basic_string<T> t;
 		Template::ConvertStdString(tIn, t);
-		assign(Template::Format<T, A, B, Template::NullArg, Template::NullArg, Template::NullArg, Template::NullArg>(t.c_str(), a, b, Template::NullArg(), Template::NullArg(), Template::NullArg(), Template::NullArg()));
+		this->assign(Template::Format<T, A, B, Template::NullArg, Template::NullArg, Template::NullArg, Template::NullArg>(t.c_str(), a, b, Template::NullArg(), Template::NullArg(), Template::NullArg(), Template::NullArg()));
 	}
 
 	template <typename CT, typename A, typename B, typename C>
@@ -1208,7 +1208,7 @@ public:
 	{
 		std::basic_string<T> t;
 		Template::ConvertStdString(tIn, t);
-		assign(Template::Format<T, A, B, C, Template::NullArg, Template::NullArg, Template::NullArg>(t.c_str(), a, b, c, Template::NullArg(), Template::NullArg(), Template::NullArg()));
+		this->assign(Template::Format<T, A, B, C, Template::NullArg, Template::NullArg, Template::NullArg>(t.c_str(), a, b, c, Template::NullArg(), Template::NullArg(), Template::NullArg()));
 	}
 
 	template <typename CT, typename A, typename B, typename C, typename D>
@@ -1216,7 +1216,7 @@ public:
 	{
 		std::basic_string<T> t;
 		Template::ConvertStdString(tIn, t);
-		assign(Template::Format<T, A, B, C, D, Template::NullArg, Template::NullArg>(t.c_str(), a, b, c, d, Template::NullArg(), Template::NullArg()));
+		this->assign(Template::Format<T, A, B, C, D, Template::NullArg, Template::NullArg>(t.c_str(), a, b, c, d, Template::NullArg(), Template::NullArg()));
 	}
 
 	template <typename CT, typename A, typename B, typename C, typename D, typename E>
@@ -1224,7 +1224,7 @@ public:
 	{
 		std::basic_string<T> t;
 		Template::ConvertStdString(tIn, t);
-		assign(Template::Format<T, A, B, C, D, E, Template::NullArg>(t.c_str(), a, b, c, d, e, Template::NullArg()));
+		this->assign(Template::Format<T, A, B, C, D, E, Template::NullArg>(t.c_str(), a, b, c, d, e, Template::NullArg()));
 	}
 
 	template <typename CT, typename A, typename B, typename C, typename D, typename E, typename F>
@@ -1232,7 +1232,7 @@ public:
 	{
 		std::basic_string<T> t;
 		Template::ConvertStdString(tIn, t);
-		assign(Template::Format<T, A, B, C, D, E, F>(t.c_str(), a, b, c, d, e, f));
+		this->assign(Template::Format<T, A, B, C, D, E, F>(t.c_str(), a, b, c, d, e, f));
 	}
 
 	template<std::size_t SIZE>

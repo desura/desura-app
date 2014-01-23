@@ -613,7 +613,7 @@ void MCF::saveMCF()
 
 struct OffsetSortKey
 {
-	bool operator()(std::shared_ptr<MCFFile>& lhs, std::shared_ptr<MCFFile>& rhs)
+	bool operator()(const std::shared_ptr<MCFFile>& lhs, const std::shared_ptr<MCFFile>& rhs)
 	{
 		return (lhs->getOffSet() < rhs->getOffSet());
 	}

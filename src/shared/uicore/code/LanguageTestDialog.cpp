@@ -67,6 +67,8 @@ CONCOMMAND(cc_languagetest, "languagetest")
 class LanguageStubBranch : public UserCore::Item::BranchInfoI
 {
 public:
+	virtual ~LanguageStubBranch(){}
+
 	uint32 getFlags() override { return 0; }
 	MCFBranch getBranchId() override { return MCFBranch(); }
 	MCFBranch getGlobalId() override { return MCFBranch(); }
@@ -103,6 +105,8 @@ public:
 class LanguageStubExeInfo : public UserCore::Item::Misc::ExeInfoI
 {
 public:
+	virtual ~LanguageStubExeInfo(){}
+
 	const char* getName() override { return "[An Exe]"; }
 
 	const char* getExe() override { return ""; }
@@ -115,6 +119,8 @@ public:
 class LanguageStubItem : public UserCore::Item::ItemInfoI
 {
 public:
+	virtual ~LanguageStubItem(){}
+
 	void updated() override { }
 	void addToAccount() override { }
 	void removeFromAccount() override { }
@@ -234,6 +240,8 @@ public:
 class LanguageStubToolManager : public UserCore::ToolManagerI
 {
 public:
+	virtual ~LanguageStubToolManager(){}
+
 	void removeTransaction(ToolTransactionId ttid, bool forced) override { }
 	ToolTransactionId downloadTools(UserCore::Misc::ToolTransaction* transaction) override { return ToolTransactionId(); }
 	ToolTransactionId installTools(UserCore::Misc::ToolTransaction* transaction) override { return ToolTransactionId(); }
@@ -258,6 +266,8 @@ public:
 class LanguageStubItemHandle : public UserCore::Item::ItemHandleI, public UserCore::Item::ItemTaskGroupI
 {
 public:
+	virtual ~LanguageStubItemHandle(){}
+
 	void setFactory(Helper::ItemHandleFactoryI* factory) override { }
 	void addHelper(Helper::ItemHandleHelperI* helper) override 
 	{
@@ -340,6 +350,8 @@ public:
 	{
 		m_ItemHandle.m_pItemInfo = &m_Item;
 	}
+
+	virtual ~LangStubItemManager(){}
 
 	void loadItems() override { }
 	void saveItems() override { }
@@ -464,6 +476,8 @@ public:
 		m_vItems[16].m_bNullCurBranch = true;
 		m_vItems[16].m_Branch.m_bIsPreOrder = true;
 	}
+
+	virtual ~LangPlayItemManager(){}
 
 	void loadItems() override { }
 	void saveItems() override { }
