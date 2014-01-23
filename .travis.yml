@@ -10,6 +10,7 @@ before_install:
   - sudo apt-add-repository 'deb http://repos.codelite.org/wx3.0/ubuntu/ precise universe'
   - sudo apt-add-repository 'deb http://ppa.launchpad.net/makson96/desurium-travis/ubuntu precise main'
   - sudo apt-get update
+  - sudo apt-get upgrade
   - sudo apt-get install gcc-multilib libnotify-dev libboost1.48-dev libboost-filesystem1.48-dev libboost-system1.48-dev libgtest-dev libwxgtk3.0-dev clang-3.4
   - sudo rm /usr/bin/clang /usr/bin/clang++
   - sudo ln -s /usr/bin/clang-4.8 /usr/bin/clang
