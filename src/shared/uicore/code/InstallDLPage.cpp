@@ -57,7 +57,7 @@ InstallDLPage::InstallDLPage(wxWindow* parent) : InstallBannerPage(parent, true)
 	m_bError = false;
 	m_bInit = true;
 
-	this->setParentSize(-1, 240);
+	this->setParentSize(-1, 140);
 }
 
 InstallDLPage::~InstallDLPage()

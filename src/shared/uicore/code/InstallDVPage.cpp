@@ -67,7 +67,7 @@ InstallDVPage::InstallDVPage(wxWindow* parent) : BaseInstallPage(parent)
 	
 	this->SetSizer( fgSizer1 );
 	this->Layout();
-	this->setParentSize(-1, 120);
+	this->setParentSize(-1, 140);
 
 	gcFrame* par = dynamic_cast<gcFrame*>(GetParent());
 	if (par)

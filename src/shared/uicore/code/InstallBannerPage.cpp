@@ -111,7 +111,7 @@ void InstallBannerPage::hideDownloadBanner()
 {
 	m_imgBanner->Show(false);
 	m_labProv->Show(false);
-	this->setParentSize(-1, 120);
+	this->setParentSize(-1, 140);
 	this->Layout();
 }
 
@@ -119,7 +119,7 @@ void InstallBannerPage::showDownloadBanner()
 {
 	m_imgBanner->Show(true);
 	m_labProv->Show(true);
-	this->setParentSize(-1, 220);
+	this->setParentSize(-1, 240);
 	this->Layout();
 }
 

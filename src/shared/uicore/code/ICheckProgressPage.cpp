@@ -70,7 +70,7 @@ ICheckProgressPage::ICheckProgressPage(wxWindow* parent) : BaseInstallPage(paren
 	this->SetSizer( fgSizer3 );
 	this->Layout();
 
-	setParentSize(-1, 120);
+	setParentSize(-1, 140);
 }
 
 ICheckProgressPage::~ICheckProgressPage()
