@@ -746,7 +746,7 @@ void ItemForm::onStageChange(ITEM_STAGE &stage)
 	}
 	else
 	{
-		//shouldnt get here!!!!!
+		//shouldn't get here!!!!!
 		assert(false);
 		return;
 	}
