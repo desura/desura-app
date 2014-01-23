@@ -313,8 +313,13 @@ bool InternalLink::switchTab(bool &badLink, std::vector<gcString> &list, const c
 
 		std::string url(out, outLen);
 
-		if (!url.empty() && url.find("http://") == 0)
-			g_pMainApp->loadUrl(url.c_str(), page);
+		if (!url.empty())
+		{
+			std::transform(begin(url), end(url), begin(url), std::tolower);
+			
+			if (url.find("http://") == 0 || url.find("https://") == 0)
+				g_pMainApp->loadUrl(url.c_str(), page);
+		}
 	}
 
 	return true;
