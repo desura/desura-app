@@ -92,13 +92,7 @@ void BootLoader::InitInstance()
 	}
 
 	if (args.hasArg("wait"))
-	{
-#ifdef DEBUG
-		BootLoaderUtil::WaitForOtherInstance("desura-d.exe");
-#else
 		BootLoaderUtil::WaitForOtherInstance("desura.exe");
-#endif
-	}
 
 	loadUICore();
 

@@ -40,11 +40,7 @@ void UpdateShortCuts()
 	gcString exe(curDir);
 	gcString wd(curDir);
 
-#ifdef DEBUG
-	exe += "\\desura-d.exe";
-#else
 	exe += "\\desura.exe";
-#endif
 
 	gcWString folder = UTIL::OS::getConfigValue("HKEY_LOCAL_MACHINE\\SOFTWARE\\Desura\\DesuraApp\\StartMenuFolder");
 
