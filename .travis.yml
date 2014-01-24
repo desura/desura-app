@@ -1,6 +1,6 @@
 language: cpp
 compiler:
-  - gcc
+#  - gcc
   - clang
 env:
   - CFLAGS=--coverage CXXFLAGS=--coverage
@@ -9,7 +9,8 @@ before_install:
   - sudo apt-add-repository 'deb http://repos.codelite.org/wx3.0/ubuntu/ precise universe'
   - sudo add-apt-repository --yes ppa:makson96/desurium-travis
   - sudo apt-get update
-  - sudo apt-get install -qq libnotify-dev libboost1.48-dev libboost-filesystem1.48-dev libboost-system1.48-dev libgtest-dev libwxgtk3.0-dev clang-3.4 cmake gcc-4.8 g++-4.8 gcc-4.8-multilib
+  - sudo apt-get install -qq libnotify-dev libboost1.48-dev libboost-filesystem1.48-dev libboost-system1.48-dev libgtest-dev libwxgtk3.0-dev clang-3.4 cmake
+# gcc-4.8 g++-4.8 gcc-4.8-multilib
   - if [ $CC == "clang" ]; then export CC=clang-3.4 && export CXX=clang++-3.4; fi
   - if [ $CC == "gcc" ]; then export CC=gcc-4.8 && export CXX=g++-4.8; fi
   - sudo pip install cpp-coveralls --use-mirrors
