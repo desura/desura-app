@@ -163,6 +163,7 @@ if(NOT BUILD_ONLY_CEF)
   endif()
   find_package(BZip2 ${REQUIRED_IF_OPTION})
   find_package(Sqlite ${REQUIRED_IF_OPTION})
+  find_package(v8 ${REQUIRED_IF_OPTION})
 
   if(NOT FORCE_BUNDLED_WXGTK)
     find_package(wxWidgets 2.9.5 COMPONENTS richtext ${REQUIRED_IF_OPTION})
