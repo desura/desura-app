@@ -36,19 +36,15 @@ $/LicenseInfo$
 
 #include <branding/branding.h>
 
-namespace UserCore
-{
-namespace Task
-{
+using namespace UserCore::Task;
 
-DownloadUpdateTask::DownloadUpdateTask(UserCore::User* user, uint32 appver, uint32 build) : UserTask(user)
-{
-	m_uiAppVer = appver;
-	m_uiAppBuild = build;
-	m_uiLastPercent = -1;
 
-	m_bCompleted = false;
-	m_bStopped = false;
+DownloadUpdateTask::DownloadUpdateTask(UserCore::User* user, uint32 appver, uint32 build, bool bForced) 
+	: UserTask(user)
+	, m_uiAppVer(appver)
+	, m_uiAppBuild(build)
+	, m_bForced(bForced)
+{
 }
 
 void DownloadUpdateTask::doTask()
@@ -155,15 +151,10 @@ void DownloadUpdateTask::downloadUpdate()
 		const char* dir = "./";
 #endif
 
-		//Dont use courgette for non admins for now
-		bool useCourgette = false;
+		bool res = false;
 
-#ifdef WIN32
-		if (getUserCore()->isAdmin())
-			useCourgette = true;
-#endif
-
-		bool res = m_hMcfHandle->verifyInstall(dir, true, useCourgette);
+		if (!m_bForced)
+			res = m_hMcfHandle->verifyInstall(dir, true, false);
 
 		m_hMcfHandle->getProgEvent() += delegate(this, &DownloadUpdateTask::onDownloadProgress);
 
@@ -176,11 +167,7 @@ void DownloadUpdateTask::downloadUpdate()
 			info.alert = true;
 
 			onDownloadStartEvent(info);
-
-			if (useCourgette)
-				m_hMcfHandle->dlFilesFromHttp(url.c_str(), dir);
-			else
-				m_hMcfHandle->dlFilesFromHttp(url.c_str());
+			m_hMcfHandle->dlFilesFromHttp(url.c_str());
 
 			if (!isStopped())
 				onDownloadCompleteEvent(info);
@@ -223,7 +210,4 @@ void DownloadUpdateTask::onDownloadProgress(MCFCore::Misc::ProgressInfo& p)
 		
 	m_uiLastPercent = prog;
 	onDownloadProgressEvent(prog);
-}
-
-}
 }

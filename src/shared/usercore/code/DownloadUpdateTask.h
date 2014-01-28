@@ -46,7 +46,7 @@ namespace Task
 class DownloadUpdateTask : public UserTask
 {
 public:
-	DownloadUpdateTask(UserCore::User* user, uint32 appver, uint32 build);
+	DownloadUpdateTask(UserCore::User* user, uint32 appver, uint32 build, bool bForced);
 
 	void doTask();
 
@@ -66,14 +66,15 @@ protected:
 private:
 	McfHandle m_hMcfHandle;
 
-	volatile bool m_bCompleted;
-	volatile bool m_bStopped;
+	volatile bool m_bCompleted = false;
+	volatile bool m_bStopped = false;
 	gcString m_szPath;
 
-	uint32 m_uiAppVer;
-	uint32 m_uiAppBuild;
+	const bool m_bForced;
+	const uint32 m_uiAppVer;
+	const uint32 m_uiAppBuild;
 	
-	uint32 m_uiLastPercent;
+	uint32 m_uiLastPercent = -1;
 };
 
 }

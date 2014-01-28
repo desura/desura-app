@@ -32,6 +32,7 @@ $/LicenseInfo$
 #include "HtmlTabPage.h"
 #include "usercore/ItemInfoI.h"
 #include "usercore/UploadInfo.h"
+#include "util/gcOptional.h"
 
 class ItemToolBarControl;
 class BaseToolBarControl;
@@ -63,7 +64,7 @@ protected:
 	void onUploadAction(gcString hash);
 	void onUploadProgress(gcString hash, UserCore::Misc::UploadInfo& info);
 
-	void onUpdatePoll();
+	void onUpdatePoll(std::tuple<gcOptional<bool>, gcOptional<bool>, gcOptional<bool>> &info);
 	void onNewItem(DesuraId &id);
 
 	void onLoginItemsLoaded();

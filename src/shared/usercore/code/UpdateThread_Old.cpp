@@ -48,21 +48,17 @@ $/LicenseInfo$
 	#define UPDATE_TIME	9 //mins
 #endif
 
-namespace UserCore
-{
+//onForcePoll
 
-UpdateThreadOld::UpdateThreadOld(EventV *onForcePollEvent, bool loadLoginItems)
-{
-	m_bForcePoll = false;
-	m_pOnForcePollEvent = onForcePollEvent;
+using namespace UserCore;
 
+
+UpdateThreadOld::UpdateThreadOld(Event<std::tuple<gcOptional<bool>, gcOptional<bool>, gcOptional<bool>>> *onForcePollEvent, bool loadLoginItems)
+	: m_pOnForcePollEvent(onForcePollEvent)
+	, m_bLoadLoginItems(loadLoginItems)
+{
 	if (m_pOnForcePollEvent)
 		*m_pOnForcePollEvent += delegate(this, &UpdateThreadOld::onForcePoll);
-
-	m_pUser = nullptr;
-	m_pWebCore = nullptr;
-
-	m_bLoadLoginItems = loadLoginItems;
 }
 
 void UpdateThreadOld::onStop()
@@ -75,18 +71,14 @@ void UpdateThreadOld::onStop()
 	m_pOnForcePollEvent = nullptr;
 }
 
-void UpdateThreadOld::init()
-{
-	m_iAppId = 100; // Ignoring updates anyway.
-	m_iAppVersion = 0;
-	
-	m_uiLastAppId = 0;
-	m_uiLastVersion = 0;
-}
-
 void UpdateThreadOld::doRun()
 {
-	init();
+#ifdef DESURA_OFFICIAL_BUILD
+	gcString test = m_pUser->getCVarValue("gc_qa_testing");
+	std::transform(begin(test), end(test), begin(test), ::tolower);
+
+	m_bInternalTesting = test == "true" || test == "1";
+#endif
 
 	if (m_bLoadLoginItems)
 		loadLoginItems();
@@ -146,10 +138,42 @@ void UpdateThreadOld::doRun()
 	}
 }
 
-void UpdateThreadOld::onForcePoll()
+void UpdateThreadOld::onForcePoll(std::tuple<gcOptional<bool>, gcOptional<bool>, gcOptional<bool>> &info)
 {
-	Msg("\t-- Forcing update poll\n");
-	m_bForcePoll = true;
+	auto first = std::get<0>(info);
+	auto second = std::get<1>(info);
+	auto third = std::get<2>(info);
+
+	if (first && *first)
+	{
+		Msg("\t-- Forcing update poll\n");
+		m_bForcePoll = true;
+	}
+		
+#ifdef DESURA_OFFICIAL_BUILD
+	if (second && m_bInternalTesting != *second)
+	{
+		if (*second)
+		{
+			Msg("\t-- Internal Testing activated\n");
+			m_bForceTestingUpdate = true;
+			m_bForcePoll = true;
+		}
+		m_bInternalTesting = *second;
+	}
+
+	if (third && *third)
+	{
+		Msg("\t-- Forced testing update\n");
+		m_bForceTestingUpdate = true;
+		m_bForcePoll = true;
+	}
+#else
+	//shouldn't be using these in non official builds
+	assert(!second);
+	assert(!third);
+#endif
+
 	m_WaitCond.notify();
 }
 
@@ -352,34 +376,97 @@ void UpdateThreadOld::loadLoginItems()
 }
 
 
+
+void UpdateThreadOld::checkAppUpdate(const XML::gcXMLElement &uNode, std::function<void(uint32, uint32, bool)> &updateCallback)
+{
+	auto processAppVersion = [&](const char* szNodeName, uint32 &appid, uint32 &mcfversion)
+	{
+		appid = 0;
+		mcfversion = 0;
+
+		auto appEl = uNode.FirstChildElement(szNodeName);
+
+		if (!appEl.IsValid())
+			return false;
+
+		auto id = appEl.GetAtt("id");
+		auto ver = appEl.GetText();
+
+		if (!id.empty())
+			appid = atoi(id.c_str());
+
+		if (!ver.empty())
+			mcfversion = atoi(ver.c_str());
+
+		return appid != 0 && mcfversion != 0;
+	};
+
+	auto isInternalApp = [](uint32 appid)
+	{
+		return appid >= 500 && appid < 600;
+	};
+
+	uint32 mcfversion = 0;
+	uint32 appid = 0;
+	bool bIsNewerVersion = false;
+	bool bIsForced = false;
+
+#ifdef DESURA_OFFICIAL_BUILD
+	if (m_bInternalTesting)
+	{
+		if (!processAppVersion("apptesting", appid, mcfversion) || !isInternalApp(appid))
+		{
+			Warning("Failed to find qa testing build on update poll");
+
+			if (!processAppVersion("app", appid, mcfversion))
+				return;
+		}
+		else
+		{
+			if (m_bForceTestingUpdate)
+			{
+				bIsForced = true;
+				bIsNewerVersion = true;
+			}
+
+			m_bForceTestingUpdate = false;
+		}
+	}
+	else 
+#endif
+
+	if (!processAppVersion("app", appid, mcfversion))
+	{
+		return;
+	}
+
+	auto bNewerOriginalBranch = (m_uiLastAppId == 0) && (appid == m_iAppId) && (mcfversion > m_iAppVersion);
+	auto bNewerLastUpdateBranch = (appid == m_uiLastAppId) && (mcfversion > m_uiLastVersion);
+	auto bDiffBranch = (appid != m_iAppId) && (appid != m_uiLastAppId);
+
+	if (bNewerLastUpdateBranch || bNewerOriginalBranch || bDiffBranch)
+		bIsNewerVersion = true;
+
+	if (bIsNewerVersion)
+	{
+		updateCallback(appid, mcfversion, bIsForced);
+		m_uiLastAppId = appid;
+		m_uiLastVersion = mcfversion;
+	}
+}
+
+
 #ifdef DESURA_OFFICIAL_BUILD
 
 void UpdateThreadOld::checkAppUpdate(const XML::gcXMLElement &uNode)
 {
-	auto appEl = uNode.FirstChildElement("app");
-
-	if (!appEl.IsValid())
-		return;
-
 	UserCore::User *pUser = dynamic_cast<UserCore::User*>(m_pUser);
 
 	if (!pUser)
 		return;
 
-	uint32 mcfversion = 0;
-	uint32 appid = 0;
-
-	auto id = appEl.GetAtt("id");
-	auto ver = appEl.GetText();
-
-	if (!id.empty())
-		appid = atoi(id.c_str());
-		
-	if (!ver.empty())
-		mcfversion = atoi(ver.c_str());
-
-	if (appid != 0 && mcfversion != 0 && !(appid == m_iAppId && mcfversion <= m_iAppVersion ) && !(appid == m_uiLastAppId && m_uiLastAppId >= mcfversion))
-		pUser->appNeedUpdate(appid, mcfversion);
+	auto cb = std::bind(&UserCore::User::appNeedUpdate, *pUser);
+	checkAppUpdate(uNode, cb);
 }
 
 void UpdateThreadOld::updateBuildVer()
@@ -416,6 +503,195 @@ void UpdateThreadOld::updateBuildVer()
 #endif
 
 
+#ifdef WITH_GTEST
+
+#include <gtest/gtest.h>
+
+namespace UnitTest
+{
+	class UpdateThreadOldFixture : public ::testing::Test
+	{
+	public:
+		UpdateThreadOldFixture()
+			: thread(nullptr, false)
+		{
+		}
+
+		bool checkUpdate(uint32 appid, uint32 build)
+		{
+			XML::gcXMLDocument doc;
+			doc.Create("apps");
+			auto el = doc.GetRoot("apps").NewElement("app");
+			el.SetAttribute("id", appid);
+			el.SetText(gcString("{0}", build).c_str());
+
+			bool bNeedsUpdate = false;
+
+			std::function<void(uint32,uint32, bool)> callback = [&](uint32, uint32, bool)
+			{
+				bNeedsUpdate = true;
+			};
+
+			thread.checkAppUpdate(doc.GetRoot("apps"), callback);
+			return bNeedsUpdate;
+		}
+
+		void setAppVersion(uint32 appid, uint32 build)
+		{
+			thread.m_iAppId = appid;
+			thread.m_iAppVersion = build;
+		}
+
+		void setLastUpdateVersion(uint32 appid, uint32 build)
+		{
+			thread.m_uiLastAppId = appid;
+			thread.m_uiLastVersion = build;
+		}
+
+		UpdateThreadOld thread;
+	};
+
+
+	TEST_F(UpdateThreadOldFixture, invalidApp)
+	{
+		ASSERT_TRUE(checkUpdate(1, 3));
+	}
+
+
+	TEST_F(UpdateThreadOldFixture, newVersionSameApp)
+	{
+		setAppVersion(1, 2);
+		ASSERT_TRUE(checkUpdate(1, 3));
+	}
+
+	TEST_F(UpdateThreadOldFixture, oldVersionSameApp)
+	{
+		setAppVersion(1, 3);
+		ASSERT_FALSE(checkUpdate(1, 2));
+	}
+
+	TEST_F(UpdateThreadOldFixture, sameVersionSameApp)
+	{
+		setAppVersion(1, 2);
+		ASSERT_FALSE(checkUpdate(1, 2));
+	}
+
+
+
+	TEST_F(UpdateThreadOldFixture, newVersionDiffApp)
+	{
+		setAppVersion(1, 2);
+		ASSERT_TRUE(checkUpdate(2, 3));
+	}
+
+	TEST_F(UpdateThreadOldFixture, oldVersionDiffApp)
+	{
+		setAppVersion(1, 3);
+		ASSERT_TRUE(checkUpdate(2, 2));
+	}
+
+	TEST_F(UpdateThreadOldFixture, sameVersionDiffApp)
+	{
+		setAppVersion(1, 2);
+		ASSERT_TRUE(checkUpdate(2, 2));
+	}
+
+
+
+	 
+	TEST_F(UpdateThreadOldFixture, newVersionSameApp_sameVersionSameAppPoll)
+	{
+		setAppVersion(1, 2);
+		setLastUpdateVersion(1, 3);
+
+		ASSERT_FALSE(checkUpdate(1, 3));
+	}
+
+	TEST_F(UpdateThreadOldFixture, oldVersionSameApp_sameVersionSameAppPoll)
+	{
+		setAppVersion(1, 3);
+		setLastUpdateVersion(1, 2);
+
+		ASSERT_FALSE(checkUpdate(1, 2));
+	}
+
+	TEST_F(UpdateThreadOldFixture, sameVersionSameApp_sameVersionSameAppPoll)
+	{
+		setAppVersion(1, 2);
+		setLastUpdateVersion(1, 2);
+
+		ASSERT_FALSE(checkUpdate(1, 2));
+	}
+
+
+
+	TEST_F(UpdateThreadOldFixture, newVersionSameApp_olderVersionSameAppPoll)
+	{
+		setAppVersion(1, 2);
+		setLastUpdateVersion(1, 2);
+
+		ASSERT_TRUE(checkUpdate(1, 3));
+	}
+
+
+	TEST_F(UpdateThreadOldFixture, newVersionSameApp_newerVersionSameAppPoll)
+	{
+		setAppVersion(1, 2);
+		setLastUpdateVersion(1, 4);
+
+		ASSERT_FALSE(checkUpdate(1, 3));
+	}
+
+	TEST_F(UpdateThreadOldFixture, oldVersionSameApp_newerVersionSameAppPoll)
+	{
+		setAppVersion(1, 3);
+		setLastUpdateVersion(1, 4);
+
+		ASSERT_FALSE(checkUpdate(1, 2));
+	}
+
+	TEST_F(UpdateThreadOldFixture, sameVersionSameApp_newerVersionSameAppPoll)
+	{
+		setAppVersion(1, 2);
+		setLastUpdateVersion(1, 3);
+
+		ASSERT_FALSE(checkUpdate(1, 2));
+	}
+
+
+
+
+
+
+	TEST_F(UpdateThreadOldFixture, newVersionSameApp_sameVersionDiffAppPoll)
+	{
+		setAppVersion(1, 2);
+		setLastUpdateVersion(2, 3);
+
+		ASSERT_TRUE(checkUpdate(3, 3));
+	}
+
+	TEST_F(UpdateThreadOldFixture, oldVersionSameApp_sameVersionDiffAppPoll)
+	{
+		setAppVersion(1, 3);
+		setLastUpdateVersion(2, 3);
+
+		ASSERT_TRUE(checkUpdate(3, 2));
+	}
+
+	TEST_F(UpdateThreadOldFixture, sameVersionSameApp_sameVersionDiffAppPoll)
+	{
+		setAppVersion(1, 2);
+		setLastUpdateVersion(2, 2);
+
+		ASSERT_TRUE(checkUpdate(3, 2));
+	}
+
+
+
 
 
 }
+
+#endif
+

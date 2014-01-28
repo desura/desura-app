@@ -33,7 +33,7 @@ $/LicenseInfo$
 #include "usercore/ItemHandleI.h"
 #include "usercore/ItemInfoI.h"
 #include "usercore/ItemManagerI.h"
-
+#include "util/gcOptional.h"
 
 class WCSpecialInfo;
 class IPCServiceMain;
@@ -173,7 +173,7 @@ public:
 	//! @param appid Application branch (100, 300, 500)
 	//! @param appver Application build
 	//!
-	virtual void appNeedUpdate(uint32 appid = 0, uint32 appver = 0)=0;
+	virtual void appNeedUpdate(uint32 appid = 0, uint32 appver = 0, bool bForced = false)=0;
 
 	//! Used to restart connection to desura serivce
 	//!
@@ -182,6 +182,14 @@ public:
 	//! Forces the update poll to run
 	//!
 	virtual void forceUpdatePoll()=0;
+
+	//! Forces the app to trigger an update for qa testing
+	//!
+	virtual void forceQATestingUpdate()=0;
+
+	//! Enables QA Testing builds (admin only)
+	//!
+	virtual void setQATesting(bool bEnable = true)=0;
 
 	///////////////////////////////////////////////////////////////////////////////
 	// Getters
@@ -394,9 +402,12 @@ public:
 
 	//! Gets the event for when a forced update poll is triggered.
 	//!
-	//! @return Force update poll event
+	//! @return Force update poll event, 
+	//!		set first bool to force update poll to run
+	//!		set second bool to enable qa builds (admins only)
+	//!		set third bool to force an update (maybe to same version)
 	//!
-	virtual EventV* getForcedUpdatePollEvent()=0;
+	virtual Event<std::tuple<gcOptional<bool>, gcOptional<bool>, gcOptional<bool>>>* getForcedUpdatePollEvent()=0;
 
 	//! Gets the event for when the login items are loaded
 	//!

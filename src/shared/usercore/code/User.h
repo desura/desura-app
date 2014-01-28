@@ -138,9 +138,12 @@ public:
 	virtual bool isAdmin();
 	virtual bool isDelayLoading();
 
-	virtual void appNeedUpdate(uint32 appid = 0, uint32 appver = 0);
+	virtual void appNeedUpdate(uint32 appid = 0, uint32 appver = 0, bool bForced = false);
 	virtual void restartPipe();
-	virtual void forceUpdatePoll();
+	void forceUpdatePoll() override;
+	void forceQATestingUpdate() override;
+	void setQATesting(bool bEnable = true) override;
+
 	///////////////////////////////////////////////////////////////////////////////
 	// Getters
 	///////////////////////////////////////////////////////////////////////////////
@@ -185,7 +188,7 @@ public:
 	virtual Event<std::vector<UserCore::Item::ItemUpdateInfo*> >* getItemUpdateEvent();
 	virtual EventV* getUserUpdateEvent();
 	virtual EventV* getPipeDisconnectEvent();
-	virtual EventV* getForcedUpdatePollEvent();
+	virtual Event<std::tuple<gcOptional<bool>, gcOptional<bool>, gcOptional<bool>>>* getForcedUpdatePollEvent();
 	virtual EventV* getLoginItemsLoadedEvent();
 	virtual Event<std::pair<bool, char> >* getLowSpaceEvent();
 
@@ -276,7 +279,7 @@ protected:
 	Event<std::vector<UserCore::Misc::NewsItem*> > onGiftUpdateEvent;
 	Event<std::vector<UserCore::Item::ItemUpdateInfo*> > onItemUpdateEvent;
 	EventV onPipeDisconnect;
-	EventV onForcePollEvent;
+	Event<std::tuple<gcOptional<bool>, gcOptional<bool>, gcOptional<bool>>> onForcePollEvent;
 	EventV onLoginItemsLoadedEvent;
 	Event<std::pair<bool, char> > onLowSpaceEvent;
 
@@ -536,7 +539,7 @@ inline EventV* User::getPipeDisconnectEvent()
 	return &onPipeDisconnect;
 }
 
-inline EventV* User::getForcedUpdatePollEvent()
+inline Event<std::tuple<gcOptional<bool>, gcOptional<bool>, gcOptional<bool>>>* User::getForcedUpdatePollEvent()
 {
 	return &onForcePollEvent;
 }

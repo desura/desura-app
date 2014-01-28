@@ -85,7 +85,7 @@ public:
 	
 	//! Starts a update poll thread
 	//!
-	virtual Thread::UserThreadI* newUpdateThread(EventV *onForcePollEvent, bool loadLoginItems)=0;
+	virtual Thread::UserThreadI* newUpdateThread(Event<std::tuple<gcOptional<bool>, gcOptional<bool>, gcOptional<bool>>> *onForcePollEvent, bool loadLoginItems)=0;
 
 
 	/////////////////////////////////////////////////////////////////////////////////////////////////////

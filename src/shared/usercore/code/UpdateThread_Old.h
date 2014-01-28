@@ -31,25 +31,31 @@ $/LicenseInfo$
 
 #include "UpdateThread.h"
 
+namespace UnitTest
+{
+	class UpdateThreadOldFixture;
+}
+
 namespace UserCore
 {
 
 class UpdateThreadOld : public UpdateThreadI
 {
 public:
-	UpdateThreadOld(EventV *onForcePollEvent, bool loadLoginItems);
+	UpdateThreadOld(Event<std::tuple<gcOptional<bool>, gcOptional<bool>, gcOptional<bool>>> *onForcePollEvent, bool loadLoginItems);
 
 protected:
+	friend class UnitTest::UpdateThreadOldFixture;
+
 	virtual void doRun();
 	virtual void onStop();
 
-	void init();
 	bool pollUpdates();
 	void parseXML(const XML::gcXMLDocument &xmlDocument);
 	
 
 	void updateBuildVer();
-	void onForcePoll();
+	void onForcePoll(std::tuple<gcOptional<bool>, gcOptional<bool>, gcOptional<bool>> &info);
 
 	bool onMessageReceived(const char* resource, const XML::gcXMLElement &xmlElement) override;
 	void setInfo(UserCore::UserI* user, WebCore::WebCoreI* webcore) override;
@@ -60,26 +66,33 @@ protected:
 
 	void loadLoginItems();
 	void checkAppUpdate(const XML::gcXMLElement &xmlElement);
+	void checkAppUpdate(const XML::gcXMLElement &uNode, std::function<void(uint32, uint32, bool)> &updateCallback);
 
 private:
 	HttpHandle m_hHttpHandle;
 
-	uint32 m_iAppId;
-	uint32 m_iAppVersion;
+	uint32 m_iAppId = 100;
+	uint32 m_iAppVersion = 0;
 
-	uint32 m_uiLastAppId;
-	uint32 m_uiLastVersion;
+	uint32 m_uiLastAppId = 0;
+	uint32 m_uiLastVersion = 0;
 
 	::Thread::WaitCondition m_WaitCond;
 
-	EventV *m_pOnForcePollEvent;
-	volatile bool m_bForcePoll;
+	Event<std::tuple<gcOptional<bool>, gcOptional<bool>, gcOptional<bool>>> *m_pOnForcePollEvent = nullptr;
 
-	UserCore::UserI* m_pUser;
-	WebCore::WebCoreI* m_pWebCore;
+	volatile bool m_bForcePoll = false;
 
-	bool m_bLastFailed;
-	bool m_bLoadLoginItems;
+#ifdef DESURA_OFFICIAL_BUILD
+	volatile bool m_bInternalTesting = false;
+	volatile bool m_bForceTestingUpdate = false;
+#endif
+
+	UserCore::UserI* m_pUser = nullptr;
+	WebCore::WebCoreI* m_pWebCore = nullptr;
+
+	bool m_bLastFailed = false;
+	bool m_bLoadLoginItems = false;
 };
 
 }

@@ -102,7 +102,7 @@ void UserThreadManager::delist(::Thread::BaseThread* pThread)
 	}
 }
 
-Thread::UserThreadI* UserThreadManager::newUpdateThread(EventV *onForcePollEvent, bool loadLoginItems)
+Thread::UserThreadI* UserThreadManager::newUpdateThread(Event<std::tuple<gcOptional<bool>, gcOptional<bool>, gcOptional<bool>>> *onForcePollEvent, bool loadLoginItems)
 {
 	UserCore::Thread::UpdateThread* thread = new UserCore::Thread::UpdateThread(onForcePollEvent, loadLoginItems);
 	setUpThread(thread);
