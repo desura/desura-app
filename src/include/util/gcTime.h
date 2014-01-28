@@ -193,40 +193,20 @@ public:
 
 	static std::string to_iso_string(const time_t &t)
 	{
-#ifdef NIX
-		assert(false);
-		return "";
-#else
+		char szOut[255];
+
 		tm source = *localtime(&t);
+		auto size = strftime(szOut, 255, IOS_TIME_STR_FORMAT, &source);
 
-		std::ostringstream stream;
-		stream << std::put_time(&source, IOS_TIME_STR_FORMAT);
-		return stream.str();
-#endif
+		return std::string(szOut, size);
 	}
 
-	static gcTime from_iso_string(const std::string &str)
+	static gcTime from_iso_string(const std::string& str)
 	{
-#ifdef NIX
-		assert(false);
-		return gcTime();
-#else
-		tm source = {0};
+		static const int nExpectedLen = 15; //strlen("20140115T123456")
 
-		std::istringstream stream(str);
-		stream >> std::get_time(&source, IOS_TIME_STR_FORMAT);
-
-		return gcTime(std::chrono::system_clock::from_time_t(mktime(&source)));
-#endif
-	}
-
-	static gcTime from_iso_string_alt(const std::string& str)
-	{
-		static const std::string template_str("20140115T123456");
-		if (str.length() != template_str.length())
-		{
+		if (str.length() != nExpectedLen)
 			return gcTime();
-		}
 
 		tm source = { 0 };
 
@@ -247,6 +227,7 @@ public:
 		source.tm_hour = convertStringPart(9, 2);
 		source.tm_min = convertStringPart(11, 2);
 		source.tm_sec = convertStringPart(13, 2);
+		source.tm_isdst = -1;
 
 		return gcTime(std::chrono::system_clock::from_time_t(mktime(&source)));
 	}

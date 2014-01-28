@@ -154,4 +154,23 @@ namespace UnitTest
 			std::cerr << "Warning - locale not USA - dateTimeToDisplay_simple_test not executing" << std::endl;
 		}
 	}
+
+	TEST(UtilDateTime, toIsoAndBack)
+	{
+		tm t = {0};
+		t.tm_hour = 8;
+		t.tm_min = 6;
+		t.tm_sec = 56;
+
+		t.tm_year = 113;
+		t.tm_mon = 8;
+		t.tm_mday = 10;
+
+		auto timet = mktime(&t);
+
+		auto strTestTimeStamp(gcTime::to_iso_string(timet));
+		auto time = gcTime::from_iso_string(strTestTimeStamp);
+
+		ASSERT_EQ(timet, time.to_time_t());
+	}
 }
