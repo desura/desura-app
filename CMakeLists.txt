@@ -252,9 +252,7 @@ if(NOT BUILD_ONLY_CEF)
     include(BuildGTest)
   endif()
 
-  if(NOT V8_FOUND)
-    include(Buildv8)
-  endif()
+  include(Buildv8)
   
   if(WIN32)
     include(BuildDesuraExtraBin)
