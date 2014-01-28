@@ -234,12 +234,12 @@ void User::init()
 }
 
 //call this if a update needs to be downloaded
-void User::appNeedUpdate(uint32 appver, uint32 appbuild)
+void User::appNeedUpdate(uint32 appver, uint32 appbuild, bool bForced)
 {
 	if (m_bDownloadingUpdate)
 		return;
 
-	if (appver == m_uiLastUpdateVer && appbuild <= m_uiLastUpdateBuild)
+	if (!bForced && appver == m_uiLastUpdateVer && appbuild <= m_uiLastUpdateBuild)
 		return;
 
 	m_bDownloadingUpdate = true;
@@ -284,7 +284,7 @@ void User::appNeedUpdate(uint32 appver, uint32 appbuild)
 		m_uiLastUpdateBuild = 0;
 	}
 
-	UserCore::Task::DownloadUpdateTask *task = new UserCore::Task::DownloadUpdateTask(this, m_uiLastUpdateVer, m_uiLastUpdateBuild);
+	UserCore::Task::DownloadUpdateTask *task = new UserCore::Task::DownloadUpdateTask(this, m_uiLastUpdateVer, m_uiLastUpdateBuild, bForced);
 
 	task->onDownloadCompleteEvent += delegate(this, &User::onUpdateComplete);
 	task->onDownloadStartEvent += delegate(this, &User::onUpdateStart);
@@ -459,7 +459,20 @@ void User::restartPipe()
 
 void User::forceUpdatePoll()
 {
-	onForcePollEvent();
+	auto t = std::make_tuple<gcOptional<bool>, gcOptional<bool>, gcOptional<bool>>(true, gcOptional<bool>(), gcOptional<bool>());
+	onForcePollEvent(t);
+}
+
+void User::forceQATestingUpdate()
+{
+	auto t = std::make_tuple<gcOptional<bool>, gcOptional<bool>, gcOptional<bool>>(gcOptional<bool>(), gcOptional<bool>(), true);
+	onForcePollEvent(t);
+}
+
+void User::setQATesting(bool bEnable)
+{
+	auto t = std::make_tuple<gcOptional<bool>, gcOptional<bool>, gcOptional<bool>>(gcOptional<bool>(), bEnable, gcOptional<bool>());
+	onForcePollEvent(t);
 }
 
 void User::setCounts(uint32 msgs, uint32 updates, uint32 threads, uint32 cart)

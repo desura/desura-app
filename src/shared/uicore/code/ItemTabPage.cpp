@@ -418,9 +418,12 @@ void ItemTabPage::onUploadAction(gcString hash)
 	postEvent("onUploadUpdate", hash.c_str());
 }
 
-void ItemTabPage::onUpdatePoll()
+void ItemTabPage::onUpdatePoll(std::tuple<gcOptional<bool>, gcOptional<bool>, gcOptional<bool>> &info)
 {
-	postEvent("onUpdatePoll", "all");
+	auto forcedUpdate = std::get<0>(info);
+
+	if (forcedUpdate && *forcedUpdate)
+		postEvent("onUpdatePoll", "all");
 }
 
 void ItemTabPage::onNewItem(DesuraId &id)

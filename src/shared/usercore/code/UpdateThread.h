@@ -71,7 +71,7 @@ namespace Thread
 class UpdateThread : public BaseUserThread<UserThreadI, ::Thread::BaseThread>
 {
 public:
-	UpdateThread(EventV *onForcePollEvent, bool loadLoginItems);
+	UpdateThread(Event<std::tuple<gcOptional<bool>, gcOptional<bool>, gcOptional<bool>>> *onForcePollEvent, bool loadLoginItems);
 	~UpdateThread();
 
 protected:
