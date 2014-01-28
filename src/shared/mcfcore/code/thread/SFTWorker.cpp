@@ -324,15 +324,21 @@ namespace UnitTest
 		t.tm_min = 6;
 		t.tm_sec = 56;
 
-		t.tm_year = 2013;
-		t.tm_mon = 9;
+		t.tm_year = 113;
+		t.tm_mon = 8;
 		t.tm_mday = 10;
+		t.tm_isdst = -1;
 
-		gcTime e(std::chrono::system_clock::from_time_t(mktime(&t)));
+		auto timet = mktime(&t);
+		gcTime e(std::chrono::system_clock::from_time_t(timet));
 
-		gcString strTimeStamp("20130910080654");
+		auto b = e.to_iso_string();
+		auto strTestTimeStamp(gcTime::to_iso_string(timet));
+
+		gcString strTimeStamp("20130910080656");
 		auto p = MCFCore::Thread::parseTimeStamp(strTimeStamp);
 
+		ASSERT_EQ(strTestTimeStamp, strTimeStamp);
 		ASSERT_EQ(e, p);
 	}
 }
