@@ -315,7 +315,7 @@ bool InternalLink::switchTab(bool &badLink, std::vector<gcString> &list, const c
 
 		if (!url.empty())
 		{
-			std::transform(begin(url), end(url), begin(url), std::tolower);
+			std::transform(begin(url), end(url), begin(url), ::tolower);
 			
 			if (url.find("http://") == 0 || url.find("https://") == 0)
 				g_pMainApp->loadUrl(url.c_str(), page);
