@@ -183,6 +183,10 @@ public:
 	std::string to_iso_string() const
 	{
 		auto t = std::chrono::system_clock::to_time_t(m_TimePoint);
+
+		if (t == -1)
+			return "";
+
 		return to_iso_string(t);
 	}
 
@@ -193,6 +197,9 @@ public:
 
 	static std::string to_iso_string(const time_t &t)
 	{
+		if (t == -1)
+			return "";
+
 		char szOut[255];
 
 		tm source = *localtime(&t);
