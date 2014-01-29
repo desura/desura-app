@@ -128,6 +128,7 @@
 		<str name="#LF_ERRBLANKNAME">Your Username is blank</str>
 		<str name="#LF_ERRPASSWORD">Your Password is blank</str>
 		<str name="#LF_ERRPLEASE">Please fix these items and try logging in again.</str>
+		<str name="#ALTLOGIN_TITLE">Alternative Desura Login: {0}</str>
 		
 		<!-- Console Form -->
 		<str name="#CS_TITLE">Desura Console</str>
@@ -516,6 +517,7 @@
 		<str name="#PLAY_DELAY_LOADING">Retrieving play list...</str>
 		<str name="#PLAY_BRANCH_AUTO">autoplay this version next time?</str>
 		<str name="#PLAY_ADD_GAME">Added {0} {1}</str><!-- {0} = mod or game {1} = name -->
+		<str name="#PLAY_UPLOAD">Current Uploads</str>
 	
 		<!-- Pop up menu -->
 		<str name="#PM_ADDACCOUNT">Add to Account</str>
