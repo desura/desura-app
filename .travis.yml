@@ -2,8 +2,6 @@ language: cpp
 compiler:
   - gcc
   - clang
-env:
-  - CFLAGS=--coverage CXXFLAGS=--coverage
 before_install:
   - sudo add-apt-repository --yes ppa:makson96/desurium-travis
   - sudo apt-get update
