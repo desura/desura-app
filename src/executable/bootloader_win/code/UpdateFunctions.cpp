@@ -38,6 +38,8 @@ $/LicenseInfo$
 #include "IPCManager.h"
 #include "IPCUpdateApp.h"
 
+#include "umcf/UMcf.h"
+
 void SetRegValues();
 void InstallService();
 
@@ -149,30 +151,8 @@ int NeedUpdate()
 
 void SetRegValues()
 {
-	char mod[255];
-	GetModuleFileName(nullptr, mod, 255);
-
-	UTIL::FS::Path path = UTIL::FS::PathWithFile(mod);
-
-	std::string command = gcString("\"{0}\\desura.exe\" \"{1}\" -urllink", path.getFullPath(), "%1");
-	std::string exePath = path.getFolderPath();
-
-	UTIL::WIN::setRegValue("HKEY_CLASSES_ROOT\\Desura\\", "URL:Desura Protocol");
-	UTIL::WIN::setRegValue("HKEY_CLASSES_ROOT\\Desura\\URL Protocol", "");
-	UTIL::WIN::setRegValue("HKEY_CLASSES_ROOT\\Desura\\shell\\open\\command\\", command);
-	UTIL::WIN::setRegValue("HKEY_LOCAL_MACHINE\\SOFTWARE\\Desura\\DesuraApp\\InstallPath", exePath);
-	UTIL::WIN::delRegKey("HKEY_LOCAL_MACHINE\\SOFTWARE\\DesuraNET");
-
-	UTIL::WIN::setRegValue("HKEY_LOCAL_MACHINE\\Software\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\Desura\\DisplayName", PRODUCT_NAME);
-	UTIL::WIN::setRegValue("HKEY_LOCAL_MACHINE\\Software\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\Desura\\UninstallString", gcString("{0}\\Desura_Uninstaller.exe", exePath));
-	UTIL::WIN::setRegValue("HKEY_LOCAL_MACHINE\\Software\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\Desura\\InstallLocation", exePath);
-	UTIL::WIN::setRegValue("HKEY_LOCAL_MACHINE\\Software\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\Desura\\DisplayIcon", gcString("{0}\\desura.exe", exePath));
-	UTIL::WIN::setRegValue("HKEY_LOCAL_MACHINE\\Software\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\Desura\\HelpLink", "http://www.desura.com");
-	UTIL::WIN::setRegValue("HKEY_LOCAL_MACHINE\\Software\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\Desura\\URLInfoAbout", "http://www.desura.com/about");
-	UTIL::WIN::setRegValue("HKEY_LOCAL_MACHINE\\Software\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\Desura\\NoRepair", "0");
-	UTIL::WIN::setRegValue("HKEY_LOCAL_MACHINE\\Software\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\Desura\\NoModify", "1");
-	UTIL::WIN::setRegValue("HKEY_LOCAL_MACHINE\\Software\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\Desura\\RegCompany", "Desura");
-	UTIL::WIN::setRegValue("HKEY_LOCAL_MACHINE\\Software\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\Desura\\Publisher", "Desura");
+	UMcf u;
+	u.setRegValues();
 }
 
 void InstallService()

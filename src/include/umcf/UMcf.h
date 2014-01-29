@@ -103,7 +103,7 @@ public:
 	bool isValidInstaller();
 
 	//this updates the appid and build in the registry
-	void setRegValues();
+	void setRegValues(const char* szInstallPath = nullptr);
 
 	//checks reg values againts MCF version
 	bool isUpdateNewer();
