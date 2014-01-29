@@ -161,7 +161,7 @@ protected:
 	uint64 m_uiTotProgress = 0;
 	uint64 m_uiCurProgress = 0;
 
-	void onFileProgress(ProgressCB& prog);
+	void onFileProgress(ProgressCB &prog);
 
 private:
 	bool m_bShouldMoveOldFiles = true;

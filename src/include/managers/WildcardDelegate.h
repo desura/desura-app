@@ -37,7 +37,7 @@ $/LicenseInfo$
 extern MainAppI* g_pMainApp;
 
 template <class TObj>
-class WildCardDelegate : public DelegateI<WCSpecialInfo>, public InvokeI
+class WildCardDelegate : public DelegateI<WCSpecialInfo&>, public InvokeI
 {
 public:
 	WildCardDelegate(TObj* t)
@@ -76,7 +76,7 @@ public:
 		m_bCompleted = true;
 	}
 
-	virtual DelegateI<WCSpecialInfo>* clone()
+	virtual DelegateI<WCSpecialInfo&>* clone()
 	{
 		return new WildCardDelegate(m_pObj);
 	}
@@ -102,7 +102,7 @@ public:
 		m_pWildCardInfo->processed = true;
 	}
 
-	virtual bool equals(DelegateI<WCSpecialInfo>* di)
+	virtual bool equals(DelegateI<WCSpecialInfo&>* di)
 	{
 		WildCardDelegate<TObj> *d = dynamic_cast<WildCardDelegate<TObj>*>(di);
 
@@ -120,7 +120,7 @@ public:
 };
 
 template <class TObj>
-DelegateI<WCSpecialInfo>* wcDelegate(TObj* pObj)
+DelegateI<WCSpecialInfo&>* wcDelegate(TObj* pObj)
 {
 	gcPanel* pan = dynamic_cast<gcPanel*>(pObj);
 	gcFrame* frm = dynamic_cast<gcFrame*>(pObj);

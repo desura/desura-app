@@ -165,7 +165,7 @@ ItemTabPage::ItemTabPage(wxWindow* parent, gcWString homePage) : HtmlTabPage(par
 {
 	m_bNotifiedOfLowSpace = false;
 	m_pItemControlBar = new ItemToolBarControl(parent);
-	m_pItemControlBar->onSearchEvent += guiDelegate(this, &ItemTabPage::onSearch);
+	m_pItemControlBar->onSearchEvent += guiDelegate(this, &ItemTabPage::onSearchStr);
 
 	m_pWebControl = nullptr;
 
@@ -195,7 +195,7 @@ ItemTabPage::~ItemTabPage()
 	m_EventLock.unlock();
 
 	m_pItemControlBar->onButtonClickedEvent -= guiDelegate(this, &ItemTabPage::onButtonClicked);
-	m_pItemControlBar->onSearchEvent -= guiDelegate(this, &ItemTabPage::onSearch);
+	m_pItemControlBar->onSearchEvent -= guiDelegate(this, &ItemTabPage::onSearchStr);
 
 	m_pWebControl->onPageStartEvent -= delegate(&m_pItemControlBar->onPageStartLoadingEvent);
 	m_pWebControl->onPageLoadEvent -= delegate(&m_pItemControlBar->onPageEndLoadingEvent);
@@ -431,7 +431,7 @@ void ItemTabPage::onNewItem(DesuraId &id)
 	postEvent("onNewItemAdded", id.toString().c_str());
 }
 
-void ItemTabPage::onSearch(gcString &text)
+void ItemTabPage::onSearchStr(gcString &text)
 {
 	postEvent("onSearch", text.c_str());
 }

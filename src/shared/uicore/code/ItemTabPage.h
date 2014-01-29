@@ -53,7 +53,7 @@ protected:
 	virtual void constuctBrowser();
 	virtual void newBrowser(const char* homeUrl);
 
-	void onSearch(gcString &text);
+	void onSearchStr(gcString &text);
 
 	void onItemsUpdate();
 	void onRecentUpdate(DesuraId &id);
