@@ -101,6 +101,8 @@ PasswordReminder::PasswordReminder(wxWindow* parent) : gcDialog(parent, wxID_ANY
 	this->Layout();
 
 	m_pThread = nullptr;
+
+	CenterOnScreen();
 }
 
 PasswordReminder::~PasswordReminder()

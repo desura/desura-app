@@ -67,6 +67,8 @@ NewAccountDialog::NewAccountDialog(wxWindow* parent) : gcDialog( parent, wxID_AN
 
 	m_butCancel->SetFocus();
 	m_bTermsOfService = true;
+
+	CenterOnScreen();
 }
 
 void NewAccountDialog::onPageLoad()
