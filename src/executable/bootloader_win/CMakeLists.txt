@@ -31,6 +31,7 @@ target_link_libraries(desura
   util_s
   util_bootloader_s
   mdump_s
+  umcf_s
   ${OFFICIAL_DEP}
   comctl32
 )
