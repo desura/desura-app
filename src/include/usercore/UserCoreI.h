@@ -362,7 +362,7 @@ public:
 	//!
 	//! @return Avatar event
 	//!
-	virtual Event<gcString>* getNewAvatarEvent()=0;
+	virtual EventC<gcString>* getNewAvatarEvent()=0;
 
 	//! Gets the wildcard event handler. Triggered when needing a wildcard resolved by ui core
 	//!
@@ -467,6 +467,9 @@ public:
 	virtual void logInTool(const char* user, const char* pass)=0;
 	
 	virtual void init(const char* appDataPath, const char* szProviderUrl)=0;
+
+	//! Set the avatar url
+	virtual void setAvatarUrl(const char* szAvatarUrl)=0;
 };
 
 

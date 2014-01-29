@@ -97,7 +97,7 @@ protected:
 	void onResize( wxSizeEvent& event );
 
 	void onProgressUpdate(uint32& idInt);
-	void onNewAvatar(gcString& image);
+	void onNewAvatar(gcString strImage);
 	void onDesuraUpdate(uint32& prog);
 
 	void onActiveToggle(bool &state);
