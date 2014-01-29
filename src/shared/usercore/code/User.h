@@ -181,7 +181,7 @@ public:
 	virtual Event<UserCore::Misc::UpdateInfo>* getAppUpdateCompleteEvent();
 	virtual Event<uint32>* getAppUpdateProgEvent();
 	virtual Event<UserCore::Misc::CVar_s>* getNeedCvarEvent();
-	virtual Event<gcString>* getNewAvatarEvent();
+	virtual EventC<gcString>* getNewAvatarEvent();
 	virtual Event<WCSpecialInfo>* getNeedWildCardEvent();
 	virtual Event<std::vector<UserCore::Misc::NewsItem*> >* getNewsUpdateEvent();
 	virtual Event<std::vector<UserCore::Misc::NewsItem*> >* getGiftUpdateEvent();
@@ -204,6 +204,8 @@ public:
 	virtual void updateBinaryRegKey(const char* key, const char* value, size_t size);
 
 	virtual void runInstallScript(const char* file, const char* installPath, const char* function);
+
+	void setAvatarUrl(const char* szAvatarUrl) override;
 
 	bool isAltProvider();
 
@@ -266,6 +268,8 @@ public:
 
 	BDManager* getBDManager();
 
+	
+
 protected:
 	Event<uint32> onItemsAddedEvent;
 	Event<UserCore::Misc::UpdateInfo> onAppUpdateEvent;
@@ -273,7 +277,7 @@ protected:
 	Event<uint32> onAppUpdateProgEvent;
 	EventV onUserUpdateEvent;
 	Event<UserCore::Misc::CVar_s> onNeedCvarEvent;
-	Event<gcString> onNewAvatarEvent;
+	EventC<gcString> onNewAvatarEvent;
 	Event<WCSpecialInfo> onNeedWildCardEvent;
 	Event<std::vector<UserCore::Misc::NewsItem*> > onNewsUpdateEvent;
 	Event<std::vector<UserCore::Misc::NewsItem*> > onGiftUpdateEvent;
@@ -312,15 +316,17 @@ private:
 	void cleanUp();
 	void onLoginItemsLoaded();
 	
-	gcString m_szMcfCachePath;
-	gcString m_szAppDataPath;
+	gcFixedString<255> m_szMcfCachePath;
+	gcFixedString<255> m_szAppDataPath;
 
-	gcString m_szUserName;
-	gcString m_szUserNameId;
-	gcString m_szAvatar;
+	gcFixedString<255> m_szUserName;
+	gcFixedString<255> m_szUserNameId;
 
-	gcString m_szProfileUrl;
-	gcString m_szProfileEditUrl;
+	gcFixedString<255> m_szAvatar;
+	gcFixedString<255> m_szAvatarUrl;
+
+	gcFixedString<255> m_szProfileUrl;
+	gcFixedString<255> m_szProfileEditUrl;
 
 	bool m_bDelayLoading;
 	bool m_bAdmin;
@@ -504,7 +510,7 @@ inline Event<UserCore::Misc::CVar_s>* User::getNeedCvarEvent()
 	return &onNeedCvarEvent;
 }
 
-inline Event<gcString>* User::getNewAvatarEvent()
+inline EventC<gcString>* User::getNewAvatarEvent()
 {
 	return &onNewAvatarEvent;
 }
