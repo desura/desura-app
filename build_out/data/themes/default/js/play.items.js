@@ -331,21 +331,20 @@ month_names = new Array("January", "February", "March", "April", "May", "June", 
 getReleaseString = function(time){
 	var now = new Date();
 	var diff = (time.getTime()-now.getTime())/1000; //need to convert back to seconds
-	var coming = desura.utils.getLocalString("#IS_PREORDER");
 
 	if (diff > 31104000) {
-		return coming + ' ' + time.getFullYear();
+		return desura.utils.getLocalString("#IS_PREORDER_YEAR", time.getFullYear());
 	} else if (diff > (2592000*3)) {
-		return coming + ' Q' + Math.ceil(time.getMonth()/3) + ' ' + time.getFullYear();
+		return desura.utils.getLocalString("#IS_PREORDER_QUATER", Math.ceil(time.getMonth()/3), time.getFullYear());
 	} else if (diff > 2592000) {
-		return coming + ' ' + month_names[time.getMonth()] + ' ' + time.getFullYear();
+		return desura.utils.getLocalString("#IS_PREORDER_MONTH", month_names[time.getMonth()] , time.getFullYear());
 	} else if (diff > 86400) {
-		return coming + ' ' + Math.ceil(diff/86400) + ' ' + desura.utils.getLocalString(Math.ceil(diff/86400)==1 ? "#IS_PREORDER_DAY" : "#IS_PREORDER_DAYS");
+		return desura.utils.getLocalString(Math.ceil(diff/86400)==1 ? "#IS_PREORDER_DAY" : "#IS_PREORDER_DAYS", Math.ceil(diff/86400));
 	} else if (diff > 3600) {
-		return coming + ' ' + Math.ceil(diff/3600) + ' ' + desura.utils.getLocalString(Math.ceil(diff/3600)==1 ? "#IS_PREORDER_HOUR" : "#IS_PREORDER_HOURS");
+		return desura.utils.getLocalString(Math.ceil(diff/3600)==1 ? "#IS_PREORDER_HOUR" : "#IS_PREORDER_HOURS", Math.ceil(diff/3600));
 	} else {
-		return coming + ' ' + Math.ceil(diff/60) + ' ' + desura.utils.getLocalString(Math.ceil(diff/60)==1 ? "#IS_PREORDER_MIN" : "#IS_PREORDER_MINS");
-	}
+		return desura.utils.getLocalString(Math.ceil(diff/60)==1 ? "#IS_PREORDER_MIN" : "#IS_PREORDER_MINS", Math.ceil(diff/60));
+	}	
 }
 
 getItemName = function(item, hideNameOn) {
