@@ -147,6 +147,18 @@ namespace XML
 			return !!child;
 		}
 
+		template <int SIZE>
+		bool GetChild(const char* name, gcFixedString<SIZE>& str) const
+		{
+			gcString strTemp;
+			auto ret = GetChild(name, strTemp);
+
+			if (ret)
+				str = strTemp;
+
+			return ret;
+		}
+
 		bool GetChild(const char* name, gcString& str) const
 		{
 			if (!name || !m_pConstElement)
