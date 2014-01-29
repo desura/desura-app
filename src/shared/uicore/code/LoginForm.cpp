@@ -918,6 +918,14 @@ void LoginForm::onChar(wxKeyEvent& event)
 				m_cbRemPass->SetValue(!m_cbRemPass->GetValue());
 		}
 
+		if (event.GetKeyCode() == WXK_CONTROL_A)
+		{
+			if (event.GetId() == m_tbPassword->GetId())
+				m_tbPassword->SelectAll();
+			else if (event.GetId() == m_tbUsername->GetId())
+				m_tbUsername->SelectAll();
+		}
+
 		event.Skip(); 
 	}
 }
@@ -936,6 +944,10 @@ void LoginForm::onFormChar(wxKeyEvent& event)
 			m_tbUsername->SetFocus();
 			m_tbUsername->SetValue((char)keyCode);
 			m_tbUsername->SetInsertionPointEnd();
+		}
+		else
+		{
+			event.Skip();
 		}
 	}
 }
