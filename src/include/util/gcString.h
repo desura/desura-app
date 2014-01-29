@@ -1320,6 +1320,86 @@ public:
 typedef gcBaseString<char> gcString;
 typedef gcBaseString<wchar_t> gcWString;
 
+template <int SIZE>
+class gcFixedString
+{
+public:
+	gcFixedString()
+	{
+		m_szBuff[0] = '\0';
+	}
+
+	gcFixedString(const char* szString)
+	{
+		if (szString)
+			Safe::strncpy(m_szBuff, SIZE, szString, strlen(szString));
+		else
+			m_szBuff[0] = '\0';
+	}
+
+	gcFixedString(const char* szString, size_t size)
+	{
+		if (szString)
+			Safe::strncpy(m_szBuff, SIZE, szString, size);
+		else
+			m_szBuff[0] = '\0';
+	}
+
+	gcFixedString(const std::string &strIn)
+		: gcFixedString(strIn.c_str(), strIn.size())
+	{
+	}
+
+	gcFixedString<SIZE>& operator=(const gcFixedString<SIZE>& strIn)
+	{
+		if (*strIn != strIn)
+		{
+			Safe::strncpy(m_szBuff, SIZE, strIn.m_szBuff, Safe::strlen(strIn.m_szBuff, SIZE));
+		}
+
+		return *this;
+	}
+
+	gcFixedString<SIZE>& operator=(const std::string& strIn)
+	{
+		Safe::strncpy(m_szBuff, SIZE, strIn.c_str(), strIn.size());
+		return *this;
+	}
+
+	gcFixedString<SIZE>& operator=(const char* strIn)
+	{
+		if (strIn)
+			Safe::strncpy(m_szBuff, SIZE, strIn, strlen(strIn));
+		else
+			m_szBuff[0] = '\0';
+
+		return *this;
+	}
+
+	operator std::string()
+	{
+		return std::string(m_szBuff);
+	}
+
+	operator gcString()
+	{
+		return gcString(m_szBuff);
+	}
+
+	const char* c_str()
+	{
+		return m_szBuff;
+	}
+
+	size_t size()
+	{
+		return Safe::strlen(m_szBuff, SIZE);
+	}
+
+private:
+	char m_szBuff[SIZE];
+};
+
 
 
 namespace Template
