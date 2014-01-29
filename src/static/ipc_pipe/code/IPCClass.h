@@ -714,7 +714,7 @@ private:
 #define REG_EVENT_VOID( event ) registerEvent( new IPC::IPCEventV( &event ), #event );
 
 //need to link the event on the sender end. Do not link on both ends other wise it will get in a loop
-#define LINK_EVENT( event, type ) event += new IPC::IPCDelegate< type >( this , #event );
+#define LINK_EVENT( event, type ) event += new IPC::IPCDelegate< type& >( this , #event );
 #define LINK_EVENT_VOID( event ) event += new IPC::IPCDelegateV( this , #event );
 
 
