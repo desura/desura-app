@@ -97,6 +97,7 @@ void NewAccountDialog::onButtonClicked(wxCommandEvent& event)
 		m_bTermsOfService = true;
 		m_butBack->Enable(false);
 		m_butAgree->SetLabel(Managers::GetString(L"#AGREE"));
+		m_pBrowser->loadUrl("http://www.desura.com/app/terms");
 	}
 	else
 	{
