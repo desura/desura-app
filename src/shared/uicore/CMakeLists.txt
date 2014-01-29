@@ -136,7 +136,12 @@ if(WITH_GTEST)
   file(GLOB Gtest_Sources code/gcUnitTestPage.cpp)
 endif()
 
-add_definitions(-DUI_HIDE_MODS -DENABLE_SEARCH)
+if(NOT WIN32)
+	add_definitions(-DUI_HIDE_MODS)
+endif()
+
+add_definitions(-DENABLE_SEARCH)
+
 if(WIN32)
   add_definitions(-D_WINDOWS
 	              -DSVENHACK
