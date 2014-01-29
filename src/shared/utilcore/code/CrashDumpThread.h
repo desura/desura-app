@@ -36,7 +36,7 @@ $/LicenseInfo$
 #include "Event.h"
 
 typedef bool (*UploadCrashFn)(const char* path, const char* user, int build, int branch);
-typedef bool (*UploadCrashProgFn)(const char* path, const char* user, int build, int branch, DelegateI<Prog_s>* prog);
+typedef bool (*UploadCrashProgFn)(const char* path, const char* user, int build, int branch, DelegateI<Prog_s&>* prog);
 
 class CrashDumpThread : public Thread::BaseThread
 {

@@ -25,16 +25,16 @@ $/LicenseInfo$
 
 //   Description :
 //      Event Class is a multi purpose event system where by other classes/functions or events
-//		can register interest in the event (by delegates) and receive notifaction when the
+//		can register interest in the event (by delegates) and receive notifications when the
 //		event triggers.
 //
-//		To create a new event just use the template class Event for paramater events or EventV
+//		To create a new event just use the template class Event for parameter events or EventV
 //		for void events.
 //
 //		I.e. Event<int> myIntEvent; Has one int parameter
 //			 EventV myVoidEvent;	Has no parameters
 //
-//		To register intrest in an event use the overloaded += opperatior. I.e. for:
+//		To register interest in an event use the overloaded += operator. I.e. for:
 //			*Object		event += delegate( this, &Class::Function );
 //			*Function	event += delegate( &Function );
 //			*Event		event += delegate( &otherEvent );
@@ -141,7 +141,7 @@ public:
 		assert( typeid(TArg) != typeid(const wchar_t*) );
 	}
 
-	void operator()(TArg& a)
+	void operator()(TArg a)
 	{
 		//cant use this with void event
 		assert( typeid(TArg) != typeid(VoidEventArg) );
@@ -341,19 +341,19 @@ protected:
 	{
 		std::lock_guard<std::recursive_mutex> guard(m_PendingLock);
 
-		for (size_t x=0; x<m_vPendingDelegates.size(); x++)
+		for (auto p : m_vPendingDelegates)
 		{
-			if (m_vPendingDelegates[x].first)
+			if (p.first)
 			{
-				if (findInfo(m_vPendingDelegates[x].second) == UNKNOWN_ITEM)
-					m_vDelegates.push_back(m_vPendingDelegates[x].second);
+				if (findInfo(p.second) == UNKNOWN_ITEM)
+					m_vDelegates.push_back(p.second);
 				else
-					m_vPendingDelegates[x].second->destroy();
+					p.second->destroy();
 			}
 			else
 			{
-				size_t index = findInfo(m_vPendingDelegates[x].second);
-				m_vPendingDelegates[x].second->destroy();
+				size_t index = findInfo(p.second);
+				p.second->destroy();
 
 				if (index != UNKNOWN_ITEM)
 					m_vDelegates.erase(m_vDelegates.begin()+index);
@@ -411,26 +411,33 @@ void CallObjectFunction(TObj* obj, void (TObj::*func)())
 }
 
 template <typename TObj, typename A>
-void CallObjectFunction(TObj* obj, void (TObj::*func)(A &a))
+void CallObjectFunction(TObj* obj, void (TObj::*func)(A a))
 {
+	assert(false);
 }
+
+
 
 template <typename TObj, typename A>
 void CallObjectFunction(TObj* obj, void (TObj::*func)(), A &a)
 {
+	assert(false);
 }
 
 template <typename TObj, typename A>
-void CallObjectFunction(TObj* obj, void (TObj::*func)(A &a), A &a)
+void CallObjectFunction(TObj* obj, void (TObj::*func)(A a), A a)
 {
 	if (obj && func)
 		(*obj.*func)(a);
 }
 
 
+
+
 template <typename A, typename TDel>
 void CallEvent(EventBase<A, DelegateVI>* event, A &a)
 {
+	assert(false);
 }
 
 template <typename A, typename TDel>
@@ -450,6 +457,7 @@ inline void CallEvent(EventBase<A, DelegateVI>* event)
 template <typename A, typename TDel>
 void CallEvent(EventBase<A, TDel>* event)
 {
+	assert(false);
 }
 
 
@@ -690,14 +698,29 @@ protected:
 
 
 template <typename TArg>
-class Event : public EventBase<TArg, DelegateI<TArg> >
+class Event : public EventBase<TArg&, DelegateI<TArg&> >
 {
 public:
-	Event() : EventBase<TArg, DelegateI<TArg> >()
+	Event() : EventBase<TArg&, DelegateI<TArg&> >()
 	{
 	}
 
-	Event(const EventBase<TArg, DelegateI<TArg> >& e) : EventBase<TArg, DelegateI<TArg> >(e)
+	Event(const EventBase<TArg&, DelegateI<TArg&> >& e) : EventBase<TArg, DelegateI<TArg&> >(e)
+	{
+	}
+};
+
+template <typename TArg>
+class EventC : public EventBase<TArg, DelegateI<TArg> >
+{
+public:
+	EventC() 
+		: EventBase<TArg, DelegateI<TArg> >()
+	{
+	}
+
+	EventC(const EventBase<TArg, DelegateI<TArg> >& e) 
+		: EventBase<TArg, DelegateI<TArg> >(e)
 	{
 	}
 };
@@ -706,10 +729,16 @@ typedef EventBase<VoidEventArg, DelegateVI> EventV;
 
 
 
+//template <class TObj, class TArg>
+//DelegateI<TArg&>* delegate(TObj* pObj, void (TObj::*NotifyMethod)(TArg&))
+//{
+//	return new ObjDelegateBase<void (TObj::*)(TArg&), DelegateI<TArg&>, TObj, TArg&>(pObj, NotifyMethod);
+//}
+
 template <class TObj, class TArg>
-DelegateI<TArg>* delegate(TObj* pObj, void (TObj::*NotifyMethod)(TArg&))
+DelegateI<TArg>* delegate(TObj* pObj, void (TObj::*NotifyMethod)(TArg))
 {
-	return new ObjDelegateBase<void (TObj::*)(TArg&), DelegateI<TArg>, TObj, TArg>(pObj, NotifyMethod);
+	return new ObjDelegateBase<void (TObj::*)(TArg), DelegateI<TArg>, TObj, TArg>(pObj, NotifyMethod);
 }
 
 template <class TObj>
@@ -721,9 +750,15 @@ DelegateVI* delegate(TObj* pObj, void (TObj::*NotifyMethod)())
 
 
 template <class TArg>
-DelegateI<TArg>* delegate(void (*NotifyMethod)(TArg&))
+DelegateI<TArg&>* delegate(void (*NotifyMethod)(TArg&))
 {
-	return new FunctDelegateBase<void (*)(TArg&), DelegateI<TArg>, TArg>(NotifyMethod);
+	return new FunctDelegateBase<void (*)(TArg&), DelegateI<TArg&>, TArg&>(NotifyMethod);
+}
+
+template <class TArg>
+DelegateI<TArg>* delegate(void(*NotifyMethod)(TArg))
+{
+	return new FunctDelegateBase<void(*)(TArg), DelegateI<TArg>, TArg>(NotifyMethod);
 }
 
 inline DelegateVI* delegate(void (*NotifyMethod)())
@@ -734,7 +769,13 @@ inline DelegateVI* delegate(void (*NotifyMethod)())
 
 
 template <class TArg>
-DelegateI<TArg>* delegate(Event<TArg>* e)
+DelegateI<TArg&>* delegate(Event<TArg>* e)
+{
+	return new ProxieDelegateBase<TArg&, DelegateI<TArg&> >(e);
+}
+
+template <class TArg>
+DelegateI<TArg>* delegate(EventC<TArg>* e)
 {
 	return new ProxieDelegateBase<TArg, DelegateI<TArg> >(e);
 }
@@ -781,16 +822,18 @@ inline DelegateVI* delegate(EventV* e)
 
 
 template <typename TObj, typename TArg>
-class ObjDelegate : public ObjDelegateBase<void (TObj::*)(TArg&), DelegateI<TArg>, TObj, TArg>
+class ObjDelegate : public ObjDelegateBase<void (TObj::*)(TArg), DelegateI<TArg>, TObj, TArg>
 {
 public:
-	typedef void (TObj::*TFunct)(TArg&);
+	typedef void (TObj::*TFunct)(TArg);
 
-	ObjDelegate(TObj* t, TFunct f) : ObjDelegateBase<void (TObj::*)(TArg&), DelegateI<TArg>, TObj, TArg>(t, f)
+	ObjDelegate(TObj* t, TFunct f) 
+		: ObjDelegateBase<void (TObj::*)(TArg), DelegateI<TArg>, TObj, TArg>(t, f)
 	{
 	}
 
-	ObjDelegate(ObjDelegate<TObj,TArg> *oDel) : ObjDelegateBase<void (TObj::*)(TArg&), DelegateI<TArg>, TObj, TArg>(oDel)
+	ObjDelegate(ObjDelegate<TObj,TArg> *oDel) 
+		: ObjDelegateBase<void (TObj::*)(TArg), DelegateI<TArg>, TObj, TArg>(oDel)
 	{
 	}
 
@@ -840,7 +883,7 @@ template <typename TObj, typename TArg, typename TExtra>
 class ExtraDelegate : public ObjDelegate<ExtraDelegate<TObj, TArg, TExtra>, TArg>
 {
 public:
-	typedef void (TObj::*TFunct)(TExtra, TArg&); 
+	typedef void (TObj::*TFunct)(TExtra, TArg); 
 
 	ExtraDelegate(TObj* t, TExtra e, TFunct f) : ObjDelegate<ExtraDelegate<TObj, TArg, TExtra>, TArg>(this, &ExtraDelegate::callBack), m_Extra(e)
 	{
@@ -848,7 +891,7 @@ public:
 		m_pObj = t;
 	}
 
-	void callBack(TArg& a)
+	void callBack(TArg a)
 	{
 		if (m_pObj && m_pFunct)
 		{
@@ -882,9 +925,9 @@ public:
 };
 
 template <class TObj, class TArg, class TExtra>
-DelegateI<TArg>* extraDelegate(TObj* pObj, void (TObj::*NotifyMethod)(TExtra, TArg&), TExtra tExtra)
+DelegateI<TArg&>* extraDelegate(TObj* pObj, void (TObj::*NotifyMethod)(TExtra, TArg&), TExtra tExtra)
 {
-	return new ExtraDelegate<TObj, TArg, TExtra>(pObj, tExtra, NotifyMethod);
+	return new ExtraDelegate<TObj, TArg&, TExtra>(pObj, tExtra, NotifyMethod);
 }
 
 template <typename TObj, typename TExtra>

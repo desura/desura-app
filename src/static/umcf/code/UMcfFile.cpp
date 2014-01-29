@@ -254,7 +254,7 @@ void RecMakeFolder(UTIL::FS::Path path)
 }
 
 
-uint8 UMcfFile::decompressAndSave(FILEHANDLE hSrc, FILEHANDLE hSink, uint64 offset, DelegateI<ProgressCB> *del)
+uint8 UMcfFile::decompressAndSave(FILEHANDLE hSrc, FILEHANDLE hSink, uint64 offset, DelegateI<ProgressCB&> *del)
 {
 	UTIL::MISC::Buffer buff(BUFFSIZE, true);
 	const size_t buffsize = BUFFSIZE;
@@ -314,7 +314,7 @@ uint8 UMcfFile::decompressAndSave(FILEHANDLE hSrc, FILEHANDLE hSink, uint64 offs
 	return MCFF_OK;
 }
 
-uint8 UMcfFile::saveData(FILEHANDLE hSrc, FILEHANDLE hSink, uint64 offset, DelegateI<ProgressCB> *del)
+uint8 UMcfFile::saveData(FILEHANDLE hSrc, FILEHANDLE hSink, uint64 offset, DelegateI<ProgressCB&> *del)
 {
 	UTIL::MISC::Buffer buff(BUFFSIZE, true);
 	const size_t buffsize = BUFFSIZE;
@@ -363,7 +363,7 @@ void UMcfFile::remove(const wchar_t* dir)
 #endif
 }
 
-uint8 UMcfFile::readMCFAndSave(FILEHANDLE hFile, const wchar_t* dir, uint64 offset, DelegateI<ProgressCB> *del)
+uint8 UMcfFile::readMCFAndSave(FILEHANDLE hFile, const wchar_t* dir, uint64 offset, DelegateI<ProgressCB&> *del)
 {
 	if (!IsValidFileHandle(hFile))
 		return MCFF_ERR_INVALIDHANDLE;
