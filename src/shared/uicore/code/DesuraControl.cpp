@@ -397,10 +397,10 @@ void DesuraControl::onProgressUpdate(uint32& idInt)
 {
 }
 
-void DesuraControl::onNewAvatar(gcString& image)
+void DesuraControl::onNewAvatar(gcString strImage)
 {
-	m_pAvatar->setDefaultImage(image.c_str());
-	gc_lastavatar.setValue(image.c_str());
+	m_pAvatar->setDefaultImage(strImage.c_str());
+	gc_lastavatar.setValue(strImage.c_str());
 }
 
 void DesuraControl::onDesuraUpdate(uint32& prog)

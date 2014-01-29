@@ -310,6 +310,16 @@ void UpdateThreadOld::parseXML(const XML::gcXMLDocument &doc)
 	if (!pUser->isAltProvider())
 		checkAppUpdate(uNode);
 
+	tempNode = uNode.FirstChildElement("member");
+
+	if (tempNode.IsValid())
+	{
+		tempNode = tempNode.FirstChildElement("avatar");
+
+		if (tempNode.IsValid() && !tempNode.GetText().empty())
+			m_pUser->setAvatarUrl(tempNode.GetText().c_str());
+	}
+
 	if (version == 1)
 	{
 		tempNode = uNode.FirstChildElement("items");

@@ -214,6 +214,7 @@ void User::doLogIn(const char* user, const char* pass, bool bTestOnly)
 	gcString szAvatar;
 	memNode.GetChild("avatar", szAvatar);
 
+	m_szAvatarUrl = szAvatar;
 	m_pThreadPool->queueTask(new UserCore::Task::DownloadAvatarTask(this, szAvatar.c_str(), m_iUserId) );
 
 

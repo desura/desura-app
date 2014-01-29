@@ -54,9 +54,8 @@ $/LicenseInfo$
 #include "McfManager.h"
 
 namespace UM = UserCore::Misc;
+using namespace UserCore;
 
-namespace UserCore
-{
 
 User::User()
 	: m_bAltProvider(false)
@@ -153,7 +152,7 @@ void User::init(const char* appDataPath, const char* szProviderUrl)
 	m_pBannerDownloadManager = new BDManager(this);
 	m_pCDKeyManager = new CDKeyManager(this);
 
-	m_szMcfCachePath = UTIL::OS::getMcfCachePath();
+	m_szMcfCachePath = gcString(UTIL::OS::getMcfCachePath());
 
 	InitMCFManager(appDataPath, m_szMcfCachePath.c_str());
 	init();
@@ -391,7 +390,7 @@ void User::onNeedWildCardCB(WCSpecialInfo& info)
 
 void User::setAvatarPath(const char* path)
 {
-	m_szAvatar = gcString(path);
+	m_szAvatar = path;
 	onNewAvatarEvent(m_szAvatar);
 }
 
@@ -584,4 +583,13 @@ void User::testMcfCache()
 	UTIL::FS::delFile(p);
 }
 
+void User::setAvatarUrl(const char* szAvatarUrl)
+{
+	if (gcString(szAvatarUrl) != (std::string)m_szAvatarUrl)
+	{
+		m_szAvatarUrl = szAvatarUrl;
+		m_pThreadPool->queueTask(new UserCore::Task::DownloadAvatarTask(this, szAvatarUrl, m_iUserId));
+	}
 }
+
+
