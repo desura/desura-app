@@ -381,60 +381,6 @@ if (!desura.events.cip)
 		desura.events.items.onNewItemAddedEvent.trigger(itemId, {itemId: itemId, alert: (showAlert == 'true')});
 	};
 	
-	
-	desura.events.internal.onChatInstantUpdate = function(){
-		desura.events.chat.onInstantUpdate.trigger("all");
-	};
-	
-	desura.events.internal.onChatProviderUpdate = function(){
-		desura.events.chat.onProviderUpdate.trigger("all");
-	};
-	
-	desura.events.internal.onChatBuddieListUpdate = function(){
-		desura.events.chat.onBuddieListUpdate.trigger("all");
-	};
-
-
-	desura.events.internal.onChatInstaceConnect = function(id){
-		desura.events.chat.onInstaceConnect.trigger(id, id);
-	};
-	
-	desura.events.internal.onChatInstanceDisconnect = function(id){
-		desura.events.chat.onInstanceDisconnect.trigger(id, id);
-	};
-	
-	desura.events.internal.onChatEvent = function(id, type, time, info){
-	
-		var event = {
-			fid: id, 
-			type: type, 
-			time: time, 
-			msg: info
-		};	
-	
-		desura.events.chat.onEvent.trigger(id, event);
-	};
-
-	desura.events.internal.onChatBuddieUpdate = function(id){
-		desura.events.chat.onBuddieUpdate.trigger(id, id);
-	};	
-	
-	desura.events.internal.onChatAddFriend = function(){
-		desura.events.chat.onAddFriend.trigger("all");
-	};
-	
-	desura.events.internal.onChatToggleOfflineContacts = function(state){
-		desura.events.chat.onToggleOfflineContacts.trigger("all", state);
-	};	
-	
-	desura.events.internal.onChatShowTab = function(id){
-		desura.events.chat.onShowTab.trigger(id, id);
-	};		
-	
-	desura.events.internal.onChatSearchComplete = function(id){
-		desura.events.chat.onSearchComplete.trigger(id, id);
-	};		
-	
 	desura.events.internal.onCIPListUpdate = function(id){
 		desura.events.cip.onListUpdateEvent.trigger("all");
 	};
@@ -451,4 +397,7 @@ if (!desura.events.cip)
 		desura.events.items.onDelayLoadDoneEvent.trigger("all");
 	};
 		
+	desura.events.internal.onPing = function(){
+		desura.utils.ping();
+	};		
 })();

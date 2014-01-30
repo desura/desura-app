@@ -49,6 +49,8 @@ public:
 
 	static UserCore::ItemManagerI* getItemManager();
 
+	EventV onPingEvent;
+
 protected:
 	friend class MainApp;
 	friend class LanguageTestDialog;
@@ -97,6 +99,9 @@ protected:
 
 	void login(gcString username, gcString loginCookie);
 	void loginError(gcString error);
+
+	void ping();
+	
 };
 
 

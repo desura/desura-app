@@ -42,6 +42,11 @@ void FromJSObject(UserCore::Item::ItemInfoI* &item, JSObjHandle& arg)
 
 UserCore::ItemManagerI* DesuraJSBinding::gs_pItemManager = nullptr;
 
+DesuraJSBinding *GetJSBinding()
+{
+	return g_RJS.m_tVal;
+}
+
 DesuraJSBinding::DesuraJSBinding() : DesuraJSBase("app", "native_binding.js")
 {
 	REGISTER_JS_FUNCTION( getLocalString, DesuraJSBinding );
@@ -87,6 +92,8 @@ DesuraJSBinding::DesuraJSBinding() : DesuraJSBase("app", "native_binding.js")
 
 	REG_SIMPLE_JS_VOIDFUNCTION( login, DesuraJSBinding );
 	REG_SIMPLE_JS_VOIDFUNCTION( loginError, DesuraJSBinding );
+
+	REG_SIMPLE_JS_VOIDFUNCTION( ping, DesuraJSBinding );
 }
 
 DesuraJSBinding::~DesuraJSBinding()
@@ -536,4 +543,9 @@ void DesuraJSBinding::login(gcString username, gcString loginCookie)
 void DesuraJSBinding::loginError(gcString error)
 {
 	g_pMainApp->newAccountLoginError(error.c_str());
+}
+
+void DesuraJSBinding::ping()
+{
+	onPingEvent();
 }
