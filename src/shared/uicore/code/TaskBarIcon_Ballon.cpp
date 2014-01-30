@@ -137,12 +137,12 @@ void TaskBarIcon::showGiftPopup(std::vector<UserCore::Misc::NewsItem*>& itemList
 
 	std::sort(itemList.begin(), itemList.end(), sortGifts);
 
-	for (size_t x=0; x<itemList.size(); x++)
+	for (auto i : itemList)
 	{
-		if (itemList[x]->hasBeenShown)
+		if (i->hasBeenShown)
 			continue;
 
-		msg += gcWString(L" - {0}\n", itemList[x]->szTitle.c_str());
+		msg += gcWString(L" - {0}\n", i->szTitle.c_str());
 	}
 
 	m_iLastBallon = BALLON_GIFTS;
