@@ -59,7 +59,7 @@ public:
 	// Application Threads
 	/////////////////////////////////////////////////////////////////////////////////////////////////////
 
-	Thread::UserThreadI* newUpdateThread(EventV *onForcePollEvent, bool loadLoginItems);
+	Thread::UserThreadI* newUpdateThread(Event<std::tuple<gcOptional<bool>, gcOptional<bool>, gcOptional<bool>>> *onForcePollEvent, bool loadLoginItems);
 
 	/////////////////////////////////////////////////////////////////////////////////////////////////////
 	// Mcf Threads

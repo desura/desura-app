@@ -259,6 +259,28 @@ CVar gc_disable_forceupdate_shortcut("gc_disable_forceupdate_shortcut", "0", CVA
 CVar gc_linux_launch_globalbin("gc_linux_launch_globalbin", "", CVAR_LINUX_ONLY, (CVarCallBackFn)&OnLinuxBinChange);
 CVar gc_linux_launch_globalargs("gc_linux_launch_globalargs", "", CVAR_LINUX_ONLY, (CVarCallBackFn)&OnLinuxArgsChange);
 
+#ifdef DESURA_OFFICIAL_BUILD
+
+bool OnQaTestingChange(CVar* var, const char* val)
+{
+	//force the value to be set
+	var->setValue(val);
+
+	if (GetUserCore())
+		GetUserCore()->setQATesting(var->getBool());
+
+	return true;
+}
+
+CVar gc_qa_testing("gc_qa_testing", "0", CFLAG_ADMIN, (CVarCallBackFn)&OnQaTestingChange);
+
+CONCOMMAND(cc_forcetestingupdate, "force_testing_update")
+{
+	if (GetUserCore())
+		GetUserCore()->forceQATestingUpdate();
+}
+
+#endif
 
 bool OnLinuxBinChange(CVar* var, const char* val)
 {

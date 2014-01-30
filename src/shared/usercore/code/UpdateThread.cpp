@@ -36,7 +36,8 @@ namespace UserCore
 namespace Thread
 {
 
-UpdateThread::UpdateThread(EventV *onForcePollEvent, bool loadLoginItems) : BaseUserThread<UserThreadI, ::Thread::BaseThread>( "Update poll Thread", DesuraId() )
+UpdateThread::UpdateThread(Event<std::tuple<gcOptional<bool>, gcOptional<bool>, gcOptional<bool>>> *onForcePollEvent, bool loadLoginItems) 
+	: BaseUserThread<UserThreadI, ::Thread::BaseThread>( "Update poll Thread", DesuraId() )
 {
 	m_pBaseTask = new UpdateThreadOld(onForcePollEvent, loadLoginItems);
 	m_pBaseTask->isStoppedEvent += delegate(this, &UpdateThread::isThreadStopped);

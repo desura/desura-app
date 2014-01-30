@@ -303,7 +303,13 @@ class DesuraLog : public wxLog
 public:
 	virtual void DoLogString(const wxChar *msg, time_t timestamp) override
 	{
-		Debug(gcString("{0}\n", msg));
+		gcString str("{0}\n", msg);
+
+		//PostMessage(WM_NULL) crashes hard due to issue with posting console message to ui thread with this issue
+		if (str.find("PostMessage(WM_NULL)") != gcString::npos)
+			return;
+
+		Debug(str);
 	}
 };
 
