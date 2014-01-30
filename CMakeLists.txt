@@ -165,7 +165,7 @@ if(NOT BUILD_ONLY_CEF)
   find_package(Sqlite ${REQUIRED_IF_OPTION})
 
   if(NOT FORCE_BUNDLED_WXGTK)
-    find_package(wxWidgets 2.9.5 COMPONENTS richtext ${REQUIRED_IF_OPTION})
+    find_package(wxWidgets 3.0.0 COMPONENTS richtext ${REQUIRED_IF_OPTION})
   endif()
 
   if(WITH_GTEST)
