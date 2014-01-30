@@ -395,13 +395,13 @@ const std::string dateTimeToDisplay(const char* dateTime)
 {
 	std::string date_time_str = fixDateTimeString(dateTime);
 
-	gcTime t1( gcTime::from_iso_string_alt(dateTime) );
+	gcTime t1( gcTime::from_iso_string(dateTime) );
 	time_t t2 = t1.to_time_t();
 
-	std::ostringstream codec("");
-	codec << std::put_time(std::localtime(&t2), "%x");
-
-	return codec.str();
+	char szOut[255];
+	auto size = strftime(szOut, 255, "%x", std::localtime(&t2));
+	
+	return std::string(szOut, size);
 }
 
 void getTimeDiff(const char* dateTimeFirst, const char* dateTimeLast, uint32 &days, uint32 &hours)
@@ -415,9 +415,9 @@ void getTimeDiff(const char* dateTimeFirst, const char* dateTimeLast, uint32 &da
 	std::string date_str_first = fixDateTimeString(dateTimeFirst);
 	std::string date_str_last = fixDateTimeString(dateTimeLast);
 
-	gcTime first_time = gcTime::from_iso_string_alt(date_str_first);
+	gcTime first_time = gcTime::from_iso_string(date_str_first);
 
-	gcTime last_time = gcTime::from_iso_string_alt(date_str_last);
+	gcTime last_time = gcTime::from_iso_string(date_str_last);
 
 	gcDuration duration = last_time - first_time;
 	uint32 duration_hours = static_cast<uint32>(duration.hours());
