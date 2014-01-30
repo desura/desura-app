@@ -56,7 +56,7 @@ private:
 	gcButton *m_butAgree;
 	gcButton *m_butCancel;
 
-	gcMiscWebControl *m_pBrowser;
+	gcWebControl *m_pBrowser;
 
 	gcString m_szProviderUrl;
 
