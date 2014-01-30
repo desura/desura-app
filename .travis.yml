@@ -8,7 +8,6 @@ before_install:
   - sudo apt-get install -qq libnotify-dev libboost1.48-dev libboost-filesystem1.48-dev libboost-system1.48-dev libgtest-dev libwxgtk3.0-dev wx-common clang-3.4 cmake gcc-4.8 g++-4.8 gcc-4.8-multilib libv8-dev
   - if [ $CC == "clang" ]; then export CC=clang-3.4 && export CXX=clang++-3.4; fi
   - if [ $CC == "gcc" ]; then export CC=gcc-4.8 && export CXX=g++-4.8; fi
-  - sudo pip install cpp-coveralls --use-mirrors
 script:
   - cmake . -DBUILD_CEF=off -DDEBUG=on -DWITH_GTEST=ON -DBUILD_TESTS=ON
   - make
