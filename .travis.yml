@@ -2,14 +2,12 @@ language: cpp
 compiler:
   - gcc
   - clang
-env:
-  - CFLAGS=--coverage CXXFLAGS=--coverage
 before_install:
-  - sudo apt-key adv --fetch-keys http://repos.codelite.org/CodeLite.asc
-  - sudo apt-add-repository 'deb http://repos.codelite.org/wx3.0/ubuntu/ precise universe'
+  - sudo add-apt-repository --yes ppa:makson96/desurium-travis
   - sudo apt-get update
-  - sudo apt-get install gcc-multilib libnotify-dev libv8-dev libboost1.48-dev libboost-date-time1.48-dev libboost-filesystem1.48-dev libboost-thread1.48-dev libboost-system1.48-dev libboost-test1.48-dev libgtest-dev libwxgtk3.0-dev
-  - sudo pip install cpp-coveralls --use-mirrors
+  - sudo apt-get install -qq libnotify-dev libboost1.48-dev libboost-filesystem1.48-dev libboost-system1.48-dev libgtest-dev libwxgtk3.0-dev wx-common clang-3.4 cmake gcc-4.8 g++-4.8 gcc-4.8-multilib
+  - if [ $CC == "clang" ]; then export CC=clang-3.4 && export CXX=clang++-3.4; fi
+  - if [ $CC == "gcc" ]; then export CC=gcc-4.8 && export CXX=g++-4.8; fi
 script:
   - cmake . -DBUILD_CEF=off -DDEBUG=on -DWITH_GTEST=ON -DBUILD_TESTS=ON
   - make -j4
