@@ -30,13 +30,19 @@ $/LicenseInfo$
 #include "wx_controls/gcControls.h"
 
 
-NewAccountDialog::NewAccountDialog(wxWindow* parent) : gcDialog( parent, wxID_ANY, wxT("#NA_TITLE"), wxDefaultPosition, wxSize(400,400), wxCAPTION|wxCLOSE_BOX|wxSYSTEM_MENU)
+NewAccountDialog::NewAccountDialog(wxWindow* parent, const char* szProviderUrl) 
+	: gcDialog( parent, wxID_ANY, wxT("#NA_TITLE"), wxDefaultPosition, wxSize(400,400), wxCAPTION|wxCLOSE_BOX|wxSYSTEM_MENU)
 {
 	SetTitle(Managers::GetString(L"#NA_TITLE"));
 
 	Bind(wxEVT_COMMAND_BUTTON_CLICKED, &NewAccountDialog::onButtonClicked, this);
 
-	m_pBrowser = new gcMiscWebControl(this, "http://www.desura.com/app/terms", "TermsOfService");
+	if (!gcString(szProviderUrl).empty())
+		m_szProviderUrl = szProviderUrl;
+	else
+		m_szProviderUrl = "desura.com";
+
+	m_pBrowser = new gcMiscWebControl(this, GetTermsUrl().c_str(), "TermsOfService");
 	m_pBrowser->onPageLoadEvent += delegate(this, &NewAccountDialog::onPageLoad);
 
 	m_butBack = new gcButton( this, wxID_ANY, Managers::GetString(L"#BACK"), wxDefaultPosition, wxDefaultSize, 0 );
@@ -76,6 +82,16 @@ void NewAccountDialog::onPageLoad()
 	m_butAgree->Enable(true);
 }
 
+gcString NewAccountDialog::GetTermsUrl()
+{
+	return gcString("http://www.{0}/app/terms", m_szProviderUrl);
+}
+
+gcString NewAccountDialog::GetRegisterUrl()
+{
+	return gcString("http://www.{0}/members/register/app", m_szProviderUrl);
+}
+
 void NewAccountDialog::onButtonClicked(wxCommandEvent& event)
 {
 	if (event.GetId() == m_butAgree->GetId())
@@ -85,7 +101,7 @@ void NewAccountDialog::onButtonClicked(wxCommandEvent& event)
 			m_bTermsOfService = false;
 			m_butAgree->SetLabel(Managers::GetString(L"#SUBMIT"));
 			m_butBack->Enable();
-			m_pBrowser->loadUrl("http://www.desura.com/members/register/app");
+			m_pBrowser->loadUrl(GetRegisterUrl().c_str());
 		}
 		else
 		{
@@ -97,7 +113,7 @@ void NewAccountDialog::onButtonClicked(wxCommandEvent& event)
 		m_bTermsOfService = true;
 		m_butBack->Enable(false);
 		m_butAgree->SetLabel(Managers::GetString(L"#AGREE"));
-		m_pBrowser->loadUrl("http://www.desura.com/app/terms");
+		m_pBrowser->loadUrl(GetTermsUrl().c_str());
 	}
 	else
 	{
