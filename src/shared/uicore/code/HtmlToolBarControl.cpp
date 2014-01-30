@@ -161,7 +161,6 @@ void HtmlToolBarControl::showLoading(bool state)
 {
 	m_dispLoading->Show(state);
 	m_butStop->Show(state);
-	m_butRefresh->Show(!state);
 	this->Layout();
 }
 
