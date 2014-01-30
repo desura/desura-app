@@ -160,10 +160,6 @@ bool EventHandler::onNavigateUrl(const char* url, bool isMain)
 	nu.main = isMain;
 
 	m_pParent->onNewURLEvent(nu);
-
-	if (!nu.stop)
-		m_pParent->onPageStartEvent();
-
 	return !nu.stop;
 }
 
