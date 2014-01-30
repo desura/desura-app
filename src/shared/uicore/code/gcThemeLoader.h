@@ -58,4 +58,15 @@ private:
 	gcString m_szData;
 };
 
+class ExternalLoaderScheme : public DesuraSchemeBase<ExternalLoaderScheme>
+{
+public:
+	ExternalLoaderScheme();
+
+	virtual bool processRequest(ChromiumDLL::SchemeRequestI* request, bool* redirect);
+	virtual void cancel();
+	virtual bool read(char* buffer, int size, int* readSize);
+};
+
+
 #endif //DESURA_GCTHEMELOADER_H

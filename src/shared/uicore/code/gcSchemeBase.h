@@ -45,7 +45,7 @@ public:
 };
 
 
-#define REGISTER_SCHEME( schemeName ) static RegisterSchemeHelper< schemeName > g_RS;
+#define REGISTER_SCHEME( schemeName ) static RegisterSchemeHelper< schemeName > g_RS_##schemeName;
 
 
 template <class T>

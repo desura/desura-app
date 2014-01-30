@@ -83,11 +83,7 @@ bool ThemeLoaderScheme::read(char* buffer, int size, int* readSize)
 
 
 
-
-
-
-
-RegisterSchemeHelper<StaticLoaderScheme> g_RS_Static;
+REGISTER_SCHEME(StaticLoaderScheme);
 
 
 StaticLoaderScheme::StaticLoaderScheme() : DesuraSchemeBase<StaticLoaderScheme>("desura", "static")
@@ -122,6 +118,45 @@ void StaticLoaderScheme::cancel()
 }
 
 bool StaticLoaderScheme::read(char* buffer, int size, int* readSize)
+{
+	return false;
+}
+
+
+
+REGISTER_SCHEME(ExternalLoaderScheme);
+
+ExternalLoaderScheme::ExternalLoaderScheme() : DesuraSchemeBase<ExternalLoaderScheme>("desura", "external")
+{
+}
+
+bool ExternalLoaderScheme::processRequest(ChromiumDLL::SchemeRequestI* request, bool* redirect)
+{
+	char wurl[255];
+	request->getURL(wurl, 255);
+
+	// desura://external/ is 18 chars!
+
+	gcString url = wurl;
+	url = url.substr(18);
+
+	if (url == "play.js")
+	{
+		m_szRedirectUrl = GetWebCore()->getUrl(WebCore::WebCoreUrl::PlayJavaScript);
+		*redirect = true;
+		return true;
+	}
+	else
+	{
+		return false;
+	}
+}
+
+void ExternalLoaderScheme::cancel()
+{
+}
+
+bool ExternalLoaderScheme::read(char* buffer, int size, int* readSize)
 {
 	return false;
 }

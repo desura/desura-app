@@ -87,7 +87,8 @@ enum WebCoreUrl
 	ListKeys,
 	Root,
 	AppChangeLog,
-	ComplexModTutorial
+	ComplexModTutorial,
+	PlayJavaScript
 };
 
 class WebCoreI
