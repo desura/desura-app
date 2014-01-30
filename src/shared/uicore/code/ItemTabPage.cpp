@@ -31,11 +31,14 @@ $/LicenseInfo$
 
 #include "gcWebHost.h"
 #include "gcWebControl.h"
+#include "gcJSBinding.h"
 
 #include "cef_desura_includes/ChromiumBrowserI.h"
 
 std::mutex m_EventLock;
 std::map<gcString, ChromiumDLL::JSObjHandle> g_EventMap;
+
+DesuraJSBinding *GetJSBinding();
 
 bool g_bGlobalItemUpdate = false;
 bool g_bMapValid = false;
@@ -160,8 +163,9 @@ private:
 
 
 
-
-ItemTabPage::ItemTabPage(wxWindow* parent, gcWString homePage) : HtmlTabPage(parent, homePage, ITEMS)
+ItemTabPage::ItemTabPage(wxWindow* parent, gcWString homePage) 
+	: HtmlTabPage(parent, homePage, ITEMS)
+	, m_PingTimer(this)
 {
 	m_bNotifiedOfLowSpace = false;
 	m_pItemControlBar = new ItemToolBarControl(parent);
@@ -185,10 +189,14 @@ ItemTabPage::ItemTabPage(wxWindow* parent, gcWString homePage) : HtmlTabPage(par
 	m_EventLock.lock();
 	g_bMapValid = true;
 	m_EventLock.unlock();
+
+	Bind(wxEVT_TIMER, &ItemTabPage::onPingTimer, this);
 }
 
 ItemTabPage::~ItemTabPage()
 {
+	m_PingTimer.Stop();
+
 	m_EventLock.lock();
 	g_EventMap.clear();
 	g_bMapValid = false;
@@ -294,6 +302,9 @@ void ItemTabPage::constuctBrowser()
 	onUploadUpdate();
 
 	*GetUserCore()->getLoginItemsLoadedEvent() += guiDelegate(this, &ItemTabPage::onLoginItemsLoaded);
+
+	GetJSBinding()->onPingEvent += guiDelegate(this, &ItemTabPage::onPing);
+	m_PingTimer.Start(15 * 1000);
 }
 
 
@@ -458,4 +469,24 @@ void ItemTabPage::onLowDiskSpace(std::pair<bool,char> &info)
 
 	onShowAlert(text, 0);
 #endif
+}
+
+void ItemTabPage::onPingTimer(wxTimerEvent&)
+{
+	if (!m_bPingBack)
+	{
+		Warning("Item tab page did not ping back after 15 seconds\n");
+		m_pWebControl->refresh();
+	}
+	else
+	{
+		postEvent("onPing");
+	}
+		
+	m_bPingBack = false;
+}
+
+void ItemTabPage::onPing()
+{
+	m_bPingBack = true;
 }

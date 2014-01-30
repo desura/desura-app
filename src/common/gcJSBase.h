@@ -41,13 +41,16 @@ class RegisterJSExtenderHelper
 {
 public:
 	RegisterJSExtenderHelper()
+		: m_tVal(new T())
 	{
-		::RegisterJSExtender( new T() );
+		::RegisterJSExtender( m_tVal );
 	}
 
 	void noOp()
 	{
 	}
+
+	T* m_tVal;
 };
 
 
