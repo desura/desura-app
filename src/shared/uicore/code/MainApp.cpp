@@ -130,7 +130,7 @@ public:
 
 AutoDelDeleteThread addt;
 
-const char* g_szSafeList[] = 
+static const std::vector<wxString> g_szSafeList = 
 {
 	".desura.com",
 	"desura.com",
@@ -140,7 +140,6 @@ const char* g_szSafeList[] =
 	"google.com",
 	".lindenlab.com",
 	"lindenlab.com",
-	nullptr,
 };
 
 static bool isSafeUrl(const wxString &server, const wxString &safeUrl)
@@ -171,9 +170,9 @@ static bool isSafeUrl(const char* url, MainAppProviderI* pMainApp)
 
 	size_t x=0;
 
-	while (g_szSafeList[x])
+	for (auto s : g_szSafeList)
 	{
-		if (isSafeUrl(server, wxString(g_szSafeList[x])))
+		if (isSafeUrl(server, s))
 			return true;
 
 		x++;
@@ -182,6 +181,9 @@ static bool isSafeUrl(const char* url, MainAppProviderI* pMainApp)
 	if (pMainApp && pMainApp->getProvider())
 	{
 		wxString cusProvider(pMainApp->getProvider());
+
+		if (cusProvider.empty())
+			cusProvider = "desura.com";
 
 		if (isSafeUrl(server, cusProvider))
 			return true;
