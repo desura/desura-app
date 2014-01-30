@@ -475,7 +475,7 @@ void UpdateThreadOld::checkAppUpdate(const XML::gcXMLElement &uNode)
 	if (!pUser)
 		return;
 
-	auto cb = std::bind(&UserCore::User::appNeedUpdate, *pUser);
+	std::function<void(uint32,uint32, bool)> cb = std::bind(&UserCore::User::appNeedUpdate, pUser, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3);
 	checkAppUpdate(uNode, cb);
 }
 
