@@ -296,6 +296,10 @@ gcString WebCoreClass::getUrl(WebCoreUrl id)
 		url += "/groups/desura/tutorials/complex-mod-installing";
 		break;
 
+	case PlayJavaScript:
+		url += "/app/playjs";
+		break;
+
 	case Root:
 		break;
 	};
