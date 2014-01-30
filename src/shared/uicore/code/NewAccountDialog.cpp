@@ -42,7 +42,7 @@ NewAccountDialog::NewAccountDialog(wxWindow* parent, const char* szProviderUrl)
 	else
 		m_szProviderUrl = "desura.com";
 
-	m_pBrowser = new gcMiscWebControl(this, GetTermsUrl().c_str(), "TermsOfService");
+	m_pBrowser = new gcWebControl(this, GetTermsUrl().c_str(), "TermsOfService");
 	m_pBrowser->onPageLoadEvent += delegate(this, &NewAccountDialog::onPageLoad);
 
 	m_butBack = new gcButton( this, wxID_ANY, Managers::GetString(L"#BACK"), wxDefaultPosition, wxDefaultSize, 0 );
