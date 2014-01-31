@@ -35,6 +35,18 @@ public:
 	{
 	}
 
+	gcOptional(const gcOptional<T> &t)
+		: m_bIsSet(t.m_bIsSet)
+		, m_tVal(t.m_tVal)
+	{
+	}
+
+	gcOptional(gcOptional<T> &&t)
+		: m_bIsSet(t.m_bIsSet)
+		, m_tVal(std::move(t.m_tVal))
+	{
+	}
+
 	gcOptional(const T &t)
 		: m_bIsSet(true)
 		, m_tVal(t)
