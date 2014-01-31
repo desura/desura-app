@@ -142,8 +142,7 @@ public:
 	//!
 	const char* getBanner() const
 	{
-		std::lock_guard<std::mutex> guard(m_BannerLock);
-		return m_szBanner.data();
+		return m_szBanner.c_str();
 	}
 
 	//! Gets the providers url
@@ -161,10 +160,7 @@ public:
 	//!
 	void setBanner(const char* banner) const
 	{
-		std::lock_guard<std::mutex> guard(m_BannerLock);
-
-		gcString strBanner(banner);
-		Safe::strncpy(m_szBanner.data(), m_szBanner.size(), strBanner.c_str(), strBanner.size());
+		m_szBanner = banner;
 	}
 
 private:
@@ -172,8 +168,7 @@ private:
 	gcString m_szUrl;
 	gcString m_szProvUrl;
 
-	mutable std::mutex m_BannerLock;
-	mutable std::array<char, 256> m_szBanner;
+	mutable gcFixedString<255> m_szBanner;
 };
 
 }
