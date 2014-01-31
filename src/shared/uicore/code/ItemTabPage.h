@@ -53,7 +53,7 @@ protected:
 	virtual void constuctBrowser();
 	virtual void newBrowser(const char* homeUrl);
 
-	void onSearch(gcString &text);
+	void onSearchStr(gcString &text);
 
 	void onItemsUpdate();
 	void onRecentUpdate(DesuraId &id);
@@ -79,12 +79,18 @@ protected:
 
 	virtual void onFind();
 
+	void onPingTimer(wxTimerEvent&);
+	void onPing();
+
 private:
 	std::mutex m_UploadMutex;
 	std::map<std::string, uint32> m_vUploadProgress;
 
 	bool m_bNotifiedOfLowSpace;
 	ItemToolBarControl* m_pItemControlBar;
+
+	wxTimer m_PingTimer;
+	bool m_bPingBack = true;
 };
 
 #endif //DESURA_ITEMTABPAGE_H

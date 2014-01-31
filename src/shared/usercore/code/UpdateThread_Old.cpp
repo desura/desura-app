@@ -310,6 +310,16 @@ void UpdateThreadOld::parseXML(const XML::gcXMLDocument &doc)
 	if (!pUser->isAltProvider())
 		checkAppUpdate(uNode);
 
+	tempNode = uNode.FirstChildElement("member");
+
+	if (tempNode.IsValid())
+	{
+		tempNode = tempNode.FirstChildElement("avatar");
+
+		if (tempNode.IsValid() && !tempNode.GetText().empty())
+			m_pUser->setAvatarUrl(tempNode.GetText().c_str());
+	}
+
 	if (version == 1)
 	{
 		tempNode = uNode.FirstChildElement("items");
@@ -465,7 +475,7 @@ void UpdateThreadOld::checkAppUpdate(const XML::gcXMLElement &uNode)
 	if (!pUser)
 		return;
 
-	auto cb = std::bind(&UserCore::User::appNeedUpdate, *pUser);
+	std::function<void(uint32,uint32, bool)> cb = std::bind(&UserCore::User::appNeedUpdate, pUser, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3);
 	checkAppUpdate(uNode, cb);
 }
 

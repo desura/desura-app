@@ -124,9 +124,11 @@ void GCUpdateProcess::install()
 
 		if (!m_bTestMode)
 		{
-			m_pUMcf->setRegValues();
+			gcString szIPath(m_szIPath);
+
+			m_pUMcf->setRegValues(szIPath.c_str());
 			
-			if (!updateService(gcString(m_szIPath).c_str()))
+			if (!updateService(szIPath.c_str()))
 				throw gcException(ERR_INVALID, "Failed to move service to common files.");
 		}
 	}

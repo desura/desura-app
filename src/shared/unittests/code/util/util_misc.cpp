@@ -173,4 +173,20 @@ namespace UnitTest
 
 		ASSERT_EQ(timet, time.to_time_t());
 	}
+
+	TEST(UtilDateTime, BadTimeT_Static)
+	{
+		auto out = gcTime::to_iso_string(-1);
+		std::string expected = "";
+
+		ASSERT_EQ(expected, out);
+	}
+
+	TEST(UtilDateTime, BadTimeT)
+	{
+		auto out = gcTime((time_t) -1).to_iso_string();
+		std::string expected = "";
+
+		ASSERT_EQ(expected, out);
+	}
 }

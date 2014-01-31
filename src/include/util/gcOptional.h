@@ -35,6 +35,18 @@ public:
 	{
 	}
 
+	gcOptional(const gcOptional<T> &t)
+		: m_bIsSet(t.m_bIsSet)
+		, m_tVal(t.m_tVal)
+	{
+	}
+
+	gcOptional(gcOptional<T> &&t)
+		: m_bIsSet(t.m_bIsSet)
+		, m_tVal(std::move(t.m_tVal))
+	{
+	}
+
 	gcOptional(const T &t)
 		: m_bIsSet(true)
 		, m_tVal(t)
@@ -86,7 +98,7 @@ public:
 
 	gcOptional<T>& operator=(const gcOptional<T>& t)
 	{
-		if (*this == t)
+		if (this == &t)
 			return *this;
 
 		m_bIsSet = t.m_bIsSet;
@@ -97,7 +109,7 @@ public:
 
 	gcOptional<T>& operator=(gcOptional<T>&& t)
 	{
-		if (*this == t)
+		if (this == &t)
 			return *this;
 
 		m_bIsSet = t.m_bIsSet;

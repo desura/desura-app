@@ -109,7 +109,7 @@ private:
 
 bool CompressFile(gcString &filePath);
 bool PrepDumpForUpload(gcString &dumpFile);
-bool UploadDump(const char* file, const char* user, int build, int branch, DelegateI<Prog_s>* progress);
+bool UploadDump(const char* file, const char* user, int build, int branch, DelegateI<Prog_s&>* progress);
 
 
 extern "C"
@@ -119,7 +119,7 @@ extern "C"
 		return UploadDump(file, user, build, branch, nullptr);
 	}
 
-	CEXPORT bool UploadCrashProg(const char* file, const char* user, int build, int branch, DelegateI<Prog_s>* progress)
+	CEXPORT bool UploadCrashProg(const char* file, const char* user, int build, int branch, DelegateI<Prog_s&>* progress)
 	{
 		return UploadDump(file, user, build, branch, progress); 
 	}
@@ -207,7 +207,7 @@ bool PrepDumpForUpload(gcString &dumpFile)
 	return true;
 }
 
-bool UploadDump(const char* file, const char* user, int build, int branch, DelegateI<Prog_s>* progress)
+bool UploadDump(const char* file, const char* user, int build, int branch, DelegateI<Prog_s&>* progress)
 {
 	Logger log;
 	log.write("---------------------------------------\r\n");

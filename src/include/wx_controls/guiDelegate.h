@@ -32,6 +32,7 @@ $/LicenseInfo$
 #include <wx/wx.h>
 #include "Event.h"
 #include "util_thread/BaseThread.h"
+#include <type_traits>
 
 #include <memory>
 
@@ -215,9 +216,10 @@ template <class TObj, typename TArg>
 class Invoker : public InvokeI
 {
 public:
-	typedef void (TObj::*TFunct)(TArg&); 
+	typedef void (TObj::*TFunct)(TArg);
+	typedef typename std::remove_reference<TArg>::type TArgNonRef;
 
-	Invoker(DelegateI<TArg> *oDel, TArg* a)
+	Invoker(DelegateI<TArg> *oDel, TArgNonRef* a)
 	{
 		m_pDelegate = oDel;
 		m_pArg = a;
@@ -243,7 +245,7 @@ public:
 	}
 
 	DelegateI<TArg> *m_pDelegate;
-	TArg* m_pArg;
+	TArgNonRef* m_pArg;
 };
 
 
@@ -255,7 +257,7 @@ template <class TObj, typename TArg>
 class PrimInvoker : public InvokeI
 {
 public:
-	typedef void (TObj::*TFunct)(TArg&); 
+	typedef void (TObj::*TFunct)(TArg); 
 
 	PrimInvoker(DelegateI<TArg> *oDel, TArg a) : m_Arg(a)
 	{
@@ -298,7 +300,7 @@ template <class TObj, typename TArg>
 class GuiDelegate : public ObjDelegate<TObj, TArg>, public wxDelegate
 {
 public:
-	typedef void (TObj::*TFunct)(TArg&); 
+	typedef void (TObj::*TFunct)(TArg); 
 
 	GuiDelegate(TObj* t, TFunct f, MODE mode) : ObjDelegate<TObj, TArg>(t,f)
 	{
@@ -317,6 +319,8 @@ protected:
 	}
 
 public:
+	typedef typename std::remove_reference<TArg>::type TArgNonRef;
+
 	~GuiDelegate()
 	{
 		if (ObjDelegate<TObj, TArg>::m_pObj)
@@ -354,7 +358,7 @@ public:
 
 		if (m_Mode == MODE_PENDING)
 		{
-			InvokeI *i = new Invoker<TObj, TArg>(new ObjDelegate<TObj, TArg>(this), new TArg(a));
+			InvokeI *i = new Invoker<TObj, TArg>(new ObjDelegate<TObj, TArg>(this), new TArgNonRef(a));
 
 			wxGuiDelegateEvent event(std::shared_ptr<InvokeI>(i), ObjDelegate<TObj, TArg>::m_pObj->GetId());
 			ObjDelegate<TObj, TArg>::m_pObj->GetEventHandler()->AddPendingEvent(event);
@@ -508,20 +512,22 @@ inline bool validateForm(TObj* pObj)
 }
 
 
-#define PRIMOVERIDEDELEGATE( type )	template <class TObj, type> DelegateI<type>* guiDelegate(TObj* pObj, void (TObj::*NotifyMethod)(type&), MODE mode = MODE_PENDING){if (!validateForm(pObj)){assert(false);return nullptr;}return new GuiPrimDelegate<TObj, type>(pObj, NotifyMethod, mode);}
+#define PRIMOVERIDEDELEGATE( type )	template <class TObj, type> \
+	DelegateI<type>* guiDelegate(TObj* pObj, void (TObj::*NotifyMethod)(type), MODE mode = MODE_PENDING) \
+		{if (!validateForm(pObj)){assert(false);return nullptr;}return new GuiPrimDelegate<TObj, type>(pObj, NotifyMethod, mode);}
 
-PRIMOVERIDEDELEGATE( bool );
-PRIMOVERIDEDELEGATE( int8 );
-PRIMOVERIDEDELEGATE( int16 );
-PRIMOVERIDEDELEGATE( int32 );
-PRIMOVERIDEDELEGATE( int64 );
-PRIMOVERIDEDELEGATE( uint8 );
-PRIMOVERIDEDELEGATE( uint16 );
-PRIMOVERIDEDELEGATE( uint32 );
-PRIMOVERIDEDELEGATE( uint64 );
+PRIMOVERIDEDELEGATE( bool& );
+PRIMOVERIDEDELEGATE( int8& );
+PRIMOVERIDEDELEGATE( int16& );
+PRIMOVERIDEDELEGATE( int32& );
+PRIMOVERIDEDELEGATE( int64& );
+PRIMOVERIDEDELEGATE( uint8& );
+PRIMOVERIDEDELEGATE( uint16& );
+PRIMOVERIDEDELEGATE( uint32& );
+PRIMOVERIDEDELEGATE( uint64& );
 
 template <class TObj, class TArg>
-DelegateI<TArg>* guiDelegate(TObj* pObj, void (TObj::*NotifyMethod)(TArg&), MODE mode = MODE_PENDING)
+DelegateI<TArg>* guiDelegate(TObj* pObj, void (TObj::*NotifyMethod)(TArg), MODE mode = MODE_PENDING)
 {
 	if (!validateForm(pObj))
 	{
@@ -839,7 +845,7 @@ public:
 };
 
 template <class TObj, class TArg, class TExtra>
-DelegateI<TArg>* guiExtraDelegate(TObj* pObj, void (TObj::*NotifyMethod)(TExtra, TArg&), TExtra tExtra, MODE mode = MODE_PENDING)
+DelegateI<TArg>* guiExtraDelegate(TObj* pObj, void (TObj::*NotifyMethod)(TExtra, TArg), TExtra tExtra, MODE mode = MODE_PENDING)
 {
 	if (!validateForm(pObj))
 	{

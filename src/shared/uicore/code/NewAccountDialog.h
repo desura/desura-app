@@ -38,7 +38,7 @@ class gcButton;
 class NewAccountDialog : public gcDialog 
 {
 public:
-	NewAccountDialog(wxWindow* parent);
+	NewAccountDialog(wxWindow* parent, const char* szProviderUrl = nullptr);
 	
 #ifdef NIX
 	bool Show(const bool show = true);
@@ -48,12 +48,17 @@ protected:
 	void onButtonClicked(wxCommandEvent& event);
 	void onPageLoad();
 
+	gcString GetTermsUrl();
+	gcString GetRegisterUrl();
+
 private:
 	gcButton *m_butBack;
 	gcButton *m_butAgree;
 	gcButton *m_butCancel;
 
-	gcMiscWebControl *m_pBrowser;
+	gcWebControl *m_pBrowser;
+
+	gcString m_szProviderUrl;
 
 	bool m_bTermsOfService;
 };

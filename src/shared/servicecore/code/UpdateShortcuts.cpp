@@ -38,9 +38,11 @@ void UpdateShortCuts()
 	GetCurrentDirectory(255, curDir);
 
 	gcString exe(curDir);
+	gcString uninstall(curDir);
 	gcString wd(curDir);
 
 	exe += "\\desura.exe";
+	uninstall += "\\Desura_Uninstaller.exe";
 
 	gcWString folder = UTIL::OS::getConfigValue("HKEY_LOCAL_MACHINE\\SOFTWARE\\Desura\\DesuraApp\\StartMenuFolder");
 
@@ -51,6 +53,7 @@ void UpdateShortCuts()
 
 	gcString spOne = startFolder + "\\" PRODUCT_NAME ".lnk";
 	gcString spTwo = startFolder + "\\" PRODUCT_NAME " (force update).lnk";
+	gcString spThree = startFolder + "\\Uninstall " PRODUCT_NAME ".lnk";
 
 	OS_VERSION ver = UTIL::WIN::getOSId();
 
@@ -69,6 +72,12 @@ void UpdateShortCuts()
 		UTIL::WIN::createShortCut(gcWString(spTwo).c_str(), exe.c_str(), wd.c_str(), "-forceupdate", true);
 	}
 #endif
+
+	if (UTIL::FS::isValidFile(spThree) || force)
+	{
+		UTIL::FS::delFile(spThree);
+		UTIL::WIN::createShortCut(gcWString(spThree).c_str(), uninstall.c_str(), wd.c_str(), "", true);
+	}
 }
 #else
 

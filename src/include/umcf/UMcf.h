@@ -103,7 +103,7 @@ public:
 	bool isValidInstaller();
 
 	//this updates the appid and build in the registry
-	void setRegValues();
+	void setRegValues(const char* szInstallPath = nullptr);
 
 	//checks reg values againts MCF version
 	bool isUpdateNewer();
@@ -161,7 +161,7 @@ protected:
 	uint64 m_uiTotProgress = 0;
 	uint64 m_uiCurProgress = 0;
 
-	void onFileProgress(ProgressCB& prog);
+	void onFileProgress(ProgressCB &prog);
 
 private:
 	bool m_bShouldMoveOldFiles = true;

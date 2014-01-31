@@ -31,7 +31,7 @@ $/LicenseInfo$
 #include "sqlite3x.hpp"
 #include "sql/ItemInfoSql.h"
 
-gcString g_szAppDataPath;
+gcFixedString<255> g_szAppDataPath;
 
 void SetAppDataPath(const char* path)
 {

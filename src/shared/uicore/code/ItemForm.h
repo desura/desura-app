@@ -161,7 +161,7 @@ protected:
 
 	void cleanUpCallbacks();
 
-	friend class LanguageTestDialog;
+	friend class ::LanguageTestDialog;
 	static void showLaunchError();
 
 private:

@@ -1006,7 +1006,12 @@ void LoginForm::processTab(bool forward, int32 id)
 
 void LoginForm::onNewAccount()
 {
-	NewAccountDialog naf(this);
+	gcString strApiUrl;
+
+	if (m_comboProvider && m_comboProvider->GetSelection() != 0)
+		strApiUrl = gc_login_stage_url.getString();
+
+	NewAccountDialog naf(this, strApiUrl.c_str());
 
 	m_pNewAccount = &naf;
 	naf.ShowModal();

@@ -138,7 +138,10 @@ void NewsForm::loadSelection()
 	
 	Layout();
 
-	SetTitle(gcWString(L"{0} {1}", m_szTitle, m_vItemList[m_uiSelected].szTitle));
+	if (m_vItemList.size() > 1)
+		SetTitle(gcWString(L"{0} {1} ({2} of {3})", m_szTitle, m_vItemList[m_uiSelected].szTitle, m_uiSelected+1, m_vItemList.size()));
+	else
+		SetTitle(gcWString(L"{0} {1}", m_szTitle, m_vItemList[m_uiSelected].szTitle));
 
 	if (m_vItemList.size() == 1)
 	{

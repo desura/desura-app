@@ -31,11 +31,14 @@ $/LicenseInfo$
 
 #include "gcWebHost.h"
 #include "gcWebControl.h"
+#include "gcJSBinding.h"
 
 #include "cef_desura_includes/ChromiumBrowserI.h"
 
 std::mutex m_EventLock;
 std::map<gcString, ChromiumDLL::JSObjHandle> g_EventMap;
+
+DesuraJSBinding *GetJSBinding();
 
 bool g_bGlobalItemUpdate = false;
 bool g_bMapValid = false;
@@ -160,12 +163,13 @@ private:
 
 
 
-
-ItemTabPage::ItemTabPage(wxWindow* parent, gcWString homePage) : HtmlTabPage(parent, homePage, ITEMS)
+ItemTabPage::ItemTabPage(wxWindow* parent, gcWString homePage) 
+	: HtmlTabPage(parent, homePage, ITEMS)
+	, m_PingTimer(this)
 {
 	m_bNotifiedOfLowSpace = false;
 	m_pItemControlBar = new ItemToolBarControl(parent);
-	m_pItemControlBar->onSearchEvent += guiDelegate(this, &ItemTabPage::onSearch);
+	m_pItemControlBar->onSearchEvent += guiDelegate(this, &ItemTabPage::onSearchStr);
 
 	m_pWebControl = nullptr;
 
@@ -185,17 +189,21 @@ ItemTabPage::ItemTabPage(wxWindow* parent, gcWString homePage) : HtmlTabPage(par
 	m_EventLock.lock();
 	g_bMapValid = true;
 	m_EventLock.unlock();
+
+	Bind(wxEVT_TIMER, &ItemTabPage::onPingTimer, this);
 }
 
 ItemTabPage::~ItemTabPage()
 {
+	m_PingTimer.Stop();
+
 	m_EventLock.lock();
 	g_EventMap.clear();
 	g_bMapValid = false;
 	m_EventLock.unlock();
 
 	m_pItemControlBar->onButtonClickedEvent -= guiDelegate(this, &ItemTabPage::onButtonClicked);
-	m_pItemControlBar->onSearchEvent -= guiDelegate(this, &ItemTabPage::onSearch);
+	m_pItemControlBar->onSearchEvent -= guiDelegate(this, &ItemTabPage::onSearchStr);
 
 	m_pWebControl->onPageStartEvent -= delegate(&m_pItemControlBar->onPageStartLoadingEvent);
 	m_pWebControl->onPageLoadEvent -= delegate(&m_pItemControlBar->onPageEndLoadingEvent);
@@ -294,6 +302,9 @@ void ItemTabPage::constuctBrowser()
 	onUploadUpdate();
 
 	*GetUserCore()->getLoginItemsLoadedEvent() += guiDelegate(this, &ItemTabPage::onLoginItemsLoaded);
+
+	GetJSBinding()->onPingEvent += guiDelegate(this, &ItemTabPage::onPing);
+	m_PingTimer.Start(15 * 1000);
 }
 
 
@@ -431,7 +442,7 @@ void ItemTabPage::onNewItem(DesuraId &id)
 	postEvent("onNewItemAdded", id.toString().c_str());
 }
 
-void ItemTabPage::onSearch(gcString &text)
+void ItemTabPage::onSearchStr(gcString &text)
 {
 	postEvent("onSearch", text.c_str());
 }
@@ -458,4 +469,24 @@ void ItemTabPage::onLowDiskSpace(std::pair<bool,char> &info)
 
 	onShowAlert(text, 0);
 #endif
+}
+
+void ItemTabPage::onPingTimer(wxTimerEvent&)
+{
+	if (!m_bPingBack)
+	{
+		Warning("Item tab page did not ping back after 15 seconds\n");
+		m_pWebControl->refresh();
+	}
+	else
+	{
+		postEvent("onPing");
+	}
+		
+	m_bPingBack = false;
+}
+
+void ItemTabPage::onPing()
+{
+	m_bPingBack = true;
 }
