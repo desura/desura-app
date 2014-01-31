@@ -358,11 +358,16 @@ void IPCServiceMain::startThread()
 }
 
 void SetCrashSettings(const wchar_t* user, bool upload);
-void SetAppDataPath(const char* path);
+
+#ifdef WIN32
+void UnInstallRegKey_SetAppDataPath(const char* path);
+#endif
 
 void IPCServiceMain::setAppDataPath(const char* path)
 {
-	SetAppDataPath(path);
+#ifdef WIN32
+	UnInstallRegKey_SetAppDataPath(path);
+#endif
 }
 
 void IPCServiceMain::setCrashSettings(const char* user, bool upload)
