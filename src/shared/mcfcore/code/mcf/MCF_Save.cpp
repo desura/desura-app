@@ -156,7 +156,7 @@ void MCF::dlHeaderFromWeb()
 			msc.downloadRange(0, headerSize, &out);
 
 			if (out.m_uiTotalSize != headerSize)
-				throw gcException(ERR_BADHEADER, "Did not get correct ammount of data from server.");
+				throw gcException(ERR_BADHEADER, "Did not get correct amount of data from server.");
 
 			MCFCore::MCFHeader webHeader((uint8*)out.m_szBuffer);
 
