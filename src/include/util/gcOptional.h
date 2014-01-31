@@ -98,7 +98,7 @@ public:
 
 	gcOptional<T>& operator=(const gcOptional<T>& t)
 	{
-		if (*this == t)
+		if (this == &t)
 			return *this;
 
 		m_bIsSet = t.m_bIsSet;
@@ -109,7 +109,7 @@ public:
 
 	gcOptional<T>& operator=(gcOptional<T>&& t)
 	{
-		if (*this == t)
+		if (this == &t)
 			return *this;
 
 		m_bIsSet = t.m_bIsSet;
