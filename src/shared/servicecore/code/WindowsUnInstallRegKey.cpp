@@ -25,15 +25,13 @@ $/LicenseInfo$
 
 #include "Common.h"
 
-#ifdef WIN32
-
 #include <branding/branding.h>
 #include "sqlite3x.hpp"
 #include "sql/ItemInfoSql.h"
 
 gcFixedString<255> g_szAppDataPath;
 
-void SetAppDataPath(const char* path)
+void UnInstallRegKey_SetAppDataPath(const char* path)
 {
 	g_szAppDataPath = path;
 }
@@ -223,6 +221,3 @@ bool SetUninstallRegKey(DesuraId id, uint64 installSize)
 	SetUninstallRegKey(info, installSize);
 	return true;
 }
-
-
-#endif
