@@ -28,7 +28,7 @@ endif()
 
 if (TINYXML_API_TEST)
     set (TINYXML_INCLUDE_DIR ${TINYXML2_H_PATH})
-    set (TINYXML_LIBRARIES ${TINYXML_LIB})
+    set (TINYXML_LIBRARIES ${TINYXML2_LIB})
 else()
 	if (TINYXML_FOUND)
 		message("-- System TinyXml2 found but is too old, using local tinyxml2")
