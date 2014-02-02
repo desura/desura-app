@@ -27,7 +27,7 @@ if [ -f /etc/debian_version ]; then # Debian/Ubuntu
 	fi
 elif [ -f /etc/redhat-release ]; then #Redhat/Fedora (not tested)
 	echo "\033[1;31mRedhat/Fedora detected!\033[0m"
-	DEPS="alsa-lib-devel autoconf binutils bison boost-devel boost-static bzip2-devel cups-devel dbus-glib-devel flex gcc-c++ GConf2-devel glibc-devel gperf gtk2-devel install libcurl-devel libevent-devel libgnome-keyring-devel libjpeg-turbo-devel libnotify-devel libstdc++-static libtool libX11-devel libXpm-devel libxslt-devel m4 nss-devel scons sqlite-devel xdg-user-dirs yasm-devel"
+	DEPS="alsa-lib-devel autoconf binutils bison boost-devel boost-static bzip2-devel cups-devel dbus-glib-devel flex gcc-c++ GConf2-devel glibc-devel gperf gtk2-devel libcurl-devel libevent-devel libgnome-keyring-devel libjpeg-turbo-devel libnotify-devel libstdc++-static libtool libX11-devel libXpm-devel libxslt-devel m4 nss-devel scons sqlite-devel xdg-user-dirs yasm-devel"
 	for PACK in ${DEPS}
 	do
 		CHECK=`rpm -qa | grep ${PACK}`
