@@ -309,3 +309,21 @@ void gcFrame::onWindowClose(wxCloseEvent& event)
 
 	event.Skip();
 }
+
+void gcFrame::setMessageBox(wxWindow *pDialog)
+{
+	assert((!pDialog && m_pMessageBox) || (pDialog && !m_pMessageBox));
+	m_pMessageBox = pDialog;
+
+	if (!pDialog && m_bPendingClose)
+		Close();
+}
+
+bool gcFrame::checkAndSetPendingClose()
+{
+	if (!m_pMessageBox)
+		return false;
+
+	m_bPendingClose = true;
+	return true;
+}

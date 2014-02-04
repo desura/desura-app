@@ -790,6 +790,12 @@ void ItemForm::onItemInfoGathered()
 
 void ItemForm::onFormClose(wxCloseEvent& event)
 {
+	if (checkAndSetPendingClose())
+	{
+		event.Veto();
+		return;
+	}
+
 	if (m_pDialog)
 		m_pDialog->EndModal(wxCANCEL);
 	

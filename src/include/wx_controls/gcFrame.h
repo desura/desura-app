@@ -81,7 +81,11 @@ public:
 	//!
 	bool loadSavedWindowPos();
 
+	void setMessageBox(wxWindow *pDialog);
+
 protected:
+	bool checkAndSetPendingClose();
+
 	void onIdle( wxIdleEvent& event );
 	void initGCFrame(bool delayLoad, long style);
 
@@ -97,6 +101,9 @@ protected:
 private:
 	wxSize m_IdealSize;
 	bool m_bEnableIdealSize;
+
+	bool m_bPendingClose = false;
+	wxWindow *m_pMessageBox = nullptr;
 
 	CVarInfo* m_pCVarInfo;
 
