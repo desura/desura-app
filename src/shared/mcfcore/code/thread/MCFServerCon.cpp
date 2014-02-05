@@ -103,7 +103,7 @@ void MCFServerCon::connect(const char* url, const GetFile_s& fileAuth)
 	u += "/mcf";
 
 	m_FtpHandle->setUrl(u.c_str());
-	m_FtpHandle->setUserPass(fileAuth.authkey->data(), fileAuth.authhash->data());
+	m_FtpHandle->setUserPass(fileAuth.authkey.data(), fileAuth.authhash.data());
 
 	m_bConnected = true;
 }

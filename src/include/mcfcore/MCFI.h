@@ -53,8 +53,8 @@ namespace Misc
 	class GetFile_s
 	{
 	public:
-		std::array<char, 33> authhash[33];
-		std::array<char, 10> authkey[10];
+		std::array<char, 33> authhash;
+		std::array<char, 10> authkey;
 	};
 }
 

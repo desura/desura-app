@@ -105,8 +105,8 @@ void MCF::getDownloadProviders(const char* url, MCFCore::Misc::UserCookies *pCoo
 
 	auto temp = std::make_shared<Misc::GetFile_s>();
 
-	Safe::strncpy(temp->authhash->data(), 33, szAuthCode.c_str(), szAuthCode.size());
-	Safe::snprintf(temp->authkey->data(), 10, "%d", pCookies->getUserId());
+	Safe::strncpy(temp->authhash.data(), 33, szAuthCode.c_str(), szAuthCode.size());
+	Safe::snprintf(temp->authkey.data(), 10, "%d", pCookies->getUserId());
 
 	m_pFileAuth = temp;
 
