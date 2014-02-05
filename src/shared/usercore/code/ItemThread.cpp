@@ -33,10 +33,7 @@ $/LicenseInfo$
 
 #include "UserThreadManager.h"
 
-namespace UserCore
-{
-namespace Item
-{
+using namespace UserCore::Item;
 
 ItemThread::ItemThread(UserCore::Item::ItemHandle *handle) : ::Thread::BaseThread(gcString("{0} Thread", handle->getItemInfo()->getShortName()).c_str())
 {
@@ -68,19 +65,22 @@ ItemThread::~ItemThread()
 
 void ItemThread::purge()
 {
-	m_TaskMutex.lock();
-	size_t size = m_vTaskList.size();
-	safe_delete(m_vTaskList);
-	m_TaskMutex.unlock();
+	size_t size;
 
-	m_DeleteMutex.lock();
+	{
+		std::lock_guard<std::mutex> guard(m_TaskMutex);
+		size = m_vTaskList.size();
+		safe_delete(m_vTaskList);
+	}
 
-	if (m_pCurrentTask)
-		m_pCurrentTask->onStop();
-	else if (size > 0) //could be getting a task now
-		m_bDeleteCurrentTask = true;
+	{
+		std::lock_guard<std::mutex> guard(m_DeleteMutex);
 
-	m_DeleteMutex.unlock();
+		if (m_pCurrentTask)
+			m_pCurrentTask->onStop();
+		else if (size > 0) //could be getting a task now
+			m_bDeleteCurrentTask = true;
+	}
 }
 
 void ItemThread::setThreadManager(UserCore::UserThreadManagerI* tm)
@@ -116,9 +116,10 @@ void ItemThread::queueTask(UserCore::ItemTask::BaseItemTask *task)
 	task->setUserCore(m_pUserCore);
 	task->setWebCore(m_pWebCore);
 
-	m_TaskMutex.lock();
-	m_vTaskList.push_back(task);
-	m_TaskMutex.unlock();
+	{
+		std::lock_guard<std::mutex> guard(m_TaskMutex);
+		m_vTaskList.push_back(task);
+	}
 
 	//get thread running again.
 	m_WaitCond.notify();
@@ -145,15 +146,14 @@ bool ItemThread::performTask()
 	if (!task)
 		return false;
 
-	m_DeleteMutex.lock();
-	m_bDeleteCurrentTask = false;
-	m_DeleteMutex.unlock();
+	ITEM_STAGE taskType;
 
-	ITEM_STAGE taskType = task->getTaskType();
-
-	m_DeleteMutex.lock();
-	m_pCurrentTask = task;
-	m_DeleteMutex.unlock();
+	{
+		std::lock_guard<std::mutex> guard(m_DeleteMutex);
+		m_bDeleteCurrentTask = false;
+		taskType = task->getTaskType();
+		m_pCurrentTask = task;
+	}
 
 	if (!m_bDeleteCurrentTask)
 	{
@@ -166,9 +166,10 @@ bool ItemThread::performTask()
 		m_bRunningTask = false;
 	}
 
-	m_DeleteMutex.lock();
-	m_pCurrentTask = nullptr;
-	m_DeleteMutex.unlock();
+	{
+		std::lock_guard<std::mutex> guard(m_DeleteMutex);
+		m_pCurrentTask = nullptr;
+	}
 
 	safe_delete(task);
 	setThreadName(m_szBaseName.c_str());
@@ -183,7 +184,7 @@ UserCore::ItemTask::BaseItemTask* ItemThread::getNewTask()
 
 	UserCore::ItemTask::BaseItemTask* task = nullptr;
 
-	m_TaskMutex.lock();
+	std::lock_guard<std::mutex> guard(m_TaskMutex);
 	
 	if (m_vTaskList.size() != 0)
 	{
@@ -197,53 +198,47 @@ UserCore::ItemTask::BaseItemTask* ItemThread::getNewTask()
 		this->setThreadName(name.c_str());
 	}
 	
-	m_TaskMutex.unlock();
-
 	return task;
 }
 
 void ItemThread::onPause()
 {
-	m_DeleteMutex.lock();
+	std::lock_guard<std::mutex> guard(m_DeleteMutex);
 
 	if (m_pCurrentTask)
 		m_pCurrentTask->onPause();
-
-	m_DeleteMutex.unlock();
 }
 
 void ItemThread::onUnpause()
 {
-	m_DeleteMutex.lock();
+	{
+		std::lock_guard<std::mutex> guard(m_DeleteMutex);
 
-	if (m_pCurrentTask)
-		m_pCurrentTask->onUnpause();
-
-	m_DeleteMutex.unlock();
+		if (m_pCurrentTask)
+			m_pCurrentTask->onUnpause();
+	}
 
 	m_WaitCond.notify();
 }
 
 void ItemThread::onStop()
 {
-	m_DeleteMutex.lock();
+	{
+		std::lock_guard<std::mutex> guard(m_DeleteMutex);
 
-	if (m_pCurrentTask)
-		m_pCurrentTask->onStop();
-
-	m_DeleteMutex.unlock();
+		if (m_pCurrentTask)
+			m_pCurrentTask->onStop();
+	}
 
 	m_WaitCond.notify();
 }
 
 void ItemThread::cancelCurrentTask()
 {
-	m_DeleteMutex.lock();
+	std::lock_guard<std::mutex> guard(m_DeleteMutex);
 
 	if (m_pCurrentTask)
 		m_pCurrentTask->cancel();
-
-	m_DeleteMutex.unlock();
 }
 
 bool ItemThread::hasTaskToRun()
@@ -251,14 +246,6 @@ bool ItemThread::hasTaskToRun()
 	if (isRunningTask())
 		return true;
 
-	bool hasTasks = false;
-
-	m_TaskMutex.lock();
-	hasTasks = (m_vTaskList.size() > 0);
-	m_TaskMutex.unlock();
-
-	return hasTasks;
-}
-
-}
+	std::lock_guard<std::mutex> guard(m_TaskMutex);
+	return (m_vTaskList.size() > 0);
 }

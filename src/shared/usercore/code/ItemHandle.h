@@ -203,7 +203,7 @@ private:
 	uint32 m_uiHelperId;
 	ITEM_STAGE m_uiStage;
 
-	std::mutex m_ThreadMutex;
+	std::recursive_mutex m_ThreadMutex;
 	UserCore::Item::ItemThread *m_pThread;
 	UserCore::Item::ItemInfo* m_pItemInfo;
 	UserCore::User* m_pUserCore;
