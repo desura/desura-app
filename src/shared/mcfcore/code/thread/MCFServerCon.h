@@ -107,6 +107,8 @@ public:
 		return m_bConnected;
 	}
 
+	void stop();
+
 protected:
 	void doDownloadRange(uint64 offset, uint32 size);
 	
@@ -116,12 +118,11 @@ protected:
 private:
 	HttpHandle m_FtpHandle;
 
-	uint32 m_uiDPRId;
-	bool m_bConnected;
+	uint32 m_uiDPRId = -1;
+	uint64 m_uiDone = 0;
 
-	uint64 m_uiDone;
-
-	OutBufferI* m_pOutBuffer;
+	OutBufferI* m_pOutBuffer = nullptr;
+	bool m_bConnected = false;
 };
 
 

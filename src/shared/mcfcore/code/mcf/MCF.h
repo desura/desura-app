@@ -69,6 +69,11 @@ namespace MISC
 	class UserCookies; 
 }
 
+namespace Misc
+{
+	class MCFServerCon;
+}
+
 class MCF : public MCFI
 {
 public:
@@ -312,6 +317,9 @@ protected:
 	void createCourgetteDiff(CourgetteInstance* ci, UTIL::MISC::Buffer &oldBuff, UTIL::MISC::Buffer &newBuff, const char* oldHash, std::shared_ptr<MCFFile>& file, UTIL::FS::FileHandle& dest);
 	void extractFile(const char* mcfPath, std::shared_ptr<MCFFile>& file, UTIL::MISC::Buffer &outBuff);
 
+	void setServerCon(MCFCore::Misc::MCFServerCon *pMCFServerCon);
+	void doDlHeaderFromWeb(MCFCore::Misc::MCFServerCon &msc);
+
 private:
 	uint16 m_uiWCount = 0;
 	gcString m_szFile;
@@ -331,6 +339,7 @@ private:
 	std::vector<std::shared_ptr<const MCFCore::Misc::DownloadProvider>> m_vProviderList;
 
 	std::mutex m_mThreadMutex;
+	MCFCore::Misc::MCFServerCon *m_pMCFServerCon = nullptr;
 };
 
 

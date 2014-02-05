@@ -33,6 +33,7 @@ $/LicenseInfo$
 #include "mcfcore/ProgressInfo.h"
 
 #include "XMLSaveAndCompress.h"
+#include "thread/MCFServerCon.h"
 
 using namespace MCFCore;
 
@@ -170,12 +171,21 @@ void MCF::stop()
 
 	m_bStopped = true;
 
-	m_mThreadMutex.lock();
+	std::lock_guard<std::mutex> guard(m_mThreadMutex);
 
 	if (m_pTHandle && !m_pTHandle->isStopped())
 		m_pTHandle->stop();
 
-	m_mThreadMutex.unlock();
+	if (m_pMCFServerCon)
+		m_pMCFServerCon->stop();
+}
+
+void MCF::setServerCon(MCFCore::Misc::MCFServerCon *pMCFServerCon)
+{
+	std::lock_guard<std::mutex> guard(m_mThreadMutex);
+
+	assert((pMCFServerCon && !m_pMCFServerCon) || (!pMCFServerCon && m_pMCFServerCon));
+	m_pMCFServerCon = pMCFServerCon;
 }
 
 void MCF::setWorkerCount(uint16 count)

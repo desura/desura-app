@@ -67,6 +67,8 @@ namespace UserCore
 
 			void onLocalFileProgress(MCFCore::Misc::ProgressInfo& p);
 
+			void setCurrentMcf(McfHandle* pMcfHandle);
+
 		private:
 			enum class ACTION
 			{
@@ -94,6 +96,7 @@ namespace UserCore
 			uint32 m_CurMcfIndex = 0;
 			uint32 m_TotalFileCount = 0;
 
+			std::mutex m_McfLock;
 			McfHandle *m_CurrentMcf = nullptr;
 		};
 	}

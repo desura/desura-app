@@ -283,7 +283,7 @@ void ItemHandle::setPaused(bool state, bool forced)
 		bool verify = false;
 
 		{
-			std::lock_guard<std::mutex> guard(m_ThreadMutex);
+			std::lock_guard<std::recursive_mutex> guard(m_ThreadMutex);
 
 			if (state)
 			{
@@ -450,7 +450,7 @@ void ItemHandle::goToStageUninstall(bool complete, bool account)
 	setPaused(false, true);
 
 	{
-		std::lock_guard<std::mutex> guard(m_ThreadMutex);
+		std::lock_guard<std::recursive_mutex> guard(m_ThreadMutex);
 
 		if (m_pThread)
 			m_pThread->purge();
@@ -642,7 +642,7 @@ void ItemHandle::goToStageInstall(const char* path, MCFBranch branch)
 
 void ItemHandle::stopThread()
 {
-	std::lock_guard<std::mutex> guard(m_ThreadMutex);
+	std::lock_guard<std::recursive_mutex> guard(m_ThreadMutex);
 
 	m_pUserCore->getThreadPool()->queueTask(new UserCore::Task::DeleteThread(m_pUserCore, m_pThread));
 
@@ -664,7 +664,7 @@ void ItemHandle::registerTask(UserCore::ItemTask::BaseItemTask* task)
 		return;
 
 	m_pEventHandler->registerTask(task);
-	std::lock_guard<std::mutex> guard(m_ThreadMutex);
+	std::lock_guard<std::recursive_mutex> guard(m_ThreadMutex);
 
 	if (m_pThread == nullptr)
 	{
@@ -748,7 +748,7 @@ bool ItemHandle::verify(bool files, bool tools, bool hooks)
 void ItemHandle::verifyOveride()
 {
 	{
-		std::lock_guard<std::mutex> guard(m_ThreadMutex);
+		std::lock_guard<std::recursive_mutex> guard(m_ThreadMutex);
 
 		if (m_pThread)
 			m_pThread->purge();
@@ -1188,7 +1188,7 @@ void ItemHandle::cancelCurrentStage()
 
 	setPaused(false);
 
-	std::lock_guard<std::mutex> guard(m_ThreadMutex);
+	std::lock_guard<std::recursive_mutex> guard(m_ThreadMutex);
 
 	if (m_pThread)
 		m_pThread->cancelCurrentTask();
@@ -1321,7 +1321,7 @@ bool ItemHandle::setTaskGroup(ItemTaskGroup* group, bool force)
 	{
 		setPaused(false, true);
 
-		std::lock_guard<std::mutex> guard(m_ThreadMutex);
+		std::lock_guard<std::recursive_mutex> guard(m_ThreadMutex);
 
 		if (m_pThread)
 			m_pThread->purge();

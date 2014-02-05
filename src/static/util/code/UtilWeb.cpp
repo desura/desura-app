@@ -160,8 +160,8 @@ protected:
 
 private:
 	bool m_bLock;
-	bool m_bAbort;
 	bool m_bWritingToFile;
+	volatile bool m_bAbort;
 
 	FILE* m_hFile;
 	CURL* m_pCurlHandle;
