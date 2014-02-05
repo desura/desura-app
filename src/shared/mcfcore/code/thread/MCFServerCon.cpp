@@ -32,24 +32,18 @@ $/LicenseInfo$
 
 #define READ_SIZE (1024*1024)
 
-namespace MCFCore
-{
-namespace Misc
-{
+using namespace MCFCore::Misc;
+
 
 MCFServerCon::MCFServerCon()
 {
-	m_uiDPRId = -1;
-	m_bConnected = false;
-
 	m_FtpHandle->getProgressEvent() += delegate(this, &MCFServerCon::onProgress);
 	m_FtpHandle->getWriteEvent() += delegate(this, &MCFServerCon::onWrite);
-
-	m_pOutBuffer = nullptr;
 }
 
 MCFServerCon::~MCFServerCon()
 {
+	stop();
 	disconnect();
 
 	if (m_uiDPRId != UINT_MAX)
@@ -172,5 +166,7 @@ void MCFServerCon::onPause()
 	m_uiDPRId = -1;	
 }
 
-}
+void MCFServerCon::stop()
+{
+	m_FtpHandle->abortTransfer();
 }

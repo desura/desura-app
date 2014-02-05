@@ -120,18 +120,40 @@ void MCF::dlHeaderFromWeb()
 	if (m_vProviderList.size() == 0)
 		throw gcException(ERR_ZEROFILE);
 
+	MCFCore::Misc::MCFServerCon msc;
+
+	setServerCon(&msc);
+
+	try
+	{
+		doDlHeaderFromWeb(msc);
+	}
+	catch (...)
+	{
+		setServerCon(nullptr);
+		throw;
+	}
+
+	setServerCon(nullptr);
+}
+
+
+void MCF::doDlHeaderFromWeb(MCFCore::Misc::MCFServerCon &msc)
+{
 	gcException lastE;
 	bool successful = false;
 
 	OutBuffer out(MCF_HEADERSIZE_V2);
-	MCFCore::Misc::MCFServerCon msc;
 
-	for (size_t x=0; x<m_vProviderList.size(); x++)
+	for (auto provider : m_vProviderList)
 	{
+		if (m_bStopped)
+			return;
+
 		try
 		{
 			msc.disconnect();
-			msc.connect(m_vProviderList[x]->getUrl(), *m_pFileAuth.get());
+			msc.connect(provider->getUrl(), *m_pFileAuth.get());
 
 			msc.downloadRange(0, 5, &out); //4 id bytes and 1 version byte
 
@@ -152,6 +174,9 @@ void MCF::dlHeaderFromWeb()
 			else
 				throw gcException(ERR_BADHEADER, "Bad version number");
 
+			if (m_bStopped)
+				return;
+
 			out.reset();
 			msc.downloadRange(0, headerSize, &out);
 
@@ -165,6 +190,9 @@ void MCF::dlHeaderFromWeb()
 
 			uint32 ths = webHeader.getXmlSize();
 			out = ths;
+
+			if (m_bStopped)
+				return;
 
 			msc.downloadRange(webHeader.getXmlStart(), webHeader.getXmlSize(), &out);
 
@@ -184,9 +212,16 @@ void MCF::dlHeaderFromWeb()
 		catch (gcException &e)
 		{
 			lastE = e;
-			Warning(gcString("Failed to download MCF Header from {1}: {0}\n", e, m_vProviderList[x]->getUrl()));
+
+			auto bIsUserCancel = (e.getErrId() == ERR_MCFSERVER && e.getSecErrId() == ERR_USERCANCELED);
+
+			if (!bIsUserCancel)
+				Warning(gcString("Failed to download MCF Header from {1}: {0}\n", e, provider->getUrl()));
 		}
 	}
+
+	if (m_bStopped)
+		return;
 
 	if (!successful)
 		throw lastE;
