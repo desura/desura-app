@@ -98,7 +98,7 @@ public:
 			g_bGlobalItemUpdate = true;
 	}
 
-	virtual void destroy()
+	void destroy() override
 	{
 		if (m_pContext)
 			m_pContext->destroy();
@@ -106,7 +106,23 @@ public:
 		delete this;
 	}
 
-	virtual void run()
+	void run() override
+	{
+		try
+		{
+			doRun();
+		}
+		catch (...)
+		{
+			Warning(gcString("JSCallback {0} threw exception", m_szName));
+		}
+
+		if (m_szName == "onItemListUpdated")
+			g_bGlobalItemUpdate = false;
+	}
+
+protected:
+	void doRun()
 	{
 		if (!g_bMapValid)
 			return;
@@ -146,9 +162,6 @@ public:
 		}
 
 		m_pContext->exit();
-
-		if (m_szName == "onItemListUpdated")
-			g_bGlobalItemUpdate = false;
 	}
 
 private:
