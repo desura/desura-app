@@ -35,31 +35,18 @@ $/LicenseInfo$
 
 namespace UTIL
 {
-namespace STRING
-{
+	namespace STRING
+	{
+
 
 void zeroBuffer(char* str, size_t maxlen)
 {
-	uint32 x = 0;
-	while (str && x<maxlen)
-	{
-		*str = 0;
-
-		str++;
-		x++;
-	}
+	memset(str, 0, maxlen);
 }
 
 void zeroBuffer(wchar_t* str, size_t maxlen)
 {
-	uint32 x = 0;
-	while (str && x<maxlen)
-	{
-		*str = 0;
-
-		str++;
-		x++;
-	}
+	memset(str, 0, maxlen*sizeof(wchar_t));
 }
 
 
@@ -601,7 +588,6 @@ std::string escape(const std::string &in)
 
 	return out;
 }
-
 
 }
 }
