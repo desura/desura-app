@@ -95,7 +95,10 @@ void ValidateTask::doRun()
 	m_bLocalMcf = UTIL::FS::isValidFile(savePath);
 	m_szInstallPath = getItemInfo()->getPath();
 
+	setCurrentMcf(&m_hMCFile);
 	m_hMCFile->dlHeaderFromWeb();
+	setCurrentMcf(nullptr);
+
 	m_hMCFile->setFile(savePath.c_str());
 
 	if (isStopped())
@@ -151,9 +154,9 @@ void ValidateTask::doRun()
 
 	setAction(ACTION::PRE_ALLOCATING);
 
-	m_CurrentMcf = &m_hMCFile;
+	setCurrentMcf(&m_hMCFile);
 	m_hMCFile->preAllocateFile();
-	m_CurrentMcf = nullptr;
+	setCurrentMcf(nullptr);
 
 	if (isStopped())
 		return;
@@ -232,9 +235,9 @@ bool ValidateTask::checkExistingMcf(gcString savePath)
 	McfHandle mcfTemp;
 	mcfTemp->setFile(savePath.c_str());
 
-	m_CurrentMcf = &mcfTemp;
+	setCurrentMcf(&mcfTemp);
 	mcfTemp->parseMCF();
-	m_CurrentMcf = nullptr;
+	setCurrentMcf(nullptr);
 
 	if (isStopped())
 		return false;
@@ -262,9 +265,9 @@ bool ValidateTask::checkExistingMcf(gcString savePath)
 	bool verify;
 	m_CurMcfIndex = 1;
 
-	m_CurrentMcf = &mcfTemp;
+	setCurrentMcf(&mcfTemp);
 	verify = mcfTemp->verifyMCF();
-	m_CurrentMcf = nullptr;
+	setCurrentMcf(nullptr);
 
 	McfHandle curMcf;
 	bool useCurMcf = false;
@@ -275,10 +278,10 @@ bool ValidateTask::checkExistingMcf(gcString savePath)
 		{
 			m_CurMcfIndex = 2;
 
-			m_CurrentMcf = &curMcf;
+			setCurrentMcf(&curMcf);
 			curMcf->parseFolder(m_szInstallPath.c_str(), false, true);
 			curMcf->hashFiles(mcfTemp.handle());
-			m_CurrentMcf = nullptr;
+			setCurrentMcf(nullptr);
 
 			useCurMcf = true;
 		}
@@ -393,12 +396,10 @@ void ValidateTask::copyLocalFiles()
 	{
 		m_CurMcfIndex = 1;
 
-		m_CurrentMcf = &curMcf;
-
+		setCurrentMcf(&curMcf);
 		curMcf->parseFolder(m_szInstallPath.c_str(), false, true);
 		curMcf->hashFiles(m_hMCFile.handle());
-
-		m_CurrentMcf = nullptr;
+		setCurrentMcf(nullptr);
 	}
 	catch (gcException &e)
 	{
@@ -571,6 +572,8 @@ void ValidateTask::onStop()
 {
 	UserCore::ItemTask::BaseItemTask::onStop();
 
+	std::lock_guard<std::mutex> guard(m_McfLock);
+
 	if (m_CurrentMcf)
 		m_CurrentMcf->handle()->stop();
 }
@@ -579,4 +582,10 @@ void ValidateTask::cancel()
 {
 	onStop();
 	getItemHandle()->resetStage(true);
+}
+
+void ValidateTask::setCurrentMcf(McfHandle* pMcfHandle)
+{
+	std::lock_guard<std::mutex> guard(m_McfLock);
+	m_CurrentMcf = pMcfHandle;
 }
