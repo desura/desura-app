@@ -341,7 +341,7 @@ onUploadContextMenu = function(event, upload) {
 
 	contextMenu.appendItem(resume, function() {
 		if (started == false) {
-			desura.links.internalLink(upload.getItemId(), desura.links.action.RESUPLOAD, upload.getuid());
+			desura.links.internalLink(upload.getItemId(), desura.links.action.RESUPLOAD, "uid=" + upload.getuid());
 		} 
 		else {
 		

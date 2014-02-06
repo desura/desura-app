@@ -130,6 +130,17 @@ void UploadMCFForm::setInfo_key(DesuraId id,  const char* key)
 	m_szKey = gcString(key);
 }
 
+void UploadMCFForm::setInfo_uid(DesuraId id, const char* uploadId)
+{
+	setInfo(id);
+
+	uint32 hash = atoi(uploadId);
+	auto pUpload = GetUploadMng()->findItem(hash);
+
+	if (pUpload)
+		m_szKey = pUpload->getKey();
+}
+
 void UploadMCFForm::showInfo()
 {
 	cleanUpPages();
