@@ -52,6 +52,8 @@ protected:
 	virtual void doHandPaint(wxPaintDC& dc);
 	virtual void doImgPaint(wxPaintDC& dc);
 
+	virtual void doExtraImgPaint(wxBitmap &img, int w, int h){}
+
 	gcImage* getImage(){return m_imgProg.getImg();}
 
 private:

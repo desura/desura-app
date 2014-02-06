@@ -76,22 +76,17 @@ void gcULProgressBar::doHandPaint(wxPaintDC& dc)
 	dc.DrawRectangle(wp,0, w, h);
 }
 
-
-
-void gcULProgressBar::doImgPaint(wxPaintDC& dc)
+void gcULProgressBar::doExtraImgPaint(wxBitmap &img, int w, int h)
 {
-	gcProgressBar::doImgPaint(dc);
-	
-
-	int h = GetSize().GetHeight();
-	int w = GetSize().GetWidth();
-#ifdef WIN32 // unused AFAIK
-	int ih = getImage()->GetSize().GetHeight();
-#endif
 	int iw = getImage()->GetSize().GetWidth();
 
 	uint32 wm = w*m_uiLastMS/100;
-	uint32 wp = w*getProgress()/100 - wm;
+	uint32 wp = 0;
+	
+	uint32 t = w*getProgress()/100;
+
+	if (t > wm)
+		wp = t - wm;
 	
 	if (wp == 0)
 		return;
@@ -106,7 +101,6 @@ void gcULProgressBar::doImgPaint(wxPaintDC& dc)
 	tmpDC.SetBrush(wxBrush(wxColor(255,0,255)));
 	tmpDC.SetPen( wxPen(wxColor(255,0,255),1) );
 	tmpDC.DrawRectangle(0,0,w,h);
-
 
 	uint32 eeWidth = eedge.GetWidth();
 
@@ -125,6 +119,7 @@ void gcULProgressBar::doImgPaint(wxPaintDC& dc)
 		tmpDC.DrawBitmap(eedge, wp-eeWidth, 0, true);
 	}
 
+	tmpDC.SelectObject(img);
+	tmpDC.DrawBitmap(tmpBmp, wm, 0, true);
 	tmpDC.SelectObject(wxNullBitmap);
-	dc.DrawBitmap(tmpBmp, wm, 0, true);
 }
