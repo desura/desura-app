@@ -229,6 +229,13 @@ void UploadThread::onProgress(Prog_s& p)
 	ui.doneAmmount = currProg + m_pInfo->uiStart;
 	ui.percent = (uint8)((currProg+m_pInfo->uiStart)*100/m_uiFileSize);
 
+	gcTime now;
+
+	//Dont overfill the event queue
+	if (ui.totalAmmount != ui.doneAmmount && (now - m_tLastProgUpdate).milliseconds() < 250)
+		return;
+
+	m_tLastProgUpdate = now;
 	double pred = (m_uiFileSize - currProg - m_pInfo->uiStart) / p.ulspeed;
 
 	if (p.abort)
