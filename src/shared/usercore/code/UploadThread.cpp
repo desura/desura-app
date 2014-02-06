@@ -232,7 +232,7 @@ void UploadThread::onProgress(Prog_s& p)
 	gcTime now;
 
 	//Dont overfill the event queue
-	if (ui.totalAmmount != ui.doneAmmount && (now - m_tLastProgUpdate).milliseconds() < 250)
+	if (!p.abort && ui.totalAmmount != ui.doneAmmount && (now - m_tLastProgUpdate).milliseconds() < 250)
 		return;
 
 	m_tLastProgUpdate = now;
