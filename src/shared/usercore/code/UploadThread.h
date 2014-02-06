@@ -97,6 +97,7 @@ private:
 	uint64 m_uiFileSize;
 	uint64 m_uiAmountRead;
 
+	gcTime m_tLastProgUpdate;
 
 	bool m_bCancel;
 };
