@@ -45,8 +45,10 @@ typedef struct
 {
 	double dltotal;
 	double dlnow;
+	double dlspeed;
 	double ultotal;
 	double ulnow;
+	double ulspeed;
 	bool abort;
 } Prog_s;
 

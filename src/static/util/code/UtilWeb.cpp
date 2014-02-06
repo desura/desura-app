@@ -694,6 +694,9 @@ int HttpHInternal::progress_cb(double dltotal, double dlnow, double ultotal, dou
 	temp.ulnow = ulnow;
 	temp.abort = m_bAbort;
 
+	curl_easy_getinfo(m_pCurlHandle, CURLINFO_SPEED_UPLOAD, &temp.ulspeed);
+	curl_easy_getinfo(m_pCurlHandle, CURLINFO_SPEED_DOWNLOAD, &temp.dlspeed);
+
 	onProgressEvent(temp);
 
 	m_bAbort = temp.abort;
