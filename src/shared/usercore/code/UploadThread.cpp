@@ -25,16 +25,13 @@ $/LicenseInfo$
 
 #include "Common.h"
 #include "UploadThread.h"
+#include "usercore/UserCoreI.h"
 
 #include <algorithm>
 
 #define MINCHUNKSIZE (500*1024)
 
-namespace UserCore
-{
-namespace Thread
-{
-
+using namespace UserCore::Thread;
 
 UploadThread::UploadThread(UploadThreadInfo* info) : MCFThread( "Upload Thread", info->itemId )
 {
@@ -44,9 +41,6 @@ UploadThread::UploadThread(UploadThreadInfo* info) : MCFThread( "Upload Thread",
 	m_uiChunkSize = 1024*1024; //chunksize;
 	m_uiFileSize = 0;
 	m_uiAmountRead =0;
-
-	m_fLastAmmount = 0;
-	m_bSetPauseStart = false;
 	m_bCancel = false;
 }
 
@@ -57,6 +51,9 @@ UploadThread::~UploadThread()
 
 void UploadThread::doRun()
 {
+	gcString szSafeUploads = getUserCore()->getCVarValue("gc_safe_uploads");
+	bool bSafeUploads = szSafeUploads == "true" || szSafeUploads == "1";
+
 	DesuraId id= getItemId();
 	gcString type = id.getTypeString();
 
@@ -83,19 +80,23 @@ void UploadThread::doRun()
 		onUploadProgressEvent(ui);
 	}
 
-	uint64 chunkCalc = m_uiFileSize / 100;
-	//max chunck size is 40mg, min is 5mg
+	if (bSafeUploads)
+	{
+		uint64 chunkCalc = m_uiFileSize / 10;
+		//max chunk size is 100mg, min is 5mg
 
-	uint32 minSize = 5*1024*1024;
-	uint32 maxSize = 40*1024*1024;
+		uint32 minSize = 5 * 1024 * 1024;
+		uint32 maxSize = 100 * 1024 * 1024;
 
-	if (chunkCalc > UINT_MAX)
-		m_uiChunkSize = maxSize;
+		m_uiChunkSize = Clamp((uint32) chunkCalc, minSize, maxSize);
+	}
 	else
-		m_uiChunkSize = Clamp((uint32)chunkCalc, minSize, maxSize);
+	{
+		m_uiChunkSize = (uint32)std::min<uint64>(m_uiFileSize, 100 * 1024 * 1024);
+	}
 
 	//if the file is 20% (or less) bigger than one chunk. Upload in one go
-	if ( (uint64)((double)m_uiChunkSize*1.2) > m_uiFileSize)
+	if (m_uiFileSize < UINT_MAX && (uint64)((double)m_uiChunkSize*1.2) > m_uiFileSize)
 		m_uiChunkSize = (uint32)m_uiFileSize;
 
 	gcString url = getWebCore()->getUrl(WebCore::McfUpload);
@@ -103,18 +104,10 @@ void UploadThread::doRun()
 
 	UTIL::MISC::Buffer buffer(m_uiChunkSize);
 
-	m_tStartTime = gcTime();
-
 	while (sCode != 999)
 	{
 		if (m_bCancel)
 			break;
-
-		if (m_bSetPauseStart)
-		{
-			m_tPauseStartTime = gcTime();
-			m_bSetPauseStart = false;
-		}
 
 		while (isPaused())
 		{
@@ -228,12 +221,7 @@ void UploadThread::doRun()
 
 void UploadThread::onProgress(Prog_s& p)
 {
-	Prog_s* temp = &p;
-
-	if (!temp)
-		return;
-
-	uint64 currProg = m_uiAmountRead + (uint64)temp->ulnow;
+	uint64 currProg = m_uiAmountRead + (uint64)p.ulnow;
 
 	UserCore::Misc::UploadInfo ui;
 	ui.num = 0;
@@ -241,49 +229,33 @@ void UploadThread::onProgress(Prog_s& p)
 	ui.doneAmmount = currProg + m_pInfo->uiStart;
 	ui.percent = (uint8)((currProg+m_pInfo->uiStart)*100/m_uiFileSize);
 
-	if (temp->abort)
+	double pred = (m_uiFileSize - currProg - m_pInfo->uiStart) / p.ulspeed;
+
+	if (p.abort)
 	{
 		ui.doneAmmount = m_uiAmountRead + m_pInfo->uiStart;
 		ui.paused = true;
-		onUploadProgressEvent(ui);
-		return;
 	}
+	else if (pred > 0)
+	{
+		auto predTime = gcDuration(std::chrono::seconds((long) pred));
 
-	gcTime curTime;
-	double rate = (temp->ulnow - m_fLastAmmount)/((double)(curTime - m_tLastTime).seconds());
-	
-	if (m_fLastAmmount < 1)
-		rate = 0;
-
-	m_fLastAmmount = temp->ulnow;
-	m_tLastTime = curTime;
-
-	auto total = curTime - m_tStartTime;
-	total -= m_tTotPauseTime;
-
-	double avgRate = (currProg) / ((double)total.seconds());
-	double pred = (m_uiFileSize - currProg - m_pInfo->uiStart) / avgRate;
-
-	auto predTime = gcDuration(std::chrono::seconds((long)pred));
-
-	ui.min = (uint8)predTime.minutes();
-	ui.hour = (uint8)predTime.hours();
-	ui.rate = (uint32)(avgRate);
+		ui.min = (uint8) predTime.minutes();
+		ui.hour = (uint8) predTime.hours();
+		ui.rate = (uint32) (p.ulspeed);
+	}
 
 	onUploadProgressEvent(ui);
 }
 
 void UploadThread::onPause()
 {
-	m_bSetPauseStart = true;
 	m_hHttpHandle->abortTransfer();
-
 	onPauseEvent();
 }
 
 void UploadThread::onUnpause()
 {
-	m_tTotPauseTime += gcTime() - m_tPauseStartTime;
 	onUnpauseEvent();
 }
 
@@ -291,7 +263,4 @@ void UploadThread::onStop()
 {
 	m_bCancel = true;
 	m_hHttpHandle->abortTransfer();
-}
-
-}
 }
