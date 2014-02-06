@@ -55,6 +55,8 @@ public:
 	//this is used to resume uploading of a file
 	void setInfo_key(DesuraId id, const char* key);
 
+	void setInfo_uid(DesuraId id, const char* uploadId);
+
 	void run();
 
 	void showInfo();

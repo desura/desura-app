@@ -43,6 +43,11 @@ public:
 	{
 	}
 
+	uint64 milliseconds() const
+	{
+		return std::chrono::duration_cast<std::chrono::milliseconds>(m_Duration).count();
+	}
+
 	uint64 seconds() const
 	{
 		return std::chrono::duration_cast<std::chrono::seconds>(m_Duration).count();

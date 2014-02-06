@@ -1228,6 +1228,7 @@ void InternalLink::uploadMCF(DesuraId id)
 void InternalLink::resumeUploadMCF(DesuraId id, Args args)
 {
 	std::string key = args.getArgValue("key");
+	std::string uid = args.getArgValue("uid");
 
 	UserCore::Item::ItemInfoI* item = GetUserCore()->getItemManager()->findItemInfo( id );
 	if (!item && !GetUserCore()->isAdmin())
@@ -1239,7 +1240,14 @@ void InternalLink::resumeUploadMCF(DesuraId id, Args args)
 
 	//create new create from
 	UploadMCFForm* form = new UploadMCFForm(m_pParent);
-	form->setInfo_key(id, key.c_str());
+
+	if (!key.empty())
+		form->setInfo_key(id, key.c_str());
+	else if (!uid.empty())
+		form->setInfo_uid(id, uid.c_str());
+	else
+		form->setInfo(id);
+
 	form->Show(true);	
 	form->Raise();
 	form->run();

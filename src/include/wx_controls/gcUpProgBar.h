@@ -47,8 +47,8 @@ public:
 	void revertMileStone();
 
 protected:
-	virtual void doHandPaint(wxPaintDC& dc);
-	virtual void doImgPaint(wxPaintDC& dc);
+	void doHandPaint(wxPaintDC& dc) override;
+	void doExtraImgPaint(wxBitmap &img, int w, int h) override;
 
 private:
 	uint8 m_uiLastMS;

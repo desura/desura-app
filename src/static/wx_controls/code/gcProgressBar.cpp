@@ -182,5 +182,8 @@ void gcProgressBar::doImgPaint(wxPaintDC& dc)
 	tmpDC.DrawBitmap(right, wp,0,true);
 
 	tmpDC.SelectObject(wxNullBitmap);
+
+	doExtraImgPaint(tmpBmp, w, h);
+
 	dc.DrawBitmap(tmpBmp, 0,0, true);
 }
