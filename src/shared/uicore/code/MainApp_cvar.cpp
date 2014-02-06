@@ -258,6 +258,7 @@ CVar gc_disable_forceupdate_shortcut("gc_disable_forceupdate_shortcut", "0", CVA
 
 CVar gc_linux_launch_globalbin("gc_linux_launch_globalbin", "", CVAR_LINUX_ONLY, (CVarCallBackFn)&OnLinuxBinChange);
 CVar gc_linux_launch_globalargs("gc_linux_launch_globalargs", "", CVAR_LINUX_ONLY, (CVarCallBackFn)&OnLinuxArgsChange);
+CVar gc_safe_uploads("gc_safe_uploads", "0", CFLAG_USER);
 
 #ifdef DESURA_OFFICIAL_BUILD
 

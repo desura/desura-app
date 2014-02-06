@@ -97,15 +97,8 @@ private:
 	uint64 m_uiFileSize;
 	uint64 m_uiAmountRead;
 
-	bool m_bSetPauseStart;
+
 	bool m_bCancel;
-
-	double m_fLastAmmount;
-
-	gcTime m_tLastTime;
-	gcTime m_tStartTime;
-	gcTime m_tPauseStartTime;
-	gcDuration m_tTotPauseTime;
 };
 
 

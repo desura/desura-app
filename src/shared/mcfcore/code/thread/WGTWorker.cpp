@@ -400,7 +400,7 @@ namespace UnitTest
 
 			while (size > 0)
 			{
-				int todo = m_nDownloadSize;
+				uint32 todo = m_nDownloadSize;
 
 				if (todo > size)
 					todo = size;
