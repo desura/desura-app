@@ -421,6 +421,7 @@
 		<str name="#UDF_NONMATCHING_FILE">File doesn't match the uploaded file. Please select the correct file or start again.</str>
 		<str name="#UDF_UPLOAD_ERRTITLE">File Upload Error</str>
 		<str name="#UDF_RESUMEDIR">Searching for MCF ...</str>	
+		<str name="#UDF_ERROR_LABEL">Upload Error</str>
 	
 		<!-- Task Bar Menu -->
 		<str name="#TB_EXIT">Exit</str>
