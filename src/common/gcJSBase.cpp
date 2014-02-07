@@ -91,7 +91,7 @@ void FromJSObject(int32 &ret, JSObjHandle& arg)
 	else if (arg->isString())
 	{
 		gcString b = getString(arg);
-		int64 i = UTIL::MISC::atoll(b.c_str());
+		int64 i = Safe::atoll(b.c_str());
 		ret = (int32)i;
 	}
 	else

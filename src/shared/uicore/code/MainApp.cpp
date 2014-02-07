@@ -343,7 +343,7 @@ void MainApp::Init(int argc, wxCmdLineArgsArray &argv)
 	uint32 appid = -1;
 
 	if (szAppid.size() > 0)
-		appid = atoi(szAppid.c_str());
+		appid = Safe::atoi(szAppid.c_str());
 
 	if (appid == BUILDID_BETA || appid == BUILDID_INTERNAL)
 		gc_uploaddumps.setValue(true);

@@ -79,32 +79,6 @@ uint8 getCoreCount()
 #endif
 }
 
-
-int64 atoll(const char *ca )
-{
-	int64 ig=0;
-	int8 sign=1;
-
-	/* test for prefixing white space */
-	while (*ca == ' ' || *ca == '\t' )
-		ca++;
-
-	/* Check sign entered or no */
-	if ( *ca == '-' )
-		sign = -1;
-
-	/* convert string to int */
-	while (*ca != '\0')
-	{
-		if (*ca >= '0' && *ca <= '9')
-			ig = ig * 10LL + *ca++ - '0';
-		else
-			ca++;
-	}
-
-	return (ig*(int64)sign);
-}
-
 bool matchList(const char* str, const char **list)
 {
 	if (!str || str[0] == '\0')
@@ -808,7 +782,7 @@ int CMDArgs::getInt(const char* name)
 	int res = 0;
 
 	if (hasValue(name))
-		res = atoi(m_pInternal->m_mArgv[name].c_str());
+		res = Safe::atoi(m_pInternal->m_mArgv[name].c_str());
 	
 	return res;
 }

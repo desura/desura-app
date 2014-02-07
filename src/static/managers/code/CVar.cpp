@@ -105,7 +105,7 @@ bool CVar::getBool() const
 int32 CVar::getInt() const
 {
 	checkOsValid();
-	return atoi(m_szData.c_str());
+	return Safe::atoi(m_szData.c_str());
 }
 
 float CVar::getFloat() const

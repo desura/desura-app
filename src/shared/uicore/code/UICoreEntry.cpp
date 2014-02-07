@@ -346,7 +346,7 @@ const char* GetWebCoreVersion()
 
 bool setDumpLevel(const CVar* cvar, const char* value)
 {
-	int level = atoi(value);
+	int level = Safe::atoi(value);
 
 	if (level != 0)
 		g_pUICore.setDumpLevel(level);

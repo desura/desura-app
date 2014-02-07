@@ -65,13 +65,6 @@ namespace MISC
 	//!
 	uint8 getCoreCount();
 
-	//! Convers string into long long
-	//!
-	//! @param ca Input string
-	//! @return number
-	//!
-	int64 atoll(const char *ca );
-
 	//! matches str in list
 	//!
 	//! @param str input string to match

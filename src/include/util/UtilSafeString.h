@@ -194,6 +194,23 @@ namespace Safe
 		return ::wcscasecmp(str1, str2);
 #endif
 	}
+
+	inline uint64 atoll(const char* szString)
+	{
+		if (!szString)
+			return 0;
+
+		return std::strtoull(szString, nullptr, 0);
+	}
+
+	//Make sure we handle the last bit correctly by using 64bit then down cast to 32bit
+	inline uint32 atoi(const char* szString)
+	{
+		if (!szString)
+			return 0;
+
+		return (uint32)std::strtoull(szString, nullptr, 0);
+	}
 }
 
 #endif

@@ -379,7 +379,7 @@ void MainForm::showChangeLog()
 	std::string szAppid = UTIL::OS::getConfigValue(APPID);
 
 	if (szAppid.size() > 0)
-		version = atoi(szAppid.c_str());
+		version = Safe::atoi(szAppid.c_str());
 
 	g_pMainApp->handleInternalLink(DesuraId(version,0), ACTION_APPUPDATELOG);
 }

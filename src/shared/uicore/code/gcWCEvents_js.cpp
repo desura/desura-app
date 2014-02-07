@@ -271,7 +271,7 @@ void ContextMenuExtender::showContextMenu(int32 xPos, int32 yPos, std::vector<st
 			if (type == "checkbox")
 				kind = wxITEM_CHECK;
 
-			gcMenuItem* item = new gcMenuItem(menuList.back(), baseId + atoi(id.c_str()), lable, L"", kind);
+			gcMenuItem* item = new gcMenuItem(menuList.back(), baseId + Safe::atoi(id.c_str()), lable, L"", kind);
 
 			menuList.back()->Append(item);
 

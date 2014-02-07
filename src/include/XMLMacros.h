@@ -110,7 +110,7 @@ namespace XML
 			GetAtt(name, r);
 
 			if (r.size() > 0)
-				outVal = atoi(r.c_str());
+				outVal = Safe::atoi(r.c_str());
 		}
 
 		gcString GetChild(const char* name) const
@@ -208,7 +208,7 @@ namespace XML
 			bool res = GetChild(name, string);
 
 			if (res)
-				num = atoi(string.c_str());
+				num = Safe::atoi(string.c_str());
 
 			return res;
 		}
@@ -230,7 +230,7 @@ namespace XML
 			bool res = GetChild(name, string);
 
 			if (res)
-				num = UTIL::MISC::atoll(string.c_str());
+				num = Safe::atoll(string.c_str());
 
 			return res;
 		}
@@ -453,7 +453,7 @@ namespace XML
 			if (!statStr)
 				throw gcException(ERR_BADXML, "No status code");
 		
-			status = atoi(statStr);
+			status = Safe::atoi(statStr);
 
 			if (status != 0)
 				throw gcException(ERR_BADSTATUS, status, gcString("Status: {0}", sNode->GetText()));
@@ -461,7 +461,7 @@ namespace XML
 			const char* verStr = uNode->Attribute("version");
 
 			if (verStr)
-				v = atoi(verStr);
+				v = Safe::atoi(verStr);
 
 			if (v == 0)
 				v = 1;

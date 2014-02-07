@@ -283,7 +283,7 @@ void DesuraJSSettings::saveCIPList(std::vector<std::map<gcString, gcString>> sav
 			}
 		}
 
-		DesuraId id(UTIL::MISC::atoll(savelist[x]["id"].c_str()));
+		DesuraId id(Safe::atoll(savelist[x]["id"].c_str()));
 
 		if (id.isOk() == false)
 			continue;

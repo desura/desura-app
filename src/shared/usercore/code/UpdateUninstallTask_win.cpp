@@ -81,7 +81,7 @@ void UpdateUninstallTask::getAllUninstallIds(std::vector<int64> &vIds)
 
 		std::string szId = key.substr(7, -1);
 
-		DesuraId id(UTIL::MISC::atoll(szId.c_str()));
+		DesuraId id(Safe::atoll(szId.c_str()));
 
 		if (!id.isOk())
 			continue;

@@ -403,10 +403,10 @@ void UpdateThreadOld::checkAppUpdate(const XML::gcXMLElement &uNode, std::functi
 		auto ver = appEl.GetText();
 
 		if (!id.empty())
-			appid = atoi(id.c_str());
+			appid = Safe::atoi(id.c_str());
 
 		if (!ver.empty())
-			mcfversion = atoi(ver.c_str());
+			mcfversion = Safe::atoi(ver.c_str());
 
 		return appid != 0 && mcfversion != 0;
 	};
@@ -485,10 +485,10 @@ void UpdateThreadOld::updateBuildVer()
 	std::string szAppBuild = UTIL::OS::getConfigValue(APPBUILD);
 
 	if (szAppid.size() > 0)
-		m_iAppId = atoi(szAppid.c_str());
+		m_iAppId = Safe::atoi(szAppid.c_str());
 
 	if (szAppBuild.size() > 0)
-		m_iAppVersion = atoi(szAppBuild.c_str());
+		m_iAppVersion = Safe::atoi(szAppBuild.c_str());
 
 	//if admin, give them internal build
 	if (m_pUser->isAdmin() && m_iAppId != BUILDID_INTERNAL)

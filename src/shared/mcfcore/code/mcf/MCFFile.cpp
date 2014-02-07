@@ -349,7 +349,7 @@ void MCFFile::loadXmlData(const XML::gcXMLElement &xmlElement)
 		const std::string bs = crcNode.GetAtt("blocksize");
 
 		if (!bs.empty())
-			m_iBlockSize = atoi(bs.c_str());
+			m_iBlockSize = Safe::atoi(bs.c_str());
 
 		gcString baseBuff(crcNode.GetText());
 
