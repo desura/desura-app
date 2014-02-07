@@ -111,10 +111,10 @@ protected:
 		std::vector<std::string> out;
 		UTIL::STRING::tokenize(m_szUrl, out, "|");
 
-		m_ItemId = DesuraId(UTIL::MISC::atoll(out[0].c_str()));
+		m_ItemId = DesuraId(Safe::atoll(out[0].c_str()));
 
 		if (out.size() > 1)
-			m_uiBranchId = MCFBranch::BranchFromInt(atoi(out[1].c_str()));
+			m_uiBranchId = MCFBranch::BranchFromInt(Safe::atoi(out[1].c_str()));
 
 		m_szUrl = "";
 	}

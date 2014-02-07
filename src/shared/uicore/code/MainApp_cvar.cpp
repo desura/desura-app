@@ -337,7 +337,7 @@ bool updoaddumpsChange(CVar* var, const char* val)
 	uint32 appid = -1;
 
 	if (szAppid.size() > 0)
-		appid = atoi(szAppid.c_str());
+		appid = Safe::atoi(szAppid.c_str());
 
 	if (appid != UINT_MAX && (appid == BUILDID_BETA || appid == BUILDID_INTERNAL)  && (strcmp(val, "0")==0 || strcmp(val, "false")==0 ))
 		ret = false;
@@ -352,7 +352,7 @@ bool betaChange(CVar* var, const char* val)
 	uint32 appid = -1;
 
 	if (szAppid.size() > 0)
-		appid = atoi(szAppid.c_str());
+		appid = Safe::atoi(szAppid.c_str());
 
 	if (strcmp(val, "1")==0 || strcmp(val, "true")==0)
 	{
@@ -378,7 +378,7 @@ bool betaChange(CVar* var, const char* val)
 
 bool corecountChange(CVar* var, const char* val)
 {
-	uint16 count = atoi(val);
+	uint16 count = Safe::atoi(val);
 	uint16 coreCount = UTIL::MISC::getCoreCount();
 
 	if (count > coreCount)

@@ -91,7 +91,7 @@ public:
 		m_uiType = TYPE_NONE;
 
 		if (id)
-			m_uiItemId = atoi(id);
+			m_uiItemId = Safe::atoi(id);
 
 
 		if (type && strcmp(type, "mods")==0)

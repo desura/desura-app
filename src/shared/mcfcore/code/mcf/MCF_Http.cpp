@@ -90,10 +90,10 @@ void MCF::getDownloadProviders(const char* url, MCFCore::Misc::UserCookies *pCoo
 		//Debug(gcString("MCF: R: {0}.{1} G: {2}.{3}\n", m_sHeader->getBranch(), m_sHeader->getBuild(), build, branch));
 
 		if (!build.empty())
-			m_sHeader->setBuild(MCFBuild::BuildFromInt(atoi(build.c_str())));
+			m_sHeader->setBuild(MCFBuild::BuildFromInt(Safe::atoi(build.c_str())));
 
 		if (!branch.empty())
-			m_sHeader->setBranch(MCFBranch::BranchFromInt(atoi(branch.c_str())));
+			m_sHeader->setBranch(MCFBranch::BranchFromInt(Safe::atoi(branch.c_str())));
 	}
 
 	const std::string szAuthCode = mNode.GetChild("authhash");
@@ -120,7 +120,7 @@ void MCF::getDownloadProviders(const char* url, MCFCore::Misc::UserCookies *pCoo
 
 	if (unauthed && !szAuthed.empty())
 	{
-		*unauthed = (atoi(szAuthed.c_str()) == 0);
+		*unauthed = (Safe::atoi(szAuthed.c_str()) == 0);
 	}
 
 

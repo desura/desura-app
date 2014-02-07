@@ -239,11 +239,11 @@ void GetBuildBranch(int &build, int &branch)
 
 	lszValue[0] = 0;
 	DWORD err2 = RegQueryValueEx(hk, "appid", nullptr, &dwType,(LPBYTE)&lszValue, &dwSize);
-	branch = atoi(lszValue);
+	branch = Safe::atoi(lszValue);
 
 	lszValue[0] = 0;
 	DWORD err3 = RegQueryValueEx(hk, "appver", nullptr, &dwType,(LPBYTE)&lszValue, &dwSize);
-	build = atoi(lszValue);
+	build = Safe::atoi(lszValue);
 
 	RegCloseKey(hk);
 }

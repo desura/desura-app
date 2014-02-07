@@ -175,7 +175,7 @@ void* DesuraJSBinding::getItemInfoFromId(gcString szId)
 	if (!getItemManager())
 		return nullptr;
 
-	DesuraId id(UTIL::MISC::atoll(szId.c_str()));
+	DesuraId id(Safe::atoll(szId.c_str()));
 	return getItemManager()->findItemInfo(id);
 }
 
@@ -391,13 +391,13 @@ void DesuraJSBinding::setCacheValue(gcString name, gcString value)
 
 int32 DesuraJSBinding::getItemFromId(gcString szId)
 {
-	DesuraId id(UTIL::MISC::atoll(szId.c_str()));
+	DesuraId id(Safe::atoll(szId.c_str()));
 	return id.getItem();
 }
 
 gcString DesuraJSBinding::getTypeFromId(gcString szId)
 {
-	DesuraId id(UTIL::MISC::atoll(szId.c_str()));
+	DesuraId id(Safe::atoll(szId.c_str()));
 	return id.getTypeString();
 }
 

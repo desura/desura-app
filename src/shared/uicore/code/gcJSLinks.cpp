@@ -73,7 +73,7 @@ JSObjHandle DesuraJSLinks::internalLink(ChromiumDLL::JavaScriptFactoryI *factory
 	FromJSObject(szId, args[0]);
 	FromJSObject(action, args[1]);
 
-	DesuraId id(UTIL::MISC::atoll(szId.c_str()));
+	DesuraId id(Safe::atoll(szId.c_str()));
 	std::vector<std::string> argList;
 
 	for (size_t x=2; x<args.size(); x++)

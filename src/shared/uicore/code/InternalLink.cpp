@@ -839,11 +839,11 @@ void InternalLink::installItem(DesuraId id, Args args)
 	}
 	else if (global.size() > 0)
 	{
-		iBranch = MCFBranch::BranchFromInt(atoi(global.c_str()), true);
+		iBranch = MCFBranch::BranchFromInt(Safe::atoi(global.c_str()), true);
 	}
 	else
 	{
-		iBranch = MCFBranch::BranchFromInt(atoi(branch.c_str()));
+		iBranch = MCFBranch::BranchFromInt(Safe::atoi(branch.c_str()));
 	}
 
 	g_pMainApp->showPlay();
@@ -971,10 +971,10 @@ void InternalLink::installTestMCF(DesuraId id, Args args)
 	MCFBuild iBuild ;
 
 	if (branch.size() > 0)
-		iBranch = MCFBranch::BranchFromInt(atoi(branch.c_str()));
+		iBranch = MCFBranch::BranchFromInt(Safe::atoi(branch.c_str()));
 
 	if (build.size() > 0)
-		iBuild = MCFBuild::BuildFromInt(atoi(build.c_str()));
+		iBuild = MCFBuild::BuildFromInt(Safe::atoi(build.c_str()));
 
 	UI::Forms::ItemForm* form = showItemForm(id, UI::Forms::INSTALL_ACTION::IA_INSTALL_TESTMCF, iBranch, iBuild);
 
@@ -1001,7 +1001,7 @@ void InternalLink::switchBranch(DesuraId id, Args args)
 	if (branch.size() == 0)
 		return;
 
-	MCFBranch iBranch = MCFBranch::BranchFromInt(atoi(branch.c_str()));
+	MCFBranch iBranch = MCFBranch::BranchFromInt(Safe::atoi(branch.c_str()));
 
 	if (iBranch == 0)
 		return;
@@ -1353,7 +1353,7 @@ void InternalLink::showUpdateLogApp(uint32 version)
 	std::string szAppid = UTIL::OS::getConfigValue(APPID);
 
 	if (szAppid.size() > 0)
-		iAppId = atoi(szAppid.c_str());
+		iAppId = Safe::atoi(szAppid.c_str());
 
 	ChangeLogForm* form = new ChangeLogForm(m_pParent);
 	form->setInfo(iAppId);

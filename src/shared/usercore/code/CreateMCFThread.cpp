@@ -76,8 +76,8 @@ void CreateMCFThread::doRun()
 
 	const char* val = getUserCore()->getCVarValue("gc_corecount");
 
-	if (val && atoi(val) != 0)
-		m_hMCFile->setWorkerCount(atoi(val));
+	if (val && Safe::atoi(val) != 0)
+		m_hMCFile->setWorkerCount(Safe::atoi(val));
 
 
 	m_hMCFile->parseFolder(m_szPath.c_str(), true);

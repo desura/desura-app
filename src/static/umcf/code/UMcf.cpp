@@ -355,14 +355,14 @@ void UMcf::parseUpdateXml(const XML::gcXMLDocument &xmlDocument)
 	const std::string appid = mcfNode.GetAtt("appid");
 
 	if (!appid.empty())
-		m_iAppId = atoi(appid.c_str());
+		m_iAppId = Safe::atoi(appid.c_str());
 	else
 		m_iAppId = 100;
 
 	const std::string build = mcfNode.GetAtt("build");
 
 	if (!build.empty())
-		m_iAppBuild = atoi(build.c_str());
+		m_iAppBuild = Safe::atoi(build.c_str());
 	else
 		m_iAppBuild = 0;
 
@@ -558,8 +558,8 @@ bool UMcf::isUpdateNewer()
 	if (err1 != ERROR_SUCCESS || err2 != ERROR_SUCCESS)
 		return true;
 
-	uint32 appid = atoi(lszAppId);
-	uint32 build = atoi(lszBuild);
+	uint32 appid = Safe::atoi(lszAppId);
+	uint32 build = Safe::atoi(lszBuild);
 #else
 	FILE* fh = fopen("version", "r");
 
