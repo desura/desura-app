@@ -319,6 +319,8 @@ protected:
 	}
 
 public:
+	typedef typename std::remove_reference<TArg>::type TArgNonRef;
+
 	~GuiDelegate()
 	{
 		if (ObjDelegate<TObj, TArg>::m_pObj)
@@ -356,7 +358,7 @@ public:
 
 		if (m_Mode == MODE_PENDING)
 		{
-			InvokeI *i = new Invoker<TObj, TArg>(new ObjDelegate<TObj, TArg>(this), new std::remove_reference<TArg>::type(a));
+			InvokeI *i = new Invoker<TObj, TArg>(new ObjDelegate<TObj, TArg>(this), new TArgNonRef(a));
 
 			auto event = new wxGuiDelegateEvent(std::shared_ptr<InvokeI>(i), ObjDelegate<TObj, TArg>::m_pObj->GetId());
 			ObjDelegate<TObj, TArg>::m_pObj->GetEventHandler()->QueueEvent(event);

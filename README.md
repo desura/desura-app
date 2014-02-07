@@ -30,28 +30,37 @@ You can install dependencies by package manager or install_deps.sh
 
 Required dependencies:
 
- * GCC (4.6 or later, multilib support for 32 bit compatibility on 64 bit systems)
+ * GCC (4.8 or later) or Clang (3.4 or later) - compiler multilib support for 32 bit compatibility on 64 bit systems
  * cmake (2.8.5 or later)
- * PkgConfig (for building DEB and RPM packages)
- * Boost (date_time, filesystem, system)
  * Freetype
+ * GLib2
  * GTK2
- * libX11 (with libXt)
  * libEvent
  * libNotify (0.7 or later)
- * GLib2
- * OpenSSL (only for building Curl)
- * BZip2
- * Sqlite3
- * tinyxml (2.6 or later)
- * V8
+ * libX11 (with libXt)
+ * Patch
  * Python
- * Curl
 
-Optional dependencies (will be built by cmake if not existing):
-- wxWidgets (3.0.0 or later)
-- Breakpad
-- CEF (Chromium Embedded)
+Optional dependencies (will be build by cmake if not found):
+
+ * Boost (filesystem, system)
+ * BZip2
+ * Curl (7.19.1 or later)
+ * Sqlite3
+ * tinyxml2
+ * wxWidgets (3.0.0 or later)
+
+Optional dependencies (only in special cases):
+
+ * Gtest (only when "WITH_GTEST" switch set to "ON")
+ * OpenSSL (only for building Curl)
+ * PkgConfig (for building DEB and RPM packages)
+
+Third party bundled libraries:
+
+ * Breakpad
+ * CEF (Chromium Embedded)
+ * V8
 
 Installation
 ------------

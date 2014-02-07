@@ -479,6 +479,20 @@ void UpdateThreadOld::checkAppUpdate(const XML::gcXMLElement &uNode)
 	checkAppUpdate(uNode, cb);
 }
 
+
+#ifdef DESURA_OFFICIAL_BUILD
+
+void UpdateThreadOld::checkAppUpdate(const XML::gcXMLElement &uNode)
+{
+	UserCore::User *pUser = dynamic_cast<UserCore::User*>(m_pUser);
+
+	if (!pUser)
+		return;
+
+	std::function<void(uint32,uint32, bool)> cb = std::bind(&UserCore::User::appNeedUpdate, pUser, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3);
+	checkAppUpdate(uNode, cb);
+}
+
 void UpdateThreadOld::updateBuildVer()
 {
 	std::string szAppid = UTIL::OS::getConfigValue(APPID);
