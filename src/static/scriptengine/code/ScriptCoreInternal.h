@@ -47,6 +47,8 @@ protected:
 
 private:
 	friend bool IsV8Init();
+	
+	static std::mutex s_InitLock;
 	static bool s_IsInit;
 	static bool s_Disabled;
 
