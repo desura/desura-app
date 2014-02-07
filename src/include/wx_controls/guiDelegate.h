@@ -360,8 +360,8 @@ public:
 		{
 			InvokeI *i = new Invoker<TObj, TArg>(new ObjDelegate<TObj, TArg>(this), new TArgNonRef(a));
 
-			wxGuiDelegateEvent event(std::shared_ptr<InvokeI>(i), ObjDelegate<TObj, TArg>::m_pObj->GetId());
-			ObjDelegate<TObj, TArg>::m_pObj->GetEventHandler()->AddPendingEvent(event);
+			auto event = new wxGuiDelegateEvent(std::shared_ptr<InvokeI>(i), ObjDelegate<TObj, TArg>::m_pObj->GetId());
+			ObjDelegate<TObj, TArg>::m_pObj->GetEventHandler()->QueueEvent(event);
 		}
 		else if (m_Mode == MODE_PROCESS || Thread::BaseThread::GetCurrentThreadId() == GetMainThreadId())
 		{
@@ -372,8 +372,8 @@ public:
 			PrimInvoker<TObj, TArg> *i = new PrimInvoker<TObj, TArg>(new ObjDelegate<TObj, TArg>(this), a);
 			std::shared_ptr<InvokeI> invoker(i);
 
-			wxGuiDelegateEvent event(invoker, ObjDelegate<TObj, TArg>::m_pObj->GetId());
-			ObjDelegate<TObj, TArg>::m_pObj->GetEventHandler()->AddPendingEvent(event);
+			auto event = new wxGuiDelegateEvent(invoker, ObjDelegate<TObj, TArg>::m_pObj->GetId());
+			ObjDelegate<TObj, TArg>::m_pObj->GetEventHandler()->QueueEvent(event);
 
 			setInvoker(i);
 			i->wait();
@@ -460,7 +460,7 @@ public:
 			InvokeI *i = new Invoker<TObj, TArg>(new ObjDelegate<TObj, TArg>(this), a);
 
 			wxGuiDelegateEvent event(i, ObjDelegate<TObj, TArg>::m_pObj->GetId());
-			ObjDelegate<TObj, TArg>::m_pObj->GetEventHandler()->AddPendingEvent(event);
+			ObjDelegate<TObj, TArg>::m_pObj->GetEventHandler()->QueueEvent(event);
 		}
 		else if (m_Mode == MODE_PROCESS || Thread::BaseThread::GetCurrentThreadId() == GetMainThreadId())
 		{
@@ -472,7 +472,7 @@ public:
 			std::shared_ptr<InvokeI> invoker(i);
 
 			wxGuiDelegateEvent event(invoker, ObjDelegate<TObj, TArg>::m_pObj->GetId());
-			ObjDelegate<TObj, TArg>::m_pObj->GetEventHandler()->AddPendingEvent(event);
+			ObjDelegate<TObj, TArg>::m_pObj->GetEventHandler()->QueueEvent(event);
 
 			setInvoker(i);
 			i->wait();
@@ -671,8 +671,8 @@ public:
 		{
 			InvokerV<TObj> *i = new InvokerV<TObj>(new ObjDelegateV<TObj>(this));
 
-			wxGuiDelegateEvent event(std::shared_ptr<InvokeI>(i), ObjDelegateV<TObj>::m_pObj->GetId());
-			ObjDelegateV<TObj>::m_pObj->GetEventHandler()->AddPendingEvent(event);
+			auto event = new wxGuiDelegateEvent(std::shared_ptr<InvokeI>(i), ObjDelegateV<TObj>::m_pObj->GetId());
+			ObjDelegateV<TObj>::m_pObj->GetEventHandler()->QueueEvent(event);
 		}
 		else if (m_Mode == MODE_PROCESS || Thread::BaseThread::GetCurrentThreadId() == GetMainThreadId())
 		{
@@ -683,8 +683,8 @@ public:
 			InvokerV<TObj> *i = new InvokerV<TObj>(new ObjDelegateV<TObj>(this));
 			std::shared_ptr<InvokeI> invoker(i);
 
-			wxGuiDelegateEvent event(invoker, ObjDelegateV<TObj>::m_pObj->GetId());
-			ObjDelegateV<TObj>::m_pObj->GetEventHandler()->AddPendingEvent(event);
+			auto event = new wxGuiDelegateEvent(invoker, ObjDelegateV<TObj>::m_pObj->GetId());
+			ObjDelegateV<TObj>::m_pObj->GetEventHandler()->QueueEvent(event);
 
 			setInvoker(i);
 			i->wait();
