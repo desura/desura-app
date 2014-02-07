@@ -350,10 +350,10 @@ void WebCoreClass::logIn(const char* user, const char* pass, XML::gcXMLDocument 
 
 	const std::string idStr =  memNode.GetAtt("siteareaid");
 
-	if (idStr.empty() || atoi(idStr.c_str()) <= 0)
+	if (idStr.empty() || Safe::atoi(idStr.c_str()) <= 0)
 		throw gcException(ERR_BAD_PORU);
 
-	m_uiUserId = atoi(idStr.c_str());
+	m_uiUserId = Safe::atoi(idStr.c_str());
 
 	auto cookieNode = memNode.FirstChildElement("cookies");
 

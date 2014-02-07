@@ -113,7 +113,7 @@ bool RestartTimerCB(const CVar* hook, const char* newval)
 	if (! newval)
 		return false;
 
-	RestartTimer(atoi(newval));
+	RestartTimer(Safe::atoi(newval));
 	
 	return true;
 }

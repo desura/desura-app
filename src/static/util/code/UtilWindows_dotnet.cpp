@@ -338,16 +338,16 @@ bool CheckNetfxBuildNumber(const char *pszNetfxRegKeyName, const char *pszNetfxR
 		// the version here
 
 		if (outList.size() >= 1 && outList[0].size() != 0)
-			iRegistryVersionMajor = atoi(outList[0].c_str());
+			iRegistryVersionMajor = Safe::atoi(outList[0].c_str());
 
 		if (outList.size() >= 2 && outList[1].size() != 0)
-			iRegistryVersionMinor = atoi(outList[1].c_str());
+			iRegistryVersionMinor = Safe::atoi(outList[1].c_str());
 
 		if (outList.size() >= 3 && outList[2].size() != 0)
-			iRegistryVersionBuild = atoi(outList[2].c_str());
+			iRegistryVersionBuild = Safe::atoi(outList[2].c_str());
 
 		if (outList.size() >= 4 && outList[3].size() != 0)
-			iRegistryVersionRevision = atoi(outList[3].c_str());
+			iRegistryVersionRevision = Safe::atoi(outList[3].c_str());
 	}
 
 	// Compare the version number retrieved from the registry with

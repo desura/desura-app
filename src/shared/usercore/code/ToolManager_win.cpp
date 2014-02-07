@@ -84,8 +84,8 @@ void ToolManager::onSpecialCheck(WCSpecialInfo &info)
 		char szJ[2] = {0};
 		szJ[0] = home.back();
 
-		uint32 cVer = atoi(info.result.c_str());
-		uint32 jVer = atoi(szJ);
+		uint32 cVer = Safe::atoi(info.result.c_str());
+		uint32 jVer = Safe::atoi(szJ);
 
 		if (cVer != 0 && cVer >= jVer)
 			info.result = home;
@@ -104,9 +104,9 @@ void ToolManager::onSpecialCheck(WCSpecialInfo &info)
 		bool client = false;
 
 		if (list.size() >= 1)
-			major = atoi(list[0].c_str());
+			major = Safe::atoi(list[0].c_str());
 		if (list.size() >= 2)
-			minor = atoi(list[1].c_str());
+			minor = Safe::atoi(list[1].c_str());
 		if (list.size() >= 3)
 			client = list[2] == "c";
 

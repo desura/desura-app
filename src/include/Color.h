@@ -130,7 +130,7 @@ public:
 		}
 		else
 		{
-			red = atoi(text);
+			red = Safe::atoi(text);
 	
 			char textcpy[255] = {0};
 #ifdef WIN32
@@ -142,7 +142,7 @@ public:
 			char* g = strstr(textcpy+1, " ");
 			if (g)
 			{
-				green = atoi(g);
+				green = Safe::atoi(g);
 
 				char* b = strstr(g+1, " ");
 				if (b)
@@ -151,7 +151,7 @@ public:
 
 					char* a = strstr(b+1, " ");
 					if (a)
-						alpha = atoi(a);
+						alpha = Safe::atoi(a);
 				}
 			}
 		}

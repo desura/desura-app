@@ -83,10 +83,10 @@ void CrashDumpThread::uploadDump(const char* dumpFile)
 	std::string szAppBuild = UTIL::WIN::getRegValue(APPBUILD);
 
 	if (szAppid.size() > 0)
-		branch = atoi(szAppid.c_str());
+		branch = Safe::atoi(szAppid.c_str());
 
 	if (szAppBuild.size() > 0)
-		build = atoi(szAppBuild.c_str());
+		build = Safe::atoi(szAppBuild.c_str());
 
 	uploadCrashProg(dumpFile, gc_lastusername.getString(), build, branch, delegate(this, &CrashDumpThread::uploadProgress));
 }

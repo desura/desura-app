@@ -338,7 +338,7 @@ static int64 ConvertTimeStringToInt(std::string timeStr)
 	if (tPos != std::string::npos)
 		timeStr = timeStr.substr(0, tPos) + timeStr.substr(tPos + 1);
 
-	return UTIL::MISC::atoll(timeStr.c_str());
+	return Safe::atoll(timeStr.c_str());
 }
 
 void MCF::parseFolder(const char *filePath, const char *oPath)

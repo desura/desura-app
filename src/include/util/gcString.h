@@ -870,7 +870,7 @@ std::basic_string<CT> Format(const CT* t, const A &a, const B &b, const C &c, co
 
 inline int atoi(const char* str)
 {
-	return ::atoi(str);
+	return Safe::atoi(str);
 }
 
 inline int atoi(const wchar_t* str)

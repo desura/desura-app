@@ -186,10 +186,10 @@ void Theme::LoadSprites(const XML::gcXMLElement &xmlEl)
 				sprite->addItem(rect);
 			}
 
-			rect->x = atoi(x.c_str());
-			rect->y = atoi(y.c_str());
-			rect->w = atoi(w.c_str());
-			rect->h = atoi(h.c_str());
+			rect->x = Safe::atoi(x.c_str());
+			rect->y = Safe::atoi(y.c_str());
+			rect->w = Safe::atoi(w.c_str());
+			rect->h = Safe::atoi(h.c_str());
 		});
 	});
 }

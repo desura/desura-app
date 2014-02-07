@@ -248,7 +248,7 @@ void User::appNeedUpdate(uint32 appver, uint32 appbuild, bool bForced)
 	if (m_uiLastUpdateVer == 0)
 	{
 		if (szAppid.size() > 0)
-			m_uiLastUpdateVer = atoi(szAppid.c_str());
+			m_uiLastUpdateVer = Safe::atoi(szAppid.c_str());
 		
 		if (m_uiLastUpdateVer == 0)
 			m_uiLastUpdateVer = 100;
@@ -259,7 +259,7 @@ void User::appNeedUpdate(uint32 appver, uint32 appbuild, bool bForced)
 		std::string szAppBuild = UTIL::OS::getConfigValue(APPBUILD);
 
 		if (szAppBuild.size() > 0)
-			m_uiLastUpdateBuild = atoi(szAppBuild.c_str());
+			m_uiLastUpdateBuild = Safe::atoi(szAppBuild.c_str());
 
 		if (m_uiLastUpdateBuild == 0) 
 			m_uiLastUpdateBuild = 0;
@@ -268,7 +268,7 @@ void User::appNeedUpdate(uint32 appver, uint32 appbuild, bool bForced)
 	uint32 curAppVer=0;
 
 	if (szAppid.size() > 0)
-		curAppVer = atoi(szAppid.c_str());
+		curAppVer = Safe::atoi(szAppid.c_str());
 
 	//if we changed the appver dont keep downloading updates for the old one
 	if (appver == 0 && m_uiLastUpdateVer != curAppVer)
@@ -438,7 +438,7 @@ void User::parseNewsAndGifts(const XML::gcXMLElement &xmlNode, const char* szChi
 		if (szId.empty() || szTitle.empty() || szUrl.empty())
 			return;
 
-		uint32 id = (uint32)atoi(szId.c_str());
+		uint32 id = (uint32)Safe::atoi(szId.c_str());
 
 		UserCore::Misc::NewsItem *temp = new UserCore::Misc::NewsItem(id, 0, szTitle.c_str(), szUrl.c_str());
 		itemList.push_back(temp);
