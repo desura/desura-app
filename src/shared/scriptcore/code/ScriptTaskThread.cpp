@@ -25,7 +25,7 @@ $/LicenseInfo$
 
 #include "Common.h"
 #include "ScriptTaskThread.h"
-
+#include <v8.h>
 
 ScriptTaskThread::ScriptTaskThread() 
 	: BaseThread("ScriptCore Thread")
@@ -36,20 +36,18 @@ ScriptTaskThread::~ScriptTaskThread()
 {
 	stop();
 
-	m_LockMutex.lock();
+	std::lock_guard<std::mutex> guard(m_LockMutex);
 
 	for (size_t x=0; x<m_TaskQue.size(); x++)
 		m_TaskQue[x]->destory();
 
 	m_TaskQue.clear();
-	m_LockMutex.unlock();
 }
 
 void ScriptTaskThread::queTask(ScriptTaskI* task)
 {
-	m_LockMutex.lock();
+	std::lock_guard<std::mutex> guard(m_LockMutex);
 	m_TaskQue.push_back(task);
-	m_LockMutex.unlock();
 
 	m_WaitCond.notify();
 }
@@ -61,25 +59,27 @@ void ScriptTaskThread::setLastTask(ScriptTaskI* task)
 
 void ScriptTaskThread::run()
 {
-	ScriptTaskI* curTask = nullptr;
+	auto pIsolator = v8::Isolate::New();
 
 	while (!isStopped())
 	{
-		curTask = nullptr;
+		ScriptTaskI* curTask = nullptr;
 
-		m_LockMutex.lock();
-
-		if (m_TaskQue.size() > 0)
 		{
-			curTask = m_TaskQue.front();
-			m_TaskQue.pop_front();
-		}
+			std::lock_guard<std::mutex> guard(m_LockMutex);
 
-		m_LockMutex.unlock();
+			if (m_TaskQue.size() > 0)
+			{
+				curTask = m_TaskQue.front();
+				m_TaskQue.pop_front();
+			}
+		}
 
 		if (curTask)
 		{
+			v8::Isolate::Scope scope(pIsolator);
 			curTask->doTask();
+
 			curTask->destory();
 			curTask = nullptr;
 		}
@@ -91,9 +91,12 @@ void ScriptTaskThread::run()
 
 	if (m_pLastTask)
 	{
+		v8::Isolate::Scope scope(pIsolator);
 		m_pLastTask->doTask();
 		m_pLastTask->destory();
 	}
+
+	pIsolator->Dispose();
 }
 
 void ScriptTaskThread::onStop()

@@ -28,11 +28,13 @@ $/LicenseInfo$
 #include "ScriptCoreInternal.h"
 
 
+std::mutex ScriptCoreInternal::s_InitLock;
 bool ScriptCoreInternal::s_IsInit = false;
 bool ScriptCoreInternal::s_Disabled = false;
 
 bool IsV8Init()
 {
+	std::lock_guard<std::mutex> guard(ScriptCoreInternal::s_InitLock);
 	return ScriptCoreInternal::s_IsInit && !ScriptCoreInternal::s_Disabled;
 }
 
@@ -61,14 +63,17 @@ void ScriptCoreInternal::init()
 	if (s_Disabled)
 		return;
 
-	if (!s_IsInit)
 	{
-		s_IsInit = true;
-		v8::V8::Initialize();
-		
-		v8::V8::AddMessageListener(&MessageCallback);
-		v8::V8::SetCaptureStackTraceForUncaughtExceptions(true);
-		v8::V8::SetFatalErrorHandler(&ScriptCoreInternal::OnFatalError);
+		std::lock_guard<std::mutex> guard(s_InitLock);
+		if (!s_IsInit)
+		{
+			s_IsInit = true;
+			v8::V8::Initialize();
+
+			v8::V8::AddMessageListener(&MessageCallback);
+			v8::V8::SetCaptureStackTraceForUncaughtExceptions(true);
+			v8::V8::SetFatalErrorHandler(&ScriptCoreInternal::OnFatalError);
+		}
 	}
 	
 	v8::HandleScope handle_scope;
