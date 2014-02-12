@@ -173,7 +173,10 @@ if(NOT BUILD_ONLY_CEF)
         "${CMAKE_TEST_PROJECTS_BIN}/wxWidget_3.0_test"
         "${CMAKE_TEST_PROJECTS}/wxWidget_3.0_test"
         "wxWidget_3_0_test"
-        "wxWidget_3_0_test")
+        "wxWidget_3_0_test"
+        CMAKE_FLAGS
+        "-DwxWidgets_CONFIG_EXECUTABLE=${wxWidgets_CONFIG_EXECUTABLE}"
+        "-DwxWidgets_wxrc_EXECUTABLE=${wxWidgets_wxrc_EXECUTABLE}")
       if(NOT WXWIDGET_3_0_TEST_COMPILE)
         unset(wxWidgets_FOUND)
         message(STATUS "no wxWidget 3.0 found")
