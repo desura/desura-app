@@ -7,6 +7,7 @@
 # global options:
 #   BUILD_CEF       ON                  Build cef
 #   BUILD_TESTS     ON                  Build various unit tests
+#   WITH_GTEST      ON                  Add GTest support
 #   BUILD_TOOLS     ON                  Build various Desura tools
 #   OFFICIAL_BUILD  OFF                 for official build only
 #   BRANDING        depends on          which branding should be used?
