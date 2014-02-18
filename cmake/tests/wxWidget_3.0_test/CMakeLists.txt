@@ -1,6 +1,7 @@
 cmake_minimum_required(VERSION 2.8)
 project(wxWidget_3_0_test)
 
+set(CMAKE_CXX_FLAGS "-std=c++11")
 find_package(wxWidgets REQUIRED)
 
 include_directories(
