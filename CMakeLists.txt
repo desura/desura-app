@@ -7,6 +7,7 @@
 # global options:
 #   BUILD_CEF       ON                  Build cef
 #   BUILD_TESTS     ON                  Build various unit tests
+#   WITH_GTEST      ON                  Add GTest support
 #   BUILD_TOOLS     ON                  Build various Desura tools
 #   OFFICIAL_BUILD  OFF                 for official build only
 #   BRANDING        depends on          which branding should be used?
@@ -165,7 +166,22 @@ if(NOT BUILD_ONLY_CEF)
   find_package(Sqlite ${REQUIRED_IF_OPTION})
 
   if(NOT FORCE_BUNDLED_WXGTK)
-    find_package(wxWidgets 2.9.5 COMPONENTS richtext ${REQUIRED_IF_OPTION})
+    find_package(wxWidgets 3.0 COMPONENTS richtext ${REQUIRED_IF_OPTION})
+    if(wxWidgets_FOUND)
+      try_compile(
+        WXWIDGET_3_0_TEST_COMPILE
+        "${CMAKE_TEST_PROJECTS_BIN}/wxWidget_3.0_test"
+        "${CMAKE_TEST_PROJECTS}/wxWidget_3.0_test"
+        "wxWidget_3_0_test"
+        "wxWidget_3_0_test"
+        CMAKE_FLAGS
+        "-DwxWidgets_CONFIG_EXECUTABLE=${wxWidgets_CONFIG_EXECUTABLE}"
+        "-DwxWidgets_wxrc_EXECUTABLE=${wxWidgets_wxrc_EXECUTABLE}")
+      if(NOT WXWIDGET_3_0_TEST_COMPILE)
+        unset(wxWidgets_FOUND)
+        message(STATUS "no wxWidget 3.0 found")
+      endif()
+    endif()
   endif()
 
   if(WITH_GTEST)
