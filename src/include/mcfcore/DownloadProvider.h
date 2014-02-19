@@ -38,7 +38,14 @@ namespace MCFCore
 namespace Misc
 {
 
-//! DownloadProvider class stores infomation about servers that are avaliable to download MCF content from
+	enum class DownloadProviderType
+	{
+		Mcf,
+		Http,
+		Cdn,
+	};
+
+//! DownloadProvider class stores information about servers that are available to download MCF content from
 //! 
 class DownloadProvider
 {
@@ -60,6 +67,7 @@ public:
 		m_szName = prov.getName();
 		m_szUrl = prov.getUrl();
 		m_szProvUrl = prov.getProvUrl();
+		m_eType = prov.getType();
 
 		setBanner(prov.getBanner());
 	}
@@ -72,6 +80,7 @@ public:
 		m_szName = prov.getName();
 		m_szUrl = prov.getUrl();
 		m_szProvUrl = prov.getProvUrl();
+		m_eType = prov.getType();
 
 		setBanner(prov.getBanner());
 
@@ -107,6 +116,16 @@ public:
 		xmlElement.GetChild("provider", m_szName);
 		xmlElement.GetChild("provlink", m_szProvUrl);
 		xmlElement.GetChild("link", m_szUrl);
+
+		gcString type;
+		xmlElement.GetChild("type", type);
+
+		if (type == "cdn")
+			m_eType = DownloadProviderType::Cdn;
+		else if (type == "http")
+			m_eType = DownloadProviderType::Http;
+		else
+			m_eType = DownloadProviderType::Mcf;
 	}
 
 	//! Checks to see if its a valid banner
@@ -167,7 +186,19 @@ public:
 		Safe::strncpy(m_szBanner.data(), m_szBanner.size(), strBanner.c_str(), strBanner.size());
 	}
 
+	void setType(DownloadProviderType type)
+	{
+		m_eType = type;
+	}
+
+
+	DownloadProviderType getType() const
+	{
+		return m_eType;
+	}
+
 private:
+	DownloadProviderType m_eType = DownloadProviderType::Mcf;
 	gcString m_szName;
 	gcString m_szUrl;
 	gcString m_szProvUrl;

@@ -136,6 +136,9 @@ public:
 
 	void del(){delete this;}
 
+	const char* getUserName() override;
+	const char* getPassword() override;
+
 protected:
 	void addHeader(const char* header);
 
@@ -849,4 +852,14 @@ void HttpHInternal::setUserPass(const char* user, const char* pass)
 {
 	m_szUser = user;
 	m_szPass = pass;
+}
+
+const char* HttpHInternal::getUserName()
+{
+	return m_szUser.c_str();
+}
+
+const char* HttpHInternal::getPassword()
+{
+	return m_szPass.c_str();
 }

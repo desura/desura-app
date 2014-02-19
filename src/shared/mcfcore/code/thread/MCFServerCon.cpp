@@ -86,15 +86,20 @@ void MCFServerCon::connect(const char* url, const GetFile_s& fileAuth)
 
 	gcString u(url);
 
-	if (u.find("mcf://") == 0)
-		u.replace(0, 3, "ftp");
+	m_bHttpDownload = u.find("http://") == 0;
 
-	size_t pos = u.find(":62001");
+	if (!m_bHttpDownload)
+	{
+		if (u.find("mcf://") == 0)
+			u.replace(0, 3, "ftp");
 
-	if (pos != std::string::npos)
-		u.replace(pos, 6, ":62003");
+		size_t pos = u.find(":62001");
 
-	u += "/mcf";
+		if (pos != std::string::npos)
+			u.replace(pos, 6, ":62003");
+
+		u += "/mcf";
+	}
 
 	m_FtpHandle->setUrl(u.c_str());
 	m_FtpHandle->setUserPass(fileAuth.authkey.data(), fileAuth.authhash.data());
@@ -139,9 +144,35 @@ void MCFServerCon::doDownloadRange(uint64 offset, uint32 size)
 		throw gcException(ERR_SOCKET, "Socket not connected");
 
 	m_FtpHandle->cleanUp(false);
-	m_FtpHandle->setDownloadRange(offset, size);
 
-	uint8 res = m_FtpHandle->getFtp();
+	uint8 res;
+
+	if (m_bHttpDownload)
+	{
+		gcString user(m_FtpHandle->getUserName());
+
+		//CDN Links will have no user info, use http 1.1 headers for download range
+		if (user.empty())
+		{
+			m_FtpHandle->setDownloadRange(offset, size);
+		}
+		else
+		{
+			gcString o("{0}", offset);
+
+			m_FtpHandle->addPostText("authid", user.c_str());
+			m_FtpHandle->addPostText("authkey", m_FtpHandle->getPassword());
+			m_FtpHandle->addPostText("offset", o.c_str());
+			m_FtpHandle->addPostText("length", size);
+		}
+
+		res = m_FtpHandle->postWeb();
+	}
+	else
+	{
+		m_FtpHandle->setDownloadRange(offset, size);
+		res = m_FtpHandle->getFtp();
+	}
 
 	if (res == UWEB_USER_ABORT)
 		throw gcException(ERR_MCFSERVER, ERR_USERCANCELED, "Client canceled data write");
