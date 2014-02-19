@@ -29,6 +29,7 @@ $/LicenseInfo$
 
 #ifndef DESURA_CLIENT
 #include "ToolInstallThread.h"
+#include "LogCallback.h"
 #else
 #include "ToolInfo.h"
 #endif
@@ -36,27 +37,14 @@ $/LicenseInfo$
 IPCToolMain* g_pToolMain = nullptr;
 REG_IPC_CLASS( IPCToolMain );
 
+extern LogCallback* g_pLogCallback;
+
 
 #ifndef DESURA_CLIENT
 
 bool g_bLogEnabled = true;
 
-void PrintfMsg(const char* format, ...)
-{
-	if (!g_pToolMain || !g_bLogEnabled)
-		return;
-
-	va_list args;
-	va_start(args, format);
-
-	gcString str;
-	str.vformat(format, args);
-	g_pToolMain->message(str.c_str());
-
-	va_end(args);
-}
-
-void LogMsg(int type, std::string msg, Color* col)
+void IPCToolPipe_LogMsg(int type, std::string msg, Color* col)
 {
 	OutputDebugStringA(msg.c_str());
 
@@ -76,7 +64,7 @@ void LogMsg(int type, std::string msg, Color* col)
 	};
 }
 
-void LogMsg(int type, std::wstring msg, Color* col)
+void IPCToolPipe_LogMsg(int type, std::wstring msg, Color* col)
 {
 	OutputDebugStringW(msg.c_str());
 
@@ -94,6 +82,61 @@ void LogMsg(int type, std::wstring msg, Color* col)
 		g_pToolMain->warning(gcString(msg).c_str());
 		break;
 	};
+}
+
+
+
+
+void IPCToolPipe_Msg(const char* msg, Color *col = nullptr)
+{
+	if (!msg)
+		return;
+
+	IPCToolPipe_LogMsg(MT_MSG, msg, col);
+}
+
+void IPCToolPipe_Msg_W(const wchar_t* msg, Color *col = nullptr)
+{
+	if (!msg)
+		return;
+
+	IPCToolPipe_LogMsg(MT_MSG, msg, col);
+}
+
+void IPCToolPipe_Warn(const char* msg)
+{
+	if (!msg)
+		return;
+
+	IPCToolPipe_LogMsg(MT_WARN, msg, nullptr);
+}
+
+void IPCToolPipe_Warn_W(const wchar_t* msg)
+{
+	if (!msg)
+		return;
+
+	IPCToolPipe_LogMsg(MT_WARN, msg, nullptr);
+}
+
+void IPCToolPipe_Debug(const char* msg)
+{
+#ifdef DEBUG
+	if (!msg)
+		return;
+
+	IPCToolPipe_LogMsg(MT_MSG, msg, nullptr);
+#endif
+}
+
+void IPCToolPipe_Debug_W(const wchar_t* msg)
+{
+#ifdef DEBUG
+	if (!msg)
+		return;
+
+	IPCToolPipe_LogMsg(MT_MSG, msg, nullptr);
+#endif
 }
 
 #endif
@@ -115,6 +158,22 @@ IPCToolMain::~IPCToolMain()
 	safe_delete(m_pThread);
 #endif
 }
+
+#ifndef DESURA_CLIENT
+void IPCToolMain::SetupLogging()
+{
+	safe_delete(g_pLogCallback);
+	g_pLogCallback = new LogCallback();
+
+	g_pLogCallback->RegMsg(&IPCToolPipe_Msg);
+	g_pLogCallback->RegMsg(&IPCToolPipe_Msg_W);
+	g_pLogCallback->RegWarn(&IPCToolPipe_Warn);
+	g_pLogCallback->RegWarn(&IPCToolPipe_Warn_W);
+	g_pLogCallback->RegDebug(&IPCToolPipe_Debug);
+	g_pLogCallback->RegDebug(&IPCToolPipe_Debug_W);
+}
+
+#endif
 
 void IPCToolMain::registerFunctions()
 {
