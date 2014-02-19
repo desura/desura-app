@@ -118,6 +118,7 @@ private:
 	MCFCore::Thread::Misc::WGTSuperBlock *m_pCurBlock = nullptr;
 	MCFCore::Misc::ProviderManager *m_pProvMng = nullptr;
 
+	MCFCore::Misc::DownloadProviderType m_eType;
 
 	std::mutex m_ErrorMutex;
 	bool m_bError = false;

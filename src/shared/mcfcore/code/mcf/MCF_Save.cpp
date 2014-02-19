@@ -153,7 +153,18 @@ void MCF::doDlHeaderFromWeb(MCFCore::Misc::MCFServerCon &msc)
 		try
 		{
 			msc.disconnect();
-			msc.connect(provider->getUrl(), *m_pFileAuth.get());
+
+			if (provider->getType() == MCFCore::Misc::DownloadProviderType::Cdn)
+			{
+				MCFCore::Misc::GetFile_s f;
+				f.zero();
+
+				msc.connect(provider->getUrl(), f);
+			}
+			else
+			{
+				msc.connect(provider->getUrl(), *m_pFileAuth.get());
+			}
 
 			msc.downloadRange(0, 5, &out); //4 id bytes and 1 version byte
 

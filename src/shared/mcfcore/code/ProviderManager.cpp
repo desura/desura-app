@@ -83,7 +83,7 @@ ProviderManager::~ProviderManager()
 {
 }
 
-gcString ProviderManager::getUrl(uint32 id)
+gcString ProviderManager::getUrl(uint32 id, DownloadProviderType &eType)
 {
 	gcString url("nullptr");
 	std::vector<uint32> validList;
@@ -100,7 +100,9 @@ gcString ProviderManager::getUrl(uint32 id)
 	if (validList.size() > 0)
 	{
 		m_vErrorList[validList[0]]->setOwner(id);
+
 		url = gcString(m_vSourceList[validList[0]]->getUrl());
+		eType = m_vSourceList[validList[0]]->getType();
 
 		MCFCore::Misc::DP_s dp;
 		dp.action = MCFCore::Misc::DownloadProvider::ADD;
@@ -131,12 +133,12 @@ gcString ProviderManager::getName(uint32 id)
 	return name;
 }
 
-gcString ProviderManager::requestNewUrl(uint32 id, uint32 errCode, const char* errMsg)
+gcString ProviderManager::requestNewUrl(uint32 id, DownloadProviderType &eType, uint32 errCode, const char* errMsg)
 {
 	Warning(gcString("Mcf download thread errored out. Id: {0}, Error: {2} [{1}]\n", id, errCode, errMsg));
 
 	removeAgent(id, true);
-	return getUrl(id);
+	return getUrl(id, eType);
 }
 
 void ProviderManager::removeAgent(uint32 id, bool setTimeOut)

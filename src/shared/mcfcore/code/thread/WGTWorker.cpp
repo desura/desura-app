@@ -63,7 +63,7 @@ void WGTWorker::reportError(gcException &e, gcString provider)
 
 void WGTWorker::run()
 {
-	m_szUrl = m_pProvMng->getUrl(m_uiId);
+	m_szUrl = m_pProvMng->getUrl(m_uiId, m_eType);
 	if (m_szUrl == "nullptr")
 	{
 		Warning(gcString("Mcf Download Thread [{0}] failed to get valid url for download.\n", m_uiId));
@@ -254,7 +254,19 @@ void WGTWorker::doDownload()
 			throw gcException(ERR_MCFSERVER, "No more download servers to use.");
 
 		if (!m_pMcfCon->isConnected())
-			m_pMcfCon->connect(m_szUrl.c_str(), m_FileAuth);
+		{
+			if (m_eType == MCFCore::Misc::DownloadProviderType::Cdn)
+			{
+				MCFCore::Misc::GetFile_s f;
+				f.zero();
+
+				m_pMcfCon->connect(m_szUrl.c_str(), f);
+			}
+			else
+			{
+				m_pMcfCon->connect(m_szUrl.c_str(), m_FileAuth);
+			}
+		}
 
 		m_pMcfCon->downloadRange(m_pCurBlock->offset + m_pCurBlock->done, m_pCurBlock->size - m_pCurBlock->done, this);
 	}
@@ -339,7 +351,7 @@ void WGTWorker::onProgress(uint32& prog)
 
 void WGTWorker::requestNewUrl(gcException& e)
 {
-	m_szUrl = m_pProvMng->requestNewUrl(m_uiId, e.getSecErrId(), e.getErrMsg());
+	m_szUrl = m_pProvMng->requestNewUrl(m_uiId, m_eType, e.getSecErrId(), e.getErrMsg());
 
 	if (m_szUrl != "nullptr")
 	{

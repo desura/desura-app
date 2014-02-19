@@ -122,6 +122,8 @@ private:
 	uint64 m_uiDone = 0;
 
 	OutBufferI* m_pOutBuffer = nullptr;
+
+	bool m_bHttpDownload = false;
 	bool m_bConnected = false;
 };
 
