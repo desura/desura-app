@@ -57,9 +57,6 @@ private:
 	gcButton *m_butCancel;
 
 	gcWebControl *m_pBrowser;
-
-	gcString m_szProviderUrl;
-
 	gcString m_szProviderUrl;
 
 	bool m_bTermsOfService;
