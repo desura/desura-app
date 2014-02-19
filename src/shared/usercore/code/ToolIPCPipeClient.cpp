@@ -33,10 +33,11 @@ $/LicenseInfo$
   #include <Shellapi.h>
 #endif
 
-namespace UserCore
-{
+using namespace UserCore;
 
-ToolIPCPipeClient::ToolIPCPipeClient(const char* user, bool uploadDumps, const char* key, HWND handle) : IPC::PipeClient(gcString("DesuraToolHelper-{0}", key).c_str())
+
+ToolIPCPipeClient::ToolIPCPipeClient(const char* user, bool uploadDumps, const char* key, HWND handle) 
+	: IPC::PipeClient(gcString("DesuraToolHelper-{0}", key).c_str())
 {
 	m_szKey = key;
 	m_WinHandle = handle;
@@ -158,7 +159,4 @@ IPCToolMain* ToolIPCPipeClient::getToolMain()
 		return nullptr;
 
 	return m_pServiceMain;
-}
-
-
 }

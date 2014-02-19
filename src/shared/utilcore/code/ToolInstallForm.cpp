@@ -27,6 +27,8 @@ $/LicenseInfo$
 #include "ToolInstallForm.h"
 #include "IPCPipeServer.h"
 
+#include "tool_pipe/IPCToolMain.h"
+
 #include <branding/branding.h>
 
 #define STR_INSTALLING Managers::GetString(L"#TIF_INSTALLING")
@@ -89,6 +91,8 @@ void ToolInstallForm::startServer()
 
 	m_pIPCServer = new IPC::PipeServer(pipe.c_str(), 1, true);
 	m_pIPCServer->onDisconnectEvent += delegate(this, &ToolInstallForm::onDissconnect);
+
+	IPCToolMain::SetupLogging();
 	m_pIPCServer->start();
 }
 
