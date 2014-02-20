@@ -97,7 +97,7 @@ void WebCoreClass::init(const char* appDataPath, const char* szProviderUrl)
 void WebCoreClass::setUrlDomain(const char* domain)
 {
 	g_szRootDomain = domain;
-	m_szMCFDownloadUrl = gcString("http://api.") + g_szRootDomain + "/api/itemdownloadurl";
+	m_szMCFDownloadUrl = gcString("http://api.") + g_szRootDomain + "/2/itemdownloadurl";
 
 	m_bValidateCert = g_szRootDomain == "desura.com";
 }
@@ -109,7 +109,7 @@ const char* WebCoreClass::getMCFDownloadUrl()
 
 gcString WebCoreClass::getPassWordReminderUrl()
 {
-	return gcString("http://api.") + g_szRootDomain + "/api/memberpasswordreminder";
+	return gcString("http://api.") + g_szRootDomain + "/1/memberpasswordreminder";
 }
 
 gcString WebCoreClass::getLoginUrl()
@@ -119,7 +119,7 @@ gcString WebCoreClass::getLoginUrl()
 
 gcString WebCoreClass::getRefreshUrl()
 {
-	return gcString("http://api.") + g_szRootDomain + "/api/refresh";
+	return gcString("http://api.") + g_szRootDomain + "/1/refresh";
 }
 
 gcString WebCoreClass::getUpdatePollUrl()
@@ -129,12 +129,12 @@ gcString WebCoreClass::getUpdatePollUrl()
 
 gcString WebCoreClass::getNameLookUpUrl()
 {
-	return gcString("http://api.") + g_szRootDomain + "/api/itemnamelookup";
+	return gcString("http://api.") + g_szRootDomain + "/1/itemnamelookup";
 }
 
 gcString WebCoreClass::getMcfUploadUrl()
 {
-	return gcString("http://api.") + g_szRootDomain + "/api/itemupload";
+	return gcString("http://api.") + g_szRootDomain + "/1/itemupload";
 }
 
 gcString WebCoreClass::getItemInfoUrl()
@@ -149,12 +149,12 @@ gcString WebCoreClass::getInstalledWizardUrl()
 
 gcString WebCoreClass::getUpdateAccountUrl()
 {
-	return gcString("http://api.") + g_szRootDomain + "/api/iteminstall";
+	return gcString("http://api.") + g_szRootDomain + "/1/iteminstall";
 }
 
 gcString WebCoreClass::getCDKeyUrl()
 {
-	return gcString("http://api.") + g_szRootDomain + "/api/cdkey";
+	return gcString("http://api.") + g_szRootDomain + "/1/cdkey";
 }
 
 gcString WebCoreClass::getMemberDataUrl()

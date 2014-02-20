@@ -61,14 +61,14 @@ public:
 	//! @param errMsg Detail error message
 	//! @return url if has valid url or "nullptr" if no valid url
 	//!
-	gcString requestNewUrl(uint32 id, uint32 errCode, const char* errMsg);
+	gcString requestNewUrl(uint32 id, DownloadProviderType &eType, uint32 errCode, const char* errMsg);
 
 	//! Gets a url for agent
 	//!
 	//! @param id Agent id
 	//! @return url if has valid url or "nullptr" if no valid url
 	//!
-	gcString getUrl(uint32 id);
+	gcString getUrl(uint32 id, DownloadProviderType &eType);
 
 	//! Gets a name for agent
 	//!

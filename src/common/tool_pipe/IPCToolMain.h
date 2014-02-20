@@ -53,6 +53,8 @@ public:
 
 #ifdef DESURA_CLIENT
 	gcException installTool(UserCore::ToolInfo* info);
+#else
+	static void SetupLogging();
 #endif
 
 	//! Async. Wait for onCompleteEvent

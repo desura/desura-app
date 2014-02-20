@@ -33,7 +33,9 @@ file(GLOB Sources code/BZip2.cpp
                   code/UninstallAllThread.cpp
                   code/UninstallDesuraForm.cpp
                   code/UtilCoreEntry.cpp
-                  code/UtilCoreMain.cpp)
+                  code/UtilCoreMain.cpp
+				  ${TOOL_PIPE_SPOURCES}
+				  )
 
 if(WIN32)
   use_unicode_here()

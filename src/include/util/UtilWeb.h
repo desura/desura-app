@@ -150,6 +150,10 @@ public:
 
 	virtual Event<Prog_s>& getProgressEvent()=0;
 	virtual Event<WriteMem_s>& getWriteEvent()=0;
+
+
+	virtual const char* getUserName()=0;
+	virtual const char* getPassword()=0;
 };
 
 
