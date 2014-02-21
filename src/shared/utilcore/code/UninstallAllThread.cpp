@@ -296,6 +296,7 @@ void UninstallAllThread::removeDesuraSettings()
 	onProgressEvent(pair);
 
 	UTIL::FS::Path dbDir(UTIL::OS::getAppDataPath(), L"", false);
+	UTIL::FS::Path localAppDir(UTIL::OS::getLocalAppDataPath(), L"", false);
 	
 	std::vector<UTIL::FS::Path> fileList;
 	std::vector<UTIL::FS::Path> folderList;
@@ -303,6 +304,9 @@ void UninstallAllThread::removeDesuraSettings()
 	UTIL::FS::getAllFiles(dbDir, fileList, nullptr);
 	UTIL::FS::getAllFolders(dbDir, folderList);
 
+	UTIL::FS::getAllFiles(localAppDir, fileList, nullptr);
+	UTIL::FS::getAllFolders(localAppDir, folderList);
+	
 	for (size_t x=0; x<fileList.size(); x++)
 	{
 		std::string fileName = fileList[x].getFile().getFile();
@@ -322,6 +326,12 @@ void UninstallAllThread::removeDesuraSettings()
 
 		UTIL::FS::delFolder(folderList[x]);
 	}
+
+	if (UTIL::FS::isFolderEmpty(dbDir))
+		UTIL::FS::delFolder(dbDir);
+
+	if (UTIL::FS::isFolderEmpty(localAppDir))
+		UTIL::FS::delFolder(localAppDir);
 }
 
 bool UninstallAllThread::hasPaidBranch(UserCore::Item::ItemInfoI* item)

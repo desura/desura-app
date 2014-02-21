@@ -15,14 +15,15 @@ add_definitions(
   -DDESURA_EXE
   -DDESURA_CLIENT
 )
-				
-add_executable(utilhelper WIN32 ${Sources})
-target_link_libraries(utilhelper
+
+#Desura Uninstaller has this projects name hard coded. Do not change
+add_executable(utility WIN32 ${Sources})
+target_link_libraries(utility
   mdump_s
   util_s
   util_bootloader_s
   Comctl32
 )
 
-install_executable(utilhelper)
-SetStaticRuntime(utilhelper)
+install_executable(utility)
+SetStaticRuntime(utility)

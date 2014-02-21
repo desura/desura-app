@@ -172,31 +172,40 @@ void MainForm::initPages(bool offline)
 
 void MainForm::setTitle(bool offline)
 {
+
+	auto setTitleReal = [this](const std::string &strTitle)
+	{
+#ifndef DEBUG
+		std::string szAppid = UTIL::OS::getConfigValue(APPID);
+		std::string szAppBuild = UTIL::OS::getConfigValue(APPBUILD);
+#else
+		std::string szAppid("Debug");
+		std::string szAppBuild(__DATE__);
+#endif
+
+		SetTitle(gcString("{0} [{1}: {2}]", strTitle, szAppid, szAppBuild));
+	};
+
 	if (offline)
 	{
-		SetTitle( Managers::GetString(L"#MP_TITLE_OFFLINE") );
+		setTitleReal( Managers::GetString("#MP_TITLE_OFFLINE") );
 	}
 	else
 	{
-
-#ifdef DEBUG
-	const char* title = PRODUCT_NAME " Debug";
-#else
 	#ifdef WIN32
 		const char* title = PRODUCT_NAME " Windows";
 	#else
 		#ifdef NIX64
-			const char* title = PRODUCT_NAME " Linux 64";
+		const char* title = PRODUCT_NAME " Linux 64";
 		#else
-			const char* title = PRODUCT_NAME " Linux";
+		const char* title = PRODUCT_NAME " Linux";
 		#endif
 	#endif
-#endif
 
 		if (GetUserCore())
-			SetTitle(gcString("{0}: {1}", title, GetUserCore()->getUserName()));
+			setTitleReal(gcString("{0}: {1}", title, GetUserCore()->getUserName()));
 		else
-			SetTitle(title);
+			setTitleReal(title);
 	}
 }
 

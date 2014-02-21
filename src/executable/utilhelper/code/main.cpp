@@ -124,11 +124,7 @@ void BootLoader::loadUICore()
 		exit(-100);			
 	}
 
-#ifdef DEBUG
-	const char* dllname = "utilcore-d.dll";
-#else
 	const char* dllname = "utilcore.dll";
-#endif
 
 	if (!m_hUICore.load(dllname))
 	{
