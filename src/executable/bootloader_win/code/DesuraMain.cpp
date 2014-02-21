@@ -452,7 +452,7 @@ int BootLoader::ExitInstance()
 	if (g_bRestart)
 	{
 		if (g_szArgs && strstr(g_szArgs, "-setcachedir"))
-			BootLoaderUtil::StartProcess("utilhelper.exe", g_szArgs);
+			BootLoaderUtil::StartProcess("utility.exe", g_szArgs);
 		else
 			BootLoaderUtil::Restart(g_szArgs);
 	}
