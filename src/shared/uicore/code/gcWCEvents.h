@@ -89,7 +89,13 @@ class gcMenu;
 class ChromiumMenuInfoFromMem;
 
 
-class EventHandler : public ChromiumDLL::ChromiumBrowserEventI
+#ifdef USE_CHROMIUM_API_V2
+#define CHROMIUMEVENTCLASS ChromiumDLL::ChromiumBrowserEventI_V2
+#else
+#define CHROMIUMEVENTCLASS ChromiumDLL::ChromiumBrowserEventI
+#endif
+
+class EventHandler : public CHROMIUMEVENTCLASS
 {
 public:
 	EventHandler(gcWebControlI* parent);
@@ -114,6 +120,10 @@ public:
 	bool HandlePopupMenu(ChromiumDLL::ChromiumMenuInfoI* menuInfo) override;
 
 	void HandleJSBinding(ChromiumDLL::JavaScriptObjectI* jsObject, ChromiumDLL::JavaScriptFactoryI* factory) override;
+
+#ifdef USE_CHROMIUM_API_V2
+	void onDownloadFile(const char* szUrl, const char* szMimeType, unsigned long long ullFileSize) override;
+#endif
 
 	uint32 getLastX()
 	{

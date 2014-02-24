@@ -141,6 +141,7 @@ if(NOT WIN32)
 endif()
 
 add_definitions(-DENABLE_SEARCH)
+add_definitions(-DCHROMIUM_API_SUPPORTS_V2)
 
 if(WIN32)
   add_definitions(-D_WINDOWS

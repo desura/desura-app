@@ -45,6 +45,7 @@ $/LicenseInfo$
 void RegisterJSBindings();
 void RegisterSchemes();
 
+typedef void(*CEF_SetApiVersionFn)(int);
 
 typedef bool (*CEF_InitFn)(bool, const char*, const char*, const char*);
 typedef void (*CEF_StopFn)();
@@ -68,6 +69,7 @@ guint m_timeoutSource = 0;
 bool g_bLoaded = false;
 SharedObjectLoader g_CEFDll;
 
+CEF_SetApiVersionFn CEF_SetApiVersion = nullptr;
 CEF_InitFn CEF_Init = nullptr;
 CEF_StopFn CEF_Stop = nullptr;
 CEF_RegisterJSExtenderFn CEF_RegisterJSExtender = nullptr;
@@ -123,6 +125,7 @@ CVar gc_cef_timeout("gc_cef_timeout", "75", 0, &RestartTimerCB);
 
 void UnloadCEFDll()
 {
+	CEF_SetApiVersion = nullptr;
 	CEF_Init = nullptr;
 	CEF_Stop = nullptr;
 	CEF_RegisterJSExtender = nullptr;
@@ -150,6 +153,11 @@ bool LoadCEFDll()
 		Warning(gcString("Failed to load cef library: {0}\n", GetLastError()));
 		return false;
 	}
+
+	CEF_SetApiVersion = g_CEFDll.getFunction<CEF_SetApiVersionFn>("CEF_SetApiVersion", false);
+
+	if (CEF_SetApiVersion)
+		CEF_SetApiVersion(2);
 
 	CEF_Init = g_CEFDll.getFunction<CEF_InitFn>("CEF_Init");
 	CEF_Stop = g_CEFDll.getFunction<CEF_StopFn>("CEF_Stop");

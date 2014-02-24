@@ -103,7 +103,7 @@ public:
 	}
 
 	template <typename T>
-	T getFunction(const char* functionName)
+	T getFunction(const char* functionName, bool failIfNotFound = true)
 	{
 		if (!m_hHandle)
 			return nullptr;
@@ -120,7 +120,7 @@ public:
 		T fun = (T)GetProcAddress(m_hHandle, functionName);
 #endif
 
-		if (!fun)
+		if (!fun && failIfNotFound)
 			m_bHasFailed = true;
 
 		return fun;
