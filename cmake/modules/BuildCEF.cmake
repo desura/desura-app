@@ -247,6 +247,50 @@ if(BUILD_CEF OR BUILD_ONLY_CEF)
   install_external_library(cef ${CEF_LIBRARIES} ${CEF_FFMPEG_LIB})
 		  
   SET_PROPERTY(TARGET cef                PROPERTY FOLDER "ThirdParty")
+else(CEF_EXTERNAL_PATH and WIN32)
+  set(CEF_SOURCE_DIR ${CEF_EXTERNAL_PATH})
+  set(CEF_INCLUDE_DIRS "${CEF_EXTERNAL_PATH}") 
+  
+  ExternalProject_Add(
+    fetch_cef_external
+	SOURCE_DIR "${CEF_EXTERNAL_PATH}"
+    UPDATE_COMMAND ""
+    BUILD_IN_SOURCE 1
+    CONFIGURE_COMMAND ""
+    BUILD_COMMAND ""
+    INSTALL_COMMAND ""
+  )  
+  
+  install_external_library(fetch_cef_external 
+    ${CEF_EXTERNAL_PATH}/Debug/avcodec-53.dll
+    ${CEF_EXTERNAL_PATH}/Debug/avformat-53.dll
+    ${CEF_EXTERNAL_PATH}/Debug/avutil-51.dll
+    ${CEF_EXTERNAL_PATH}/Debug/cef_desura.dll
+    ${CEF_EXTERNAL_PATH}/Debug/icudt.dll
+  )
+	  
+  ExternalProject_Add(
+    fetch_cef_bin
+    URL "${CEF_BIN_URL}"
+    URL_MD5 ${CEF_BIN_MD5}
+    UPDATE_COMMAND ""
+    BUILD_IN_SOURCE 1
+    CONFIGURE_COMMAND ""
+    BUILD_COMMAND ""
+    INSTALL_COMMAND ""
+  )
+
+  ExternalProject_Get_Property(
+    fetch_cef_bin
+    source_dir
+  )
+    
+  install_external_library(fetch_cef_bin 
+    ${source_dir}/gcswf32.dll
+    ${source_dir}/plugin.vch
+    ${source_dir}/zlibwapi.dll
+  )	  
+	  
 else(BUILD_CEF)
   ExternalProject_Add(
     fetch_cef

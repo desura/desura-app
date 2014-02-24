@@ -492,3 +492,12 @@ void EventHandler::ForwardPopupMenu(ChromiumMenuInfoFromMem* menu)
 {
 	m_pParent->HandlePopupMenu(menu);
 }
+
+#ifdef USE_CHROMIUM_API_V2
+
+void EventHandler::onDownloadFile(const char* szUrl, const char* szMimeType, unsigned long long ullFileSize)
+{
+	gcLaunchDefaultBrowser(szUrl);
+}
+
+#endif

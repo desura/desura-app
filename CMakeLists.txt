@@ -90,8 +90,10 @@ else()
 endif()
 
 ###############################################################################
-# some globale variables
+# some global variables
 ###############################################################################
+
+set(CEF_EXTERNAL_PATH "" CACHE STRING "External path to cef if building seperatly to desura")
 
 set(CMAKE_OUTPUT "${CMAKE_SOURCE_DIR}/build_out")
 set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake/modules")
