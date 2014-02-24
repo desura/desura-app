@@ -24,6 +24,11 @@ function(add_copy_target_file_step target target_loc)
   endif()
 endfunction()
 
+function(add_copy_target_dir_step target target_loc)
+	get_filename_component(target_name "${target_loc}" NAME)
+	add_custom_command(TARGET ${target} POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy_directory "${target_loc}" "${CMAKE_BINARY_DIR}/${BINDIR}/${target_name}")
+endfunction()
+
 function(add_copy_target_step target)
   get_target_property(target_loc ${target} LOCATION)
   add_copy_target_file_step(${target} ${target_loc})

@@ -269,6 +269,8 @@ elseif(CEF_EXTERNAL_PATH AND WIN32)
     ${CEF_EXTERNAL_PATH}/Debug/icudt.dll
   )
 	  
+  add_copy_target_dir_step(fetch_cef_external ${CEF_EXTERNAL_PATH}/Debug/resources)
+	  
   ExternalProject_Add(
     fetch_cef_bin
     URL "${CEF_BIN_URL}"
