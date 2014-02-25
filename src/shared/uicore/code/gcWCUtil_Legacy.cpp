@@ -24,6 +24,7 @@ $/LicenseInfo$
 */
 
 #include "Common.h"
+#include "gcWCUtil_Legacy.h"
 
 #define CEF_IGNORE_FUNCTIONS 1
 #include "cef_desura_includes/ChromiumBrowserI.h"
