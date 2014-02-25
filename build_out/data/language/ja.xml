@@ -1,0 +1,670 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<lang name="Japanese">
+	<author>
+		<username>Desura</username>
+		<profile>http://www.desura.com</profile>
+	</author>
+	<linux>
+		<str name="#MW_PROMPT">このウィザードは このコンピュータにインストールされている Desura で サポートされているゲームと MOD を検索します。注意： 見つかったすべてのアイテムは Desura 上の 最新バージョンにアップデートされます。</str>
+		<str name="#MW_FINISH">ウィザードは完了し、このコンピュータで見つかった Desura がサポートするすべてのゲームと MOD は あなたのアカウントに追加されました。 &#xA;&#xA;PCにインストールされているゲームを Desura が見つけられなかった場合、 以下の「カスタムインストール」ボタンから 手動で追加することができます。</str>
+
+		<str name="#IF_WINDOWS_LAUNCH_WARNING">警告：Windows プログラムを起動しようとしています。このプログラムは、形式を認識して適切なツール (WINE など) を起動するでシステムで動作するようになっています。それ以外のシステムでは、アプリケーション/ゲームが正しく起動しないか、またはまったく起動しない恐れがあります。&#xA;&#xA;この警告は「設定」で無効にすることができます。</str>
+		<str name="#IF_SHOWFILES">ファイルの表示</str>
+		<str name="#MF_ERROR_NO32LIBS">起動しようとしているアイテムは 32 ビットですが、32 ビットのライブラリがインストールされていないようです。&#xA;&#xA;詳しくは、http://www.desura.com/groups/desura/linux を参照してください。</str>
+		<str name="#MF_ERROR_NOBITTEST">実行中のバージョンの Desura は 32 ビットのゲームの実行に対応していません。</str>
+
+		<str name="#PLAY_EMPTY">ご利用のアカウントには、Linux {1}ゲーム{0} がありません。</str><!-- {0} = </a> {1}, {2} and {3} = <a href="..."> -->
+
+		<str name="#SET_CV_LIN_DIS_WIN_WRN">Windows 実行ファイルの警告を無効にします。</str>
+		<str name="#SET_CV_LIN_DIS_WIN_WRN_TOOLTIP">Windows 実行ファイルを起動するたびに警告を表示することはありません。</str>
+		<str name="#SET_CV_ALLOW_WM_POS">ウィンドウマネージャーポジショニングを使用します。</str>
+		<str name="#SET_CV_ALLOW_WM_POS_TOOLTIP">Desura で位置とサイズを保存して復元するのではなく、システムウィンドウマネージャーがメインウィンドウの位置を決めることができます。</str>
+
+		<str name="#SET_CV_GLOBALBIN">グローバルゲーム起動バイナリ</str>
+		<str name="#SET_CV_GLOBALBIN_TOOLTIP">このバイナリファイルですべてのゲームを起動します</str>
+		<str name="#SET_CV_GLOBALARGS">グローバルゲーム引数</str>
+		<str name="#SET_CV_GLOBALARGS_TOOLTIP">起動時にこれらの引数をすべてのゲームに付加します</str>
+
+		<str name="#SET_CV_DISABLE_FORCESHORTCUT">メニューの強制実行ショートカットを無効にする</str>
+		<str name="#SET_CV_DISABLE_FORCESHORTCUT_TOOLTIP">Desura によるメインメニューへの強制アップデートのショートカットの作成を停止します</str>
+
+		<str name="#IF_GERROR_TOOL">Desura は {1} に必要な {0} を見つけられませんでした。</str>
+		<str name="#IF_GERROR_TOOL_Q">インストールを続行しますか？</str>
+		<str name="#HELP">ヘルプ</str>
+	</linux>
+	<windows>
+		<str name="#IF_SHOWFILES">エクスプローラーでファイルを表示する</str>
+		<str name="#PLAY_EMPTY">ご利用のアカウントには、Windows {1}ゲーム{0} または {2}MOD{0} がありません。お使いの PC で Desura 対応のゲームを検索する{3}インストール済みゲームの検索{0}ウィザードを実行してください。</str><!-- {0} = </a> {1}, {2} and {3} = <a href="..."> -->
+
+		<str name="#SET_CV_DISABLE_FS_PERMS">すべてのインストールフォルダを通常のユーザーが書き込み可能にします</str>
+		<str name="#SET_CV_DISABLE_FS_PERMS_TOOLTIP">ゲーム開発元は Windows の標準に従おうとせず、 多くのゲームはインストールフォルダに書き込みをしようとして、 それに失敗したときクラッシュします。 警告：これを無効にするといくつかのゲームは動きません。</str>
+
+		<str name="#IF_LOWSPACE_SYS">Desura は起動しますが、システムディスク ({0}:\\) の空き容量がないため、パフォーマンスが低下する可能性があります。&lt;a href=&quot;desura://settings/cache&quot;&gt;容量を空けるために Desura キャッシュを新しいディスクに移してください。&lt;/a&gt;</str>
+		<str name="#IF_LOWSPACE_CACHE">Desura キャッシュを保存するハードディスク ({0}:\\) に空き容量が少なくなっています。Desura の性能をすべて引き出すために、容量を空けることをお勧めします。</str>
+
+		<str name="#MW_PROMPT">このウィザードは このコンピュータにインストールされている Desura で サポートされているゲームと MOD を検索します。注意： 見つかったすべてのアイテムは Desura 上の 最新バージョンにアップデートされます。</str>
+		<str name="#MW_FINISH">ウィザードは完了し、このコンピュータで見つかった Desura 対応のゲームはすべてあなたのアカウントに追加されました。 &#xA;&#xA;PC にインストールされているゲームを Desura で見つけることができなかった場合、以下の「カスタムインストール」ボタンをクリックして、手動で追加できます。</str>
+	</windows>
+	<strings>
+		<!-- Generic Buttons -->
+		<str name="#LOGIN">サインイン</str>
+		<str name="#CANCEL">取り消し</str>
+		<str name="#OK">Ok</str>
+		<str name="#SUBMIT">送信</str>
+		<str name="#START">開始</str>
+		<str name="#PLAY">プレイ</str>
+		<str name="#CLOSE">閉じる</str>
+		<str name="#LAUNCH">起動</str>
+		<str name="#AGREE">同意する</str>
+		<str name="#BACK">戻る</str>
+		<str name="#SEND">送信</str>		
+		<str name="#UNINSTALL">アンインストール</str>
+		<str name="#VERIFY">照合</str>
+		<str name="#HIDE">隠す</str>
+		<str name="#PAUSE">一時停止</str>
+		<str name="#RESUME">再開</str>
+		<str name="#TRYAGAIN">再試行</str>
+		<str name="#BROWSE">参照</str>
+		<str name="#UPLOAD">アップロード</str>
+		<str name="#YES">はい</str>
+		<str name="#NO">いいえ</str>
+		<str name="#SAVE">保存</str>
+		<str name="#ADD">追加</str>
+		<str name="#LINK">リンク</str>
+		<str name="#APPLY">適用</str>
+		<str name="#CONTINUE">続ける</str>
+		<str name="#FIND">検索</str>
+		<str name="#MOREINFO">詳細を表示</str>
+		<str name="#PURCHASE">カートに追加</str>
+		<str name="#UPDATE">更新</str>
+		
+		<!-- Misc Labels -->
+		<str name="#PROCESSING">処理中:</str>
+		<str name="#INITIALIZING">初期化中...</str>
+		<str name="#PROGRESS_INFO">{0} / {1}</str><!-- {0} is completed, {1} is total -->
+		<str name="#COMPLTETED">完了</str>
+		<str name="#FINALIZING">終了中</str>
+		<str name="#PAUSED">一時停止</str>
+		<str name="#CONFIRM">確認...</str>
+		<str name="#CONFIRM_PROMPT">このウィンドウを閉じると、現在の処理が停止されます。本当に閉じますか？</str>	
+		<str name="#INSTALL">インストール</str>
+		<str name="#TBA">未定</str><!-- to be advertised -->
+		
+		<!-- Preorder String status -->
+		<str name="#IS_PREORDER_YEAR">{0} 年に提供</str>
+		<str name="#IS_PREORDER_QUATER">{1} 年の第{0}四半期に提供</str><!-- {0} is quater, {1} is year -->
+		<str name="#IS_PREORDER_MONTH">{1} 年の {0} 月に利用可能</str><!-- {0} is month, {1} is year -->
+		
+		<str name="#IS_PREORDER_DAYS">{0} 日後に利用可能</str>
+		<str name="#IS_PREORDER_HOURS">{0} 時間後に利用可能</str>
+		<str name="#IS_PREORDER_MINS">{0} 分後に利用可能</str>
+		
+		<str name="#IS_PREORDER_DAY">1 日後に利用可能</str>
+		<str name="#IS_PREORDER_HOUR">1 時間後に利用可能</str>
+		<str name="#IS_PREORDER_MIN">1 分後に利用可能</str>	
+		
+		<!-- Update Item -->
+		<str name="#UI_LABEL">アップデートが利用できます。今すぐアップデートしますか？</str>
+		<str name="#UI_NO_REMINDER">次から起動時に表示しない</str>
+		<str name="#UI_TITLE">{0} のアップデートが利用可能</str>		
+		
+		<!-- About Form -->
+		<str name="#AB_ABOUTINFO">Desura は、ゲーマー向けのコミュニティ主導の配信サービスで、開発者からの最高のゲーム、MOD およびダウンロード可能なコンテンツをすぐに購入してプレイできる状態でユーザーの手元に提供します。</str>
+		<str name="#AB_CREDITS">クレジット</str>
+		<str name="#AB_ABOUT">Desura について</str>
+		
+		<!-- Login Form -->
+		<str name="#LF_TITLE">Desura サインイン</str>
+		<str name="#LF_USER">ユーザー名またはメールアドレス</str>
+		<str name="#LF_PASS">パスワード</str>
+		<str name="#LF_AUTO">自動</str>
+		<str name="#LF_AUTO_TOOLTIP">次回から Desura を起動したときに自動でサインインします</str>
+		<str name="#LF_LOSTPASS">パスワードの紛失</str>
+		<str name="#LF_NEWACCOUNT">新しいアカウント</str>
+		<str name="#LF_OFFLINE">オフラインモード</str>
+		<str name="#LF_ERRTITLE">Desura ログインエラー</str>
+		<str name="#LF_ERROR">ログインに失敗しました</str>
+		<str name="#LF_VALDERROR">以下のエラーがあります：</str>
+		<str name="#LF_ERRBLANKNAME">ユーザー名が入力されていません</str>
+		<str name="#LF_ERRPASSWORD">パスワードが入力されていません</str>
+		<str name="#LF_ERRPLEASE">これらを解決してから、もう一度ログインし直してください。</str>
+		<str name="#ALTLOGIN_TITLE">代替 Desura ログイン:{0}</str>
+		
+		<!-- Console Form -->
+		<str name="#CS_TITLE">Desura コンソール</str>
+		
+		<!-- Change Log Form -->
+		<str name="#CL_TITLE">Desura 更新履歴</str>
+		
+		<!-- Launch item -->
+		<str name="#LI_LABEL">{0} の {1} は既にインストールされています。今すぐ起動しますか？</str><!-- {0} type [game|mod], {1} name -->
+		
+		<!-- Html Tab Page -->
+		<str name="#DL_LOADING">読み込み中 ...</str>
+		
+		<!-- Need Game Disc -->
+		<str name="#GD_TITLE">{0}: ゲームディスクが必要</str>
+		<str name="#GD_INFO">{0} をプレイするには、コンピュータに {1} のディスクが必要です。 &#xA;&#xA;操作を続行するには、ディスクを挿入する必要があります。</str><!-- {0} lanuch item, {1} required cd item -->
+		<str name="#GD_REMINDER">次回から表示しない</str>
+		
+		<!-- Main Menu -->
+		<str name="#MENU_ONLINE">オンラインにする</str>
+		<str name="#MENU_EXIT">終了</str>
+		<str name="#MENU_EXIT_TOOLTIP">Desura を終了します</str>
+		<str name="#MENU_UNITTEST">Unit Tests</str>
+		<str name="#MENU_TOOLS">ツール</str>
+		<str name="#MENU_HISTORY">履歴</str>
+		<str name="#MENU_SETTINGS">設定</str>
+		<str name="#MENU_SETTINGS_TOOLTIP">設定ウィンドウを表示します</str>
+		<str name="#MENU_CONSOLE">コンソール</str>
+		<str name="#MENU_HELP">ヘルプ</str>
+		<str name="#MENU_ABOUT">Desura について</str>
+		<str name="#MENU_LOGOUT">ログアウト</str>
+		<str name="#MENU_LOGOUT_TOOLTIP">Desura からログアウトします</str>
+		<str name="#MENU_OFFLINE">オフラインにする</str>
+		<str name="#MENU_OFFLINE_TOOLTIP">オフラインモードに切り替えます (インターネットに接続しません)</str>
+		<str name="#MENU_CHANGELOG">アプリケーションの更新履歴</str>
+		<str name="#MENU_CHANGELOG_TOOLTIP">Desura の更新履歴を表示します</str>
+		<str name="#MENU_CART">ショッピングカート</str>
+		<str name="#MENU_CART_TOOLTIP">ショッピングカート内のアイテムを表示します</str>
+		<str name="#MENU_PURCHASE">購入履歴</str>
+		<str name="#MENU_PURCHASE_TOOLTIP">購入したアイテムを表示します</str>
+		<str name="#MENU_GIFTS">ギフト履歴</str>
+		<str name="#MENU_GIFTS_TOOLTIP">受け取ったギフトの履歴を表示します</str>
+		<str name="#MENU_LISTKEYS">ゲームおよび CD キーの表示</str>
+		<str name="#MENU_LISTKEYS_TOOLTIP">ゲームとその CD キーを含む Web ページを表示します</str>
+		<str name="#MENU_INSTALLPATH">インストールされているゲームを追加する</str>
+		<str name="#MENU_INSTALLPATH_TOOLTIP">ゲームのインストールパスを個別に設定します</str>
+		<str name="#MENU_WIZZARD">インストールされているゲームを検索する</str>
+		<str name="#MENU_WIZZARD_TOOLTIP">この PC にインストールされているゲームと MOD を検索するウィザードを表示します</str>
+		<str name="#MENU_ACTIVATEGAME">ゲーム CD キーまたはギフトを有効化する</str>
+		<str name="#MENU_ACTIVATEGAME_TOOLTIP">CD キーまたはギフトコードを入力して、ゲームをアカウントに登録します</str>
+		<str name="#MENU_VERSION">バージョン</str>
+		
+		<!-- Games Wizard Note: Has os translations as well -->
+		<str name="#MW_TITLE">インストールされているゲームを検索する</str>
+		<str name="#MW_ERRTITLE">インストールされているゲームの検索エラー</str>
+		<str name="#MW_ERROR">ウィザード処理で以下のエラーがあるため、 処理を中止しました。</str>
+		<str name="#MW_CUSTOM">カスタムインストール</str>
+		<str name="#MW_ADDACCOUNT">見つかったアイテムをアカウントに追加</str>	
+		
+		<!-- cd key form -->
+		<str name="#CDK_TITLE">{0}: CDキー</str>
+		<str name="#CDK_ERRTITLE">CDキーの取得に失敗しました</str>
+		<str name="#CDK_ERROR">Desura は CD キーの認証に失敗しました</str>
+		<str name="#CDK_PROGRESSINFO">CD キーを収集中 ...</str>		
+		<str name="#CDK_COPYALL">すべてコピー</str>
+		<str name="#CDK_COPYPART">Part 1 をコピー</str>
+		<str name="#CDK_COPYPART_X">Part {0} をコピー</str><!-- {0} is the part number -->	
+		<str name="#CDK_INFO_STEAM">プレイをするには、Steam で {0} を有効化する必要があります。Steam で次のキーを入力してください:</str>
+		<str name="#CDK_ACTIVATE">有効化</str>
+		<str name="#CDK_INFO">プレイをするには、次の CD キーを入力する必要があります:</str>
+		<str name="#CDK_LAUNCHNOW">今すぐ起動</str>
+	
+		<!-- Eula form -->
+		<str name="#EULA_LABEL">プレイをするには、プログラム使用許諾契約書に同意する必要があります。</str>
+		<str name="#EULA_TITLE">エンドユーザープログラム使用許諾契約書:{0}</str>
+	
+		<!-- News Form -->
+		<str name="#NF_PREV">前へ</str>
+		<str name="#NF_NEXT">次へ</str>
+		<str name="#NF_TITLE">Desura ニュース:</str>
+		<str name="#GF_TITLE">Desura ギフト:</str>
+	
+		<!-- Update Form -->
+		<str name="#UF_INFO">Desura のアップデートがリリースされており、インストールできます。</str>
+		<str name="#UF_TITLE">Desura アップデートがあります</str>
+		<str name="#UF_RESTART_NOW">今すぐ再起動</str>
+		<str name="#UF_RESTART_LATER">後で再起動</str>		
+	
+		<!-- New Account -->
+		<str name="#NA_TITLE">Desura 新規アカウント</str>	
+	
+		<!-- Password Reminder Dialog -->
+		<str name="#PR_TITLE">Desura パスワードリマインダ</str>
+		<str name="#PR_PROMPT">登録に使用したメールアドレスを入力していただくと、そのアドレス宛にパスワードのリセット手順を記載したメールをお送りします。</str>
+		<str name="#PR_EMAIL">メール：</str>
+		<str name="#PR_SENT">リマインダが送信されました。受信トレイで次の手順を記載したメールを確認してください。</str>
+		<str name="#PR_ERRTITLE">Desura パスワードリマインダエラー</str>
+		<str name="#PR_ERROR">パスワードリマインダでエラーが発生しました。</str>
+		<str name="#PR_VALIDEMAIL">有効なメールアドレスを入力してください。</str>		
+	
+		<!-- Exe Select Form -->
+		<str name="#ES_TITLE">バージョンの選択: {0}</str><!-- {0} is item name -->
+		<str name="#ES_LABEL">プレイする {0} のバージョンを選択してください:</str><!-- {0} is item name -->
+	
+		<!-- Uninstall Form -->
+		<str name="#UNF_REMOVEFILES">Desura ファイルの削除</str>
+		<str name="#UNF_REMOVEFILES_TOOLTIP">MCF と Desura に関連するファイルを削除します</str>
+		<str name="#UNF_REMOVEACCOUNT">アカウントから削除</str>
+		<str name="#UNF_REMOVEACCOUNT_TOOLTIP">現在のアカウントからこのアイテムを削除します</str>
+		<str name="#UNF_CONFIRM">このコンピュータから {0} をアンインストールします。よろしいですか？いったん処理を開始すると、キャンセルすることはできません。</str><!-- {0} is item name -->
+		<str name="#UNF_ERRTITLE">アンインストールエラー</str>
+		<str name="#UNF_ERROR">アンインストール処理で以下のエラーがあるため、 処理を中止しました。</str>
+	
+		<!-- Item Form: Misc -->
+		<str name="#IF_TITLE">準備:</str>
+		<str name="#IF_PREPARE_INFO">{1} に対して{0}を準備中</str> <!-- {0} is action, {1} is item short name -->
+		<str name="#IF_PREPARE_INFO_NOITEM">準備中...</str>	
+		<str name="#IF_BRANCHINFO">{0} はインストールされていません。プレイするリリースを選択してください。</str>
+		<str name="#IF_BRANCHTITLE">プレイ {0}</str>
+		<str name="#IF_BROUGHT">購入済み</str>
+		<str name="#IF_CONFLICT">Desura はコンテンツの競合を検出しました。 {0} はすでにインストールされています。{0} には複合インストールが必要です。この問題を回避するため、Desura でのインストールを続行する前に {0} を手動でアンインストールすることをお勧めします。</str>
+		<str name="#IF_CONFLICTTITLE">複合インストールの競合</str>		
+		<str name="#IF_EXISTINGFILES">{0} のインストール先にこれらのファイルが存在します。処理を選んでください。</str>
+		<str name="#IF_FINDONCOMPUTER">このコンピュータ上のインストールの検索</str>
+		<str name="#IF_FREE">無償版</str>
+		<str name="#IF_GERROR_BRANCH_PLATFORM_Q">他のバージョンを選択しますか？</str>
+		<str name="#IF_INSTALL_REMOVE">インストールする。 使われていないファイルは削除する (推奨)</str>
+		<str name="#IF_INSTALL_LEAVE">インストールする。 使われていないファイルを残す</str>
+		<str name="#IF_INSTALL_VERIFY">ファイルを照合し 必要なファイルだけインストールする</str>
+		<str name="#IF_NOTFOUND">{0} はゲーム {1} の MOD です。プレイする前に、ゲームをインストールしておく必要があります。&#xA;&#xA;{1} のインストール方法を選択してください:</str>
+		<str name="#IF_NOTFOUND_GAME">{0} はゲーム {1} の拡張です。プレイする前に、ゲームをインストールしておく必要があります。&#xA;&#xA;{1} のインストール方法を選択してください:</str>
+		<str name="#IF_ONCOMPUTER">このコンピュータにインストールされているバージョンを使用</str>
+		<str name="#IF_PRELOADLAUNCH">{0} は {2} 日間経過しており、現在起動することはできません。このゲームは  {1} {4} 日後の {3} にプレイ可能になります。</str>
+		<!-- 
+			{0} Item Name
+			{1} Number of days
+			{2} if preloaded #IF_PRELOADLAUNCH_PRELOADED or if preordered #IF_PRELOADLAUNCH_PREORDERED
+			{3} date/time when item is available
+			{4} if days == 1 #IF_PRELOADLAUNCH_WORD_DAY else #IF_PRELOADLAUNCH_WORD_DAYS
+		-->
+		<str name="#IF_PRELOADLAUNCH_TITLE">{0}</str>
+		<str name="#IF_PRELOADLAUNCH_WORD_DAY">日</str>
+		<str name="#IF_PRELOADLAUNCH_WORD_DAYS">日間</str>
+		<str name="#IF_PRELOADLAUNCH_PREORDERED">予約購入済</str>
+		<str name="#IF_PRELOADLAUNCH_PRELOADED">プリロード済み</str>
+		<str name="#IF_PRELOADLAUNCH_INSTALLDEMO">デモ版をインストール</str>
+		<str name="#IF_PRELOADLAUNCH_INSTALLOTHER">他のバージョンをインストール</str>
+		<str name="#IF_PRELOADLAUNCH_INSTALLOTHER_INFO">&#xA;&#xA;プレイできる他のバージョンが存在します。</str>
+		<str name="#IF_PREORDERED_NORELEASE">予約購入: 未リリース</str>
+		<str name="#IF_PREORDERED">予約購入: プリロード可能</str>	
+	
+		<!-- Item Form: Uninstall -->
+		<str name="#IF_UNINSTALL">アンインストール:</str>
+		<str name="#IF_UNINSTALL_LABEL">アンインストール中 ...</str>
+		<str name="#IF_UNINSTALL_PATCH">古いファイルの削除:</str>
+		<str name="#IF_UNINSTALL_PATCH_LABEL">古いファイルを削除中 ...</str>
+		<str name="#IF_UNINSTALL_BRANCH">古いファイルの削除:</str>
+		<str name="#IF_UNINSTALL_BRANCH_LABEL">古いファイルを削除中 ...</str>
+		<str name="#IF_UNINSTALL_COMPLEX">複合 MOD のアンインストール</str>
+		<str name="#IF_UNINSTALL_COMPLEX_LABEL">複合 MOD をアンインストール中 ...</str>
+		
+		<!-- Item Form: Verify -->
+		<str name="#IF_VERIFY">照合:</str>
+		<str name="#IF_VERIFYFILES">ファイルの照合</str>
+		<str name="#IF_VERIFYTOOLS">ツールを再インストール</str>
+		<str name="#IF_VERIFYHOOKS">post install フックの再実行</str>
+		<str name="#IF_VERIFYCONFIRM">{0} の起動に問題がある場合、ファイルの照合で問題が解決することがあります。</str>
+		<str name="#IF_VERIFYLABEL">照合中 ...</str>
+		<str name="#IF_VERROR">インストール処理の照合で以下のエラーがあるため、 処理を中止しました。</str>
+		<str name="#IF_VERRTITLE">インストールの照合エラー</str>
+		<str name="#IF_VERIFYMCF">MCF を照合中 ...</str>
+		<str name="#IF_VERIFYINSTALL">インストールを照合中 ...</str>
+		<str name="#IF_VERIFYDOWNLOADF">足りないファイルをダウンロード中 ...</str>
+		<str name="#IF_VERIFYINSTALLF">足りないファイルをインストール中 ...</str>
+		<str name="#IF_VERIFYBRANCH">バージョンを切り替え中 ...</str>
+		<str name="#IF_VERIFYCOMPLETE">照合完了</str>
+	
+		<!-- Item Form: Install -->
+		<str name="#IF_PROVIDEDBY">提供元:</str>
+		<str name="#IF_GATHERINFO">情報を取得中 ...</str>
+		<str name="#IF_CHECKINGIR">インストールの要件を確認中 ...</str>
+		<str name="#IF_GERRTITLE">情報の取得エラー</str>	
+		<str name="#IF_GERROR">情報の収集で以下のエラーがあるため、 処理を中止しました。</str>
+		<str name="#IF_GERROR_LABEL">エラーが発生し、処理が停止しました。</str>
+		<str name="#IF_GERROR_PLATFORM">{0} はこのプラットフォームでサポートされていません。</str><!-- {0} item name -->
+		<str name="#IF_GERROR_BRANCH_PLATFORM">指定された {0} のバージョンはこのプラットフォームでサポートされていません。</str><!-- {0} item name -->
+		
+		<str name="#IF_DOWNLOAD">ダウンロード：</str>
+		<str name="#IF_ETIME">残り時間:</str>
+		<str name="#IF_INITDOWNLOAD">ダウンロードの初期化</str>
+		<str name="#IF_DLERROR">MCF ダウンロード処理で以下のエラーがあるため、 処理を中止しました。</str>
+		<str name="#IF_DLERRTITLE">MCF ダウンロードエラー</str>	
+	
+		<str name="#IF_UPDATE">アップデート:</str>
+		<str name="#IF_INSTALL">インストール:</str>
+		<str name="#IF_INITINSTALL">インストールの初期化</str>
+		<str name="#IF_COMPLETEPREORDER">プリロード完了</str>
+		<str name="#IF_IERROR">MCF インストール処理で以下のエラーがあるため、 処理を中止しました。</str>
+		<str name="#IF_IERRTITLE">MCF インストールエラー</str>
+	
+		
+		<str name="#IF_DOWNLOADTOOL">依存ファイルのダウンロード:</str>
+		<str name="#IF_DOWNLOADTOOL_LABEL">ダウンロード中 ...</str>	
+	
+		<str name="#IF_INSTALLTOOL">ツールのインストール:</str>
+		<str name="#IF_INTOOL_WAIT_HELPER">インストールヘルパーを待機中...</str>
+		<str name="#IF_INTOOL_WAIT_OTHER">他のインストールの完了を待機中...</str>
+		<str name="#IF_INTOOL_LABEL">ツールのインストール: {0}</str><!-- {0}: tool name -->
+		
+		<str name="#IF_INSTALL_CHECK">インストールチェック</str>
+		<str name="#IF_CHECK_ERRTITLE">インストールチェックエラー</str>
+		<str name="#IF_CHECK_ERROR">インストールチェックで以下のエラーがあるため、 処理を中止しました。</str>	
+	
+		<str name="#IF_CHECK_NOTFOUND">{0} がこのコンピュータ上に見つかりませんでした。インストールされていること、 少なくとも一度はそれを実行していることを確認して、 もう一度やり直してください。または、下の「カスタムインストール」ボタンをクリックして、インストール先を指定してください。</str><!-- {0} item name -->
+		<str name="#IF_CHECK_CIP">カスタムインストール</str>
+		<str name="#IF_CHECK_FOUND">{0} が見つかり、実行する準備ができました。</str><!-- {0} item name -->
+	
+		<str name="#IF_COMPLEXLABEL_INIT">{0} (初期化中)</str>
+		<str name="#IF_COMPLEXREMOVE">古いファイルの削除</str>
+		<str name="#IF_COMPLEXBACKUP">ゲームファイルのバックアップ</str>
+		<str name="#IF_COMPLEXINSTALL">ファイルのインストール</str>
+		<str name="#IF_COMPLEXLABEL">{0}...</str>
+	
+	
+		<str name="#IF_VALIDATE_ERROR">検証で以下のエラーがあるため、 処理を中止しました。</str>
+		<str name="#IF_VALIDATE_ERROR_TITLE">検証エラー</str>	
+		<str name="#IF_VALIDATE_TITLE">ダウンロードの検証:</str>
+		<str name="#IF_VALIDATE_PREALLOCATING">ダウンロードファイルの事前割り当て中...</str>
+		<str name="#IF_VALIDATE_LOCALFILES">古いインストールファイルをチェック中...</str>
+		<str name="#IF_VALIDATE_LABEL">ステージ {2}: {0} / {1} 完了</str><!-- {0}: done, {1}: total {2}:Stage number-->	
+		<str name="#IF_VALIDATE_EXISTINGMCF">最新データファイルの確認中...</str>
+		<str name="#IF_VALIDATE_LOCALMCFS">古いデータファイルの確認中...</str>
+		<str name="#IF_VALIDATE_DEFAULT">既存ファイルを検証中...</str>
+	
+		<str name="#IF_WAIT_TITLE">アイテムの待機:</str>
+		<str name="#IF_WAIT_FORCE">強制</str>
+		<str name="#IF_WAIT_CANCELALL">すべてキャンセル</str>
+		<str name="#IF_WAIT_INFO">{0} は {1} を開始する前に他のアイテムが完了するのを待機しています。</str><!-- {0}: item name, {1}: action (next two strings) -->
+		<str name="#IF_WAIT_ACTION_UNINSTALL">アイテムのインストール</str>
+		<str name="#IF_WAIT_ACTION_VERIFY">アイテムファイルの照合</str>
+	
+	
+		<!-- Main Form -->
+		<str name="#MF_ERRTITLE">Desura エラー</str>
+		<str name="#MF_ERROR">アイテムを起動できませんでした。</str>
+		<str name="#MF_OLNOTINSTALLED">Desura はオフラインモードで、このアイテムはインストールされていないため、起動できません。</str>
+		<str name="#MF_BADLINK">不明な Desura リンク</str>
+		<str name="#MF_NAMERESOLVE">ID 番号からアイテム名を解決できませんでした。</str>
+		<str name="#MF_IPERMISSION_ERROR">未承認の MCF をインストールする権限がありません</str>
+		<str name="#MF_PERMISSION_ERRTITLE">誤った権限エラー</str>
+		<str name="#MF_LUANCH_ERROR_VERIFY_TOOLTIP">インストールファイルを照合します</str>
+		<str name="#MF_UNINSTALLPROMPT">{0} は現在インストールの処理中です。アンインストールを実行するには、Desura でインストール処理を停止する必要があります。アンインストールを続けますか？</str>
+		<str name="#MF_UNINSTALLTITLE">Desura {0} アンインストール</str>
+		<str name="#MF_OFFLINE">オフラインにしますか？</str>
+		<str name="#MF_OFFLINE_TITLE">オフラインモード</str>
+		<str name="#MF_OFFLINEWARN">Desura はオフラインでリンクを処理できません。ログインしてください</str>		
+		<str name="#MF_IBADBUILD">アイテム認証インストールの不正なビルド番号</str>
+		<str name="#MF_IBADBRANCH">アイテム認証インストールの不正なバージョン番号</str>	
+		<str name="#MF_UPERMISSION_ERROR">このアイテムの MCF をアップロードする権限がありません。</str>
+		<str name="#MF_UPDATELOG_ITEMERROR">更新履歴を表示できません。アカウントにアイテムが見つかりません。</str>
+		<str name="#MF_NONDEV_ERROR">このアイテムの開発者でないため、アイテムのコンテンツを作成する権限がありません。</str>
+		
+		<!-- Create MCF -->
+		<str name="#CREATE_MCF_TITILE">MCF の作成: {0}</str><!-- {0} is item name -->
+		<str name="#CREATE_MCF_TITILE_ADMIN">{0} の MCF の作成 [管理者オーバーライド]</str><!-- {0} is item id -->
+		<str name="#CF_PROMPT">ゲームをクリーンインストールするフォルダを選択してください。</str>
+		<str name="#CF_DIRPROMPT">フォルダを選択すると、Desura がアップロード用の MCF アーカイブを作成します。</str>
+		<str name="#CF_PROG">状況:</str>
+		<str name="#CF_NOTSTARTED">初期化中...</str>	
+		<str name="#CF_ERROR">MCS 作成処理で以下のエラーがあるため、 処理を中止しました。</str>
+		<str name="#CF_ERRTITLE">MCF 作成エラー</str>	
+		<str name="#CF_VIEWFILES">ファイルの表示</str>
+		<str name="#CF_COMPLETE">{0} の MCF の作成が完了しました。</str><!-- note the {0} will be replaced with the item name! -->	
+	
+		<!-- Upload MCF -->
+		<str name="#UPLOAD_MCF_TITILE">MCF のアップロード: {0}</str><!-- {0} is item name -->
+		<str name="#UPLOAD_MCF_TITILE_ADMIN">{0} の MCF のアップロード [管理者オーバーライド]</str><!-- {0} is item id -->	
+		<str name="#UDF_PROMPT">アップロードする MCF ファイルを選択してください。</str>
+		<str name="#UDF_ETIME">残り時間:</str>
+		<str name="#UDF_NOTSTARTED">アップロードは開始していません。</str>
+		<str name="#UDF_DELETE">完了したら MCF を削除する</str>
+		<str name="#UDF_DELETE_TOOLTIP">アップロードが完了したら、ファイルを削除します。</str>
+		<str name="#UDF_UNKNOWNPAUSE">一時停止中</str>
+		<str name="#UDF_ERRTITLE">MCF アップロードエラー</str>
+		<str name="#UDF_ERROR">MCF アップロード処理で以下のエラーがあるため、 処理を中止しました。</str>
+		<str name="#UDF_COMPLETE">アップロードが完了しました。</str>
+		<str name="#UDF_ERROR_VALIDATION">アップロードするファイルを検証できませんでした</str>
+		<str name="#UDF_NOFILE">アップロードの再開に必要なファイルが見つかりませんでした。このファイルを見つけるか、アップロードをやり直してください。</str>
+		<str name="#UDF_RESUME_ERRTITLE">アップロードの再開エラー。</str>
+		<str name="#UDF_NONMATCHING_FILE">アップロードするファイルが一致しませんでした。正しいファイルを指定するか、アップロードをやり直してください。</str>
+		<str name="#UDF_UPLOAD_ERRTITLE">ファイルアップロードエラー</str>
+		<str name="#UDF_RESUMEDIR">MCF を探しています ...</str>	
+	
+		<!-- Task Bar Menu -->
+		<str name="#TB_EXIT">終了</str>
+		<str name="#TB_WINDOWS">ウィンドウ</str>
+		<str name="#TB_NOWINDOWS">開いているウィンドウはありません</str>
+		<str name="#TB_NOITEMS">アイテムなし</str>
+		<str name="#TB_STATUS">状態</str>
+		<str name="#TB_CART">カートアイテム</str>
+		<str name="#TB_MESSAGE">メッセージ</str>
+		<str name="#TB_UPDATES">アップデート</str>
+		<str name="#TB_GAMES">ゲーム</str>
+		<str name="#TB_MODS">MOD</str>
+		<str name="#TB_TITLE">Desura ゲームのアップデートが準備できています</str>
+		<str name="#TB_GIFTTITLE">新しいアイテムのギフトを受け取りました！</str>
+		<str name="#TB_APPUPDATE_TITLE">Desura アップデート</str>
+		<str name="#TB_APPUPDATE">Desura アップデートをダウンロード中 (Build {0}) 。</str>
+		
+		<!-- Browser controls -->
+		<str name="#BC_HOME">ホームページを開く</str>
+		<str name="#BC_STOP">現在のページの読み込みを止める</str>
+		<str name="#BC_REFRESH">現在のページを再読み込みする</str>
+		<str name="#BC_BACK">直前に見ていたページへ戻る</str>
+		<str name="#BC_FORWARD">次のページへ進む</str>
+		<str name="#BC_BREAK">標準のブラウザで表示する</str>
+
+		<!-- Main Page -->
+		<str name="#MP_OFFLINE">オフライン</str>
+		<str name="#MP_PLAY">プレイ</str>
+		<str name="#MP_GAMES">ストア</str>
+		<str name="#MP_MODS">MOD</str>
+		<str name="#MP_COMMUNITY">コミュニティ</str>
+		<str name="#MP_DEVELOPMENT">開発</str>
+		<str name="#MP_SUPPORT">サポート</str>
+		<str name="#MP_TITLE_OFFLINE">Desura オフライン</str>	
+		
+		<!-- Search Box -->
+		<str name="#SB_DEFAULT">検索...</str>
+		<str name="#SB_FULL_SEARCH">全検索を実行</str>
+		
+		<!-- Button Strip -->
+		<str name="#BS_MAIN">メインメニューを開く</str>
+		<str name="#BS_UPDATE">アップデート</str>
+		<str name="#BS_PLUS">スレッド表示</str>
+		<str name="#BS_CART">カートアイテム</str>
+		<str name="#BS_PMESSAGE">プライベートメッセージ</str>
+
+		<!-- Items menu -->
+		<str name="#DM_EXPAND">すべてのアイテムを展開</str>
+		<str name="#DM_CONTRACT">すべてのアイテムを閉じる</str>
+		
+		<!-- Service Error -->
+		<str name="#DS_TITLE">Desura サービスエラー</str>
+		<str name="#DS_ERROR">Desura サービスの接続が予期せず切断されました。&#xA;&#xA;再接続しています...</str>
+		<str name="#DS_ERRORFAILED">Desura サービスの接続が予期せず切断されました。&#xA;&#xA;再起動が失敗しました:</str>
+	
+		<!-- Steam User -->
+		<str name="#STEAM_TITLE">Steam アカウントの選択</str>
+		<str name="#STEAM_WARN">一部のアイテムをインストールするために、Desura は使用する Steam アカウントを知る必要があります。 &#xA;&#xA;オプションフォームに進むことにより、いつでもこれを変更できます。&#xA;&#xA;注意： Desura から Steam のパスワードを聞かれることはありません。</str>
+		
+		<!-- Headers -->
+		<str name="#HEAD_NAME">名前</str>
+		<str name="#HEAD_STATUS">ステータス</str>
+		<str name="#HEAD_RATING">レーティング区分</str>
+		<str name="#HEAD_DEV">開発者</str>
+		<str name="#HEAD_FAV">お気に入り</str>	
+		
+		<!-- Item status -->
+		<str name="#IS_INSTALLED">インストール済み</str>
+		<str name="#IS_NOTINSTALLED">未インストール</str>
+		<str name="#IS_READY">プレイ可能</str>
+		<str name="#IS_VERIFY">照合中</str>
+		<str name="#IS_UPDATING">更新中</str>
+		<str name="#IS_DOWNLOADING">ダウンロード中</str>
+		<str name="#IS_INSTALLING">インストール中</str>
+		<str name="#IS_DEVSTUB">開発者控え</str>
+		<str name="#IS_NOTAVAIL">準備ができていません</str>
+		<str name="#IS_PAUSED">一時停止</str>
+		<str name="#IS_PREORDER_STATUS">予約購入済</str>
+		<str name="#IS_PRELOADED_STATUS">プリロード済み</str>		
+		<str name="#IS_LAUNCHING">起動中</str>
+		<str name="#IS_DOWNLOADINGTOOL">DL ツール</str>
+		<str name="#IS_INSTALLINGTOOL">IN ツール</str>
+		<str name="#IS_VALIDATE">検証中</str>
+		<str name="#IS_WAIT">待機中 ({0} / {1})</str>		
+		
+		<!-- Play page Note: Has os translations -->
+		<str name="#PLAY_UPDATE_AVAILABLE">アップデート可能</str>
+		<str name="#PLAY_UPDATE_DEMO">デモ版をアップグレードする</str>
+		<str name="#PLAY_UPDATE_PRELOAD">プリロード可能</str>
+		<str name="#PLAY_UPDATE_POLL">アップロードのプレイリストを確認中...</str>
+		<str name="#PLAY_INVALID_UPLOAD">無効なアップロード</str>
+		<str name="#PLAY_INVALID_ITEM">無効なアイテム</str>
+		<str name="#PLAY_EDIT_FAV">お気に入りを編集</str>
+		<str name="#PLAY_DELAY_LOADING">プレイリストの取得中...</str>
+		<str name="#PLAY_BRANCH_AUTO">このバージョンを次回自動再生しますか？</str>
+		<str name="#PLAY_ADD_GAME">{0} {1} を追加しました</str><!-- {0} = mod or game {1} = name -->
+		<str name="#PLAY_UPLOAD">最新アップロード</str>
+	
+		<!-- Pop up menu -->
+		<str name="#PM_ADDACCOUNT">アカウントに追加</str>
+		<str name="#PM_CREATEMCF">MCF を作成</str>
+		<str name="#PM_DELMCF">MCF を削除</str>
+		<str name="#PM_DESURAPAGE">Desura ページ</str>
+		<str name="#PM_DEVPROFILE">開発プロフィール</str>
+		<str name="#PM_INSTALLCHECK">インストールチェック</str>
+		<str name="#PM_MENU_ENTRY">アプリケーションメニューエントリの作成</str>
+		<str name="#PM_MODLIST">MODリストを表示</str>
+		<str name="#PM_PROPERTIES">プロパティ</str>
+		<str name="#PM_REVERTCOMPLEX">ゲームファイルを元に戻す</str>
+		<str name="#PM_SHORTCUT">デスクトップにショートカットを作成</str>
+		<str name="#PM_SHOWMCF">MCF を表示</str>
+		<str name="#PM_SHOWCDKEY">CD キーの表示</str>	
+		<str name="#PM_UPLOADMCF">MCF のアップロード</str>
+		<str name="#PM_UPDATELOG">更新履歴を表示</str>
+		<str name="#PM_VIEWPROFILE">プロフィールを表示</str>	
+		<str name="#PM_FAVORITE">お気に入りに追加</str>
+		<str name="#PM_FAVORITE_REMOVE">お気に入りから削除</str>		
+		<str name="#PM_REMOVEFROMACCOUNT">アカウントから削除</str>
+		
+		<!-- Play page buttons -->
+		<str name="#PLAY_FAVORITES">お気に入り</str>
+		<str name="#PLAY_GAMES">ゲーム</str>
+		<str name="#PLAY_DEVELOPMENT">開発</str>
+		
+		
+		<!-- browser menu -->
+		<str name="#CHROME_UNDO">元に戻す</str>
+		<str name="#CHROME_REDO">やり直し</str>
+		<str name="#CHROME_CUT">切り取り</str>
+		<str name="#CHROME_COPY">コピー</str>
+		<str name="#CHROME_PASTE">貼り付け</str>
+		<str name="#CHROME_DELETE">削除</str>
+		<str name="#CHROME_SELECTALL">すべて選択</str>
+		<str name="#CHROME_BACK">戻る</str>
+		<str name="#CHROME_FORWARD">進む</str>
+		<str name="#CHROME_RELOAD">再読み込み</str>
+		<str name="#CHROME_ZOOMIN">拡大</str>
+		<str name="#CHROME_ZOOMOUT">縮小</str>
+		<str name="#CHROME_ZOOMNORMAL">標準ズーム</str>
+		<str name="#CHROME_PRINT">プリント</str>
+		<str name="#CHROME_VIEWSOURCE">ソースを表示</str>
+		<str name="#CHROME_VIEWPAGE">ページをブラウザで表示</str>
+		<str name="#CHROME_VIEWLINK">リンクをブラウザで表示</str>
+		<str name="#CHROME_VIEWIMAGE">画像をブラウザで表示</str>
+		<str name="#CHROME_INSPECTELEMENT">属性を監視</str>
+		<str name="#CHROME_NORMALMENU">通常メニュー</str>
+		<str name="#CHROME_COPYURL">URL をコピー</str>
+		<str name="#BH_NO_LOAD">ブラウザライブラリをロードできませんでした。コンソールでエラーメッセージを確認してください。</str>
+			
+		<!-- Properties -->
+		<str name="#P_VERIFY">ファイルの照合</str>
+		<str name="#P_TITLE">プロパティ</str>
+		<str name="#P_URLABEL">起動時にアップデートについて表示しない</str>
+		<str name="#P_FIXEDLO">起動オプションの修正:</str>
+		<str name="#P_USERLO">ユーザー起動オプション:</str>
+		<str name="#P_EXE">実行ファイルの場所:</str>
+		<str name="#P_VERSION">インストールされているバージョン</str>
+		<str name="#P_RETAIL">リテール</str>			
+			
+		<!-- Custom install path -->
+		<str name="#CIP_BROWSE">ゲームのルートフォルダを選択してください: {0}</str>
+		<str name="#CIP_LINK_BROWSE">リンクを作成するバイナリを選択してください: {0}</str>
+
+		<!-- Settings -->
+		<str name="#SET_TITLE">Desura の設定</str>
+		<str name="#SET_BETA_LABEL">Desura パブリックベータに参加する</str>
+		<str name="#SET_BETA_INFO">Desura の最新機能や最新ビルドをリリースする前に、新バージョンのバグをテストして修正するためにパブリックベータがリリースされます。Desura ユーザーとして、パブリック ベータの新機能のテストに参加して、バグの修正に協力し、フィードバックをご提供いただくことができます。 &#xA;&#xA;テストにご参加いただいて、クラッシュを経験されると、クラッシュダンプが自動的にアップロードされます。その場合、経験されたバグのデバッグと修正にご協力いただくために、電子メールでご連絡差し上げることがあります。 &#xA;&#xA;注意： パブリックベータには、データの消失やアプリケーションのクラッシュを引き起こす恐れのあるバグが含まれる場合があります。専門知識のあるユーザーの方のみ、パブリックベータに参加されることをお勧めします。&#xA;</str>
+		<str name="#SET_NOTE">注意： 新しいテーマを選択した場合、そのテーマを適用するために、Desura を再起動する必要があります。</str>
+		<str name="#SET_THEME_VERSION">バージョン</str>
+		<str name="#SET_THEME_AUTHOR">：</str>
+		<str name="#SET_CV_THEME">テーマ</str>
+		<str name="#SET_CV_BETA">ベータ</str>
+		<str name="#SET_CV_LANG">言語</str>
+		<str name="#SET_CV_LANG_TOOLTIP">使用する言語を選択します</str>
+		<str name="#SET_CV_STEAM">Steam ユーザー名</str>
+		<str name="#SET_CV_STEAM_TOOLTIP">現在の Steam ユーザー名 (MOD インストール用) です</str>
+		<str name="#SET_CV_AUTOLOGIN">起動時に自動ログインする</str>
+		<str name="#SET_CV_AUTOLOGIN_TOOLTIP">ログイン情報を保存して、Desura 起動時に自動でログインします</str>
+		<str name="#SET_CV_AUTOSTART">自動で Desura を起動する</str>
+		<str name="#SET_CV_AUTOSTART_TOOLTIP">Windows の起動時に Desura を起動します</str>
+		<str name="#SET_CV_CRASH">自動でクラッシュレポートをアップロードする</str>
+		<str name="#SET_CV_CRASH_TOOLTIP">Desura 起動時に自動でクラッシュレポートをアップロードします (デバッグ用)</str>
+		<str name="#SET_CV_MCFCLEAN">使用後に MCF を消去する</str>
+		<str name="#SET_CV_MCFCLEAN_TOOLTIP">これにより、 MCF が書き込んだ不要なデータがハードディスクから消去されます。ただし、さらにダウンロードが必要になることがあります。</str>
+		<str name="#SET_CV_USER">ログインユーザー名を保存</str>
+		<str name="#SET_CV_USER_TOOLTIP">次回ログイン時のためにユーザー名を保存します</str>
+		<str name="#SET_CV_CONSOLE">エラー発生時にコンソールを表示</str>
+		<str name="#SET_CV_CONSOLE_TOOLTIP">エラーが発生すると、コンソールを開きます</str>
+		<str name="#SET_CV_DISABLE_WGE">Windows ゲーム エクスプローラーを無効にする</str>
+		<str name="#SET_CV_DISABLE_WGE_TOOLTIP">Desura が Windows ゲーム エクスプローラーへゲームを追加しないようにします</str>
+		<str name="#SET_CV_NEWS_POPUP_ENABLE">ニュースのポップアップウィンドウを許可</str>
+		<str name="#SET_CV_NEWS_POPUP_ENABLE_TOOLTIP">最新のニュース記事を表示するポップアップウィンドウを有効または無効にします</str>
+
+		<str name="#SET_CV_WORKER">ワーカースレッド</str>
+		<str name="#SET_CV_WORKER_TOOLTIP">これは処理 (MCFの作成など) を実行するワーカーの数を表します。</str>
+		<str name="#SET_CV_DESTMAIN">メインウィンドウを閉じたときにアンロードする</str>
+		<str name="#SET_CV_DESTMAIN_TOOLTIP">メインウィンドウを閉じたときにメモリを節約するために開放します。 ただし、実行速度 (および履歴) が犠牲になります。</str>
+		<str name="#SET_CV_NOTAB">ログイン時にブラウザページを自動で読み込まない</str>
+		<str name="#SET_CV_NOTAB_TOOLTIP">ログイン時にブラウザにページを読み込まないため、メモリ使用量が少なくなります (ただしロード時間は遅くなります)</str>
+		<str name="#SET_LAB_GENERAL">全般</str>
+		<str name="#SET_LAB_PERFORMANCE">パフォーマンス</str>
+		<str name="#SET_LAB_THEME">テーマ</str>
+		<str name="#SET_LAB_BETA">ベータ</str>
+		<str name="#SET_LAB_CACHE">キャッシュ</str>
+		<str name="#SET_LAB_GAMES">ゲーム</str>
+		<str name="#SET_LAB_CHAT">チャット</str>
+		<str name="#SET_WARNING">変更した設定の中には、再起動しないと有効にならないものがあります。</str>
+
+		<str name="#SET_CV_SILENTLAUNCH">サイレントモードで起動</str>
+		<str name="#SET_CV_SILENTLAUNCH_TOOLTIP">自動ログイン時にメインウィンドウを表示しません</str>
+		<str name="#SET_CACHE_BROWSE">Desura がキャッシュに使用する新しいフォルダを選択してください</str>
+
+		<str name="#SET_CV_CHAT_ENABLED">Desura チャットを有効にする</str>
+		<str name="#SET_CV_CHAT_ENABLED_TOOLTIP">Desura クライアントでチャットを有効にします</str>
+		<str name="#SET_CV_CHAT_BREAKOUT">チャットクライアントのウィンドウを分割して表示する</str>
+		<str name="#SET_CV_CHAT_BREAKOUT_TOOLTIP">デフォルトでチャットの分割ウィンドウを使用します</str>
+		<str name="#SET_CV_CHAT_SHOWCONTACTS">ログイン時にチャットコンタクトを表示する</str>
+		<str name="#SET_CV_CHAT_SHOWCONTACTS_TOOLTIP">Desura ログイン時に、チャットコンタクトウィンドウを表示します (注意: チャットが分割ウィンドウの場合のみ)</str>
+		<str name="#SET_CV_CHAT_SHOWOFFLINE">オフラインコンタクトを表示する</str>
+		<str name="#SET_CV_CHAT_SHOWOFFLINE_TOOLTIP">デフォルトでオフラインコンタクトを表示します</str>
+		<str name="#SET_CV_CHAT_REMEMBERSTATUS">最後のチャット状態を記憶する</str>
+		<str name="#SET_CV_CHAT_REMEMBERSTATUS_TOOLTIP">ログイン時に、前回のチャット状態が設定されます</str>
+
+		<str name="#SET_CIP_UPDATE">ゲームリストの更新</str>
+		<str name="#SET_CIP_BUT_BROWSE">参照</str>
+		<str name="#SET_CIP_BUT_REFRESH">ゲームを更新</str>
+		<str name="#SET_CIP_BUT_DELETE">削除</str>
+		<str name="#SET_CIP_BUT_ACTIVATE">有効化</str>
+		<str name="#SET_CIP_ERR_GAME">変更を保存するために、ゲームごとに有効なパスを入力してください。</str>
+		<str name="#SET_CIP_ERR_CACHE">変更を保存するために、有効なキャッシュパスを入力してください。</str>
+		<str name="#SET_CIP_SUCCESS">設定が更新されました。</str>
+		<str name="#SET_CIP_SUCCESS_GAMES">設定が更新されました。ゲームリストを更新したため、入力したパスを確認するために{1}インストールウィザード{0}を実行する必要があります。この操作により、ゲームが{2}プレイページ{0}に表示されるようになります。</str>
+		<str name="#SET_CIP_CDKEY">有効な CD キーまたはギフトコードを入力してください。</str>
+		<str name="#SET_CIP_CDKEY_VALIDATING">キーを検証中...</str>
+		<str name="#SET_CIP_CDKEY_ERR">キーの有効化中にエラーが発生しました。もう一度やり直してください。</str>
+		<str name="#SET_CIP_INFO">市販ゲームを購入されたか、{1}ギフトを受け取られた{0}場合は、Desura に登録するために、ここで配信された CD/DVD キーを入力してください。</str><!-- {0} = </a> {1} = <a href="..."> -->
+		<str name="#SET_CIP_CDKEY">CD キー / ギフト</str>
+		<str name="#SET_CIP_CDKEY_INFO">プロダクトキー、CD キー、およびギフトコードは通常、次のような形式になります:{0}{0}AAAAA-BBBBB-CCCCC-DDDDD-EEEEE{0}0123456789ABCDEFGHIJKLMNOPQRSTUV{0}00000 11111111</str><!-- {0} = <br /> -->
+		<str name="#SET_CIP_INFO_ADD">Desura で検索してリストに表示するゲームが既に PC 上にある場合は、{1}インストールされているゲームを検索{0}ウィザードを実行して、それらのゲームを自動的にアカウントに追加できます。インストールされているゲームを Desura で見つけられない場合は、次のフォームで、インストールフォルダを手動で指定することができます:</str><!-- {0} = </a> {1} = <a href="..."> -->
+		<str name="#SET_CIP_MANUAL">手動でゲームを追加する</str>
+
+		<str name="#SET_CIP_LINK">以下のフォームを使用して、システム上の他のゲームやアプリケーションのショートカットを追加できます。右クリックメニューのプロパティから起動引数を追加することができ、 メニューからアンインストールを選択して削除することができます。 警告：この機能は、ベータ版の機能です。バグがある可能性があります！</str>
+		<str name="#SET_CIP_LINK_NAME">リンク名:</str>
+		<str name="#SET_CIP_LINK_EXE">リンクの実行ファイル:</str>
+			
+	</strings>
+</lang>
