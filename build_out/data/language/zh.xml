@@ -1,0 +1,670 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<lang name="Chinese">
+	<author>
+		<username>Desura</username>
+		<profile>http://www.desura.com</profile>
+	</author>
+	<linux>
+		<str name="#MW_PROMPT">此精靈將找出已安裝於電腦且是 Desura 所支援的遊戲和遊戲模組。 請注意：這將把找到的所有項目更新成 Desura 上的最新版本。</str>
+		<str name="#MW_FINISH">精靈完成作業。你電腦上所有 Desura 支援的遊戲和遊戲模組都已添加倒你的帳戶。 &#xA;&#xA;如果 Desura 沒有找到你個人電腦上安裝的某個遊戲，你可按下方的「自定安裝」按鈕，以手動方式新增該遊戲。</str>
+
+		<str name="#IF_WINDOWS_LAUNCH_WARNING">警示：你正試圖啟動一個 Windows 程式。 你的系統必須瞭解該程式格式，並啟動適當工具（例如 WINE），才能成功啟動。 否則，該應用/遊戲可能完全無法啟動或中途失敗。&#xA;&#xA;本警示可以到「設定」處加以關閉。</str>
+		<str name="#IF_SHOWFILES">顯示檔案</str>
+		<str name="#MF_ERROR_NO32LIBS">你試圖啟動的項目是 32 位元，不過你似乎尚未安裝 32 位元的函式庫。&#xA;&#xA;請至 http://www.desura.com/groups/desura/linux 參閱詳情。</str>
+		<str name="#MF_ERROR_NOBITTEST">目前你使用的 Desura 版本並不支援 32 位元遊戲。</str>
+
+		<str name="#PLAY_EMPTY">你的帳戶中沒有 Linux {1}遊戲{0}。</str><!-- {0} = </a> {1}, {2} and {3} = <a href="..."> -->
+
+		<str name="#SET_CV_LIN_DIS_WIN_WRN">關閉有關 Windows 可執行程式的警示。</str>
+		<str name="#SET_CV_LIN_DIS_WIN_WRN_TOOLTIP">每當你啟動 Windows 可執行程式時，將不會發出警示。</str>
+		<str name="#SET_CV_ALLOW_WM_POS">使用視窗管理員定位。</str>
+		<str name="#SET_CV_ALLOW_WM_POS_TOOLTIP">允許讓系統視窗管理員來定位主頁表單，不經 Desura 儲存並恢復視窗位置和大小。</str>
+
+		<str name="#SET_CV_GLOBALBIN">全域遊戲啟動執行程式</str>
+		<str name="#SET_CV_GLOBALBIN_TOOLTIP">透過這個可執行程式，啟動所有遊戲</str>
+		<str name="#SET_CV_GLOBALARGS">全域遊戲參數</str>
+		<str name="#SET_CV_GLOBALARGS_TOOLTIP">啟動所有遊戲時，使用這些參數</str>
+
+		<str name="#SET_CV_DISABLE_FORCESHORTCUT">制止在主選單建立強制更新捷徑</str>
+		<str name="#SET_CV_DISABLE_FORCESHORTCUT_TOOLTIP">制止 Desura 在主選單建立一個「強制更新版本」的捷徑</str>
+
+		<str name="#IF_GERROR_TOOL">Desura 無法找到 {1} 所需的 {0}。</str>
+		<str name="#IF_GERROR_TOOL_Q">是否繼續安裝？</str>
+		<str name="#HELP">幫助</str>
+	</linux>
+	<windows>
+		<str name="#IF_SHOWFILES">在「檔案總管」顯示檔案</str>
+		<str name="#PLAY_EMPTY">你的帳戶中沒有 Windows {1}遊戲{0}或{2}遊戲模組{0}。 請執行{3}「尋找已安裝遊戲」精靈{0}，幫你找出個人電腦上 Desura 支援的遊戲。</str><!-- {0} = </a> {1}, {2} and {3} = <a href="..."> -->
+
+		<str name="#SET_CV_DISABLE_FS_PERMS">把所有安裝資料夾權限設為可讓一般使用者寫入</str>
+		<str name="#SET_CV_DISABLE_FS_PERMS_TOOLTIP">有些遊戲開發者沒有遵循 Windows 開發標準，因此很多遊戲試圖對安裝資料夾寫入資料，如果不成功程式就會當掉。 警示：如果禁止這設定，有些遊戲可能無法使用</str>
+
+		<str name="#IF_LOWSPACE_SYS">系統硬碟({0}:\\)剩餘可用空間很少，Desura 可能開始出現性能問題。 &lt;a href=&quot;desura://settings/cache&quot;&gt;你可以將 Desura 快取資料夾移到另一硬碟，以便挪出可用空間。&lt;/a&gt;</str>
+		<str name="#IF_LOWSPACE_CACHE">Desura 快取用來儲存資料的硬碟({0}:\\)剩餘可用空間不多。 建議你騰出可用空間，好讓 Desura 正常運作。</str>
+
+		<str name="#MW_PROMPT">此精靈將找出已安裝於電腦且是 Desura 所支援的遊戲。 請注意：這將把找到的所有項目更新成 Desura 上的最新版本。</str>
+		<str name="#MW_FINISH">精靈完成作業。你電腦上所有 Desura 支援的遊戲都已添加倒你的帳戶。&#xA;&#xA;如果 Desura 沒有找到你個人電腦上安裝的某個遊戲，你可按下方的「自定安裝」按鈕，以手動方式新增該遊戲。</str>
+	</windows>
+	<strings>
+		<!-- Generic Buttons -->
+		<str name="#LOGIN">登入</str>
+		<str name="#CANCEL">取消</str>
+		<str name="#OK">確定</str>
+		<str name="#SUBMIT">提交</str>
+		<str name="#START">開始</str>
+		<str name="#PLAY">遊戲</str>
+		<str name="#CLOSE">關閉</str>
+		<str name="#LAUNCH">啟動</str>
+		<str name="#AGREE">我同意</str>
+		<str name="#BACK">返回</str>
+		<str name="#SEND">送出</str>		
+		<str name="#UNINSTALL">卸除安裝</str>
+		<str name="#VERIFY">驗證</str>
+		<str name="#HIDE">隱藏</str>
+		<str name="#PAUSE">暫停</str>
+		<str name="#RESUME">繼續</str>
+		<str name="#TRYAGAIN">再試一次</str>
+		<str name="#BROWSE">瀏覽</str>
+		<str name="#UPLOAD">上傳</str>
+		<str name="#YES">確定</str>
+		<str name="#NO">取消</str>
+		<str name="#SAVE">儲存</str>
+		<str name="#ADD">新增</str>
+		<str name="#LINK">聯結</str>
+		<str name="#APPLY">套用</str>
+		<str name="#CONTINUE">繼續</str>
+		<str name="#FIND">搜尋</str>
+		<str name="#MOREINFO">更多資訊</str>
+		<str name="#PURCHASE">新增到購物籃</str>
+		<str name="#UPDATE">更新</str>
+		
+		<!-- Misc Labels -->
+		<str name="#PROCESSING">處理中：</str>
+		<str name="#INITIALIZING">正在初始化…</str>
+		<str name="#PROGRESS_INFO">{0}(共{1}項)</str><!-- {0} is completed, {1} is total -->
+		<str name="#COMPLTETED">已完成</str>
+		<str name="#FINALIZING">即將完成</str>
+		<str name="#PAUSED">暫停中</str>
+		<str name="#CONFIRM">確認…</str>
+		<str name="#CONFIRM_PROMPT">如果關閉此表單，進行中的程序將會中止。 確定繼續？</str>	
+		<str name="#INSTALL">安裝</str>
+		<str name="#TBA">尚待公佈</str><!-- to be advertised -->
+		
+		<!-- Preorder String status -->
+		<str name="#IS_PREORDER_YEAR">{0} 年推出</str>
+		<str name="#IS_PREORDER_QUATER">{1} 年第 {0} 季推出</str><!-- {0} is quater, {1} is year -->
+		<str name="#IS_PREORDER_MONTH">{1} 年 {0} 月推出</str><!-- {0} is month, {1} is year -->
+		
+		<str name="#IS_PREORDER_DAYS">{0} 日後推出</str>
+		<str name="#IS_PREORDER_HOURS">{0} 小時後推出</str>
+		<str name="#IS_PREORDER_MINS">{0} 分鐘後推出</str>
+		
+		<str name="#IS_PREORDER_DAY">一天後推出</str>
+		<str name="#IS_PREORDER_HOUR">一小時後推出</str>
+		<str name="#IS_PREORDER_MIN">一分鐘後推出</str>	
+		
+		<!-- Update Item -->
+		<str name="#UI_LABEL">有更新版本。 是否現在更新？</str>
+		<str name="#UI_NO_REMINDER">以後啟動時不要再提醒我</str>
+		<str name="#UI_TITLE">{0} 有更新版本</str>		
+		
+		<!-- About Form -->
+		<str name="#AB_ABOUTINFO">Desura 是一個針對遊戲愛好者、並以社群為導向的數位發售服務，我們提供來自各開發者的最好的遊戲、遊戲模組和可下載內容，方便你立即選購，馬上開始玩。</str>
+		<str name="#AB_CREDITS">製作群</str>
+		<str name="#AB_ABOUT">關於 Desura</str>
+		
+		<!-- Login Form -->
+		<str name="#LF_TITLE">Desura 登入</str>
+		<str name="#LF_USER">使用者名稱或電郵</str>
+		<str name="#LF_PASS">密碼</str>
+		<str name="#LF_AUTO">自動</str>
+		<str name="#LF_AUTO_TOOLTIP">以後啟動時自動登入 Desura</str>
+		<str name="#LF_LOSTPASS">密碼遺失</str>
+		<str name="#LF_NEWACCOUNT">新帳號</str>
+		<str name="#LF_OFFLINE">離線模式</str>
+		<str name="#LF_ERRTITLE">Desura 登入出錯</str>
+		<str name="#LF_ERROR">登入失敗</str>
+		<str name="#LF_VALDERROR">登入時發生錯誤：</str>
+		<str name="#LF_ERRBLANKNAME">使用者名稱未輸入</str>
+		<str name="#LF_ERRPASSWORD">密碼未輸入</str>
+		<str name="#LF_ERRPLEASE">請修改這些項目後再登入一次。</str>
+		<str name="#ALTLOGIN_TITLE">他種 Desura 登入：{0}</str>
+		
+		<!-- Console Form -->
+		<str name="#CS_TITLE">Desura 主控台</str>
+		
+		<!-- Change Log Form -->
+		<str name="#CL_TITLE">Desura 變更記錄</str>
+		
+		<!-- Launch item -->
+		<str name="#LI_LABEL">「{1}」{0}已安裝。 是否現在啟動？</str><!-- {0} type [game|mod], {1} name -->
+		
+		<!-- Html Tab Page -->
+		<str name="#DL_LOADING">載入中…</str>
+		
+		<!-- Need Game Disc -->
+		<str name="#GD_TITLE">{0}：需要遊戲光碟</str>
+		<str name="#GD_INFO">{0}需有「{1}」光碟置入電腦中，才可啟動遊戲。&#xA;&#xA;請先插入光碟再繼續。</str><!-- {0} lanuch item, {1} required cd item -->
+		<str name="#GD_REMINDER">以後不要再提醒我</str>
+		
+		<!-- Main Menu -->
+		<str name="#MENU_ONLINE">連通上線</str>
+		<str name="#MENU_EXIT">離開</str>
+		<str name="#MENU_EXIT_TOOLTIP">離開 Desura</str>
+		<str name="#MENU_UNITTEST">單元測試</str>
+		<str name="#MENU_TOOLS">工具</str>
+		<str name="#MENU_HISTORY">歷史記錄</str>
+		<str name="#MENU_SETTINGS">設定</str>
+		<str name="#MENU_SETTINGS_TOOLTIP">顯示「設定」表單</str>
+		<str name="#MENU_CONSOLE">主控台</str>
+		<str name="#MENU_HELP">幫助</str>
+		<str name="#MENU_ABOUT">關於</str>
+		<str name="#MENU_LOGOUT">登出</str>
+		<str name="#MENU_LOGOUT_TOOLTIP">登出 Desura</str>
+		<str name="#MENU_OFFLINE">離線</str>
+		<str name="#MENU_OFFLINE_TOOLTIP">進入離線模式（無網路連線）</str>
+		<str name="#MENU_CHANGELOG">應用程式變更記錄</str>
+		<str name="#MENU_CHANGELOG_TOOLTIP">顯示 Desura 變更記錄</str>
+		<str name="#MENU_CART">購物籃</str>
+		<str name="#MENU_CART_TOOLTIP">瀏覽購物籃內容</str>
+		<str name="#MENU_PURCHASE">購買記錄</str>
+		<str name="#MENU_PURCHASE_TOOLTIP">瀏覽已購物品</str>
+		<str name="#MENU_GIFTS">禮物紀錄</str>
+		<str name="#MENU_GIFTS_TOOLTIP">瀏覽獲贈禮物</str>
+		<str name="#MENU_LISTKEYS">列出遊戲和光碟碼</str>
+		<str name="#MENU_LISTKEYS_TOOLTIP">顯示含有你所有遊戲和光碟碼的網頁</str>
+		<str name="#MENU_INSTALLPATH">新增已安裝遊戲</str>
+		<str name="#MENU_INSTALLPATH_TOOLTIP">為遊戲設立自定安裝路徑</str>
+		<str name="#MENU_WIZZARD">搜尋已安裝遊戲</str>
+		<str name="#MENU_WIZZARD_TOOLTIP">「尋找個人電腦上已安裝遊戲及遊戲模組」精靈</str>
+		<str name="#MENU_ACTIVATEGAME">啟用遊戲光碟碼或禮物</str>
+		<str name="#MENU_ACTIVATEGAME_TOOLTIP">輸入光碟碼或禮物碼，在你帳戶上啟用新遊戲</str>
+		<str name="#MENU_VERSION">版本</str>
+		
+		<!-- Games Wizard Note: Has os translations as well -->
+		<str name="#MW_TITLE">搜尋已安裝遊戲</str>
+		<str name="#MW_ERRTITLE">「搜尋已安裝遊戲」出錯</str>
+		<str name="#MW_ERROR">精靈程式運行時出錯，已停止該程式。</str>
+		<str name="#MW_CUSTOM">自定安裝</str>
+		<str name="#MW_ADDACCOUNT">把找到的項目加入帳戶</str>	
+		
+		<!-- cd key form -->
+		<str name="#CDK_TITLE">{0}：光碟碼</str>
+		<str name="#CDK_ERRTITLE">無法取得光碟碼</str>
+		<str name="#CDK_ERROR">Desura 找不到光碟碼</str>
+		<str name="#CDK_PROGRESSINFO">光碟碼獲取中…</str>		
+		<str name="#CDK_COPYALL">複製全部</str>
+		<str name="#CDK_COPYPART">複製第1部分</str>
+		<str name="#CDK_COPYPART_X">複製第{0}部分</str><!-- {0} is the part number -->	
+		<str name="#CDK_INFO_STEAM">{0} 需先在 Steam 上啟用後，才可開始使用。 請把這個數碼輸入 Steam：</str>
+		<str name="#CDK_ACTIVATE">啟用</str>
+		<str name="#CDK_INFO">請先輸入這個光碟碼才能開始玩：</str>
+		<str name="#CDK_LAUNCHNOW">立刻啟動</str>
+	
+		<!-- Eula form -->
+		<str name="#EULA_LABEL">玩遊戲前，你需先同意授權條款。</str>
+		<str name="#EULA_TITLE">終端使用者授權協議(EULA)：{0}</str>
+	
+		<!-- News Form -->
+		<str name="#NF_PREV">往前</str>
+		<str name="#NF_NEXT">往下</str>
+		<str name="#NF_TITLE">Desura 新聞：</str>
+		<str name="#GF_TITLE">Desura 禮物：</str>
+	
+		<!-- Update Form -->
+		<str name="#UF_INFO">Desura 已釋出新版本供你更新。</str>
+		<str name="#UF_TITLE">Desura 有新版本</str>
+		<str name="#UF_RESTART_NOW">立刻重啟</str>
+		<str name="#UF_RESTART_LATER">暫不重啟</str>		
+	
+		<!-- New Account -->
+		<str name="#NA_TITLE">Desura 新帳戶</str>	
+	
+		<!-- Password Reminder Dialog -->
+		<str name="#PR_TITLE">Desura 密碼提示</str>
+		<str name="#PR_PROMPT">請輸入你註冊時使用的電郵。我們將對該郵箱發送郵件，讓你重設密碼。</str>
+		<str name="#PR_EMAIL">電郵地址： </str>
+		<str name="#PR_SENT">已寄出密碼提示。 請前往該郵箱收信，進行下一步程序。</str>
+		<str name="#PR_ERRTITLE">Desura 發送密碼提示出錯</str>
+		<str name="#PR_ERROR">發送密碼提示時出錯。</str>
+		<str name="#PR_VALIDEMAIL">請輸入有效的電郵地址。</str>		
+	
+		<!-- Exe Select Form -->
+		<str name="#ES_TITLE">選擇版本：{0}</str><!-- {0} is item name -->
+		<str name="#ES_LABEL">請選擇你要玩的「{0}」版本：</str><!-- {0} is item name -->
+	
+		<!-- Uninstall Form -->
+		<str name="#UNF_REMOVEFILES">移除 Desura 檔案</str>
+		<str name="#UNF_REMOVEFILES_TOOLTIP">刪除媒體快取檔案(MCF)和其他 Desura 所用相關檔案</str>
+		<str name="#UNF_REMOVEACCOUNT">從名單移除</str>
+		<str name="#UNF_REMOVEACCOUNT_TOOLTIP">從遊戲清單移除這個項目</str>
+		<str name="#UNF_CONFIRM">確定從電腦卸除「{0}」？ 程序一旦開始就無法取消。</str><!-- {0} is item name -->
+		<str name="#UNF_ERRTITLE">卸除安裝時出錯</str>
+		<str name="#UNF_ERROR">卸除安裝程序出錯，已停止該程序。</str>
+	
+		<!-- Item Form: Misc -->
+		<str name="#IF_TITLE">正在準備：</str>
+		<str name="#IF_PREPARE_INFO">正準備{0}{1}</str> <!-- {0} is action, {1} is item short name -->
+		<str name="#IF_PREPARE_INFO_NOITEM">正在準備…</str>	
+		<str name="#IF_BRANCHINFO">{0}尚未安裝。 請選擇你要玩的釋出版本。</str>
+		<str name="#IF_BRANCHTITLE">開始玩「{0}」</str>
+		<str name="#IF_BROUGHT">已購買</str>
+		<str name="#IF_CONFLICT">Desura 偵測到「{0}」已經安裝。 因為{0}的安裝程序複雜，因此建議你手動卸除{0}的安裝，再繼續安裝 Desura，以避免安裝內容互相衝突。</str>
+		<str name="#IF_CONFLICTTITLE">複雜安裝衝突</str>		
+		<str name="#IF_EXISTINGFILES">存在一些檔案來自{0}的安裝。 你希望如何處理？</str>
+		<str name="#IF_FINDONCOMPUTER">尋找這部電腦上的安裝物</str>
+		<str name="#IF_FREE">免費</str>
+		<str name="#IF_GERROR_BRANCH_PLATFORM_Q">是否要選擇另一個分支？</str>
+		<str name="#IF_INSTALL_REMOVE">安裝並移除不相關的檔案（建議選項）</str>
+		<str name="#IF_INSTALL_LEAVE">進行安裝，但留下不相關的檔案</str>
+		<str name="#IF_INSTALL_VERIFY">檢驗已安裝檔案，並補安裝缺少的檔案</str>
+		<str name="#IF_NOTFOUND">「{0}」是「{1}」遊戲的模組。 你必須先安裝該遊戲，才可以開始玩。&#xA;&#xA;請為{1}選擇一種安裝方式：</str>
+		<str name="#IF_NOTFOUND_GAME">「{0}」是「{1}」遊戲的擴充。 你必須先安裝該遊戲，才可以開始玩。&#xA;&#xA;請為{1}選擇一種安裝方式：</str>
+		<str name="#IF_ONCOMPUTER">使用這部電腦上已安裝的版本</str>
+		<str name="#IF_PRELOADLAUNCH">{0}已經{2}，此刻無法啟用。 {1}{4}後（{3}）就可開始玩。</str>
+		<!-- 
+			{0} Item Name
+			{1} Number of days
+			{2} if preloaded #IF_PRELOADLAUNCH_PRELOADED or if preordered #IF_PRELOADLAUNCH_PREORDERED
+			{3} date/time when item is available
+			{4} if days == 1 #IF_PRELOADLAUNCH_WORD_DAY else #IF_PRELOADLAUNCH_WORD_DAYS
+		-->
+		<str name="#IF_PRELOADLAUNCH_TITLE">{0}</str>
+		<str name="#IF_PRELOADLAUNCH_WORD_DAY">日</str>
+		<str name="#IF_PRELOADLAUNCH_WORD_DAYS">日</str>
+		<str name="#IF_PRELOADLAUNCH_PREORDERED">預訂</str>
+		<str name="#IF_PRELOADLAUNCH_PRELOADED">預先載入</str>
+		<str name="#IF_PRELOADLAUNCH_INSTALLDEMO">安裝示範版</str>
+		<str name="#IF_PRELOADLAUNCH_INSTALLOTHER">安裝其他的</str>
+		<str name="#IF_PRELOADLAUNCH_INSTALLOTHER_INFO">&#xA;&#xA;有其他版本的遊戲可玩。</str>
+		<str name="#IF_PREORDERED_NORELEASE">已預訂：尚未推出</str>
+		<str name="#IF_PREORDERED">已預訂：可預先載入</str>	
+	
+		<!-- Item Form: Uninstall -->
+		<str name="#IF_UNINSTALL">正在卸除安裝： </str>
+		<str name="#IF_UNINSTALL_LABEL">正在卸除安裝…</str>
+		<str name="#IF_UNINSTALL_PATCH">正在移除舊檔案： </str>
+		<str name="#IF_UNINSTALL_PATCH_LABEL">正在移除舊檔案… </str>
+		<str name="#IF_UNINSTALL_BRANCH">正在移除舊檔案： </str>
+		<str name="#IF_UNINSTALL_BRANCH_LABEL">正在移除舊檔案… </str>
+		<str name="#IF_UNINSTALL_COMPLEX">正在卸除安裝複雜遊戲模組</str>
+		<str name="#IF_UNINSTALL_COMPLEX_LABEL">正在卸除安裝複雜遊戲模組… </str>
+		
+		<!-- Item Form: Verify -->
+		<str name="#IF_VERIFY">正在驗證：</str>
+		<str name="#IF_VERIFYFILES">驗證檔案</str>
+		<str name="#IF_VERIFYTOOLS">重新安裝工具</str>
+		<str name="#IF_VERIFYHOOKS">重新執行安裝後掛鉤</str>
+		<str name="#IF_VERIFYCONFIRM">如果你執行{0}發生問題，驗證程序將試圖解決所有問題。</str>
+		<str name="#IF_VERIFYLABEL">驗證中…</str>
+		<str name="#IF_VERROR">驗證安裝程序出錯，已停止該程序。</str>
+		<str name="#IF_VERRTITLE">驗證安裝程序出錯</str>
+		<str name="#IF_VERIFYMCF">正在驗證MCF…</str>
+		<str name="#IF_VERIFYINSTALL">正在驗證安裝…</str>
+		<str name="#IF_VERIFYDOWNLOADF">正在下載缺失的檔案…</str>
+		<str name="#IF_VERIFYINSTALLF">正在安裝缺失的檔案…</str>
+		<str name="#IF_VERIFYBRANCH">正在變換分支…</str>
+		<str name="#IF_VERIFYCOMPLETE">驗證完成</str>
+	
+		<!-- Item Form: Install -->
+		<str name="#IF_PROVIDEDBY">提供者：</str>
+		<str name="#IF_GATHERINFO">正在取得資訊…</str>
+		<str name="#IF_CHECKINGIR">正在檢查安裝條件…</str>
+		<str name="#IF_GERRTITLE">取得資訊時出錯</str>	
+		<str name="#IF_GERROR">試圖取得資訊時發生錯誤，已停止程序。</str>
+		<str name="#IF_GERROR_LABEL">發生錯誤。 已停止程序。</str>
+		<str name="#IF_GERROR_PLATFORM">此平臺不支援{0}。</str><!-- {0} item name -->
+		<str name="#IF_GERROR_BRANCH_PLATFORM">此平臺不支援你為{0}所選的分支。</str><!-- {0} item name -->
+		
+		<str name="#IF_DOWNLOAD">正在下載：</str>
+		<str name="#IF_ETIME">估計剩餘時間：</str>
+		<str name="#IF_INITDOWNLOAD">正在初始化下載</str>
+		<str name="#IF_DLERROR">下載MCF程序出錯，已停止該程序。</str>
+		<str name="#IF_DLERRTITLE">MCF下載出錯</str>	
+	
+		<str name="#IF_UPDATE">正在更新：</str>
+		<str name="#IF_INSTALL">正在安裝：</str>
+		<str name="#IF_INITINSTALL">正在初始化安裝程序</str>
+		<str name="#IF_COMPLETEPREORDER">預先載入程序完成</str>
+		<str name="#IF_IERROR">MCF安裝程序出錯，已停止該程序。</str>
+		<str name="#IF_IERRTITLE">MCF安裝程序出錯</str>
+	
+		
+		<str name="#IF_DOWNLOADTOOL">正在下載所需部件：</str>
+		<str name="#IF_DOWNLOADTOOL_LABEL">正在下載…</str>	
+	
+		<str name="#IF_INSTALLTOOL">正在安裝工具：</str>
+		<str name="#IF_INTOOL_WAIT_HELPER">正在等候安裝助理程式…</str>
+		<str name="#IF_INTOOL_WAIT_OTHER">正在等候其他安裝程序結束…</str>
+		<str name="#IF_INTOOL_LABEL">正在安裝工具：{0}</str><!-- {0}: tool name -->
+		
+		<str name="#IF_INSTALL_CHECK">安裝檢查</str>
+		<str name="#IF_CHECK_ERRTITLE">安裝檢查出錯</str>
+		<str name="#IF_CHECK_ERROR">安裝檢查程序出錯，已停止該程序。</str>	
+	
+		<str name="#IF_CHECK_NOTFOUND">你的電腦上找不到{0}。 請先確定它已經安裝好並至少執行過一次，然後再試一次。 你也可以點按下方「自定安裝」鈕，指出它的安裝地點。</str><!-- {0} item name -->
+		<str name="#IF_CHECK_CIP">自定安裝</str>
+		<str name="#IF_CHECK_FOUND">{0}已找到，一切就緒。</str><!-- {0} item name -->
+	
+		<str name="#IF_COMPLEXLABEL_INIT">{0}（正在初始化）</str>
+		<str name="#IF_COMPLEXREMOVE">正在移除舊檔案</str>
+		<str name="#IF_COMPLEXBACKUP">正在備份遊戲檔案</str>
+		<str name="#IF_COMPLEXINSTALL">正在安裝檔案</str>
+		<str name="#IF_COMPLEXLABEL">{0}...</str>
+	
+	
+		<str name="#IF_VALIDATE_ERROR">驗證過程出錯，已停止該程序。</str>
+		<str name="#IF_VALIDATE_ERROR_TITLE">驗證過程出錯</str>	
+		<str name="#IF_VALIDATE_TITLE">正在檢驗下載內容：</str>
+		<str name="#IF_VALIDATE_PREALLOCATING">正對下載檔案進行預配置…</str>
+		<str name="#IF_VALIDATE_LOCALFILES">正在檢查舊有安裝檔案…</str>
+		<str name="#IF_VALIDATE_LABEL">第{2}階段：已完成{0}項，共{1}項</str><!-- {0}: done, {1}: total {2}:Stage number-->	
+		<str name="#IF_VALIDATE_EXISTINGMCF">正在檢查目前的資料檔…</str>
+		<str name="#IF_VALIDATE_LOCALMCFS">正在檢查舊有資料檔…</str>
+		<str name="#IF_VALIDATE_DEFAULT">正在檢驗現有檔案…</str>
+	
+		<str name="#IF_WAIT_TITLE">正在等待這些物項：</str>
+		<str name="#IF_WAIT_FORCE">強制</str>
+		<str name="#IF_WAIT_CANCELALL">取消全部</str>
+		<str name="#IF_WAIT_INFO">{0}正在等待其他項目結束，然後才會開始{1}。</str><!-- {0}: item name, {1}: action (next two strings) -->
+		<str name="#IF_WAIT_ACTION_UNINSTALL">卸除安裝該項目</str>
+		<str name="#IF_WAIT_ACTION_VERIFY">檢驗該項目的檔案</str>
+	
+	
+		<!-- Main Form -->
+		<str name="#MF_ERRTITLE">Desura 出錯</str>
+		<str name="#MF_ERROR">啟動項目失敗。</str>
+		<str name="#MF_OLNOTINSTALLED">在 Desura 目前的離線模式下，這物項因為尚未安裝，因此無法啟動。</str>
+		<str name="#MF_BADLINK">不明的 Desura 聯結</str>
+		<str name="#MF_NAMERESOLVE">無法從ID碼辨識出物項名稱。</str>
+		<str name="#MF_IPERMISSION_ERROR">你無權安裝一個未經授權的MCF</str>
+		<str name="#MF_PERMISSION_ERRTITLE">發生「權限不正確」錯誤</str>
+		<str name="#MF_LUANCH_ERROR_VERIFY_TOOLTIP">檢驗安裝檔案</str>
+		<str name="#MF_UNINSTALLPROMPT">{0}目前正在進行安裝。 若想把它卸除安裝，Desura 必須先停止它的安裝程序。 繼續卸除安裝？</str>
+		<str name="#MF_UNINSTALLTITLE">Desura {0} 卸除安裝</str>
+		<str name="#MF_OFFLINE">確定要離線？</str>
+		<str name="#MF_OFFLINE_TITLE">離線模式</str>
+		<str name="#MF_OFFLINEWARN">Desura 處於離線模式，無法處理聯結。 請登入</str>		
+		<str name="#MF_IBADBUILD">錯誤的管理員測試安裝建置號碼</str>
+		<str name="#MF_IBADBRANCH">錯誤的管理員測試安裝分支號碼</str>	
+		<str name="#MF_UPERMISSION_ERROR">你無權上傳這個項目的MCF。</str>
+		<str name="#MF_UPDATELOG_ITEMERROR">無法顯示變更記錄。 你的帳號中找不到這個項目。</str>
+		<str name="#MF_NONDEV_ERROR">你不是這個項目的開發者，因此無權為它製作內容。</str>
+		
+		<!-- Create MCF -->
+		<str name="#CREATE_MCF_TITILE">建立MCF：{0}</str><!-- {0} is item name -->
+		<str name="#CREATE_MCF_TITILE_ADMIN">為{0}建立MCF [管理員強制動作]</str><!-- {0} is item id -->
+		<str name="#CF_PROMPT">請選擇一個你的遊戲安裝成功的所在資料夾。</str>
+		<str name="#CF_DIRPROMPT">選擇一個資料夾，Desura 將把資料夾內容壓縮成一個 MCF 檔案，供你上傳。</str>
+		<str name="#CF_PROG">進度： </str>
+		<str name="#CF_NOTSTARTED">正在初始化…</str>	
+		<str name="#CF_ERROR">建立MCF的過程出錯，已停止該程序。</str>
+		<str name="#CF_ERRTITLE">建立MCF時出錯</str>	
+		<str name="#CF_VIEWFILES">檢視檔案</str>
+		<str name="#CF_COMPLETE">已完成為{0}建立MCF。</str><!-- note the {0} will be replaced with the item name! -->	
+	
+		<!-- Upload MCF -->
+		<str name="#UPLOAD_MCF_TITILE">上傳MCF：{0}</str><!-- {0} is item name -->
+		<str name="#UPLOAD_MCF_TITILE_ADMIN">為{0}上傳MCF [管理員強制動作]</str><!-- {0} is item id -->	
+		<str name="#UDF_PROMPT">請選擇你要上傳的MCF檔案。</str>
+		<str name="#UDF_ETIME">估計剩餘時間：</str>
+		<str name="#UDF_NOTSTARTED">尚未開始上傳。</str>
+		<str name="#UDF_DELETE">完成後刪除MCF檔案</str>
+		<str name="#UDF_DELETE_TOOLTIP">上傳完成後刪除該檔案</str>
+		<str name="#UDF_UNKNOWNPAUSE">暫停中</str>
+		<str name="#UDF_ERRTITLE">MCF上傳出錯</str>
+		<str name="#UDF_ERROR">上傳MCF過程出錯，已停止該程序。</str>
+		<str name="#UDF_COMPLETE">已完成上傳。</str>
+		<str name="#UDF_ERROR_VALIDATION">無法檢驗待上傳檔案</str>
+		<str name="#UDF_NOFILE">無法找到重新開始上傳所需的檔案。 請找出該檔案，然後再試一次。</str>
+		<str name="#UDF_RESUME_ERRTITLE">重新上傳時出錯。</str>
+		<str name="#UDF_NONMATCHING_FILE">檔案和已上傳檔案不相符。 請選擇正確的檔案，或者重來一次。</str>
+		<str name="#UDF_UPLOAD_ERRTITLE">上傳檔案出錯</str>
+		<str name="#UDF_RESUMEDIR">正在搜尋MCF…</str>	
+	
+		<!-- Task Bar Menu -->
+		<str name="#TB_EXIT">離開</str>
+		<str name="#TB_WINDOWS">視窗</str>
+		<str name="#TB_NOWINDOWS">無開啟的視窗</str>
+		<str name="#TB_NOITEMS">沒有物項</str>
+		<str name="#TB_STATUS">狀態</str>
+		<str name="#TB_CART">購物籃內容</str>
+		<str name="#TB_MESSAGE">訊息</str>
+		<str name="#TB_UPDATES">更新</str>
+		<str name="#TB_GAMES">遊戲</str>
+		<str name="#TB_MODS">遊戲模組</str>
+		<str name="#TB_TITLE">Desura 遊戲有更新版</str>
+		<str name="#TB_GIFTTITLE">你獲贈一樣新東西！</str>
+		<str name="#TB_APPUPDATE_TITLE">Desura 更新</str>
+		<str name="#TB_APPUPDATE">正在下載 Desura 更新版（建置號 {0}）。</str>
+		
+		<!-- Browser controls -->
+		<str name="#BC_HOME">開啟首頁</str>
+		<str name="#BC_STOP">停止載入目前頁面</str>
+		<str name="#BC_REFRESH">刷新目前的頁面</str>
+		<str name="#BC_BACK">回到上一頁</str>
+		<str name="#BC_FORWARD">前往下一頁</str>
+		<str name="#BC_BREAK">用預設瀏覽器載入</str>
+
+		<!-- Main Page -->
+		<str name="#MP_OFFLINE">離線</str>
+		<str name="#MP_PLAY">遊戲</str>
+		<str name="#MP_GAMES">商店</str>
+		<str name="#MP_MODS">遊戲模組</str>
+		<str name="#MP_COMMUNITY">社群</str>
+		<str name="#MP_DEVELOPMENT">開發</str>
+		<str name="#MP_SUPPORT">支援</str>
+		<str name="#MP_TITLE_OFFLINE">Desura 離線</str>	
+		
+		<!-- Search Box -->
+		<str name="#SB_DEFAULT">搜尋…</str>
+		<str name="#SB_FULL_SEARCH">進行全面搜尋</str>
+		
+		<!-- Button Strip -->
+		<str name="#BS_MAIN">開啟主選單</str>
+		<str name="#BS_UPDATE">更新</str>
+		<str name="#BS_PLUS">關注討論串</str>
+		<str name="#BS_CART">購物籃內容</str>
+		<str name="#BS_PMESSAGE">私人訊息</str>
+
+		<!-- Items menu -->
+		<str name="#DM_EXPAND">展開所有項目</str>
+		<str name="#DM_CONTRACT">摺疊所有項目</str>
+		
+		<!-- Service Error -->
+		<str name="#DS_TITLE">Desura 服務出錯</str>
+		<str name="#DS_ERROR">Desura 服務意外斷線。&#xA;&#xA;嘗試重新連線中…</str>
+		<str name="#DS_ERRORFAILED">Desura 服務意外斷線。&#xA;&#xA;重新啟動失敗：</str>
+	
+		<!-- Steam User -->
+		<str name="#STEAM_TITLE">選擇Steam帳號</str>
+		<str name="#STEAM_WARN">若要安裝某些項目，Desura 需要知道你使用哪個 Steam 帳號。&#xA;&#xA;你隨時可以到「選項」表單變更這個選擇。&#xA;&#xA;請注意：Desura 員工絕對不會向你詢問你的 Steam 密碼。 </str>
+		
+		<!-- Headers -->
+		<str name="#HEAD_NAME">名稱</str>
+		<str name="#HEAD_STATUS">狀態</str>
+		<str name="#HEAD_RATING">評等</str>
+		<str name="#HEAD_DEV">開發者</str>
+		<str name="#HEAD_FAV">我的最愛</str>	
+		
+		<!-- Item status -->
+		<str name="#IS_INSTALLED">已安裝</str>
+		<str name="#IS_NOTINSTALLED">未安裝</str>
+		<str name="#IS_READY">待命中</str>
+		<str name="#IS_VERIFY">正在檢驗</str>
+		<str name="#IS_UPDATING">正在更新</str>
+		<str name="#IS_DOWNLOADING">正在下載</str>
+		<str name="#IS_INSTALLING">正在安裝</str>
+		<str name="#IS_DEVSTUB">開發者分頁</str>
+		<str name="#IS_NOTAVAIL">忙碌狀態</str>
+		<str name="#IS_PAUSED">暫停中</str>
+		<str name="#IS_PREORDER_STATUS">已預訂</str>
+		<str name="#IS_PRELOADED_STATUS">已預先載入</str>		
+		<str name="#IS_LAUNCHING">正在啟動</str>
+		<str name="#IS_DOWNLOADINGTOOL">下載工具</str>
+		<str name="#IS_INSTALLINGTOOL">安裝工具</str>
+		<str name="#IS_VALIDATE">正在檢驗</str>
+		<str name="#IS_WAIT">等待中（完成{0}項，共{1}項）</str>		
+		
+		<!-- Play page Note: Has os translations -->
+		<str name="#PLAY_UPDATE_AVAILABLE">有更新版本</str>
+		<str name="#PLAY_UPDATE_DEMO">將示範版升級為完整版</str>
+		<str name="#PLAY_UPDATE_PRELOAD">有預先載入版可用</str>
+		<str name="#PLAY_UPDATE_POLL">正檢查遊戲清單是否有更新版…</str>
+		<str name="#PLAY_INVALID_UPLOAD">無效的上傳</str>
+		<str name="#PLAY_INVALID_ITEM">無效的項目</str>
+		<str name="#PLAY_EDIT_FAV">編輯我的最愛</str>
+		<str name="#PLAY_DELAY_LOADING">正在擷取遊戲清單…</str>
+		<str name="#PLAY_BRANCH_AUTO">以後自動啟動這個版本？</str>
+		<str name="#PLAY_ADD_GAME">已新增「{1}」{0}</str><!-- {0} = mod or game {1} = name -->
+		<str name="#PLAY_UPLOAD">目前的上傳</str>
+	
+		<!-- Pop up menu -->
+		<str name="#PM_ADDACCOUNT">新增到帳戶中</str>
+		<str name="#PM_CREATEMCF">建立MCF</str>
+		<str name="#PM_DELMCF">刪除MCF</str>
+		<str name="#PM_DESURAPAGE">Desura 頁面</str>
+		<str name="#PM_DEVPROFILE">開發簡介</str>
+		<str name="#PM_INSTALLCHECK">安裝檢查</str>
+		<str name="#PM_MENU_ENTRY">把應用程式放到選單上</str>
+		<str name="#PM_MODLIST">查看遊戲模組清單</str>
+		<str name="#PM_PROPERTIES">屬性</str>
+		<str name="#PM_REVERTCOMPLEX">恢復原遊戲檔案</str>
+		<str name="#PM_SHORTCUT">建立桌面捷徑</str>
+		<str name="#PM_SHOWMCF">顯示 MCF</str>
+		<str name="#PM_SHOWCDKEY">查看光碟碼</str>	
+		<str name="#PM_UPLOADMCF">上傳MCF</str>
+		<str name="#PM_UPDATELOG">察看變更記錄</str>
+		<str name="#PM_VIEWPROFILE">察看簡介</str>	
+		<str name="#PM_FAVORITE">添加到我的最愛</str>
+		<str name="#PM_FAVORITE_REMOVE">移除我的最愛</str>		
+		<str name="#PM_REMOVEFROMACCOUNT">從名單移除</str>
+		
+		<!-- Play page buttons -->
+		<str name="#PLAY_FAVORITES">我的最愛</str>
+		<str name="#PLAY_GAMES">遊戲</str>
+		<str name="#PLAY_DEVELOPMENT">開發</str>
+		
+		
+		<!-- browser menu -->
+		<str name="#CHROME_UNDO">復原</str>
+		<str name="#CHROME_REDO">重做</str>
+		<str name="#CHROME_CUT">剪下</str>
+		<str name="#CHROME_COPY">複製</str>
+		<str name="#CHROME_PASTE">貼上</str>
+		<str name="#CHROME_DELETE">刪除</str>
+		<str name="#CHROME_SELECTALL">全選</str>
+		<str name="#CHROME_BACK">返回</str>
+		<str name="#CHROME_FORWARD">向前</str>
+		<str name="#CHROME_RELOAD">重新載入</str>
+		<str name="#CHROME_ZOOMIN">放大</str>
+		<str name="#CHROME_ZOOMOUT">縮小</str>
+		<str name="#CHROME_ZOOMNORMAL">正常縮放比例</str>
+		<str name="#CHROME_PRINT">列印</str>
+		<str name="#CHROME_VIEWSOURCE">察看原始碼</str>
+		<str name="#CHROME_VIEWPAGE">在瀏覽器察看頁面</str>
+		<str name="#CHROME_VIEWLINK">在瀏覽器察看聯結</str>
+		<str name="#CHROME_VIEWIMAGE">在瀏覽器察看圖像</str>
+		<str name="#CHROME_INSPECTELEMENT">檢視元素</str>
+		<str name="#CHROME_NORMALMENU">正常選單</str>
+		<str name="#CHROME_COPYURL">覆製 URL</str>
+		<str name="#BH_NO_LOAD">載入瀏覽器函式庫時失敗。 請到主控台察看錯誤訊息。</str>
+			
+		<!-- Properties -->
+		<str name="#P_VERIFY">檢驗檔案</str>
+		<str name="#P_TITLE">屬性</str>
+		<str name="#P_URLABEL">以後啟動時不要再提醒我更新</str>
+		<str name="#P_FIXEDLO">固定啟動選項：</str>
+		<str name="#P_USERLO">使用者定義啟動選項：</str>
+		<str name="#P_EXE">執行檔位置：</str>
+		<str name="#P_VERSION">已安裝版本</str>
+		<str name="#P_RETAIL">零售</str>			
+			
+		<!-- Custom install path -->
+		<str name="#CIP_BROWSE">請選擇遊戲的根資料夾：{0}</str>
+		<str name="#CIP_LINK_BROWSE">請選擇聯結的執行檔：{0}</str>
+
+		<!-- Settings -->
+		<str name="#SET_TITLE">Desura 設定</str>
+		<str name="#SET_BETA_LABEL">參與 Desura 的公開 Beta 測試版</str>
+		<str name="#SET_BETA_INFO">Desura 釋出新功能和新版之前，會先推出公開 Beta 測試版以便測試並修復新版本中的錯誤。 Desura 使用者可以選擇加入測試這個公開 Beta 版，共同測試新功能，幫忙找錯並提供使用意見。&#xA;&#xA;如果你參加測試，遭遇遊戲當機，你的當機傾印內容將會自動上傳給我們，我們並可能透過電郵聯絡你請你協助除錯，以求解決你遇到的問題。&#xA;&#xA;請注意：公開 Beta 版裡的錯誤有可能導致應用程式當機、丟失資料。 我們只建議高級使用者參加公開 Beta 測試。&#xA;</str>
+		<str name="#SET_NOTE">請注意：如你選擇了新的主題，必須重新啟動 Desura 才會生效。</str>
+		<str name="#SET_THEME_VERSION">版本</str>
+		<str name="#SET_THEME_AUTHOR">製作人：</str>
+		<str name="#SET_CV_THEME">主題</str>
+		<str name="#SET_CV_BETA">Beta 版</str>
+		<str name="#SET_CV_LANG">語言</str>
+		<str name="#SET_CV_LANG_TOOLTIP">選擇你想使用的語言</str>
+		<str name="#SET_CV_STEAM">Steam 使用者名稱</str>
+		<str name="#SET_CV_STEAM_TOOLTIP">目前的 Steam 使用者名稱（用來安裝遊戲模組）</str>
+		<str name="#SET_CV_AUTOLOGIN">啟動時自動登入</str>
+		<str name="#SET_CV_AUTOLOGIN_TOOLTIP">儲存登入資料，以後 Desura 啟動時自動登入</str>
+		<str name="#SET_CV_AUTOSTART">自動啟動 Desura</str>
+		<str name="#SET_CV_AUTOSTART_TOOLTIP">啟動 Windows 後一同啟動 Desura</str>
+		<str name="#SET_CV_CRASH">自動上傳當機報告</str>
+		<str name="#SET_CV_CRASH_TOOLTIP">Desura 啟動時自動上傳當機報告（適用於除錯）</str>
+		<str name="#SET_CV_MCFCLEAN">使用後清除 MCF 檔案</str>
+		<str name="#SET_CV_MCFCLEAN_TOOLTIP">這將從 MCF 用來儲存的硬碟空間移除不需要的資料。 不過，這麼做會增加需要下載的內容。</str>
+		<str name="#SET_CV_USER">登入時記住使用者名稱</str>
+		<str name="#SET_CV_USER_TOOLTIP">記住你的使用者名稱供以後登入使用</str>
+		<str name="#SET_CV_CONSOLE">出錯時顯示主控台</str>
+		<str name="#SET_CV_CONSOLE_TOOLTIP">發生錯誤時開啟主控台</str>
+		<str name="#SET_CV_DISABLE_WGE">停用 Windows 遊戲管理員(Game Explorer)</str>
+		<str name="#SET_CV_DISABLE_WGE_TOOLTIP">禁止 Desura 將遊戲放入 Windows 遊戲管理員</str>
+		<str name="#SET_CV_NEWS_POPUP_ENABLE">允許「新聞」彈出視窗</str>
+		<str name="#SET_CV_NEWS_POPUP_ENABLE_TOOLTIP">啟用或禁用顯示新近新聞的彈出視窗</str>
+
+		<str name="#SET_CV_WORKER">工作執行緒</str>
+		<str name="#SET_CV_WORKER_TOOLTIP">這是執行程序（例如建立 MCF）時所用的工作執行緒數目。</str>
+		<str name="#SET_CV_DESTMAIN">關閉時上傳主表單</str>
+		<str name="#SET_CV_DESTMAIN_TOOLTIP">關閉時上傳主選單，可節省記憶體但速度會變慢（並會影響歷史記錄）。</str>
+		<str name="#SET_CV_NOTAB">登入時不要自動載入瀏覽器頁面</str>
+		<str name="#SET_CV_NOTAB_TOOLTIP">登入時不自動載入瀏覽器頁面，可減少記憶體使用（但也會增加載入時間）。</str>
+		<str name="#SET_LAB_GENERAL">一般</str>
+		<str name="#SET_LAB_PERFORMANCE">性能</str>
+		<str name="#SET_LAB_THEME">主題</str>
+		<str name="#SET_LAB_BETA">Beta 版</str>
+		<str name="#SET_LAB_CACHE">快取</str>
+		<str name="#SET_LAB_GAMES">遊戲</str>
+		<str name="#SET_LAB_CHAT">聊天</str>
+		<str name="#SET_WARNING">有些已變更的設定需要重啟電腦才能生效。</str>
+
+		<str name="#SET_CV_SILENTLAUNCH">不顯示畫面即自動登入</str>
+		<str name="#SET_CV_SILENTLAUNCH_TOOLTIP">自動登入時不要顯示主視窗畫面</str>
+		<str name="#SET_CACHE_BROWSE">請選擇一個新的 Desura 快取資料夾</str>
+
+		<str name="#SET_CV_CHAT_ENABLED">啟用 Desura 聊天</str>
+		<str name="#SET_CV_CHAT_ENABLED_TOOLTIP">在 Desura 客戶端啟用聊天</str>
+		<str name="#SET_CV_CHAT_BREAKOUT">使用個別視窗進行客戶端聊天</str>
+		<str name="#SET_CV_CHAT_BREAKOUT_TOOLTIP">預設使用個別視窗進行客戶端聊天</str>
+		<str name="#SET_CV_CHAT_SHOWCONTACTS">登入時顯示聊天聯絡人清單</str>
+		<str name="#SET_CV_CHAT_SHOWCONTACTS_TOOLTIP">在 Desura 登入後顯示聊天聯絡人視窗（註：僅限使用個別聊天視窗時）</str>
+		<str name="#SET_CV_CHAT_SHOWOFFLINE">顯示離線聯絡人清單</str>
+		<str name="#SET_CV_CHAT_SHOWOFFLINE_TOOLTIP">預設顯示離線聯絡人清單</str>
+		<str name="#SET_CV_CHAT_REMEMBERSTATUS">記住最近一次的聊天狀態</str>
+		<str name="#SET_CV_CHAT_REMEMBERSTATUS_TOOLTIP">把你的目前狀態固定設為上一次登入時所在的狀態</str>
+
+		<str name="#SET_CIP_UPDATE">正在刷新遊戲清單</str>
+		<str name="#SET_CIP_BUT_BROWSE">瀏覽</str>
+		<str name="#SET_CIP_BUT_REFRESH">刷新遊戲</str>
+		<str name="#SET_CIP_BUT_DELETE">刪除</str>
+		<str name="#SET_CIP_BUT_ACTIVATE">啟用</str>
+		<str name="#SET_CIP_ERR_GAME">請為每個遊戲輸入有效的路徑，以便儲存變更。</str>
+		<str name="#SET_CIP_ERR_CACHE">請輸入有效的快取路徑，以便儲存變更。</str>
+		<str name="#SET_CIP_SUCCESS">你的設定已經更新。</str>
+		<str name="#SET_CIP_SUCCESS_GAMES">你的設定已經更新。 由於你更新了你的遊戲清單，你需要執行{1}安裝精靈{0}驗證你輸入的路徑，驗證成功後這些遊戲才會顯示在你的{2}遊戲頁面{0}上。</str>
+		<str name="#SET_CIP_CDKEY">請輸入有效的光碟碼或禮物碼。</str>
+		<str name="#SET_CIP_CDKEY_VALIDATING">正在驗證光碟碼…</str>
+		<str name="#SET_CIP_CDKEY_ERR">試圖啟用光碟碼時出錯。 請稍候再試一次。</str>
+		<str name="#SET_CIP_INFO">如果你先前購買了零售遊戲或{1}收到禮物{0}，請在這裡輸入它所附的光碟碼，以便向 Desura 註冊：</str><!-- {0} = </a> {1} = <a href="..."> -->
+		<str name="#SET_CIP_CDKEY">光碟碼 / 禮物</str>
+		<str name="#SET_CIP_CDKEY_INFO">產品碼、光碟碼、禮物碼通常有如下的格式：{0}{0}AAAAA-BBBBB-CCCCC-DDDDD-EEEEE{0}0123456789ABCDEFGHIJKLMNOPQRSTUV{0}00000 11111111</str><!-- {0} = <br /> -->
+		<str name="#SET_CIP_INFO_ADD">如果希望 Desura 找到並納列你個人電腦上已有的遊戲，你可以執行{1}尋找已安裝遊戲{0}精靈，它將自動把遊戲新增到你的帳戶。 如果 Desura 沒有找到你所安裝的某個遊戲，你可在下方以手動方式指出安裝該遊戲的資料夾：</str><!-- {0} = </a> {1} = <a href="..."> -->
+		<str name="#SET_CIP_MANUAL">親自新增遊戲</str>
+
+		<str name="#SET_CIP_LINK">你可以透過下方的表單，為你電腦上其他遊戲或應用新增捷徑。 你可以透過滑鼠右鍵選單的「屬性」選項，新增遊戲的啟動參數，也可在同一選單點按「卸除安裝」來卸除遊戲。 警示：這功能尚在 Beta 測試階段。 有可能發生錯誤！</str>
+		<str name="#SET_CIP_LINK_NAME">聯結名稱：</str>
+		<str name="#SET_CIP_LINK_EXE">聯結執行檔：</str>
+			
+	</strings>
+</lang>

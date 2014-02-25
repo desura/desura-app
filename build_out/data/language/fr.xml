@@ -1,0 +1,670 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<lang name="French">
+	<author>
+		<username>Desura</username>
+		<profile>http://www.desura.com</profile>
+	</author>
+	<linux>
+		<str name="#MW_PROMPT">Cet assistant trouvera les jeux et les mods installés sur cet ordinateur qui sont pris en charge par Desura. Remarque : tous les éléments trouvés seront mis à jour et passeront à la dernière version de Desura.</str>
+		<str name="#MW_FINISH">L&apos;assistant a terminé et tous les jeux et mods qui ont été trouvés sur votre ordinateur et qui sont pris en charge par Desura ont été ajoutés à votre compte. &#xA;&#xA;Si Desura n&apos;a pas réussi à trouver un jeu installé sur votre ordinateur, vous pouvez l&apos;ajouter manuellement en cliquant sur le bouton d&apos;installation personnalisée ci-dessous.</str>
+
+		<str name="#IF_WINDOWS_LAUNCH_WARNING">AVERTISSEMENT : vous essayez de lancer un programme Windows. Cela nécessite que votre système reconnaisse le format et lance les outils appropriés (par ex. WINE). Sinon, l&apos;application/le jeu risque de ne pas se lancer correctement, voire de ne pas se lancer du tout.&#xA;&#xA;Vous pouvez désactiver cet avertissement dans les paramètres.</str>
+		<str name="#IF_SHOWFILES">Afficher les fichiers</str>
+		<str name="#MF_ERROR_NO32LIBS">L&apos;élément que vous avez essayé de lancer est un élément 32 bits, mais il semble que les bibliothèques 32 bits ne soient pas installées sur votre système.&#xA;&#xA;Rendez-vous sur http://www.desura.com/groups/desura/linux pour en savoir plus.</str>
+		<str name="#MF_ERROR_NOBITTEST">Votre version de Desura ne prend pas en charge l&apos;exécution des jeux 32 bits.</str>
+
+		<str name="#PLAY_EMPTY">Votre compte ne contient aucun {1}jeu{0} Linux.</str><!-- {0} = </a> {1}, {2} and {3} = <a href="..."> -->
+
+		<str name="#SET_CV_LIN_DIS_WIN_WRN">Désactiver l&apos;avertissement d&apos;exécutable Windows</str>
+		<str name="#SET_CV_LIN_DIS_WIN_WRN_TOOLTIP">Ne vous avertit pas à chaque fois que vous lancez un exécutable Windows.</str>
+		<str name="#SET_CV_ALLOW_WM_POS">Utiliser le positionnement du gestionnaire de fenêtres</str>
+		<str name="#SET_CV_ALLOW_WM_POS_TOOLTIP">Permet au gestionnaire de fenêtres du système de positionner le formulaire principal, au lieu que Desura enregistre et rétablisse la position et la taille.</str>
+
+		<str name="#SET_CV_GLOBALBIN">Fichier binaire de lancement des jeux global</str>
+		<str name="#SET_CV_GLOBALBIN_TOOLTIP">Lancez tous les jeux par le biais de ce fichier binaire.</str>
+		<str name="#SET_CV_GLOBALARGS">Arguments de jeux globaux</str>
+		<str name="#SET_CV_GLOBALARGS_TOOLTIP">Ajoutez ces arguments à tous les jeux au lancement.</str>
+
+		<str name="#SET_CV_DISABLE_FORCESHORTCUT">Désactiver le raccourci forcé dans le menu</str>
+		<str name="#SET_CV_DISABLE_FORCESHORTCUT_TOOLTIP">Empêche Desura de créer un raccourci de mise à jour forcé dans le menu principal.</str>
+
+		<str name="#IF_GERROR_TOOL">Desura ne trouve pas {0} dont {1} a besoin.</str>
+		<str name="#IF_GERROR_TOOL_Q">Voulez-vous poursuivre l&apos;installation ?</str>
+		<str name="#HELP">Aide</str>
+	</linux>
+	<windows>
+		<str name="#IF_SHOWFILES">Afficher les fichiers dans l&apos;explorateur</str>
+		<str name="#PLAY_EMPTY">Votre compte ne contient aucun {1}jeu{0} ou {2}mod{0} Windows. Vous devez exécuter l&apos;{3}assistant de recherche des jeux installés{0} qui recherchera les jeux pris en charge par Desura sur votre ordinateur.</str><!-- {0} = </a> {1}, {2} and {3} = <a href="..."> -->
+
+		<str name="#SET_CV_DISABLE_FS_PERMS">Autoriser l&apos;accès en écriture pour tous les dossiers d&apos;installation aux utilisateurs normaux</str>
+		<str name="#SET_CV_DISABLE_FS_PERMS_TOOLTIP">Comme les développeurs de jeux vidéo ne suivent pas les normes Windows, de nombreux jeux écrivent dans le dossier d&apos;installation et se plantent s&apos;ils ne peuvent pas le faire. Avertissement : si vous désactivez cette option, certains jeux risquent de ne pas fonctionner.</str>
+
+		<str name="#IF_LOWSPACE_SYS">Le disque dur du système ({0}:\\) a peu d&apos;espace disponible et Desura risque de commencer à avoir des problèmes de performance. &lt;a href=&quot;desura://settings/cache&quot;&gt;Vous pouvez déplacer votre dossier cache Desura vers un autre disque pour libérer de l&apos;espace.&lt;/a&gt;</str>
+		<str name="#IF_LOWSPACE_CACHE">Le disque dur sur lequel le cache Desura effectue les sauvegardes ({0}:\\) a peu d&apos;espace disponible. Nous vous conseillons de libérer de l&apos;espace pour que Desura fonctionne correctement.</str>
+
+		<str name="#MW_PROMPT">Cet assistant trouvera les jeux installés sur cet ordinateur qui sont pris en charge par Desura. Remarque : tous les éléments trouvés seront mis à jour et passeront à la dernière version de Desura.</str>
+		<str name="#MW_FINISH">L&apos;assistant a terminé et tous les jeux qui ont été trouvés sur votre ordinateur et qui sont pris en charge par Desura ont été ajoutés à votre compte. &#xA;&#xA;Si Desura n&apos;a pas réussi à trouver un jeu installé sur votre ordinateur, vous pouvez l&apos;ajouter manuellement en cliquant sur le bouton d&apos;installation personnalisée ci-dessous.</str>
+	</windows>
+	<strings>
+		<!-- Generic Buttons -->
+		<str name="#LOGIN">Me connecter</str>
+		<str name="#CANCEL">Annuler</str>
+		<str name="#OK">OK</str>
+		<str name="#SUBMIT">Soumettre</str>
+		<str name="#START">Démarrer</str>
+		<str name="#PLAY">Jouer</str>
+		<str name="#CLOSE">Fermer</str>
+		<str name="#LAUNCH">Lancer</str>
+		<str name="#AGREE">J&apos;accepte</str>
+		<str name="#BACK">Retour</str>
+		<str name="#SEND">Envoyer</str>		
+		<str name="#UNINSTALL">Désinstaller</str>
+		<str name="#VERIFY">Vérifier</str>
+		<str name="#HIDE">Masquer</str>
+		<str name="#PAUSE">Pauser</str>
+		<str name="#RESUME">Reprendre</str>
+		<str name="#TRYAGAIN">Réessayer</str>
+		<str name="#BROWSE">Parcourir</str>
+		<str name="#UPLOAD">Charger</str>
+		<str name="#YES">Oui</str>
+		<str name="#NO">Non</str>
+		<str name="#SAVE">Enregistrer</str>
+		<str name="#ADD">Ajouter</str>
+		<str name="#LINK">Lien</str>
+		<str name="#APPLY">Appliquer</str>
+		<str name="#CONTINUE">Continuer</str>
+		<str name="#FIND">Trouver</str>
+		<str name="#MOREINFO">Plus d&apos;informations</str>
+		<str name="#PURCHASE">Ajouter au panier</str>
+		<str name="#UPDATE">Mettre à jour</str>
+		
+		<!-- Misc Labels -->
+		<str name="#PROCESSING">Traitement en cours :</str>
+		<str name="#INITIALIZING">Initialisation...</str>
+		<str name="#PROGRESS_INFO">{0} sur {1}</str><!-- {0} is completed, {1} is total -->
+		<str name="#COMPLTETED">Terminé</str>
+		<str name="#FINALIZING">En cours de finalisation</str>
+		<str name="#PAUSED">En pause</str>
+		<str name="#CONFIRM">Confirmer...</str>
+		<str name="#CONFIRM_PROMPT">Si vous fermez ce formulaire, le processus actuel sera interrompu. Voulez-vous vraiment continuer ?</str>	
+		<str name="#INSTALL">Installer</str>
+		<str name="#TBA">TBA</str><!-- to be advertised -->
+		
+		<!-- Preorder String status -->
+		<str name="#IS_PREORDER_YEAR">Disponible en {0}</str>
+		<str name="#IS_PREORDER_QUATER">Disponible au {0}e trimestre {1}</str><!-- {0} is quater, {1} is year -->
+		<str name="#IS_PREORDER_MONTH">Disponible en {0} {1}</str><!-- {0} is month, {1} is year -->
+		
+		<str name="#IS_PREORDER_DAYS">Disponible dans {0} jours</str>
+		<str name="#IS_PREORDER_HOURS">Disponible dans {0} heures</str>
+		<str name="#IS_PREORDER_MINS">Disponible dans {0} minutes</str>
+		
+		<str name="#IS_PREORDER_DAY">Disponible dans un jour</str>
+		<str name="#IS_PREORDER_HOUR">Disponible dans une heure</str>
+		<str name="#IS_PREORDER_MIN">Disponible dans une minute</str>	
+		
+		<!-- Update Item -->
+		<str name="#UI_LABEL">Une mise à jour est disponible. Voulez-vous mettre à jour maintenant ?</str>
+		<str name="#UI_NO_REMINDER">Ne plus me le rappeler au lancement</str>
+		<str name="#UI_TITLE">Mise à jour disponible pour {0}</str>		
+		
+		<!-- About Form -->
+		<str name="#AB_ABOUTINFO">Desura est un service de distribution numérique, axé sur la communauté et destiné aux joueurs. Il vous permet de facilement acheter les meilleurs jeux, mods et contenus téléchargeables des développeurs.</str>
+		<str name="#AB_CREDITS">Remerciements</str>
+		<str name="#AB_ABOUT">À propos de Desura</str>
+		
+		<!-- Login Form -->
+		<str name="#LF_TITLE">Connexion à Desura</str>
+		<str name="#LF_USER">Nom d&apos;utilisateur ou e-mail</str>
+		<str name="#LF_PASS">Mot de passe</str>
+		<str name="#LF_AUTO">Auto</str>
+		<str name="#LF_AUTO_TOOLTIP">Connectez-vous automatiquement à Desura lors de son prochain lancement.</str>
+		<str name="#LF_LOSTPASS">Perte de mot de passe</str>
+		<str name="#LF_NEWACCOUNT">Nouveau compte</str>
+		<str name="#LF_OFFLINE">Mode hors ligne</str>
+		<str name="#LF_ERRTITLE">Erreur de connexion à Desura</str>
+		<str name="#LF_ERROR">Échec de la connexion</str>
+		<str name="#LF_VALDERROR">Une erreur est survenue pendant la connexion :</str>
+		<str name="#LF_ERRBLANKNAME">Votre nom d&apos;utilisateur est vide.</str>
+		<str name="#LF_ERRPASSWORD">Votre mot de passe est vide.</str>
+		<str name="#LF_ERRPLEASE">Veuillez corriger ces erreurs et réessayer de vous connecter.</str>
+		<str name="#ALTLOGIN_TITLE">Autre connexion à Desura : {0}</str>
+		
+		<!-- Console Form -->
+		<str name="#CS_TITLE">Console Desura</str>
+		
+		<!-- Change Log Form -->
+		<str name="#CL_TITLE">Journal des modifications Desura</str>
+		
+		<!-- Launch item -->
+		<str name="#LI_LABEL">{0} {1} déjà installé. Voulez-vous le lancer maintenant ?</str><!-- {0} type [game|mod], {1} name -->
+		
+		<!-- Html Tab Page -->
+		<str name="#DL_LOADING">Chargement...</str>
+		
+		<!-- Need Game Disc -->
+		<str name="#GD_TITLE">{0}: Disque de jeu requis</str>
+		<str name="#GD_INFO">{0} nécessite que le disque {1} soit inséré dans votre ordinateur pour jouer. &#xA;&#xA;Vérifiez que le disque est inséré dans votre ordinateur avant de continuer.</str><!-- {0} lanuch item, {1} required cd item -->
+		<str name="#GD_REMINDER">Ne plus me le rappeler</str>
+		
+		<!-- Main Menu -->
+		<str name="#MENU_ONLINE">Aller en ligne</str>
+		<str name="#MENU_EXIT">Quitter</str>
+		<str name="#MENU_EXIT_TOOLTIP">Quitter Desura</str>
+		<str name="#MENU_UNITTEST">Unit Tests</str>
+		<str name="#MENU_TOOLS">Outils</str>
+		<str name="#MENU_HISTORY">Historique</str>
+		<str name="#MENU_SETTINGS">Paramètres</str>
+		<str name="#MENU_SETTINGS_TOOLTIP">Affichez le formulaire de paramètres.</str>
+		<str name="#MENU_CONSOLE">Console</str>
+		<str name="#MENU_HELP">Aide</str>
+		<str name="#MENU_ABOUT">À propos</str>
+		<str name="#MENU_LOGOUT">Me déconnecter</str>
+		<str name="#MENU_LOGOUT_TOOLTIP">Déconnectez-vous de Desura.</str>
+		<str name="#MENU_OFFLINE">Aller hors ligne</str>
+		<str name="#MENU_OFFLINE_TOOLTIP">Passez en mode hors ligne (pas d&apos;accès Internet).</str>
+		<str name="#MENU_CHANGELOG">Journal des modifications de l&apos;application</str>
+		<str name="#MENU_CHANGELOG_TOOLTIP">Affichez le journal des modifications de Desura.</str>
+		<str name="#MENU_CART">Panier</str>
+		<str name="#MENU_CART_TOOLTIP">Parcourez les articles qui se trouvent dans votre panier.</str>
+		<str name="#MENU_PURCHASE">Historique des achats</str>
+		<str name="#MENU_PURCHASE_TOOLTIP">Parcourez les articles que vous avez achetés.</str>
+		<str name="#MENU_GIFTS">Historique des cadeaux</str>
+		<str name="#MENU_GIFTS_TOOLTIP">Parcourez les articles que vous avez reçus en cadeau.</str>
+		<str name="#MENU_LISTKEYS">Liste des jeux et des clés de CD</str>
+		<str name="#MENU_LISTKEYS_TOOLTIP">Affiche une page Web contenant vos jeux et leurs clés de CD.</str>
+		<str name="#MENU_INSTALLPATH">Ajouter les jeux installés</str>
+		<str name="#MENU_INSTALLPATH_TOOLTIP">Définissez des chemins d&apos;installation personnalisés pour les jeux.</str>
+		<str name="#MENU_WIZZARD">Trouver les jeux installés</str>
+		<str name="#MENU_WIZZARD_TOOLTIP">Assistant permettant de trouver les jeux et les mods installés sur cet ordinateur.</str>
+		<str name="#MENU_ACTIVATEGAME">Activer la clé de CD du jeu ou le cadeau</str>
+		<str name="#MENU_ACTIVATEGAME_TOOLTIP">Saisissez une clé de CD ou un code cadeau pour activer un jeu dans votre compte.</str>
+		<str name="#MENU_VERSION">Version</str>
+		
+		<!-- Games Wizard Note: Has os translations as well -->
+		<str name="#MW_TITLE">Trouver les jeux installés</str>
+		<str name="#MW_ERRTITLE">Erreur de recherche des jeux installés</str>
+		<str name="#MW_ERROR">Le processus de l&apos;assistant a rencontré une erreur et a été interrompu.</str>
+		<str name="#MW_CUSTOM">Installation personnalisée</str>
+		<str name="#MW_ADDACCOUNT">Ajouter les éléments trouvés au compte</str>	
+		
+		<!-- cd key form -->
+		<str name="#CDK_TITLE">{0}: Clé de CD</str>
+		<str name="#CDK_ERRTITLE">Échec d&apos;extraction de la clé de CD</str>
+		<str name="#CDK_ERROR">Desura n&apos;a pas réussi à trouver une clé de CD</str>
+		<str name="#CDK_PROGRESSINFO">Extraction de la clé de CD...</str>		
+		<str name="#CDK_COPYALL">Tout copier</str>
+		<str name="#CDK_COPYPART">Copier la partie 1</str>
+		<str name="#CDK_COPYPART_X">Copier la partie {0}</str><!-- {0} is the part number -->	
+		<str name="#CDK_INFO_STEAM">{0} doit être activé sur Steam pour que vous puissiez jouer. Vous devez saisir cette clé dans Steam :</str>
+		<str name="#CDK_ACTIVATE">Activer</str>
+		<str name="#CDK_INFO">Vous devez saisir cette clé de CD pour jouer :</str>
+		<str name="#CDK_LAUNCHNOW">Lancer maintenant</str>
+	
+		<!-- Eula form -->
+		<str name="#EULA_LABEL">Avant de pouvoir jouer, vous devez accepter les conditions générales de la licence.</str>
+		<str name="#EULA_TITLE">Contrat de licence de l&apos;utilisateur final : {0}</str>
+	
+		<!-- News Form -->
+		<str name="#NF_PREV">Préc.</str>
+		<str name="#NF_NEXT">Suiv.</str>
+		<str name="#NF_TITLE">Actualités Desura :</str>
+		<str name="#GF_TITLE">Cadeaux Desura :</str>
+	
+		<!-- Update Form -->
+		<str name="#UF_INFO">Une mise à jour pour Desura est disponible et prête à être installée.</str>
+		<str name="#UF_TITLE">Mise à jour Desura disponible</str>
+		<str name="#UF_RESTART_NOW">Redémarrer maintenant</str>
+		<str name="#UF_RESTART_LATER">Redémarrer plus tard</str>		
+	
+		<!-- New Account -->
+		<str name="#NA_TITLE">Nouveau compte Desura</str>	
+	
+		<!-- Password Reminder Dialog -->
+		<str name="#PR_TITLE">Rappel du mot de passe Desura</str>
+		<str name="#PR_PROMPT">Saisissez l&apos;adresse e-mail avec laquelle vous vous êtes inscrit et vous recevrez un message qui vous permettra de réinitialiser votre mot de passe.</str>
+		<str name="#PR_EMAIL">Adresse e-mail : </str>
+		<str name="#PR_SENT">Rappel envoyé. Consultez votre messagerie pour trouver des instructions sur les prochaines étapes.</str>
+		<str name="#PR_ERRTITLE">Erreur de rappel du mot de passe Desura</str>
+		<str name="#PR_ERROR">Le rappel du mot de passe a rencontré une erreur.</str>
+		<str name="#PR_VALIDEMAIL">Veuillez saisir une adresse e-mail valide.</str>		
+	
+		<!-- Exe Select Form -->
+		<str name="#ES_TITLE">Sélectionner la version : {0}</str><!-- {0} is item name -->
+		<str name="#ES_LABEL">Veuillez sélectionner la version de {0} à laquelle vous voulez jouer :</str><!-- {0} is item name -->
+	
+		<!-- Uninstall Form -->
+		<str name="#UNF_REMOVEFILES">Supprimer les fichiers Desura</str>
+		<str name="#UNF_REMOVEFILES_TOOLTIP">Supprimer le fichier MCF et les fichiers connexes que Desura utilise</str>
+		<str name="#UNF_REMOVEACCOUNT">Supprimer de la liste</str>
+		<str name="#UNF_REMOVEACCOUNT_TOOLTIP">Supprime cet élément de la liste de jeux.</str>
+		<str name="#UNF_CONFIRM">Voulez-vous vraiment désinstaller {0} de votre ordinateur ? Une fois que vous aurez lancé le processus, vous ne pourrez plus l&apos;interrompre.</str><!-- {0} is item name -->
+		<str name="#UNF_ERRTITLE">Erreur de désinstallation</str>
+		<str name="#UNF_ERROR">Le processus de désinstallation a rencontré une erreur et a été interrompu.</str>
+	
+		<!-- Item Form: Misc -->
+		<str name="#IF_TITLE">Préparation :</str>
+		<str name="#IF_PREPARE_INFO">Se prépare à {0} {1}</str> <!-- {0} is action, {1} is item short name -->
+		<str name="#IF_PREPARE_INFO_NOITEM">Préparation...</str>	
+		<str name="#IF_BRANCHINFO">{0} n&apos;est pas installé. Sélectionnez la version à laquelle vous voulez jouer.</str>
+		<str name="#IF_BRANCHTITLE">Jouer à {0}</str>
+		<str name="#IF_BROUGHT">Acheté</str>
+		<str name="#IF_CONFLICT">Desura a détecté que {0} est déjà installé. Comme {0} nécessite une installation complexe, afin d&apos;éviter des conflits de contenu, nous vous conseillons de désinstaller {0} manuellement avant de poursuivre l&apos;installation Desura.</str>
+		<str name="#IF_CONFLICTTITLE">Conflit d&apos;installation complexe</str>		
+		<str name="#IF_EXISTINGFILES">Il y a déjà des fichiers existants à l&apos;emplacement d&apos;installation de {0}. Que souhaitez-vous faire ?</str>
+		<str name="#IF_FINDONCOMPUTER">Trouver l&apos;installation sur cet ordinateur</str>
+		<str name="#IF_FREE">Gratuit</str>
+		<str name="#IF_GERROR_BRANCH_PLATFORM_Q">Voulez-vous sélectionner une autre branche ?</str>
+		<str name="#IF_INSTALL_REMOVE">Installer le jeu et supprimer les fichiers non connexes (conseillé)</str>
+		<str name="#IF_INSTALL_LEAVE">Installer le jeu et laisser les fichiers non connexes</str>
+		<str name="#IF_INSTALL_VERIFY">Vérifier les fichiers installés et installer les fichiers manquants</str>
+		<str name="#IF_NOTFOUND">{0} est une modification du jeu {1}. Le jeu doit être installé pour que vous puissiez jouer.&#xA;&#xA;Veuillez sélectionner une méthode d&apos;installation pour {1} :</str>
+		<str name="#IF_NOTFOUND_GAME">{0} est une extension du jeu {1}. Le jeu doit être installé pour que vous puissiez jouer.&#xA;&#xA;Veuillez sélectionner une méthode d&apos;installation pour {1} :</str>
+		<str name="#IF_ONCOMPUTER">Utiliser la version installée sur cet ordinateur</str>
+		<str name="#IF_PRELOADLAUNCH">{0} a été {2} et il est impossible de le lancer actuellement. Il sera disponible pour le jeu dans {1} {4} sur {3}.</str>
+		<!-- 
+			{0} Item Name
+			{1} Number of days
+			{2} if preloaded #IF_PRELOADLAUNCH_PRELOADED or if preordered #IF_PRELOADLAUNCH_PREORDERED
+			{3} date/time when item is available
+			{4} if days == 1 #IF_PRELOADLAUNCH_WORD_DAY else #IF_PRELOADLAUNCH_WORD_DAYS
+		-->
+		<str name="#IF_PRELOADLAUNCH_TITLE">{0}</str>
+		<str name="#IF_PRELOADLAUNCH_WORD_DAY">jour</str>
+		<str name="#IF_PRELOADLAUNCH_WORD_DAYS">jours</str>
+		<str name="#IF_PRELOADLAUNCH_PREORDERED">précommandé</str>
+		<str name="#IF_PRELOADLAUNCH_PRELOADED">préchargé</str>
+		<str name="#IF_PRELOADLAUNCH_INSTALLDEMO">Installer la démonstration</str>
+		<str name="#IF_PRELOADLAUNCH_INSTALLOTHER">Installer une autre branche</str>
+		<str name="#IF_PRELOADLAUNCH_INSTALLOTHER_INFO">&#xA;&#xA;Il y a d&apos;autres versions disponibles pour le jeu.</str>
+		<str name="#IF_PREORDERED_NORELEASE">Précommandé : pas encore sorti</str>
+		<str name="#IF_PREORDERED">Précommandé : préchargement prêt</str>	
+	
+		<!-- Item Form: Uninstall -->
+		<str name="#IF_UNINSTALL">Désinstallation : </str>
+		<str name="#IF_UNINSTALL_LABEL">Désinstallation...</str>
+		<str name="#IF_UNINSTALL_PATCH">Suppression des anciens fichiers : </str>
+		<str name="#IF_UNINSTALL_PATCH_LABEL">Suppression des anciens fichiers... </str>
+		<str name="#IF_UNINSTALL_BRANCH">Suppression des anciens fichiers : </str>
+		<str name="#IF_UNINSTALL_BRANCH_LABEL">Suppression des anciens fichiers... </str>
+		<str name="#IF_UNINSTALL_COMPLEX">Désinstallation d&apos;un mod complexe</str>
+		<str name="#IF_UNINSTALL_COMPLEX_LABEL">Désinstallation d&apos;un mod complexe... </str>
+		
+		<!-- Item Form: Verify -->
+		<str name="#IF_VERIFY">Vérification :</str>
+		<str name="#IF_VERIFYFILES">Vérification des fichiers</str>
+		<str name="#IF_VERIFYTOOLS">Réinstaller les outils</str>
+		<str name="#IF_VERIFYHOOKS">Réexécuter les hooks ou crochets post-installation</str>
+		<str name="#IF_VERIFYCONFIRM">Si vous avez des difficultés à exécuter {0}, le processus de vérification tentera de résoudre tous les problèmes.</str>
+		<str name="#IF_VERIFYLABEL">Vérification...</str>
+		<str name="#IF_VERROR">Le processus de vérification de l&apos;installation a rencontré une erreur et a été interrompu.</str>
+		<str name="#IF_VERRTITLE">Erreur de vérification de l&apos;installation</str>
+		<str name="#IF_VERIFYMCF">Vérification du fichier MCF...</str>
+		<str name="#IF_VERIFYINSTALL">Vérification de l&apos;installation...</str>
+		<str name="#IF_VERIFYDOWNLOADF">Téléchargement des fichiers manquants...</str>
+		<str name="#IF_VERIFYINSTALLF">Installation des fichiers manquants...</str>
+		<str name="#IF_VERIFYBRANCH">Changement de branche...</str>
+		<str name="#IF_VERIFYCOMPLETE">Vérification terminée</str>
+	
+		<!-- Item Form: Install -->
+		<str name="#IF_PROVIDEDBY">Fourni(e) par :</str>
+		<str name="#IF_GATHERINFO">Extraction des informations...</str>
+		<str name="#IF_CHECKINGIR">Vérification des conditions requises pour l&apos;installation...</str>
+		<str name="#IF_GERRTITLE">Erreur d&apos;extraction des informations</str>	
+		<str name="#IF_GERROR">Le processus d&apos;extraction des informations a rencontré une erreur et a été interrompu.</str>
+		<str name="#IF_GERROR_LABEL">Une erreur est survenue. Processus interrompu.</str>
+		<str name="#IF_GERROR_PLATFORM">{0} n&apos;est pas pris(e) en charge sur cette plate-forme.</str><!-- {0} item name -->
+		<str name="#IF_GERROR_BRANCH_PLATFORM">La branche que vous avez sélectionnée pour {0} n&apos;est pas prise en charge pour cette plate-forme.</str><!-- {0} item name -->
+		
+		<str name="#IF_DOWNLOAD">Téléchargement :</str>
+		<str name="#IF_ETIME">Temps restant estimé :</str>
+		<str name="#IF_INITDOWNLOAD">Initialisation du téléchargement</str>
+		<str name="#IF_DLERROR">Le processus de téléchargement du fichier MCF a rencontré une erreur et a été interrompu.</str>
+		<str name="#IF_DLERRTITLE">Erreur de téléchargement du fichier MCF</str>	
+	
+		<str name="#IF_UPDATE">Mise à jour :</str>
+		<str name="#IF_INSTALL">Installation :</str>
+		<str name="#IF_INITINSTALL">Initialisation de l&apos;installation</str>
+		<str name="#IF_COMPLETEPREORDER">Préchargement terminé</str>
+		<str name="#IF_IERROR">Le processus d&apos;installation du fichier MCF a rencontré une erreur et a été interrompu.</str>
+		<str name="#IF_IERRTITLE">Erreur d&apos;installation du fichier MCF</str>
+	
+		
+		<str name="#IF_DOWNLOADTOOL">Téléchargement des dépendances :</str>
+		<str name="#IF_DOWNLOADTOOL_LABEL">Téléchargement...</str>	
+	
+		<str name="#IF_INSTALLTOOL">Installation des outils :</str>
+		<str name="#IF_INTOOL_WAIT_HELPER">En attente du programme d&apos;aide à l&apos;installation...</str>
+		<str name="#IF_INTOOL_WAIT_OTHER">En attente d&apos;achèvement d&apos;autres installations...</str>
+		<str name="#IF_INTOOL_LABEL">Installation d&apos;outil : {0}</str><!-- {0}: tool name -->
+		
+		<str name="#IF_INSTALL_CHECK">Contrôle d&apos;installation</str>
+		<str name="#IF_CHECK_ERRTITLE">Erreur du contrôle d&apos;installation</str>
+		<str name="#IF_CHECK_ERROR">Le processus de contrôle d&apos;installation a rencontré une erreur et a été interrompu.</str>	
+	
+		<str name="#IF_CHECK_NOTFOUND">{0} est introuvable sur votre ordinateur. Vérifiez qu&apos;il est bien installé et que vous l&apos;avez exécuté au moins une fois, puis réessayez. Sinon, vous pouvez cliquer sur le bouton d&apos;installation personnalisée ci-dessous et nous indiquer où il est installé.</str><!-- {0} item name -->
+		<str name="#IF_CHECK_CIP">Installation personnalisée</str>
+		<str name="#IF_CHECK_FOUND">{0} trouvé et prêt.</str><!-- {0} item name -->
+	
+		<str name="#IF_COMPLEXLABEL_INIT">{0} (initialisation)</str>
+		<str name="#IF_COMPLEXREMOVE">Suppression des anciens fichiers</str>
+		<str name="#IF_COMPLEXBACKUP">Sauvegarde des fichiers de jeu</str>
+		<str name="#IF_COMPLEXINSTALL">Installation des fichiers</str>
+		<str name="#IF_COMPLEXLABEL">{0}...</str>
+	
+	
+		<str name="#IF_VALIDATE_ERROR">Le processus de validation a rencontré une erreur et a été interrompu.</str>
+		<str name="#IF_VALIDATE_ERROR_TITLE">Erreur de validation</str>	
+		<str name="#IF_VALIDATE_TITLE">Validation du téléchargement :</str>
+		<str name="#IF_VALIDATE_PREALLOCATING">Pré-allocation du fichier de téléchargement...</str>
+		<str name="#IF_VALIDATE_LOCALFILES">Vérification des anciens fichiers d&apos;installation...</str>
+		<str name="#IF_VALIDATE_LABEL">Étape {2} : terminé {0} sur {1}</str><!-- {0}: done, {1}: total {2}:Stage number-->	
+		<str name="#IF_VALIDATE_EXISTINGMCF">Vérification des fichiers de données actuels...</str>
+		<str name="#IF_VALIDATE_LOCALMCFS">Vérification des anciens fichiers de données...</str>
+		<str name="#IF_VALIDATE_DEFAULT">Validation des fichiers existants...</str>
+	
+		<str name="#IF_WAIT_TITLE">En attente des éléments :</str>
+		<str name="#IF_WAIT_FORCE">Forcer</str>
+		<str name="#IF_WAIT_CANCELALL">Tout annuler</str>
+		<str name="#IF_WAIT_INFO">{0} attend l&apos;achèvement d&apos;autres éléments avant de commencer à {1}.</str><!-- {0}: item name, {1}: action (next two strings) -->
+		<str name="#IF_WAIT_ACTION_UNINSTALL">désinstaller l&apos;élément</str>
+		<str name="#IF_WAIT_ACTION_VERIFY">vérifier les fichiers d&apos;éléments </str>
+	
+	
+		<!-- Main Form -->
+		<str name="#MF_ERRTITLE">Erreur Desura</str>
+		<str name="#MF_ERROR">Échec du lancement de l&apos;élément</str>
+		<str name="#MF_OLNOTINSTALLED">Desura est en mode hors ligne, or cet élément n&apos;est pas installé et ne peut donc pas être lancé.</str>
+		<str name="#MF_BADLINK">Lien Desura inconnu</str>
+		<str name="#MF_NAMERESOLVE">Échec de la résolution du nom de l&apos;élément à partir du numéro d&apos;ID</str>
+		<str name="#MF_IPERMISSION_ERROR">Vous n&apos;avez pas les autorisations nécessaires pour installer un fichier MCF non autorisé.</str>
+		<str name="#MF_PERMISSION_ERRTITLE">Erreur d&apos;autorisations incorrectes</str>
+		<str name="#MF_LUANCH_ERROR_VERIFY_TOOLTIP">Vérifier les fichiers d&apos;installation</str>
+		<str name="#MF_UNINSTALLPROMPT">{0} est en cours d&apos;installation. Pour le désinstaller, Desura doit interrompre le processus d&apos;installation. Poursuivre la désinstallation ?</str>
+		<str name="#MF_UNINSTALLTITLE">Désinstallation {0} de Desura</str>
+		<str name="#MF_OFFLINE">Voulez-vous vraiment passer en mode hors ligne ?</str>
+		<str name="#MF_OFFLINE_TITLE">Mode hors ligne</str>
+		<str name="#MF_OFFLINEWARN">Desura est en mode hors ligne et ne peut pas traiter les liens. Veuillez vous connecter.</str>		
+		<str name="#MF_IBADBUILD">Mauvais numéro de version pour l&apos;installation admin de l&apos;élément</str>
+		<str name="#MF_IBADBRANCH">Mauvais numéro de branche pour l&apos;installation admin de l&apos;élément</str>	
+		<str name="#MF_UPERMISSION_ERROR">Vous n&apos;avez pas les autorisations nécessaires pour charger un fichier MCF pour cet élément.</str>
+		<str name="#MF_UPDATELOG_ITEMERROR">Affichage du journal des modifications impossible. L&apos;élément est introuvable dans votre compte.</str>
+		<str name="#MF_NONDEV_ERROR">Vous n&apos;êtes pas un développeur de cet élément, vous n&apos;avez donc pas les autorisations nécessaires pour créer du contenu pour cet élément.</str>
+		
+		<!-- Create MCF -->
+		<str name="#CREATE_MCF_TITILE">Créer un fichier MCF : {0}</str><!-- {0} is item name -->
+		<str name="#CREATE_MCF_TITILE_ADMIN">Créer un fichier MCF pour {0} [remplacement admin]</str><!-- {0} is item id -->
+		<str name="#CF_PROMPT">Sélectionnez un dossier contenant une installation propre de votre jeu.</str>
+		<str name="#CF_DIRPROMPT">Sélectionnez le dossier et Desura compressera son contenu dans une archive MCF pour le chargement.</str>
+		<str name="#CF_PROG">Progrès : </str>
+		<str name="#CF_NOTSTARTED">Initialisation...</str>	
+		<str name="#CF_ERROR">Le processus de création de fichier MCF a rencontré une erreur et a été interrompu.</str>
+		<str name="#CF_ERRTITLE">Erreur de création de fichier MCF</str>	
+		<str name="#CF_VIEWFILES">Afficher le fichier</str>
+		<str name="#CF_COMPLETE">Création du fichier MCF pour {0} terminée.</str><!-- note the {0} will be replaced with the item name! -->	
+	
+		<!-- Upload MCF -->
+		<str name="#UPLOAD_MCF_TITILE">Chargement du fichier MCF : {0}</str><!-- {0} is item name -->
+		<str name="#UPLOAD_MCF_TITILE_ADMIN">Charger un fichier MCF pour {0} [remplacement admin]</str><!-- {0} is item id -->	
+		<str name="#UDF_PROMPT">Sélectionnez le ficher MCF que vous voulez charger.</str>
+		<str name="#UDF_ETIME">Temps restant estimé :</str>
+		<str name="#UDF_NOTSTARTED">Le chargement n&apos;a pas commencé.</str>
+		<str name="#UDF_DELETE">Supprimer le fichier MCF à l&apos;achèvement</str>
+		<str name="#UDF_DELETE_TOOLTIP">Supprimez le fichier une fois le chargement terminé.</str>
+		<str name="#UDF_UNKNOWNPAUSE">En pause</str>
+		<str name="#UDF_ERRTITLE">Erreur de chargement du fichier MCF</str>
+		<str name="#UDF_ERROR">Le processus de chargement du fichier MCF a rencontré une erreur et a été interrompu.</str>
+		<str name="#UDF_COMPLETE">Chargement terminé.</str>
+		<str name="#UDF_ERROR_VALIDATION">Erreur de validation du fichier à charger</str>
+		<str name="#UDF_NOFILE">Échec de la recherche du fichier nécessaire pour reprendre le chargement Vous devez trouver ce fichier ou recommencer.</str>
+		<str name="#UDF_RESUME_ERRTITLE">Erreur de reprise du chargement</str>
+		<str name="#UDF_NONMATCHING_FILE">Le fichier ne correspond pas au fichier chargé. Vous devez sélectionner le fichier correct ou recommencer.</str>
+		<str name="#UDF_UPLOAD_ERRTITLE">Erreur de chargement de fichier</str>
+		<str name="#UDF_RESUMEDIR">Recherche du fichier MCF...</str>	
+	
+		<!-- Task Bar Menu -->
+		<str name="#TB_EXIT">Quitter</str>
+		<str name="#TB_WINDOWS">Fenêtres</str>
+		<str name="#TB_NOWINDOWS">Pas de fenêtres ouvertes</str>
+		<str name="#TB_NOITEMS">Pas d&apos;éléments</str>
+		<str name="#TB_STATUS">Statut</str>
+		<str name="#TB_CART">Éléments du panier</str>
+		<str name="#TB_MESSAGE">Messages</str>
+		<str name="#TB_UPDATES">Mises à jour</str>
+		<str name="#TB_GAMES">Jeux</str>
+		<str name="#TB_MODS">Mods</str>
+		<str name="#TB_TITLE">Mises à jour de jeux Desura disponibles</str>
+		<str name="#TB_GIFTTITLE">Vous avez reçu un nouvel élément en cadeau.</str>
+		<str name="#TB_APPUPDATE_TITLE">Mise à jour Desura</str>
+		<str name="#TB_APPUPDATE">Téléchargement de la mise à jour Desura (version {0}).</str>
+		
+		<!-- Browser controls -->
+		<str name="#BC_HOME">Ouvrir la page d&apos;accueil</str>
+		<str name="#BC_STOP">Interrompre le chargement de la page actuelle</str>
+		<str name="#BC_REFRESH">Actualiser la page actuelle</str>
+		<str name="#BC_BACK">Retourner à la dernière page</str>
+		<str name="#BC_FORWARD">Aller à la page suivante</str>
+		<str name="#BC_BREAK">Charger dans le navigateur par défaut</str>
+
+		<!-- Main Page -->
+		<str name="#MP_OFFLINE">Hors ligne</str>
+		<str name="#MP_PLAY">Jouer</str>
+		<str name="#MP_GAMES">Boutique</str>
+		<str name="#MP_MODS">Mods</str>
+		<str name="#MP_COMMUNITY">Communauté</str>
+		<str name="#MP_DEVELOPMENT">Développement</str>
+		<str name="#MP_SUPPORT">Aide</str>
+		<str name="#MP_TITLE_OFFLINE">Desura hors ligne</str>	
+		
+		<!-- Search Box -->
+		<str name="#SB_DEFAULT">Recherche...</str>
+		<str name="#SB_FULL_SEARCH">Effectuer une recherche complète</str>
+		
+		<!-- Button Strip -->
+		<str name="#BS_MAIN">Ouvrir le menu principal</str>
+		<str name="#BS_UPDATE">Mises à jour</str>
+		<str name="#BS_PLUS">Surveillance des threads</str>
+		<str name="#BS_CART">Éléments du panier</str>
+		<str name="#BS_PMESSAGE">Messages privés</str>
+
+		<!-- Items menu -->
+		<str name="#DM_EXPAND">Agrandir tous les éléments</str>
+		<str name="#DM_CONTRACT">Réduire tous les éléments</str>
+		
+		<!-- Service Error -->
+		<str name="#DS_TITLE">Erreur de service Desura</str>
+		<str name="#DS_ERROR">Le service Desura a été déconnecté de façon inattendue.&#xA;&#xA;Tentative de reconnexion...</str>
+		<str name="#DS_ERRORFAILED">Le service Desura a été déconnecté de façon inattendue.&#xA;&#xA;Échec du redémarrage :</str>
+	
+		<!-- Steam User -->
+		<str name="#STEAM_TITLE">Sélectionner un compte Steam</str>
+		<str name="#STEAM_WARN">Pour installer certains éléments, Desura doit savoir quel compte Steam vous utilisez. &#xA;&#xA;Vous pouvez modifier ce paramètre à tout moment dans le formulaire d&apos;options.&#xA;&#xA;Remarque : aucun employé de Desura ne vous demandera jamais votre mot de passe Steam. </str>
+		
+		<!-- Headers -->
+		<str name="#HEAD_NAME">Nom</str>
+		<str name="#HEAD_STATUS">Statut</str>
+		<str name="#HEAD_RATING">Niveau</str>
+		<str name="#HEAD_DEV">Développeur</str>
+		<str name="#HEAD_FAV">Favori</str>	
+		
+		<!-- Item status -->
+		<str name="#IS_INSTALLED">Installé</str>
+		<str name="#IS_NOTINSTALLED">Pas installé</str>
+		<str name="#IS_READY">Prêt</str>
+		<str name="#IS_VERIFY">Vérification</str>
+		<str name="#IS_UPDATING">Mise à jour</str>
+		<str name="#IS_DOWNLOADING">Téléchargement</str>
+		<str name="#IS_INSTALLING">Installation</str>
+		<str name="#IS_DEVSTUB">Stub développeur</str>
+		<str name="#IS_NOTAVAIL">Pas prêt</str>
+		<str name="#IS_PAUSED">En pause</str>
+		<str name="#IS_PREORDER_STATUS">Précommandé</str>
+		<str name="#IS_PRELOADED_STATUS">Préchargé</str>		
+		<str name="#IS_LAUNCHING">Lancement</str>
+		<str name="#IS_DOWNLOADINGTOOL">Outils téléch.</str>
+		<str name="#IS_INSTALLINGTOOL">Outils install.</str>
+		<str name="#IS_VALIDATE">Validation</str>
+		<str name="#IS_WAIT">En attente de ({0} sur {1})</str>		
+		
+		<!-- Play page Note: Has os translations -->
+		<str name="#PLAY_UPDATE_AVAILABLE">Une mise à jour est disponible.</str>
+		<str name="#PLAY_UPDATE_DEMO">Mettre à niveau et passer de la démonstration à la version complète</str>
+		<str name="#PLAY_UPDATE_PRELOAD">Préchargement disponible</str>
+		<str name="#PLAY_UPDATE_POLL">Vérification de la liste des jeux pour trouver des mises à jour...</str>
+		<str name="#PLAY_INVALID_UPLOAD">Chargement non valide</str>
+		<str name="#PLAY_INVALID_ITEM">Élément non valide</str>
+		<str name="#PLAY_EDIT_FAV">Modifier les favoris</str>
+		<str name="#PLAY_DELAY_LOADING">Extraction de la liste des jeux...</str>
+		<str name="#PLAY_BRANCH_AUTO">Jouer automatiquement à cette version la prochaine fois ?</str>
+		<str name="#PLAY_ADD_GAME">{0} {1} ajouté(s)</str><!-- {0} = mod or game {1} = name -->
+		<str name="#PLAY_UPLOAD">Chargements actuels</str>
+	
+		<!-- Pop up menu -->
+		<str name="#PM_ADDACCOUNT">Ajouter au compte</str>
+		<str name="#PM_CREATEMCF">Créer un fichier MCF</str>
+		<str name="#PM_DELMCF">Supprimer le fichier MCF</str>
+		<str name="#PM_DESURAPAGE">Page Desura</str>
+		<str name="#PM_DEVPROFILE">Profil de développement</str>
+		<str name="#PM_INSTALLCHECK">Contrôle d&apos;installation</str>
+		<str name="#PM_MENU_ENTRY">Créer une entrée de menu d&apos;application</str>
+		<str name="#PM_MODLIST">Afficher la liste des mods</str>
+		<str name="#PM_PROPERTIES">Propriétés</str>
+		<str name="#PM_REVERTCOMPLEX">Rétablir les fichiers de jeux</str>
+		<str name="#PM_SHORTCUT">Créer un raccourci sur le bureau</str>
+		<str name="#PM_SHOWMCF">Afficher le fichier MCF</str>
+		<str name="#PM_SHOWCDKEY">Afficher la clé de CD</str>	
+		<str name="#PM_UPLOADMCF">Charger le fichier MCF</str>
+		<str name="#PM_UPDATELOG">Afficher le journal des modifications</str>
+		<str name="#PM_VIEWPROFILE">Voir le profil</str>	
+		<str name="#PM_FAVORITE">Ajouter aux favoris</str>
+		<str name="#PM_FAVORITE_REMOVE">Supprimer un favori</str>		
+		<str name="#PM_REMOVEFROMACCOUNT">Supprimer de la liste</str>
+		
+		<!-- Play page buttons -->
+		<str name="#PLAY_FAVORITES">Favoris</str>
+		<str name="#PLAY_GAMES">Jeux</str>
+		<str name="#PLAY_DEVELOPMENT">Développement</str>
+		
+		
+		<!-- browser menu -->
+		<str name="#CHROME_UNDO">Annuler</str>
+		<str name="#CHROME_REDO">Refaire</str>
+		<str name="#CHROME_CUT">Couper</str>
+		<str name="#CHROME_COPY">Copier</str>
+		<str name="#CHROME_PASTE">Coller</str>
+		<str name="#CHROME_DELETE">Supprimer</str>
+		<str name="#CHROME_SELECTALL">Tout sélectionner</str>
+		<str name="#CHROME_BACK">Retour</str>
+		<str name="#CHROME_FORWARD">Avancer</str>
+		<str name="#CHROME_RELOAD">Recharger</str>
+		<str name="#CHROME_ZOOMIN">Zoomer en avant</str>
+		<str name="#CHROME_ZOOMOUT">Zoomer en arrière</str>
+		<str name="#CHROME_ZOOMNORMAL">Zoom normal</str>
+		<str name="#CHROME_PRINT">Imprimer</str>
+		<str name="#CHROME_VIEWSOURCE">Afficher la source</str>
+		<str name="#CHROME_VIEWPAGE">Afficher la page dans le navigateur</str>
+		<str name="#CHROME_VIEWLINK">Afficher le lien dans le navigateur</str>
+		<str name="#CHROME_VIEWIMAGE">Afficher l&apos;image dans le navigateur</str>
+		<str name="#CHROME_INSPECTELEMENT">Inspecter l&apos;élément</str>
+		<str name="#CHROME_NORMALMENU">Menu normal</str>
+		<str name="#CHROME_COPYURL">Copier l&apos;URL</str>
+		<str name="#BH_NO_LOAD">Échec de chargement de la bibliothèque de navigateur. Consultez la console pour prendre connaissance de tout message d&apos;erreur.</str>
+			
+		<!-- Properties -->
+		<str name="#P_VERIFY">Vérifier les fichiers</str>
+		<str name="#P_TITLE">Propriétés</str>
+		<str name="#P_URLABEL">Ne pas me rappeler les mises à jour au lancement</str>
+		<str name="#P_FIXEDLO">Options de lancement fixes :</str>
+		<str name="#P_USERLO">Options de lancement utilisateur :</str>
+		<str name="#P_EXE">Emplacement du fichier exe :</str>
+		<str name="#P_VERSION">Version installée</str>
+		<str name="#P_RETAIL">Commercial</str>			
+			
+		<!-- Custom install path -->
+		<str name="#CIP_BROWSE">Veuillez sélectionner le dossier racine pour le jeu : {0}</str>
+		<str name="#CIP_LINK_BROWSE">Veuillez sélectionner le fichier binaire pour le lien : {0}</str>
+
+		<!-- Settings -->
+		<str name="#SET_TITLE">Paramètres Desura</str>
+		<str name="#SET_BETA_LABEL">Participer au programme bêta public de Desura</str>
+		<str name="#SET_BETA_INFO">Avant la sortie de nouvelles fonctionnalités et de nouvelles versions de Desura, une version bêta publique est disponible pour tester et résoudre les problèmes de la nouvelle version. En tant qu&apos;utilisateur de Desura, vous pouvez participer et aider à tester les fonctionnalités de cette version bêta publique afin de contribuer à la résolution des bugs et de partager vos commentaires. &#xA;&#xA;Si vous participez et si votre système se plante, votre crash dump (analyse de vidage) sera automatiquement chargé et il est possible que vous soyez contacté par e-mail pour déboguer et résoudre les bugs que vous rencontrez. &#xA;&#xA;Remarque : les versions bêta publiques peuvent contenir des bugs risquant de causer des pertes de données ou des plantages d&apos;applications. Nous conseillons que seuls les utilisateurs avancés participent au programme bêta public.&#xA;</str>
+		<str name="#SET_NOTE">Remarque : si vous sélectionnez un nouveau thème, vous devrez redémarrer Desura pour l&apos;appliquer.</str>
+		<str name="#SET_THEME_VERSION">version</str>
+		<str name="#SET_THEME_AUTHOR">de</str>
+		<str name="#SET_CV_THEME">Thème</str>
+		<str name="#SET_CV_BETA">Bêta</str>
+		<str name="#SET_CV_LANG">Langue</str>
+		<str name="#SET_CV_LANG_TOOLTIP">Sélectionnez la langue que vous souhaitez utiliser.</str>
+		<str name="#SET_CV_STEAM">Nom d&apos;utilisateur Steam</str>
+		<str name="#SET_CV_STEAM_TOOLTIP">Nom d&apos;utilisateur Steam actuel (pour les installations de mods)</str>
+		<str name="#SET_CV_AUTOLOGIN">Connexion automatique au démarrage</str>
+		<str name="#SET_CV_AUTOLOGIN_TOOLTIP">Enregistrez les informations de connexion pour vous connecter automatiquement quand Desura démarre.</str>
+		<str name="#SET_CV_AUTOSTART">Démarrage automatique de Desura</str>
+		<str name="#SET_CV_AUTOSTART_TOOLTIP">Démarrez Desura avec Windows.</str>
+		<str name="#SET_CV_CRASH">Chargement automatique des rapports de plantage</str>
+		<str name="#SET_CV_CRASH_TOOLTIP">Chargez automatiquement les rapports de plantage quand Desura démarre (utilisés pour le débogage).</str>
+		<str name="#SET_CV_MCFCLEAN">Nettoyer le fichier MCF après utilisation</str>
+		<str name="#SET_CV_MCFCLEAN_TOOLTIP">Cela supprime les données inutiles du fichier MCF et permet d&apos;économiser de l&apos;espace sur le disque dur. Cependant, cela génère plus de téléchargements.</str>
+		<str name="#SET_CV_USER">Enregistrer le nom d&apos;utilisateur à la connexion</str>
+		<str name="#SET_CV_USER_TOOLTIP">Enregistre votre nom d&apos;utilisateur à la connexion pour la prochaine fois que vous connectez.</str>
+		<str name="#SET_CV_CONSOLE">Afficher la console en cas d&apos;erreur</str>
+		<str name="#SET_CV_CONSOLE_TOOLTIP">Ouvre la console quand une erreur survient.</str>
+		<str name="#SET_CV_DISABLE_WGE">Désactiver l&apos;explorateur de jeux Windows</str>
+		<str name="#SET_CV_DISABLE_WGE_TOOLTIP">Empêche Desura de placer les jeux dans l&apos;explorateur de jeux Windows.</str>
+		<str name="#SET_CV_NEWS_POPUP_ENABLE">Autoriser le fenêtre contextuelle d&apos;actualités</str>
+		<str name="#SET_CV_NEWS_POPUP_ENABLE_TOOLTIP">Active ou désactive la fenêtre contextuelle qui affiche les actualités récentes.</str>
+
+		<str name="#SET_CV_WORKER">Threads travailleurs</str>
+		<str name="#SET_CV_WORKER_TOOLTIP">Il s&apos;agit du nombre de travailleurs utilisés pour la réalisation des processus (comme la création d&apos;un fichier MCF).</str>
+		<str name="#SET_CV_DESTMAIN">Décharger le formulaire principal à la fermeture</str>
+		<str name="#SET_CV_DESTMAIN_TOOLTIP">Décharge le formulaire principal à la fermeture, ce qui permet d&apos;économiser de la mémoire, mais provoque une perte de vitesse (et d&apos;historique).</str>
+		<str name="#SET_CV_NOTAB">Ne pas charger automatiquement les pages de navigateur à la connexion</str>
+		<str name="#SET_CV_NOTAB_TOOLTIP">Ne charge pas les pages de navigateur à la connexion, ce qui permet d&apos;économiser de la mémoire (mais provoque des temps de chargement plus longs).</str>
+		<str name="#SET_LAB_GENERAL">Général</str>
+		<str name="#SET_LAB_PERFORMANCE">Performances</str>
+		<str name="#SET_LAB_THEME">Thème</str>
+		<str name="#SET_LAB_BETA">Bêta</str>
+		<str name="#SET_LAB_CACHE">Cache</str>
+		<str name="#SET_LAB_GAMES">Jeux</str>
+		<str name="#SET_LAB_CHAT">Chat</str>
+		<str name="#SET_WARNING">Certains paramètres qui ont été modifiés nécessitent un redémarrage pour entrer en vigueur.</str>
+
+		<str name="#SET_CV_SILENTLAUNCH">Connexion automatique silencieuse</str>
+		<str name="#SET_CV_SILENTLAUNCH_TOOLTIP">Ne pas afficher la fenêtre principale à la connexion automatique</str>
+		<str name="#SET_CACHE_BROWSE">Sélectionnez un nouveau dossier que Desura utilisera comme cache.</str>
+
+		<str name="#SET_CV_CHAT_ENABLED">Activer le chat Desura</str>
+		<str name="#SET_CV_CHAT_ENABLED_TOOLTIP">Active le chat dans le client Desura.</str>
+		<str name="#SET_CV_CHAT_BREAKOUT">Faire du client chat une fenêtre indépendante</str>
+		<str name="#SET_CV_CHAT_BREAKOUT_TOOLTIP">Fait par défaut du client chat une fenêtre indépendante.</str>
+		<str name="#SET_CV_CHAT_SHOWCONTACTS">Afficher les contacts de chat à la connexion</str>
+		<str name="#SET_CV_CHAT_SHOWCONTACTS_TOOLTIP">À la connexion à Desura, affiche la fenêtre de contacts de chat (remarque : uniquement si le client chat est une fenêtre indépendante).</str>
+		<str name="#SET_CV_CHAT_SHOWOFFLINE">Afficher les contacts hors ligne</str>
+		<str name="#SET_CV_CHAT_SHOWOFFLINE_TOOLTIP">Affiche les contacts hors ligne par défaut.</str>
+		<str name="#SET_CV_CHAT_REMEMBERSTATUS">Mémoriser le dernier statut de chat</str>
+		<str name="#SET_CV_CHAT_REMEMBERSTATUS_TOOLTIP">Configure toujours votre statut actuel sur votre statut à votre dernière connexion.</str>
+
+		<str name="#SET_CIP_UPDATE">Actualisation de la liste des jeux</str>
+		<str name="#SET_CIP_BUT_BROWSE">Parcourir</str>
+		<str name="#SET_CIP_BUT_REFRESH">Actualiser les jeux</str>
+		<str name="#SET_CIP_BUT_DELETE">Supprimer</str>
+		<str name="#SET_CIP_BUT_ACTIVATE">Activer</str>
+		<str name="#SET_CIP_ERR_GAME">Veuillez saisir un chemin valide pour chaque jeu afin d&apos;enregistrer vos modifications.</str>
+		<str name="#SET_CIP_ERR_CACHE">Veuillez saisir un chemin de cache valide afin d&apos;enregistrer vos modifications.</str>
+		<str name="#SET_CIP_SUCCESS">Vos paramètres ont été mis à jour.</str>
+		<str name="#SET_CIP_SUCCESS_GAMES">Vos paramètres ont été mis à jour. Comme vous avez mis votre liste de jeux à jour, vous devez exécuter l&apos;{1}assistant d&apos;installation{0} afin de vérifier les chemins que vous avez saisis pour que ces jeux soient affichés dans votre {2}liste de jeux{0}.</str>
+		<str name="#SET_CIP_CDKEY">Veuillez saisir une clé de CD ou un code cadeau valide.</str>
+		<str name="#SET_CIP_CDKEY_VALIDATING">Validation de la clé...</str>
+		<str name="#SET_CIP_CDKEY_ERR">Une erreur est survenue lors de l&apos;activation de votre clé. Veuillez réessayer dans un petit moment.</str>
+		<str name="#SET_CIP_INFO">Si vous avez acheté un jeu au détail ou {1}reçu un cadeau{0}, pour l&apos;enregistrer auprès de Desura, saisissez sa clé de CD/DVD :</str><!-- {0} = </a> {1} = <a href="..."> -->
+		<str name="#SET_CIP_CDKEY">Clé de CD/Cadeau</str>
+		<str name="#SET_CIP_CDKEY_INFO">Les clés de produits, les clés de CD et les codes cadeaux ressemblent généralement à ceci :{0}{0}AAAAA-BBBBB-CCCCC-DDDDD-EEEEE{0}0123456789ABCDEFGHIJKLMNOPQRSTUV{0}00000 11111111</str><!-- {0} = <br /> -->
+		<str name="#SET_CIP_INFO_ADD">Si vous avez déjà des jeux sur votre ordinateur que vous souhaitez que Desura trouve et répertorie, vous pouvez exécuter l&apos;assistant de {1}recherche des jeux installés{0} qui les ajoutera automatiquement à votre compte. Si Desura ne trouve pas un jeu qui est installé sur votre ordinateur, vous pouvez manuellement spécifier le dossier dans lequel vous l&apos;avez installé ci-dessous :</str><!-- {0} = </a> {1} = <a href="..."> -->
+		<str name="#SET_CIP_MANUAL">Ajouter un jeu manuellement</str>
+
+		<str name="#SET_CIP_LINK">Vous pouvez ajouter des raccourcis pour d&apos;autres jeux et applications se trouvant sur votre système en utilisant le formulaire ci-dessous. Vous pouvez ajouter des arguments de lancement par le biais des propriétés dans le menu de clic droit et supprimer le jeu ou l&apos;application en sélectionnant Désinstaller dans ce menu. Avertissement : cette fonctionnalité est en version bêta. Vous risquez de rencontrer des bugs !</str>
+		<str name="#SET_CIP_LINK_NAME">Nom du lien :</str>
+		<str name="#SET_CIP_LINK_EXE">Fichier exe du lien :</str>
+			
+	</strings>
+</lang>
