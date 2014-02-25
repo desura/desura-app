@@ -28,12 +28,16 @@ $/LicenseInfo$
 #define CEF_IGNORE_FUNCTIONS 1
 #include "cef_desura_includes/ChromiumBrowserI.h"
 
+#include "gcWCUtil_Legacy.h"
 #include "mcfcore/UserCookies.h"
 #include "MainApp.h"
 
 #include "SharedObjectLoader.h"
 #include "gcSchemeBase.h"
 #include "gcJSBase.h"
+
+#include "webcore/WebCoreI.h"
+
 
 #ifdef NIX
 #include "managers/CVar.h"
@@ -45,22 +49,10 @@ $/LicenseInfo$
 void RegisterJSBindings();
 void RegisterSchemes();
 
-typedef void(*CEF_SetApiVersionFn)(int);
+typedef gcString (*UserAgentFN)();
+typedef ChromiumDLL::ChromiumControllerI* (*CEF_InitFn)(bool, const char*, const char*, const char*);
+CEF_InitFn CEF_Init = nullptr;
 
-typedef bool (*CEF_InitFn)(bool, const char*, const char*, const char*);
-typedef void (*CEF_StopFn)();
-
-typedef bool (*CEF_RegisterJSExtenderFn)(ChromiumDLL::JavaScriptExtenderI*);
-typedef bool (*CEF_RegisterSchemeExtenderFn)(ChromiumDLL::SchemeExtenderI*);
-
-typedef void (*CEF_DeleteCookieFn)(const char*, const char*);
-typedef ChromiumDLL::CookieI* (*CEF_CreateCookieFn)();
-typedef void (*CEF_SetCookieFn)(const char* ulr, ChromiumDLL::CookieI*);
-typedef ChromiumDLL::ChromiumBrowserI* (*CEF_NewChromiumBrowserFn)(int*, const char *,  const char*);
-
-typedef void (*CEF_DoWorkFn)();
-
-typedef void (*CEF_PostCallbackFn)(ChromiumDLL::CallbackI*);
 
 #ifdef NIX
 guint m_timeoutSource = 0;
@@ -68,32 +60,21 @@ guint m_timeoutSource = 0;
 
 bool g_bLoaded = false;
 SharedObjectLoader g_CEFDll;
-
-CEF_SetApiVersionFn CEF_SetApiVersion = nullptr;
-CEF_InitFn CEF_Init = nullptr;
-CEF_StopFn CEF_Stop = nullptr;
-CEF_RegisterJSExtenderFn CEF_RegisterJSExtender = nullptr;
-CEF_RegisterSchemeExtenderFn CEF_RegisterSchemeExtender = nullptr;
-CEF_DeleteCookieFn CEF_DeleteCookie = nullptr;
-CEF_CreateCookieFn CEF_CreateCookie = nullptr;
-CEF_SetCookieFn CEF_SetCookie = nullptr;
-CEF_NewChromiumBrowserFn CEF_NewChromiumBrowser = nullptr;
-CEF_DoWorkFn CEF_DoWork = nullptr;
-CEF_PostCallbackFn CEF_PostCallback = nullptr;
+ChromiumDLL::ChromiumControllerI* g_pChromiumController = nullptr;
 
 
 #ifdef NIX
 gboolean onTimeout(gpointer data)
 {
-	if (!g_bLoaded || !CEF_DoWork)
+	if (!g_bLoaded || !g_pChromiumController)
 	{
 		m_timeoutSource = 0;
 		return false;
 	}
 	
-	CEF_DoWork();
+	g_pChromiumController->DoMsgLoop();
 	
-	//if we dont do this here we could end up starving the pending que due to CEF_DoWork taking to long.
+	//if we dont do this here we could end up starving the pending que due to g_pChromiumController->DoMsgLoop() taking to long.
 	if (wxTheApp)
 		wxTheApp->ProcessPendingEvents();
 	
@@ -123,23 +104,6 @@ bool RestartTimerCB(const CVar* hook, const char* newval)
 CVar gc_cef_timeout("gc_cef_timeout", "75", 0, &RestartTimerCB);
 #endif
 
-void UnloadCEFDll()
-{
-	CEF_SetApiVersion = nullptr;
-	CEF_Init = nullptr;
-	CEF_Stop = nullptr;
-	CEF_RegisterJSExtender = nullptr;
-	CEF_RegisterSchemeExtender = nullptr;
-	CEF_DeleteCookie = nullptr;
-	CEF_CreateCookie = nullptr;
-	CEF_SetCookie = nullptr;
-	CEF_NewChromiumBrowser = nullptr;
-	CEF_DoWork = nullptr;
-	CEF_PostCallback = nullptr;
-
-	g_CEFDll.unload();
-}
-
 #ifdef WIN32
 const char* szCefDLL = "cef_desura.dll";
 #else
@@ -154,41 +118,9 @@ bool LoadCEFDll()
 		return false;
 	}
 
-	CEF_SetApiVersion = g_CEFDll.getFunction<CEF_SetApiVersionFn>("CEF_SetApiVersion", false);
+	CEF_Init = g_CEFDll.getFunction<CEF_InitFn>("CEF_InitEx");
 
-	if (CEF_SetApiVersion)
-		CEF_SetApiVersion(2);
-
-	CEF_Init = g_CEFDll.getFunction<CEF_InitFn>("CEF_Init");
-	CEF_Stop = g_CEFDll.getFunction<CEF_StopFn>("CEF_Stop");
-	CEF_RegisterJSExtender = g_CEFDll.getFunction<CEF_RegisterJSExtenderFn>("CEF_RegisterJSExtender");
-	CEF_RegisterSchemeExtender = g_CEFDll.getFunction<CEF_RegisterSchemeExtenderFn>("CEF_RegisterSchemeExtender");
-	CEF_DeleteCookie = g_CEFDll.getFunction<CEF_DeleteCookieFn>("CEF_DeleteCookie");
-	CEF_CreateCookie = g_CEFDll.getFunction<CEF_CreateCookieFn>("CEF_CreateCookie");
-	CEF_SetCookie = g_CEFDll.getFunction<CEF_SetCookieFn>("CEF_SetCookie");
-	CEF_NewChromiumBrowser = g_CEFDll.getFunction<CEF_NewChromiumBrowserFn>("CEF_NewChromiumBrowser");
-	CEF_DoWork = g_CEFDll.getFunction<CEF_DoWorkFn>("CEF_DoMsgLoop");
-	CEF_PostCallback = g_CEFDll.getFunction<CEF_PostCallbackFn>("CEF_PostCallback");
-
-	if (g_CEFDll.hasFailed())
-	{
-		Warning("Failed to find cef library exports\n");
-		UnloadCEFDll();
-		return false;
-	}
-
-	return true;
-}
-
-bool InitWebControl()
-{
-	if (g_bLoaded)
-		return true;
-
-	if (!LoadCEFDll())
-		return false;
-
-	UserAgentFN userAgent = (UserAgentFN)WebCore::FactoryBuilder(WEBCORE_USERAGENT);
+	UserAgentFN userAgent = (UserAgentFN) WebCore::FactoryBuilder(WEBCORE_USERAGENT);
 	gcString ua;
 
 	//stupid hack cause crappy paypal does useragent sniffing. FFFFFFFFFFFFUUUUUUUUUUUUUUUUUUUUUUU
@@ -215,11 +147,31 @@ bool InitWebControl()
 	bool multiThreaded = false;
 #endif
 
-	if (!CEF_Init(multiThreaded, gcString(path.getFolderPath()).c_str(), logPath.c_str(), ua.c_str()))
+	if (CEF_Init)
+		g_pChromiumController = CEF_Init(multiThreaded, gcString(path.getFolderPath()).c_str(), logPath.c_str(), ua.c_str());
+	else
+		g_pChromiumController = CEF_Init_Legacy(g_CEFDll, multiThreaded, gcString(path.getFolderPath()).c_str(), logPath.c_str(), ua.c_str());
+
+	if (!g_pChromiumController)
 	{
 		Warning("Failed to init cef.\n");
 		return false;
 	}
+
+	g_pChromiumController->SetApiVersion(2);
+	return true;
+}
+
+bool InitWebControl()
+{
+	if (g_bLoaded)
+		return true;
+
+	if (!LoadCEFDll())
+		return false;
+
+	if (!g_pChromiumController)
+		return false;
 
 	RegisterJSBindings();
 	RegisterSchemes();
@@ -244,10 +196,11 @@ void ShutdownWebControl()
 	}
 #endif
 
-	if (CEF_Stop)
-		CEF_Stop();
+	if (g_pChromiumController)
+		g_pChromiumController->Stop();
 
-	UnloadCEFDll();
+	g_pChromiumController = nullptr;
+	g_CEFDll.unload();
 }
 
 static std::mutex g_RootUrlMutex;
@@ -255,7 +208,7 @@ static gcString g_strRootUrl = "desura.com";
 
 void DeleteCookies()
 {
-	if (!CEF_DeleteCookie)
+	if (!g_pChromiumController)
 		return;
 
 	gcString urlRoot;
@@ -265,8 +218,8 @@ void DeleteCookies()
 		urlRoot = g_strRootUrl;
 	}
 
-	CEF_DeleteCookie(urlRoot.c_str(), "freeman");
-	CEF_DeleteCookie(urlRoot.c_str(), "masterchief");
+	g_pChromiumController->DeleteCookie(urlRoot.c_str(), "freeman");
+	g_pChromiumController->DeleteCookie(urlRoot.c_str(), "masterchief");
 }
 
 void SetCookies()
@@ -274,19 +227,7 @@ void SetCookies()
 	if (!g_bLoaded && !InitWebControl() && !GetWebCore())
 		return;
 
-	if (!CEF_CreateCookie)
-	{
-		Warning("CEF_CreateCookie is nullptr. Failed to set cookies. :(\n");
-		return;
-	}
-
-	if (!CEF_SetCookie)
-	{
-		Warning("CEF_SetCookie is nullptr. Failed to set cookies. :(\n");
-		return;
-	}
-
-	ChromiumDLL::CookieI* cookie = CEF_CreateCookie();
+	ChromiumDLL::CookieI* cookie = g_pChromiumController->CreateCookie();
 
 	if (!cookie)
 	{
@@ -327,12 +268,12 @@ void SetCookies()
 
 	gcString strRoot = GetWebCore()->getUrl(WebCore::Root);
 
-	CEF_SetCookie(strRoot.c_str(), cookie);
+	g_pChromiumController->SetCookie(strRoot.c_str(), cookie);
 
 	cookie->SetName("masterchief");
 	cookie->SetData(mD.c_str());
 
-	CEF_SetCookie(strRoot.c_str(), cookie);
+	g_pChromiumController->SetCookie(strRoot.c_str(), cookie);
 
 	cookie->destroy();
 }
@@ -347,7 +288,7 @@ ChromiumDLL::ChromiumBrowserI* NewChromiumBrowser(int* hwnd, const char* name, c
 	if (!g_bLoaded && !InitWebControl())
 		return nullptr;
 
-	return CEF_NewChromiumBrowser((int*)hwnd, name, loadUrl);
+	return g_pChromiumController->NewChromiumBrowser((int*)hwnd, name, loadUrl);
 }
 
 
@@ -364,11 +305,11 @@ void RegisterJSExtender( ChromiumDLL::JavaScriptExtenderI* scheme )
 
 void RegisterJSBindings()
 {
-	if (!g_vJSExtenderList)
+	if (!g_vJSExtenderList || !g_pChromiumController)
 		return;
 
 	for (size_t x=0; x<g_vJSExtenderList->size(); x++)
-		CEF_RegisterJSExtender((*g_vJSExtenderList)[x]);
+		g_pChromiumController->RegisterJSExtender((*g_vJSExtenderList)[x]);
 	
 	g_vJSExtenderList->clear();
 	safe_delete(g_vJSExtenderList);
@@ -388,11 +329,11 @@ void RegisterScheme( ChromiumDLL::SchemeExtenderI* scheme )
 
 void RegisterSchemes()
 {
-	if (!g_vSchemeList)
+	if (!g_vSchemeList || !g_pChromiumController)
 		return;
 
 	for (size_t x=0; x<g_vSchemeList->size(); x++)
-		CEF_RegisterSchemeExtender((*g_vSchemeList)[x]);
+		g_pChromiumController->RegisterSchemeExtender((*g_vSchemeList)[x]);
 	
 	g_vSchemeList->clear();
 	safe_delete(g_vSchemeList);
@@ -400,6 +341,6 @@ void RegisterSchemes()
 
 void BrowserUICallback(ChromiumDLL::CallbackI* callback)
 {
-	if (CEF_PostCallback)
-		CEF_PostCallback(callback);
+	if (g_pChromiumController)
+		g_pChromiumController->PostCallback(callback);
 }
