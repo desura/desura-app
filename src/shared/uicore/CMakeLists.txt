@@ -118,7 +118,8 @@ file(GLOB Sources       code/AboutForm.cpp
                         code/UsernameBox.cpp
                         code/*.h
 						code/AltLoginDialog.cpp
-						code/LanguageTestDialog.cpp)
+						code/LanguageTestDialog.cpp
+						code/gcWCUtil_Legacy.cpp)
 
 if(WIN32)
   file(GLOB PlattformSources
