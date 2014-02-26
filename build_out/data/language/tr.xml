@@ -1,0 +1,670 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<lang name="Turkish">
+	<author>
+		<username>Desura</username>
+		<profile>http://www.desura.com</profile>
+	</author>
+	<linux>
+		<str name="#MW_PROMPT">Bu sihirbaz, bu bilgisayara yüklenmiş olan ve Desura tarafından desteklenen oyunları ve modları bulacaktır. Lütfen Dikkat Ediniz: Bu işlem, bulunan tüm öğeleri Desura&apos;daki en son sürüme güncelleyecektir.</str>
+		<str name="#MW_FINISH">Sihirbazın işlemi artık tamamlanmıştır; bilgisayarınızda bulunan ve Desura tarafından desteklenen tüm oyunlar ve modlar hesabınıza eklenmiştir. &#xA;&#xA;Eğer Desura PC&apos;nize yüklenmiş olan bir oyunu bulamadıysa, aşağıdaki &quot;Özel Yükleme&quot; düğmesine tıklayarak bunu manuel olarak ekleyebilirsiniz.</str>
+
+		<str name="#IF_WINDOWS_LAUNCH_WARNING">UYARI: Bir Windows programını başlatmaya kalkışıyorsunuz. Bu işlemin gerçekleşebilmesi için sisteminizin formatı tanıması ve uygun araçları başlatması gerekmektedir (örn: WINE). Eğer sisteminiz bunu yapmazsa, uygulama/oyun doğru başlamayabilir veya hiç başlamayabilir.&#xA;&#xA;Bu uyarı Ayarlar&apos;da devre dışı bırakılabilir.</str>
+		<str name="#IF_SHOWFILES">Dosyaları Göster</str>
+		<str name="#MF_ERROR_NO32LIBS">Başlatmak istediğiniz öğe 32 bit, ancak 32 bit kütüphaneler sizde yüklü görünmüyor.&#xA;&#xA;Daha fazla bilgi edinmek için lütfen http://www.desura.com/groups/desura/linux adresine bakın.</str>
+		<str name="#MF_ERROR_NOBITTEST">Çalıştırdığınız Desura sürümü 32 bit oyunları desteklemez.</str>
+
+		<str name="#PLAY_EMPTY">Hesabınızda bir Linux {1}oyunu{0} yok.</str><!-- {0} = </a> {1}, {2} and {3} = <a href="..."> -->
+
+		<str name="#SET_CV_LIN_DIS_WIN_WRN">Windows yürütülebilir dosya uyarısını devre dışı bırak.</str>
+		<str name="#SET_CV_LIN_DIS_WIN_WRN_TOOLTIP">Windows yürütülebilir dosyaları çalıştırıldığında sizi uyarmaz.</str>
+		<str name="#SET_CV_ALLOW_WM_POS">Pencere yöneticisi konumlandırmasını kullan.</str>
+		<str name="#SET_CV_ALLOW_WM_POS_TOOLTIP">Ana form için konum ve büyüklük bilgilerinin Desura tarafından kaydedilmesi ve geri getirilmesi yerine, ana formun sistem pencere yöneticisi tarafından konumlandırmasına imkan tanır.</str>
+
+		<str name="#SET_CV_GLOBALBIN">Küresel oyun başlatma ikili dosyası</str>
+		<str name="#SET_CV_GLOBALBIN_TOOLTIP">Tüm oyunları bu ikili dosya ile başlat</str>
+		<str name="#SET_CV_GLOBALARGS">Küresel oyun değişkenleri</str>
+		<str name="#SET_CV_GLOBALARGS_TOOLTIP">Başlatırken bu değişkenler tüm oyunlara eklensin</str>
+
+		<str name="#SET_CV_DISABLE_FORCESHORTCUT">Menüde zorlama kısayolunu devre dışı bırak</str>
+		<str name="#SET_CV_DISABLE_FORCESHORTCUT_TOOLTIP">Desura&apos;nın ana menüde güncellemeye zorlama kısayolu oluşturmasını engeller</str>
+
+		<str name="#IF_GERROR_TOOL">Desura {1} için gereken {0} aracını bulamıyor.</str>
+		<str name="#IF_GERROR_TOOL_Q">Yüklemeye devam etmek istiyor musunuz?</str>
+		<str name="#HELP">Yardım</str>
+	</linux>
+	<windows>
+		<str name="#IF_SHOWFILES">Dosyaları Gezgin&apos;de Göster</str>
+		<str name="#PLAY_EMPTY">Hesabınızda Windows {1}oyunları{0} veya {2}modları{0} yok. {3}Yüklü oyunları bulma sihirbazını{0} çalıştırmalısınız, bu sihirbaz PC&apos;nizde Desura&apos;nın desteklediği oyunları arar.</str><!-- {0} = </a> {1}, {2} and {3} = <a href="..."> -->
+
+		<str name="#SET_CV_DISABLE_FS_PERMS">Tüm yükleme klasörlerine normal kullanıcıların yazmasına izin ver</str>
+		<str name="#SET_CV_DISABLE_FS_PERMS_TOOLTIP">Oyun geliştiricilerin Windows standartlarını takip edememesi nedeniyle birçok oyun yükleme klasörüne yazma gerçekleştirir; yazamazlarsa da kilitlenirler. Uyarı: Bunu devre dışı bırakırsanız bazı oyunlar çalışmayabilir.</str>
+
+		<str name="#IF_LOWSPACE_SYS">Sistem sabit diskinde ({0}:\\) boş alan miktarı azalmış durumda ve Desura performans sorunları ile başlatılacak. &lt;a href=&quot;desura://settings/cache&quot;&gt;Boş alan sağlamak için Desura önbellek klasörünüzü yeni bir diske taşıyabilirsiniz.&lt;/a&gt;</str>
+		<str name="#IF_LOWSPACE_CACHE">Desura önbelleğinin kaydedildiği sabit diskte ({0}:\\) boş alan azalmış durumda. Desura&apos;nın doğru bir şekilde çalışması için, boş alan sağlamanız tavsiye edilir.</str>
+
+		<str name="#MW_PROMPT">Bu sihirbaz, bu bilgisayara yüklenmiş olan ve Desura tarafından desteklenen oyunları bulacaktır. Lütfen Dikkat Ediniz: Bu işlem, bulunan tüm öğeleri Desura&apos;daki en son sürüme güncelleyecektir.</str>
+		<str name="#MW_FINISH">Sihirbazın işlemi artık tamamlanmıştır; bilgisayarınızda bulunan ve Desura tarafından desteklenen tüm oyunlar hesabınıza eklenmiştir. &#xA;&#xA;Eğer Desura PC&apos;nize yüklenmiş olan bir oyunu bulamadıysa, aşağıdaki &quot;Özel Yükleme&quot; düğmesine tıklayarak bunu manuel olarak ekleyebilirsiniz.</str>
+	</windows>
+	<strings>
+		<!-- Generic Buttons -->
+		<str name="#LOGIN">Oturum aç</str>
+		<str name="#CANCEL">İptal</str>
+		<str name="#OK">Tamam</str>
+		<str name="#SUBMIT">Gönder</str>
+		<str name="#START">Başla</str>
+		<str name="#PLAY">Oyna</str>
+		<str name="#CLOSE">Kapat</str>
+		<str name="#LAUNCH">Başlat</str>
+		<str name="#AGREE">Kabul Ediyorum</str>
+		<str name="#BACK">Geri</str>
+		<str name="#SEND">Gönder</str>		
+		<str name="#UNINSTALL">Kaldır</str>
+		<str name="#VERIFY">Doğrula</str>
+		<str name="#HIDE">Gizle</str>
+		<str name="#PAUSE">Duraklat</str>
+		<str name="#RESUME">Devam et</str>
+		<str name="#TRYAGAIN">Tekrar dene</str>
+		<str name="#BROWSE">Gözat</str>
+		<str name="#UPLOAD">Karşıya Yükle</str>
+		<str name="#YES">Evet</str>
+		<str name="#NO">Hayır</str>
+		<str name="#SAVE">Kaydet</str>
+		<str name="#ADD">Ekle</str>
+		<str name="#LINK">Bağlantı</str>
+		<str name="#APPLY">Uygula</str>
+		<str name="#CONTINUE">Devam Et</str>
+		<str name="#FIND">Bul</str>
+		<str name="#MOREINFO">Ek Bilgi</str>
+		<str name="#PURCHASE">Sepete Ekle</str>
+		<str name="#UPDATE">Güncelleştir</str>
+		
+		<!-- Misc Labels -->
+		<str name="#PROCESSING">İşlem durumu:</str>
+		<str name="#INITIALIZING">Başlatılıyor...</str>
+		<str name="#PROGRESS_INFO">{0} / {1}</str><!-- {0} is completed, {1} is total -->
+		<str name="#COMPLTETED">Tamamlandı</str>
+		<str name="#FINALIZING">Sonlandırılıyor</str>
+		<str name="#PAUSED">Duraklatıldı</str>
+		<str name="#CONFIRM">Onayla ...</str>
+		<str name="#CONFIRM_PROMPT">Eğer bu formu kapatırsanız, mevcut işlem durdurulacak. Bunu istediğinize emin misiniz?</str>	
+		<str name="#INSTALL">Yükle</str>
+		<str name="#TBA">Duyurulacak</str><!-- to be advertised -->
+		
+		<!-- Preorder String status -->
+		<str name="#IS_PREORDER_YEAR">{0} yılında çıkacak</str>
+		<str name="#IS_PREORDER_QUATER">{1} yılının {0}. çeyreğinde çıkacak</str><!-- {0} is quater, {1} is year -->
+		<str name="#IS_PREORDER_MONTH">{1} yılının {0}. ayında çıkacak</str><!-- {0} is month, {1} is year -->
+		
+		<str name="#IS_PREORDER_DAYS">{0} gün içinde çıkacak</str>
+		<str name="#IS_PREORDER_HOURS">{0} saat içinde çıkacak</str>
+		<str name="#IS_PREORDER_MINS">{0} dakika içinde çıkacak</str>
+		
+		<str name="#IS_PREORDER_DAY">Bir gün içinde çıkacak</str>
+		<str name="#IS_PREORDER_HOUR">Bir saat içinde çıkacak</str>
+		<str name="#IS_PREORDER_MIN">Bir dakika içinde çıkacak</str>	
+		
+		<!-- Update Item -->
+		<str name="#UI_LABEL">Bir güncelleştirme mevcut. Şimdi güncelleştirmek istiyor musunuz?</str>
+		<str name="#UI_NO_REMINDER">Bir dahaki başlatmada bunu hatırlatma</str>
+		<str name="#UI_TITLE">{0} için Güncelleştirme Mevcut</str>		
+		
+		<!-- About Form -->
+		<str name="#AB_ABOUTINFO">Desura, geliştiriciler tarafından sunulan en iyi oyunları, modları ve indirilebilir içeriği satın almaya ve oynamaya hazır bir şekilde parmaklarınızın ucuna kadar getiren, oyunculara özel, topluluk odaklı dijital bir dağıtım servisidir.</str>
+		<str name="#AB_CREDITS">Katkıda Bulunanlar</str>
+		<str name="#AB_ABOUT">Desura Hakkında</str>
+		
+		<!-- Login Form -->
+		<str name="#LF_TITLE">Desura Oturumu Aç</str>
+		<str name="#LF_USER">Kullanıcı adı veya E-posta</str>
+		<str name="#LF_PASS">Parola</str>
+		<str name="#LF_AUTO">Otomatik</str>
+		<str name="#LF_AUTO_TOOLTIP">Bir daha Desura başlatıldığında Desura&apos;ya otomatik giriş yap</str>
+		<str name="#LF_LOSTPASS">Parolamı Unuttum</str>
+		<str name="#LF_NEWACCOUNT">Yeni Hesap...</str>
+		<str name="#LF_OFFLINE">Çevrimdışı Modu</str>
+		<str name="#LF_ERRTITLE">Desura Oturumu Açma Hatası</str>
+		<str name="#LF_ERROR">Oturum açılamadı</str>
+		<str name="#LF_VALDERROR">Oturum açma sırasında bir hata oluştu:</str>
+		<str name="#LF_ERRBLANKNAME">Kullanıcı Adı alanını boş bırakamazsınız</str>
+		<str name="#LF_ERRPASSWORD">Parola alanını boş bırakamazsınız</str>
+		<str name="#LF_ERRPLEASE">Lütfen bu öğeleri düzeltin ve tekrar giriş yapmayı deneyin.</str>
+		<str name="#ALTLOGIN_TITLE">Alternatif Desura Oturumu Açma: {0}</str>
+		
+		<!-- Console Form -->
+		<str name="#CS_TITLE">Desura Konsolu</str>
+		
+		<!-- Change Log Form -->
+		<str name="#CL_TITLE">Desura Değişim Günlüğü</str>
+		
+		<!-- Launch item -->
+		<str name="#LI_LABEL">{0} {1}, zaten yüklü. Şimdi başlatmak istiyor musunuz?</str><!-- {0} type [game|mod], {1} name -->
+		
+		<!-- Html Tab Page -->
+		<str name="#DL_LOADING">Yükleniyor...</str>
+		
+		<!-- Need Game Disc -->
+		<str name="#GD_TITLE">{0}: Oyun Diski Gerekiyor</str>
+		<str name="#GD_INFO">{0} oynayabilmeniz için {1} diskinin bilgisayarınıza takılı olması gerekiyor. &#xA;&#xA;Lütfen devam etmeden önce diskin takılı olduğundan emin olun.</str><!-- {0} lanuch item, {1} required cd item -->
+		<str name="#GD_REMINDER">Bir dahaki sefere bunu hatırlatma</str>
+		
+		<!-- Main Menu -->
+		<str name="#MENU_ONLINE">Çevrimiçine Geç</str>
+		<str name="#MENU_EXIT">Çıkış</str>
+		<str name="#MENU_EXIT_TOOLTIP">Desura&apos;dan Çık</str>
+		<str name="#MENU_UNITTEST">Unit Tests</str>
+		<str name="#MENU_TOOLS">Araçlar</str>
+		<str name="#MENU_HISTORY">Geçmiş</str>
+		<str name="#MENU_SETTINGS">Ayarlar</str>
+		<str name="#MENU_SETTINGS_TOOLTIP">Ayarlar formunu göster</str>
+		<str name="#MENU_CONSOLE">Konsol</str>
+		<str name="#MENU_HELP">Yardım</str>
+		<str name="#MENU_ABOUT">Hakkında</str>
+		<str name="#MENU_LOGOUT">Çıkış</str>
+		<str name="#MENU_LOGOUT_TOOLTIP">Desura&apos;dan Çık</str>
+		<str name="#MENU_OFFLINE">Çevrimdışı Çalış</str>
+		<str name="#MENU_OFFLINE_TOOLTIP">Çevrimdışı moda geç (İnternet erişimi olmadan)</str>
+		<str name="#MENU_CHANGELOG">Uygulama Değişim Günlüğü</str>
+		<str name="#MENU_CHANGELOG_TOOLTIP">Desura değişim günlüğünü görüntüle</str>
+		<str name="#MENU_CART">Alışveriş Sepeti</str>
+		<str name="#MENU_CART_TOOLTIP">Alışveriş sepetinizdeki öğelere göz atın</str>
+		<str name="#MENU_PURCHASE">Satın Alma Geçmişi</str>
+		<str name="#MENU_PURCHASE_TOOLTIP">Satın almış olduğunuz öğelere göz atın</str>
+		<str name="#MENU_GIFTS">Hediye Geçmişi</str>
+		<str name="#MENU_GIFTS_TOOLTIP">Size hediye edilmiş olan öğelere göz atın</str>
+		<str name="#MENU_LISTKEYS">Oyunları ve CD Anahtarlarını Listele</str>
+		<str name="#MENU_LISTKEYS_TOOLTIP">Oyunlarınızı ve bunların CD anahtarlarını içeren bir web sayfası görüntüler</str>
+		<str name="#MENU_INSTALLPATH">Yüklenen Oyunları Ekle</str>
+		<str name="#MENU_INSTALLPATH_TOOLTIP">Oyunlar için özel yükleme yolları ayarla</str>
+		<str name="#MENU_WIZZARD">Yüklenen Oyunları Bul</str>
+		<str name="#MENU_WIZZARD_TOOLTIP">Bu bilgisayarda yüklü olan oyunları ve modları bulma Sihirbazı</str>
+		<str name="#MENU_ACTIVATEGAME">Oyun CD&apos;si anahtarını veya Hediyeyi etkinleştir</str>
+		<str name="#MENU_ACTIVATEGAME_TOOLTIP">Hesabınızdaki bir oyunu etkinleştirmek için bir CD anahtarı veya hediye kodu girin</str>
+		<str name="#MENU_VERSION">Sürüm</str>
+		
+		<!-- Games Wizard Note: Has os translations as well -->
+		<str name="#MW_TITLE">Yüklenen Oyunları Bul</str>
+		<str name="#MW_ERRTITLE">Yüklenen Oyunları Bulma Hatası</str>
+		<str name="#MW_ERROR">Sihirbaz işlemi sırasında bir hata oluştu ve işlem durduruldu.</str>
+		<str name="#MW_CUSTOM">Özel Yükleme</str>
+		<str name="#MW_ADDACCOUNT">Bulunan öğeleri hesaba ekle</str>	
+		
+		<!-- cd key form -->
+		<str name="#CDK_TITLE">{0}: CD Anahtarı</str>
+		<str name="#CDK_ERRTITLE">CD Anahtarı alınamadı</str>
+		<str name="#CDK_ERROR">Desura, CD Anahtarı konumunu bulamadı</str>
+		<str name="#CDK_PROGRESSINFO">CD Anahtarı toplanıyor ...</str>		
+		<str name="#CDK_COPYALL">Tümünü Kopyala</str>
+		<str name="#CDK_COPYPART">1. Bölümü Kopyala</str>
+		<str name="#CDK_COPYPART_X">{0} Bölümünü Kopyala</str><!-- {0} is the part number -->	
+		<str name="#CDK_INFO_STEAM">Oynayabilmeniz için {0}&apos;ın önce Steam&apos;de etkinleştirilmesi gerekiyor. Şu anahtarı Steam&apos;e girmeniz gerekecek:</str>
+		<str name="#CDK_ACTIVATE">Etkinleştir</str>
+		<str name="#CDK_INFO">Oynayabilmek için şu CD anahtarını girmeniz gerekecek:</str>
+		<str name="#CDK_LAUNCHNOW">Şimdi Başlat</str>
+	
+		<!-- Eula form -->
+		<str name="#EULA_LABEL">Oynamadan önce lisans hükümlerini ve koşullarını kabul etmeniz gerekiyor.</str>
+		<str name="#EULA_TITLE">Son Kullanıcı Lisans Anlaşması: {0}</str>
+	
+		<!-- News Form -->
+		<str name="#NF_PREV">Önceki</str>
+		<str name="#NF_NEXT">Sonraki</str>
+		<str name="#NF_TITLE">Desura Haberleri:</str>
+		<str name="#GF_TITLE">Desura Hediyeleri:</str>
+	
+		<!-- Update Form -->
+		<str name="#UF_INFO">Desura için bir güncelleştirme yayımlandı ve yüklenmeye hazır.</str>
+		<str name="#UF_TITLE">Desura Güncelleştirmesi Mevcut</str>
+		<str name="#UF_RESTART_NOW">Şimdi Yeniden Başlat</str>
+		<str name="#UF_RESTART_LATER">Daha Sonra Yeniden Başlat</str>		
+	
+		<!-- New Account -->
+		<str name="#NA_TITLE">Desura Yeni Hesap</str>	
+	
+		<!-- Password Reminder Dialog -->
+		<str name="#PR_TITLE">Desura Şifre Hatırlatıcı</str>
+		<str name="#PR_PROMPT">Lütfen kayıt olurken kullandığınız e-posta adresini girin; yeniden parola oluşturmanız için size bir e-posta gönderilecek.</str>
+		<str name="#PR_EMAIL">E-posta: </str>
+		<str name="#PR_SENT">Hatırlatma mesajı gönderildi. Bir sonraki adımla ilgili talimatlara erişmek için lütfen e-postanızın gelen kutusunu kontrol edin.</str>
+		<str name="#PR_ERRTITLE">Desura Parola Hatırlatıcı Hatası</str>
+		<str name="#PR_ERROR">Parola hatırlatıcıda bir hata oluştu.</str>
+		<str name="#PR_VALIDEMAIL">Lütfen geçerli bir e-posta adresi girin.</str>		
+	
+		<!-- Exe Select Form -->
+		<str name="#ES_TITLE">Sürüm Seçin: {0}</str><!-- {0} is item name -->
+		<str name="#ES_LABEL">Lütfen oynamak istediğiniz {0} sürümünü seçin:</str><!-- {0} is item name -->
+	
+		<!-- Uninstall Form -->
+		<str name="#UNF_REMOVEFILES">Desura Dosyalarını Kaldır</str>
+		<str name="#UNF_REMOVEFILES_TOOLTIP">Desura&apos;nın kullandığı MCF&apos;yi ve bununla ilişkili dosyaları sil</str>
+		<str name="#UNF_REMOVEACCOUNT">Listeden Kaldır</str>
+		<str name="#UNF_REMOVEACCOUNT_TOOLTIP">Bu öğeyi oyun listesinden kaldırır</str>
+		<str name="#UNF_CONFIRM">{0} öğesini bilgisayarınızdan kaldırmak istediğinizden emin misiniz? İşlem bir kez başladıktan sonra iptal edilemez.</str><!-- {0} is item name -->
+		<str name="#UNF_ERRTITLE">Kaldırma Hatası</str>
+		<str name="#UNF_ERROR">Kaldırma işlemi sırasında bir hata oluştu ve işlem durduruldu.</str>
+	
+		<!-- Item Form: Misc -->
+		<str name="#IF_TITLE">Hazırlanıyor:</str>
+		<str name="#IF_PREPARE_INFO">{1} için {0} işlemi hazırlanıyor</str> <!-- {0} is action, {1} is item short name -->
+		<str name="#IF_PREPARE_INFO_NOITEM">Hazırlanıyor...</str>	
+		<str name="#IF_BRANCHINFO">{0} öğesi yüklü değil. Lütfen oynamak istediğiniz sürümü seçin.</str>
+		<str name="#IF_BRANCHTITLE">{0} Oyna</str>
+		<str name="#IF_BROUGHT">Satın Alındı</str>
+		<str name="#IF_CONFLICT">Desura {0} öğesinin zaten yüklenmiş olduğunu algıladı. {0} öğesi için karmaşık bir yükleme işlemi gerektiğinden, içerik çakışması ile ilgili sorunlardan kaçınmak için Desura yüklemesi ile devam etmeden önce {0} öğesini el ile kaldırmanız tavsiye edilir.</str>
+		<str name="#IF_CONFLICTTITLE">Karmaşık Yükleme Çakışması</str>		
+		<str name="#IF_EXISTINGFILES">{0} öğesinin yükleme noktasında hala dosyalar mevcut. Ne yapmak istersiniz?</str>
+		<str name="#IF_FINDONCOMPUTER">Bu bilgisayardaki yüklemeyi bul</str>
+		<str name="#IF_FREE">Ücretsiz</str>
+		<str name="#IF_GERROR_BRANCH_PLATFORM_Q">Başka bir versiyon seçmek istiyor musunuz?</str>
+		<str name="#IF_INSTALL_REMOVE">Yükle ve ilgili olmayan dosyaları kaldır (tavsiye edilen)</str>
+		<str name="#IF_INSTALL_LEAVE">Yükle ve ilgili olmayan dosyaları bırak</str>
+		<str name="#IF_INSTALL_VERIFY">Yüklenen dosyaları doğrula ve eksik olanları yükle</str>
+		<str name="#IF_NOTFOUND">{0}, {1} oyununa özel bir değişikliktir. Oynayabilmek için önce oyunu yüklemelisiniz.&#xA;&#xA;Lütfen {1} için bir yükleme yöntemi seçiniz:</str>
+		<str name="#IF_NOTFOUND_GAME">{0}, {1} oyununa özel bir genişletmedir. Oynayabilmek için önce oyunu yüklemelisiniz.&#xA;&#xA;Lütfen {1} için bir yükleme yöntemi seçiniz:</str>
+		<str name="#IF_ONCOMPUTER">Bu bilgisayarda yüklü olan sürümü kullan</str>
+		<str name="#IF_PRELOADLAUNCH">{0} için {2} işlemi yapılmış ve şu anda başlatılamıyor. {1} {4} sonra, {3} tarihinde çıkacak.</str>
+		<!-- 
+			{0} Item Name
+			{1} Number of days
+			{2} if preloaded #IF_PRELOADLAUNCH_PRELOADED or if preordered #IF_PRELOADLAUNCH_PREORDERED
+			{3} date/time when item is available
+			{4} if days == 1 #IF_PRELOADLAUNCH_WORD_DAY else #IF_PRELOADLAUNCH_WORD_DAYS
+		-->
+		<str name="#IF_PRELOADLAUNCH_TITLE">{0}</str>
+		<str name="#IF_PRELOADLAUNCH_WORD_DAY">gün</str>
+		<str name="#IF_PRELOADLAUNCH_WORD_DAYS">gün</str>
+		<str name="#IF_PRELOADLAUNCH_PREORDERED">ön sipariş</str>
+		<str name="#IF_PRELOADLAUNCH_PRELOADED">ön yükleme</str>
+		<str name="#IF_PRELOADLAUNCH_INSTALLDEMO">Demo Yükle</str>
+		<str name="#IF_PRELOADLAUNCH_INSTALLOTHER">Diğer Versiyonu Yükle</str>
+		<str name="#IF_PRELOADLAUNCH_INSTALLOTHER_INFO">&#xA;&#xA;Oynanabilecek başka sürümler mevcut.</str>
+		<str name="#IF_PREORDERED_NORELEASE">Ön Sipariş yapılmış: Yayımlanmadı</str>
+		<str name="#IF_PREORDERED">Ön Sipariş yapılmış: Önyükleme Hazır</str>	
+	
+		<!-- Item Form: Uninstall -->
+		<str name="#IF_UNINSTALL">Kaldırılıyor: </str>
+		<str name="#IF_UNINSTALL_LABEL">Kaldırılıyor ...</str>
+		<str name="#IF_UNINSTALL_PATCH">Eski Dosyalar Kaldırılıyor: </str>
+		<str name="#IF_UNINSTALL_PATCH_LABEL">Eski Dosyalar Kaldırılıyor ... </str>
+		<str name="#IF_UNINSTALL_BRANCH">Eski Dosyalar Kaldırılıyor: </str>
+		<str name="#IF_UNINSTALL_BRANCH_LABEL">Eski Dosyalar Kaldırılıyor ... </str>
+		<str name="#IF_UNINSTALL_COMPLEX">Karmaşık Mod Kaldırılıyor</str>
+		<str name="#IF_UNINSTALL_COMPLEX_LABEL">Karmaşık Mod Kaldırılıyor ... </str>
+		
+		<!-- Item Form: Verify -->
+		<str name="#IF_VERIFY">Doğrulanıyor:</str>
+		<str name="#IF_VERIFYFILES">Dosyaları doğrula</str>
+		<str name="#IF_VERIFYTOOLS">Araçları yeniden yükle</str>
+		<str name="#IF_VERIFYHOOKS">Yükleme sonrası kancaları yeniden çalıştır</str>
+		<str name="#IF_VERIFYCONFIRM">{0} öğesini çalıştırmakta güçlük yaşıyorsanız, doğrulama işlemi bütün sorunları çözmeyi deneyecek.</str>
+		<str name="#IF_VERIFYLABEL">Doğrulanıyor ...</str>
+		<str name="#IF_VERROR">Yüklemeyi doğrulama işlemi sırasında bir hata oluştu ve işlem durduruldu.</str>
+		<str name="#IF_VERRTITLE">Yükleme Doğrulama Hatası</str>
+		<str name="#IF_VERIFYMCF">MCF Doğrulanıyor ...</str>
+		<str name="#IF_VERIFYINSTALL">Yükleme Doğrulanıyor ...</str>
+		<str name="#IF_VERIFYDOWNLOADF">Eksik Dosyalar İndiriliyor ...</str>
+		<str name="#IF_VERIFYINSTALLF">Eksik Dosyalar Yükleniyor ...</str>
+		<str name="#IF_VERIFYBRANCH">Versiyon değiştiriliyor ...</str>
+		<str name="#IF_VERIFYCOMPLETE">Doğrulama Tamamlandı</str>
+	
+		<!-- Item Form: Install -->
+		<str name="#IF_PROVIDEDBY">Sağlayan:</str>
+		<str name="#IF_GATHERINFO">Bilgi Toplanıyor ...</str>
+		<str name="#IF_CHECKINGIR">Yükleme Gereksinimleri Kontrol Ediliyor ...</str>
+		<str name="#IF_GERRTITLE">Bilgi Toplama Hatası</str>	
+		<str name="#IF_GERROR">Bilgi toplama işlemi sırasında bir hata oluştu ve işlem durduruldu.</str>
+		<str name="#IF_GERROR_LABEL">Hata Oluştu. İşlem Durduruldu.</str>
+		<str name="#IF_GERROR_PLATFORM">{0} bu platformda desteklenmiyor.</str><!-- {0} item name -->
+		<str name="#IF_GERROR_BRANCH_PLATFORM">{0} için seçtiğiniz versiyon bu platformda desteklenmiyor.</str><!-- {0} item name -->
+		
+		<str name="#IF_DOWNLOAD">Karşıdan Yükleniyor:</str>
+		<str name="#IF_ETIME">Tahmini Kalan Süre:</str>
+		<str name="#IF_INITDOWNLOAD">İndirme Başlatılıyor</str>
+		<str name="#IF_DLERROR">MCF indirme işlemi sırasında bir hata oluştu ve işlem durduruldu.</str>
+		<str name="#IF_DLERRTITLE">MCF İndirme Hatası</str>	
+	
+		<str name="#IF_UPDATE">Güncelleştirme:</str>
+		<str name="#IF_INSTALL">Yükleniyor:</str>
+		<str name="#IF_INITINSTALL">Yükleme Başlatılıyor</str>
+		<str name="#IF_COMPLETEPREORDER">Ön Yükleme Tamamlandı</str>
+		<str name="#IF_IERROR">MCF yükleme işlemi sırasında bir hata oluştu ve işlem durduruldu.</str>
+		<str name="#IF_IERRTITLE">MCF Yükleme Hatası</str>
+	
+		
+		<str name="#IF_DOWNLOADTOOL">Bağımlılıklar Karşıdan Yükleniyor:</str>
+		<str name="#IF_DOWNLOADTOOL_LABEL">Karşıdan Yükleniyor...</str>	
+	
+		<str name="#IF_INSTALLTOOL">Araçlar Yükleniyor:</str>
+		<str name="#IF_INTOOL_WAIT_HELPER">Yükleme Yardımcısı Bekleniyor...</str>
+		<str name="#IF_INTOOL_WAIT_OTHER">Diğer yüklemelerin tamamlanması bekleniyor...</str>
+		<str name="#IF_INTOOL_LABEL">Araç Yükleniyor: {0}</str><!-- {0}: tool name -->
+		
+		<str name="#IF_INSTALL_CHECK">Yükleme Denetimi</str>
+		<str name="#IF_CHECK_ERRTITLE">Yükleme Denetimi Hatası</str>
+		<str name="#IF_CHECK_ERROR">Yükleme denetimi işlemi sırasında bir hata oluştu ve işlem durduruldu.</str>	
+	
+		<str name="#IF_CHECK_NOTFOUND">{0} bilgisayarınızda bulunamadı. Yüklendiğinden ve en az bir kez çalıştırdığınızdan emin olun, sonra tekrar deneyin. Aksi takdirde, aşağıdaki &quot;özel yükleme&quot; düğmesine basabilir ve bize nereye yüklendiğini bildirebilirsiniz.</str><!-- {0} item name -->
+		<str name="#IF_CHECK_CIP">Özel Yükleme</str>
+		<str name="#IF_CHECK_FOUND">{0} bulundu ve şimdi devam etmeye hazır.</str><!-- {0} item name -->
+	
+		<str name="#IF_COMPLEXLABEL_INIT">{0} (Başlatılıyor)</str>
+		<str name="#IF_COMPLEXREMOVE">Eski Dosyalar Kaldırılıyor</str>
+		<str name="#IF_COMPLEXBACKUP">Oyun Dosyaları Yedekleniyor</str>
+		<str name="#IF_COMPLEXINSTALL">Dosyalar Yükleniyor</str>
+		<str name="#IF_COMPLEXLABEL">{0}...</str>
+	
+	
+		<str name="#IF_VALIDATE_ERROR">Doğrulama işlemi sırasında bir hata oluştu ve işlem durduruldu.</str>
+		<str name="#IF_VALIDATE_ERROR_TITLE">Doğrulama Hatası</str>	
+		<str name="#IF_VALIDATE_TITLE">İndirme Doğrulanıyor:</str>
+		<str name="#IF_VALIDATE_PREALLOCATING">İndirme dosyası önceden ayrılıyor...</str>
+		<str name="#IF_VALIDATE_LOCALFILES">Eski yükleme dosyaları denetleniyor...</str>
+		<str name="#IF_VALIDATE_LABEL">Aşama {2}: {0}/{1}</str><!-- {0}: done, {1}: total {2}:Stage number-->	
+		<str name="#IF_VALIDATE_EXISTINGMCF">Mevcut veri dosyası denetleniyor...</str>
+		<str name="#IF_VALIDATE_LOCALMCFS">Eski veri dosyaları denetleniyor...</str>
+		<str name="#IF_VALIDATE_DEFAULT">Var olan dosyalar doğrulanıyor...</str>
+	
+		<str name="#IF_WAIT_TITLE">Öğeler bekleniyor:</str>
+		<str name="#IF_WAIT_FORCE">Zorla</str>
+		<str name="#IF_WAIT_CANCELALL">Tümünü İptal Et</str>
+		<str name="#IF_WAIT_INFO">{0}, {1} işlemini başlatmadan önce diğer öğelerin tamamlanmasını bekliyor.</str><!-- {0}: item name, {1}: action (next two strings) -->
+		<str name="#IF_WAIT_ACTION_UNINSTALL">öğeyi kaldırma</str>
+		<str name="#IF_WAIT_ACTION_VERIFY">öğe dosyalarını doğrulama</str>
+	
+	
+		<!-- Main Form -->
+		<str name="#MF_ERRTITLE">Desura Hatası</str>
+		<str name="#MF_ERROR">Öğe başlatılamadı.</str>
+		<str name="#MF_OLNOTINSTALLED">Desura çevrimdışı modda ve bu öğe yüklü değil; bu yüzden başlatılamıyor.</str>
+		<str name="#MF_BADLINK">Bilinmeyen Desura Bağlantısı</str>
+		<str name="#MF_NAMERESOLVE">Kod numarasından öğe adı çözümlenemedi.</str>
+		<str name="#MF_IPERMISSION_ERROR">Yetkilendirilmemiş bir MCF yüklemeye izniniz yok</str>
+		<str name="#MF_PERMISSION_ERRTITLE">Yanlış İzinler Hatası</str>
+		<str name="#MF_LUANCH_ERROR_VERIFY_TOOLTIP">Yükleme dosyalarını doğrula</str>
+		<str name="#MF_UNINSTALLPROMPT">{0} şu an yükleme sürecinde. Öğeyi kaldırmak için, Desura&apos;nın yükleme işlemini durdurması gerekiyor. Kaldırma işlemine devam etmek istiyor musunuz?</str>
+		<str name="#MF_UNINSTALLTITLE">Desura {0} Kaldırma İşlemi</str>
+		<str name="#MF_OFFLINE">Çevrimdışı çalışmak istediğinize emin misiniz?</str>
+		<str name="#MF_OFFLINE_TITLE">Çevrimdışı Modu</str>
+		<str name="#MF_OFFLINEWARN">Desura çevrimdışı modda ve bağlantıları işleyemiyor. Lütfen oturum açın</str>		
+		<str name="#MF_IBADBUILD">Yönetici Öğe Yüklemesi için Geçersiz Yapı Numarası</str>
+		<str name="#MF_IBADBRANCH">Yönetici Öğe Yüklemesi için Geçersiz Versiyon Numarası</str>	
+		<str name="#MF_UPERMISSION_ERROR">Bu öğe için MCF dosyasını karşıya yükleme izniniz yok.</str>
+		<str name="#MF_UPDATELOG_ITEMERROR">Değişim günlüğü görüntülenemiyor. Öğe hesabınızda bulunamıyor.</str>
+		<str name="#MF_NONDEV_ERROR">Bu öğenin geliştiricisi olmadığınızdan, öğe için içerik oluşturmaya izniniz yok.</str>
+		
+		<!-- Create MCF -->
+		<str name="#CREATE_MCF_TITILE">MCF oluştur: {0}</str><!-- {0} is item name -->
+		<str name="#CREATE_MCF_TITILE_ADMIN">{0} için MCF oluştur [Yöneticiyi geçersiz kıl]</str><!-- {0} is item id -->
+		<str name="#CF_PROMPT">Lütfen oyununuza ait temiz bir yükleme içeren bir klasör seçin.</str>
+		<str name="#CF_DIRPROMPT">Klasörü seçin; Desura klasörün içeriğini karşıya yüklemek için bir MCF arşivine sıkıştırır.</str>
+		<str name="#CF_PROG">İlerleme Durumu: </str>
+		<str name="#CF_NOTSTARTED">Başlatılıyor...</str>	
+		<str name="#CF_ERROR">MCF oluşturma işlemi sırasında bir hata oluştu ve işlem durduruldu.</str>
+		<str name="#CF_ERRTITLE">MCF Oluşturma Hatası</str>	
+		<str name="#CF_VIEWFILES">Dosyayı Görüntüle</str>
+		<str name="#CF_COMPLETE">{0} için MCF oluşturma tamamlandı.</str><!-- note the {0} will be replaced with the item name! -->	
+	
+		<!-- Upload MCF -->
+		<str name="#UPLOAD_MCF_TITILE">MCF dosyasını karşıya yükle: {0}</str><!-- {0} is item name -->
+		<str name="#UPLOAD_MCF_TITILE_ADMIN">{0} için MCF dosyasını karşıya yükle [Yöneticiyi geçersiz kıl]</str><!-- {0} is item id -->	
+		<str name="#UDF_PROMPT">Lütfen karşıya yüklemek istediğiniz MCF dosyasını seçin.</str>
+		<str name="#UDF_ETIME">Tahmini Kalan Süre:</str>
+		<str name="#UDF_NOTSTARTED">Karşıya yükleme başlamadı.</str>
+		<str name="#UDF_DELETE">Bittiği zaman MCF&apos;yi sil</str>
+		<str name="#UDF_DELETE_TOOLTIP">Karşıya yükleme tamamlandıktan sonra dosyayı sil</str>
+		<str name="#UDF_UNKNOWNPAUSE">Duraklatıldı</str>
+		<str name="#UDF_ERRTITLE">MCF Karşıya Yükleme Hatası</str>
+		<str name="#UDF_ERROR">MCF&apos;yi karşıya yükleme işlemi sırasında bir hata oluştu ve işlem durduruldu.</str>
+		<str name="#UDF_COMPLETE">Karşıya yükleme işlemi tamamlandı.</str>
+		<str name="#UDF_ERROR_VALIDATION">Karşıya yüklenecek dosya doğrulanamadı</str>
+		<str name="#UDF_NOFILE">Karşıya yüklemeyi sürdürmek için gereken dosya bulunamadı. Lütfen bu dosyanın konumunu bulun veya yeniden başlayın.</str>
+		<str name="#UDF_RESUME_ERRTITLE">Karşıya yüklemeyi sürdürme hatası.</str>
+		<str name="#UDF_NONMATCHING_FILE">Dosya, karşıya yüklenen dosya ile eşleşmiyor. Lütfen doğru dosyayı seçin veya yeniden başlayın.</str>
+		<str name="#UDF_UPLOAD_ERRTITLE">Dosyayı Karşıya Yükleme Hatası</str>
+		<str name="#UDF_RESUMEDIR">MCF aranıyor ...</str>	
+	
+		<!-- Task Bar Menu -->
+		<str name="#TB_EXIT">Çıkış</str>
+		<str name="#TB_WINDOWS">Pencereler</str>
+		<str name="#TB_NOWINDOWS">Açık pencere yok</str>
+		<str name="#TB_NOITEMS">Hiç öğe yok</str>
+		<str name="#TB_STATUS">Durum</str>
+		<str name="#TB_CART">Sepet Öğeleri</str>
+		<str name="#TB_MESSAGE">Mesajlar</str>
+		<str name="#TB_UPDATES">Güncelleştirmeler</str>
+		<str name="#TB_GAMES">Oyunlar</str>
+		<str name="#TB_MODS">Modlar</str>
+		<str name="#TB_TITLE">Desura Oyun Güncelleştirmeleri Mevcut</str>
+		<str name="#TB_GIFTTITLE">Size yeni bir öğe hediye edildi!</str>
+		<str name="#TB_APPUPDATE_TITLE">Desura Güncelleştirmesi</str>
+		<str name="#TB_APPUPDATE">Desura Güncelleştirmesi İndiriliyor (Yapı {0})</str>
+		
+		<!-- Browser controls -->
+		<str name="#BC_HOME">Ana sayfayı aç</str>
+		<str name="#BC_STOP">Mevcut sayfayı yüklemeyi durdur</str>
+		<str name="#BC_REFRESH">Mevcut sayfayı yenile</str>
+		<str name="#BC_BACK">Son sayfaya geri dön</str>
+		<str name="#BC_FORWARD">Bir sonraki sayfaya geç</str>
+		<str name="#BC_BREAK">Varsayılan tarayıcıda yükle</str>
+
+		<!-- Main Page -->
+		<str name="#MP_OFFLINE">Çevrimdışı</str>
+		<str name="#MP_PLAY">Oyna</str>
+		<str name="#MP_GAMES">Mağaza</str>
+		<str name="#MP_MODS">Modlar</str>
+		<str name="#MP_COMMUNITY">Topluluk</str>
+		<str name="#MP_DEVELOPMENT">Geliştirme</str>
+		<str name="#MP_SUPPORT">Destek</str>
+		<str name="#MP_TITLE_OFFLINE">Desura Çevrimdışı</str>	
+		
+		<!-- Search Box -->
+		<str name="#SB_DEFAULT">Ara...</str>
+		<str name="#SB_FULL_SEARCH">Tam arama yap</str>
+		
+		<!-- Button Strip -->
+		<str name="#BS_MAIN">Ana menüyü aç</str>
+		<str name="#BS_UPDATE">Güncelleştirmeler</str>
+		<str name="#BS_PLUS">Forum İzleme</str>
+		<str name="#BS_CART">Sepet Öğeleri</str>
+		<str name="#BS_PMESSAGE">Özel Mesajlar</str>
+
+		<!-- Items menu -->
+		<str name="#DM_EXPAND">Bütün öğeleri genişlet</str>
+		<str name="#DM_CONTRACT">Bütün öğeleri daralt</str>
+		
+		<!-- Service Error -->
+		<str name="#DS_TITLE">Desura Hizmet Hatası</str>
+		<str name="#DS_ERROR">Desura Hizmeti bağlantısı beklenmedik bir şekilde kesildi.&#xA;&#xA;Yeniden bağlanmayı deniyor...</str>
+		<str name="#DS_ERRORFAILED">Desura Hizmeti bağlantısı beklenmedik bir şekilde kesildi.&#xA;&#xA;Yeniden başlama başarısız:</str>
+	
+		<!-- Steam User -->
+		<str name="#STEAM_TITLE">Steam Hesabı Seçin</str>
+		<str name="#STEAM_WARN">Bazı öğeleri yükleyebilmek için, Desura&apos;nın kullandığınız Steam hesabını bilmesi gerekiyor. &#xA;&#xA;Bunu seçenekler formuna giderek istediğiniz her zaman değiştirebilirsiniz.&#xA;&#xA;Lütfen Dikkat Ediniz: Hiçbir Desura çalışanı size Steam parolanızı sormaz. </str>
+		
+		<!-- Headers -->
+		<str name="#HEAD_NAME">Ad</str>
+		<str name="#HEAD_STATUS">Durum</str>
+		<str name="#HEAD_RATING">Seviye</str>
+		<str name="#HEAD_DEV">Geliştirici</str>
+		<str name="#HEAD_FAV">Favori</str>	
+		
+		<!-- Item status -->
+		<str name="#IS_INSTALLED">Yüklendi</str>
+		<str name="#IS_NOTINSTALLED">Yüklenmedi</str>
+		<str name="#IS_READY">Hazır</str>
+		<str name="#IS_VERIFY">Doğrulanıyor</str>
+		<str name="#IS_UPDATING">Güncelleştiriliyor</str>
+		<str name="#IS_DOWNLOADING">Karşıdan Yükleniyor</str>
+		<str name="#IS_INSTALLING">Yükleniyor</str>
+		<str name="#IS_DEVSTUB">Geliştirici Saplaması</str>
+		<str name="#IS_NOTAVAIL">Hazır Değil</str>
+		<str name="#IS_PAUSED">Duraklatıldı</str>
+		<str name="#IS_PREORDER_STATUS">Ön Sipariş Yapıldı</str>
+		<str name="#IS_PRELOADED_STATUS">Ön Yükleme Yapıldı</str>		
+		<str name="#IS_LAUNCHING">Başlatılıyor</str>
+		<str name="#IS_DOWNLOADINGTOOL">İnd. Araçları</str>
+		<str name="#IS_INSTALLINGTOOL">Yükl. Araçları</str>
+		<str name="#IS_VALIDATE">Doğrulanıyor</str>
+		<str name="#IS_WAIT">Bekliyor ({0} / {1})</str>		
+		
+		<!-- Play page Note: Has os translations -->
+		<str name="#PLAY_UPDATE_AVAILABLE">Bir güncelleştirme mevcut.</str>
+		<str name="#PLAY_UPDATE_DEMO">Demoyu tam kopyaya yükselt</str>
+		<str name="#PLAY_UPDATE_PRELOAD">Önyükleme mevcut</str>
+		<str name="#PLAY_UPDATE_POLL">Güncelleştirmeler için oyun listesi denetleniyor...</str>
+		<str name="#PLAY_INVALID_UPLOAD">Geçersiz Karşıya Yükleme</str>
+		<str name="#PLAY_INVALID_ITEM">Geçersiz Öğe</str>
+		<str name="#PLAY_EDIT_FAV">Favorileri düzenle</str>
+		<str name="#PLAY_DELAY_LOADING">Oyun listesi alınıyor...</str>
+		<str name="#PLAY_BRANCH_AUTO">Bir dahaki sefere bu sürüm otomatik kullanılsın mı?</str>
+		<str name="#PLAY_ADD_GAME">{0} {1} eklendi</str><!-- {0} = mod or game {1} = name -->
+		<str name="#PLAY_UPLOAD">Mevcut Karşıya Yüklemeler</str>
+	
+		<!-- Pop up menu -->
+		<str name="#PM_ADDACCOUNT">Hesaba Ekle</str>
+		<str name="#PM_CREATEMCF">MCF dosyası oluştur</str>
+		<str name="#PM_DELMCF">MCF dosyasını sil</str>
+		<str name="#PM_DESURAPAGE">Desura Sayfası</str>
+		<str name="#PM_DEVPROFILE">Geliştirme Profili</str>
+		<str name="#PM_INSTALLCHECK">Yükleme Denetimi</str>
+		<str name="#PM_MENU_ENTRY">Uygulama Menüsü Girdisi Oluştur</str>
+		<str name="#PM_MODLIST">Mod Listesini Görüntüle</str>
+		<str name="#PM_PROPERTIES">Özellikler</str>
+		<str name="#PM_REVERTCOMPLEX">Oyun Dosyalarına Geri Dön</str>
+		<str name="#PM_SHORTCUT">Masaüstü Kısayolu Oluştur</str>
+		<str name="#PM_SHOWMCF">MCF Dosyasını Göster</str>
+		<str name="#PM_SHOWCDKEY">CD Anahtarını Görüntüle</str>	
+		<str name="#PM_UPLOADMCF">MCF Dosyasını Karşıya Yükle</str>
+		<str name="#PM_UPDATELOG">Değişim Günlüğünü Görüntüle</str>
+		<str name="#PM_VIEWPROFILE">Profili Görüntüle</str>	
+		<str name="#PM_FAVORITE">Favorilere Ekle</str>
+		<str name="#PM_FAVORITE_REMOVE">Favoriyi Kaldır</str>		
+		<str name="#PM_REMOVEFROMACCOUNT">Listeden Kaldır</str>
+		
+		<!-- Play page buttons -->
+		<str name="#PLAY_FAVORITES">Favoriler</str>
+		<str name="#PLAY_GAMES">Oyunlar</str>
+		<str name="#PLAY_DEVELOPMENT">Geliştirme</str>
+		
+		
+		<!-- browser menu -->
+		<str name="#CHROME_UNDO">Geri Al</str>
+		<str name="#CHROME_REDO">Yinele</str>
+		<str name="#CHROME_CUT">Kes</str>
+		<str name="#CHROME_COPY">Kopyala</str>
+		<str name="#CHROME_PASTE">Yapıştır</str>
+		<str name="#CHROME_DELETE">Sil</str>
+		<str name="#CHROME_SELECTALL">Tümünü Seç</str>
+		<str name="#CHROME_BACK">Geri</str>
+		<str name="#CHROME_FORWARD">İleri</str>
+		<str name="#CHROME_RELOAD">Yeniden Yükle</str>
+		<str name="#CHROME_ZOOMIN">Yakınlaştır</str>
+		<str name="#CHROME_ZOOMOUT">Uzaklaştır</str>
+		<str name="#CHROME_ZOOMNORMAL">Normal Boyuta Getir</str>
+		<str name="#CHROME_PRINT">Yazdır</str>
+		<str name="#CHROME_VIEWSOURCE">Kaynağı Görüntüle</str>
+		<str name="#CHROME_VIEWPAGE">Sayfayı Tarayıcıda Görüntüle</str>
+		<str name="#CHROME_VIEWLINK">Bağlantıyı Tarayıcıda Görüntüle</str>
+		<str name="#CHROME_VIEWIMAGE">Görseli Tarayıcıda Görüntüle</str>
+		<str name="#CHROME_INSPECTELEMENT">Öğeyi Denetle</str>
+		<str name="#CHROME_NORMALMENU">Normal Menü</str>
+		<str name="#CHROME_COPYURL">Url&apos;yi Kopyala</str>
+		<str name="#BH_NO_LOAD">Tarayıcı kitaplığı yüklenemedi. Lütfen hata mesajı için konsolu kontrol edin.</str>
+			
+		<!-- Properties -->
+		<str name="#P_VERIFY">Dosyaları Doğrula</str>
+		<str name="#P_TITLE">Özellikler</str>
+		<str name="#P_URLABEL">Başlangıçta güncellemeler hakkında hatırlatma yapma</str>
+		<str name="#P_FIXEDLO">Sabit Başlatma Seçenekleri:</str>
+		<str name="#P_USERLO">Kullanıcı Başlatma Seçenekleri:</str>
+		<str name="#P_EXE">Exe konumu:</str>
+		<str name="#P_VERSION">Yüklü Sürüm</str>
+		<str name="#P_RETAIL">Perakende</str>			
+			
+		<!-- Custom install path -->
+		<str name="#CIP_BROWSE">Lütfen oyun için kök klasörü seçin: {0}</str>
+		<str name="#CIP_LINK_BROWSE">Lütfen bağlantı için ikili değer seçin: {0}</str>
+
+		<!-- Settings -->
+		<str name="#SET_TITLE">Desura Ayarları</str>
+		<str name="#SET_BETA_LABEL">Desura Halka Açık Beta Testine Katıl</str>
+		<str name="#SET_BETA_INFO">Desura&apos;nın yeni özellikleri ve yeni yapılandırılmaları yayınlanmadan önce, yeni sürümdeki hataları test etmek ve saptamak için halka açık bir beta sürümü yayınlanmaktadır. Bir Desura kullanıcısı olarak; hata saptamasına yardımcı olmak için halka açık betanın yeni özelliklerini test etmeye yardımcı olmayı kabul edebilir ve geri bildirimde bulunabilirsiniz. &#xA;&#xA;Eğer katılırsanız ve bir kilitlenme yaşarsanız, kilitlenme bilgi dökümünüz otomatik olarak karşıya yüklenir; karşılaştığınız hatalar için hata ayıklamada ve sorun çözmede yardımcı olmanız amacıyla sizinle iletişime geçilebilir. &#xA;&#xA;Lütfen Dikkat Ediniz: Halka açık beta sürümde veri kaybına ve uygulama kilitlenmelerine neden olabilecek hatalar bulunabilir. Halka açık beta sürümlerini sadece gelişmiş kullanıcıların test etmesi tavsiye edilir.&#xA;</str>
+		<str name="#SET_NOTE">Lütfen Dikkat Ediniz: Eğer yeni bir tema seçerseniz, bunu uygulamak için Desura&apos;yı yeniden başlatmanız gerekecektir.</str>
+		<str name="#SET_THEME_VERSION">sürüm</str>
+		<str name="#SET_THEME_AUTHOR">Hazırlayan:</str>
+		<str name="#SET_CV_THEME">Tema</str>
+		<str name="#SET_CV_BETA">Beta</str>
+		<str name="#SET_CV_LANG">Dil</str>
+		<str name="#SET_CV_LANG_TOOLTIP">Kullanmak istediğiniz dili seçin</str>
+		<str name="#SET_CV_STEAM">Steam kullanıcı adı</str>
+		<str name="#SET_CV_STEAM_TOOLTIP">Geçerli Steam kullanıcı adı (mod yüklemeleri için)</str>
+		<str name="#SET_CV_AUTOLOGIN">Başlangıçta otomatik oturum aç</str>
+		<str name="#SET_CV_AUTOLOGIN_TOOLTIP">Oturum bilgilerini kaydet ve Desura başladığında oturumu otomatik olarak aç</str>
+		<str name="#SET_CV_AUTOSTART">Desura&apos;yı otomatik olarak başlat</str>
+		<str name="#SET_CV_AUTOSTART_TOOLTIP">Desura&apos;yı Windows ile başlat</str>
+		<str name="#SET_CV_CRASH">Çökme raporlarını otomatik olarak karşıya yükle</str>
+		<str name="#SET_CV_CRASH_TOOLTIP">Desura başladığında çökme raporlarını otomatik olarak karşıya yükle (hata ayıklamak için kullanılır)</str>
+		<str name="#SET_CV_MCFCLEAN">Kullanımdan sonra MCF dosyalarını temizle</str>
+		<str name="#SET_CV_MCFCLEAN_TOOLTIP">Bu sayede gereksiz veriler MCF dosyalarından silinir ve sabit diskte yerden tasarruf edilir. Ancak bu durumda karşıdan daha fazla veri yüklenir.</str>
+		<str name="#SET_CV_USER">Oturum açıldığında kullanıcı adını kaydet</str>
+		<str name="#SET_CV_USER_TOOLTIP">Tekrar oturum açtığınızda kullanılmak üzere kullanıcı adınızı kaydeder</str>
+		<str name="#SET_CV_CONSOLE">Hata durumunda konsolu göster</str>
+		<str name="#SET_CV_CONSOLE_TOOLTIP">Hatalar meydana geldiğinde konsolu açar</str>
+		<str name="#SET_CV_DISABLE_WGE">Windows Game Explorer&apos;ı Devre Dışı Bırak</str>
+		<str name="#SET_CV_DISABLE_WGE_TOOLTIP">Desura&apos;nın Windows Game Explorer&apos;a oyun yerleştirmesini durdurur</str>
+		<str name="#SET_CV_NEWS_POPUP_ENABLE">Açılan Haberler Penceresine İzin Ver</str>
+		<str name="#SET_CV_NEWS_POPUP_ENABLE_TOOLTIP">Yakın zamanlara ait haberleri görüntüleyen açılan pencereyi etkinleştirir veya devre dışı bırakır</str>
+
+		<str name="#SET_CV_WORKER">Çalışan İş Parçacıkları</str>
+		<str name="#SET_CV_WORKER_TOOLTIP">Bu, süreçleri (bir MCF oluşturmak gibi) gerçekleştirmek için kullanılan arka plan işlerinin sayısıdır.</str>
+		<str name="#SET_CV_DESTMAIN">Kapatırken ana formu boşalt</str>
+		<str name="#SET_CV_DESTMAIN_TOOLTIP">Kapatırken ana formu boşaltarak bellek tasarrufu sağlar ama hızın azalmasına (ve geçmişin kaybolmasına) neden olur.</str>
+		<str name="#SET_CV_NOTAB">Oturum açarken tarayıcı sayfalarını otomatik olarak yükleme</str>
+		<str name="#SET_CV_NOTAB_TOOLTIP">Oturum açılırken tarayıcı sayfaları otomatik olarak yüklenmez, böylece daha az bellek harcanır (ama yüklenme süreleri uzar).</str>
+		<str name="#SET_LAB_GENERAL">Genel</str>
+		<str name="#SET_LAB_PERFORMANCE">Performans</str>
+		<str name="#SET_LAB_THEME">Tema</str>
+		<str name="#SET_LAB_BETA">Beta</str>
+		<str name="#SET_LAB_CACHE">Önbellek</str>
+		<str name="#SET_LAB_GAMES">Oyunlar</str>
+		<str name="#SET_LAB_CHAT">Sohbet</str>
+		<str name="#SET_WARNING">Değiştirilen bazı ayarların geçerli hale gelmesi için yeniden başlatma gerekir.</str>
+
+		<str name="#SET_CV_SILENTLAUNCH">Sessiz Otomatik Oturum Açma</str>
+		<str name="#SET_CV_SILENTLAUNCH_TOOLTIP">Otomatik Oturum Açmada ana pencereyi gösterme</str>
+		<str name="#SET_CACHE_BROWSE">Lütfen Desura&apos;nın önbellek olarak kullanması için yeni bir klasör seçin</str>
+
+		<str name="#SET_CV_CHAT_ENABLED">Desura sohbetini etkinleştir</str>
+		<str name="#SET_CV_CHAT_ENABLED_TOOLTIP">Desura İstemcisi&apos;nde sohbeti etkinleştirir</str>
+		<str name="#SET_CV_CHAT_BREAKOUT">Sohbet istemcisi ayrı pencerede</str>
+		<str name="#SET_CV_CHAT_BREAKOUT_TOOLTIP">Varsayılan olarak sohbet istemcisini ayrı bir pencere yap</str>
+		<str name="#SET_CV_CHAT_SHOWCONTACTS">Oturum açılınca sohbet kişilerini göster</str>
+		<str name="#SET_CV_CHAT_SHOWCONTACTS_TOOLTIP">Desura oturumu açıldığında sohbet kişileri penceresini göster (Not: Sadece sohbet istemcisi ayrı bir pencere halindeyse)</str>
+		<str name="#SET_CV_CHAT_SHOWOFFLINE">Çevrimdışı kişileri göster</str>
+		<str name="#SET_CV_CHAT_SHOWOFFLINE_TOOLTIP">Varsayılan olarak çevrimdışı kişileri göster</str>
+		<str name="#SET_CV_CHAT_REMEMBERSTATUS">Son sohbet durumunu hatırla</str>
+		<str name="#SET_CV_CHAT_REMEMBERSTATUS_TOOLTIP">Geçerli durumunuzu daima en son oturum açtığınız yerdeki durumunuz olarak ayarlar</str>
+
+		<str name="#SET_CIP_UPDATE">Oyun listesi yenileniyor</str>
+		<str name="#SET_CIP_BUT_BROWSE">Gözat</str>
+		<str name="#SET_CIP_BUT_REFRESH">Oyunları Yenile</str>
+		<str name="#SET_CIP_BUT_DELETE">Sil</str>
+		<str name="#SET_CIP_BUT_ACTIVATE">Etkinleştir</str>
+		<str name="#SET_CIP_ERR_GAME">Değişikliklerinizi kaydetmek amacıyla lütfen her bir oyun için geçerli bir yol girin.</str>
+		<str name="#SET_CIP_ERR_CACHE">Değişikliklerinizi kaydetmek amacıyla lütfen her bir oyun için geçerli bir önbellek yolu girin.</str>
+		<str name="#SET_CIP_SUCCESS">Ayarlarınız güncellendi.</str>
+		<str name="#SET_CIP_SUCCESS_GAMES">Ayarlarınız güncellendi. Oyunlar listenizi güncellediğiniz için, bu oyunların {2}oyun sayfanızda{0} görüntülenmesi amacıyla, girdiğiniz yolları doğrulamak için {1}yükleme sihirbazını{0} çalıştırmanız gerekir. </str>
+		<str name="#SET_CIP_CDKEY">Lütfen geçerli bir CD Anahtarı veya hediye kodu girin.</str>
+		<str name="#SET_CIP_CDKEY_VALIDATING">Anahtar doğrulanıyor...</str>
+		<str name="#SET_CIP_CDKEY_ERR">Anahtarınız etkinleştirilirken bir hata meydana geldi. Lütfen kısa bir süre sonra tekrar deneyin.</str>
+		<str name="#SET_CIP_INFO">Eğer bir mağazadan bir oyun satın aldıysanız veya oyun size {1}hediye olarak verildiyse{0}, bunu Desura&apos;da kaydetmek için oyunla birlikte verilen CD/DVD anahtarını buraya girin:</str><!-- {0} = </a> {1} = <a href="..."> -->
+		<str name="#SET_CIP_CDKEY">CD Anahtarı / Hediye</str>
+		<str name="#SET_CIP_CDKEY_INFO">Ürün anahtarları, CD anahtarları ve hediye kodları tipik olarak şuna benzer:{0}{0}AAAAA-BBBBB-CCCCC-DDDDD-EEEEE{0}0123456789ABCDEFGHIJKLMNOPQRSTUV{0}00000 11111111</str><!-- {0} = <br /> -->
+		<str name="#SET_CIP_INFO_ADD">Eğer PC&apos;nizde Desura&apos;nın bulup, listelemesini istediğiniz oyunlar varsa, {1}yüklü oyunları bulma{0} sihirbazını çalıştırabilirsiniz, bu sihirbaz bu oyunları otomatik olarak hesabınıza ekleyecektir. Eğer Desura, yüklediğiniz bir oyunu bulamazsa, bu oyunu yüklediğiniz klasörü manuel olarak aşağıda belirtebilirsiniz:</str><!-- {0} = </a> {1} = <a href="..."> -->
+		<str name="#SET_CIP_MANUAL">Oyunu Manuel Olarak Ekle</str>
+
+		<str name="#SET_CIP_LINK">Aşağıdaki formu kullanarak sisteminizdeki diğer oyunlar ve uygulamalar için kısayollar ekleyebilirsiniz. Sağ tıklama menüsündeki özellikler kısmından başlatma değişkenleri ekleyebilir, aynı menüde kaldırma seçimini yaparak, kaldırma işlemleri de gerçekleştirebilirsiniz. Uyarı: Bu özellik Beta aşamasındadır. Karşınıza hatalar çıkabilir!</str>
+		<str name="#SET_CIP_LINK_NAME">Bağlantı Adı:</str>
+		<str name="#SET_CIP_LINK_EXE">Exe Dosyası İçin Bağlantı:</str>
+			
+	</strings>
+</lang>
