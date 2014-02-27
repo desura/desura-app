@@ -34,14 +34,11 @@ $/LicenseInfo$
 
 #include "WGTExtras.h"
 #include "mcfcore/DownloadProvider.h"
+#include "ProviderManager.h"
 #include "mcfcore/MCFI.h"
 
 namespace MCFCore
 {
-namespace Misc
-{
-	class ProviderManager;
-}
 
 namespace Thread
 {
@@ -60,7 +57,7 @@ public:
 	//! @param caller Parent Mcf
 	//! @param checkMcf Check the Mcf for downloaded chunks before starting
 	//!
-	WGTController(std::vector<std::shared_ptr<const MCFCore::Misc::DownloadProvider>> &source, uint16 numWorkers, MCFCore::MCF* caller, bool checkMcf);
+	WGTController(std::shared_ptr<MCFCore::Misc::DownloadProvidersI> pDownloadProviders, uint16 numWorkers, MCFCore::MCF* caller, bool checkMcf);
 	~WGTController();
 	
 	//! Provider event
@@ -128,15 +125,13 @@ protected:
 	virtual void pokeThread();
 
 private:
-	std::shared_ptr<const MCFCore::Misc::GetFile_s> m_pFileAuth;
-	MCFCore::Misc::ProviderManager* m_pProvManager;
+	MCFCore::Misc::ProviderManager m_ProvManager;
 
+	uint32 m_iAvailbleWork=0;
+	uint32 m_iRunningWorkers=0;
 
-	uint32 m_iAvailbleWork;
-	uint32 m_iRunningWorkers;
-
-	bool m_bCheckMcf;
-	volatile bool m_bDoingStop;
+	bool m_bCheckMcf=false;
+	volatile bool m_bDoingStop=false;
 
 	std::vector<WGTWorkerInfo*> m_vWorkerList;
 	std::deque<Misc::WGTSuperBlock*> m_vSuperBlockList;
@@ -145,7 +140,7 @@ private:
 	::Thread::WaitCondition m_WaitCondition;
 
 #ifdef DEBUG
-	uint64 m_uiSaved;
+	uint64 m_uiSaved = 0;
 #endif
 };
 

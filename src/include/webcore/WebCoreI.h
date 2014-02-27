@@ -50,7 +50,6 @@ namespace MCFCore
 { 
 	namespace Misc
 	{ 
-		class UserCookies; 
 		class DownloadProvider;
 	}
 }
@@ -91,6 +90,12 @@ enum WebCoreUrl
 	PlayJavaScript
 };
 
+class CookieCallbackI
+{
+public:
+	virtual void operator()(const char* szRootUrl, const char* szName, const char* szValue)=0;
+};
+
 class WebCoreI
 {
 public:
@@ -125,12 +130,6 @@ public:
 	//! @return Useragent string
 	//!
 	virtual const char* getUserAgent()=0;
-
-	//! Gets the url to get location of mcf files
-	//!
-	//! @return Mcf url
-	//!
-	virtual const char* getMCFDownloadUrl()=0;
 
 	//! Gets item info from the web and saves it into the user
 	//!
@@ -187,11 +186,6 @@ public:
 	//!
 	virtual void setWCCookies(HttpHandle& hh)=0;
 
-	//! Sets cookies for MCF download
-	//!
-	//! @param uc UserCookie object
-	//!
-	virtual void setMCFCookies(MCFCore::Misc::UserCookies* uc)=0;
 
 	//! Sets the root domain for all urls. Must be in form of desura.com not www.desura.com or http://desura.com
 	//!
@@ -292,6 +286,44 @@ public:
 	//! @param szProviderUrl Url to use for server communication
 	//!
 	virtual void init(const char* appDataPath, const char* szProviderUrl)=0;
+
+	//! Gets the download provider info for a item
+	//!
+	//! @param id Item id
+	//! @param xmlDocument resulting api result
+	//! @param mcfBranch branch of item
+	//! @param mcfBuild build of item. Can be 0
+	//!
+	virtual void getDownloadProviders(DesuraId id, XML::gcXMLDocument &xmlDocument, MCFBranch mcfBranch, MCFBuild mcfBuild)=0;
+
+	//! allows extern parts to use the cookies from webcore. Gets a callback for every cookie needed.
+	//!
+	//! @param pCallback Callback to use, caller responsable for deletion
+	//!
+	virtual void setCookies(CookieCallbackI *pCallback)=0;
+
+	template <typename T>
+	void setCookies(T &t)
+	{
+		class CCB : public CookieCallbackI
+		{
+		public:
+			CCB(T &t)
+				: m_tCallback(t)
+			{
+			}
+
+			void operator()(const char* szRootUrl, const char* szName, const char* szValue) override
+			{
+				m_tCallback(szRootUrl, szName, szValue);
+			}
+
+			T &m_tCallback;
+		};
+
+		CCB ccb(t);
+		setCookies(&ccb);
+	}
 };
 
 }

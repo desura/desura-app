@@ -40,7 +40,7 @@ namespace MCFCore
 {
 namespace Misc
 { 
-	class UserCookies; 
+	class DownloadProvidersI;
 	class DownloadProvider;
 
 	//! Structer to hold information for the download provider event
@@ -120,13 +120,9 @@ public:
 	//!
 	virtual const char* getFile()=0;
 
-	//! Gets all the download providers
+	//! Sets the interface to use to get download providers
 	//!
-	//! @param pCookies User cookies
-	//! @param unauthed Is this an unauthed MCF
-	//! @param local use local download mirror (admin only!)
-	//!
-	virtual void getDownloadProviders(const char* url, MCFCore::Misc::UserCookies *pCookies, bool *unauthed = nullptr, bool local = false)=0;
+	virtual void setDownloadProvider(std::shared_ptr<MCFCore::Misc::DownloadProvidersI> pDownloadProviders)=0;
 
 	//! Gets the authirzation information for testing purpuses
 	//!
@@ -204,13 +200,6 @@ public:
 	//! Turns compression off. Use full for gamecore update MCF files.
 	//!
 	virtual void disableCompression()=0;
-
-	//! Allows adding a provider for testing purpuses
-	//! 
-	//! @param pov Download provider to add to list
-	//!
-	virtual void addProvider(MCFCore::Misc::DownloadProvider* pov) = 0;
-
 
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////
 	// File processing

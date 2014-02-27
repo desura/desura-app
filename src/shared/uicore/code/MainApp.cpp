@@ -34,7 +34,6 @@ $/LicenseInfo$
 #include "Log.h"
 #include <branding/uicore_version.h>
 #include "mcfcore/MCFMain.h"
-#include "mcfcore/UserCookies.h"
 
 #include "managers/CVar.h"
 

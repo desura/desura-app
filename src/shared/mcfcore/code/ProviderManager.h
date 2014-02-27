@@ -40,7 +40,7 @@ namespace MCFCore
 namespace Misc
 {
 
-class ErrorInfo;
+class ProviderInfo;
 
 //! Provider manager handles all the providers for mcf download including error management
 //!
@@ -51,7 +51,7 @@ public:
 	//!
 	//! @param source Provider source list
 	//!
-	ProviderManager(std::vector<std::shared_ptr<const MCFCore::Misc::DownloadProvider>> &source);
+	ProviderManager(std::shared_ptr<Misc::DownloadProvidersI> pDownloadProviders);
 	~ProviderManager();
 
 	//! Gets new url for download
@@ -61,14 +61,14 @@ public:
 	//! @param errMsg Detail error message
 	//! @return url if has valid url or "nullptr" if no valid url
 	//!
-	gcString requestNewUrl(uint32 id, DownloadProviderType &eType, uint32 errCode, const char* errMsg);
+	std::shared_ptr<const MCFCore::Misc::DownloadProvider> requestNewUrl(uint32 id, uint32 errCode, const char* errMsg);
 
 	//! Gets a url for agent
 	//!
 	//! @param id Agent id
 	//! @return url if has valid url or "nullptr" if no valid url
 	//!
-	gcString getUrl(uint32 id, DownloadProviderType &eType);
+	std::shared_ptr<const MCFCore::Misc::DownloadProvider> getUrl(uint32 id);
 
 	//! Gets a name for agent
 	//!
@@ -94,18 +94,31 @@ public:
 	//!
 	//! @return Provider list
 	//!
-	std::vector<std::shared_ptr<const MCFCore::Misc::DownloadProvider>>& getVector()
+	std::shared_ptr<Misc::DownloadProvidersI> getDownloadProviders() const
 	{
-		return m_vSourceList;
+		return m_pDownloadProviders;
+	}
+
+	std::shared_ptr<const GetFile_s> getDownloadAuth()
+	{
+		if (m_pDownloadProviders)
+			return m_pDownloadProviders->getDownloadAuth();
+
+		return std::shared_ptr<const GetFile_s>();
 	}
 
 	//! Event that gets triggered when using new providers
 	//!
 	Event<MCFCore::Misc::DP_s> onProviderEvent;
 
+protected:
+	void initProviderList();
+	void cleanExpiredProviders();
+	bool getValidFreeProviders(std::vector<ProviderInfo*> &vValidProviders);
+
 private:
-	std::vector<std::shared_ptr<const MCFCore::Misc::DownloadProvider>> &m_vSourceList;
-	std::vector<std::shared_ptr<ErrorInfo>> m_vErrorList;
+	std::shared_ptr<Misc::DownloadProvidersI> m_pDownloadProviders;
+	std::vector<ProviderInfo> m_vProviderList;
 
 	std::mutex m_WaitMutex;
 };

@@ -63,16 +63,15 @@ MCFI::~MCFI()
 
 MCF::MCF()
 	: m_sHeader(std::make_shared<MCFCore::MCFHeader>())
-	, m_pFileAuth(std::make_shared<Misc::GetFile_s>())
 {
 	setWorkerCount(0);
 }
 
-MCF::MCF(std::vector<std::shared_ptr<const MCFCore::Misc::DownloadProvider>> &vProviderList, std::shared_ptr<const Misc::GetFile_s> pFileAuth)
-	: MCF()
+MCF::MCF(std::shared_ptr<MCFCore::Misc::DownloadProvidersI> pDownloadProviders)
+	: m_sHeader(std::make_shared<MCFCore::MCFHeader>())
+	, m_pDownloadProviders(pDownloadProviders)
 {
-	m_vProviderList = vProviderList;
-	m_pFileAuth = pFileAuth;
+	setWorkerCount(0);
 }
 
 MCF::~MCF()
@@ -875,3 +874,15 @@ uint64 MCF::getFileOffset()
 	return m_uiFileOffset;
 }
 
+void MCF::setDownloadProvider(std::shared_ptr<MCFCore::Misc::DownloadProvidersI> pDownloadProviders)
+{
+	m_pDownloadProviders = pDownloadProviders;
+
+	auto header = getHeader();
+
+	if (header && m_pDownloadProviders)
+	{
+		DesuraId id(header->getId(), header->getType());
+		m_pDownloadProviders->setInfo(id, header->getBranch(), header->getBuild());
+	}
+}

@@ -29,8 +29,6 @@ $/LicenseInfo$
 #include "CefIPCPipeClient.h"
 #include "gcWCEvents.h"
 #include "ChromiumMenuInfoFromMem.h"
-
-#include "mcfcore/UserCookies.h"
 #include "MainApp.h"
 
 #define IPC_TRY_CATCH( b, x ) try{ if (b){x;} } catch (...){}
@@ -82,12 +80,19 @@ void gcWebHost::onCookieUpdate()
 	if (!m_pBrowser)
 		return;
 
-	MCFCore::Misc::UserCookies uc;
-	GetWebCore()->setMCFCookies(&uc);
+	gcString fD;
+	gcString mD;
 
-	gcString fD(uc.getIdCookie()); //= UTIL::STRING::urlDecode
-	gcString mD(uc.getSessCookie()); //= UTIL::STRING::urlDecode
+	std::function<void(const char*, const char*, const char*)> cookieCallback
+		= [&](const char* szRootUrl, const char* szName, const char* szValue)
+	{
+		if (gcString(szName) == "freeman")
+			fD = szValue;
+		else if (gcString(szName) == "masterchief")
+			mD = szValue;
+	};
 
+	GetWebCore()->setCookies(cookieCallback);
 	m_pBrowser->setCookies(fD.c_str(), mD.c_str());
 }
 

@@ -33,7 +33,6 @@ $/LicenseInfo$
 
 #include "mcfcore/MCFI.h"
 #include "mcfcore/MCFMain.h"
-#include "mcfcore/UserCookies.h"
 
 #include "sqlite3x.hpp"
 #include "sql/WebCoreSql.h"
@@ -97,14 +96,12 @@ void WebCoreClass::init(const char* appDataPath, const char* szProviderUrl)
 void WebCoreClass::setUrlDomain(const char* domain)
 {
 	g_szRootDomain = domain;
-	m_szMCFDownloadUrl = gcString("http://api.") + g_szRootDomain + "/2/itemdownloadurl";
-
 	m_bValidateCert = g_szRootDomain == "desura.com";
 }
 
-const char* WebCoreClass::getMCFDownloadUrl()
+gcString WebCoreClass::getMCFDownloadUrl()
 {
-	return m_szMCFDownloadUrl.c_str();
+	return gcString("http://api.") + g_szRootDomain + "/2/itemdownloadurl";
 }
 
 gcString WebCoreClass::getPassWordReminderUrl()
@@ -181,6 +178,19 @@ void WebCoreClass::setCookie(const char* sess)
 	onCookieUpdateEvent();
 }
 
+void WebCoreClass::setCookies(CookieCallbackI *pCallback)
+{
+	assert(pCallback);
+
+	if (!pCallback)
+		return;
+
+	auto strRoot = getUrl(WebCore::Root);
+
+	(*pCallback)(strRoot.c_str(), "freeman", m_szIdCookie.c_str());
+	(*pCallback)(strRoot.c_str(), "masterchief", gcString(m_szSessCookie).c_str());
+}
+
 void WebCoreClass::setWCCookies(HttpHandle& hh)
 {
 	std::lock_guard<std::mutex> l(m_mSessLock);
@@ -188,16 +198,6 @@ void WebCoreClass::setWCCookies(HttpHandle& hh)
 	hh->addCookie("freeman", m_szIdCookie.c_str());
 	hh->addCookie("masterchief", gcString(m_szSessCookie).c_str());
 	hh->setUserAgent(getUserAgent());
-}
-
-void WebCoreClass::setMCFCookies(MCFCore::Misc::UserCookies* uc)
-{
-	std::lock_guard<std::mutex> l(m_mSessLock);
-
-	uc->setUserId(m_uiUserId);
-	uc->setId(m_szIdCookie.c_str());
-	uc->setSess(gcString(m_szSessCookie).c_str());
-	uc->setUAgent(getUserAgent());
 }
 
 void WebCoreClass::clearNameCache()

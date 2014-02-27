@@ -80,13 +80,12 @@ void MCFServerCon::onWrite(WriteMem_s &mem)
 	}
 }
 
-void MCFServerCon::connect(const char* url, const GetFile_s& fileAuth)
+void MCFServerCon::connect(const MCFCore::Misc::DownloadProvider &provider, const GetFile_s& fileAuth)
 {
 	if (m_bConnected)
 		return;
 
-	gcString u(url);
-
+	gcString u(provider.getUrl());
 	m_bHttpDownload = u.find("http://") == 0;
 
 	if (!m_bHttpDownload)
@@ -103,7 +102,9 @@ void MCFServerCon::connect(const char* url, const GetFile_s& fileAuth)
 	}
 
 	m_FtpHandle->setUrl(u.c_str());
-	m_FtpHandle->setUserPass(fileAuth.authkey.data(), fileAuth.authhash.data());
+
+	if (provider.getType() != DownloadProviderType::Cdn)
+		m_FtpHandle->setUserPass(fileAuth.authkey.data(), fileAuth.authhash.data());
 
 	m_bConnected = true;
 }

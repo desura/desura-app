@@ -33,8 +33,7 @@ $/LicenseInfo$
 
 
 
-namespace WebCore
-{
+using namespace WebCore;
 
 
 const XML::gcXMLElement WebCoreClass::postToServer(std::string url, std::string resource, PostMap &postData, XML::gcXMLDocument &xmlDocument, bool useHTTPS)
@@ -397,4 +396,16 @@ void WebCoreClass::getLoginItems(XML::gcXMLDocument &xmlDocument)
 	postToServer(getMemberDataUrl(), "memberdata", postData, xmlDocument);
 }
 
+void WebCoreClass::getDownloadProviders(DesuraId id, XML::gcXMLDocument &xmlDocument, MCFBranch mcfBranch, MCFBuild mcfBuild)
+{
+	PostMap postData;
+
+	postData["siteareaid"] = id.getItem();
+	postData["sitearea"] = id.getTypeString();
+	postData["branch"] = (size_t) mcfBranch;
+
+	if (mcfBuild != 0)
+		postData["build"] = (size_t) mcfBuild;
+
+	postToServer(getMCFDownloadUrl(), "itemdownloadurl", postData, xmlDocument);
 }

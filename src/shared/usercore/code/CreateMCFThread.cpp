@@ -27,10 +27,9 @@ $/LicenseInfo$
 #include "CreateMCFThread.h"
 
 #include "McfManager.h"
-#include "mcfcore/UserCookies.h"
-
 #include "ItemManager.h"
 #include "util/gcTime.h"
+#include "MCFDownloadProviders.h"
 
 namespace UserCore
 {
@@ -145,9 +144,8 @@ void CreateMCFThread::compareBranches(std::vector<UserCore::Item::BranchInfo*> &
 	
 		try
 		{
-			MCFCore::Misc::UserCookies uc;
-			getWebCore()->setMCFCookies(&uc); 
-			tempMcf->getDownloadProviders(getWebCore()->getMCFDownloadUrl(), &uc);
+			auto dp = std::make_shared<MCFDownloadProviders>(getWebCore(), getUserCore()->getUserId());
+			MCFDownloadProviders::forceLoad(tempMcf, dp);
 		}
 		catch (gcException &except)
 		{

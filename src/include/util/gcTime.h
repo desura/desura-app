@@ -185,6 +185,11 @@ public:
 		return gcTime(m_TimePoint + duration);
 	}
 
+	gcTime operator-(const std::chrono::system_clock::duration &duration)
+	{
+		return gcTime(m_TimePoint - duration);
+	}
+
 	std::string to_iso_string() const
 	{
 		auto t = std::chrono::system_clock::to_time_t(m_TimePoint);

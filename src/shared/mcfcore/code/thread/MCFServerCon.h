@@ -54,7 +54,7 @@ public:
 	//! @param host Sever to connect to in form of name:port
 	//! @param fileAuth File authentication cookie
 	//!
-	virtual void connect(const char* host, const MCFCore::Misc::GetFile_s& fileAuth) = 0;
+	virtual void connect(const MCFCore::Misc::DownloadProvider &provider, const MCFCore::Misc::GetFile_s& fileAuth) = 0;
 
 	//! Disconnect from server. Gets called in the destructor automatically
 	//!
@@ -94,7 +94,7 @@ public:
 	MCFServerCon();
 	~MCFServerCon();
 
-	void connect(const char* host, const MCFCore::Misc::GetFile_s& fileAuth) override;
+	void connect(const MCFCore::Misc::DownloadProvider &provider, const MCFCore::Misc::GetFile_s& fileAuth) override;
 	void disconnect() override;
 
 	void setDPInformation(const char* name) override;

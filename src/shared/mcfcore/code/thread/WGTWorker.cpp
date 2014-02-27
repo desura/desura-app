@@ -34,10 +34,9 @@ namespace MCFCore
 namespace Thread
 {
 
-WGTWorker::WGTWorker(WGTControllerI* controller, uint16 id, MCFCore::Misc::ProviderManager *pProvMng, const MCFCore::Misc::GetFile_s& fileAuth) 
+WGTWorker::WGTWorker(WGTControllerI* controller, uint16 id, MCFCore::Misc::ProviderManager &provMng) 
 	: BaseThread( "WebGet Worker Thread" )
-	, m_FileAuth(fileAuth)
-	, m_pProvMng(pProvMng)
+	, m_ProvMng(provMng)
 	, m_uiId(id)
 	, m_pCT(controller)
 {
@@ -52,7 +51,7 @@ WGTWorker::~WGTWorker()
 
 void WGTWorker::reportError(gcException &e, gcString provider)
 {
-	if (m_pProvMng->getName(m_uiId) != provider)
+	if (m_ProvMng.getName(m_uiId) != provider)
 		return;
 
 	m_ErrorMutex.lock();
@@ -63,14 +62,15 @@ void WGTWorker::reportError(gcException &e, gcString provider)
 
 void WGTWorker::run()
 {
-	m_szUrl = m_pProvMng->getUrl(m_uiId, m_eType);
-	if (m_szUrl == "nullptr")
+	m_DownloadProvider = m_ProvMng.getUrl(m_uiId);
+
+	if (!m_DownloadProvider || !m_DownloadProvider->isValidAndNotExpired())
 	{
 		Warning(gcString("Mcf Download Thread [{0}] failed to get valid url for download.\n", m_uiId));
 		return;
 	}
 
-	gcString name = m_pProvMng->getName(m_uiId);
+	gcString name = m_ProvMng.getName(m_uiId);
 
 	m_pMcfCon = new MCFCore::Misc::MCFServerCon();
 	m_pMcfCon->setDPInformation(name.c_str());
@@ -100,7 +100,7 @@ void WGTWorker::run()
 
 		if (isPaused)
 		{
-			gcString name = m_pProvMng->getName(m_uiId);
+			gcString name = m_ProvMng.getName(m_uiId);
 			m_pMcfCon->setDPInformation(name.c_str());
 		}
 
@@ -119,7 +119,7 @@ void WGTWorker::run()
 			doDownload();
 	}
 
-	m_pProvMng->removeAgent(m_uiId);
+	m_ProvMng.removeAgent(m_uiId);
 
 	m_DeleteMutex.lock();
 	safe_delete(m_pMcfCon);
@@ -172,7 +172,7 @@ bool WGTWorker::writeData(char* data, uint32 size)
 	if (size >= ds)
 	{
 		block->dlsize = block->size;
-		block->provider = m_pProvMng->getName(m_uiId);
+		block->provider = m_ProvMng.getName(m_uiId);
 
 		memcpy(block->buff+done, data, ds);
 
@@ -250,22 +250,16 @@ void WGTWorker::doDownload()
 
 	try
 	{
-		if (m_szUrl.size() == 0 || m_szUrl == "nullptr")
+		if (!m_DownloadProvider || !m_DownloadProvider->isValidAndNotExpired())
+			m_DownloadProvider = m_ProvMng.getUrl(m_uiId);
+
+		if (!m_DownloadProvider || !m_DownloadProvider->isValidAndNotExpired())
 			throw gcException(ERR_MCFSERVER, "No more download servers to use.");
 
 		if (!m_pMcfCon->isConnected())
 		{
-			if (m_eType == MCFCore::Misc::DownloadProviderType::Cdn)
-			{
-				MCFCore::Misc::GetFile_s f;
-				f.zero();
-
-				m_pMcfCon->connect(m_szUrl.c_str(), f);
-			}
-			else
-			{
-				m_pMcfCon->connect(m_szUrl.c_str(), m_FileAuth);
-			}
+			auto authToken = m_ProvMng.getDownloadAuth();
+			m_pMcfCon->connect(*m_DownloadProvider, *authToken);
 		}
 
 		m_pMcfCon->downloadRange(m_pCurBlock->offset + m_pCurBlock->done, m_pCurBlock->size - m_pCurBlock->done, this);
@@ -278,7 +272,7 @@ void WGTWorker::doDownload()
 		}
 		else if (!isStopped())
 		{
-			Warning(gcString("Mcf Server error: {0} [{1}]\n", excep, m_szUrl));
+			Warning(gcString("Mcf Server error: {0} [{1}]\n", excep, m_DownloadProvider->getUrl()));
 
 			if (excep.getErrId() == ERR_LIBCURL)
 			{
@@ -351,14 +345,14 @@ void WGTWorker::onProgress(uint32& prog)
 
 void WGTWorker::requestNewUrl(gcException& e)
 {
-	m_szUrl = m_pProvMng->requestNewUrl(m_uiId, m_eType, e.getSecErrId(), e.getErrMsg());
+	m_DownloadProvider = m_ProvMng.requestNewUrl(m_uiId, e.getSecErrId(), e.getErrMsg());
 
-	if (m_szUrl != "nullptr")
+	if (m_DownloadProvider && m_DownloadProvider->isValidAndNotExpired())
 	{
 		m_iAttempt = 0;
 		m_pMcfCon->disconnect();
 
-		gcString name = m_pProvMng->getName(m_uiId);
+		gcString name = m_ProvMng.getName(m_uiId);
 		m_pMcfCon->setDPInformation(name.c_str());
 	}
 	else
@@ -390,7 +384,7 @@ namespace UnitTest
 		{
 		}
 		
-		void connect(const char* host, const MCFCore::Misc::GetFile_s& fileAuth) override
+		void connect(const MCFCore::Misc::DownloadProvider &provider, const MCFCore::Misc::GetFile_s& fileAuth) override
 		{
 		}
 
@@ -493,10 +487,9 @@ namespace UnitTest
 	class TestWGTWorker : public MCFCore::Thread::WGTWorker
 	{
 	public:
-		TestWGTWorker(MCFCore::Thread::WGTControllerI* controller, uint16 id, MCFCore::Misc::ProviderManager *pProvMng, const MCFCore::Misc::GetFile_s& fileAuth)
-			: MCFCore::Thread::WGTWorker(controller, id, pProvMng, fileAuth)
+		TestWGTWorker(MCFCore::Thread::WGTControllerI* controller, uint16 id, MCFCore::Misc::ProviderManager &provMng)
+			: MCFCore::Thread::WGTWorker(controller, id, provMng)
 		{
-			m_szUrl = "UnitTest";
 		}
 
 		void download(StubMCFServerCon *pMcfCon, int nRunCount)
@@ -509,15 +502,48 @@ namespace UnitTest
 		}
 	};
 
+	class TestDownloadProviders : public MCFCore::Misc::DownloadProvidersI
+	{
+	public:
+		TestDownloadProviders(std::vector<std::shared_ptr<const MCFCore::Misc::DownloadProvider>> &vProviders)
+			: m_vProviders(vProviders)
+		{
+		}
+
+		void setInfo(DesuraId id, MCFBranch branch, MCFBuild build) override
+		{
+
+		}
+
+		bool getDownloadProviders(std::vector<std::shared_ptr<const MCFCore::Misc::DownloadProvider>> &vDownloadProviders) override
+		{
+			vDownloadProviders = m_vProviders;
+			return true;
+		}
+
+		std::shared_ptr<const MCFCore::Misc::GetFile_s> getDownloadAuth()
+		{
+			return std::make_shared<const MCFCore::Misc::GetFile_s>();
+		}
+
+		size_t size()
+		{
+			return m_vProviders.size();
+		}
+
+		std::vector<std::shared_ptr<const MCFCore::Misc::DownloadProvider>> &m_vProviders;
+	};
+
 	class WGTWorkerFixture : public ::testing::TestWithParam<std::pair<int, int>>
 	{
 	public:
 		WGTWorkerFixture()
 			: m_nParamOne(GetParam().first)
 			, m_nParamTwo(GetParam().second)
-			, Provider(std::make_shared<MCFCore::Misc::DownloadProvider>("", "", "", ""))
-			, ProviderManager(getProviderVector())
-			, Worker(&Controller, 1, &ProviderManager, FileAuth)
+			, Provider(std::make_shared<MCFCore::Misc::DownloadProvider>("a1", "a2", "a3", "a4"))
+			, DownloadProviders(std::make_shared<TestDownloadProviders>(getProviderVector()))
+			, ProviderManager(DownloadProviders)
+			, Worker(&Controller, 1, ProviderManager)
 		{
 		}
 
@@ -574,6 +600,7 @@ namespace UnitTest
 
 		std::vector<std::shared_ptr<const MCFCore::Misc::DownloadProvider>> Providers;
 		std::shared_ptr<MCFCore::Misc::DownloadProvider> Provider;
+		std::shared_ptr<MCFCore::Misc::DownloadProvidersI> DownloadProviders;
 		MCFCore::Misc::ProviderManager ProviderManager;
 		
 		std::vector<std::shared_ptr<MCFCore::Thread::Misc::WGTBlock>> m_vBlocks;

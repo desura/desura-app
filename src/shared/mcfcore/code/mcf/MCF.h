@@ -65,8 +65,7 @@ namespace MCFCore{
 	
 namespace MISC
 {
-	class DownloadProvider;
-	class UserCookies; 
+	class DownloadProvider; 
 }
 
 namespace Misc
@@ -78,7 +77,7 @@ class MCF : public MCFI
 {
 public:
 	MCF();
-	MCF(std::vector<std::shared_ptr<const MCFCore::Misc::DownloadProvider>> &vProviderList, std::shared_ptr<const Misc::GetFile_s> pFileAuth);
+	MCF(std::shared_ptr<MCFCore::Misc::DownloadProvidersI> pDownloadProviders);
 	virtual ~MCF();
 
 
@@ -134,7 +133,9 @@ public:
 	uint32 getFileCount() override;
 	MCFCore::MCFFileI* getMCFFile(uint32 index) override;
 	const char* getFile() override;
-	void getDownloadProviders(const char* url, MCFCore::Misc::UserCookies *pCookies, bool *unauthed = nullptr, bool local = false) override;
+
+	void setDownloadProvider(std::shared_ptr<MCFCore::Misc::DownloadProvidersI> pDownloadProviders) override;
+
 	std::shared_ptr<const Misc::GetFile_s> getAuthInfo() override;
 	Event<MCFCore::Misc::ProgressInfo>& getProgEvent() override;
 	Event<gcException>&	getErrorEvent() override;
@@ -154,8 +155,6 @@ public:
 	void setFile(const char* file, uint64 offset) override;
 	void setWorkerCount(uint16 count) override;
 	void disableCompression() override;
-	void addProvider(MCFCore::Misc::DownloadProvider* pov) override;
-
 
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////
 	// File processing
@@ -333,10 +332,9 @@ private:
 
 	::Thread::BaseThread *m_pTHandle = nullptr;
 
-	std::shared_ptr<const Misc::GetFile_s> m_pFileAuth;
 	std::shared_ptr<MCFCore::MCFHeader> m_sHeader;
 	std::vector<std::shared_ptr<MCFCore::MCFFile>> m_pFileList;
-	std::vector<std::shared_ptr<const MCFCore::Misc::DownloadProvider>> m_vProviderList;
+	std::shared_ptr<MCFCore::Misc::DownloadProvidersI> m_pDownloadProviders;
 
 	std::mutex m_mThreadMutex;
 	MCFCore::Misc::MCFServerCon *m_pMCFServerCon = nullptr;
@@ -350,7 +348,10 @@ inline uint32 MCF::getFileCount()
 
 inline std::shared_ptr<const Misc::GetFile_s> MCF::getAuthInfo()
 {
-	return m_pFileAuth;
+	if (m_pDownloadProviders)
+		return m_pDownloadProviders->getDownloadAuth();
+
+	return std::shared_ptr<const Misc::GetFile_s>();
 }
 
 inline Event<MCFCore::Misc::ProgressInfo>& MCF::getProgEvent()
@@ -366,11 +367,6 @@ inline Event<gcException>& MCF::getErrorEvent()
 inline Event<MCFCore::Misc::DP_s>& MCF::getNewProvider()
 {
 	return onProviderEvent;
-}
-
-inline void MCF::addProvider(MCFCore::Misc::DownloadProvider* pov)
-{
-	m_vProviderList.push_back(std::shared_ptr<MCFCore::Misc::DownloadProvider>(pov));
 }
 
 }

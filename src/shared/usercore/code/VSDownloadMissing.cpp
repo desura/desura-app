@@ -30,9 +30,10 @@ $/LicenseInfo$
 #include "ItemInfo.h"
 #include "usercore/UserCoreI.h"
 #include "webcore/WebCoreI.h"
-
-#include "mcfcore/UserCookies.h"
 #include "User.h"
+
+#include "MCFDownloadProviders.h"
+
 
 namespace UserCore
 {
@@ -61,10 +62,10 @@ bool VSDownloadMissing::doTask()
 
 	try
 	{
-		MCFCore::Misc::UserCookies uc;
-		getWebCore()->setMCFCookies(&uc); 
+		auto dp = std::make_shared<MCFDownloadProviders>(getWebCore(), getUserCore()->getUserId());
+		dp->forceLoad(m_hMcf);
 
-		m_hMcf->getDownloadProviders(getWebCore()->getMCFDownloadUrl(), &uc);
+		m_hMcf->setDownloadProvider(dp);
 		m_hMcf->dlFilesFromWeb();
 	}
 	catch (gcException &except)

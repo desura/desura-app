@@ -117,7 +117,7 @@ void MCF::dlHeaderFromWeb()
 	if (m_bStopped)
 		return;
 
-	if (m_vProviderList.size() == 0)
+	if (!m_pDownloadProviders)
 		throw gcException(ERR_ZEROFILE);
 
 	MCFCore::Misc::MCFServerCon msc;
@@ -145,7 +145,15 @@ void MCF::doDlHeaderFromWeb(MCFCore::Misc::MCFServerCon &msc)
 
 	OutBuffer out(MCF_HEADERSIZE_V2);
 
-	for (auto provider : m_vProviderList)
+	std::vector<std::shared_ptr<const MCFCore::Misc::DownloadProvider>> vProviders;
+	m_pDownloadProviders->getDownloadProviders(vProviders);
+
+	if (vProviders.empty())
+		throw gcException(ERR_ZEROFILE);
+
+	auto auth = m_pDownloadProviders->getDownloadAuth();
+
+	for (auto provider : vProviders)
 	{
 		if (m_bStopped)
 			return;
@@ -153,18 +161,7 @@ void MCF::doDlHeaderFromWeb(MCFCore::Misc::MCFServerCon &msc)
 		try
 		{
 			msc.disconnect();
-
-			if (provider->getType() == MCFCore::Misc::DownloadProviderType::Cdn)
-			{
-				MCFCore::Misc::GetFile_s f;
-				f.zero();
-
-				msc.connect(provider->getUrl(), f);
-			}
-			else
-			{
-				msc.connect(provider->getUrl(), *m_pFileAuth.get());
-			}
+			msc.connect(*provider, *auth);
 
 			msc.downloadRange(0, 5, &out); //4 id bytes and 1 version byte
 
@@ -279,20 +276,23 @@ void MCF::dlFilesFromWeb( )
 	if (m_bStopped)
 		return;
 
-	if (m_vProviderList.size() == 0)
-		throw gcException(ERR_NOFILE);
+	std::vector<std::shared_ptr<const MCFCore::Misc::DownloadProvider>> vProviders;
+	m_pDownloadProviders->getDownloadProviders(vProviders);
+
+	if (vProviders.empty())
+		throw gcException(ERR_ZEROFILE);
 
 	bool mcfExists = UTIL::FS::isValidFile(UTIL::FS::PathWithFile(getFile()));
 
 	//save the header first incase we fail
 	saveMCF_Header();
 
-	uint16 workerCount = (uint16)m_vProviderList.size();
+	uint16 workerCount = (uint16)vProviders.size();
 
 	if (workerCount > 3)
 		workerCount = 3;
 
-	MCFCore::Thread::WGTController *temp = new MCFCore::Thread::WGTController(m_vProviderList, workerCount, this, mcfExists);
+	MCFCore::Thread::WGTController *temp = new MCFCore::Thread::WGTController(m_pDownloadProviders, workerCount, this, mcfExists);
 	temp->onProgressEvent += delegate(&onProgressEvent);
 	temp->onErrorEvent += delegate(&onErrorEvent);
 	temp->onProviderEvent += delegate(&onProviderEvent);

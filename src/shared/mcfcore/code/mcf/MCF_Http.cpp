@@ -25,8 +25,6 @@ $/LicenseInfo$
 #include "Common.h"
 #include "MCF.h"
 
-#include "mcfcore/DownloadProvider.h"
-#include "mcfcore/UserCookies.h"
 #include "XMLMacros.h"
 
 #include "thread/HGTController.h"
@@ -37,109 +35,6 @@ $/LicenseInfo$
 
 namespace MCFCore
 {
-
-void MCF::getDownloadProviders(const char* url, MCFCore::Misc::UserCookies *pCookies, bool *unauthed, bool local)
-{
-	if (!pCookies)
-		throw gcException(ERR_INVALID, "Cookies are null (getDownloadProviders)");
-
-	HttpHandle wc(url);
-	pCookies->set(wc);
-
-	DesuraId id = m_sHeader->getDesuraId();
-	gcString type = id.getTypeString();
-
-	wc->addPostText("siteareaid", id.getItem());
-	wc->addPostText("sitearea", type.c_str());
-	wc->addPostText("branch", m_sHeader->getBranch());
-
-	{
-		MCFBuild build = m_sHeader->getBuild();
-
-		if (build != 0)
-			wc->addPostText("build", build);
-
-		if (local)
-			wc->addPostText("local", "yes");
-	}
-
-	wc->postWeb();
-
-	if (wc->getDataSize() == 0)
-		throw gcException(ERR_BADRESPONSE);
-	
-	XML::gcXMLDocument doc(const_cast<char*>(wc->getData()), wc->getDataSize());
-
-	doc.ProcessStatus("itemdownloadurl");
-
-	auto uNode = doc.GetRoot("itemdownloadurl");
-	auto iNode = uNode.FirstChildElement("item");
-
-	if (!iNode.IsValid())
-		throw gcException(ERR_BADXML);
-
-	auto mNode = iNode.FirstChildElement("mcf");
-
-	if (!mNode.IsValid())
-		throw gcException(ERR_BADXML);
-
-	{
-		const std::string build = mNode.GetAtt("build");
-		const std::string branch = mNode.GetAtt("branch");
-
-		//Debug(gcString("MCF: R: {0}.{1} G: {2}.{3}\n", m_sHeader->getBranch(), m_sHeader->getBuild(), build, branch));
-
-		if (!build.empty())
-			m_sHeader->setBuild(MCFBuild::BuildFromInt(Safe::atoi(build.c_str())));
-
-		if (!branch.empty())
-			m_sHeader->setBranch(MCFBranch::BranchFromInt(Safe::atoi(branch.c_str())));
-	}
-
-	const std::string szAuthCode = mNode.GetChild("authhash");
-
-	if (szAuthCode.empty())
-		throw gcException(ERR_BADXML);
-
-	
-
-	auto temp = std::make_shared<Misc::GetFile_s>();
-
-	Safe::strncpy(temp->authhash.data(), 33, szAuthCode.c_str(), szAuthCode.size());
-	Safe::snprintf(temp->authkey.data(), 10, "%d", pCookies->getUserId());
-
-	m_pFileAuth = temp;
-
-
-	auto urlNode = mNode.FirstChildElement("urls");
-
-	if (!urlNode.IsValid())
-		throw gcException(ERR_BADXML);
-
-	const std::string szAuthed = mNode.GetChild("authed");
-
-	if (unauthed && !szAuthed.empty())
-	{
-		*unauthed = (Safe::atoi(szAuthed.c_str()) == 0);
-	}
-
-
-#ifdef DEBUG
-#if 0
-	m_vProviderList.clear();
-	m_vProviderList.push_back(new MCFCore::Misc::DownloadProvider("localhost", "mcf://10.0.0.121:62001", "", ""));
-	return;
-#endif
-#endif
-
-	urlNode.for_each_child("url", [this](const XML::gcXMLElement &xmlChild)
-	{
-		m_vProviderList.push_back(std::make_shared<MCFCore::Misc::DownloadProvider>(xmlChild));
-	});
-
-	if (m_vProviderList.size() == 0)
-		throw gcException(ERR_ZEROSIZE);
-}
 
 void MCF::dlHeaderFromHttp(const char* url)
 {
