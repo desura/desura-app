@@ -39,6 +39,7 @@ MCFServerCon::MCFServerCon()
 {
 	m_FtpHandle->getProgressEvent() += delegate(this, &MCFServerCon::onProgress);
 	m_FtpHandle->getWriteEvent() += delegate(this, &MCFServerCon::onWrite);
+	m_FtpHandle->dontThrowOnPartFile();
 }
 
 MCFServerCon::~MCFServerCon()

@@ -154,6 +154,8 @@ public:
 
 	virtual const char* getUserName()=0;
 	virtual const char* getPassword()=0;
+
+	virtual void dontThrowOnPartFile()=0;
 };
 
 

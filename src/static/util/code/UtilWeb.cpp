@@ -124,6 +124,11 @@ public:
 	virtual void cleanPostInfo();
 
 
+	void dontThrowOnPartFile() override
+	{
+		m_bDontThrowOnPartFile = true;
+	}
+
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	// Events
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -186,6 +191,8 @@ private:
 	uint64 m_uiSize;
 
 	char m_szErrBuff[CURL_ERROR_SIZE];
+
+	bool m_bDontThrowOnPartFile = false;
 };
 
 
@@ -533,6 +540,9 @@ curl_slist_s* HttpHInternal::setUpHeaders()
 
 uint8 HttpHInternal::processResult(CURLcode res)
 {
+	if (res == CURLE_PARTIAL_FILE && m_bDontThrowOnPartFile)
+		return UWEB_OK;
+
 	if (res != CURLE_OK && res != CURLE_ABORTED_BY_CALLBACK)
 		throw gcException(ERR_LIBCURL, res, gcString("{0} ({1}) [{2}]", curl_easy_strerror(res), m_szUrl, m_szErrBuff));
 
