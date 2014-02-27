@@ -519,6 +519,8 @@
 		<str name="#PLAY_BRANCH_AUTO">autoplay this version next time?</str>
 		<str name="#PLAY_ADD_GAME">Added {0} {1}</str><!-- {0} = mod or game {1} = name -->
 		<str name="#PLAY_UPLOAD">Current Uploads</str>
+		<str name="#PLAY_NEWITEMS">New</str>
+		<str name="#PLAY_RECENT">Recently Played</str>
 	
 		<!-- Pop up menu -->
 		<str name="#PM_ADDACCOUNT">Add to Account</str>
