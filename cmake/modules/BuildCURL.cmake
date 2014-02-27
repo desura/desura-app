@@ -63,6 +63,7 @@ if(WIN32 AND NOT MINGW)
     source_dir
   )
   
+  set_property(TARGET curl PROPERTY FOLDER "ThirdParty")
   set_property(TARGET curl_s PROPERTY FOLDER "ThirdParty")
   
   if(DEBUG)
@@ -90,6 +91,8 @@ else()
         --disable-manual --enable-optimize=-O2 --disable-ares ${CONFIGURE_DEBUG}
         --prefix=${CURL_INSTALL_DIR}
   )
+  
+  set_property(TARGET curl PROPERTY FOLDER "ThirdParty")
 endif()
 
 set(CURL_BIN_DIRS ${CURL_INSTALL_DIR}/bin)
