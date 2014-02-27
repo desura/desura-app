@@ -136,6 +136,11 @@ public:
 		return m_hHandle;
 	}
 
+	void resetFailed()
+	{
+		m_bHasFailed = false;
+	}
+
 private:
 	mutable bool m_bHasFailed;
 	mutable SOHANDLE m_hHandle;
