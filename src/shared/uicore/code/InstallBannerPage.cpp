@@ -51,12 +51,21 @@ InstallBannerPage::InstallBannerPage(wxWindow* parent, bool useSpinnerFirst) : B
 	if (!useSpinnerFirst)
 		m_pbProgress->swap();
 
-	m_imgBanner = new gcImageControl( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, 0 );
+	m_imgBanner = new gcImageControl( this, wxID_ANY, wxDefaultPosition, wxSize( 358,75 ), 0 );
 	m_imgBanner->SetBackgroundColour( wxSystemSettings::GetColour( wxSYS_COLOUR_ACTIVECAPTION ) );
 	m_imgBanner->setImage(DEFAULT_BANNER);
-	m_imgBanner->SetMinSize( wxSize( 350,75 ) );
+	m_imgBanner->SetMinSize( wxSize( 358,75 ) );
+	m_imgBanner->SetMaxSize( wxSize( 358,75 ) );
 	m_imgBanner->SetCursor(wxCURSOR_HAND);
 	m_imgBanner->Bind(wxEVT_LEFT_DOWN, &InstallBannerPage::onMouseClick, this);
+
+	wxFlexGridSizer* fgSizerImg = new wxFlexGridSizer(1, 3, 0, 0);
+	fgSizerImg->AddGrowableCol(0);
+	fgSizerImg->AddGrowableCol(2);
+
+	fgSizerImg->Add( 0, 0, 1, wxEXPAND, 0);
+	fgSizerImg->Add( m_imgBanner, 1, wxBOTTOM|wxLEFT|wxRIGHT, 5 );
+	fgSizerImg->Add( 0, 0, 1, wxEXPAND, 0);
 
 	wxBoxSizer* bSizer17 = new wxBoxSizer( wxHORIZONTAL );
 	bSizer17->Add( m_labLabel, 0, wxLEFT|wxRIGHT|wxTOP, 5 );
@@ -78,7 +87,7 @@ InstallBannerPage::InstallBannerPage(wxWindow* parent, bool useSpinnerFirst) : B
 	fgSizer1->Add( 0, 0, 1, wxEXPAND, 5 );
 	fgSizer1->Add( m_pButSizer, 0, wxEXPAND, 5 );
 	fgSizer1->Add( m_labProv, 0, wxLEFT|wxEXPAND, 5 );
-	fgSizer1->Add( m_imgBanner, 1, wxALL|wxEXPAND, 5 );
+	fgSizer1->Add( fgSizerImg, 1, wxALL|wxEXPAND, 5 );
 	
 	this->SetSizer( fgSizer1 );
 	this->Layout();
