@@ -180,3 +180,17 @@ Index: /wxWidgets/trunk/src/msw/app.cpp
 +            ::PostMessage(hwndTop, WM_NULL, 0, 0);
          }
      }
+--- src/msw/textentry.cpp	(revision 68296)
++++ src/msw/textentry.cpp	(working copy)
+@@ -428,9 +428,8 @@
+                              );
+         if ( SUCCEEDED(hr) )
+         {
+-            pAutoComplete2->SetOptions(ACO_AUTOSUGGEST |
+-                                       ACO_AUTOAPPEND |
+-                                       ACO_UPDOWNKEYDROPSLIST);
++                       //DESURA Changed from ACO_AUTOSUGGEST | ACO_AUTOAPPEND | ACO_UPDOWNKEYDROPSLIST
++            pAutoComplete2->SetOptions(ACO_AUTOSUGGEST|ACO_AUTOAPPEND|ACO_USETAB);
+             pAutoComplete2->Release();
+         }
+     }

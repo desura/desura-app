@@ -31,6 +31,8 @@ $/LicenseInfo$
 #include <gtest/gtest.h>
 #include "managers/CVar.h"
 
+#include "Console.h"
+
 using namespace testing;
 
 #ifdef DEBUG
@@ -112,6 +114,8 @@ public:
 
 	void run()
 	{
+		Console::ignoreThisThread();
+
 		m_strFilter = g_strUnitTestFilter.getString();
 
 		GTEST_FLAG(filter) = m_strFilter;
