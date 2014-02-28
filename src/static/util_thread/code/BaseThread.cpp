@@ -334,6 +334,8 @@ void BaseThread::setThreadName(const char* nameOveride)
 	if (!nameOveride)
 		nameOveride = m_pPrivates->m_szName.c_str();
 
+	Debug(gcString("Setting thread name to: {0}\n", nameOveride));
+
 #if defined(WIN32) && !defined(__MINGW32__)
 	THREADNAME_INFO info;
 	info.dwType = 0x1000;
