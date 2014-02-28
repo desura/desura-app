@@ -75,17 +75,22 @@ public:
 		m_szResult = res;
 	}
 
-	virtual bool isDownloaded()
+	bool isDownloaded() override
 	{
 		return true;
 	}
 
-	virtual bool isInstalled()
+	bool isInstalled() override
 	{
 		//need this here as a bug in desura deleted the tool exe after running (GOD FUCK!) and if it dont exist just pretend its installed.
 		if (!checkExePath(m_szExe.c_str()))
 			return true;
 
+		return UserCore::ToolInfo::isInstalled();
+	}
+
+	bool isRealyInstalled()
+	{
 		return UserCore::ToolInfo::isInstalled();
 	}
 
@@ -99,8 +104,9 @@ public:
 		return m_uiBranchId;
 	}
 
-	virtual void setExePath(const char* exe)
+	void setExePath(const char* exe) override
 	{
+		m_szExe = exe;
 	}
 
 protected:
@@ -160,7 +166,7 @@ public:
 	gcString GetInstallPath(UserItem* item)
 	{
 		if (!item)
-			return "nullptr ITEM";
+			return "NULL ITEM";
 
 		gcString p = item->m_pItem->getPath();
 		p.push_back(UTIL::FS::Path::GetDirSeperator());
@@ -176,6 +182,7 @@ public:
 		if (name.size() == 0 || exe.size() == 0)
 			return;
 
+		Debug(gcString("Adding JS Tool to {0}: {1} {2} {3}\n", item->m_pItem->getName(), name, exe, args));
 		item->m_pToolManager->addJSTool(item->m_pItem, item->m_pBranch->getBranchId(), name, exe, args, res);
 	}
 };
@@ -206,19 +213,31 @@ void ToolManager::addJSTool(UserCore::Item::ItemInfo* item, uint32 branchId, gcS
 
 	bool found = false;
 
+
+	JSToolInfo* jsinfo = nullptr;
+
 	BaseManager<ToolInfo>::for_each([&](ToolInfo* info)
 	{
-		JSToolInfo* jsinfo = dynamic_cast<JSToolInfo*>(info);
+		auto temp = dynamic_cast<JSToolInfo*>(info);
 
-		if (!jsinfo)
+		if (!temp)
 			return;
 
-		if (item->getId() == jsinfo->getItemId() && name == info->getName() && jsinfo->getBranchId() == branchId)
+		if (item->getId() == temp->getItemId() && name == info->getName() && temp->getBranchId() == branchId)
+		{
+			jsinfo = temp;
 			found = true;
+		}
 	});
 
 	if (found)
+	{
+		if (!jsinfo->isRealyInstalled())
+			jsinfo->setExePath(exe.c_str());
+
 		return;
+	}
+
 
 	DesuraId toolId(m_iLastCustomToolId, DesuraId::TYPE_TOOL);
 	m_iLastCustomToolId--;
