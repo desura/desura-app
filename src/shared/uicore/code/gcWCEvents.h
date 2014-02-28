@@ -124,11 +124,11 @@ public:
 #ifdef USE_CHROMIUM_API_V2
 	void onDownloadFile(const char* szUrl, const char* szMimeType, unsigned long long ullFileSize) override;
 
-	void onStatus(const char* szStatus, ChromiumDLL::StatusType eType) override {}
+	//void onStatus(const char* szStatus, ChromiumDLL::StatusType eType) override {}
 
-	void onTitle(const char* szTitle) override {}
+	//void onTitle(const char* szTitle) override {}
 
-	bool onToolTip(const char* szToolTop) override { return false; }
+	//bool onToolTip(const char* szToolTop) override { return false; }
 #endif
 
 	uint32 getLastX()

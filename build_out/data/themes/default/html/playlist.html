@@ -201,7 +201,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>
 	};
 	
 	onNewItem = function(info) {
-		var item = desura.items.getItemFromId(info.itemId);
+		var item = info && desura.items.getItemFromId(info.itemId);
 	
 		if (item == null || typeof(item) == "undefined" || !item.isValid()) {
 			return null;
@@ -232,10 +232,15 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>
 	};
 	
 	onItemUpdate = function(info){
-		var item = desura.items.getItemFromId(info.id);
+		var item = info && desura.items.getItemFromId(info.id);
 	
 		if (item == null || item.isValid() == false)
 			return;
+			
+		if ($('#item_' + item.getId()).length == 0) {
+			onNewItem(info);
+			return;
+		}
 	
 		var template = '#t_gameheader';
 		var hasMods = false;
@@ -443,9 +448,18 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>
 
 <script id="t_gamelist" type="text/html">
 	<# 
-		var list = desura.items.getGames().concat(desura.items.getLinks());
+		var list = [];
+	
+		if (tabCache == "game") {
+			list = desura.items.getGames().concat(desura.items.getLinks());
+		}
+		else if (tabCache == "dev") {
+			list = desura.items.getDevItems();
+		}
+		
 		games=sortList(list);
-		if (games.length == 0) { #>
+		if (tabCache == "game" && games.length == 0) { 
+	#>
 		<#= parseTemplate($("#t_nogames").html(), {}) #>
 	<# } else { #>
 		<#= parseTemplate($("#t_listheader").html(), {}) #>
@@ -571,9 +585,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>
 
 <script id="t_devlist" type="text/html">
 <#
-	uploads = desura.items.getUploads(); 
-	devItems = sortList(desura.items.getDevItems());
-	
+	uploads = desura.items.getUploads(); 	
 	uData = {
 		hasChildren: (uploads.length > 0), 
 		expandName: "uploadexpand", 
@@ -751,6 +763,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>
 	</div>
 </div>
 </script>
-<script type="text/javascript" src="desura://external/play.js"></script>
+<script type="text/javascript">
+	$.getScript("desura://external/play.js");
+</script>
 </body>
 </html>

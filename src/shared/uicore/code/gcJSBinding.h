@@ -51,6 +51,8 @@ public:
 
 	EventV onPingEvent;
 
+	static gcString getCacheValue_s(gcString name, gcString defaultV);
+
 protected:
 	friend class MainApp;
 	friend class LanguageTestDialog;

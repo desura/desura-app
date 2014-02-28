@@ -113,6 +113,7 @@
 			<color id="hov-fg">255 255 255 255</color> 		<!-- hover -->
 			<color id="fg">177 177 177 255</color> 				<!-- normal -->
 			<color id="na-fg">177 177 177 255</color> 			<!-- nonactive -->
+			<color id="selected">44 44 44 255</color>
 		</control>
 
 		<control name="menu">

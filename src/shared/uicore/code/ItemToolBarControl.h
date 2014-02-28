@@ -62,7 +62,11 @@ protected:
 	void createButtons();
 	void onLoginItemsLoaded();
 
+	void onButtonClick(wxCommandEvent &event) override;
+
 private:
+	bool m_bShowDevList = false;
+
 	wxFlexGridSizer* m_pFGContentSizer;
 
 	SearchControl* m_pSearch;
