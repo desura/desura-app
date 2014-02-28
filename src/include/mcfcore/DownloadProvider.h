@@ -127,6 +127,12 @@ namespace Misc
 				m_eType = DownloadProviderType::Http;
 			else
 				m_eType = DownloadProviderType::Mcf;
+
+			uint64 ttl = -1;
+			xmlElement.GetChild("ttl", ttl);
+
+			if (ttl > -1)
+				m_tExpireTime = gcTime() + std::chrono::seconds(ttl);
 		}
 
 		//! Checks to see if its a valid banner
