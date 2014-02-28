@@ -37,6 +37,8 @@ $/LicenseInfo$
 #include "ProviderManager.h"
 #include "mcfcore/MCFI.h"
 
+#include <atomic>
+
 namespace MCFCore
 {
 
@@ -127,8 +129,8 @@ protected:
 private:
 	MCFCore::Misc::ProviderManager m_ProvManager;
 
-	uint32 m_iAvailbleWork=0;
-	uint32 m_iRunningWorkers=0;
+	std::atomic<uint32> m_iAvailbleWork=0;
+	std::atomic<uint32> m_iRunningWorkers=0;
 
 	bool m_bCheckMcf=false;
 	volatile bool m_bDoingStop=false;

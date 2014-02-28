@@ -578,68 +578,62 @@ bool WGTController::fillBlockList()
 
 bool WGTController::stealBlocks()
 {
-	//Disable this for now as it causes mcf download issues
-	return false;
-
-	size_t largestIndex = -1;
+	WGTWorkerInfo* largestWorker = nullptr;
 	size_t largestCount = 0;
 
-	for (size_t x=0; x<m_vWorkerList.size(); x++)
+	for (auto w : m_vWorkerList)
 	{
-		std::lock_guard<std::mutex> al(m_vWorkerList[x]->mutex);
+		std::lock_guard<std::mutex> al(w->mutex);
 
-		if (!m_vWorkerList[x]->curBlock)
+		if (!w->curBlock)
 			continue;
 
-		size_t count = m_vWorkerList[x]->curBlock->vBlockList.size();
+		size_t count = w->curBlock->vBlockList.size();
 
 		if (count > largestCount)
 		{
 			largestCount = count;
-			largestIndex = x;
+			largestWorker = w;
 		}
 	}
 
-	if (largestCount < 3 || largestIndex == (size_t)-1)
+	if (largestCount < 3 || !largestWorker)
 		return false;
 
-	WGTWorkerInfo* worker = m_vWorkerList[largestIndex];
-	worker->mutex.lock();
-
-	Misc::WGTSuperBlock* curBlock = worker->curBlock;
+	WGTWorkerInfo* worker = largestWorker;
 	Misc::WGTSuperBlock* superBlock = new Misc::WGTSuperBlock();
 
-	size_t halfWay = largestCount/2;
-
-	curBlock->m_Lock.lock();
-	superBlock->offset = curBlock->offset;
-
-	for (size_t x=0; x<curBlock->vBlockList.size(); x++)
 	{
-		if (x <= halfWay)
+		std::lock_guard<std::mutex> wg(worker->mutex);
+		Misc::WGTSuperBlock* curBlock = worker->curBlock;
+		
+		size_t halfWay = largestCount / 2;
+
 		{
-			superBlock->offset += curBlock->vBlockList[x]->size;
-		}
-		else
-		{
-			curBlock->size -= curBlock->vBlockList[x]->size;
-			superBlock->size += curBlock->vBlockList[x]->size;
-			superBlock->vBlockList.push_back(curBlock->vBlockList[x]);
+			std::lock_guard<std::mutex> cg(curBlock->m_Lock);
+
+			auto firstHalf = std::deque<Misc::WGTBlock*>(curBlock->vBlockList.begin(), curBlock->vBlockList.begin() + halfWay);
+			auto secondHalf = std::deque<Misc::WGTBlock*>(curBlock->vBlockList.begin() + halfWay, curBlock->vBlockList.end());
+
+			size_t totSize = 0;
+
+			for (auto b : secondHalf)
+				totSize += b->size;
+
+			curBlock->size -= totSize;
+			curBlock->vBlockList = firstHalf;
+
+			superBlock->size = totSize;
+			superBlock->vBlockList = secondHalf;
+			superBlock->offset = curBlock->offset + curBlock->size;
 		}
 	}
 
-	for (size_t x=curBlock->vBlockList.size()-1; x>halfWay; x--)
 	{
-		curBlock->vBlockList.erase(curBlock->vBlockList.begin()+x);
+		std::lock_guard<std::mutex> lg(m_pFileMutex);
+		m_vSuperBlockList.push_back(superBlock);
+		m_iAvailbleWork++;
 	}
-
-	curBlock->m_Lock.unlock();
-	worker->mutex.unlock();
-
-	m_pFileMutex.lock();
-	m_vSuperBlockList.push_back(superBlock);
-	m_iAvailbleWork++;
-	m_pFileMutex.unlock();
 
 	return true;
 }
