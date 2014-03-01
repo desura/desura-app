@@ -129,8 +129,8 @@ protected:
 private:
 	MCFCore::Misc::ProviderManager m_ProvManager;
 
-	std::atomic<uint32> m_iAvailbleWork=0;
-	std::atomic<uint32> m_iRunningWorkers=0;
+	std::atomic<uint32> m_iAvailbleWork;
+	std::atomic<uint32> m_iRunningWorkers;
 
 	bool m_bCheckMcf=false;
 	volatile bool m_bDoingStop=false;
