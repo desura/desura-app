@@ -229,6 +229,8 @@
 		<image name="playlist_button_hover">playlist_button_hover.png</image>
 		<image name="playlist_button_focus">playlist_button_focus.png</image>
 		<image name="playlist_button_nonactive">playlist_button_nonactive.png</image>
+		<image name="playlist_button_active">playlist_button_active.png</image>
+		
 		<image name="button_copy">button_copy.png</image>
 		<image name="button_copy_hover">button_copy_hover.png</image>	
 		<image name="button_copy_focus">button_copy_focus.png</image>

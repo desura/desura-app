@@ -88,6 +88,13 @@ public:
 			return;
 
 		m_bSelected = bState;
+
+		if (bState)
+			m_szImage = "#playlist_button_active";
+		else
+			m_szImage = "#playlist_button_normal";
+
+		m_szCurImage = "";
 		refreshImage(true);
 	}
 
