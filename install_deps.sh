@@ -39,6 +39,7 @@ elif [ -f /etc/redhat-release ]; then #Redhat/Fedora (not tested)
 		yum install ${MUST_BE_INSTALLED}
 	else
 		echo "Dependencies already installed."
+	fi
 elif [ -f /etc/arch-release ]; then # Arch Linux (not tested)
 	echo "\033[1;31mArch Linux detected!\033[0m"
 	echo "\033[1;31mNote: there is a pkgbuild in ./distro/archlinux/\033[0m"
