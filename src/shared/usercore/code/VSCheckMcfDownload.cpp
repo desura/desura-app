@@ -32,8 +32,6 @@ $/LicenseInfo$
 #include "usercore/UserCoreI.h"
 #include "webcore/WebCoreI.h"
 
-#include "mcfcore/UserCookies.h"
-
 namespace UserCore
 {
 namespace ItemTask

@@ -33,7 +33,6 @@ $/LicenseInfo$
 
 #include "mcfcore/MCFHeaderI.h"
 #include "mcfcore/MCFMain.h"
-#include "mcfcore/UserCookies.h"
 
 #include "UserTasks.h"
 #include "User.h"
@@ -45,6 +44,9 @@ $/LicenseInfo$
 #include "VSCheckInstall.h"
 #include "VSDownloadMissing.h"
 #include "VSInstallMissing.h"
+
+#include "MCFDownloadProviders.h"
+
 
 enum TIER
 {
@@ -512,9 +514,8 @@ bool VerifyServiceTask::checkUnAuthed()
 
 	try
 	{
-		MCFCore::Misc::UserCookies uc;
-		getWebCore()->setMCFCookies(&uc); 
-		hMcf->getDownloadProviders(getWebCore()->getMCFDownloadUrl(), &uc);
+		auto dp = std::make_shared<MCFDownloadProviders>(getWebCore(), getUserCore()->getUserId());
+		MCFDownloadProviders::forceLoad(hMcf, dp);
 	}
 	catch (gcException &except)
 	{

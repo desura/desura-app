@@ -26,6 +26,8 @@ $/LicenseInfo$
 #ifndef DESURA_GCWCUTIL_LEGACY_H
 #define DESURA_GCWCUTIL_LEGACY_H
 
+#define CEF_IGNORE_FUNCTIONS 1
+#include "cef_desura_includes/ChromiumBrowserI.h"
 #include "SharedObjectLoader.h"
 
 #ifndef USE_CHROMIUM_API_V2

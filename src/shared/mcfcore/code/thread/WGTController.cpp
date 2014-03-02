@@ -60,10 +60,10 @@ struct block_sortkey
 class WGTWorkerInfo
 {
 public:
-	WGTWorkerInfo(WGTControllerI* con, uint32 i, MCFCore::Misc::ProviderManager *pProvMng, const MCFCore::Misc::GetFile_s& fileAuth)
+	WGTWorkerInfo(WGTControllerI* con, uint32 i, MCFCore::Misc::ProviderManager &provMng)
 	{
 		id = i;
-		workThread = new WGTWorker(con, i, pProvMng, fileAuth);
+		workThread = new WGTWorker(con, i, provMng);
 		workThread->setPriority(::Thread::BaseThread::BELOW_NORMAL);
 		curBlock = nullptr;
 		ammountDone = 0;
@@ -89,51 +89,16 @@ public:
 };
 
 
-WGTController::WGTController(std::vector<std::shared_ptr<const MCFCore::Misc::DownloadProvider>> &source, uint16 numWorkers, MCFCore::MCF* caller, bool checkMcf) 
+WGTController::WGTController(std::shared_ptr<MCFCore::Misc::DownloadProvidersI> pDownloadProviders, uint16 numWorkers, MCFCore::MCF* caller, bool checkMcf) 
 	: MCFCore::Thread::BaseMCFThread(numWorkers, caller, "WebGet Controller Thread")
+	, m_ProvManager(pDownloadProviders)
+	, m_bCheckMcf(checkMcf)
 {
-#ifdef DEBUG
-#if 0
-	source.clear();
-	source.push_back(std::make_shread<MCFCore::Misc::DownloadProvider>("us1", "mcf://10.0.0.2:62003", "http://images.wikia.com/mariokart/images/4/45/Mkdd_giant_banana.jpg", ""));
-	/*std::vector<MCFCore::Misc::DownloadProvider*> list;
+	if (m_uiNumber > pDownloadProviders->size())
+		m_uiNumber = pDownloadProviders->size();
 
-	for (size_t x=0; x<source.size(); x++)
-	{
-		source[x]->m_szUrl = "";
-
-		if (gcString("mcf://us20.dl.desura.com:62001") == source[x]->getUrl())
-		{
-			list.push_back(source[x]);
-			break;
-		}
-	}
-
-	if (list.size() == 0)
-		list.push_back(source[0]);
-
-	source.clear();
-	source = list;*/
-#endif
-	m_uiSaved = 0;
-#endif
-
-	m_pProvManager = new MCFCore::Misc::ProviderManager(source);
-
-	if (m_uiNumber > source.size())
-		m_uiNumber = source.size();
-
-	m_pProvManager->onProviderEvent += delegate(&onProviderEvent);
-
+	m_ProvManager.onProviderEvent += delegate(&onProviderEvent);
 	setPriority(BELOW_NORMAL);
-	m_bCheckMcf = checkMcf;
-
-	m_iRunningWorkers=0;
-	m_iAvailbleWork=0;
-
-	m_pFileAuth = caller->getAuthInfo();
-
-	m_bDoingStop = false;
 }
 
 WGTController::~WGTController()
@@ -143,7 +108,6 @@ WGTController::~WGTController()
 	if (m_bDoingStop)
 		gcSleep(500);
 
-	safe_delete(m_pProvManager);
 	safe_delete(m_vWorkerList);
 
 	m_pFileMutex.lock();
@@ -159,13 +123,6 @@ void WGTController::pokeThread()
 
 void WGTController::run()
 {
-	if (m_pProvManager->getVector().size() == 0)
-	{
-		gcException newE(ERR_INVALID, "There are no download providers to download mcf.");
-		onErrorEvent(newE);
-		return;
-	}
-
 	UTIL::FS::FileHandle fh;
 
 	if (!fillBlockList())
@@ -202,7 +159,7 @@ void WGTController::run()
 
 		if (!isQuedBlocks() && m_iRunningWorkers > 0 && !isStopped())
 		{
-			if (!m_pProvManager->hasValidAgents())
+			if (!m_ProvManager.hasValidAgents())
 				break;
 
 			m_WaitCondition.wait(5);
@@ -246,7 +203,7 @@ void WGTController::createWorkers()
 {
 	for (uint16 x=0; x<m_uiNumber; x++)
 	{
-		WGTWorkerInfo* temp = new WGTWorkerInfo(this, (uint32)x, m_pProvManager, *m_pFileAuth);
+		WGTWorkerInfo* temp = new WGTWorkerInfo(this, (uint32)x, m_ProvManager);
 		m_vWorkerList.push_back(temp);
 
 		temp->workThread->start();
@@ -401,7 +358,7 @@ static bool SortByOffset(const std::shared_ptr<MCFCore::MCFFile>& a, const std::
 bool WGTController::fillBlockList()
 {
 	MCFCore::Misc::ProgressInfo pi;
-	MCFCore::MCF webMcf(m_pProvManager->getVector(), m_pFileAuth);
+	MCFCore::MCF webMcf(m_ProvManager.getDownloadProviders());
 
 	try
 	{
@@ -621,68 +578,62 @@ bool WGTController::fillBlockList()
 
 bool WGTController::stealBlocks()
 {
-	//Disable this for now as it causes mcf download issues
-	return false;
-
-	size_t largestIndex = -1;
+	WGTWorkerInfo* largestWorker = nullptr;
 	size_t largestCount = 0;
 
-	for (size_t x=0; x<m_vWorkerList.size(); x++)
+	for (auto w : m_vWorkerList)
 	{
-		std::lock_guard<std::mutex> al(m_vWorkerList[x]->mutex);
+		std::lock_guard<std::mutex> al(w->mutex);
 
-		if (!m_vWorkerList[x]->curBlock)
+		if (!w->curBlock)
 			continue;
 
-		size_t count = m_vWorkerList[x]->curBlock->vBlockList.size();
+		size_t count = w->curBlock->vBlockList.size();
 
 		if (count > largestCount)
 		{
 			largestCount = count;
-			largestIndex = x;
+			largestWorker = w;
 		}
 	}
 
-	if (largestCount < 3 || largestIndex == (size_t)-1)
+	if (largestCount < 3 || !largestWorker)
 		return false;
 
-	WGTWorkerInfo* worker = m_vWorkerList[largestIndex];
-	worker->mutex.lock();
-
-	Misc::WGTSuperBlock* curBlock = worker->curBlock;
+	WGTWorkerInfo* worker = largestWorker;
 	Misc::WGTSuperBlock* superBlock = new Misc::WGTSuperBlock();
 
-	size_t halfWay = largestCount/2;
-
-	curBlock->m_Lock.lock();
-	superBlock->offset = curBlock->offset;
-
-	for (size_t x=0; x<curBlock->vBlockList.size(); x++)
 	{
-		if (x <= halfWay)
+		std::lock_guard<std::mutex> wg(worker->mutex);
+		Misc::WGTSuperBlock* curBlock = worker->curBlock;
+		
+		size_t halfWay = largestCount / 2;
+
 		{
-			superBlock->offset += curBlock->vBlockList[x]->size;
-		}
-		else
-		{
-			curBlock->size -= curBlock->vBlockList[x]->size;
-			superBlock->size += curBlock->vBlockList[x]->size;
-			superBlock->vBlockList.push_back(curBlock->vBlockList[x]);
+			std::lock_guard<std::mutex> cg(curBlock->m_Lock);
+
+			auto firstHalf = std::deque<Misc::WGTBlock*>(curBlock->vBlockList.begin(), curBlock->vBlockList.begin() + halfWay);
+			auto secondHalf = std::deque<Misc::WGTBlock*>(curBlock->vBlockList.begin() + halfWay, curBlock->vBlockList.end());
+
+			size_t totSize = 0;
+
+			for (auto b : secondHalf)
+				totSize += b->size;
+
+			curBlock->size -= totSize;
+			curBlock->vBlockList = firstHalf;
+
+			superBlock->size = totSize;
+			superBlock->vBlockList = secondHalf;
+			superBlock->offset = curBlock->offset + curBlock->size;
 		}
 	}
 
-	for (size_t x=curBlock->vBlockList.size()-1; x>halfWay; x--)
 	{
-		curBlock->vBlockList.erase(curBlock->vBlockList.begin()+x);
+		std::lock_guard<std::mutex> lg(m_pFileMutex);
+		m_vSuperBlockList.push_back(superBlock);
+		m_iAvailbleWork++;
 	}
-
-	curBlock->m_Lock.unlock();
-	worker->mutex.unlock();
-
-	m_pFileMutex.lock();
-	m_vSuperBlockList.push_back(superBlock);
-	m_iAvailbleWork++;
-	m_pFileMutex.unlock();
 
 	return true;
 }

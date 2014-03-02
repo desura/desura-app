@@ -357,9 +357,12 @@ std::vector<CVar*> g_pCvarList;
 AutoDeleteV<std::vector<CVar*>> cvad(g_pCvarList);
 
 
-
-
 gcString DesuraJSBinding::getCacheValue(gcString name, gcString defaultV)
+{
+	return getCacheValue_s(name, defaultV);
+}
+
+gcString DesuraJSBinding::getCacheValue_s(gcString name, gcString defaultV)
 {
 	gcString fullname("WEBCACHE_{0}", name);
 

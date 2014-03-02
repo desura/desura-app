@@ -29,8 +29,7 @@ $/LicenseInfo$
 #include "User.h"
 
 #include "McfManager.h"
-#include "mcfcore/UserCookies.h"
-
+#include "MCFDownloadProviders.h"
 
 #include "ToolManager.h"
 #ifdef WIN32
@@ -64,15 +63,14 @@ void ValidateTask::doRun()
 	MCFBuild build;
 	MCFBranch branch;
 
-	MCFCore::Misc::UserCookies uc;
-	getWebCore()->setMCFCookies(&uc); 
-
 	updateStatusFlags();
 
 	m_hMCFile->setHeader(getItemId(), getMcfBranch(), getMcfBuild());
 	m_hMCFile->getErrorEvent() += delegate(&onErrorEvent);
 	m_hMCFile->getProgEvent() += delegate(this, &ValidateTask::onProgress);
-	m_hMCFile->getDownloadProviders(getWebCore()->getMCFDownloadUrl(), &uc, &m_bUnAuthed);
+
+	auto dp = std::make_shared<MCFDownloadProviders>(getWebCore(), getUserCore()->getUserId());
+	MCFDownloadProviders::forceLoad(m_hMCFile, dp);
 
 	validateHeader(build, branch);
 
@@ -124,7 +122,9 @@ void ValidateTask::doRun()
 				//local mcf. Reset every thing
 				m_hMCFile->getErrorEvent() += delegate(&onErrorEvent);
 				m_hMCFile->getProgEvent() += delegate(this, &ValidateTask::onProgress);
-				m_hMCFile->getDownloadProviders(getWebCore()->getMCFDownloadUrl(), &uc, &m_bUnAuthed);
+
+				auto dp = std::make_shared<MCFDownloadProviders>(getWebCore(), getUserCore()->getUserId());
+				MCFDownloadProviders::forceLoad(m_hMCFile, dp);
 			}
 		}
 		catch (gcException &e)

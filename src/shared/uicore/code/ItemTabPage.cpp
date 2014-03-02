@@ -35,41 +35,67 @@ $/LicenseInfo$
 
 #include "cef_desura_includes/ChromiumBrowserI.h"
 
-std::mutex m_EventLock;
-std::map<gcString, ChromiumDLL::JSObjHandle> g_EventMap;
+
 
 DesuraJSBinding *GetJSBinding();
 
-bool g_bGlobalItemUpdate = false;
-bool g_bMapValid = false;
 
-ChromiumDLL::JSObjHandle findEventFunction(const gcString &name, ChromiumDLL::JSObjHandle root)
+class JSEventMap
 {
-	std::lock_guard<std::mutex> al(m_EventLock);
+public:
+	ChromiumDLL::JSObjHandle findEventFunction(const gcString &name, ChromiumDLL::JSObjHandle root)
+	{
+		std::lock_guard<std::mutex> al(m_EventLock);
 
-	if (!g_bMapValid)
-		return nullptr;
+		if (!s_bMapValid)
+			return nullptr;
 
-	if (g_EventMap.find(name) != g_EventMap.end())
-		return g_EventMap[name];
+		if (g_EventMap.find(name) != g_EventMap.end())
+			return g_EventMap[name];
 
-	if (!root.get() || root->isNull())
-		return nullptr;
+		if (!root.get() || root->isNull())
+			return nullptr;
 
-	if (g_EventMap.find("__desura__") == g_EventMap.end())
-		g_EventMap["__desura__"] = root->getValue("desura");
-	
-	if (g_EventMap.find("__events__") == g_EventMap.end())
-		g_EventMap["__events__"] = g_EventMap["__desura__"]->getValue("events");
+		if (g_EventMap.find("__desura__") == g_EventMap.end())
+			g_EventMap["__desura__"] = root->getValue("desura");
 
-	if (g_EventMap.find("__internal__") == g_EventMap.end())
-		g_EventMap["__internal__"] = g_EventMap["__events__"]->getValue("internal");
+		if (g_EventMap.find("__events__") == g_EventMap.end())
+			g_EventMap["__events__"] = g_EventMap["__desura__"]->getValue("events");
 
-	ChromiumDLL::JSObjHandle ret = g_EventMap["__internal__"]->getValue(name.c_str());
-	g_EventMap[name] = ret;
+		if (g_EventMap.find("__internal__") == g_EventMap.end())
+			g_EventMap["__internal__"] = g_EventMap["__events__"]->getValue("internal");
 
-	return ret;
-}
+		ChromiumDLL::JSObjHandle ret = g_EventMap["__internal__"]->getValue(name.c_str());
+		g_EventMap[name] = ret;
+
+		return ret;
+	}
+
+	void reset()
+	{
+		std::lock_guard<std::mutex> al(m_EventLock);
+		g_EventMap.clear();
+	}
+
+	bool isVaild()
+	{
+		std::lock_guard<std::mutex> al(m_EventLock);
+		return s_bMapValid;
+	}
+
+	void setValid(bool bState)
+	{
+		std::lock_guard<std::mutex> al(m_EventLock);
+		s_bMapValid = bState;
+	}
+private:
+	std::mutex m_EventLock;
+	std::map<gcString, ChromiumDLL::JSObjHandle> g_EventMap;
+	bool s_bMapValid = false;
+};
+
+static JSEventMap g_JSEventMap;
+
 
 void BrowserUICallback(ChromiumDLL::CallbackI* callback);
 
@@ -95,7 +121,7 @@ public:
 		}	
 
 		if (m_szName == "onItemListUpdated")
-			g_bGlobalItemUpdate = true;
+			s_bGlobalItemUpdate = true;
 	}
 
 	void destroy() override
@@ -118,23 +144,23 @@ public:
 		}
 
 		if (m_szName == "onItemListUpdated")
-			g_bGlobalItemUpdate = false;
+			s_bGlobalItemUpdate = false;
 	}
 
 protected:
 	void doRun()
 	{
-		if (!g_bMapValid)
+		if (!g_JSEventMap.isVaild())
 			return;
 
-		if (m_szName == "onItemUpdate" && g_bGlobalItemUpdate)
+		if (m_szName == "onItemUpdate" && s_bGlobalItemUpdate)
 			return;
 
 		if (!m_pContext)
 			return;
 
 		m_pContext->enter();
-		ChromiumDLL::JSObjHandle funct = findEventFunction(m_szName, m_pContext->getGlobalObject());
+		ChromiumDLL::JSObjHandle funct = g_JSEventMap.findEventFunction(m_szName, m_pContext->getGlobalObject());
 
 		if (funct.get())
 		{
@@ -172,9 +198,11 @@ private:
 
 	ChromiumDLL::JavaScriptContextI* m_pContext;
 	gcString m_szName;
+
+	static bool s_bGlobalItemUpdate;
 };
 
-
+bool JSCallback::s_bGlobalItemUpdate = false;
 
 ItemTabPage::ItemTabPage(wxWindow* parent, gcWString homePage) 
 	: HtmlTabPage(parent, homePage, ITEMS)
@@ -198,10 +226,7 @@ ItemTabPage::ItemTabPage(wxWindow* parent, gcWString homePage)
 	killControlBar();
 
 	m_pItemControlBar->onButtonClickedEvent += guiDelegate(this, &ItemTabPage::onButtonClicked);
-
-	m_EventLock.lock();
-	g_bMapValid = true;
-	m_EventLock.unlock();
+	g_JSEventMap.setValid(true);
 
 	Bind(wxEVT_TIMER, &ItemTabPage::onPingTimer, this);
 }
@@ -210,10 +235,8 @@ ItemTabPage::~ItemTabPage()
 {
 	m_PingTimer.Stop();
 
-	m_EventLock.lock();
-	g_EventMap.clear();
-	g_bMapValid = false;
-	m_EventLock.unlock();
+	g_JSEventMap.setValid(false);
+	g_JSEventMap.reset();
 
 	m_pItemControlBar->onButtonClickedEvent -= guiDelegate(this, &ItemTabPage::onButtonClicked);
 	m_pItemControlBar->onSearchEvent -= guiDelegate(this, &ItemTabPage::onSearchStr);
@@ -363,6 +386,8 @@ void ItemTabPage::onButtonClicked(int32& id)
 
 void ItemTabPage::doneLoading()
 {
+	g_JSEventMap.reset();
+
 	if (GetUserCore() && GetUserCore()->isDelayLoading())
 		postEvent("onDelayLoad");
 }

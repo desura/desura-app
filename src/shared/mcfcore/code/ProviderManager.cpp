@@ -27,168 +27,431 @@ $/LicenseInfo$
 #include "ProviderManager.h"
 #include "util/gcTime.h"
 
-namespace MCFCore
-{
-namespace Misc
-{
+using namespace MCFCore::Misc;
 
 const uint32 g_uiTimeOutDelay = 15;
 
-class ErrorInfo
+namespace MCFCore
 {
-public:
-	void setTimeOut()
+	namespace Misc
 	{
-		m_iOwner = -1;
-		m_tExpTime = gcTime() + std::chrono::seconds( getTimeOut() );
-		m_uiErrCount++;
+
+		class ProviderInfo
+		{
+		public:
+			ProviderInfo(std::shared_ptr<const MCFCore::Misc::DownloadProvider> &pProvider)
+				: m_pProvider(pProvider)
+			{
+			}
+
+			void setTimeOut()
+			{
+				m_iOwner = -1;
+				m_uiErrCount++;
+				m_tExpTime = gcTime() + std::chrono::seconds(getTimeOut());
+				assert(isInTimeOut());
+			}
+
+			bool isInTimeOut()
+			{
+				return gcTime() < m_tExpTime;
+			}
+
+			void setOwner(uint32 id)
+			{
+				m_iOwner = id;
+			}
+
+			uint32 getOwner()
+			{
+				return m_iOwner;
+			}
+
+			std::shared_ptr<const MCFCore::Misc::DownloadProvider> getProvider()
+			{
+				return m_pProvider;
+			}
+
+		protected:
+			uint32 getTimeOut()
+			{
+				return (g_uiTimeOutDelay * m_uiErrCount);
+			}
+
+		private:
+			uint32 m_uiErrCount = 0;
+			uint32 m_iOwner = -1;
+			gcTime m_tExpTime;
+			std::shared_ptr<const MCFCore::Misc::DownloadProvider> m_pProvider;
+		};
+
 	}
-
-	bool isInTimeOut()
-	{
-		return m_tExpTime > gcTime();
-	}
-
-	void setOwner(uint32 id)
-	{
-		m_iOwner = id;
-	}
-
-	uint32 getOwner()
-	{
-		return m_iOwner;
-	}
-
-protected:
-	uint32 getTimeOut()
-	{
-		return (g_uiTimeOutDelay * m_uiErrCount);
-	}
-
-private:
-	uint32 m_uiErrCount = 0;
-	uint32 m_iOwner = -1;
-	gcTime m_tExpTime;
-};
+}
 
 
-ProviderManager::ProviderManager(std::vector<std::shared_ptr<const MCFCore::Misc::DownloadProvider>> &source) 
-	: m_vSourceList(source)
+ProviderManager::ProviderManager(std::shared_ptr<MCFCore::Misc::DownloadProvidersI> pDownloadProviders) 
+	: m_pDownloadProviders(pDownloadProviders)
 {
-	for (auto i : m_vSourceList)
-		m_vErrorList.push_back(std::make_shared<ErrorInfo>());
 }
 
 ProviderManager::~ProviderManager()
 {
 }
 
-gcString ProviderManager::getUrl(uint32 id, DownloadProviderType &eType)
+void ProviderManager::initProviderList()
 {
-	gcString url("nullptr");
-	std::vector<uint32> validList;
+	std::vector<std::shared_ptr<const DownloadProvider>> vProviders;
+	m_pDownloadProviders->getDownloadProviders(vProviders);
 
-	m_WaitMutex.lock();
-
-	for (size_t x=0; x<m_vErrorList.size(); x++)
+	for (auto p : vProviders)
 	{
-		if (!m_vErrorList[x]->isInTimeOut() && m_vErrorList[x]->getOwner() == UINT_MAX)
-			validList.push_back(x);
+		auto bFound = false;
+
+		for (auto x : m_vProviderList)
+		{
+			if (gcString(p->getUrl()) == x.getProvider()->getUrl())
+			{
+				bFound = true;
+				break;
+			}
+		}
+
+		if (!bFound && p->isValidAndNotExpired())
+			m_vProviderList.push_back(ProviderInfo(p));
+	}
+}
+
+void ProviderManager::cleanExpiredProviders()
+{
+	auto it = std::remove_if(m_vProviderList.begin(), m_vProviderList.end(), [](ProviderInfo &p)
+	{
+		return !p.getProvider()->isValidAndNotExpired();
+	});
+
+	if (it != m_vProviderList.end())
+		m_vProviderList.erase(it, m_vProviderList.end());
+}
+
+bool ProviderManager::getValidFreeProviders(std::vector<ProviderInfo*> &vValidProviders)
+{
+	for (auto &p : m_vProviderList)
+	{
+		if (!p.isInTimeOut() && p.getOwner() == UINT_MAX)
+			vValidProviders.push_back(&p);
 	}
 
-	//always take from the top of the list as they are prefered servers
-	if (validList.size() > 0)
+	return !vValidProviders.empty();
+}
+
+std::shared_ptr<const MCFCore::Misc::DownloadProvider> ProviderManager::getUrl(uint32 id)
+{
+	std::shared_ptr<const MCFCore::Misc::DownloadProvider> pProvider;
+	auto bInitList = false;
+
 	{
-		m_vErrorList[validList[0]]->setOwner(id);
+		std::lock_guard<std::mutex> guard(m_WaitMutex);
 
-		url = gcString(m_vSourceList[validList[0]]->getUrl());
-		eType = m_vSourceList[validList[0]]->getType();
+		cleanExpiredProviders();
 
-		MCFCore::Misc::DP_s dp;
-		dp.action = MCFCore::Misc::DownloadProvider::ADD;
-		dp.provider = m_vSourceList[validList[0]];
-		onProviderEvent(dp);
+		for (auto p : m_vProviderList)
+		{
+			if (id == p.getOwner())
+				return p.getProvider();
+		}
+
+		if (m_vProviderList.size() == 0)
+		{
+			initProviderList();
+			bInitList = true;
+		}
+
+		std::vector<ProviderInfo*> vValidProviders;
+
+		if (!getValidFreeProviders(vValidProviders))
+		{
+			//recheck to see if we can get some more providers
+			if (bInitList)
+				return pProvider;
+
+			initProviderList();
+
+			if (!getValidFreeProviders(vValidProviders))
+				return pProvider;
+		}
+			
+		//always take from the top of the list as they are preferred servers
+		auto first = *vValidProviders.begin();
+
+		first->setOwner(id);
+		pProvider = first->getProvider();
 	}
 
-	m_WaitMutex.unlock();
+	MCFCore::Misc::DP_s dp;
 
-	return url;
+	dp.action = MCFCore::Misc::DownloadProvider::ADD;
+	dp.provider = pProvider;
+
+	onProviderEvent(dp);
+
+	return pProvider;
 }
 
 gcString ProviderManager::getName(uint32 id)
 {
-	gcString name;
+	std::lock_guard<std::mutex> guard(m_WaitMutex);
 
-	for (size_t x=0; x<m_vSourceList.size(); x++)
+	for (auto p : m_vProviderList)
 	{
-		if (!m_vSourceList[x])
-			continue;
-
-		if (id == m_vErrorList[x]->getOwner())
-		{
-			name = gcString(m_vSourceList[x]->getName());
-		}
+		if (id == p.getOwner())
+			return p.getProvider()->getName();
 	}
 
-	return name;
+	return "";
 }
 
-gcString ProviderManager::requestNewUrl(uint32 id, DownloadProviderType &eType, uint32 errCode, const char* errMsg)
+std::shared_ptr<const MCFCore::Misc::DownloadProvider> ProviderManager::requestNewUrl(uint32 id, uint32 errCode, const char* errMsg)
 {
 	Warning(gcString("Mcf download thread errored out. Id: {0}, Error: {2} [{1}]\n", id, errCode, errMsg));
 
 	removeAgent(id, true);
-	return getUrl(id, eType);
+	return getUrl(id);
 }
 
 void ProviderManager::removeAgent(uint32 id, bool setTimeOut)
 {
-	m_WaitMutex.lock();
+	std::shared_ptr<const MCFCore::Misc::DownloadProvider> pProvider;
 
-	for (size_t x=0; x<m_vSourceList.size(); x++)
 	{
-		if (!m_vSourceList[x])
-			continue;
+		std::lock_guard<std::mutex> guard(m_WaitMutex);
 
-		if (id == m_vErrorList[x]->getOwner())
+		for (auto &p : m_vProviderList)
 		{
+			if (id != p.getOwner())
+				continue;
+
 			if (setTimeOut)
-				m_vErrorList[x]->setTimeOut();
-			else
-				m_vErrorList[x]->setOwner(-1);
-
-			MCFCore::Misc::DP_s dp;
-			dp.action = MCFCore::Misc::DownloadProvider::REMOVE;
-			dp.provider = m_vSourceList[x];
-			onProviderEvent(dp);
-		}
-	}
-
-	m_WaitMutex.unlock();
-}
-
-bool ProviderManager::hasValidAgents()
-{
-	bool res = false;
-
-	m_WaitMutex.lock();
-
-	for (size_t x=0; x<m_vSourceList.size(); x++)
-	{
-		if (!m_vSourceList[x])
-			continue;
-
-		if (!m_vErrorList[x]->isInTimeOut())
-		{
-			res = true;
+				p.setTimeOut();
+			
+			p.setOwner(-1);
+			pProvider = p.getProvider();
 			break;
 		}
 	}
 
-	m_WaitMutex.unlock();
+	if (pProvider)
+	{
+		MCFCore::Misc::DP_s dp;
 
-	return res;
+		dp.action = MCFCore::Misc::DownloadProvider::REMOVE;
+		dp.provider = pProvider;
+
+		onProviderEvent(dp);
+	}
 }
 
+bool ProviderManager::hasValidAgents()
+{
+	std::lock_guard<std::mutex> guard(m_WaitMutex);
+
+	for (auto &p : m_vProviderList)
+	{
+		if (!p.isInTimeOut())
+			return true;
+	}
+
+	return false;
 }
+
+#ifdef WITH_GTEST
+
+#include <gtest/gtest.h>
+
+namespace UnitTest
+{
+
+	class TestDownloadProvidersPM : public DownloadProvidersI
+	{
+	public:
+		bool getDownloadProviders(std::vector<std::shared_ptr<const DownloadProvider>> &vDownloadProviders) override
+		{
+			vDownloadProviders = m_vDownloadProviders;
+			return !m_vDownloadProviders.empty();
+		}
+
+		void setInfo(DesuraId id, MCFBranch branch, MCFBuild build) override
+		{
+
+		}
+
+		std::shared_ptr<const GetFile_s> getDownloadAuth() override
+		{
+			return std::shared_ptr<const GetFile_s>();
+		}
+
+		size_t size() override
+		{
+			return m_vDownloadProviders.size();
+		}
+
+		std::vector<std::shared_ptr<const DownloadProvider>> m_vDownloadProviders;
+	};
+
+
+	//test getUrl gives valid download provider
+	TEST(ProviderManager, BasicOneRequest)
+	{
+		auto dp = std::make_shared<TestDownloadProvidersPM>();
+		dp->m_vDownloadProviders.push_back(std::make_shared<const DownloadProvider>("a1","a2","a3","a4"));
+
+		ProviderManager pm(dp);
+
+		{
+			auto res = pm.getUrl(1);
+
+			ASSERT_TRUE(res.get());
+			ASSERT_STREQ("a1", res->getName());
+		}
+
+		//Getting it a second time should return same provider
+		{
+			auto res = pm.getUrl(1);
+
+			ASSERT_TRUE(res.get());
+			ASSERT_STREQ("a1", res->getName());
+		}
+	}
+
+
+	//test getUrl gives unique download provider each time and in order
+	TEST(ProviderManager, BasicTwoRequests)
+	{
+		auto dp = std::make_shared<TestDownloadProvidersPM>();
+		dp->m_vDownloadProviders.push_back(std::make_shared<const DownloadProvider>("a1", "a2", "a3", "a4"));
+		dp->m_vDownloadProviders.push_back(std::make_shared<const DownloadProvider>("b1", "b2", "b3", "b4"));
+
+		ProviderManager pm(dp);
+
+		{
+			auto res = pm.getUrl(1);
+
+			ASSERT_TRUE(res.get());
+			ASSERT_STREQ("a1", res->getName());
+		}
+
+		{
+			auto res = pm.getUrl(2);
+
+			ASSERT_TRUE(res.get());
+			ASSERT_STREQ("b1", res->getName());
+		}
+	}
+
+	//test requestNewUrl gives new download provider and doest reallocate old provider
+	TEST(ProviderManager, BasicTwoRequestsWithError)
+	{
+		auto dp = std::make_shared<TestDownloadProvidersPM>();
+		dp->m_vDownloadProviders.push_back(std::make_shared<const DownloadProvider>("a1", "a2", "a3", "a4"));
+		dp->m_vDownloadProviders.push_back(std::make_shared<const DownloadProvider>("b1", "b2", "b3", "b4"));
+
+		ProviderManager pm(dp);
+
+		{
+			auto res = pm.getUrl(1);
+
+			ASSERT_TRUE(res.get());
+			ASSERT_STREQ("a1", res->getName());
+		}
+
+		{
+			auto res = pm.requestNewUrl(1, 1, "error");
+
+			ASSERT_TRUE(res.get());
+			ASSERT_STREQ("b1", res->getName());
+		}
+
+		{
+			auto res = pm.getUrl(1);
+
+			ASSERT_TRUE(res.get());
+			ASSERT_STREQ("b1", res->getName());
+		}
+	}
+
+	//test getUrl gives valid provider when all old providers have expired
+	TEST(ProviderManager, ProvExpire)
+	{
+		auto pc = std::make_shared<const DownloadProvider>("a1", "a2", "a3", "a4");
+		
+		DownloadProvider *p = const_cast<DownloadProvider*>(&*pc);
+		p->setType(DownloadProviderType::Cdn);
+		p->setExpireTime(gcTime() + std::chrono::minutes(1));
+
+		auto dp = std::make_shared<TestDownloadProvidersPM>();
+		dp->m_vDownloadProviders.push_back(pc);
+		dp->m_vDownloadProviders.push_back(std::make_shared<const DownloadProvider>("b1", "b2", "b3", "b4"));
+		
+
+		ProviderManager pm(dp);
+
+		{
+			auto res = pm.getUrl(1);
+
+			ASSERT_TRUE(res.get());
+			ASSERT_STREQ("a1", res->getName());
+		}
+
+		p->setExpireTime(gcTime() - std::chrono::minutes(1));
+
+		//Getting it a second time should return same provider
+		{
+			auto res = pm.getUrl(1);
+
+			ASSERT_TRUE(res.get());
+			ASSERT_STREQ("b1", res->getName());
+		}
+	}
+
+	//test getUrl gives valid provider when all old providers have expired (requests new providers)
+	TEST(ProviderManager, ProvExpireWithNewProviders)
+	{
+		auto pc = std::make_shared<const DownloadProvider>("a1", "a2", "a3", "a4");
+
+		DownloadProvider *p = const_cast<DownloadProvider*>(&*pc);
+		p->setType(DownloadProviderType::Cdn);
+		p->setExpireTime(gcTime() + std::chrono::minutes(1));
+
+		auto dp = std::make_shared<TestDownloadProvidersPM>();
+		dp->m_vDownloadProviders.push_back(pc);
+
+		ProviderManager pm(dp);
+
+		{
+			auto res = pm.getUrl(1);
+
+			ASSERT_TRUE(res.get());
+			ASSERT_STREQ("a1", res->getName());
+		}
+
+		p->setExpireTime(gcTime() - std::chrono::minutes(1));
+
+		dp->m_vDownloadProviders.clear();
+		dp->m_vDownloadProviders.push_back(std::make_shared<const DownloadProvider>("b1", "b2", "b3", "b4"));
+
+		//Getting it a second time should return same provider
+		{
+			auto res = pm.getUrl(1);
+
+			ASSERT_TRUE(res.get());
+			ASSERT_STREQ("b1", res->getName());
+		}
+	}
+
+
+	//test getUrl gives back errored providers after time out
+
+
 }
+
+
+
+#endif

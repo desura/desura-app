@@ -26,9 +26,7 @@ $/LicenseInfo$
 #include "Common.h"
 #include "gcWCUtil_Legacy.h"
 
-#define CEF_IGNORE_FUNCTIONS 1
-#include "cef_desura_includes/ChromiumBrowserI.h"
-#include "SharedObjectLoader.h"
+
 
 
 
@@ -187,6 +185,9 @@ public:
 	bool Load(SharedObjectLoader &hCefDll)
 	{
 		CEF_SetApiVersion = hCefDll.getFunction<CEF_SetApiVersionFn>("CEF_SetApiVersion", false);
+
+		hCefDll.resetFailed();
+
 		CEF_Init = hCefDll.getFunction<CEF_InitFn>("CEF_Init");
 		CEF_Stop = hCefDll.getFunction<CEF_StopFn>("CEF_Stop");
 		CEF_RegisterJSExtender = hCefDll.getFunction<CEF_RegisterJSExtenderFn>("CEF_RegisterJSExtender");

@@ -30,7 +30,7 @@ $/LicenseInfo$
 #include "mcfcore/MCFI.h"
 #include "mcfcore/MCFHeaderI.h"
 #include "mcfcore/MCFMain.h"
-#include "mcfcore/UserCookies.h"
+#include "MCFDownloadProviders.h"
 
 namespace UserCore
 {
@@ -96,15 +96,15 @@ gcString UIBaseServiceTask::getBranchMcf(DesuraId id, MCFBranch branch, MCFBuild
 		if (filePath == "")
 			filePath =  mm->newMcfPath(id, branch, build);
 
-		MCFCore::Misc::UserCookies uc;
-		getWebCore()->setMCFCookies(&uc);
-
 		try
 		{
 			McfHandle mcfHandle;
 			mcfHandle->setHeader(id, branch, build);
 			mcfHandle->setFile(filePath.c_str());
-			mcfHandle->getDownloadProviders(getWebCore()->getMCFDownloadUrl(), &uc);
+
+			auto dp = std::make_shared<MCFDownloadProviders>(getWebCore(), getUserCore()->getUserId());
+			MCFDownloadProviders::forceLoad(mcfHandle, dp);
+
 			mcfHandle->dlHeaderFromWeb();
 			mcfHandle->saveBlankMcf();
 		}

@@ -37,6 +37,7 @@ namespace MCFCore
 {
 namespace Misc
 {
+	class GetFile_s;
 
 	enum class DownloadProviderType
 	{
@@ -45,168 +46,214 @@ namespace Misc
 		Cdn,
 	};
 
-//! DownloadProvider class stores information about servers that are available to download MCF content from
-//! 
-class DownloadProvider
-{
-public:
-	enum PROVIDER
+	//! DownloadProvider class stores information about servers that are available to download MCF content from
+	//! 
+	class DownloadProvider
 	{
-		ADD,	//!< Using new provider (i.e. add to banner)
-		REMOVE,	//!< Stop using provider (i.e. remove from banner)
+	public:
+		enum PROVIDER
+		{
+			ADD,	//!< Using new provider (i.e. add to banner)
+			REMOVE,	//!< Stop using provider (i.e. remove from banner)
+		};
+
+		//! Default Constructor
+		DownloadProvider()
+		{
+		}
+
+		//! Copy Constructor
+		DownloadProvider(const MCFCore::Misc::DownloadProvider& prov)
+		{
+			m_szName = prov.getName();
+			m_szUrl = prov.getUrl();
+			m_szProvUrl = prov.getProvUrl();
+			m_eType = prov.getType();
+
+			setBanner(prov.getBanner());
+		}
+
+		DownloadProvider& operator=(const DownloadProvider& prov)
+		{
+			if (this == &prov)
+				return *this;
+
+			m_szName = prov.getName();
+			m_szUrl = prov.getUrl();
+			m_szProvUrl = prov.getProvUrl();
+			m_eType = prov.getType();
+
+			setBanner(prov.getBanner());
+
+			return *this;
+		}
+
+		//! Alt Constructor
+		//!
+		//! @param n Provider Name
+		//! @param u Download Url
+		//! @param b Banner Url
+		//! @param p Provider Url
+		//!
+		DownloadProvider(const char* n, const char* u, const char* b, const char* p)
+			: m_szName(n)
+			, m_szUrl(u)
+			, m_szProvUrl(p)
+		{
+			setBanner(b);
+		}
+
+		//! Alt Constructor from xml
+		//! 
+		//! @param node Xml node to get info from
+		//!
+		DownloadProvider(const XML::gcXMLElement &xmlElement)
+		{
+			assert(xmlElement.IsValid());
+
+			const std::string strBanner = xmlElement.GetChild("banner");
+			setBanner(strBanner.c_str());
+
+			xmlElement.GetChild("provider", m_szName);
+			xmlElement.GetChild("provlink", m_szProvUrl);
+			xmlElement.GetChild("link", m_szUrl);
+
+			gcString type;
+			xmlElement.GetChild("type", type);
+
+			if (type == "cdn")
+				m_eType = DownloadProviderType::Cdn;
+			else if (type == "http")
+				m_eType = DownloadProviderType::Http;
+			else
+				m_eType = DownloadProviderType::Mcf;
+
+			uint64 ttl = -1;
+			xmlElement.GetChild("ttl", ttl);
+
+			if (ttl > -1)
+				m_tExpireTime = gcTime() + std::chrono::seconds(ttl);
+		}
+
+		//! Checks to see if its a valid banner
+		//! 
+		//! @return True if valid, False if not
+		//!
+		bool isValid() const
+		{
+			return (m_szName.size() > 0 && m_szUrl.size() > 0 && m_szBanner.size() > 0 && m_szProvUrl.size() > 0);
+		}
+
+		//! Gets the provider name
+		//!
+		//! @return Provider name
+		//!
+		const char* getName() const
+		{
+			return m_szName.c_str();
+		}
+
+		//! Gets the download url
+		//!
+		//! @return Download url
+		//!
+		const char* getUrl() const
+		{
+			return m_szUrl.c_str();
+		}
+
+		//! Gets the banner url
+		//!
+		//! @return Banner Url
+		//!
+		const char* getBanner() const
+		{
+			std::lock_guard<std::mutex> guard(m_BannerLock);
+			return m_szBanner.data();
+		}
+
+		//! Gets the providers url
+		//!
+		//! @return Provider url
+		//!
+		const char* getProvUrl() const
+		{
+			return m_szProvUrl.c_str();
+		}
+
+		//! Sets the banner url
+		//!
+		//! @param banner New banner Url
+		//!
+		void setBanner(const char* banner) const
+		{
+			std::lock_guard<std::mutex> guard(m_BannerLock);
+
+			gcString strBanner(banner);
+			Safe::strncpy(m_szBanner.data(), m_szBanner.size(), strBanner.c_str(), strBanner.size());
+		}
+
+		void setType(DownloadProviderType type)
+		{
+			m_eType = type;
+		}
+
+
+		DownloadProviderType getType() const
+		{
+			return m_eType;
+		}
+
+		void setExpireTime(gcTime time)
+		{
+			m_tExpireTime = time;
+		}
+
+		bool hasExpired() const
+		{
+			if (m_eType != DownloadProviderType::Cdn)
+				return false;
+
+			return gcTime() > m_tExpireTime;
+		}
+
+		bool isValidAndNotExpired() const
+		{
+			return !hasExpired() && !m_szUrl.empty();
+		}
+
+	private:
+		DownloadProviderType m_eType = DownloadProviderType::Mcf;
+
+		gcTime m_tExpireTime;
+		gcString m_szName;
+		gcString m_szUrl;
+		gcString m_szProvUrl;
+
+		mutable std::mutex m_BannerLock;
+		mutable std::array<char, 256> m_szBanner;
 	};
 
-	//! Default Constructor
-	DownloadProvider()
+
+	class DownloadProvidersI
 	{
-	}
+	public:
+		virtual ~DownloadProvidersI(){}
 
-	//! Copy Constructor
-	DownloadProvider(const MCFCore::Misc::DownloadProvider& prov)
-	{
-		m_szName = prov.getName();
-		m_szUrl = prov.getUrl();
-		m_szProvUrl = prov.getProvUrl();
-		m_eType = prov.getType();
+		virtual void setInfo(DesuraId id, MCFBranch branch, MCFBuild build)=0;
 
-		setBanner(prov.getBanner());
-	}
+		//! Get a list of download providers
+		//!
+		virtual bool getDownloadProviders(std::vector<std::shared_ptr<const DownloadProvider>> &vDownloadProviders)=0;
 
-	DownloadProvider& operator=(const DownloadProvider& prov)
-	{
-		if (this == &prov)
-			return *this;
+		//! Auth token for downloads
+		//!
+		virtual std::shared_ptr<const GetFile_s> getDownloadAuth()=0;
 
-		m_szName = prov.getName();
-		m_szUrl = prov.getUrl();
-		m_szProvUrl = prov.getProvUrl();
-		m_eType = prov.getType();
-
-		setBanner(prov.getBanner());
-
-		return *this;
-	}
-
-	//! Alt Constructor
-	//!
-	//! @param n Provider Name
-	//! @param u Download Url
-	//! @param b Banner Url
-	//! @param p Provider Url
-	//!
-	DownloadProvider(const char* n, const char* u, const char* b, const char* p)
-		: m_szName(n)
-		, m_szUrl(u)
-		, m_szProvUrl(p)
-	{
-		setBanner(b);
-	}
-
-	//! Alt Constructor from xml
-	//! 
-	//! @param node Xml node to get info from
-	//!
-	DownloadProvider(const XML::gcXMLElement &xmlElement)
-	{
-		assert(xmlElement.IsValid());
-
-		const std::string strBanner = xmlElement.GetChild("banner");
-		setBanner(strBanner.c_str());
-
-		xmlElement.GetChild("provider", m_szName);
-		xmlElement.GetChild("provlink", m_szProvUrl);
-		xmlElement.GetChild("link", m_szUrl);
-
-		gcString type;
-		xmlElement.GetChild("type", type);
-
-		if (type == "cdn")
-			m_eType = DownloadProviderType::Cdn;
-		else if (type == "http")
-			m_eType = DownloadProviderType::Http;
-		else
-			m_eType = DownloadProviderType::Mcf;
-	}
-
-	//! Checks to see if its a valid banner
-	//! 
-	//! @return True if valid, False if not
-	//!
-	bool isValid() const
-	{
-		return (m_szName.size() > 0 && m_szUrl.size() > 0 && m_szBanner.size() > 0 && m_szProvUrl.size() > 0);
-	}
-
-	//! Gets the provider name
-	//!
-	//! @return Provider name
-	//!
-	const char* getName() const
-	{
-		return m_szName.c_str();
-	}
-
-	//! Gets the download url
-	//!
-	//! @return Download url
-	//!
-	const char* getUrl() const
-	{
-		return m_szUrl.c_str();
-	}
-
-	//! Gets the banner url
-	//!
-	//! @return Banner Url
-	//!
-	const char* getBanner() const
-	{
-		std::lock_guard<std::mutex> guard(m_BannerLock);
-		return m_szBanner.data();
-	}
-
-	//! Gets the providers url
-	//!
-	//! @return Provider url
-	//!
-	const char* getProvUrl() const
-	{
-		return m_szProvUrl.c_str();
-	}
-
-	//! Sets the banner url
-	//!
-	//! @param banner New banner Url
-	//!
-	void setBanner(const char* banner) const
-	{
-		std::lock_guard<std::mutex> guard(m_BannerLock);
-
-		gcString strBanner(banner);
-		Safe::strncpy(m_szBanner.data(), m_szBanner.size(), strBanner.c_str(), strBanner.size());
-	}
-
-	void setType(DownloadProviderType type)
-	{
-		m_eType = type;
-	}
-
-
-	DownloadProviderType getType() const
-	{
-		return m_eType;
-	}
-
-private:
-	DownloadProviderType m_eType = DownloadProviderType::Mcf;
-	gcString m_szName;
-	gcString m_szUrl;
-	gcString m_szProvUrl;
-
-	mutable std::mutex m_BannerLock;
-	mutable std::array<char, 256> m_szBanner;
-};
-
+		//! Number of download providers
+		//!
+		virtual size_t size()=0;
+	};
 }
 }
 

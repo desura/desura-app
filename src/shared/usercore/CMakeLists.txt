@@ -78,6 +78,7 @@ file(GLOB Sources code/BaseItemServiceTask.cpp
                   code/VSCheckMcfDownload.cpp
                   code/VSDownloadMissing.cpp
                   code/VSInstallMissing.cpp
+				  code/MCFDownloadProviders.cpp
 )
 
 if(WIN32)

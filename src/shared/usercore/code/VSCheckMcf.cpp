@@ -31,8 +31,7 @@ $/LicenseInfo$
 #include "ItemInfo.h"
 #include "usercore/UserCoreI.h"
 #include "webcore/WebCoreI.h"
-
-#include "mcfcore/UserCookies.h"
+#include "MCFDownloadProviders.h"
 
 namespace UserCore
 {
@@ -100,13 +99,11 @@ gcString VSCheckMcf::downloadMCFHeader()
 
 	m_hTempMcf->setHeader(getItemId(), getMcfBranch(), getMcfBuild());
 	
-
 	try
 	{
-		MCFCore::Misc::UserCookies uc;
-		getWebCore()->setMCFCookies(&uc); 
+		auto dp = std::make_shared<MCFDownloadProviders>(getWebCore(), getUserCore()->getUserId());
+		MCFDownloadProviders::forceLoad(m_hTempMcf, dp);
 
-		m_hTempMcf->getDownloadProviders(getWebCore()->getMCFDownloadUrl(), &uc);
 		m_hTempMcf->dlHeaderFromWeb();
 	}
 	catch (gcException &except)

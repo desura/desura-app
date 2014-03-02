@@ -88,7 +88,7 @@ CONCOMMAND(cc_PrintVersion, "version")
 	Msg(gcString("Desura Version\t\t: {0}\n",	GetAppVersion()));
 	Msg(gcString("MCFCore Version\t\t: {0}\n",	GetMCFCoreVersion()));
 	Msg(gcString("UICore Version\t\t: {0}\n",	GetUICoreVersion()));
-	Msg(gcString("UserCore Version\t: {0}\n",	GetUserCoreVersion()));
+	Msg(gcString("UserCore Version\t\t: {0}\n",	GetUserCoreVersion()));
 	Msg(gcString("WebCore Version\t\t: {0}\n",	GetWebCoreVersion()));
 	Msg("--------------------------------------------------\n");
 }

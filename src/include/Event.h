@@ -53,7 +53,6 @@ $/LicenseInfo$
 
 #include <vector>
 #include <algorithm>
-#include <assert.h>
 
 #ifndef UNKNOWN_ITEM
 #define UNKNOWN_ITEM 0xFFFFFFFF

@@ -156,7 +156,7 @@ public:
 	const char* getName(){return "DownloadBannerTask";}
 
 private:
-	MCFCore::Misc::DownloadProvider m_DPInfo;
+	BannerCompleteInfo m_DPInfo;
 };
 
 

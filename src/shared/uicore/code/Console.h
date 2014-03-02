@@ -36,10 +36,14 @@ $/LicenseInfo$
 #include "Color.h"
 #include "Managers.h"
 
+#include <atomic>
+#include <thread>
+
 typedef struct
 {
 	gcWString str;
 	Color col;
+	std::thread::id id;
 } ConsoleText_s;
 
 
@@ -62,6 +66,9 @@ public:
 	void setSize();
 	void postShowEvent();
 
+	//Used to ignore unit test thread
+	static void ignoreThisThread();
+
 protected:
 	void setupAutoComplete();
 
@@ -83,6 +90,8 @@ protected:
 
 private:
 	bool m_bCenterOnParent;
+
+	static std::atomic<std::thread::id> s_IgnoredThread;
 };
 
 #endif //DESURA_LOG_FORM_H

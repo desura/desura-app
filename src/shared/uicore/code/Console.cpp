@@ -122,6 +122,7 @@ private:
 };
 
 
+std::atomic<std::thread::id> Console::s_IgnoredThread;
 
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -136,7 +137,10 @@ Console::Console(wxWindow* parent) : gcFrame(parent, wxID_ANY, wxT("#CS_TITLE"),
 	SetMinSize( wxSize(300,300) );
 	setupPositionSave("log", false);
 
+	wxFont font(9, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, false, wxT("Courier New"));
+
 	m_rtDisplay = new wxRichTextCtrl( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_READONLY|wxHSCROLL|wxVSCROLL );
+	m_rtDisplay->SetFont(font);
 
 	m_tbInfo = new gcComboBox( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0, nullptr, wxTE_PROCESS_ENTER|wxWANTS_CHARS );
 	m_tbInfo->Bind(wxEVT_KEY_DOWN, &Console::onKeyDown, this);
@@ -177,6 +181,11 @@ Console::~Console()
 {
 	wxLog *old_log = wxLog::SetActiveTarget(nullptr);
 	delete old_log;
+}
+
+void Console::ignoreThisThread()
+{
+	s_IgnoredThread = std::this_thread::get_id();
 }
 
 void Console::setupAutoComplete()
@@ -284,15 +293,24 @@ void Console::onConsoleText(ConsoleText_s& text)
 	for (std::vector<std::string>::iterator it=tList.begin(); it != tList.end(); ++it)
 	{
 		gcWString szText(*it);
-
 		wxDateTime now = wxDateTime::Now();
+
+#ifdef DEBUG
+		std::stringstream ss;
+		ss << text.id;
+
+		m_rtDisplay->AppendText(gcString("[{0,5}] ", ss.str()));
+#endif
+
 		m_rtDisplay->AppendText(now.Format("%H:%M\t").c_str());
 
 		if (szText.size() > 0)
 		{
-			m_rtDisplay->BeginTextColour( wxColor(text.col) );
+			auto start = m_rtDisplay->GetInsertionPoint();
 			m_rtDisplay->AppendText(szText.c_str());
-			m_rtDisplay->EndTextColour();
+			auto end = m_rtDisplay->GetInsertionPoint();
+
+			m_rtDisplay->SetStyle(start, end-1, wxColor(text.col));
 		}
 
 		if (it+1 != tList.end())
@@ -310,6 +328,11 @@ void Console::onConsoleText(ConsoleText_s& text)
 
 void Console::appendText(gcWString text, Color col)
 {
+	auto id = std::this_thread::get_id();
+
+	if (s_IgnoredThread == id)
+		return;
+
 #ifdef DEBUG
 	OutputDebugStringW(text.c_str());
 #endif
@@ -317,6 +340,7 @@ void Console::appendText(gcWString text, Color col)
 	ConsoleText_s c;
 	c.str = text;
 	c.col = col;
+	c.id = id;
 	consoleTextEvent(c);
 }
 

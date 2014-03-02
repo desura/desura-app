@@ -29,7 +29,6 @@ $/LicenseInfo$
 #include "cef_desura_includes/ChromiumBrowserI.h"
 
 #include "gcWCUtil_Legacy.h"
-#include "mcfcore/UserCookies.h"
 #include "MainApp.h"
 
 #include "SharedObjectLoader.h"
@@ -224,7 +223,7 @@ void DeleteCookies()
 
 void SetCookies()
 {
-	if (!g_bLoaded && !InitWebControl() && !GetWebCore())
+	if (!g_bLoaded && !InitWebControl() && !GetWebCore() && !g_pChromiumController)
 		return;
 
 	ChromiumDLL::CookieI* cookie = g_pChromiumController->CreateCookie();
@@ -257,24 +256,16 @@ void SetCookies()
 	cookie->SetDomain(urlRoot.c_str());
 	cookie->SetPath("/");
 
-	MCFCore::Misc::UserCookies uc;
-	GetWebCore()->setMCFCookies(&uc);
+	std::function<void(const char*, const char*, const char*)> cookieCallback 
+		= [&](const char* szRootUrl, const char* szName, const char* szValue)
+	{
+		cookie->SetName(szName);
+		cookie->SetData(szValue);
 
-	gcString fD(uc.getIdCookie()); //= UTIL::STRING::urlDecode
-	gcString mD(uc.getSessCookie()); //= UTIL::STRING::urlDecode
+		g_pChromiumController->SetCookie(szRootUrl, cookie);
+	};
 
-	cookie->SetName("freeman");
-	cookie->SetData(fD.c_str());
-
-	gcString strRoot = GetWebCore()->getUrl(WebCore::Root);
-
-	g_pChromiumController->SetCookie(strRoot.c_str(), cookie);
-
-	cookie->SetName("masterchief");
-	cookie->SetData(mD.c_str());
-
-	g_pChromiumController->SetCookie(strRoot.c_str(), cookie);
-
+	GetWebCore()->setCookies(cookieCallback);
 	cookie->destroy();
 }
 

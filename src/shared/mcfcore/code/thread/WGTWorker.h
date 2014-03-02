@@ -71,7 +71,7 @@ public:
 	//! @param pProvMng Provider manager
 	//! @param pFileAuth Mcf download auth
 	//!
-	WGTWorker(WGTControllerI* controller, uint16 id, MCFCore::Misc::ProviderManager *pProvMng, const MCFCore::Misc::GetFile_s& pFileAuth);
+	WGTWorker(WGTControllerI* controller, uint16 id, MCFCore::Misc::ProviderManager &provMng);
 	~WGTWorker();
 
 	//! Reports a download error from controller
@@ -105,9 +105,8 @@ protected:
 private:
 	friend class UnitTest::TestWGTWorker;
 
-	gcString m_szUrl;
 	MCFCore::Misc::MCFServerConI *m_pMcfCon = nullptr;
-	MCFCore::Misc::GetFile_s m_FileAuth;
+	std::shared_ptr<const MCFCore::Misc::DownloadProvider> m_DownloadProvider;
 
 	uint32 m_iAttempt = 0;
 	uint32 m_uiId = 0;
@@ -116,9 +115,7 @@ private:
 
 	MCFCore::Thread::WGTControllerI *m_pCT = nullptr;
 	MCFCore::Thread::Misc::WGTSuperBlock *m_pCurBlock = nullptr;
-	MCFCore::Misc::ProviderManager *m_pProvMng = nullptr;
-
-	MCFCore::Misc::DownloadProviderType m_eType;
+	MCFCore::Misc::ProviderManager &m_ProvMng;
 
 	std::mutex m_ErrorMutex;
 	bool m_bError = false;

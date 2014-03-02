@@ -100,15 +100,16 @@ public:
 	virtual gcString getCDKey(DesuraId id, MCFBranch branch);
 	virtual void getUpdatePoll(XML::gcXMLDocument &xmlDocument, const std::map<std::string, std::string> &post);
 	virtual void getLoginItems(XML::gcXMLDocument &xmlDocument);
+	void getDownloadProviders(DesuraId id, XML::gcXMLDocument &xmlDocument, MCFBranch mcfBranch, MCFBuild mcfBuild) override;
 
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////
 	// Setters
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-	virtual void setCookie(const char* sess);
-	virtual void setWCCookies(HttpHandle& hh);
-	virtual void setMCFCookies(MCFCore::Misc::UserCookies* uc);
-	virtual void setUrlDomain(const char* domain);
+	void setCookie(const char* sess)  override;
+	void setCookies(CookieCallbackI *pCallback) override;
+	void setWCCookies(HttpHandle& hh)  override;
+	void setUrlDomain(const char* domain)  override;
 	
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////
 	// Functions
@@ -139,7 +140,7 @@ public:
 	//!
 	static void sendPassReminder(const char* email);
 
-	const char* getMCFDownloadUrl();
+	gcString getMCFDownloadUrl();
 
 	static gcString getPassWordReminderUrl();
 	static gcString getLoginUrl();
@@ -174,7 +175,6 @@ private:
 	gcString m_szUserAgent;
 	gcString m_szIdCookie;
 	std::array<char, 4096> m_szSessCookie;
-	gcString m_szMCFDownloadUrl;
 	gcString m_szAppDataPath;
 
 	bool m_bDebuggingOut;

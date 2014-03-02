@@ -29,6 +29,7 @@ $/LicenseInfo$
 
 #include "Managers.h"
 #include "SearchControl.h"
+#include "gcJSBinding.h"
 
 enum
 {
@@ -52,6 +53,7 @@ public:
 
 		m_colHover = wxColor(GetGCThemeManager()->getColor("itemToolBar", "hov-fg"));
 		m_colNormal = wxColor(GetGCThemeManager()->getColor("itemToolBar", "fg"));
+		m_colSelected =  wxColor(GetGCThemeManager()->getColor("itemToolBar", "selected"));
 
 		refreshImage(true);
 		
@@ -80,6 +82,22 @@ public:
 		invalidatePaint();
 	}
 
+	void setSelected(bool bState)
+	{
+		if (bState == m_bSelected)
+			return;
+
+		m_bSelected = bState;
+
+		if (bState)
+			m_szImage = "#playlist_button_active";
+		else
+			m_szImage = "#playlist_button_normal";
+
+		m_szCurImage = "";
+		refreshImage(true);
+	}
+
 protected:
 	virtual void doPaint(wxDC* dc)
 	{
@@ -95,6 +113,8 @@ protected:
 
 		if (m_bHovering)
 			dc->SetTextForeground(m_colHover);
+		else if (m_bSelected)
+			dc->SetTextForeground(m_colSelected);
 		else
 			dc->SetTextForeground(m_colNormal);
 
@@ -162,10 +182,12 @@ protected:
 	}
 
 private:
+	bool m_bSelected = false;
 	uint32 m_uiPos;
 
 	wxColor m_colHover;
 	wxColor m_colNormal;
+	wxColor m_colSelected;
 };
 
 
@@ -278,9 +300,6 @@ void ItemToolBarControl::onUploadItemsAdded()
 
 void ItemToolBarControl::createButtons()
 {
-	m_pFGContentSizer->Clear(true);
-	m_vButtonList.clear();
-
 	if (!GetUserCore() || !GetUserCore()->getItemManager())
 		return;
 
@@ -289,8 +308,17 @@ void ItemToolBarControl::createButtons()
 
 	bool dev = (dList.size() > 0) || (GetUploadMng()->getCount() > 0);
 
+	if (dev == m_bShowDevList)
+		return;
+
+	m_bShowDevList = dev;
+
+	m_pFGContentSizer->Clear(true);
+	m_vButtonList.clear();
+
+
 	uint32 fPos = CENTER;
-	uint32 dPos = CENTER;
+	uint32 dPos = RIGHT;
 
 	if (!dev)
 		fPos = RIGHT;
@@ -303,4 +331,33 @@ void ItemToolBarControl::createButtons()
 	
 	for (size_t x=0; x<m_vButtonList.size(); x++)
 		m_pFGContentSizer->Add( m_vButtonList[x], 0, wxTOP|wxBOTTOM, 4 );
+
+	gcString strVal = DesuraJSBinding::getCacheValue_s("LastActiveTab", "");
+
+	if (!strVal.empty())
+	{
+		if (strVal == "game")
+			m_vButtonList[0]->setSelected(true);
+		else if (strVal == "fav")
+			m_vButtonList[1]->setSelected(true);
+		else if (dev && strVal == "dev")
+			m_vButtonList[2]->setSelected(true);
+		else
+			m_vButtonList[0]->setSelected(true);
+	}
+	else
+	{
+		m_vButtonList[0]->setSelected(true);
+	}
+}
+
+void ItemToolBarControl::onButtonClick(wxCommandEvent &event)
+{
+	BaseToolBarControl::onButtonClick(event);
+
+	for (auto b : m_vButtonList)
+	{
+		auto bSelect = b->GetId() == event.GetId();
+		b->setSelected(bSelect);
+	}
 }

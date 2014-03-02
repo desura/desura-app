@@ -26,8 +26,37 @@ $/LicenseInfo$
 #ifndef COMMON_H
 	#define COMMON_H
 
-	#include <assert.h>
 	#include <exception>
+
+	#ifdef DEBUG
+		#ifdef WIN32
+			#define PAUSE_DEBUGGER() __asm int 3
+		#else
+			#define PAUSE_DEBUGGER() asm("int $3")
+		#endif
+	#else
+		#define PAUSE_DEBUGGER()
+	#endif
+
+inline void DoAssert(const char* szExp, const char* szFile, int nLine)
+{
+	PAUSE_DEBUGGER();
+}
+
+#ifdef DEBUG
+	#define assert( X )				\
+		do							\
+		{							\
+			bool bFailed = !(X);	\
+			if (bFailed)			\
+			{						\
+				DoAssert( #X , __FILE__ , __LINE__ );	\
+			}						\
+		}							\
+		while(false)
+#else
+	#define assert( X )
+#endif
 
 	#define BOOST_ENABLE_ASSERT_HANDLER 1
 	namespace 
@@ -126,16 +155,6 @@ $/LicenseInfo$
 		#else
 			#define ERROR_NOT_IMPLEMENTED
 		#endif
-	#endif
-
-	#ifdef DEBUG
-		#ifdef WIN32
-			#define PAUSE_DEBUGGER() __asm int 3
-		#else
-			#define PAUSE_DEBUGGER() asm("int $3")
-		#endif
-	#else
-		#define PAUSE_DEBUGGER()
 	#endif
 
 	#ifdef BUILDID_INTERNAL

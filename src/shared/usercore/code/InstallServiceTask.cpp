@@ -32,8 +32,6 @@ $/LicenseInfo$
 
 #include "IPCServiceMain.h"
 #include "IPCInstallMcf.h"
-
-#include "mcfcore/UserCookies.h"
 #include "usercore/ItemHelpersI.h"
 
 #include "McfManager.h"

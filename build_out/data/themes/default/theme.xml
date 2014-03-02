@@ -113,6 +113,7 @@
 			<color id="hov-fg">255 255 255 255</color> 		<!-- hover -->
 			<color id="fg">177 177 177 255</color> 				<!-- normal -->
 			<color id="na-fg">177 177 177 255</color> 			<!-- nonactive -->
+			<color id="selected">44 44 44 255</color>
 		</control>
 
 		<control name="menu">
@@ -224,25 +225,12 @@
 		<image name="button_toggle_down">button_toggle_down.png</image>
 		<image name="button_focus">button_focus.png</image>
 		
-		<image name="main_border_nonactive">main_border_nonactive.png</image>
-		<image name="main_border">main_border.png</image>
-		<image name="main_header_border">main_header_border.png</image>
-		<image name="main_header_border_nonactive">main_header_border_nonactive.png</image>
-		
-		<image name="main_close">main_close.png</image>
-		<image name="main_close_nonactive">main_close_nonactive.png</image>
-		<image name="main_max">main_max.png</image>
-		<image name="main_max_nonactive">main_max_nonactive.png</image>
-		<image name="main_min">main_min.png</image>	
-		<image name="main_min_nonactive">main_min_nonactive.png</image>
-		<image name="main_restore">main_restore.png</image>	
-		<image name="main_restore_nonactive">main_restore_nonactive.png</image>
-		
 		<image name="playlist_button_normal">playlist_button_normal.png</image>
 		<image name="playlist_button_hover">playlist_button_hover.png</image>
 		<image name="playlist_button_focus">playlist_button_focus.png</image>
 		<image name="playlist_button_nonactive">playlist_button_nonactive.png</image>
-
+		<image name="playlist_button_active">playlist_button_active.png</image>
+		
 		<image name="button_copy">button_copy.png</image>
 		<image name="button_copy_hover">button_copy_hover.png</image>	
 		<image name="button_copy_focus">button_copy_focus.png</image>
@@ -309,64 +297,6 @@
 				<size w="4" h="19" />
 			</rect>
 		</sprite>			
-	
-		<sprite name="main_button">
-			<rect name="normal">
-				<pos x="0" y="0" />
-				<size w="500" h="22" />
-			</rect>
-			<rect name="disabled">
-				<pos x="0" y="22" />
-				<size w="500" h="22" />
-			</rect>
-			<rect name="focus">
-				<pos x="0" y="44" />
-				<size w="500" h="22" />
-			</rect>
-			<rect name="hover">
-				<pos x="0" y="66" />
-				<size w="500" h="22" />
-			</rect>
-		</sprite>
-	
-		<sprite name="main_border">
-			<rect name="north">
-				<pos x="6" y="0" />
-				<size w="10" h="6" />
-			</rect>
-			<rect name="south">
-				<pos x="6" y="16" />
-				<size w="10" h="6" />
-			</rect>	
-			<rect name="east">
-				<pos x="16" y="6" />
-				<size w="6" h="10" />
-			</rect>	
-			<rect name="west">
-				<pos x="0" y="6" />
-				<size w="6" h="10" />
-			</rect>
-			<rect name="nwest">
-				<pos x="0" y="0" />
-				<size w="6" h="6" />
-			</rect>	
-			<rect name="neast">
-				<pos x="16" y="0" />
-				<size w="6" h="6" />
-			</rect>	
-			<rect name="swest">
-				<pos x="0" y="16" />
-				<size w="6" h="6" />
-			</rect>	
-			<rect name="seast">
-				<pos x="16" y="16" />
-				<size w="6" h="6" />
-			</rect>	
-			<rect name="fill">
-				<pos x="7" y="7" />
-				<size w="8" h="8" />
-			</rect>		
-		</sprite>
 	
 		<sprite name="horizontal_rule">
 			<rect name="Left">

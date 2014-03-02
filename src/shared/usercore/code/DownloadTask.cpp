@@ -29,7 +29,7 @@ $/LicenseInfo$
 #include "User.h"
 
 #include "McfManager.h"
-#include "mcfcore/UserCookies.h"
+#include "MCFDownloadProviders.h"
 
 #include "ToolManager.h"
 #ifdef WIN32
@@ -72,10 +72,8 @@ void DownloadTask::doRun()
 	m_hMCFile->getProgEvent() += delegate(this, &DownloadTask::onProgress);
 	m_hMCFile->getNewProvider() += delegate(this, &DownloadTask::onNewProvider);
 
-	MCFCore::Misc::UserCookies uc;
-	getWebCore()->setMCFCookies(&uc); 
-
-	m_hMCFile->getDownloadProviders(getWebCore()->getMCFDownloadUrl(), &uc);
+	auto dp = std::make_shared<MCFDownloadProviders>(getWebCore(), getUserCore()->getUserId());
+	MCFDownloadProviders::forceLoad(m_hMCFile, dp);
 
 	if (isStopped())
 		return;

@@ -223,13 +223,13 @@ void IPCServiceMain::warning(const char* msg)
 
 void IPCServiceMain::message(const char* msg)
 {
-	Color c(0x00, 0x33, 0x00);
+	Color c(65, 209, 7);
 	MsgCol(&c, gcString("DS: {0}", msg));
 }
 
 void IPCServiceMain::debug(const char* msg)
 {
-	Color c(0x00, 0x33, 0x66);
+	Color c(0x65, 0x33, 0x66);
 	MsgCol(&c, gcString("DS: {0}", msg));
 }	
 

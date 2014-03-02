@@ -159,14 +159,12 @@ void ChangeAccountTask::doTask()
 
 DownloadBannerTask::DownloadBannerTask(UserCore::User* user, const MCFCore::Misc::DownloadProvider& dp) 
 	: UserTask(user)
-	, m_DPInfo(dp)
+	, m_DPInfo(this, dp)
 {
 }
 
 void DownloadBannerTask::doTask()
 {
-	BannerCompleteInfo bci(this, m_DPInfo);
-
 	try
 	{
 		UTIL::FS::Path path(getUserCore()->getAppDataPath(), "", false);
@@ -174,16 +172,16 @@ void DownloadBannerTask::doTask()
 		path += "temp";
 		UTIL::FS::recMakeFolder(path);
 
-		getWebCore()->downloadBanner(&m_DPInfo, path.getFullPath().c_str());
-		bci.complete = true;
+		getWebCore()->downloadBanner(&m_DPInfo.info, path.getFullPath().c_str());
+		m_DPInfo.complete = true;
 	}
 	catch (gcException &e)
 	{
 		Warning(gcString("Failed to download banner: {0}\n", e));
-		bci.complete = false;
+		m_DPInfo.complete = false;
 	}
 
-	onDLCompleteEvent(bci);
+	onDLCompleteEvent(m_DPInfo);
 }
 
 ////////////////////////////////////////////////////////////////////////////

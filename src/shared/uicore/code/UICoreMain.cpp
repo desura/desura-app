@@ -305,6 +305,9 @@ public:
 	{
 		gcString str("{0}\n", msg);
 
+		if (str.find("iCCP: known incorrect sRGB profile") != gcString::npos)
+			return;
+
 		//PostMessage(WM_NULL) crashes hard due to issue with posting console message to ui thread with this issue
 		if (str.find("PostMessage(WM_NULL)") != gcString::npos)
 			return;

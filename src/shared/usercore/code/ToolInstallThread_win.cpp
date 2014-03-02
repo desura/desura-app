@@ -37,7 +37,9 @@ namespace Misc
 
 
 ToolInstallThread::ToolInstallThread(ToolManager* toolManager, std::mutex &mapLock, std::map<ToolTransactionId, ToolTransInfo*> &transactions, const char* userName, HWND handle) 
-	: ::Thread::BaseThread("Tool Install Thread"), m_mTransactions(transactions), m_MapLock(mapLock)
+	: ::Thread::BaseThread("Tool Install Thread")
+	, m_mTransactions(transactions)
+	, m_MapLock(mapLock)
 {
 	m_WinHandle = handle;
 	m_pIPCClient = nullptr;
