@@ -120,7 +120,7 @@ public:
 
 		GTEST_FLAG(filter) = m_strFilter;
 		RUN_ALL_TESTS();
-		GTEST_FLAG(filter) = '\0';
+		GTEST_FLAG(filter) = "";
 
 #ifdef WIN32
 		//Reset this as gtest messes with it :'(
