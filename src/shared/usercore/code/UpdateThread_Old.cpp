@@ -309,6 +309,8 @@ void UpdateThreadOld::parseXML(const XML::gcXMLDocument &doc)
 
 	if (!pUser->isAltProvider())
 		checkAppUpdate(uNode);
+	else
+		Warning("Skipping app update check due to alt provider\n");
 
 	tempNode = uNode.FirstChildElement("member");
 

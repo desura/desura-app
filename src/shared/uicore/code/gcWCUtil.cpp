@@ -223,7 +223,7 @@ void DeleteCookies()
 
 void SetCookies()
 {
-	if (!g_bLoaded && !InitWebControl() && !GetWebCore() && !g_pChromiumController)
+	if (!g_bLoaded || !GetWebCore())
 		return;
 
 	ChromiumDLL::CookieI* cookie = g_pChromiumController->CreateCookie();

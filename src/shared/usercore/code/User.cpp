@@ -136,7 +136,7 @@ void User::init(const char* appDataPath)
 
 void User::init(const char* appDataPath, const char* szProviderUrl)
 {
-	m_bAltProvider = (szProviderUrl && gcString("desura.com") != szProviderUrl);
+	m_bAltProvider = (szProviderUrl && szProviderUrl[0] && gcString("desura.com") != szProviderUrl);
 
 
 	UTIL::FS::recMakeFolder(UTIL::FS::PathWithFile(appDataPath));
