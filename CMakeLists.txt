@@ -187,7 +187,7 @@ if(NOT BUILD_ONLY_CEF)
   endif()
 
   if(WITH_GTEST)
-    find_package(GTest ${REQUIRED_IF_OPTION})
+    find_package(GTest 1.7 ${REQUIRED_IF_OPTION})
     add_definitions(-DGTEST_LINKED_AS_SHARED_LIBRARY -DWITH_GTEST)
   endif()
 endif()
