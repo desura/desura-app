@@ -30,7 +30,8 @@ $/LicenseInfo$
 #include "UninstallAllThread.h"
 #include "UninstallDesuraForm.h"
 
-UDFProgressPanel::UDFProgressPanel(wxWindow* parent, UserCore::UserI* user, uint32 flags) : gcPanel( parent, wxID_ANY, wxDefaultPosition, wxSize( 500,300 ), wxTAB_TRAVERSAL, false)
+UDFProgressPanel::UDFProgressPanel(wxWindow* parent, UserCore::UserI* user, uint32 flags) 
+	: gcPanel( parent, wxID_ANY, wxDefaultPosition, wxSize( 500,-1 ), wxTAB_TRAVERSAL, false)
 {
 	m_labTotal = new wxStaticText( this, wxID_ANY, Managers::GetString("#DUN_TOTAL"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_labCurrent = new wxStaticText( this, wxID_ANY, Managers::GetString("#DUN_CURRENT"), wxDefaultPosition, wxDefaultSize, 0 );
