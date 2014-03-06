@@ -426,6 +426,8 @@ void UpdateThreadOld::checkAppUpdate(const XML::gcXMLElement &uNode, std::functi
 #ifdef DESURA_OFFICIAL_BUILD
 	if (m_bInternalTesting)
 	{
+		Msg("Checking internal testing for app update...\n");
+
 		if (!processAppVersion("apptesting", appid, mcfversion) || !isInternalApp(appid))
 		{
 			Warning("Failed to find qa testing build on update poll");
@@ -435,8 +437,12 @@ void UpdateThreadOld::checkAppUpdate(const XML::gcXMLElement &uNode, std::functi
 		}
 		else
 		{
+			Msg(gcString("Found app build {0}.{1}\n", appid, mcfversion));
+
 			if (m_bForceTestingUpdate)
 			{
+				Msg("Forcing testing update..\n");
+
 				bIsForced = true;
 				bIsNewerVersion = true;
 			}
@@ -444,13 +450,16 @@ void UpdateThreadOld::checkAppUpdate(const XML::gcXMLElement &uNode, std::functi
 			m_bForceTestingUpdate = false;
 		}
 	}
-	else 
-#endif
-
+	else if (!processAppVersion("app", appid, mcfversion))
+	{
+		return;
+	}
+#else
 	if (!processAppVersion("app", appid, mcfversion))
 	{
 		return;
 	}
+#endif
 
 	auto bNewerOriginalBranch = (m_uiLastAppId == 0) && (appid == m_iAppId) && (mcfversion > m_iAppVersion);
 	auto bNewerLastUpdateBranch = (appid == m_uiLastAppId) && (mcfversion > m_uiLastVersion);
