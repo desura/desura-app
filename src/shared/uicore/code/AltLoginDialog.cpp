@@ -30,7 +30,7 @@ $/LicenseInfo$
 AltLoginDialog::AltLoginDialog(wxWindow* parent, const char* szProvider, const char* szApiUrl)
 	: gcDialog(parent, wxID_ANY, wxT("#ALTLOGIN_TITLE"), wxDefaultPosition, wxSize(500, 665), wxDEFAULT_FRAME_STYLE|wxTAB_TRAVERSAL) 
 {
-	SetTitle(gcString("{0}: {1}", Managers::GetString(L"#ALTLOGIN_TITLE"), szProvider));
+	SetTitle(gcString(Managers::GetString(L"#ALTLOGIN_TITLE"), szProvider));
 
 	GetWebCore();
 
