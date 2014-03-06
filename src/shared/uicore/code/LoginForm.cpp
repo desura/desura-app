@@ -455,6 +455,9 @@ LoginForm::LoginForm(wxWindow* parent)
 #endif
 
 	setFrameRegion();
+
+	onNewAccountLoginEvent += guiDelegate(this, &LoginForm::newAccountLoginCB);
+	onNewAccountLoginErrorEvent += guiDelegate(this, &LoginForm::newAccountLoginErrorCB);
 }
 
 LoginForm::~LoginForm()
@@ -1020,10 +1023,19 @@ void LoginForm::onNewAccount()
 
 void LoginForm::newAccountLogin(const char* username, const char* cookie)
 {
-	if (!cookie)
+	auto info = std::make_pair(gcString(username), gcString(cookie));
+	onNewAccountLoginEvent(info);
+}
+
+void LoginForm::newAccountLoginCB(std::pair<gcString, gcString> &info)
+{
+	gcString username = info.first;
+	gcString cookie = info.second;
+
+	if (cookie.empty())
 		return;
 
-	if (gcString(username).size() == 0 || gcString(cookie).size() == 0)
+	if (username.size() == 0 || cookie.size() == 0)
 	{
 		newAccountLoginError("Invalid data returned from auto login.");
 		return;
@@ -1043,6 +1055,16 @@ void LoginForm::newAccountLogin(const char* username, const char* cookie)
 }
 
 void LoginForm::newAccountLoginError(const char* szErrorMessage)
+{
+	gcString strErrorMessage(szErrorMessage);
+
+	if (wxThread::IsMain())
+		newAccountLoginErrorCB(strErrorMessage);
+	else
+		onNewAccountLoginErrorEvent(strErrorMessage);
+}
+
+void LoginForm::newAccountLoginErrorCB(gcString &szErrorMessage)
 {
 	if (m_pNewAccount)
 		m_pNewAccount->EndModal(0);
