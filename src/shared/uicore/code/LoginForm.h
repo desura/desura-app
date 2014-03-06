@@ -123,7 +123,13 @@ protected:
 
 	void onAltLogin(const char* szProvider);
 
+	void newAccountLoginCB(std::pair<gcString, gcString> &info);
+	void newAccountLoginErrorCB(gcString &szErrorMessage);
+
 private:
+	Event<std::pair<gcString, gcString>> onNewAccountLoginEvent;
+	Event<gcString> onNewAccountLoginErrorEvent;
+
 	bool m_bSavePos;
 	LoginThread* m_pLogThread;
 
