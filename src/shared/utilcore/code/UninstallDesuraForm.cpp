@@ -113,23 +113,41 @@ UninstallForm::UninstallForm(wxWindow* parent, UserCore::UserI* user) : wxFrame(
 	SetIcon(wxIcon(wxICON(IDI_ICONNORMAL)));
 
 	Bind(wxEVT_COMMAND_BUTTON_CLICKED, &UninstallForm::onButtonClicked, this);
-	m_bComplete = false;
+	Bind(wxEVT_CLOSE_WINDOW, &UninstallForm::onCloseWindow, this);
 }
 
 UninstallForm::~UninstallForm()
 {
 }
 
+void UninstallForm::onCloseWindow(wxCloseEvent &event)
+{
+	if (!m_bComplete && event.CanVeto())
+	{
+		event.Veto();
+	}
+	else
+	{
+		doClose();
+		event.Skip();
+	}
+}
+
+void UninstallForm::doClose()
+{
+	if (!m_bComplete)
+		SetExitCode(-1);
+	else
+		SetExitCode(0);
+
+	GetParent()->Close(true);
+}
+
 void UninstallForm::onButtonClicked(wxCommandEvent &event)
 {
 	if (m_butCancel->GetId() == event.GetId())
 	{
-		if (!m_bComplete)
-			SetExitCode(-1);
-		else
-			SetExitCode(0);
 
-		GetParent()->Close();
 	}
 	else if (m_butUninstall->GetId() == event.GetId())
 	{

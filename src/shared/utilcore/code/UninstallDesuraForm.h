@@ -74,10 +74,13 @@ protected:
 	wxBoxSizer* m_bContentSizer;
 
 	void onButtonClicked(wxCommandEvent &event);
+	void onCloseWindow(wxCloseEvent &event);
+
+	void doClose();
 
 private:
 	UserCore::UserI* m_pUser;
-	bool m_bComplete;
+	bool m_bComplete = false;
 };
 
 #endif //DESURA_UNINSTALLDESURAPANEL_H
