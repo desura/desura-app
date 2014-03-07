@@ -204,7 +204,7 @@ void BootLoader::InitInstance()
 
 bool BootLoader::preLaunchCheck(UTIL::MISC::CMDArgs &args)
 {
-#ifdef DESURA_OFFICAL_BUILD
+#ifdef DESURA_OFFICIAL_BUILD
 	CheckForBadUninstaller();
 #endif
 
