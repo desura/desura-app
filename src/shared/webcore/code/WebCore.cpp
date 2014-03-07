@@ -159,6 +159,11 @@ gcString WebCoreClass::getMemberDataUrl()
 	return gcString("http://api.") + g_szRootDomain + "/1/memberdata";
 }
 
+gcString WebCoreClass::getAppUpdateUrl()
+{
+	return gcString("http://api.") + g_szRootDomain + "/1/appupdate";
+}
+
 void WebCoreClass::setCookie(const char* sess)
 {
 	if (!sess)

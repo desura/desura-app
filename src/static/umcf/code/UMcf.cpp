@@ -167,6 +167,8 @@ uint8 UMcf::parseXml(char* buff, size_t buffLen)
 {
 	UTIL::MISC::BZ2Worker worker(UTIL::MISC::BZ2_DECOMPRESS);
 
+	gcBuff pTempBuff(1);
+
 	if (!(m_sHeader->getFlags() & MCFCore::MCFHeaderI::FLAG_NOTCOMPRESSED))
 	{
 		worker.write(buff, buffLen, true);
@@ -174,11 +176,11 @@ uint8 UMcf::parseXml(char* buff, size_t buffLen)
 
 		buffLen = worker.getReadSize();
 
-		gcBuff buff(buffLen);
-		worker.read(buff, buffLen);
+		pTempBuff = gcBuff(buffLen);
+		worker.read(pTempBuff, buffLen);
 	}
 
-	XML::gcXMLDocument doc(buff, buffLen);
+	XML::gcXMLDocument doc(pTempBuff, buffLen);
 	return parseXml(doc.GetRoot("files"));
 }
 

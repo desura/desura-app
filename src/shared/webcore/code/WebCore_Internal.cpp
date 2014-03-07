@@ -409,3 +409,36 @@ void WebCoreClass::getDownloadProviders(DesuraId id, XML::gcXMLDocument &xmlDocu
 
 	postToServer(getMCFDownloadUrl(), "itemdownloadurl", postData, xmlDocument);
 }
+
+gcString WebCoreClass::getAppUpdateDownloadUrl(uint32 &appId, uint32 &appBuild)
+{
+	assert(appId);
+
+	PostMap postData;
+
+	postData["appid"] = appId;
+
+	if (appBuild > 0)
+		postData["build"] = appBuild;
+
+	XML::gcXMLDocument doc;
+	postToServer(getAppUpdateUrl(), "appupdate", postData, doc);
+
+	auto mNode = doc.GetRoot("appupdate").FirstChildElement("mcf");
+
+	if (!mNode.IsValid())
+		throw gcException(ERR_BADXML);
+
+	mNode.GetAtt("appid", appId);
+	mNode.GetAtt("build", appBuild);
+
+	if (appId == 0 || appBuild == 0)
+		throw gcException(ERR_BADXML);
+
+	gcString url = mNode.GetChild("url");
+
+	if (url.size() == 0)
+		throw gcException(ERR_BADXML);
+
+	return url;
+}
