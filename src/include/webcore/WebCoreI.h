@@ -324,6 +324,12 @@ public:
 		CCB ccb(t);
 		setCookies(&ccb);
 	}
+
+	//! Gets a url for app update downloads
+	//!
+	//! Sets appId and appBuild to the values returned by the api.
+	//!
+	virtual gcString getAppUpdateDownloadUrl(uint32 &appId, uint32 &appBuild)=0;
 };
 
 }

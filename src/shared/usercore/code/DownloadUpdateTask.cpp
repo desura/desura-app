@@ -93,47 +93,14 @@ void DownloadUpdateTask::downloadUpdate()
 	uint32 appver = m_uiAppVer;
 	uint32 appbuild = m_uiAppBuild;
 
-
-	HttpHandle wc(PRIMUPDATE);
-	getWebCore()->setWCCookies(wc);
-	
-	wc->addPostText("appid", appver);
-	wc->postWeb();
-
-
-	if (wc->getDataSize() == 0)
-		throw gcException(ERR_INVALIDDATA);
-
-
-	XML::gcXMLDocument doc(const_cast<char*>(wc->getData()), wc->getDataSize());
-	doc.ProcessStatus("appupdate");
-
-	auto mNode = doc.GetRoot("appupdate").FirstChildElement("mcf");
-
-	if (!mNode.IsValid())
-		throw gcException(ERR_BADXML);
-
-	uint32 version = 0;
-	uint32 build = 0;
-	
-	mNode.GetAtt("appid", version);
-	mNode.GetAtt("build", build);
-
-	if (version == 0 || build == 0)
-		throw gcException(ERR_BADXML);
+	gcString url = getWebCore()->getAppUpdateDownloadUrl(appver, appbuild);
 
 	//check to see if its newer than last
-	if (appbuild != 0 && build <= appbuild && appver == version)
+	if (m_uiAppBuild != 0 && appbuild < m_uiAppBuild && appver == m_uiAppVer)
 		return;
 
-	gcString url = mNode.GetChild("url");
-
-	if (url.size() == 0)
-		throw gcException(ERR_BADXML);
-
 #ifdef WIN32
-	const char *comAppPath = getUserCore()->getAppDataPath();
-	m_szPath = gcString("{0}{1}{2}", comAppPath, DIRS_STR, UPDATEFILE);
+	m_szPath = UTIL::FS::Path(getUserCore()->getAppDataPath(), UPDATEFILE, false).getFullPath();
 #else
 	m_szPath = gcString("{0}", UPDATEFILE);
 #endif
@@ -159,11 +126,11 @@ void DownloadUpdateTask::downloadUpdate()
 		m_hMcfHandle->getProgEvent() += delegate(this, &DownloadUpdateTask::onDownloadProgress);
 
 		UserCore::Misc::update_s info;
-		info.build = build;
+		info.build = m_uiAppBuild;
 
 		if (!res)
 		{
-			Msg(gcString("Downloading " PRODUCT_NAME " update: Ver {0} build {1}\n", appver, build));
+			Msg(gcString("Downloading " PRODUCT_NAME " update: Ver {0} build {1}\n", m_uiAppVer, m_uiAppBuild));
 			info.alert = true;
 
 			onDownloadStartEvent(info);
@@ -178,8 +145,8 @@ void DownloadUpdateTask::downloadUpdate()
 			if (!getUserCore() || !getUserCore()->getServiceMain())
 				return;
 
-			gcString av("{0}", appver);
-			gcString ab("{0}", build);
+			gcString av("{0}", m_uiAppVer);
+			gcString ab("{0}", m_uiAppBuild);
 			info.alert = false;
 
 			try

@@ -134,6 +134,8 @@ public:
 
 	virtual gcString getUrl(WebCoreUrl id);
 
+	gcString getAppUpdateDownloadUrl(uint32 &appId, uint32 &appBuild) override;
+
 	//! Sends a password reminder to the dest email
 	//!
 	//! @param email Email to send reminder to
@@ -153,6 +155,7 @@ public:
 	static gcString getUpdateAccountUrl();
 	static gcString getCDKeyUrl();
 	static gcString getMemberDataUrl();
+	static gcString getAppUpdateUrl();
 
 protected:
 	virtual void logIn(const char* user, const char* pass, XML::gcXMLDocument &xmlDocument);
