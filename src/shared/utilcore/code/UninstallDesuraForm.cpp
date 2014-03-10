@@ -147,7 +147,7 @@ void UninstallForm::onButtonClicked(wxCommandEvent &event)
 {
 	if (m_butCancel->GetId() == event.GetId())
 	{
-
+		doClose();
 	}
 	else if (m_butUninstall->GetId() == event.GetId())
 	{
