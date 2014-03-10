@@ -128,8 +128,7 @@ namespace
 		L"desura_browserhost.exe",
 		L"bin\\mfc120.dll",
 		L"bin\\msvcp120.dll",
-		L"bin\\msvcr120.dll",
-		nullptr,
+		L"bin\\msvcr120.dll"
 	};
 #endif
 }
