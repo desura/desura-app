@@ -105,44 +105,33 @@ public:
 
 #endif
 
+namespace
+{
+
 #ifdef WIN32
-const wchar_t* problemFiles[] =
-{
-	L"desura.exe",
-	L"desura_service.exe",
-	L"servicecore_c.dll",
-	L"desura_browserhost.exe",
-	L"mfc100.dll",
-	L"msvcp100.dll",
-	L"msvcr100.dll",
-	nullptr,
-};
+	const std::vector<wchar_t*> g_vProblemFiles =
+	{
+		L"desura.exe",
+		L"desura_service.exe",
+		L"servicecore.dll",
+		L"desura_browserhost.exe",
+		L"mfc120.dll",
+		L"msvcp120.dll",
+		L"msvcr120.dll"
+	};
 
-const wchar_t* problemFilesPath[] =
-{
-	L"desura.exe",
-	L"desura_service.exe",
-	L"bin\\servicecore_c.dll",
-	L"desura_browserhost.exe",
-	L"bin\\mfc100.dll",
-	L"bin\\msvcp100.dll",
-	L"bin\\msvcr100.dll",
-	nullptr,
-};
-#else
-const wchar_t* problemFiles[] =
-{
-	L"desura",
-	nullptr,
-};
-
-const wchar_t* problemFilesPath[] =
-{
-	L"bin/desura",
-	nullptr,
-};
+	const std::vector<wchar_t*> g_vProblemFilesPath =
+	{
+		L"desura.exe",
+		L"desura_service.exe",
+		L"bin\\servicecore.dll",
+		L"desura_browserhost.exe",
+		L"bin\\mfc120.dll",
+		L"bin\\msvcp120.dll",
+		L"bin\\msvcr120.dll"
+	};
 #endif
-
+}
 
 UMcf::UMcf()
 	: m_sHeader(std::make_unique<UMcfHeader>())
@@ -207,34 +196,30 @@ uint8 UMcf::parseXml(const XML::gcXMLElement &xmlElement)
 #ifdef WIN32
 void UMcf::removeOldFiles(const wchar_t* installPath)
 {
-	size_t y=0;
-	while (problemFilesPath[y] != nullptr)
+	for (auto p : g_vProblemFiles)
 	{
 		wchar_t src[255] = {0};
-		Safe::snwprintf(src, 255, L"%s\\%s_old", installPath, problemFilesPath[y]);
+		Safe::snwprintf(src, 255, L"%s\\%s_old", installPath, p);
 		DeleteFileW(src);
-		y++;
 	}
 }
 
 void UMcf::moveOldFiles(const wchar_t* installPath, const wchar_t* fileName)
 {
-	size_t y=0;
-	while (problemFiles[y] != nullptr)
+	for (auto p : g_vProblemFiles)
 	{
-		if (Safe::wcsicmp(fileName, problemFiles[y])==0)
-		{
-			wchar_t src[255] = {0};
-			wchar_t dest[255] = {0};
+		if (Safe::wcsicmp(fileName, p) != 0)
+			continue;
 
-			Safe::snwprintf(src, 255, L"%s\\%s", installPath, problemFilesPath[y]);
-			Safe::snwprintf(dest, 255, L"%s\\%s_old", installPath, problemFilesPath[y]);
+		wchar_t src[255] = {0};
+		wchar_t dest[255] = {0};
 
-			//cant copy over a running exe.
-			MoveFileExW(src, dest, MOVEFILE_WRITE_THROUGH);
-			return;
-		}
-		y++;
+		Safe::snwprintf(src, 255, L"%s\\%s", installPath, p);
+		Safe::snwprintf(dest, 255, L"%s\\%s_old", installPath, p);
+
+		//cant copy over a running exe.
+		MoveFileExW(src, dest, MOVEFILE_WRITE_THROUGH);
+		return;
 	}
 }
 #endif
