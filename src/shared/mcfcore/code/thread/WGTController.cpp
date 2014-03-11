@@ -700,7 +700,7 @@ Misc::WGTSuperBlock* WGTController::stealBlocks()
 	}
 
 	if (largestCount < 3 || !largestWorker)
-		return false;
+		return nullptr;
 
 	size_t halfWay = largestCount / 2;
 	return largestWorker->splitCurrentBlock(halfWay);
