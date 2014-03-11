@@ -126,11 +126,11 @@ void DownloadUpdateTask::downloadUpdate()
 		m_hMcfHandle->getProgEvent() += delegate(this, &DownloadUpdateTask::onDownloadProgress);
 
 		UserCore::Misc::update_s info;
-		info.build = m_uiAppBuild;
+		info.build = appbuild;
 
 		if (!res)
 		{
-			Msg(gcString("Downloading " PRODUCT_NAME " update: Ver {0} build {1}\n", m_uiAppVer, m_uiAppBuild));
+			Msg(gcString("Downloading " PRODUCT_NAME " update: Ver {0} build {1}\n", appver, appbuild));
 			info.alert = true;
 
 			onDownloadStartEvent(info);
@@ -145,8 +145,8 @@ void DownloadUpdateTask::downloadUpdate()
 			if (!getUserCore() || !getUserCore()->getServiceMain())
 				return;
 
-			gcString av("{0}", m_uiAppVer);
-			gcString ab("{0}", m_uiAppBuild);
+			gcString av("{0}", appver);
+			gcString ab("{0}", appbuild);
 			info.alert = false;
 
 			try
