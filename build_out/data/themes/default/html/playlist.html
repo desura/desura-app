@@ -450,13 +450,16 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>
 	<# 
 		var list = [];
 	
-		if (tabCache == "game") {
-			list = desura.items.getGames().concat(desura.items.getLinks());
-		}
-		else if (tabCache == "dev") {
+		if (tabCache == "dev") {
 			list = desura.items.getDevItems();
 		}
-		
+		else if (tabCache == "fav") {
+		}
+		else {
+			tabCache = "game";
+			list = desura.items.getGames().concat(desura.items.getLinks());
+		}
+
 		games=sortList(list);
 		if (tabCache == "game" && games.length == 0) { 
 	#>
