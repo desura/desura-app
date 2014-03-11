@@ -196,7 +196,7 @@ uint8 UMcf::parseXml(const XML::gcXMLElement &xmlElement)
 #ifdef WIN32
 void UMcf::removeOldFiles(const wchar_t* installPath)
 {
-	for (auto p : g_vProblemFiles)
+	for (auto p : g_vProblemFilesPath)
 	{
 		wchar_t src[255] = {0};
 		Safe::snwprintf(src, 255, L"%s\\%s_old", installPath, p);
@@ -206,16 +206,24 @@ void UMcf::removeOldFiles(const wchar_t* installPath)
 
 void UMcf::moveOldFiles(const wchar_t* installPath, const wchar_t* fileName)
 {
+	assert(g_vProblemFilesPath.size() == g_vProblemFiles.size());
+
+	size_t x = 0;
+
 	for (auto p : g_vProblemFiles)
 	{
+		x++;
+
 		if (Safe::wcsicmp(fileName, p) != 0)
 			continue;
+
+		auto probFilePath = g_vProblemFilesPath[x - 1];
 
 		wchar_t src[255] = {0};
 		wchar_t dest[255] = {0};
 
-		Safe::snwprintf(src, 255, L"%s\\%s", installPath, p);
-		Safe::snwprintf(dest, 255, L"%s\\%s_old", installPath, p);
+		Safe::snwprintf(src, 255, L"%s\\%s", installPath, probFilePath);
+		Safe::snwprintf(dest, 255, L"%s\\%s_old", installPath, probFilePath);
 
 		//cant copy over a running exe.
 		MoveFileExW(src, dest, MOVEFILE_WRITE_THROUGH);
