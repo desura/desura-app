@@ -37,93 +37,91 @@ $/LicenseInfo$
 
 namespace MCFCore
 {
-namespace Misc
-{
-
-class ProviderInfo;
-
-//! Provider manager handles all the providers for mcf download including error management
-//!
-class ProviderManager
-{
-public:
-	//! Constructor
-	//!
-	//! @param source Provider source list
-	//!
-	ProviderManager(std::shared_ptr<Misc::DownloadProvidersI> pDownloadProviders);
-	~ProviderManager();
-
-	//! Gets new url for download
-	//!
-	//! @param id Agent id
-	//! @param errCode Reason why requesting new url
-	//! @param errMsg Detail error message
-	//! @return url if has valid url or "nullptr" if no valid url
-	//!
-	std::shared_ptr<const MCFCore::Misc::DownloadProvider> requestNewUrl(uint32 id, uint32 errCode, const char* errMsg);
-
-	//! Gets a url for agent
-	//!
-	//! @param id Agent id
-	//! @return url if has valid url or "nullptr" if no valid url
-	//!
-	std::shared_ptr<const MCFCore::Misc::DownloadProvider> getUrl(uint32 id);
-
-	//! Gets a name for agent
-	//!
-	//! @param id Agent id
-	//! @return name
-	//!
-	gcString getName(uint32 id);
-
-	//! Removes an Agent from downloading
-	//!
-	//! @param id Agent id
-	//! @param setTimeOut Trigger timeout for that Agents current url
-	//!
-	void removeAgent(uint32 id, bool setTimeOut = false);
-
-	//! Returns if any workers have valid urls at this stage
-	//!
-	//! @return True if valid urls, false if not
-	//!
-	bool hasValidAgents();
-
-	//! Gets the providers list
-	//!
-	//! @return Provider list
-	//!
-	std::shared_ptr<Misc::DownloadProvidersI> getDownloadProviders() const
+	namespace Misc
 	{
-		return m_pDownloadProviders;
+		class ProviderInfo;
+
+		//! Provider manager handles all the providers for mcf download including error management
+		//!
+		class ProviderManager
+		{
+		public:
+			//! Constructor
+			//!
+			//! @param source Provider source list
+			//!
+			ProviderManager(std::shared_ptr<Misc::DownloadProvidersI> pDownloadProviders);
+			~ProviderManager();
+
+			//! Gets new url for download
+			//!
+			//! @param id Agent id
+			//! @param errCode Reason why requesting new url
+			//! @param errMsg Detail error message
+			//! @return url if has valid url or "nullptr" if no valid url
+			//!
+			std::shared_ptr<const MCFCore::Misc::DownloadProvider> requestNewUrl(uint32 id, uint32 errCode, const char* errMsg);
+
+			//! Gets a url for agent
+			//!
+			//! @param id Agent id
+			//! @return url if has valid url or "nullptr" if no valid url
+			//!
+			std::shared_ptr<const MCFCore::Misc::DownloadProvider> getUrl(uint32 id);
+
+			//! Gets a name for agent
+			//!
+			//! @param id Agent id
+			//! @return name
+			//!
+			gcString getName(uint32 id);
+
+			//! Removes an Agent from downloading
+			//!
+			//! @param id Agent id
+			//! @param setTimeOut Trigger timeout for that Agents current url
+			//!
+			void removeAgent(uint32 id, bool setTimeOut = false);
+
+			//! Returns if any workers have valid urls at this stage
+			//!
+			//! @return True if valid urls, false if not
+			//!
+			bool hasValidAgents();
+
+			//! Gets the providers list
+			//!
+			//! @return Provider list
+			//!
+			std::shared_ptr<Misc::DownloadProvidersI> getDownloadProviders() const
+			{
+				return m_pDownloadProviders;
+			}
+
+			std::shared_ptr<const GetFile_s> getDownloadAuth()
+			{
+				if (m_pDownloadProviders)
+					return m_pDownloadProviders->getDownloadAuth();
+
+				return std::shared_ptr<const GetFile_s>();
+			}
+
+			//! Event that gets triggered when using new providers
+			//!
+			Event<MCFCore::Misc::DP_s> onProviderEvent;
+
+		protected:
+			void initProviderList();
+			void cleanExpiredProviders();
+			bool getValidFreeProviders(std::vector<ProviderInfo*> &vValidProviders);
+
+		private:
+			std::shared_ptr<Misc::DownloadProvidersI> m_pDownloadProviders;
+			std::vector<ProviderInfo> m_vProviderList;
+
+			std::mutex m_WaitMutex;
+		};
 	}
-
-	std::shared_ptr<const GetFile_s> getDownloadAuth()
-	{
-		if (m_pDownloadProviders)
-			return m_pDownloadProviders->getDownloadAuth();
-
-		return std::shared_ptr<const GetFile_s>();
-	}
-
-	//! Event that gets triggered when using new providers
-	//!
-	Event<MCFCore::Misc::DP_s> onProviderEvent;
-
-protected:
-	void initProviderList();
-	void cleanExpiredProviders();
-	bool getValidFreeProviders(std::vector<ProviderInfo*> &vValidProviders);
-
-private:
-	std::shared_ptr<Misc::DownloadProvidersI> m_pDownloadProviders;
-	std::vector<ProviderInfo> m_vProviderList;
-
-	std::mutex m_WaitMutex;
-};
-
-}
 }
 
 #endif //DESURA_URLMANAGER_H

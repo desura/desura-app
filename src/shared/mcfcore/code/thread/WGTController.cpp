@@ -43,50 +43,161 @@ A min(A a, A b)
 
 #endif
 
+
+namespace
+{
+	struct block_sortkey
+	{
+		bool operator()(MCFCore::Thread::Misc::WGTBlock *lhs, MCFCore::Thread::Misc::WGTBlock *rhs)
+		{
+			return (lhs->webOffset < rhs->webOffset);
+		}
+	};
+}
+
 namespace MCFCore
 {
-namespace Thread
-{
-
-struct block_sortkey
-{
-	bool operator()(Misc::WGTBlock *lhs, Misc::WGTBlock *rhs )
+	namespace Thread
 	{
-		return (lhs->webOffset < rhs->webOffset);
+
+		class WGTWorkerInfo
+		{
+		public:
+			WGTWorkerInfo(WGTControllerI* con, uint32 i, MCFCore::Misc::ProviderManager &provMng)
+				: id(i)
+				, workThread(new WGTWorker(con, i, provMng))
+			{
+				workThread->setPriority(::Thread::BaseThread::BELOW_NORMAL);
+			}
+
+			~WGTWorkerInfo()
+			{
+				delete workThread;
+				safe_delete(vBuffer);
+			}
+
+			const uint32 id;
+			WGTWorker * const workThread;
+
+			uint64 ammountDone = 0;
+					
+			void setCurrentBlock(Misc::WGTSuperBlock* pBlock)
+			{
+				std::lock_guard<std::mutex> guard(mutex);
+
+				curBlock = pBlock;
+				status = MCFThreadStatus::SF_STATUS_CONTINUE;
+			}
+
+			Misc::WGTSuperBlock* resetCurrentBlock()
+			{
+				std::lock_guard<std::mutex> guard(mutex);
+
+				auto block = curBlock;
+				curBlock = nullptr;
+				status = MCFThreadStatus::SF_STATUS_CONTINUE;
+
+				return block;
+			}
+
+			void addBlock(Misc::WGTBlock* pBlock)
+			{
+				std::lock_guard<std::mutex> guard(mutex);
+				vBuffer.push_back(pBlock);
+			}
+
+			Misc::WGTBlock* popBlock()
+			{
+				std::lock_guard<std::mutex> guard(mutex);
+
+				if (vBuffer.size() == 0)
+					return nullptr;
+
+				Misc::WGTBlock *block = vBuffer.front();
+				vBuffer.pop_front();
+
+				return block;
+			}
+
+			size_t getBufferSize()
+			{
+				std::lock_guard<std::mutex> guard(mutex);
+				return vBuffer.size();
+			}
+
+			size_t getCurrentBlockSize()
+			{
+				std::lock_guard<std::mutex> al(mutex);
+
+				if (!curBlock)
+					return 0;
+
+				return curBlock->vBlockList.size();
+			}
+
+			Misc::WGTSuperBlock* getCurrentBlock()
+			{
+				std::lock_guard<std::mutex> al(mutex);
+				return curBlock;
+			}
+
+			Misc::WGTSuperBlock* splitCurrentBlock(size_t halfWay)
+			{
+				std::lock_guard<std::mutex> al(mutex);
+
+				if (!curBlock)
+					return nullptr;
+
+				if (halfWay > curBlock->vBlockList.size())
+					return nullptr;
+
+				Misc::WGTSuperBlock* superBlock = new Misc::WGTSuperBlock();
+
+				std::lock_guard<std::mutex> cg(curBlock->m_Lock);
+
+				auto firstHalf = std::deque<Misc::WGTBlock*>(curBlock->vBlockList.begin(), curBlock->vBlockList.begin() + halfWay);
+				auto secondHalf = std::deque<Misc::WGTBlock*>(curBlock->vBlockList.begin() + halfWay, curBlock->vBlockList.end());
+
+				size_t totSize = 0;
+
+				for (auto b : secondHalf)
+					totSize += b->size;
+
+				curBlock->size -= totSize;
+				curBlock->vBlockList = firstHalf;
+
+				superBlock->size = totSize;
+				superBlock->vBlockList = secondHalf;
+				superBlock->offset = curBlock->offset + curBlock->size;
+
+				return superBlock;
+			}
+
+			MCFThreadStatus getStatus()
+			{
+				std::lock_guard<std::mutex> al(mutex);
+				return status;
+			}
+
+			void setStatus(MCFThreadStatus newStatus)
+			{
+				std::lock_guard<std::mutex> al(mutex);
+				status = newStatus;
+			}
+
+		private:
+			MCFThreadStatus status = MCFThreadStatus::SF_STATUS_CONTINUE;
+			Misc::WGTSuperBlock* curBlock = nullptr;
+
+			std::mutex mutex;
+			std::deque<Misc::WGTBlock*> vBuffer;
+		};
 	}
-};
+}
 
 
-class WGTWorkerInfo
-{
-public:
-	WGTWorkerInfo(WGTControllerI* con, uint32 i, MCFCore::Misc::ProviderManager &provMng)
-	{
-		id = i;
-		workThread = new WGTWorker(con, i, provMng);
-		workThread->setPriority(::Thread::BaseThread::BELOW_NORMAL);
-		curBlock = nullptr;
-		ammountDone = 0;
-		status = MCFCore::Thread::BaseMCFThread::SF_STATUS_CONTINUE;
-	}
+using namespace MCFCore::Thread;
 
-	~WGTWorkerInfo()
-	{
-		safe_delete(workThread);
-		safe_delete(vBuffer);
-	}
-
-	uint64 ammountDone;
-
-	uint32 id;
-	uint32 status;
-
-	Misc::WGTSuperBlock* curBlock;
-	WGTWorker* workThread;
-
-	std::mutex mutex;
-	std::deque<Misc::WGTBlock*> vBuffer;
-};
 
 
 WGTController::WGTController(std::shared_ptr<MCFCore::Misc::DownloadProvidersI> pDownloadProviders, uint16 numWorkers, MCFCore::MCF* caller, bool checkMcf) 
@@ -151,27 +262,28 @@ void WGTController::run()
 	while (!isStopped())
 	{
 		doPause();
-
 		saveBuffers(fh);
 
-		if (m_iRunningWorkers == 0 && !isQuedBlocks())
+		if (isQueuedBlocks())
+			continue;
+
+		if (m_iRunningWorkers == 0)
 			break;
 
-		if (!isQuedBlocks() && m_iRunningWorkers > 0 && !isStopped())
+		if (!m_ProvManager.hasValidAgents())
 		{
-			if (!m_ProvManager.hasValidAgents())
-				break;
-
-			m_WaitCondition.wait(5);
+			saveBuffers(fh, true);
+			break;
 		}
+
+		if (!isStopped())
+			m_WaitCondition.wait(5);
 	}
 
 	m_pUPThread->stop();
 
-	for (uint16 x=0; x<m_uiNumber; x++)
-		m_vWorkerList[x]->workThread->stop();
-
-	saveBuffers(fh, true);
+	for (auto worker : m_vWorkerList)
+		worker->workThread->stop();
 
 	if (m_iAvailbleWork == 0)
 	{
@@ -211,11 +323,11 @@ void WGTController::createWorkers()
 	}
 }
 
-bool WGTController::isQuedBlocks()
+bool WGTController::isQueuedBlocks()
 {
-	for (size_t x=0; x<m_vWorkerList.size(); x++)
+	for (auto worker : m_vWorkerList)
 	{
-		if (m_vWorkerList[x]->vBuffer.size() > 0)
+		if (worker->getBufferSize() > 0)
 			return true;
 	}
 
@@ -228,21 +340,16 @@ void WGTController::saveBuffers(UTIL::FS::FileHandle& fileHandle, bool allBlocks
 	if (m_vWorkerList.size() == 0)
 		return;
 
-	for (size_t x=0; x<m_vWorkerList.size(); x++)
+	for (auto worker : m_vWorkerList)
 	{
 		do
 		{
-			if (m_vWorkerList[x]->vBuffer.size() == 0)
+			auto block = worker->popBlock();
+
+			if (!block)
 				break;
 
-			m_vWorkerList[x]->mutex.lock();
-			Misc::WGTBlock *block = m_vWorkerList[x]->vBuffer.front();
-			m_vWorkerList[x]->vBuffer.pop_front();
-			m_vWorkerList[x]->mutex.unlock();
-
-			assert(block);
-
-			if (!checkBlock(block, m_vWorkerList[x]->id))
+			if (!checkBlock(block, worker->id))
 				continue;
 
 			try
@@ -576,19 +683,14 @@ bool WGTController::fillBlockList()
 	return true;
 }
 
-bool WGTController::stealBlocks()
+Misc::WGTSuperBlock* WGTController::stealBlocks()
 {
 	WGTWorkerInfo* largestWorker = nullptr;
 	size_t largestCount = 0;
 
 	for (auto w : m_vWorkerList)
 	{
-		std::lock_guard<std::mutex> al(w->mutex);
-
-		if (!w->curBlock)
-			continue;
-
-		size_t count = w->curBlock->vBlockList.size();
+		size_t count = w->getCurrentBlockSize();
 
 		if (count > largestCount)
 		{
@@ -600,66 +702,57 @@ bool WGTController::stealBlocks()
 	if (largestCount < 3 || !largestWorker)
 		return false;
 
-	WGTWorkerInfo* worker = largestWorker;
-	Misc::WGTSuperBlock* superBlock = new Misc::WGTSuperBlock();
-
-	{
-		std::lock_guard<std::mutex> wg(worker->mutex);
-		Misc::WGTSuperBlock* curBlock = worker->curBlock;
-		
-		size_t halfWay = largestCount / 2;
-
-		{
-			std::lock_guard<std::mutex> cg(curBlock->m_Lock);
-
-			auto firstHalf = std::deque<Misc::WGTBlock*>(curBlock->vBlockList.begin(), curBlock->vBlockList.begin() + halfWay);
-			auto secondHalf = std::deque<Misc::WGTBlock*>(curBlock->vBlockList.begin() + halfWay, curBlock->vBlockList.end());
-
-			size_t totSize = 0;
-
-			for (auto b : secondHalf)
-				totSize += b->size;
-
-			curBlock->size -= totSize;
-			curBlock->vBlockList = firstHalf;
-
-			superBlock->size = totSize;
-			superBlock->vBlockList = secondHalf;
-			superBlock->offset = curBlock->offset + curBlock->size;
-		}
-	}
-
-	{
-		std::lock_guard<std::mutex> lg(m_pFileMutex);
-		m_vSuperBlockList.push_back(superBlock);
-		m_iAvailbleWork++;
-	}
-
-	return true;
+	size_t halfWay = largestCount / 2;
+	return largestWorker->splitCurrentBlock(halfWay);
 }
 
-Misc::WGTSuperBlock* WGTController::newTask(uint32 id, uint32 &status)
+Misc::WGTSuperBlock* WGTController::newTask(uint32 id, MCFThreadStatus &status)
 {
 	WGTWorkerInfo* worker = findWorker(id);
 	assert(worker);
 
-	status = worker->status;
+	status = worker->getStatus();
 
-	if (worker->status != SF_STATUS_CONTINUE)
+	if (status != MCFThreadStatus::SF_STATUS_CONTINUE)
 		return nullptr;
 
-	if (worker->curBlock)
-		return worker->curBlock;
+	Misc::WGTSuperBlock* pSuperBlock = worker->getCurrentBlock();
 
-	m_pFileMutex.lock();
-	size_t listSize = m_vSuperBlockList.size();
-	m_pFileMutex.unlock();
+	if (pSuperBlock)
+		return pSuperBlock;
 
-	if (listSize == 0 && !stealBlocks())
+	auto bNoMoreWork = false;
+	
+	{
+		std::lock_guard<std::mutex> guard(m_pFileMutex);
+		size_t listSize = m_vSuperBlockList.size();
+
+		if (listSize == 0)
+		{
+			auto pStolenBlock = stealBlocks();
+
+			if (!pStolenBlock)
+			{
+				bNoMoreWork = true;
+			}
+			else
+			{
+				pSuperBlock = pStolenBlock;
+				m_iAvailbleWork++;
+			}
+		}
+		else
+		{
+			pSuperBlock = m_vSuperBlockList.front();
+			m_vSuperBlockList.pop_front();
+		}
+	}
+
+	if (bNoMoreWork)
 	{
 		m_pUPThread->stopThread(id);
-		worker->status = SF_STATUS_STOP;
-		status = SF_STATUS_STOP;
+		worker->setStatus(MCFThreadStatus::SF_STATUS_STOP);
+		status = MCFThreadStatus::SF_STATUS_STOP;
 
 		m_iRunningWorkers--;
 		//get thread running again.
@@ -668,19 +761,13 @@ Misc::WGTSuperBlock* WGTController::newTask(uint32 id, uint32 &status)
 		return nullptr;
 	}
 
-	m_pFileMutex.lock();
-	Misc::WGTSuperBlock* temp = m_vSuperBlockList.front();
-	m_vSuperBlockList.pop_front();
-	m_pFileMutex.unlock();
-
-	if (!temp)
+	if (!pSuperBlock)
 		return newTask(id, status);
 
-	worker->curBlock = temp;
-	worker->status = SF_STATUS_CONTINUE;
-	status = SF_STATUS_CONTINUE;
+	worker->setCurrentBlock(pSuperBlock);
+	status = MCFThreadStatus::SF_STATUS_CONTINUE;
 
-	return temp;
+	return pSuperBlock;
 }
 
 void WGTController::workerFinishedSuperBlock(uint32 id)
@@ -688,13 +775,7 @@ void WGTController::workerFinishedSuperBlock(uint32 id)
 	WGTWorkerInfo* worker = findWorker(id);
 	assert(worker);
 
-	Misc::WGTSuperBlock* block = nullptr;
-
-	worker->mutex.lock();
-	block = worker->curBlock;
-	worker->curBlock = nullptr;
-	worker->status = SF_STATUS_CONTINUE;
-	worker->mutex.unlock();
+	Misc::WGTSuperBlock* block = worker->resetCurrentBlock();
 
 	if (!block)
 	{
@@ -732,26 +813,24 @@ void WGTController::workerFinishedBlock(uint32 id, Misc::WGTBlock* block)
 	if (!block || !worker)
 		return;
 
-	worker->mutex.lock();
-	worker->vBuffer.push_back(block);
-	worker->mutex.unlock();
+	worker->addBlock(block);
 
 	//get thread running again.
 	m_WaitCondition.notify();
 }
 
-uint32 WGTController::getStatus(uint32 id)
+MCFThreadStatus WGTController::getStatus(uint32 id)
 {
 	WGTWorkerInfo* worker = findWorker(id);
 	assert(worker);
 
 	if (isPaused())
-		return SF_STATUS_PAUSE;
+		return MCFThreadStatus::SF_STATUS_PAUSE;
 
 	if (isStopped())
-		return SF_STATUS_STOP;
+		return MCFThreadStatus::SF_STATUS_STOP;
 
-	return worker->status;
+	return worker->getStatus();
 }
 
 void WGTController::reportError(uint32 id, gcException &e)
@@ -762,7 +841,7 @@ void WGTController::reportError(uint32 id, gcException &e)
 	Warning(gcString("WebGet: {0} Error: {1}.\n", id, e));
 
 	m_pUPThread->stopThread(id);
-	worker->status = SF_STATUS_STOP;
+	worker->setStatus(MCFThreadStatus::SF_STATUS_STOP);
 
 	m_iRunningWorkers--;
 
@@ -820,7 +899,4 @@ void WGTController::onStop()
 	m_WaitCondition.notify();
 
 	m_bDoingStop = false;
-}
-
-}
 }

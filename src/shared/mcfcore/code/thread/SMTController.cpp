@@ -71,10 +71,10 @@ public:
 
 	uint64 ammountDone = 0;
 
-	uint32 id = 0;
-	uint32 status = 0;
+	const uint32 id = 0;
+	MCFThreadStatus status;
 
-	gcString file;
+	const gcString file;
 
 	std::shared_ptr<MCFCore::MCFFile> curFile;
 	std::unique_ptr<SMTWorker> workThread;
@@ -292,16 +292,16 @@ void SMTController::fillFileList()
 	m_pUPThread->setTotal(sumSize);
 }
 
-uint32 SMTController::getStatus(uint32 id)
+MCFThreadStatus SMTController::getStatus(uint32 id)
 {
 	SMTWorkerInfo* worker = findWorker(id);
 	assert(worker);
 
 	if (isPaused())
-		return SF_STATUS_PAUSE;
+		return MCFThreadStatus::SF_STATUS_PAUSE;
 
 	if (isStopped())
-		return SF_STATUS_STOP;
+		return MCFThreadStatus::SF_STATUS_STOP;
 
 	return worker->status;
 }
@@ -311,7 +311,7 @@ std::shared_ptr<MCFCore::MCFFile> SMTController::newTask(uint32 id)
 	SMTWorkerInfo* worker = findWorker(id);
 	assert(worker);
 
-	if (worker->status != SF_STATUS_NULL)
+	if (worker->status != MCFThreadStatus::SF_STATUS_NULL)
 		return nullptr;
 
 	m_pFileMutex.lock();
@@ -321,7 +321,7 @@ std::shared_ptr<MCFCore::MCFFile> SMTController::newTask(uint32 id)
 	if (listSize == 0)
 	{
 		m_pUPThread->stopThread(id);
-		worker->status = SF_STATUS_STOP;
+		worker->status = MCFThreadStatus::SF_STATUS_STOP;
 
 		m_iRunningWorkers--;
 		//wake thread up
@@ -341,7 +341,7 @@ std::shared_ptr<MCFCore::MCFFile> SMTController::newTask(uint32 id)
 
 	worker->vFileList.push_back(index);
 	worker->curFile = temp;
-	worker->status = SF_STATUS_CONTINUE;
+	worker->status = MCFThreadStatus::SF_STATUS_CONTINUE;
 	return temp;
 }
 
@@ -350,7 +350,7 @@ void SMTController::endTask(uint32 id)
 	SMTWorkerInfo* worker = findWorker(id);
 	assert(worker);
 
-	worker->status = SF_STATUS_NULL;
+	worker->status = MCFThreadStatus::SF_STATUS_NULL;
 
 	worker->ammountDone += worker->curFile->getSize();
 }

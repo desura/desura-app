@@ -49,8 +49,8 @@ public:
 	uint64 offset = 0;
 	uint64 ammountDone = 0;
 
-	uint32 id = 0;
-	uint32 status = 0;
+	const uint32 id;
+	MCFThreadStatus status = MCFThreadStatus::SF_STATUS_NULL;
 
 	std::mutex mutex;
 
@@ -124,9 +124,9 @@ void SFTController::run()
 
 bool SFTController::workersDone()
 {
-	for (size_t x=0; x<m_vWorkerList.size(); x++)
+	for (auto worker : m_vWorkerList)
 	{
-		if (m_vWorkerList[x]->status != SF_STATUS_STOP)
+		if (worker->status != MCFThreadStatus::SF_STATUS_STOP)
 			return false;
 	}
 
@@ -219,10 +219,10 @@ bool SFTController::fillBuffers(UTIL::FS::FileHandle& fileHandle)
 
 	for (size_t x=0; x<m_vWorkerList.size(); x++)
 	{
-		if (m_vWorkerList[x]->status != SF_STATUS_CONTINUE || !m_vWorkerList[x]->curFile)
+		if (m_vWorkerList[x]->status != MCFThreadStatus::SF_STATUS_CONTINUE || !m_vWorkerList[x]->curFile)
 			continue;
 
-		if (m_vWorkerList[x]->vBuffer.size() >= 4 || m_vWorkerList[x]->status == SF_STATUS_ENDFILE)
+		if (m_vWorkerList[x]->vBuffer.size() >= 4 || m_vWorkerList[x]->status == MCFThreadStatus::SF_STATUS_ENDFILE)
 			continue;
 
 		processed = true;
@@ -262,7 +262,7 @@ bool SFTController::fillBuffers(UTIL::FS::FileHandle& fileHandle)
 		m_vWorkerList[x]->vBuffer.push_back(std::make_shared<SFTWorkerBuffer>(buffSize, buff));
 
 		if (endFile)
-			m_vWorkerList[x]->status = SF_STATUS_ENDFILE;
+			m_vWorkerList[x]->status = MCFThreadStatus::SF_STATUS_ENDFILE;
 
 		m_vWorkerList[x]->offset += buffSize;
 
@@ -272,21 +272,21 @@ bool SFTController::fillBuffers(UTIL::FS::FileHandle& fileHandle)
 	return processed;
 }
 
-uint32 SFTController::getStatus(uint32 id)
+MCFThreadStatus SFTController::getStatus(uint32 id)
 {
 	SFTWorkerInfo* worker = findWorker(id);
 	assert(worker);
 
 	if (isPaused())
-		return SF_STATUS_PAUSE;
+		return MCFThreadStatus::SF_STATUS_PAUSE;
 
 	if (isStopped())
-		return SF_STATUS_STOP;
+		return MCFThreadStatus::SF_STATUS_STOP;
 
 	return worker->status;
 }
 
-std::shared_ptr<SFTWorkerBuffer> SFTController::getBlock(uint32 id, uint32 &status)
+std::shared_ptr<SFTWorkerBuffer> SFTController::getBlock(uint32 id, MCFThreadStatus &status)
 {
 	SFTWorkerInfo* worker = findWorker(id);
 	assert(worker);
@@ -317,10 +317,10 @@ std::shared_ptr<MCFCore::MCFFile> SFTController::newTask(uint32 id)
 	SFTWorkerInfo* worker = findWorker(id);
 	assert(worker);
 
-	if (worker->status != SF_STATUS_NULL)
+	if (worker->status != MCFThreadStatus::SF_STATUS_NULL)
 		return nullptr;
 
-	worker->status = SF_STATUS_WAITTASK;
+	worker->status = MCFThreadStatus::SF_STATUS_WAITTASK;
 
 	m_pFileMutex.lock();
 	size_t listSize = m_vFileList.size();
@@ -329,7 +329,7 @@ std::shared_ptr<MCFCore::MCFFile> SFTController::newTask(uint32 id)
 	if (listSize == 0)
 	{
 		m_pUPThread->stopThread(id);
-		worker->status = SF_STATUS_STOP;
+		worker->status = MCFThreadStatus::SF_STATUS_STOP;
 		return nullptr;
 	}
 
@@ -345,19 +345,19 @@ std::shared_ptr<MCFCore::MCFFile> SFTController::newTask(uint32 id)
 
 	worker->curFile = temp;
 	worker->offset = 0;
-	worker->status = SF_STATUS_CONTINUE;
+	worker->status = MCFThreadStatus::SF_STATUS_CONTINUE;
 
 	m_WaitCond.notify();
 
 	return temp;
 }
 
-void SFTController::endTask(uint32 id, uint32 status, gcException e)
+void SFTController::endTask(uint32 id, MCFThreadStatus status, gcException e)
 {
 	SFTWorkerInfo* worker = findWorker(id);
 	assert(worker);
 
-	if (status == SF_STATUS_HASHMISSMATCH)
+	if (status == MCFThreadStatus::SF_STATUS_HASHMISSMATCH)
 	{
 		if (worker->curFile)
 			Warning(gcString("\t{0}: Hash mismatch found in file {1}.\n", id, worker->curFile->getName()));
@@ -365,22 +365,22 @@ void SFTController::endTask(uint32 id, uint32 status, gcException e)
 			Warning(gcString("\t{0}: Hash mismatch in unknown file.\n", id));
 	}
 
-	if (status != BaseMCFThread::SF_STATUS_COMPLETE)
+	if (status != MCFThreadStatus::SF_STATUS_COMPLETE)
 	{
 		gcException err = e;
 
 		if (err.getErrId() == 0)
 		{
 			if (worker->curFile)
-				err = gcException(ERR_HASHMISSMATCH, status, gcString("Hash mismatch found in file {0}", worker->curFile->getName()));
+				err = gcException(ERR_HASHMISSMATCH, (uint32)status, gcString("Hash mismatch found in file {0}", worker->curFile->getName()));
 			else
-				err = gcException(ERR_HASHMISSMATCH, status, gcString("Hash mismatch found in unknown file"));
+				err = gcException(ERR_HASHMISSMATCH, (uint32)status, gcString("Hash mismatch found in unknown file"));
 		}
 
 		onErrorEvent(e);
 	}
 
-	worker->status = SF_STATUS_NULL;
+	worker->status = MCFThreadStatus::SF_STATUS_NULL;
 	worker->curFile = nullptr;
 
 	worker->mutex.lock();
@@ -411,7 +411,7 @@ void SFTController::reportError(uint32 id, gcException &e)
 	assert(worker);
 #endif
 	Warning(gcString("SFTControler: {0} Error: {1}.\n", id, e));
-	endTask(id, SF_STATUS_ERROR, e);
+	endTask(id, MCFThreadStatus::SF_STATUS_ERROR, e);
 }
 
 void SFTController::reportProgress(uint32 id, uint64 ammount)

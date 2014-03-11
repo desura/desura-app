@@ -41,6 +41,7 @@ namespace MCFCore
 		public:
 			ProviderInfo(std::shared_ptr<const MCFCore::Misc::DownloadProvider> &pProvider)
 				: m_pProvider(pProvider)
+				, m_tExpTime(gcTime() - std::chrono::seconds(getTimeOut()))
 			{
 			}
 
@@ -253,6 +254,9 @@ bool ProviderManager::hasValidAgents()
 {
 	std::lock_guard<std::mutex> guard(m_WaitMutex);
 
+	if (m_vProviderList.size() == 0)
+		initProviderList();
+
 	for (auto &p : m_vProviderList)
 	{
 		if (!p.isInTimeOut())
@@ -261,6 +265,8 @@ bool ProviderManager::hasValidAgents()
 
 	return false;
 }
+
+
 
 #ifdef WITH_GTEST
 
@@ -445,6 +451,19 @@ namespace UnitTest
 			ASSERT_STREQ("b1", res->getName());
 		}
 	}
+
+	TEST(ProviderManager, hasValidAgentsCallsInit)
+	{
+		auto pc = std::make_shared<const DownloadProvider>("a1", "a2", "a3", "a4");
+
+		DownloadProvider *p = const_cast<DownloadProvider*>(&*pc);
+		auto dp = std::make_shared<TestDownloadProvidersPM>();
+		dp->m_vDownloadProviders.push_back(pc);
+
+		ProviderManager pm(dp);
+		ASSERT_TRUE(pm.hasValidAgents());
+	}
+
 
 
 	//test getUrl gives back errored providers after time out

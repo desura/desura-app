@@ -38,76 +38,74 @@ $/LicenseInfo$
 
 namespace MCFCore
 {
+	class MCFFile;
+	class MCF;
+	class MCFHeaderI;
 
-class MCFFile;
-class MCF;
-class MCFHeaderI;
-
-//! namespace for all MCFCore thread processes
-namespace Thread
-{
-
-//! BaseMCFThread is the base class for all MCFCore processes that use the producer consumer patteren
-//! and also need progress reporting
-//!
-class BaseMCFThread : public ::Thread::BaseThread
-{
-public:
-	enum
+	//! namespace for all MCFCore thread processes
+	namespace Thread
 	{
-		SF_STATUS_NULL,				//!< Unknown Process status
-		SF_STATUS_PAUSE,			//!< Process paused
-		SF_STATUS_STOP,				//!< Process stopped
-		SF_STATUS_ENDFILE,			//!< Process is at the end of the file
-		SF_STATUS_SKIP,				//!< Process is skipping current task
-		SF_STATUS_CONTINUE,			//!< Process is continuing current task
-		SF_STATUS_COMPLETE,			//!< Process has completed task
-		SF_STATUS_HASHMISSMATCH,	//!< Process has a hask miss match
-		SF_STATUS_ERROR,			//!< Process has an error
-		SF_STATUS_WAITTASK = SF_STATUS_PAUSE,	//!< Process is waiting on task
-	};
+		enum class MCFThreadStatus
+		{
+			SF_STATUS_NULL,				//!< Unknown Process status
+			SF_STATUS_PAUSE,			//!< Process paused
+			SF_STATUS_STOP,				//!< Process stopped
+			SF_STATUS_ENDFILE,			//!< Process is at the end of the file
+			SF_STATUS_SKIP,				//!< Process is skipping current task
+			SF_STATUS_CONTINUE,			//!< Process is continuing current task
+			SF_STATUS_COMPLETE,			//!< Process has completed task
+			SF_STATUS_HASHMISSMATCH,	//!< Process has a hask miss match
+			SF_STATUS_ERROR,			//!< Process has an error
+			SF_STATUS_WAITTASK = SF_STATUS_PAUSE,	//!< Process is waiting on task
+		};
 
-	//! Constuctor
-	//!
-	//! @param num Number of workers
-	//! @param caller Parent MCF
-	//! @param name Thread name
-	//!
-	BaseMCFThread(uint16 num, MCFCore::MCF* caller, const char* name);
-
-	//! virual deconstuctor
-	//!
-	virtual ~BaseMCFThread();
-
-	//! Error event
-	//!
-	Event<gcException> onErrorEvent;
-
-	//! Progress event
-	//!
-	Event<MCFCore::Misc::ProgressInfo> onProgressEvent;
-
-protected:
-	virtual void onPause();
-	virtual void onUnpause();
-	virtual void onStop();
-
-	bool m_bCompress;
-	const char *m_szFile;
-	uint16 m_uiNumber;
-
-	MCFCore::MCFHeaderI* m_pHeader;
-	MCFCore::Thread::UpdateProgThread *m_pUPThread;
-	std::mutex m_pFileMutex;
-
-	std::vector<std::shared_ptr<MCFCore::MCFFile>> &m_rvFileList;
-	std::vector<int32> m_vFileList;
-
-	uint64 m_uiFileOffset;
-};
+		//! BaseMCFThread is the base class for all MCFCore processes that use the producer consumer patteren
+		//! and also need progress reporting
+		//!
+		class BaseMCFThread : public ::Thread::BaseThread
+		{
+		public:
 
 
-}
+			//! Constuctor
+			//!
+			//! @param num Number of workers
+			//! @param caller Parent MCF
+			//! @param name Thread name
+			//!
+			BaseMCFThread(uint16 num, MCFCore::MCF* caller, const char* name);
+
+			//! virual deconstuctor
+			//!
+			virtual ~BaseMCFThread();
+
+			//! Error event
+			//!
+			Event<gcException> onErrorEvent;
+
+			//! Progress event
+			//!
+			Event<MCFCore::Misc::ProgressInfo> onProgressEvent;
+
+		protected:
+			virtual void onPause();
+			virtual void onUnpause();
+			virtual void onStop();
+
+			bool m_bCompress;
+			const char *m_szFile;
+			uint16 m_uiNumber;
+
+			MCFCore::MCFHeaderI* m_pHeader;
+			MCFCore::Thread::UpdateProgThread *m_pUPThread;
+			std::mutex m_pFileMutex;
+
+			std::vector<std::shared_ptr<MCFCore::MCFFile>> &m_rvFileList;
+			std::vector<int32> m_vFileList;
+
+			uint64 m_uiFileOffset;
+		};
+	}
 }
 
 #endif

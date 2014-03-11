@@ -36,101 +36,100 @@ class CourgetteInstance;
 
 namespace MCFCore
 {
-namespace Thread
-{
+	namespace Thread
+	{
 
-class SMTWorkerInfo;
+		class SMTWorkerInfo;
 
-//! Save mcf thread controller. Zips the local files into a mcf
-//!
-class SMTController : public MCFCore::Thread::BaseMCFThread
-{
-public:
-	//! Constuctor
-	//!
-	//! @param num Number of workers
-	//! @param caller Parent Mcf
-	//!
-	SMTController(uint16 num, MCFCore::MCF* caller);
-	~SMTController();
+		//! Save mcf thread controller. Zips the local files into a mcf
+		//!
+		class SMTController : public MCFCore::Thread::BaseMCFThread
+		{
+		public:
+			//! Constuctor
+			//!
+			//! @param num Number of workers
+			//! @param caller Parent Mcf
+			//!
+			SMTController(uint16 num, MCFCore::MCF* caller);
+			~SMTController();
 
-	//! Gets a new task for a worker
-	//!
-	//! @param id Worker id
-	//! @return File to process
-	//!
-	std::shared_ptr<MCFCore::MCFFile> newTask(uint32 id);
+			//! Gets a new task for a worker
+			//!
+			//! @param id Worker id
+			//! @return File to process
+			//!
+			std::shared_ptr<MCFCore::MCFFile> newTask(uint32 id);
 
-	//! Report a worker has completed its task
-	//!
-	//! @param id Worker id
-	//!
-	void endTask(uint32 id);
+			//! Report a worker has completed its task
+			//!
+			//! @param id Worker id
+			//!
+			void endTask(uint32 id);
 
-	//! Gets a worker status
-	//!
-	//! @param id Worker id
-	//! @return Worker status
-	//!
-	uint32 getStatus(uint32 id);
+			//! Gets a worker status
+			//!
+			//! @param id Worker id
+			//! @return Worker status
+			//!
+			MCFThreadStatus getStatus(uint32 id);
 
-	//! Reports an error from a worker thread
-	//!
-	//! @param id Worker id
-	//! @param e Exception that occured
-	//!
-	void reportError(uint32 id, gcException &e);
+			//! Reports an error from a worker thread
+			//!
+			//! @param id Worker id
+			//! @param e Exception that occured
+			//!
+			void reportError(uint32 id, gcException &e);
 
-	//! Report progress from a worker
-	//!
-	//! @param id Worker id
-	//! @param ammount Ammount completed
-	//!
-	void reportProgress(uint32 id, uint64 ammount);
+			//! Report progress from a worker
+			//!
+			//! @param id Worker id
+			//! @param ammount Ammount completed
+			//!
+			void reportProgress(uint32 id, uint64 ammount);
 
-protected:
-	void run();
-	void onPause();
-	void onStop();
+		protected:
+			void run();
+			void onPause();
+			void onStop();
 
-	//! Finds a Worker given a worker id
-	//!
-	//! @param id worker id
-	//! @return Worker
-	//!
-	SMTWorkerInfo* findWorker(uint32 id);
+			//! Finds a Worker given a worker id
+			//!
+			//! @param id worker id
+			//! @return Worker
+			//!
+			SMTWorkerInfo* findWorker(uint32 id);
 
-	//! Fills the list of files needed to be saved
-	//!
-	void fillFileList();
+			//! Fills the list of files needed to be saved
+			//!
+			void fillFileList();
 
-	//! Are all workers compelted
-	//!
-	//! @return True if all completed, false if not
-	//!
-	bool workersDone();
+			//! Are all workers compelted
+			//!
+			//! @return True if all completed, false if not
+			//!
+			bool workersDone();
 
-	//! Makes the worker threads
-	//!
-	//! @return True if completed, false if error
-	//!
-	bool makeThreads();
+			//! Makes the worker threads
+			//!
+			//! @return True if completed, false if error
+			//!
+			bool makeThreads();
 
-	//! Perform post processing on the mcf (merging parts together)
-	//!
-	void postProcessing();
+			//! Perform post processing on the mcf (merging parts together)
+			//!
+			void postProcessing();
 
 
-private:
-	std::vector<SMTWorkerInfo*> m_vWorkerList;
+		private:
+			std::vector<SMTWorkerInfo*> m_vWorkerList;
 
-	volatile uint32 m_iRunningWorkers;
-	bool m_bCreateDiff;
+			volatile uint32 m_iRunningWorkers;
+			bool m_bCreateDiff;
 
-	::Thread::WaitCondition m_WaitCond;
-};
-
-}
+			::Thread::WaitCondition m_WaitCond;
+		};
+	}
 }
 
 #endif //DESURA_SAVEMCFTHREAD_H

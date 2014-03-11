@@ -76,25 +76,25 @@ void SMTWorker::run()
 
 	while (!isStopped())
 	{
-		uint32 status = m_pCT->getStatus(m_uiId);
+		MCFThreadStatus status = m_pCT->getStatus(m_uiId);
 
-		while (status == MCFCore::Thread::BaseMCFThread::SF_STATUS_PAUSE)
+		while (status ==  MCFThreadStatus::SF_STATUS_PAUSE)
 		{
 			gcSleep(500);
 			status = m_pCT->getStatus(m_uiId);
 		}
 
-		if (status == MCFCore::Thread::BaseMCFThread::SF_STATUS_STOP)
+		if (status ==  MCFThreadStatus::SF_STATUS_STOP)
 			break;
 
-		if (status == MCFCore::Thread::BaseMCFThread::SF_STATUS_NULL)
+		if (status ==  MCFThreadStatus::SF_STATUS_NULL)
 		{
 			if (!newTask())
 				continue;
 		}
 
 		//make sure we dont do compression if we are ment to be stopped
-		if (!isStopped() && status == MCFCore::Thread::BaseMCFThread::SF_STATUS_CONTINUE)
+		if (!isStopped() && status ==  MCFThreadStatus::SF_STATUS_CONTINUE)
 		{
 			try
 			{

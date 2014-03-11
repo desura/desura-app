@@ -42,111 +42,110 @@ $/LicenseInfo$
 namespace MCFCore
 {
 
-namespace Thread
-{
-class WGTWorkerInfo;
+	namespace Thread
+	{
+		class WGTWorkerInfo;
 
 
-//! Web Get Thread controller. Downloads mcf from mcf servers
-//!
-class WGTController : public MCFCore::Thread::BaseMCFThread, protected WGTControllerI
-{
-public:
-	//! Constuctor
-	//!
-	//! @param source Download provider list
-	//! @param numWorkers Number of children to spawn to download the mcf
-	//! @param caller Parent Mcf
-	//! @param checkMcf Check the Mcf for downloaded chunks before starting
-	//!
-	WGTController(std::shared_ptr<MCFCore::Misc::DownloadProvidersI> pDownloadProviders, uint16 numWorkers, MCFCore::MCF* caller, bool checkMcf);
-	~WGTController();
-	
-	//! Provider event
-	//!
-	Event<MCFCore::Misc::DP_s> onProviderEvent;
+		//! Web Get Thread controller. Downloads mcf from mcf servers
+		//!
+		class WGTController : public MCFCore::Thread::BaseMCFThread, protected WGTControllerI
+		{
+		public:
+			//! Constuctor
+			//!
+			//! @param source Download provider list
+			//! @param numWorkers Number of children to spawn to download the mcf
+			//! @param caller Parent Mcf
+			//! @param checkMcf Check the Mcf for downloaded chunks before starting
+			//!
+			WGTController(std::shared_ptr<MCFCore::Misc::DownloadProvidersI> pDownloadProviders, uint16 numWorkers, MCFCore::MCF* caller, bool checkMcf);
+			~WGTController();
 
-protected:
-	//! Has blocks ready to written to the mcf file
-	//!
-	//! @return True if blocks are ready, false if not
-	//!
-	bool isQuedBlocks();
+			//! Provider event
+			//!
+			Event<MCFCore::Misc::DP_s> onProviderEvent;
 
-	//! Finds a Worker given a worker id
-	//!
-	//! @param id worker id
-	//! @return Worker
-	//!
-	WGTWorkerInfo* findWorker(uint32 id);
+		protected:
+			//! Has blocks ready to written to the mcf file
+			//!
+			//! @return True if blocks are ready, false if not
+			//!
+			bool isQueuedBlocks();
 
-	//! Fills the block list with all the blocks needed to be downloaded
-	//!
-	//! @return True if compelted, False if error occured
-	//!
-	bool fillBlockList();
+			//! Finds a Worker given a worker id
+			//!
+			//! @param id worker id
+			//! @return Worker
+			//!
+			WGTWorkerInfo* findWorker(uint32 id);
 
-	//! Creates the workers
-	//!
-	void createWorkers();
+			//! Fills the block list with all the blocks needed to be downloaded
+			//!
+			//! @return True if compelted, False if error occured
+			//!
+			bool fillBlockList();
 
-	//! Are all workers done
-	//!
-	//! @return True if all done, false if not
-	//!
-	bool workersDone();
+			//! Creates the workers
+			//!
+			void createWorkers();
 
-	//! Save completed blocks to the mcf file
-	//!
-	//! @param fileHandle Mcf file to save to
-	//! @param allBlocks Save all blocks instead of one
-	//!
-	void saveBuffers(UTIL::FS::FileHandle& fileHandle, bool allBlocks = false);
+			//! Are all workers done
+			//!
+			//! @return True if all done, false if not
+			//!
+			bool workersDone();
 
-	//inhereted from BaseThread
-	void run();
-	void onStop();
+			//! Save completed blocks to the mcf file
+			//!
+			//! @param fileHandle Mcf file to save to
+			//! @param allBlocks Save all blocks instead of one
+			//!
+			void saveBuffers(UTIL::FS::FileHandle& fileHandle, bool allBlocks = false);
 
-	//! Checks a block for errors
-	//!
-	bool checkBlock(Misc::WGTBlock *block, uint32 workerId);
+			//inhereted from BaseThread
+			void run() override;
+			void onStop() override;
 
-	//! Steals blocks from other workes
-	//!
-	//! @return true if blocks stolen
-	//!
-	bool stealBlocks();
+			//! Checks a block for errors
+			//!
+			bool checkBlock(Misc::WGTBlock *block, uint32 workerId);
 
-	virtual Misc::WGTSuperBlock* newTask(uint32 id, uint32 &status);
-	virtual uint32 getStatus(uint32 id);
-	virtual void reportError(uint32 id, gcException &e);
-	virtual void reportProgress(uint32 id, uint64 ammount);
-	virtual void reportNegProgress(uint32 id, uint64 ammount);
-	virtual void workerFinishedBlock(uint32 id, Misc::WGTBlock* block);
-	virtual void workerFinishedSuperBlock(uint32 id);
-	virtual void pokeThread();
+			//! Steals blocks from other workes
+			//!
+			//! @return true if blocks stolen
+			//!
+			Misc::WGTSuperBlock* stealBlocks();
 
-private:
-	MCFCore::Misc::ProviderManager m_ProvManager;
+			virtual Misc::WGTSuperBlock* newTask(uint32 id, MCFThreadStatus &status);
+			virtual MCFThreadStatus getStatus(uint32 id);
+			virtual void reportError(uint32 id, gcException &e);
+			virtual void reportProgress(uint32 id, uint64 ammount);
+			virtual void reportNegProgress(uint32 id, uint64 ammount);
+			virtual void workerFinishedBlock(uint32 id, Misc::WGTBlock* block);
+			virtual void workerFinishedSuperBlock(uint32 id);
+			virtual void pokeThread();
 
-	std::atomic<uint32> m_iAvailbleWork;
-	std::atomic<uint32> m_iRunningWorkers;
+		private:
+			MCFCore::Misc::ProviderManager m_ProvManager;
 
-	bool m_bCheckMcf=false;
-	volatile bool m_bDoingStop=false;
+			std::atomic<uint32> m_iAvailbleWork;
+			std::atomic<uint32> m_iRunningWorkers;
 
-	std::vector<WGTWorkerInfo*> m_vWorkerList;
-	std::deque<Misc::WGTSuperBlock*> m_vSuperBlockList;
-	std::vector<uint32> m_vDlFiles;
+			bool m_bCheckMcf = false;
+			volatile bool m_bDoingStop = false;
 
-	::Thread::WaitCondition m_WaitCondition;
+			std::vector<WGTWorkerInfo*> m_vWorkerList;
+			std::deque<Misc::WGTSuperBlock*> m_vSuperBlockList;
+			std::vector<uint32> m_vDlFiles;
+
+			::Thread::WaitCondition m_WaitCondition;
 
 #ifdef DEBUG
-	uint64 m_uiSaved = 0;
+			uint64 m_uiSaved = 0;
 #endif
-};
-
-}
+		};
+	}
 }
 
 #endif //DESURA_WEBGETTHREAD_H
