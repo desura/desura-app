@@ -171,7 +171,7 @@ int32 SFTWorker::doWork()
 	if (m_pCurFile->isZeroSize())
 		return BZ_STREAM_END;
 
-	MCFThreadStatus status;
+	MCFThreadStatus status = MCFThreadStatus::SF_STATUS_NULL;
 	std::shared_ptr<SFTWorkerBuffer> temp(m_pCT->getBlock(m_uiId, status));
 
 	bool endFile = (status == MCFThreadStatus::SF_STATUS_ENDFILE);

@@ -31,60 +31,71 @@ $/LicenseInfo$
 #include "mcf/MCFFile.h"
 #include "mcf/MCFHeader.h"
 
+using namespace MCFCore::Thread;
+
 namespace MCFCore
 {
-namespace Thread
-{
-
-class tFile
-{
-public:
-	tFile(uint64 s, uint32 p)
+	namespace Thread
 	{
-		size=s;
-		pos=p;
+		//! Save MCF Worker container class
+		class SMTWorkerInfo
+		{
+		public:
+			SMTWorkerInfo(uint32 i)
+				: id(i)
+			{
+			}
+
+			void init(SMTController* con, UTIL::FS::FileHandle* fileHandle, gcString f)
+			{
+				workThread = std::make_unique<SMTWorker>(con, id, fileHandle);
+				workThread->setPriority(::Thread::BaseThread::BELOW_NORMAL);
+				file = f;
+			}
+
+			uint64 ammountDone = 0;
+
+			const uint32 id = 0;
+			MCFThreadStatus status = MCFThreadStatus::SF_STATUS_NULL;
+
+			gcString file;
+
+			std::shared_ptr<MCFCore::MCFFile> curFile;
+			std::unique_ptr<SMTWorker> workThread;
+			std::vector<uint32> vFileList;
+		};
 	}
+}
 
-	uint64 size;
-	uint32 pos;
-};
-
-struct file_sortkey
+namespace
 {
-	bool operator()(tFile *lhs, tFile *rhs )
+	class tFile
 	{
-		return (lhs->size < rhs->size);
-	}
-};
+	public:
+		tFile(uint64 s, uint32 p)
+		{
+			size = s;
+			pos = p;
+		}
 
-//! Save MCF Worker container class
-class SMTWorkerInfo
-{
-public:
-	SMTWorkerInfo(SMTController* con, uint32 i, UTIL::FS::FileHandle* fileHandle, const char* f)
-		: id(i)
-		, file(f)
-		, workThread(std::make_unique<SMTWorker>(con, i, fileHandle))
+		uint64 size;
+		uint32 pos;
+	};
+
+	struct file_sortkey
 	{
-		workThread->setPriority(::Thread::BaseThread::BELOW_NORMAL);
-	}
-
-	uint64 ammountDone = 0;
-
-	const uint32 id = 0;
-	MCFThreadStatus status;
-
-	const gcString file;
-
-	std::shared_ptr<MCFCore::MCFFile> curFile;
-	std::unique_ptr<SMTWorker> workThread;
-	std::vector<uint32> vFileList;
-};
+		bool operator()(tFile *lhs, tFile *rhs)
+		{
+			return (lhs->size < rhs->size);
+		}
+	};
+}
 
 
-SMTController::SMTController(uint16 num, MCFCore::MCF* caller) : MCFCore::Thread::BaseMCFThread(num, caller, "SaveMCF Thread")
+SMTController::SMTController(uint16 num, MCFCore::MCF* caller)
+	: MCFCore::Thread::BaseMCFThread(std::max<uint32>(num, 6), caller, "SaveMCF Thread")
+	, m_vWorkerList(createWorkers())
 {
-	m_iRunningWorkers = 0;
 }
 
 SMTController::~SMTController()
@@ -114,11 +125,11 @@ void SMTController::run()
 	fillFileList();
 	m_pUPThread->start();
 
-	if (!makeThreads())
+	if (!initWorkers())
 		return;
 
-	for (size_t x=0; x<m_vWorkerList.size(); x++)
-		m_vWorkerList[x]->workThread->start();
+	for (auto worker : m_vWorkerList)
+		worker->workThread->start();
 
 	while (true)
 	{
@@ -130,24 +141,32 @@ void SMTController::run()
 		//wait here as we have nothing else to do
 		m_WaitCond.wait(2);
 
-		if (m_iRunningWorkers==0)
+		if (m_iRunningWorkers == 0)
 			break;
 	}
 
 	m_pUPThread->stop();
 
-	for (size_t x=0; x<m_vWorkerList.size(); x++)
-		m_vWorkerList[x]->workThread->stop();
+	for (auto worker : m_vWorkerList)
+		worker->workThread->stop();
 
 	if (!isStopped())
 		postProcessing();
-
-	safe_delete(m_vWorkerList);
 }
 
-bool SMTController::makeThreads()
+std::vector<SMTWorkerInfo*> SMTController::createWorkers()
 {
-	for (uint32 x=0; x<m_uiNumber; x++)
+	std::vector<SMTWorkerInfo*> vWorkerList;
+
+	for (uint32 x = 0; x < m_uiNumber; x++)
+		vWorkerList.push_back(new SMTWorkerInfo(x));
+
+	return vWorkerList;
+}
+
+bool SMTController::initWorkers()
+{
+	for (uint32 x = 0; x<m_uiNumber; x++)
 	{
 		gcString file("{0}", m_szFile);
 
@@ -166,15 +185,15 @@ bool SMTController::makeThreads()
 		}
 		catch (gcException &except)
 		{
-			safe_delete(fh);
-			onErrorEvent(except);
-			return false;
+			if (x == 0)
+			{
+				safe_delete(fh);
+				onErrorEvent(except);
+				return false;
+			}
 		}
 
-		SMTWorkerInfo* temp = new SMTWorkerInfo(this, x, fh, file.c_str());
-		m_vWorkerList.push_back(temp);
-		temp->workThread->start();
-
+		m_vWorkerList[x]->init(this, fh, file);
 		m_iRunningWorkers++;
 	}
 
@@ -204,10 +223,8 @@ void SMTController::postProcessing()
 
 	char buff[BLOCKSIZE];
 
-	for (size_t x=1; x<m_vWorkerList.size(); x++)
+	for (auto worker : m_vWorkerList)
 	{
-		SMTWorkerInfo *worker = m_vWorkerList[x];
-
 		uint64 fileSize = UTIL::FS::getFileSize(UTIL::FS::PathWithFile(worker->file));
 		uint64 done = 0;
 
@@ -218,8 +235,8 @@ void SMTController::postProcessing()
 			fhSource.open(worker->file.c_str(), UTIL::FS::FILE_READ);
 			while (fileSize > done)
 			{
-				if ((fileSize-done) < (uint64)readSize)
-					readSize = (uint32)(fileSize-done);
+				if ((fileSize - done) < (uint64)readSize)
+					readSize = (uint32)(fileSize - done);
 
 				fhSource.read(buff, readSize);
 				fhSink.write(buff, readSize);
@@ -232,7 +249,7 @@ void SMTController::postProcessing()
 		{
 		}
 
-		for (size_t y=0; y<worker->vFileList.size(); y++)
+		for (size_t y = 0; y<worker->vFileList.size(); y++)
 		{
 			uint32 index = worker->vFileList[y];
 			auto temp = m_rvFileList[index];
@@ -240,7 +257,7 @@ void SMTController::postProcessing()
 			if (!temp)
 				continue;
 
-			temp->setOffSet( temp->getOffSet() + sinkSize );
+			temp->setOffSet(temp->getOffSet() + sinkSize);
 		}
 
 		sinkSize += fileSize;
@@ -257,7 +274,7 @@ void SMTController::fillFileList()
 
 	std::vector<tFile*> vList;
 
-	for (size_t x=0; x<m_rvFileList.size(); x++)
+	for (size_t x = 0; x<m_rvFileList.size(); x++)
 	{
 		if (!m_rvFileList[x]->isSaved())
 			continue;
@@ -267,9 +284,9 @@ void SMTController::fillFileList()
 			m_rvFileList[x]->addFlag(MCFCore::MCFFileI::FLAG_ZEROSIZE);
 			continue;
 		}
-		
+
 		sumSize += m_rvFileList[x]->getSize();
-		
+
 
 		if (m_bCompress && m_rvFileList[x]->shouldCompress())
 			m_rvFileList[x]->addFlag(MCFCore::MCFFileI::FLAG_COMPRESSED);
@@ -282,7 +299,7 @@ void SMTController::fillFileList()
 
 	std::sort(vList.begin(), vList.end(), file_sortkey());
 
-	for (size_t x=0; x<vList.size(); x++)
+	for (size_t x = 0; x<vList.size(); x++)
 	{
 		m_vFileList.push_back(vList[x]->pos);
 	}
@@ -357,13 +374,10 @@ void SMTController::endTask(uint32 id)
 
 SMTWorkerInfo* SMTController::findWorker(uint32 id)
 {
-	if (id >= m_vWorkerList.size())
-		return nullptr;
-
-	for (size_t x=0; x<m_vWorkerList.size(); x++)
+	for (auto worker : m_vWorkerList)
 	{
-		if (m_vWorkerList[x]->id == id)
-			return m_vWorkerList[x];
+		if (worker->id == id)
+			return worker;
 	}
 
 	return nullptr;
@@ -386,7 +400,4 @@ void SMTController::reportProgress(uint32 id, uint64 ammount)
 	assert(m_pUPThread);
 
 	m_pUPThread->reportProg(id, worker->ammountDone + ammount);
-}
-
-}
 }

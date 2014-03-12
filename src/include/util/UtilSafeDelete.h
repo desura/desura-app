@@ -84,6 +84,13 @@ void safe_delete(std::vector<T>& vec)
 }
 
 template <typename T, typename A>
+void safe_delete(const std::vector<T, A>& vec)
+{
+	for (auto p : vec)
+		safe_delete(p);
+}
+
+template <typename T, typename A>
 void safe_delete(std::vector<T, A>& vec)
 {
 	for (size_t x = 0; x < vec.size(); x++)
