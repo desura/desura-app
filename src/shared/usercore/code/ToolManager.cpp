@@ -38,8 +38,7 @@ $/LicenseInfo$
 UserCore::ToolInfo* NewJSToolInfo(DesuraId id);
 #endif
 
-namespace UserCore
-{
+using namespace UserCore;
 
 ToolManager::ToolManager(UserCore::User* user) : BaseManager(true)
 {
@@ -572,4 +571,35 @@ void ToolManager::postParseXml()
 }
 #endif
 
+
+void ToolManager::reloadTools(DesuraId id)
+{
+	//missing tools. Gather info again
+	XML::gcXMLDocument doc;
+
+	m_pUser->getWebCore()->getItemInfo(id, doc, MCFBranch(), MCFBuild());
+
+	auto uNode = doc.GetRoot("iteminfo");
+
+	if (!uNode.IsValid())
+		return;
+
+	uint32 ver = doc.ProcessStatus("iteminfo");
+
+	if (ver == 1)
+	{
+		auto toolNode = uNode.FirstChildElement("toolinfo");
+
+		if (toolNode.IsValid())
+			parseXml(toolNode);
+	}
+	else
+	{
+		uNode.FirstChildElement("platforms").for_each_child("platform", [&](const XML::gcXMLElement &platform)
+		{
+			if (!m_pUser->platformFilter(platform, PlatformType::PT_Tool))
+				parseXml(platform.FirstChildElement("toolinfo"));
+		});
+	}
 }
+

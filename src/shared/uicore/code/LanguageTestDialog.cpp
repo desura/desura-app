@@ -261,6 +261,8 @@ public:
 	void symLinkTools(std::vector<DesuraId> &list, const char* path) override { }
 	int hasNonInstallableTool(std::vector<DesuraId> &list) override { return 0; }
 #endif	
+
+	void reloadTools(DesuraId id) override {}
 };
 
 class LanguageStubItemHandle : public UserCore::Item::ItemHandleI, public UserCore::Item::ItemTaskGroupI

@@ -107,32 +107,15 @@ void DownloadToolTask::validateTools()
 	if (toolList.size() == 0)
 		return;
 
-	if (!getUserCore()->getToolManager()->areAllToolsValid(toolList))
-	{
-		//missing tools. Gather info again
-		XML::gcXMLDocument doc;
+	auto pToolManager = getUserCore()->getToolManager();
 
-		getWebCore()->getItemInfo(getItemId(), doc, MCFBranch(), MCFBuild());
+	if (pToolManager->areAllToolsValid(toolList))
+		return;
 
-		auto uNode = doc.GetRoot("iteminfo");
+	pToolManager->reloadTools(getItemId());
+	getItemInfo()->getCurrentBranch()->getToolList(toolList);
 
-		if (!uNode.IsValid())
-			throw gcException(ERR_BADXML);
-
-		auto toolNode = uNode.FirstChildElement("toolinfo");
-
-		if (toolNode.IsValid())
-			getUserCore()->getToolManager()->parseXml(toolNode);
-
-		auto gameNode = uNode.FirstChildElement("games");
-
-		if (!gameNode.IsValid())
-			throw gcException(ERR_BADXML);
-
-		getItemInfo()->getCurrentBranch()->getToolList(toolList);
-	}
-
-	if (!getUserCore()->getToolManager()->areAllToolsValid(toolList))
+	if (!pToolManager->areAllToolsValid(toolList))
 		throw gcException(ERR_INVALID, "Tool ids cannot be resolved into tools.");
 }
 

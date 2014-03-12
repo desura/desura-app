@@ -152,7 +152,8 @@ namespace UserCore
 		//!
 		virtual int hasNonInstallableTool(std::vector<DesuraId> &list)=0;
 	#endif	
-		
+
+		virtual void reloadTools(DesuraId id)=0;	
 	};
 }
 
