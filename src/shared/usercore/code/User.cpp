@@ -235,6 +235,8 @@ void User::init()
 //call this if a update needs to be downloaded
 void User::appNeedUpdate(uint32 appver, uint32 appbuild, bool bForced)
 {
+	gcTrace("Ver {0}, Build {1}, Forced {2}", appver, appbuild, bForced);
+
 	if (m_bDownloadingUpdate)
 		return;
 
@@ -307,6 +309,8 @@ const char* User::getCVarValue(const char* cvarName)
 
 void User::onUpdateComplete(UserCore::Misc::update_s& info)
 {
+	gcTrace("");
+
 	m_uiLastUpdateBuild = info.build;
 	m_bDownloadingUpdate = false;
 	
@@ -319,6 +323,8 @@ void User::onUpdateComplete(UserCore::Misc::update_s& info)
 
 void User::onUpdateStart(UserCore::Misc::update_s& info)
 {
+	gcTrace("");
+
 	m_uiLastUpdateBuild = info.build;
 	
 	if (info.alert)

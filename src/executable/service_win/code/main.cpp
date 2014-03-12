@@ -35,9 +35,10 @@ SERVICE_STATUS_HANDLE g_hStatus;
 CGCServiceApp g_ServiceApp;
 
 class Color;
-void LogMsg(int type, std::string msg, Color *col)
-{
 
+void LogMsg(MSG_TYPE type, std::string msg, Color* col, std::map<std::string, std::string> *mpArgs)
+{
+	printf("[LogMsg] %s\n", msg.c_str());
 }
 
 void SetCrashSettings(const wchar_t* user, bool upload)

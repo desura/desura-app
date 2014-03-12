@@ -275,6 +275,8 @@ void ItemHandle::setPausable(bool state)
 
 void ItemHandle::setPaused(bool state, bool forced)
 {
+	gcTrace("Paused {0}, Forced {1}", state, forced);
+
 	bool isPausable = (getItemInfo()->getStatus()&UserCore::Item::ItemInfoI::STATUS_PAUSABLE)?true:false;
 	bool hasPauseFlag = HasAnyFlags(getItemInfo()->getStatus(), UserCore::Item::ItemInfoI::STATUS_PAUSED);
 
@@ -318,6 +320,8 @@ void ItemHandle::setPaused(bool state)
 
 void ItemHandle::setStage(ITEM_STAGE stage)
 {
+	gcTrace("Stage {0}", (int32)stage);
+
 	m_pEventHandler->reset();
 	m_uiStage = stage;
 	onChangeStageEvent(stage);
@@ -333,6 +337,8 @@ void ItemHandle::setStage(ITEM_STAGE stage)
 
 void ItemHandle::onTaskStart(ITEM_STAGE &stage)
 {
+	gcTrace("Stage {0}", (int32)stage);
+
 	if (stage == ITEM_STAGE::STAGE_NONE)
 	{
 		m_uiStage = ITEM_STAGE::STAGE_NONE;
@@ -344,6 +350,8 @@ void ItemHandle::onTaskStart(ITEM_STAGE &stage)
 
 void ItemHandle::onTaskComplete(ITEM_STAGE &stage)
 {
+	gcTrace("Stage {0}", (int32)stage);
+
 	if (stage == ITEM_STAGE::STAGE_NONE)
 	{
 		releaseComplexLock();
@@ -353,6 +361,8 @@ void ItemHandle::onTaskComplete(ITEM_STAGE &stage)
 
 void ItemHandle::resetStage(bool close)
 {
+	gcTrace("Close {0}", close);
+
 	//if we are updating and error out goback to last known state
 	if (getItemInfo()->getStatus() & UserCore::Item::ItemInfoI::STATUS_UPDATING)
 	{
@@ -375,6 +385,8 @@ void ItemHandle::resetStage(bool close)
 
 void ItemHandle::completeStage(bool close)
 {
+	gcTrace("Close {0}", close);
+
 	if (close)
 		registerTask(new BlankTask(this, ITEM_STAGE::STAGE_CLOSE));
 
@@ -479,6 +491,8 @@ void ItemHandle::goToStageUninstallBranch(MCFBranch branch, MCFBuild build, bool
 
 void ItemHandle::releaseComplexLock()
 {
+	gcTrace("");
+
 	bool isComplex = HasAllFlags(getItemInfo()->getStatus(), UserCore::Item::ItemInfoI::STATUS_INSTALLCOMPLEX);
 	UserCore::Item::ItemHandle* obj = this;
 
@@ -496,6 +510,8 @@ void ItemHandle::releaseComplexLock()
 
 bool ItemHandle::getComplexLock()
 {
+	gcTrace("");
+
 	bool isParentComplex = getItemInfo()->getInstalledModId().isOk();
 	bool isComplex = HasAllFlags(getItemInfo()->getStatus(), UserCore::Item::ItemInfoI::STATUS_INSTALLCOMPLEX);
 
@@ -642,6 +658,8 @@ void ItemHandle::goToStageInstall(const char* path, MCFBranch branch)
 
 void ItemHandle::stopThread()
 {
+	gcTrace("");
+
 	std::lock_guard<std::recursive_mutex> guard(m_ThreadMutex);
 
 	m_pUserCore->getThreadPool()->queueTask(new UserCore::Task::DeleteThread(m_pUserCore, m_pThread));
@@ -662,6 +680,8 @@ void ItemHandle::registerTask(UserCore::ItemTask::BaseItemTask* task)
 {
 	if (!task)
 		return;
+
+	gcTrace("Task {0}", task->getTaskName());
 
 	m_pEventHandler->registerTask(task);
 	std::lock_guard<std::recursive_mutex> guard(m_ThreadMutex);
@@ -923,6 +943,8 @@ void ItemHandle::preLaunchCheck()
 
 bool ItemHandle::launchForReal(Helper::ItemLaunchHelperI* helper, bool offline)
 {
+	gcTrace("");
+
 	UserCore::Item::BranchInfoI* bi = this->getItemInfo()->getCurrentBranch();
 
 	if (bi && bi->isPreOrder())
@@ -1160,6 +1182,8 @@ bool ItemHandle::startUpCheck()
 
 bool ItemHandle::uninstall(Helper::ItemUninstallHelperI* helper, bool complete, bool account)
 {
+	gcTrace("");
+
 	if (m_uiStage == ITEM_STAGE::STAGE_UNINSTALL)
 		return true;
 
@@ -1180,6 +1204,8 @@ ITEM_STAGE ItemHandle::getStage()
 
 void ItemHandle::cancelCurrentStage()
 {
+	gcTrace("");
+
 	if (!isInStage())
 		return;
 

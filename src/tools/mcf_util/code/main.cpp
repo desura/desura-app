@@ -84,16 +84,10 @@ void PrintfMsg(const char* format, ...)
 	va_end(args);
 }
 
-void LogMsg(int type, std::string msg, Color *col)
+void LogMsg(MSG_TYPE type, std::string msg, Color* col, std::map<std::string, std::string> *mpArgs)
 {
 	printf("%s", msg.c_str());
 }
-
-void LogMsg(int type, std::wstring msg, Color *col)
-{
-	wprintf(L"%s", msg.c_str());
-}
-
 
 bool SortFunctionList(UtilFunction* a, UtilFunction* b)
 {

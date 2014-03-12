@@ -45,10 +45,7 @@ public:
 	IPCServiceMain(IPC::IPCManager* mang, uint32 id, DesuraId itemId);
 	~IPCServiceMain();
 
-	void warning(const char* msg);
-	void message(const char* msg);
-	void debug(const char* msg);
-
+	void message(int type, const char* msg, uint64 col, std::map<std::string, std::string> *mpArgs);
 	void updateRegKey(const char* key, const char* value);
 
 #ifdef DESURA_CLIENT

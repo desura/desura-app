@@ -79,6 +79,8 @@ void WebCoreClass::init(const char* appDataPath)
 
 void WebCoreClass::init(const char* appDataPath, const char* szProviderUrl)
 {
+	gcTrace("App data path {0}, Provider {1}", appDataPath, szProviderUrl);
+
 	gcString strProvUrl(szProviderUrl);
 
 	if (strProvUrl.size() == 0)

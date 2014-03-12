@@ -48,6 +48,8 @@ const XML::gcXMLElement WebCoreClass::postToServer(std::string url, std::string 
 			url += "&XDEBUG_SESSION_START=xdebug";
 	}
 
+	gcTrace("Hitting api {0}", url);
+
 	{
 		HttpHandle hh(url.c_str(), useHTTPS);
 

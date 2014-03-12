@@ -24,6 +24,8 @@ $/LicenseInfo$
 */
 
 #include "StdAfx.h"
+
+#include <map>
 #ifdef __MINGW32__
 #include <string>
 #else
@@ -36,11 +38,10 @@ void PrintfMsg(const char* format, ...)
 {
 }
 
-void LogMsg(int type, std::string msg, Color* col)
+enum MSG_TYPE
+{
+};
+
+void LogMsg(MSG_TYPE type, std::string msg, Color* col, std::map<std::string, std::string> *mpArgs)
 {
 }
-
-void LogMsg(int type, std::wstring msg, Color* col)
-{
-}
-

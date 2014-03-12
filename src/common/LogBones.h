@@ -43,11 +43,10 @@ enum MSG_TYPE
 	MT_MSG_COL,
 	MT_WARN,
 	MT_DEBUG,
+	MT_TRACE,
 };
 
-void LogMsg(int type, std::string msg, Color *col = nullptr);
-void LogMsg(int type, std::wstring msg, Color *col = nullptr);
-
+void LogMsg(MSG_TYPE type, std::string msg, Color *col = nullptr, std::map<std::string, std::string> *pmArgs = nullptr);
 
 template<typename CT>
 void Msg(const CT* message)
@@ -74,8 +73,6 @@ void MsgCol(Color* col, gcBaseString<CT> message)
 	LogMsg(MT_MSG_COL, message, col);
 }
 
-
-
 template<typename CT>
 void Warning(const CT* message)
 {
@@ -85,10 +82,9 @@ void Warning(const CT* message)
 template<typename CT>
 void Warning(gcBaseString<CT> message)
 {
-	LogMsg(MT_WARN, message);
+	gcString msg(message);
+	LogMsg(MT_WARN, msg);
 }
-
-
 
 template<typename CT>
 void Debug(const CT* message)
@@ -101,5 +97,45 @@ void Debug(gcBaseString<CT> message)
 {
 	LogMsg(MT_DEBUG, message);
 }
+
+template <typename T>
+gcString TraceClassInfo(T *pClass)
+{
+	return "";
+}
+
+template <typename T, typename ... Args>
+void TraceT(const char* szFunction, const char* szFile, int nLine, T *pClass, const char* szFormat, Args ... args)
+{
+	static auto getCurrentThreadId = []()
+	{
+#ifdef WIN32
+		return ::GetCurrentThreadId();
+#else
+		return (uint64)pthread_self();
+#endif
+	};
+
+	std::map<std::string, std::string> mArgs;
+
+	mArgs["function"] = szFunction;
+	mArgs["file"] = szFile;
+	mArgs["line"] = gcString("{0}", nLine);
+	mArgs["classinfo"] = TraceClassInfo(pClass);
+	mArgs["thread"] = gcString("{0}", getCurrentThreadId());
+	mArgs["time"] = gcTime().to_iso_string();
+
+	LogMsg(MT_TRACE, gcString(szFormat, args...), nullptr, &mArgs);
+}
+
+
+template<typename CT>
+void PrintToStream(const DesuraId& t, std::basic_stringstream<CT> &oss)
+{
+	oss << t.toInt64();
+}
+
+#define gcTrace( ... ) TraceT(__FUNCTION__, __FILE__, __LINE__, this, __VA_ARGS__);
+
 
 #endif

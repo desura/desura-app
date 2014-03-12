@@ -193,6 +193,8 @@ void BaseThread::start()
 
 	m_pPrivates->m_pThread = new std::thread([this, waitCond](){
 
+		gcTrace("Starting thread {0}", m_pPrivates->m_szName);
+
 		waitCond->wait();
 		assert(m_pPrivates->m_pThread);
 
@@ -228,6 +230,8 @@ void BaseThread::doPause()
 
 void BaseThread::pause()
 {
+	gcTrace("Pausing thread {0}", m_pPrivates->m_szName);
+
 	std::lock_guard<std::recursive_mutex> guard(m_pPrivates->m_PauseInitMutex);
 
 	if (m_pPrivates->m_bPause)
@@ -239,6 +243,8 @@ void BaseThread::pause()
 
 void BaseThread::unpause()
 {
+	gcTrace("Unpausing thread {0}", m_pPrivates->m_szName);
+
 	std::lock_guard<std::recursive_mutex> guard(m_pPrivates->m_PauseInitMutex);
 
 	if (!m_pPrivates->m_bPause)
@@ -251,6 +257,8 @@ void BaseThread::unpause()
 
 void BaseThread::stop()
 {
+	gcTrace("Stopping thread {0}", m_pPrivates->m_szName);
+
 	unpause();
 	nonBlockStop();
 
@@ -271,6 +279,8 @@ void BaseThread::nonBlockStop()
 
 void BaseThread::join()
 {
+	gcTrace("Joining thread {0}", m_pPrivates->m_szName);
+
 	auto thread = m_pPrivates->m_pThread;
 
 	if (!thread)

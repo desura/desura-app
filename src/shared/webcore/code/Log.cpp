@@ -33,6 +33,6 @@ extern "C"
 		g_pLogCallback = cb;
 
 		if (g_pLogCallback)
-			g_pLogCallback->Msg("WebCore Logging Started.\n");
+			g_pLogCallback->Message(MT_MSG, "WebCore Logging Started.\n");
 	}
 }

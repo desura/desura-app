@@ -478,3 +478,11 @@ void Console::conDump()
 
 	Msg(gcString("Console Dump Saved To:\n{0}\n\n", dumpFile));
 }
+
+void Console::Trace(const char* szMessage, std::map<std::string, std::string> *pmArgs)
+{
+	auto id = std::this_thread::get_id();
+
+	if (s_IgnoredThread == id)
+		return;
+}

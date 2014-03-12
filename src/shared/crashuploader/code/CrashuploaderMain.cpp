@@ -32,8 +32,7 @@ $/LicenseInfo$
 #define DUMP_UPLOAD_AGENT "Desura CrashDump Reporter"
 
 class Color;
-void LogMsg(int type, std::string msg, Color *col){}
-void LogMsg(int type, std::wstring msg, Color *col){}
+void LogMsg(MSG_TYPE type, std::string msg, Color* col, std::map<std::string, std::string> *mpArgs){}
 
 class Logger
 {

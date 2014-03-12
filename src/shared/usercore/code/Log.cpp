@@ -34,6 +34,6 @@ extern "C"
 		g_pLogCallback = cb;
 
 		if (g_pLogCallback)
-			g_pLogCallback->Msg("UserCore Logging Started.\n");
+			g_pLogCallback->Message(MT_MSG, "UserCore Logging Started.\n");
 	}
 }

@@ -582,6 +582,7 @@ void ItemManager::getNewItems(std::vector<UserCore::Item::ItemInfoI*> &rList)
 
 void ItemManager::removeItem(DesuraId id)
 {
+	gcTrace("ItemId {0}", id);
 	UserCore::Item::ItemInfo* item = findItemInfoNorm(id);
 
 	if (!item)
@@ -625,11 +626,14 @@ void ItemManager::removeItem(DesuraId id)
 
 void ItemManager::retrieveItemInfoAsync(DesuraId id, bool addToAccount)
 {
+	gcTrace("ItemId {0}", id);
 	m_pUser->m_pThreadPool->queueTask(new UserCore::Task::GatherInfoTask(m_pUser, id, addToAccount));
 }
 
 void ItemManager::retrieveItemInfo(DesuraId id, uint32 statusOveride, WildcardManager* pWildCard, MCFBranch mcfBranch, MCFBuild mcfBuild, bool reset)
 {
+	gcTrace("ItemId {0}", id);
+
 	assert(m_pUser->m_pWebCore);
 
 	XML::gcXMLDocument doc;
@@ -1000,6 +1004,7 @@ void ItemManager::generateInfoMaps(const XML::gcXMLElement &gamesNode, InfoMaps*
 
 UserCore::Item::ItemInfo* ItemManager::createNewItem(DesuraId pid, DesuraId id, ParseInfo& pi)
 {
+	gcTrace("ItemId {0}", id);
 	UserCore::Item::ItemInfo* temp = new UserCore::Item::ItemInfo(m_pUser, id, pid);
 	UserCore::Item::ItemHandle* handle = new UserCore::Item::ItemHandle(temp, m_pUser);
 
@@ -1258,6 +1263,7 @@ void ItemManager::parseModXml(UserCore::Item::ItemInfo* parent, DesuraId id, Par
 
 void ItemManager::setFavorite(DesuraId id, bool fav)
 {
+	gcTrace("ItemId {0}, Fav {1}", id, fav);
 	sqlite3x::sqlite3_connection db(getItemInfoDb(m_szAppPath.c_str()).c_str());
 
 	try
