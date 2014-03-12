@@ -279,6 +279,8 @@
 		<str name="#IF_PRELOADLAUNCH_INSTALLOTHER_INFO">&#xA;&#xA;There are other versions available to play.</str>
 		<str name="#IF_PREORDERED_NORELEASE">Preordered: Not Released</str>
 		<str name="#IF_PREORDERED">Preordered: Preload Ready</str>	
+		<str name="#IF_IIERRTITLE">Install Error</str>
+		<str name="#IF_IINOBRANCHES">There are no available releases for you to play.</str>	
 	
 		<!-- Item Form: Uninstall -->
 		<str name="#IF_UNINSTALL">Uninstalling: </str>
