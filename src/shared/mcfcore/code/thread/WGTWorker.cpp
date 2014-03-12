@@ -234,7 +234,7 @@ void WGTWorker::doDownload()
 
 	if (!m_pCurBlock)
 	{
-		MCFThreadStatus status;
+		MCFThreadStatus status = MCFThreadStatus::SF_STATUS_NULL;
 		m_pCurBlock = m_pCT->newTask(m_uiId, status);
 
 		if (!m_pCurBlock)

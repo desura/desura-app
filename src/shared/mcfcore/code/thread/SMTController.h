@@ -31,6 +31,7 @@ $/LicenseInfo$
 
 #include "Common.h"
 #include "BaseMCFThread.h"
+#include <atomic>
 
 class CourgetteInstance;
 
@@ -46,7 +47,7 @@ namespace MCFCore
 		class SMTController : public MCFCore::Thread::BaseMCFThread
 		{
 		public:
-			//! Constuctor
+			//! Constructor
 			//!
 			//! @param num Number of workers
 			//! @param caller Parent Mcf
@@ -104,17 +105,19 @@ namespace MCFCore
 			//!
 			void fillFileList();
 
-			//! Are all workers compelted
+			//! Are all workers completed
 			//!
 			//! @return True if all completed, false if not
 			//!
 			bool workersDone();
 
+			std::vector<SMTWorkerInfo*> createWorkers();
+
 			//! Makes the worker threads
 			//!
 			//! @return True if completed, false if error
 			//!
-			bool makeThreads();
+			bool initWorkers();
 
 			//! Perform post processing on the mcf (merging parts together)
 			//!
@@ -122,10 +125,10 @@ namespace MCFCore
 
 
 		private:
-			std::vector<SMTWorkerInfo*> m_vWorkerList;
+			const std::vector<SMTWorkerInfo*> m_vWorkerList;
 
-			volatile uint32 m_iRunningWorkers;
-			bool m_bCreateDiff;
+			std::atomic<uint32> m_iRunningWorkers;
+			bool m_bCreateDiff = false;
 
 			::Thread::WaitCondition m_WaitCond;
 		};
