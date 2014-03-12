@@ -93,7 +93,7 @@ namespace
 
 
 SMTController::SMTController(uint16 num, MCFCore::MCF* caller)
-	: MCFCore::Thread::BaseMCFThread(std::max<uint32>(num, 6), caller, "SaveMCF Thread")
+	: MCFCore::Thread::BaseMCFThread(std::min<uint32>(num, 4), caller, "SaveMCF Thread")
 	, m_vWorkerList(createWorkers())
 {
 }
@@ -223,8 +223,16 @@ void SMTController::postProcessing()
 
 	char buff[BLOCKSIZE];
 
+	auto bFirst = true;
+
 	for (auto worker : m_vWorkerList)
 	{
+		if (bFirst)
+		{
+			bFirst = false;
+			continue;
+		}
+
 		uint64 fileSize = UTIL::FS::getFileSize(UTIL::FS::PathWithFile(worker->file));
 		uint64 done = 0;
 
@@ -249,9 +257,8 @@ void SMTController::postProcessing()
 		{
 		}
 
-		for (size_t y = 0; y<worker->vFileList.size(); y++)
+		for (auto index : worker->vFileList)
 		{
-			uint32 index = worker->vFileList[y];
 			auto temp = m_rvFileList[index];
 
 			if (!temp)
