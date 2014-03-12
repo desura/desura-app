@@ -64,27 +64,27 @@ void SFTWorker::run()
 
 	while (true)
 	{
-		uint32 status = m_pCT->getStatus(m_uiId);
+		auto status = m_pCT->getStatus(m_uiId);
 		int32 res = BZ_OK;
 
-		while (status == BaseMCFThread::SF_STATUS_PAUSE)
+		while (status == MCFThreadStatus::SF_STATUS_PAUSE)
 		{
 			gcSleep(500);
 			status = m_pCT->getStatus(m_uiId);
 		}
 
-		if (status == BaseMCFThread::SF_STATUS_STOP)
+		if (status == MCFThreadStatus::SF_STATUS_STOP)
 		{
 			break;
 		}
-		else if (status == BaseMCFThread::SF_STATUS_NULL)
+		else if (status == MCFThreadStatus::SF_STATUS_NULL)
 		{
 			if (!newTask())
 				gcSleep(500);
 
 			continue;
 		}
-		else if (status == BaseMCFThread::SF_STATUS_ENDFILE)
+		else if (status == MCFThreadStatus::SF_STATUS_ENDFILE)
 		{
 			do
 			{
@@ -94,13 +94,13 @@ void SFTWorker::run()
 			}
 			while (res != BZ_STREAM_END);
 		}
-		else if (status == BaseMCFThread::SF_STATUS_CONTINUE)
+		else if (status == MCFThreadStatus::SF_STATUS_CONTINUE)
 		{
 			res = doWork();
 			bzErrorCheck(res);
 		}
 
-		if (res == BZ_STREAM_END || status == BaseMCFThread::SF_STATUS_SKIP)
+		if (res == BZ_STREAM_END || status == MCFThreadStatus::SF_STATUS_SKIP)
 			finishFile();
 	}
 }
@@ -157,12 +157,12 @@ void SFTWorker::finishFile()
 
 	if (m_pCurFile->isZeroSize() || m_pCurFile->hashCheckFile(&hash))
 	{
-		m_pCT->endTask(m_uiId, BaseMCFThread::SF_STATUS_COMPLETE);
+		m_pCT->endTask(m_uiId, MCFThreadStatus::SF_STATUS_COMPLETE);
 	}
 	else
 	{
 		Warning(gcString("Hash check failed for file [{0}]: Cur: {1} !=  Should: {2}\n", m_pCurFile->getName(), hash, m_pCurFile->getCsum()));
-		m_pCT->endTask(m_uiId, BaseMCFThread::SF_STATUS_HASHMISSMATCH);
+		m_pCT->endTask(m_uiId, MCFThreadStatus::SF_STATUS_HASHMISSMATCH);
 	}
 }
 
@@ -171,10 +171,10 @@ int32 SFTWorker::doWork()
 	if (m_pCurFile->isZeroSize())
 		return BZ_STREAM_END;
 
-	uint32 status = 0;
+	MCFThreadStatus status;
 	std::shared_ptr<SFTWorkerBuffer> temp(m_pCT->getBlock(m_uiId, status));
 
-	bool endFile = (status == BaseMCFThread::SF_STATUS_ENDFILE);
+	bool endFile = (status == MCFThreadStatus::SF_STATUS_ENDFILE);
 
 	//if temp is null we are waiting on data to be read. Lets nap for a bit
 	if (!temp)

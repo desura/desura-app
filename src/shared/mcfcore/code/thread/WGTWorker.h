@@ -43,86 +43,86 @@ namespace UnitTest
 
 namespace MCFCore
 {
-namespace Misc
-{
-	class ProviderManager;
-	class MCFServerConI;
-}
+	namespace Misc
+	{
+		class ProviderManager;
+		class MCFServerConI;
+	}
 
-namespace Thread
-{
-class WGTControllerI;
+	namespace Thread
+	{
+		class WGTControllerI;
 
-namespace Misc
-{
-	class WGTSuperBlock;
-	class WGTBlock;
-}
+		namespace Misc
+		{
+			class WGTSuperBlock;
+			class WGTBlock;
+		}
 
-//! Web get thread worker. Does all the work in regards to downloading mcf files
-//!
-class WGTWorker : public ::Thread::BaseThread, protected MCFCore::Misc::OutBufferI
-{
-public:
-	//! Constuctor
-	//! 
-	//! @param controller Parent class
-	//! @param id Worker id
-	//! @param pProvMng Provider manager
-	//! @param pFileAuth Mcf download auth
-	//!
-	WGTWorker(WGTControllerI* controller, uint16 id, MCFCore::Misc::ProviderManager &provMng);
-	~WGTWorker();
+		//! Web get thread worker. Does all the work in regards to downloading mcf files
+		//!
+		class WGTWorker : public ::Thread::BaseThread, protected MCFCore::Misc::OutBufferI
+		{
+		public:
+			//! Constuctor
+			//! 
+			//! @param controller Parent class
+			//! @param id Worker id
+			//! @param pProvMng Provider manager
+			//! @param pFileAuth Mcf download auth
+			//!
+			WGTWorker(WGTControllerI* controller, uint16 id, MCFCore::Misc::ProviderManager &provMng);
+			~WGTWorker();
 
-	//! Reports a download error from controller
-	//!
-	void reportError(gcException &e, gcString provider);
+			//! Reports a download error from controller
+			//!
+			void reportError(gcException &e, gcString provider);
 
-protected:
-	void run();
-	void onStop();
+		protected:
+			void run();
+			void onStop();
 
-	//! Does the download block work
-	//!
-	void doDownload();
+			//! Does the download block work
+			//!
+			void doDownload();
 
-	//! On progress event callback
-	//!
-	//! @param prog Current progress
-	//!
-	void onProgress(uint32& prog);
+			//! On progress event callback
+			//!
+			//! @param prog Current progress
+			//!
+			void onProgress(uint32& prog);
 
-	void takeProgressOff();
-	void requestNewUrl(gcException& e);
+			void takeProgressOff();
+			void requestNewUrl(gcException& e);
 
-	bool isGoodSocketError(uint32 errId);
+			bool isGoodSocketError(uint32 errId);
 
-	virtual bool writeData(char* data, uint32 size);
-	virtual void reset();
+			virtual bool writeData(char* data, uint32 size);
+			virtual void reset();
 
-	bool checkBlock(MCFCore::Thread::Misc::WGTBlock *block);
+			bool checkBlock(MCFCore::Thread::Misc::WGTBlock *block);
 
-private:
-	friend class UnitTest::TestWGTWorker;
+		private:
+			friend class UnitTest::TestWGTWorker;
 
-	MCFCore::Misc::MCFServerConI *m_pMcfCon = nullptr;
-	std::shared_ptr<const MCFCore::Misc::DownloadProvider> m_DownloadProvider;
+			MCFCore::Misc::MCFServerConI *m_pMcfCon = nullptr;
+			std::shared_ptr<const MCFCore::Misc::DownloadProvider> m_DownloadProvider;
 
-	uint32 m_iAttempt = 0;
-	uint32 m_uiId = 0;
+			uint32 m_iAttempt = 0;
+			uint32 m_uiId = 0;
 
-	std::mutex m_DeleteMutex;
+			std::mutex m_DeleteMutex;
 
-	MCFCore::Thread::WGTControllerI *m_pCT = nullptr;
-	MCFCore::Thread::Misc::WGTSuperBlock *m_pCurBlock = nullptr;
-	MCFCore::Misc::ProviderManager &m_ProvMng;
+			MCFCore::Thread::WGTControllerI *m_pCT = nullptr;
+			MCFCore::Thread::Misc::WGTSuperBlock *m_pCurBlock = nullptr;
+			MCFCore::Misc::ProviderManager &m_ProvMng;
 
-	std::mutex m_ErrorMutex;
-	bool m_bError = false;
-	gcException m_Error;
-};
+			std::mutex m_ErrorMutex;
+			bool m_bError = false;
+			gcException m_Error;
+		};
 
-}
+	}
 }
 
 #endif //DESURA_WTWORKERTHREAD_H

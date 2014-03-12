@@ -33,132 +33,127 @@ $/LicenseInfo$
 #include "BaseMCFThread.h"
 
 
-namespace MCFCore 
+namespace MCFCore
 {
-namespace Thread
-{
-class SFTWorkerInfo;
-
-//! Save file thread worker buffer. Used to store the data from the mcf
-//!
-class SFTWorkerBuffer
-{
-public:
-	SFTWorkerBuffer(uint32 s, char* b)
+	namespace Thread
 	{
-		buff = b;
-		size = s;
+		class SFTWorkerInfo;
+
+		//! Save file thread worker buffer. Used to store the data from the mcf
+		//!
+		class SFTWorkerBuffer
+		{
+		public:
+			SFTWorkerBuffer(uint32 s, char* b)
+			{
+				buff = b;
+				size = s;
+			}
+
+			~SFTWorkerBuffer()
+			{
+				safe_delete(buff);
+			}
+
+			char* buff;
+			uint32 size;
+		};
+
+		//! Save file thread controller. Used to exact mcf files and save into local filesystem
+		//!
+		class SFTController : public MCFCore::Thread::BaseMCFThread
+		{
+		public:
+			//! Constructor
+			//!
+			//! @param num Number of worker threads
+			//! @param caller Parent mcf
+			//! @param path Path to save files to
+			//!
+			SFTController(uint16 num, MCFCore::MCF* caller, const char* path);
+			~SFTController();
+
+			//! Gets the status of a worker thread
+			//!
+			//! @parama id Worker id
+			//! @return Worker status
+			//!
+			MCFThreadStatus getStatus(uint32 id);
+
+			//! Gets a block from the queue
+			//!
+			//! @param id Worker id
+			//! @param[out] status Worker status
+			//! @return Block
+			//!
+			std::shared_ptr<SFTWorkerBuffer> getBlock(uint32 id, MCFThreadStatus &status);
+
+			//! Creates a new save file task
+			//!
+			//! @param id Worker thread id
+			//! @return MCFFile to save
+			//!
+			std::shared_ptr<MCFCore::MCFFile> newTask(uint32 id);
+
+			//! Ends the current task when file save is complete
+			//!
+			//! @param id Worker id
+			//! @param status Completion status
+			//!
+			void endTask(uint32 id, MCFThreadStatus status, gcException e = gcException());
+
+			//! Reports an error from a worker thread
+			//!
+			//! @param id Worker id
+			//! @param e Exception that occurred
+			//!
+			void reportError(uint32 id, gcException &e);
+
+			//! Report progress from a worker
+			//!
+			//! @param id Worker id
+			//! @param ammount amount completed
+			//!
+			void reportProgress(uint32 id, uint64 amount);
+
+			//! Wake up this thread
+			//!
+			void pokeThread();
+
+		protected:
+			void run();
+
+			//! Finds a Worker given a worker id
+			//!
+			//! @param id worker id
+			//! @return Worker
+			//!
+			SFTWorkerInfo* findWorker(uint32 id);
+
+			//! Fills up the worker buffers from the mcf
+			//!
+			//! @param fileHandle Mcf handle
+			//! @return True if read one or more buffers, else false
+			//!
+			bool fillBuffers(UTIL::FS::FileHandle& fileHandle);
+
+			//! Are all workers compelted
+			//!
+			//! @return True if all completed, false if not
+			//!
+			bool workersDone();
+
+			//! Fills the list of files needed to be saved
+			//!
+			void fillFileList();
+
+		private:
+			gcString m_szPath;
+			std::vector<SFTWorkerInfo*> m_vWorkerList;
+
+			::Thread::WaitCondition m_WaitCond;
+		};
 	}
-
-	~SFTWorkerBuffer()
-	{
-		safe_delete(buff);
-	}
-
-	char* buff;
-	uint32 size;
-};
-
-//! Save file thread controller. Used to exact mcf files and save into local filesystem
-//!
-class SFTController : public MCFCore::Thread::BaseMCFThread
-{
-public:
-	//! Constuctor
-	//!
-	//! @param num Number of worker threads
-	//! @param caller Parent mcf
-	//! @param path Path to save files to
-	//!
-	SFTController(uint16 num, MCFCore::MCF* caller, const char* path);
-	~SFTController();
-
-	//! Gets the status of a worker thread
-	//!
-	//! @parama id Worker id
-	//! @return Worker status
-	//!
-	uint32 getStatus(uint32 id);
-
-	//! Gets a block from the queue
-	//!
-	//! @param id Worker id
-	//! @param[out] status Worker status
-	//! @return Block
-	//!
-	std::shared_ptr<SFTWorkerBuffer> getBlock(uint32 id, uint32 &status);
-
-	//! Creates a new save file task
-	//!
-	//! @param id Worker thread id
-	//! @return MCFFile to save
-	//!
-	std::shared_ptr<MCFCore::MCFFile> newTask(uint32 id);
-
-	//! Ends the current task when file save is complete
-	//!
-	//! @param id Worker id
-	//! @param status Completion status
-	//!
-	void endTask(uint32 id, uint32 status, gcException e = gcException());
-
-	//! Reports an error from a worker thread
-	//!
-	//! @param id Worker id
-	//! @param e Exception that occured
-	//!
-	void reportError(uint32 id, gcException &e);
-
-	//! Report progress from a worker
-	//!
-	//! @param id Worker id
-	//! @param ammount Ammount completed
-	//!
-	void reportProgress(uint32 id, uint64 ammount);
-
-	//! Wake up this thread
-	//!
-	void pokeThread();
-
-protected:
-	void run();
-
-	//! Finds a Worker given a worker id
-	//!
-	//! @param id worker id
-	//! @return Worker
-	//!
-	SFTWorkerInfo* findWorker(uint32 id);
-
-	//! Fills up the worker buffers from the mcf
-	//!
-	//! @param fileHandle Mcf handle
-	//! @return True if read one or more buffers, else false
-	//!
-	bool fillBuffers(UTIL::FS::FileHandle& fileHandle);
-
-	//! Are all workers compelted
-	//!
-	//! @return True if all completed, false if not
-	//!
-	bool workersDone();
-
-	//! Fills the list of files needed to be saved
-	//!
-	void fillFileList();
-
-private:
-	gcString m_szPath;
-	std::vector<SFTWorkerInfo*> m_vWorkerList;
-
-	::Thread::WaitCondition m_WaitCond;
-};
-
-
 }
-}
-
-
-
 
 #endif

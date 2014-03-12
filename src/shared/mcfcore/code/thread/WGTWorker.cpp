@@ -29,10 +29,8 @@ $/LicenseInfo$
 #include "ProviderManager.h"
 
 
-namespace MCFCore
-{
-namespace Thread
-{
+using namespace MCFCore::Thread;
+
 
 WGTWorker::WGTWorker(WGTControllerI* controller, uint16 id, MCFCore::Misc::ProviderManager &provMng) 
 	: BaseThread( "WebGet Worker Thread" )
@@ -78,16 +76,16 @@ void WGTWorker::run()
 
 	while (!isStopped())
 	{
-		uint32 status = m_pCT->getStatus(m_uiId);
+		MCFThreadStatus status = m_pCT->getStatus(m_uiId);
 
 		uint32 pauseCount = 0;
 
-		bool isPaused= (status == MCFCore::Thread::BaseMCFThread::SF_STATUS_PAUSE);
+		bool isPaused= (status == MCFThreadStatus::SF_STATUS_PAUSE);
 
 		if (isPaused)
 			m_pMcfCon->onPause();
 
-		while (status == MCFCore::Thread::BaseMCFThread::SF_STATUS_PAUSE)
+		while (status == MCFThreadStatus::SF_STATUS_PAUSE)
 		{
 			if (pauseCount > 30000 && m_pMcfCon->isConnected())
 				m_pMcfCon->disconnect();
@@ -104,7 +102,7 @@ void WGTWorker::run()
 			m_pMcfCon->setDPInformation(name.c_str());
 		}
 
-		if (status == MCFCore::Thread::BaseMCFThread::SF_STATUS_STOP)
+		if (status == MCFThreadStatus::SF_STATUS_STOP)
 			break;
 
 		m_ErrorMutex.lock();
@@ -115,7 +113,7 @@ void WGTWorker::run()
 		}
 		m_ErrorMutex.unlock();
 
-		if (status == MCFCore::Thread::BaseMCFThread::SF_STATUS_CONTINUE)
+		if (status == MCFThreadStatus::SF_STATUS_CONTINUE)
 			doDownload();
 	}
 
@@ -200,7 +198,7 @@ bool WGTWorker::writeData(char* data, uint32 size)
 		m_pCurBlock->done += size;
 	}
 
-	if (m_pCT->getStatus(m_uiId) == MCFCore::Thread::BaseMCFThread::SF_STATUS_PAUSE)
+	if (m_pCT->getStatus(m_uiId) == MCFThreadStatus::SF_STATUS_PAUSE)
 		return false;
 
 	return true;
@@ -236,12 +234,12 @@ void WGTWorker::doDownload()
 
 	if (!m_pCurBlock)
 	{
-		uint32 status;
+		MCFThreadStatus status;
 		m_pCurBlock = m_pCT->newTask(m_uiId, status);
 
 		if (!m_pCurBlock)
 		{
-			if (status != MCFCore::Thread::BaseMCFThread::SF_STATUS_STOP)
+			if (status != MCFThreadStatus::SF_STATUS_STOP)
 				Warning(gcString("The block was nullptr for Mcf Download thread {0}\n", m_uiId));
 
 			return;
@@ -364,11 +362,6 @@ void WGTWorker::requestNewUrl(gcException& e)
 }
 
 
-
-}
-}
-
-
 #ifdef WITH_GTEST
 
 #include <gtest/gtest.h>
@@ -442,14 +435,14 @@ namespace UnitTest
 		{
 		}
 
-		MCFCore::Thread::Misc::WGTSuperBlock* newTask(uint32 id, uint32 &status) override
+		MCFCore::Thread::Misc::WGTSuperBlock* newTask(uint32 id, MCFThreadStatus &status) override
 		{
 			return &m_SuperBlock;
 		}
 
-		uint32 getStatus(uint32 id) override
+		MCFThreadStatus getStatus(uint32 id) override
 		{
-			return MCFCore::Thread::BaseMCFThread::SF_STATUS_CONTINUE;
+			return MCFThreadStatus::SF_STATUS_CONTINUE;
 		}
 
 		void reportError(uint32 id, gcException &e) override

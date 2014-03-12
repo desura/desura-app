@@ -253,11 +253,7 @@ void BaseThread::stop()
 {
 	unpause();
 	nonBlockStop();
-
-	auto thread = m_pPrivates->m_pThread;
-
-	if (thread && thread->joinable())
-		thread->join();
+	join();
 }
 
 void BaseThread::nonBlockStop()

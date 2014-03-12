@@ -33,60 +33,58 @@ $/LicenseInfo$
 
 namespace MCFCore
 {
-namespace Thread
-{
+	namespace Thread
+	{
+		class WGTControllerI
+		{
+		public:
+			//! Request a new task (Worker thread)
+			//!
+			//! @param id Worker id
+			//! @param[out] status Current worker status
+			//! @return New worker task
+			//!
+			virtual Misc::WGTSuperBlock* newTask(uint32 id, MCFThreadStatus &status) = 0;
 
-class WGTControllerI
-{
-public:
-	//! Request a new task (Worker thread)
-	//!
-	//! @param id Worker id
-	//! @param[out] status Current worker status
-	//! @return New worker task
-	//!
-	virtual Misc::WGTSuperBlock* newTask(uint32 id, uint32 &status)=0;
+			//! Gets the status of a worker
+			//!
+			//! @param id Worker id
+			//! @return Worker status
+			//!
+			virtual MCFThreadStatus getStatus(uint32 id) = 0;
 
-	//! Gets the status of a worker
-	//!
-	//! @param id Worker id
-	//! @return Worker status
-	//!
-	virtual uint32 getStatus(uint32 id)=0;
+			//! Reports an error from a worker thread
+			//!
+			//! @param id Worker id
+			//! @param e Exception that occurred
+			//!
+			virtual void reportError(uint32 id, gcException &e) = 0;
 
-	//! Reports an error from a worker thread
-	//!
-	//! @param id Worker id
-	//! @param e Exception that occured
-	//!
-	virtual void reportError(uint32 id, gcException &e)=0;
+			//! Report progress from a worker
+			//!
+			//! @param id Worker id
+			//! @param ammount amount completed
+			//!
+			virtual void reportProgress(uint32 id, uint64 amount) = 0;
+			virtual void reportNegProgress(uint32 id, uint64 amount) = 0;
 
-	//! Report progress from a worker
-	//!
-	//! @param id Worker id
-	//! @param ammount Ammount completed
-	//!
-	virtual void reportProgress(uint32 id, uint64 ammount)=0;
-	virtual void reportNegProgress(uint32 id, uint64 ammount)=0;
-	
-	//! Report that a worker has completed a block
-	//!
-	//! @param id Worker id
-	//!
-	virtual void workerFinishedBlock(uint32 id, Misc::WGTBlock* block)=0;
+			//! Report that a worker has completed a block
+			//!
+			//! @param id Worker id
+			//!
+			virtual void workerFinishedBlock(uint32 id, Misc::WGTBlock* block) = 0;
 
-	//! Report that a worker has completed a super block
-	//!
-	//! @param id Worker id
-	//!
-	virtual void workerFinishedSuperBlock(uint32 id)=0;
+			//! Report that a worker has completed a super block
+			//!
+			//! @param id Worker id
+			//!
+			virtual void workerFinishedSuperBlock(uint32 id) = 0;
 
-	//! Wake up the controller
-	//!
-	virtual void pokeThread()=0;
-};
-
-}
+			//! Wake up the controller
+			//!
+			virtual void pokeThread() = 0;
+		};
+	}
 }
 
 #endif //DESURA_WGTCONTROLLERI_H
