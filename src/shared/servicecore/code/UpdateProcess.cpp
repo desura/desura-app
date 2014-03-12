@@ -64,6 +64,7 @@ void GCUpdateProcess::run()
 		onErrorEvent(e);
 	}
 
+#ifdef WIN32
 	if (!m_bTestMode)
 	{
 		//remove patch
@@ -71,13 +72,12 @@ void GCUpdateProcess::run()
 		gcWString newName = m_szMCFPath;
 		newName += L"_old";
 
-#ifdef WIN32
+
 		DWORD res1 = DeleteFileW(newName.c_str());
 		DWORD res2 = MoveFileW(m_szMCFPath.c_str(), newName.c_str());
 		DWORD res3 = DeleteFileW(newName.c_str());
-#endif // LINUX TODO UPDATE
-
 	}
+#endif
 
 	onCompleteEvent();
 }
@@ -134,6 +134,7 @@ void GCUpdateProcess::install()
 	}
 	else
 	{
+		UTIL::FS::delFile(gcString(m_szMCFPath));
 		throw gcException(ERR_INVALIDFILE, gcString("The MCF file {0} is an invalid installer.", m_szMCFPath));
 	}
 

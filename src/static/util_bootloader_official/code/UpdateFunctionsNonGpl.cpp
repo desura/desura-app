@@ -160,7 +160,7 @@ int NeedUpdateNonGpl()
 	{
 		if (FileExists(path.c_str()) && CheckUpdate(path.c_str()))
 		{
-			Log("NeedUpdate: Missing Mcf");
+			Log("NeedUpdate: Has Mcf");
 			return UPDATE_MCF;
 		}
 
