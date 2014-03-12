@@ -62,6 +62,8 @@ SharedObjectLoader g_CEFDll;
 ChromiumDLL::ChromiumControllerI* g_pChromiumController = nullptr;
 
 
+void SetCookies();
+
 #ifdef NIX
 gboolean onTimeout(gpointer data)
 {
@@ -180,6 +182,7 @@ bool InitWebControl()
 #endif
 	
 	g_bLoaded = true;
+	SetCookies();
 	return true;
 }
 
