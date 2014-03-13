@@ -272,8 +272,19 @@ void BaseThread::join()
 	if (!thread)
 		return;
 
-	if (thread->get_id() != std::thread::id() && thread->joinable())
-		thread->join();
+	try
+	{
+		if (thread->get_id() != std::thread::id() && thread->joinable())
+			thread->join();
+	}
+	catch (std::exception &e)
+	{
+		Warning("Exception caught in BaseThread::join: {0}\n", e.what());
+	}
+	catch (...)
+	{
+		Warning("Unknown Exception caught in BaseThread::join\n");
+	}
 }
 
 void BaseThread::setPriority(PRIORITY priority)
