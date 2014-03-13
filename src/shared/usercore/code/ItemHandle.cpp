@@ -818,7 +818,10 @@ bool ItemHandle::install(Helper::ItemLaunchHelperI* helper, MCFBranch branch)
 
 bool ItemHandle::install(MCFBranch branch, MCFBuild build, bool test)
 {
-	return install(branch, build, UserCore::ItemTask::GI_FLAG_TEST);
+	if (test)
+		return install(branch, build, UserCore::ItemTask::GI_FLAG_TEST);
+
+	return install(branch, build, UserCore::ItemTask::GI_FLAG_NONE);
 }
 
 bool ItemHandle::install(MCFBranch branch, MCFBuild build, UserCore::ItemTask::GI_FLAGS flags)
@@ -1038,7 +1041,7 @@ bool ItemHandle::launch(Helper::ItemLaunchHelperI* helper, bool offline, bool ig
 
 		for (size_t x=0; x<getItemInfo()->getBranchCount(); x++)
 		{
-			if (getItemInfo()->getBranch(x)->isPreOrder())
+			if (getItemInfo()->getBranch(x)->isPreOrderAndNotPreload())
 			{
 				hasPreorder = true;
 				break;
@@ -1075,7 +1078,7 @@ bool ItemHandle::launch(Helper::ItemLaunchHelperI* helper, bool offline, bool ig
 		}
 		else if (HasAnyFlags(getItemInfo()->getStatus(), UserCore::Item::ItemInfoI::STATUS_PRELOADED))
 		{
-			if (getItemInfo()->getCurrentBranch()->isPreOrder())
+			if (getItemInfo()->getCurrentBranch()->isPreOrderAndNotPreload())
 			{
 				helper->showPreOrderPrompt();
 				res = false;

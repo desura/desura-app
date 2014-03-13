@@ -71,6 +71,7 @@ public:
 	virtual bool isAvaliable();
 	virtual bool isDownloadable();
 	virtual bool isPreOrder();
+	bool isPreOrderAndNotPreload() override;
 	virtual bool hasAcceptedEula();
 	virtual bool hasCDKey();
 	virtual bool isCDKeyValid();

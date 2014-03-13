@@ -88,6 +88,7 @@ public:
 	bool isAvaliable() override { return true; }
 	bool isDownloadable() override { return true; }
 	bool isPreOrder() override { return m_bIsPreOrder; }
+	bool isPreOrderAndNotPreload() override { return m_bIsPreOrder; }
 	bool hasAcceptedEula() override { return true; }
 	bool hasCDKey() override { return true; }
 	bool isCDKeyValid() override { return true; }
