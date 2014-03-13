@@ -323,21 +323,27 @@ void MCF::parseFolder(const char *path, bool hashFile, bool reportProgress)
 {
 	parseFolder(nullptr, path);
 
-	if (hashFile)
+	if (!hashFile)
+		return;
+
+	MCFCore::Misc::ProgressInfo p;
+	p.totalAmmount = m_pFileList.size();
+
+	size_t x = 0;
+
+	for (auto file : m_pFileList)
 	{
-		MCFCore::Misc::ProgressInfo p;
-		p.totalAmmount = m_pFileList.size();
+		x++;
+		if (m_bStopped)
+			return;
 
-		for (size_t x=0; x<m_pFileList.size(); x++)
+		file->hashFile();
+
+		if (reportProgress)
 		{
-			m_pFileList[x]->hashFile();
-
-			if (reportProgress)
-			{
-				p.doneAmmount = x+1;
-				p.percent = (uint8)(p.doneAmmount*100/p.totalAmmount);
-				onProgressEvent(p);
-			}
+			p.doneAmmount = x+1;
+			p.percent = (uint8)(p.doneAmmount*100/p.totalAmmount);
+			onProgressEvent(p);
 		}
 	}
 }
