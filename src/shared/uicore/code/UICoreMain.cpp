@@ -572,6 +572,33 @@ public:
 	}
 #endif
 
+	bool OnExceptionInMainLoop() override
+	{
+		auto e = std::current_exception();
+
+		try
+		{
+			std::rethrow_exception(e);
+		}
+		catch (const gcException &e)
+		{
+			assert(false);
+			Warning("OnExceptionInMainLoop gcException: {0}\n", e.what());
+		}
+		catch (const std::exception &e)
+		{
+			assert(false);
+			Warning("OnExceptionInMainLoop std::exception: {0}\n", e.what());
+		}
+		catch (...)
+		{
+			assert(false);
+			Warning("OnExceptionInMainLoop Unknown exception\n");
+		}
+		
+		return wxApp::OnExceptionInMainLoop();
+	}
+
 private:
 	wxSingleInstanceChecker *m_pChecker;
 #ifdef WIN32
