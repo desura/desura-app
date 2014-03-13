@@ -244,7 +244,7 @@ void GatherInfoTask::checkRequirements()
 		return;
 	}
 
-	if (branchInfo->isPreOrder())
+	if (branchInfo->isPreOrderAndNotPreload())
 	{
 		//show the preorder prompt
 		getItemHandle()->goToStageLaunch();

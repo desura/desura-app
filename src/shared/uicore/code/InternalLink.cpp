@@ -806,22 +806,15 @@ bool InternalLink::checkForPreorder(DesuraId id)
 	if (!item)
 		return false;
 
-	bool hasPreorder = false;
+	if (item->getCurrentBranch())
+		return item->getCurrentBranch()->isPreOrderAndNotPreload();
+
 
 	for (size_t x=0; x<item->getBranchCount(); x++)
 	{
-		if (item->getBranch(x)->isPreOrder())
-		{
-			hasPreorder = true;
-			break;
-		}
+		if (item->getBranch(x)->isPreOrderAndNotPreload())
+			return true;
 	}		
-
-	if (item->getCurrentBranch() == nullptr && hasPreorder)
-	{
-		showPreorderPrompt(id, false);
-		return true;
-	}
 
 	return false;
 }

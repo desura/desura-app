@@ -107,9 +107,14 @@ bool BranchInfo::isDownloadable()
 	return isAvaliable() && !HasAnyFlags(m_uiFlags, BF_NORELEASES);
 }
 
-bool  BranchInfo::isPreOrder()
+bool BranchInfo::isPreOrder()
 {
 	return isAvaliable() && HasAllFlags(m_uiFlags, BF_PREORDER);
+}
+
+bool BranchInfo::isPreOrderAndNotPreload()
+{
+	return isAvaliable() && HasAllFlags(m_uiFlags, BF_PREORDER | BF_NORELEASES);
 }
 
 bool BranchInfo::hasAcceptedEula()

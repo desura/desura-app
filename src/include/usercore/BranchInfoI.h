@@ -137,6 +137,7 @@ public:
 	//! @return True if preorder, false if not
 	//!
 	virtual bool isPreOrder()=0;
+	virtual bool isPreOrderAndNotPreload() = 0;
 
 	//! Has the end user accepted the eula for this branch
 	//!
