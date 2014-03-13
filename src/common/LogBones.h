@@ -49,10 +49,10 @@ void LogMsg(int type, std::string msg, Color *col = nullptr);
 void LogMsg(int type, std::wstring msg, Color *col = nullptr);
 
 
-template<typename CT>
-void Msg(const CT* message)
+template<typename CT, typename ... Args>
+void Msg(const CT* szFormat, Args ... args)
 {
-	LogMsg(MT_MSG, gcBaseString<CT>(message));
+	LogMsg(MT_MSG, gcBaseString<CT>(szFormat, args...));
 }
 
 template<typename CT>
@@ -61,11 +61,10 @@ void Msg(gcBaseString<CT> message)
 	LogMsg(MT_MSG, message);
 }
 
-
-template<typename CT>
-void MsgCol(Color* col, const CT* message)
+template<typename CT, typename ... Args>
+void MsgCol(Color* col, const CT* szFormat, Args ... args)
 {
-	LogMsg(MT_MSG_COL, gcBaseString<CT>(message), col);
+	LogMsg(MT_MSG_COL, gcBaseString<CT>(szFormat, args...), col);
 }
 
 template<typename CT>
@@ -74,12 +73,10 @@ void MsgCol(Color* col, gcBaseString<CT> message)
 	LogMsg(MT_MSG_COL, message, col);
 }
 
-
-
-template<typename CT>
-void Warning(const CT* message)
+template<typename CT, typename ... Args>
+void Warning(const CT* szFormat, Args ... args)
 {
-	LogMsg(MT_WARN, gcBaseString<CT>(message));
+	LogMsg(MT_WARN, gcBaseString<CT>(szFormat, args...));
 }
 
 template<typename CT>
@@ -88,12 +85,10 @@ void Warning(gcBaseString<CT> message)
 	LogMsg(MT_WARN, message);
 }
 
-
-
-template<typename CT>
-void Debug(const CT* message)
+template<typename CT, typename ... Args>
+void Debug(const CT* szFormat, Args ... args)
 {
-	LogMsg(MT_DEBUG, gcBaseString<CT>(message));
+	LogMsg(MT_DEBUG, gcBaseString<CT>(szFormat, args...));
 }
 
 template<typename CT>
