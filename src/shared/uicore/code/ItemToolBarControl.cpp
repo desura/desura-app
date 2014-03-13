@@ -308,7 +308,7 @@ void ItemToolBarControl::createButtons()
 
 	bool dev = (dList.size() > 0) || (GetUploadMng()->getCount() > 0);
 
-	if (dev == m_bShowDevList)
+	if (!m_vButtonList.empty() && dev == m_bShowDevList)
 		return;
 
 	m_bShowDevList = dev;
