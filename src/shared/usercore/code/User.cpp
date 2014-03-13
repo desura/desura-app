@@ -280,7 +280,7 @@ void User::appNeedUpdate(uint32 appver, uint32 appbuild, bool bForced)
 	if (appver != 0)
 	{
 		m_uiLastUpdateVer = appver;	
-		m_uiLastUpdateBuild = 0;
+		m_uiLastUpdateBuild = appbuild;
 	}
 
 	UserCore::Task::DownloadUpdateTask *task = new UserCore::Task::DownloadUpdateTask(this, m_uiLastUpdateVer, m_uiLastUpdateBuild, bForced);
