@@ -43,12 +43,15 @@ $/LicenseInfo$
 
 namespace UM = UserCore::Item;
 
+using namespace UserCore::Item;
 
 
-namespace UserCore
+
+template <>
+gcString TraceClassInfo(ItemInfo *pClass)
 {
-namespace Item
-{
+	return gcString("pid: {0}, id: {1}, short: {2}, status: {3}", pClass->getParentId(), pClass->getId(), pClass->getShortName(), pClass->getStatus());
+}
 
 
 ItemInfo::ItemInfo(UserCore::User *user, DesuraId id)
@@ -1583,7 +1586,4 @@ void ItemInfo::setActiveExe(const char* name, MCFBranch branch)
 		return;
 
 	bi->setActiveExe(name);
-}
-
-}
 }
