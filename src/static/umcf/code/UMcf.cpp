@@ -383,6 +383,8 @@ bool UMcf::checkFiles(IBadFileCallback *pCallback)
 	if (size == 0)
 		return false;
 
+	auto bValidInstall = true;
+
 	for(size_t x=0; x<size; x++)
 	{
 		prog = (uint32)((x*100)/size);
@@ -391,18 +393,16 @@ bool UMcf::checkFiles(IBadFileCallback *pCallback)
 		if (!m_pFileList[x])
 			continue;
 
-#ifdef WIN32
-		if (!m_pFileList[x]->checkFile(L".\\"))
-#else
 		if (!m_pFileList[x]->checkFile(L"."))
-#endif
 		{
 			if (!pCallback || pCallback->foundBadFile(m_pFileList[x]->getName(), m_pFileList[x]->getPath()))
 				return false;
+
+			bValidInstall = false;
 		}
 	}
 
-	return true;
+	return bValidInstall;
 }
 
 //checks the header and makes sure its a valid installer
