@@ -84,12 +84,15 @@ void Warning(gcBaseString<CT> message)
 {
 	gcString msg(message);
 	LogMsg(MT_WARN, msg);
+	TraceS("Unknown", "Unknown", -1, nullptr, msg.c_str());
 }
 
 template<typename CT>
 void Debug(const CT* message)
 {
-	LogMsg(MT_DEBUG, gcBaseString<CT>(message));
+	gcBaseString<CT> msg(message);
+	LogMsg(MT_DEBUG, msg);
+	TraceS("Unknown", "Unknown", -1, nullptr, msg.c_str());
 }
 
 template<typename CT>
@@ -104,8 +107,8 @@ gcString TraceClassInfo(T *pClass)
 	return "";
 }
 
-template <typename T, typename ... Args>
-void TraceT(const char* szFunction, const char* szFile, int nLine, T *pClass, const char* szFormat, Args ... args)
+template <typename ... Args>
+void TraceS(const char* szFunction, const char* szFile, int nLine, const char* szClassInfo, const char* szFormat, Args ... args)
 {
 	static auto getCurrentThreadId = []()
 	{
@@ -118,14 +121,21 @@ void TraceT(const char* szFunction, const char* szFile, int nLine, T *pClass, co
 
 	std::map<std::string, std::string> mArgs;
 
-	mArgs["function"] = szFunction;
-	mArgs["file"] = szFile;
+	mArgs["function"] = gcString(szFunction);
+	mArgs["file"] = gcString(szFile);
 	mArgs["line"] = gcString("{0}", nLine);
-	mArgs["classinfo"] = TraceClassInfo(pClass);
+	mArgs["classinfo"] = gcString(szClassInfo);
 	mArgs["thread"] = gcString("{0}", getCurrentThreadId());
 	mArgs["time"] = gcTime().to_iso_string();
 
 	LogMsg(MT_TRACE, gcString(szFormat, args...), nullptr, &mArgs);
+}
+
+template <typename T, typename ... Args>
+void TraceT(const char* szFunction, const char* szFile, int nLine, T *pClass, const char* szFormat, Args ... args)
+{
+	auto ci = TraceClassInfo(pClass);
+	TraceS(szFunction, szFile, nLine, ci.c_str(), szFormat, args...);
 }
 
 
