@@ -31,6 +31,7 @@ $/LicenseInfo$
 #include <mutex>
 #include <condition_variable>
 #include <chrono>
+#include <atomic>
 
 #define MS_VC_EXCEPTION 0x406D1388
 
@@ -155,8 +156,8 @@ public:
 	const std::string m_szName;
 
 	bool m_bIsRunning = false;
-	volatile bool m_bPause = false;
-	volatile bool m_bStop = false;
+	std::atomic<bool> m_bPause;
+	std::atomic<bool> m_bStop;
 
 	BaseThread::PRIORITY m_uiPriority = NORMAL;
 
@@ -191,6 +192,8 @@ void BaseThread::start()
 
 	auto waitCond = std::make_shared<WaitCondition>();
 
+	gcTrace("Creating thread {0}", m_pPrivates->m_szName);
+
 	m_pPrivates->m_pThread = new std::thread([this, waitCond](){
 
 		gcTrace("Starting thread {0}", m_pPrivates->m_szName);
@@ -201,7 +204,9 @@ void BaseThread::start()
 		m_pPrivates->m_bIsRunning = true;
 		applyPriority();
 		setThreadName();
-		run();	
+		run();
+
+		gcTrace("Ending thread {0}", m_pPrivates->m_szName);
 	});
 
 	waitCond->notify();
@@ -230,9 +235,12 @@ void BaseThread::doPause()
 
 void BaseThread::pause()
 {
-	gcTrace("Pausing thread {0}", m_pPrivates->m_szName);
-
 	std::lock_guard<std::recursive_mutex> guard(m_pPrivates->m_PauseInitMutex);
+
+	if (m_pPrivates->m_bPause)
+		return;
+
+	gcTrace("Pausing thread {0}", m_pPrivates->m_szName);
 
 	if (m_pPrivates->m_bPause)
 		return;
@@ -243,9 +251,12 @@ void BaseThread::pause()
 
 void BaseThread::unpause()
 {
-	gcTrace("Unpausing thread {0}", m_pPrivates->m_szName);
-
 	std::lock_guard<std::recursive_mutex> guard(m_pPrivates->m_PauseInitMutex);
+
+	if (!m_pPrivates->m_bPause)
+		return;
+
+	gcTrace("Unpausing thread {0}", m_pPrivates->m_szName);
 
 	if (!m_pPrivates->m_bPause)
 		return;
@@ -257,6 +268,9 @@ void BaseThread::unpause()
 
 void BaseThread::stop()
 {
+	if (m_pPrivates->m_bStop)
+		return;
+
 	gcTrace("Stopping thread {0}", m_pPrivates->m_szName);
 
 	unpause();
