@@ -479,10 +479,102 @@ void Console::conDump()
 	Msg(gcString("Console Dump Saved To:\n{0}\n\n", dumpFile));
 }
 
+
+class Tracer
+{
+public:
+	Tracer()
+	{
+		gcString dataDir = UTIL::OS::getAppDataPath(L"logs");
+		UTIL::FS::recMakeFolder(dataDir);
+
+		auto path = UTIL::FS::Path(dataDir, gcString("{0}.log", gcTime().to_iso_string()), false);
+
+		try
+		{
+			m_TraceFile.open(path, UTIL::FS::FILE_WRITE);
+			m_bEnabled = true;
+		}
+		catch (const std::exception &e)
+		{
+			Warning(gcString("Failed to open trace file {0}\n", e.what()));
+		}
+	}
+
+	~Tracer()
+	{
+		m_TraceFile.close();
+	}
+
+	void write(const char* szMessage, std::map<std::string, std::string> *pmArgs)
+	{
+		if (!m_bEnabled)
+			return;
+
+		gcString out("{\"message\": \"{0}\"", cleanUpString(szMessage));
+
+		if (pmArgs)
+		{
+			for (auto p : *pmArgs)
+			{
+				if (p.second.empty())
+					continue;
+
+				out += gcString(", \"{0}\": \"{1}\"", p.first, cleanUpString(p.second));
+			}				
+		}
+
+		out += "}";
+		std::lock_guard<std::mutex> guard(m_Lock);
+
+		if (!m_bFirst)
+			m_TraceFile.write(",\n", 2);
+
+		m_TraceFile.write(out.c_str(), out.size());
+		m_bFirst = false;
+	}
+
+protected:
+	std::string cleanUpString(const gcString &string)
+	{
+		std::string out;
+		out.reserve(string.size() + 20);
+
+		for (auto c : string)
+		{
+			if (c == '"' || c == '\\')
+				out += '\\';
+
+			if (c == '\n')
+				out += "\\n";
+			else if (c == '\t')
+				out += "\\t";
+			else
+				out += c;
+		}
+
+		return out;
+	}
+
+private:
+	std::mutex m_Lock;
+
+	bool m_bFirst = true;
+	bool m_bEnabled = false;
+	UTIL::FS::FileHandle m_TraceFile;
+};
+
+
+static Tracer g_Tracer;
+
+
+
 void Console::Trace(const char* szMessage, std::map<std::string, std::string> *pmArgs)
 {
 	auto id = std::this_thread::get_id();
 
 	if (s_IgnoredThread == id)
 		return;
+
+	g_Tracer.write(szMessage, pmArgs);
 }
