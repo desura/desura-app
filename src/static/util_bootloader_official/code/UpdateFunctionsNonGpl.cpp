@@ -196,7 +196,7 @@ public:
 	bool foundBadFile(const wchar_t* szFileName, const wchar_t* szPath) override
 	{
 		gcString strFullPath("{0}\\{1}", szPath, szFileName);
-		Log("Found bad file: %s", strFullPath.c_str());
+		Log("Found bad file: %s\n", strFullPath.c_str());
 		
 		return false;
 	}
