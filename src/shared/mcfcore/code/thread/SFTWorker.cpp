@@ -269,7 +269,6 @@ bool SFTWorker::newTask()
 	if (!m_pCurFile)
 		return false;
 
-	Debug(gcString("{0}: starting Decompressing file {1}.\n", m_uiId, m_pCurFile->getName()));
 	std::string file = m_pCurFile->getFullPath();
 
 	safe_delete(m_pBzs);
