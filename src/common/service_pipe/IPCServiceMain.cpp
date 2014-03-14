@@ -197,7 +197,19 @@ void IPCServiceMain::message(int type, const char* msg, uint64 col, std::map<std
 	else
 		color = Color(65, 209, 7);
 
-	LogMsg((MSG_TYPE)type, gcString("Service: {0}", msg), pCol, mpArgs);
+	std::map<std::string, std::string> args;
+
+	if (type == MT_TRACE)
+	{
+		if (mpArgs)
+			(*mpArgs)["app"] = "Service";
+
+		LogMsg((MSG_TYPE)type, gcString(msg), pCol, mpArgs);
+	}
+	else
+	{
+		LogMsg((MSG_TYPE)type, gcString("Service: {0}", msg), pCol, mpArgs);
+	}
 }
 
 void IPCServiceMain::updateRegKey(const char* key, const char* value)

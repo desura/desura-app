@@ -177,6 +177,7 @@ BaseThread::BaseThread(const char* name)
 BaseThread::~BaseThread()
 {
 	stop();
+	join();
 	safe_delete(m_pPrivates);
 }
 
@@ -275,11 +276,7 @@ void BaseThread::stop()
 
 	unpause();
 	nonBlockStop();
-
-	auto thread = m_pPrivates->m_pThread;
-
-	if (thread && thread->joinable())
-		thread->join();
+	join();
 }
 
 void BaseThread::nonBlockStop()
@@ -293,15 +290,16 @@ void BaseThread::nonBlockStop()
 
 void BaseThread::join()
 {
-	gcTrace("Joining thread {0}", m_pPrivates->m_szName);
-
 	auto thread = m_pPrivates->m_pThread;
 
 	if (!thread)
 		return;
 
 	if (thread->get_id() != std::thread::id() && thread->joinable())
+	{
+		gcTrace("Joining thread {0}", m_pPrivates->m_szName);
 		thread->join();
+	}
 }
 
 void BaseThread::setPriority(PRIORITY priority)

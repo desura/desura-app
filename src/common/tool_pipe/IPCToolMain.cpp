@@ -113,7 +113,17 @@ void IPCToolMain::message(int type, const char* msg, uint64 col, std::map<std::s
 		pCol = &color;
 	}
 
-	LogMsg((MSG_TYPE)type, gcString("Utility: {0}", msg), pCol, mpArgs);
+	if (type == MT_TRACE)
+	{
+		if (mpArgs)
+			(*mpArgs)["app"] = "Tool";
+
+		LogMsg((MSG_TYPE)type, gcString(msg), pCol, mpArgs);
+	}
+	else
+	{
+		LogMsg((MSG_TYPE)type, gcString("Tool: {0}", msg), pCol, mpArgs);
+	}
 }
 
 gcException IPCToolMain::installTool(UserCore::ToolInfo* info)

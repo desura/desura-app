@@ -92,6 +92,9 @@ ItemInfo::~ItemInfo()
 
 void ItemInfo::deleteFromDb(sqlite3x::sqlite3_connection* db)
 {
+	if (!m_bAddedToDb)
+		return;
+
 	gcTrace("");
 
 	try
@@ -209,6 +212,8 @@ void ItemInfo::saveDbFull(sqlite3x::sqlite3_connection* db)
 	if (!db)
 		return;
 
+	m_bAddedToDb = true;
+
 	uint32 status = m_iStatus&(~UM::ItemInfoI::STATUS_DEVELOPER);
 
 	sqlite3x::sqlite3_command cmd(*db, "REPLACE INTO iteminfo VALUES (?,?,?,?,?, ?,?,?,?,?, ?,?,?,?,?, ?,?,?);");
@@ -252,6 +257,8 @@ void ItemInfo::loadDb(sqlite3x::sqlite3_connection* db)
 {
 	if (!db)
 		return;
+
+	m_bAddedToDb = true;
 
 	sqlite3x::sqlite3_command cmd(*db, "SELECT * FROM iteminfo WHERE internalid=?;");
 	cmd.bind(1, (long long int)m_iId.toInt64());
@@ -811,10 +818,10 @@ void ItemInfo::triggerCallBack()
 
 void ItemInfo::addSFlag(uint32 flags)
 {
-	gcTrace("Flag {0}", flags);
-
-	if (m_iStatus == flags)
+	if (HasAllFlags(m_iStatus, flags))
 		return;
+
+	gcTrace("Flag {0}", flags);
 
 	bool shouldTriggerUpdate = (m_iStatus&UM::ItemInfoI::STATUS_DEVELOPER || HasAnyFlags(flags, (UM::ItemInfoI::STATUS_INSTALLED|UM::ItemInfoI::STATUS_ONCOMPUTER|UM::ItemInfoI::STATUS_ONACCOUNT|UM::ItemInfoI::STATUS_PAUSED|UM::ItemInfoI::STATUS_UPDATEAVAL)));
 
@@ -851,6 +858,9 @@ void ItemInfo::addSFlag(uint32 flags)
 
 void ItemInfo::delSFlag(uint32 flags)
 {
+	if (!HasAnyFlags(m_iStatus, flags))
+		return;
+
 	gcTrace("Flag {0}", flags);
 
 	bool wasDeleted = isDeleted();
