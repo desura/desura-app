@@ -78,7 +78,10 @@ IPC::IPCParameterI* newParameterMacro(std::map<std::string, std::string>& map)
 
 IPC::IPCParameterI* newParameterMacro(std::map<std::string, std::string> *pMap)
 {
-	return new IPC::PMapStringString(*pMap);
+	if (pMap)
+		return new IPC::PMapStringString(*pMap);
+
+	return new IPC::PMapStringString();
 }
 
 
