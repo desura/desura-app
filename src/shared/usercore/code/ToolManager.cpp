@@ -143,7 +143,7 @@ void ToolManager::saveItems()
 			}
 			catch (std::exception& e)
 			{
-				Warning(gcString("Failed to save tool {0}: {1}\n", tool->getName(), e.what()));
+				Warning("Failed to save tool {0}: {1}\n", tool->getName(), e.what());
 			}
 		}
 
@@ -151,7 +151,7 @@ void ToolManager::saveItems()
 	}
 	catch (std::exception &e)
 	{
-		Warning(gcString("Failed to save tool info: {0}\n", e.what()));
+		Warning("Failed to save tool info: {0}\n", e.what());
 	}
 }
 

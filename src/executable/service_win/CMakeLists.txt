@@ -7,6 +7,7 @@ configure_file(RES/service_exe.rc ${RC_DIR}/service_exe.rc @ONLY)
 file(GLOB
   Sources code/*.cpp
   ${RC_DIR}/service_exe.rc
+  ${COMMON_INCLUDE_DIRS}/Tracer.cpp
 )
 
 add_executable(desura_service ${Sources} ${COMMON_SOURCE})
@@ -20,3 +21,5 @@ if(WIN32)
 endif()
 
 install_executable(desura_service)
+
+add_dependencies(desura_service servicecore)

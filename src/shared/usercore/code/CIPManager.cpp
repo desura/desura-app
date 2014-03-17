@@ -75,7 +75,7 @@ void CIPManager::getCIPList(std::vector<UserCore::Misc::CIPItem> &list)
 	}
 	catch(std::exception &ex) 
 	{
-		Warning(gcString("Failed to update cip (loadItems) {0}\n", ex.what()));
+		Warning("Failed to update cip (loadItems) {0}\n", ex.what());
 	}
 }
 
@@ -99,7 +99,7 @@ void CIPManager::getItemList(std::vector<UserCore::Misc::CIPItem> &list)
 	}
 	catch(std::exception &ex) 
 	{
-		Warning(gcString("Failed to update cip (loadItems) {0}\n", ex.what()));
+		Warning("Failed to update cip (loadItems) {0}\n", ex.what());
 	}
 
 	std::vector<UserCore::Item::ItemInfoI*> items;
@@ -149,7 +149,7 @@ void CIPManager::updateItem(DesuraId id, gcString path)
 	}
 	catch (std::exception &e)
 	{
-		Warning(gcString("Failed to save cip: {0}\n", e.what()));
+		Warning("Failed to save cip: {0}\n", e.what());
 	}
 }
 
@@ -198,7 +198,7 @@ void CIPManager::onRefreshComplete(uint32&)
 
 void CIPManager::onRefreshError(gcException& e)
 {
-	Warning(gcString("Refresh CIP had critical error: {0}\n", e));
+	Warning("Refresh CIP had critical error: {0}\n", e);
 	onItemsUpdatedEvent();
 	m_bRefreshComplete = true;
 }

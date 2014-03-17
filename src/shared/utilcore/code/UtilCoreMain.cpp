@@ -90,7 +90,7 @@ bool LangChanged(CVar* var, const char* val)
 	}
 	else
 	{
-		Warning(gcString("Failed to Load Language file: {0}\n", val));
+		WarningS("Failed to Load Language file: {0}\n", val);
 		return false;
 	}
 

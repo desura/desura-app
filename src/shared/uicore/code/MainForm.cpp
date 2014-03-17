@@ -237,7 +237,7 @@ void MainForm::loadUrl(const char* url, PAGE page)
 
 	if (page < 0 || page >= (int32)m_vPageList.size())
 	{
-		Warning(gcString("Failed to load url [{0}] for page {1}. Cant find page.\n", url, page));
+		Warning("Failed to load url [{0}] for page {1}. Cant find page.\n", url, page);
 	}
 	else
 	{

@@ -211,7 +211,7 @@ gcString ProviderManager::getName(uint32 id)
 
 std::shared_ptr<const MCFCore::Misc::DownloadProvider> ProviderManager::requestNewUrl(uint32 id, uint32 errCode, const char* errMsg)
 {
-	Warning(gcString("Mcf download thread errored out. Id: {0}, Error: {2} [{1}]\n", id, errCode, errMsg));
+	Warning("Mcf download thread errored out. Id: {0}, Error: {2} [{1}]\n", id, errCode, errMsg);
 
 	removeAgent(id, true);
 	return getUrl(id);

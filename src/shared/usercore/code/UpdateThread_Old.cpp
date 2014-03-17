@@ -216,7 +216,7 @@ bool UpdateThreadOld::pollUpdates()
 	}
 	catch (gcException &e)
 	{
-		Warning(gcString("Update poll failed: {0}\n", e));
+		Warning("Update poll failed: {0}\n", e);
 		return false;
 	}
 
@@ -269,7 +269,7 @@ void UpdateThreadOld::parseXML(const XML::gcXMLDocument &doc)
 	}
 	catch (gcException &e)
 	{
-		Warning(gcString("Update poll had bad status in xml! Status: {0}\n", e));
+		Warning("Update poll had bad status in xml! Status: {0}\n", e);
 		return;
 	}
 
@@ -375,7 +375,7 @@ void UpdateThreadOld::loadLoginItems()
 	}
 	catch (gcException &e)
 	{
-		Warning(gcString("Failed to get login items: {0}\n", e));
+		Warning("Failed to get login items: {0}\n", e);
 	}
 
 	im->enableSave();

@@ -312,7 +312,7 @@ void HGTController::fillDownloadList(bool &usingDiffs)
 
 		if (index == UNKNOWN_ITEM || !webFile || !webFile->isSaved())
 		{
-			Warning(gcString("File {0} is not in web MCF. Skipping download.\n", m_rvFileList[x]->getName()));
+			Warning("File {0} is not in web MCF. Skipping download.\n", m_rvFileList[x]->getName());
 
 			if (!started)
 				m_rvFileList[x]->delFlag(MCFCore::MCFFileI::FLAG_SAVE);

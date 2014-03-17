@@ -206,7 +206,7 @@ void User::doLogIn(const char* user, const char* pass, bool bTestOnly)
 		}
 		catch (gcException &e)
 		{
-			Warning(gcString("Failed to set mcf cache path to be writeable: {0}", e));
+			Warning("Failed to set mcf cache path to be writeable: {0}", e);
 		}
 	}
 #endif

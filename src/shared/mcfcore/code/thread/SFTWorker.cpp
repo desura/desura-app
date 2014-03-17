@@ -129,7 +129,7 @@ void SFTWorker::finishFile()
 	}
 	catch (...)
 	{
-		Warning(gcString("Failed to change {0} time stamp to {1}.\n", m_pCurFile->getName(), str));
+		Warning("Failed to change {0} time stamp to {1}.\n", m_pCurFile->getName(), str);
 	}
 
 	safe_delete(m_pBzs);
@@ -161,7 +161,7 @@ void SFTWorker::finishFile()
 	}
 	else
 	{
-		Warning(gcString("Hash check failed for file [{0}]: Cur: {1} !=  Should: {2}\n", m_pCurFile->getName(), hash, m_pCurFile->getCsum()));
+		Warning("Hash check failed for file [{0}]: Cur: {1} !=  Should: {2}\n", m_pCurFile->getName(), hash, m_pCurFile->getCsum());
 		m_pCT->endTask(m_uiId, BaseMCFThread::SF_STATUS_HASHMISSMATCH);
 	}
 }

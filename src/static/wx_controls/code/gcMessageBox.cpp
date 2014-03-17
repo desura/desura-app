@@ -43,7 +43,7 @@ void gcErrorBox(wxWindow *parent, const char* title, const char* prompt, const g
 	}
 
 	gcWString errMsg(L"{0}\n\n{1}", p, e);
-	Warning(gcWString(L"{0}: {1}\n", p, e));
+	WarningS("{0}: {1}\n", p, e);
 
 	gcMessageBox(parent, errMsg, t, wxICON_EXCLAMATION|wxOK, helper);
 }

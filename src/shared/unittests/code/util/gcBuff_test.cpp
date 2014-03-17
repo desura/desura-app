@@ -29,6 +29,10 @@ $/LicenseInfo$
 #define TEST_CSTRING_SIZE sizeof(TEST_CSTRING)
 const char TEST_STATIC_CSTRING[] = TEST_CSTRING;
 
+
+#include "LogBones.cpp"
+
+
 namespace UnitTest
 {
 	TEST(gcBuff, constructor)

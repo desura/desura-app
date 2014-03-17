@@ -427,7 +427,7 @@ void ComplexLaunchServiceTask::onError(gcException &e)
 		return;
 	}
 
-	Warning(gcString("Error in complex launch service: {0}\n", e));
+	Warning("Error in complex launch service: {0}\n", e);
 	getItemHandle()->setPausable(false);
 
 	if (!getItemHandle()->shouldPauseOnError())

@@ -312,7 +312,7 @@ bool WGTController::checkBlock(Misc::WGTBlock *block, uint32 workerId)
 		fh.write(log.c_str(), log.size());
 		fh.close();
 
-		Warning(gcString("Failed crc check. Writen to log file [{0}], block saved to file [{1}].\n", logFile.getFullPath(), outFile.getFullPath()));
+		Warning("Failed crc check. Writen to log file [{0}], block saved to file [{1}].\n", logFile.getFullPath(), outFile.getFullPath());
 	}
 	catch (gcException)
 	{
@@ -458,7 +458,7 @@ bool WGTController::fillBlockList()
 
 		if (index == UNKNOWN_ITEM || !webFile || !webFile->isSaved())
 		{
-			Warning(gcString("File {0} is not in web MCF. Skipping download.\n", file->getName()));
+			Warning("File {0} is not in web MCF. Skipping download.\n", file->getName());
 			if (!started)
 				file->delFlag(MCFCore::MCFFileI::FLAG_SAVE);
 			continue;
@@ -759,7 +759,7 @@ void WGTController::reportError(uint32 id, gcException &e)
 	WGTWorkerInfo* worker = findWorker(id);
 	assert(worker);
 
-	Warning(gcString("WebGet: {0} Error: {1}.\n", id, e));
+	Warning("WebGet: {0} Error: {1}.\n", id, e);
 
 	m_pUPThread->stopThread(id);
 	worker->status = SF_STATUS_STOP;

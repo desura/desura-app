@@ -263,7 +263,7 @@ void ToolInfo::loadFromDb(sqlite3x::sqlite3_connection* db)
 	}
 	catch (std::exception &e)
 	{
-		Warning(gcString("Failed to load ToolInfo from db: {0}\n", e.what()));
+		Warning("Failed to load ToolInfo from db: {0}\n", e.what());
 	}
 }
 
@@ -529,7 +529,7 @@ bool ToolInfo::checkExpectedResult(uint32 res)
 	{
 		if (!processResultString())
 		{
-			Warning(gcString("Failed to process result string {0} for {1}, invalid expression.", m_szResult, getName()));
+			Warning("Failed to process result string {0} for {1}, invalid expression.", m_szResult, getName());
 			safe_delete(m_vRPN);
 			return true;
 		}
@@ -557,7 +557,7 @@ bool ToolInfo::checkExpectedResult(uint32 res)
 
 			if (stack.size() < 2)
 			{
-				Warning(gcString("Bad RPN equation {0} for tool {1}.", m_szResult, getName()));
+				Warning("Bad RPN equation {0} for tool {1}.", m_szResult, getName());
 				return true;
 			}
 
@@ -609,7 +609,7 @@ bool ToolInfo::checkExpectedResult(uint32 res)
 			}
 			else
 			{
-				Warning(gcString("Invalid operator {0} in tool result for {1}.", op, getName()));
+				Warning("Invalid operator {0} in tool result for {1}.", op, getName());
 				continue;
 			}
 
@@ -618,7 +618,7 @@ bool ToolInfo::checkExpectedResult(uint32 res)
 	}
 
 	if (stack.size() > 1)
-		Warning(gcString("To many items left on stack after results calc for tool {0}.", getName()));
+		Warning("To many items left on stack after results calc for tool {0}.", getName());
 
 	if (stack.empty())
 		return true;

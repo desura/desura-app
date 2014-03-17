@@ -53,7 +53,7 @@ void PipeServer::run()
 	}
 	catch (gcException &e)
 	{
-		Warning(gcString("Failed to start pipe: {0}\n", e));
+		Warning("Failed to start pipe: {0}\n", e);
 		return;
 	}
 
@@ -62,6 +62,8 @@ void PipeServer::run()
 
 void PipeServer::setUpPipes()
 {
+	gcTrace("Send: {0}, Recv: {1}", m_szSendName, m_szRecvName);
+
 	PACL pNewAcl = nullptr;
 	SECURITY_ATTRIBUTES sa;
 	SECURITY_DESCRIPTOR sd;
@@ -164,6 +166,8 @@ void PipeServer::createAccessRights(PACL pNewAcl, SECURITY_ATTRIBUTES &sa, SECUR
 
 void PipeServer::initNewClient(uint32 index, PipeInst *p, HANDLE e) 
 { 
+	gcTrace("Id: {0}", index);
+
 	if (!p)
 		return;
 
@@ -235,6 +239,7 @@ IPCManager* PipeServer::getManager(uint32 i)
 
 void PipeServer::disconnectAndReconnect(uint32 i) 
 { 
+	gcTrace("Id: {0}", i);
 	onDisconnectEvent(i);
 
 	size_t index = i/2;
@@ -249,7 +254,7 @@ void PipeServer::disconnectAndReconnect(uint32 i)
 	}
 	catch (gcException &e)
 	{
-		Warning(gcString("Failed to reconnect ipc pipe: {0}\n", e));
+		Warning("Failed to reconnect ipc pipe: {0}\n", e);
 	}
 }
 

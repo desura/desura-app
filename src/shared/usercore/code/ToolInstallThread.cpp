@@ -184,7 +184,7 @@ void ToolInstallThread::onINComplete(int32 &result)
 		{
 			int32 r = result;
 
-			Warning(gcString("The tool install [{3}] result didnt match what was expected [Actual: {0}, Expected: {1}]", r, tool->getResultString(), tool->getName()));
+			Warning("The tool install [{3}] result didnt match what was expected [Actual: {0}, Expected: {1}]", r, tool->getResultString(), tool->getName());
 			gcException e(ERR_BADRESPONSE, gcString("The tool {0} failed to install (Bad result)", tool->getName()));
 			it->second->onINError(e);
 			m_CurrentInstall = -1;

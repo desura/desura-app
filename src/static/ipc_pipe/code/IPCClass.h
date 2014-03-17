@@ -42,9 +42,11 @@ namespace IPC
 class IPCManager;
 
 #if defined(WIN32) && !defined(__MINGW32__)
-#define REG_FUNCTION_VOID( class, name ) registerFunction( networkFunctionV(this, &class##::##name ), #name );
-#define REG_FUNCTION( class, name ) registerFunction( networkFunction(this, &class##::##name ), #name );
+#define REG_FUNCTION_VOID_T( class, name, trace ) registerFunction( networkFunctionV(this, &class##::##name,  #class "::" #name, trace ), #name );
+#define REG_FUNCTION_VOID( class, name ) registerFunction( networkFunctionV(this, &class##::##name,  #class "::" #name  ), #name );
+#define REG_FUNCTION( class, name ) registerFunction( networkFunction(this, &class##::##name,  #class "::" #name ), #name );
 #else
+#define REG_FUNCTION_VOID_T( class, name, trace ) registerFunction( networkFunctionV(this, &class::name, trace ), #name );
 #define REG_FUNCTION_VOID( class, name ) registerFunction( networkFunctionV(this, &class::name ), #name );
 #define REG_FUNCTION( class, name ) registerFunction( networkFunction(this, &class::name ), #name );
 #endif
@@ -63,151 +65,99 @@ public:
 };
 
 
-template <class TObj, typename R, typename A = PVoid, typename B = PVoid, typename C = PVoid, typename D = PVoid, typename E = PVoid, typename F = PVoid>
-class NetworkFunction : public NetworkFunctionI
+class BaseNetworkFunction : public NetworkFunctionI
+{
+protected:
+	BaseNetworkFunction(const char* szName, bool bTrace = true)
+		: m_strFunctionName(szName)
+		, m_bTrace(bTrace)
+	{
+	}
+
+	template <typename A>
+	IPCParameterI* setupParam(std::vector<IPCParameterI*> &vPList, const std::vector<IPCParameter*> &vParamList, uint32 &x)
+	{
+		IPCParameterI* pParam = IPC::getParameter<A>();
+		auto msg = vParamList[x];
+
+		if (msg->type != pParam->getType())
+			assert(false);
+		else
+			pParam->deserialize(&msg->data, msg->size);
+
+		vPList[x] = pParam;
+		--x;
+		return pParam;
+	}
+
+	template <typename A>
+	IPCParameterI* popElement(const std::vector<IPCParameterI*> &vPList, uint32 &x)
+	{
+		return vPList[--x];
+	}
+
+	template <typename ... Args>
+	void emptyTemplateFunction(Args && ... args)
+	{
+	}
+
+	template <typename ... Args>
+	IPC::IPCParameterI* processArgs(char* buff, uint32 size, uint8 numP, std::vector<IPCParameterI*> &vPList)
+	{
+		if (numP != sizeof...(Args))
+		{
+			gcException e(ERR_INVALID, gcString("Number of arguments {1} calling {0} did not match expected {2}\n", m_strFunctionName, numP, sizeof...(Args)));
+			return IPC::newParameter(e);
+		}
+
+		std::vector<IPCParameter*> vParamList;
+
+		for (int x = 0; x < sizeof...(Args); ++x)
+		{
+			auto msg = (IPCParameter*)buff;
+			buff += sizeofStruct(msg);
+
+			vParamList.push_back(msg);
+			vPList.push_back(nullptr);
+		}
+
+		uint32 x = vPList.size()-1;
+		emptyTemplateFunction(setupParam<Args>(vPList, vParamList, x)...);
+
+		return nullptr;
+	}
+
+	const bool m_bTrace = true;
+	const gcString m_strFunctionName;
+};
+
+
+template <typename R, typename ... Args>
+class NetworkFunction : public BaseNetworkFunction
 {
 public:
-	typedef R (TObj::*TFunct0)();
-	typedef R (TObj::*TFunct1)(A);
-	typedef R (TObj::*TFunct2)(A, B);
-	typedef R (TObj::*TFunct3)(A, B, C);
-	typedef R (TObj::*TFunct4)(A, B, C, D);
-	typedef R (TObj::*TFunct5)(A, B, C, D, E);
-	typedef R (TObj::*TFunct6)(A, B, C, D, E, F);
-
-	NetworkFunction(TObj* t, TFunct0 f)
+	NetworkFunction(const std::function<R(Args...)> &callback, const char* szName)
+		: BaseNetworkFunction(szName)
+		, m_fnCallback(callback)
 	{
-		init();
-		m_pObj = t;
-		m_pFunct0 = f;
-		m_uiNumParams = 0;
 	}	
-
-	NetworkFunction(TObj* t, TFunct1 f)
-	{
-		init();
-		m_pObj = t;
-		m_pFunct1 = f;
-		m_uiNumParams = 1;
-	}	
-
-	NetworkFunction(TObj* t, TFunct2 f)
-	{
-		init();
-		m_pObj = t;
-		m_pFunct2 = f;
-		m_uiNumParams = 2;
-	}
-
-	NetworkFunction(TObj* t, TFunct3 f)
-	{
-		init();
-		m_pObj = t;
-		m_pFunct3 = f;
-		m_uiNumParams = 3;
-	}
-
-	NetworkFunction(TObj* t, TFunct4 f)
-	{
-		init();
-		m_pObj = t;
-		m_pFunct4 = f;
-		m_uiNumParams = 4;
-	}
-
-	NetworkFunction(TObj* t, TFunct5 f)
-	{
-		init();
-		m_pObj = t;
-		m_pFunct5 = f;
-		m_uiNumParams = 5;
-	}
-
-	NetworkFunction(TObj* t, TFunct6 f)
-	{
-		init();
-		m_pObj = t;
-		m_pFunct6 = f;
-		m_uiNumParams = 6;
-	}
-
-	void init()
-	{
-		m_pFunct0 = nullptr;
-		m_pFunct1 = nullptr;
-		m_pFunct2 = nullptr;
-		m_pFunct3 = nullptr;
-		m_pFunct4 = nullptr;
-		m_pFunct5 = nullptr;
-		m_pFunct6 = nullptr;
-	}
 
 	IPCParameterI* call(char* buff, uint32 size, uint8 numP)
 	{
-		if (numP != m_uiNumParams)
-			return IPC::getParameter<R>();
-
-		IPCParameterI* a = IPC::getParameter<A>();
-		IPCParameterI* b = IPC::getParameter<B>();
-		IPCParameterI* c = IPC::getParameter<C>();
-		IPCParameterI* d = IPC::getParameter<D>();
-		IPCParameterI* e = IPC::getParameter<E>();
-		IPCParameterI* f = IPC::getParameter<F>();
-	
 		std::vector<IPCParameterI*> vPList;
+		IPCParameterI* ret = processArgs<Args...>(buff, size, numP, vPList);
 
-		vPList.push_back(a);
-		vPList.push_back(b);
-		vPList.push_back(c);
-		vPList.push_back(d);
-		vPList.push_back(e);
-		vPList.push_back(f);
-	
-		char* buffPos = buff;
-		IPCParameter* msg = nullptr;
-
-		for (uint8 x=0; x<m_uiNumParams; x++)
-		{
-			msg = (IPCParameter*)buffPos;
-			vPList[x]->deserialize(&msg->data, msg->size);
-			buffPos += sizeofStruct(msg);
-		}
-	
-		IPCParameterI* ret = nullptr;
+		if (ret)
+			return ret;
 
 		try
 		{
-			switch (m_uiNumParams)
-			{
-			case 0: 
-				ret = IPC::getParameter( (*m_pObj.*m_pFunct0)()  , true); 
-				break;
+			TraceT(m_strFunctionName.c_str(), this, "");
 
-			case 1: 
-				ret = IPC::getParameter( (*m_pObj.*m_pFunct1)(getParameterValue<A>(a)) , true); 
-				break;
+			uint32 x = vPList.size();
+			auto res = callFunction(popElement<Args>(vPList, x)...);
 
-			case 2: 
-				ret = IPC::getParameter( (*m_pObj.*m_pFunct2)(getParameterValue<A>(a), getParameterValue<B>(b)) , true); 
-				break;
-
-			case 3: 
-				ret = IPC::getParameter( (*m_pObj.*m_pFunct3)(getParameterValue<A>(a), getParameterValue<B>(b), getParameterValue<C>(c)) , true); 
-				break;
-
-			case 4: 
-				ret = IPC::getParameter( (*m_pObj.*m_pFunct4)(getParameterValue<A>(a), getParameterValue<B>(b), getParameterValue<C>(c), getParameterValue<D>(d)) , true); 
-				break;
-
-			case 5: 
-				ret = IPC::getParameter( (*m_pObj.*m_pFunct5)(getParameterValue<A>(a), getParameterValue<B>(b), getParameterValue<C>(c), getParameterValue<D>(d), getParameterValue<E>(e)) , true); 
-				break;
-
-			case 6: 
-				ret = IPC::getParameter( (*m_pObj.*m_pFunct6)(getParameterValue<A>(a), getParameterValue<B>(b), getParameterValue<C>(c), getParameterValue<D>(d), getParameterValue<E>(e), getParameterValue<F>(f)) , true); 
-				break;
-			};
-
+			ret = IPC::getParameter(res, true);
 		}
 		catch (gcException &e)
 		{
@@ -222,7 +172,6 @@ public:
 			return ret;
 	}
 
-
 	IPCParameterI* returnVal(char* buff, uint32 size)
 	{
 		IPCParameterI *r = IPC::getParameter<R>();
@@ -230,170 +179,45 @@ public:
 		return r;
 	}
 
-
+protected:
+	template <typename ... Params>
+	R callFunction(Params&&...params)
+	{
+		return m_fnCallback(getParameterValue<Args>(params)...);
+	}
 
 private:
-	// pointer to object
-	TObj* m_pObj;     
-
-	// pointer to member function
-	TFunct0 m_pFunct0;
-	TFunct1 m_pFunct1;
-	TFunct2 m_pFunct2;  
-	TFunct3 m_pFunct3;  
-	TFunct4 m_pFunct4;  
-	TFunct5 m_pFunct5;  
-	TFunct6 m_pFunct6;  
-	
-	uint8 m_uiNumParams;
+	const gcString m_strFunctionName;
+	std::function<R(Args...)> m_fnCallback;
 };
 
 
-template <class TObj, typename A = PVoid, typename B = PVoid, typename C = PVoid, typename D = PVoid, typename E = PVoid, typename F = PVoid>
-class NetworkFunctionVoid : public NetworkFunctionI
+template <typename ... Args>
+class NetworkFunctionVoid : public BaseNetworkFunction
 {
 public:
-	typedef void (TObj::*TFunct0)();
-	typedef void (TObj::*TFunct1)(A);
-	typedef void (TObj::*TFunct2)(A, B);
-	typedef void (TObj::*TFunct3)(A, B, C);
-	typedef void (TObj::*TFunct4)(A, B, C, D);
-	typedef void (TObj::*TFunct5)(A, B, C, D, E);
-	typedef void (TObj::*TFunct6)(A, B, C, D, E, F);
-
-	NetworkFunctionVoid(TObj* t, TFunct0 f)
+	NetworkFunctionVoid(const std::function<void(Args...)> &callback, const char* szName, bool bTrace = true)
+		: BaseNetworkFunction(szName, bTrace)
+		, m_fnCallback(callback)
 	{
-		init();
-		m_pObj = t;
-		m_pFunct0 = f;
-		m_uiNumParams = 0;
-	}	
-
-	NetworkFunctionVoid(TObj* t, TFunct1 f)
-	{
-		init();
-		m_pObj = t;
-		m_pFunct1 = f;
-		m_uiNumParams = 1;
-	}	
-
-	NetworkFunctionVoid(TObj* t, TFunct2 f)
-	{
-		init();
-		m_pObj = t;
-		m_pFunct2 = f;
-		m_uiNumParams = 2;
-	}
-
-	NetworkFunctionVoid(TObj* t, TFunct3 f)
-	{
-		init();
-		m_pObj = t;
-		m_pFunct3 = f;
-		m_uiNumParams = 3;
-	}
-
-	NetworkFunctionVoid(TObj* t, TFunct4 f)
-	{
-		init();
-		m_pObj = t;
-		m_pFunct4 = f;
-		m_uiNumParams = 4;
-	}
-
-	NetworkFunctionVoid(TObj* t, TFunct5 f)
-	{
-		init();
-		m_pObj = t;
-		m_pFunct5 = f;
-		m_uiNumParams = 5;
-	}
-
-	NetworkFunctionVoid(TObj* t, TFunct6 f)
-	{
-		init();
-		m_pObj = t;
-		m_pFunct6 = f;
-		m_uiNumParams = 6;
-	}
-
-	void init()
-	{
-		m_pFunct0 = nullptr;
-		m_pFunct1 = nullptr;
-		m_pFunct2 = nullptr;
-		m_pFunct3 = nullptr;
-		m_pFunct4 = nullptr;
-		m_pFunct5 = nullptr;
-		m_pFunct6 = nullptr;
 	}
 
 	IPCParameterI* call(char* buff, uint32 size, uint8 numP)
 	{
-		if (numP != m_uiNumParams)
-			return new IPC::PVoid();
-		
-		IPCParameterI* a = IPC::getParameter<A>();
-		IPCParameterI* b = IPC::getParameter<B>();
-		IPCParameterI* c = IPC::getParameter<C>();
-		IPCParameterI* d = IPC::getParameter<D>();
-		IPCParameterI* e = IPC::getParameter<E>();
-		IPCParameterI* f = IPC::getParameter<F>();
-	
 		std::vector<IPCParameterI*> vPList;
+		IPCParameterI* ret = processArgs<Args...>(buff, size, numP, vPList);
 
-		vPList.push_back(a);
-		vPList.push_back(b);
-		vPList.push_back(c);
-		vPList.push_back(d);
-		vPList.push_back(e);
-		vPList.push_back(f);
-	
-		char* buffPos = buff;
-		IPCParameter* msg = nullptr;
-
-		for (uint8 x=0; x<m_uiNumParams; x++)
-		{
-			msg = (IPCParameter*)buffPos;
-			vPList[x]->deserialize(&msg->data, msg->size);
-			buffPos += sizeofStruct(msg);
-		}
-	
+		if (ret)
+			return ret;
 	
 		try
 		{
+			if (m_bTrace)
+				TraceT(m_strFunctionName.c_str(), this, "");
 
-			switch (m_uiNumParams)
-			{
-			case 0: 
-				(*m_pObj.*m_pFunct0)(); 
-				break;
-
-			case 1: 
-				(*m_pObj.*m_pFunct1)( getParameterValue<A>(a) ); 
-				break;
-
-			case 2: 
-				(*m_pObj.*m_pFunct2)( getParameterValue<A>(a), getParameterValue<B>(b)); 
-				break;
-
-			case 3: 
-				(*m_pObj.*m_pFunct3)( getParameterValue<A>(a), getParameterValue<B>(b), getParameterValue<C>(c)); 
-				break;
-
-			case 4: 
-				(*m_pObj.*m_pFunct4)( getParameterValue<A>(a), getParameterValue<B>(b), getParameterValue<C>(c), getParameterValue<D>(d)); 
-				break;
-
-			case 5: 
-				(*m_pObj.*m_pFunct5)( getParameterValue<A>(a), getParameterValue<B>(b), getParameterValue<C>(c), getParameterValue<D>(d), getParameterValue<E>(e)); 
-				break;
-
-			case 6: 
-				(*m_pObj.*m_pFunct6)( getParameterValue<A>(a), getParameterValue<B>(b), getParameterValue<C>(c), getParameterValue<D>(d), getParameterValue<E>(e), getParameterValue<F>(f)); 
-				break;
-			};
-
+			uint32 x = vPList.size();
+			callFunction(popElement<Args>(vPList, x)...);
+	
 		}
 		catch (gcException &e)
 		{
@@ -405,120 +229,45 @@ public:
 		return new IPC::PVoid();
 	}
 
-
 	IPCParameterI* returnVal(char* buff, uint32 size)
 	{
 		return new PVoid();
 	}
 
-private:
-	// pointer to object
-	TObj* m_pObj;     
+protected:	
+	template <typename ... Params>
+	void callFunction(Params&&...params)
+	{
+		m_fnCallback(getParameterValue<Args>(params)...);
+	}
 
-	// pointer to member function
-	TFunct0 m_pFunct0;
-	TFunct1 m_pFunct1;
-	TFunct2 m_pFunct2;  
-	TFunct3 m_pFunct3;  
-	TFunct4 m_pFunct4;  
-	TFunct5 m_pFunct5;  
-	TFunct6 m_pFunct6;  
-	
-	uint8 m_uiNumParams;
+private:
+	std::function<void(Args...)> m_fnCallback;
 };
 
 
 
-
-
-
-
-template <class TObj>
-NetworkFunctionI* networkFunctionV(TObj* pObj, void (TObj::*func)())
+template <typename TObj, typename ... Args>
+NetworkFunctionI* networkFunctionV(TObj* pObj, void(TObj::*func)(Args...), const char* szName, bool bTrace = true)
 {
-    return new NetworkFunctionVoid<TObj>(pObj, func);
-}
+	std::function<void(Args...)> fnCallback = [pObj, func](Args...args) -> void
+	{
+		(*pObj.*func)(args...);
+	};
 
-template <class TObj, typename A>
-NetworkFunctionI* networkFunctionV(TObj* pObj, void (TObj::*func)(A))
-{
-    return new NetworkFunctionVoid<TObj, A>(pObj, func);
-}
-
-template <class TObj, typename A, typename B>
-NetworkFunctionI* networkFunctionV(TObj* pObj, void (TObj::*func)(A, B))
-{
-    return new NetworkFunctionVoid<TObj, A, B>(pObj, func);
-}
-
-template <class TObj, typename A, typename B, typename C>
-NetworkFunctionI* networkFunctionV(TObj* pObj, void (TObj::*func)(A, B, C))
-{
-    return new NetworkFunctionVoid<TObj, A, B, C>(pObj, func);
-}
-
-template <class TObj, typename A, typename B, typename C, typename D>
-NetworkFunctionI* networkFunctionV(TObj* pObj, void (TObj::*func)(A, B, C, D))
-{
-    return new NetworkFunctionVoid<TObj, A, B, C, D>(pObj, func);
-}
-
-template <class TObj, typename A, typename B, typename C, typename D, typename E>
-NetworkFunctionI* networkFunctionV(TObj* pObj, void (TObj::*func)(A, B, C, D, E))
-{
-    return new NetworkFunctionVoid<TObj, A, B, C, D, E>(pObj, func);
-}
-
-template <class TObj, typename A, typename B, typename C, typename D, typename E, typename F>
-NetworkFunctionI* networkFunctionV(TObj* pObj, void (TObj::*func)(A, B, C, D, E, F))
-{
-    return new NetworkFunctionVoid<TObj, A, B, C, D, E, F>(pObj, func);
+	return new NetworkFunctionVoid<Args...>(fnCallback, szName, bTrace);
 }
 
 
-
-
-
-template <class TObj, typename R>
-NetworkFunctionI* networkFunction(TObj* pObj, R (TObj::*func)())
+template <typename TObj, typename R, typename ... Args>
+NetworkFunctionI* networkFunction(TObj* pObj, R (TObj::*func)(Args...), const char* szName)
 {
-    return new NetworkFunction<TObj, R, PVoid, PVoid, PVoid, PVoid, PVoid, PVoid>(pObj, func);
-}
+	std::function<R(Args...)> fnCallback = [pObj, func](Args...args) -> R
+	{
+		return (*pObj.*func)(args...);
+	};
 
-template <class TObj, typename R, typename A>
-NetworkFunctionI* networkFunction(TObj* pObj, R (TObj::*func)(A))
-{
-    return new NetworkFunction<TObj, R, A, PVoid, PVoid, PVoid, PVoid, PVoid>(pObj, func);
-}
-
-template <class TObj, typename R, typename A, typename B>
-NetworkFunctionI* networkFunction(TObj* pObj, R (TObj::*func)(A, B))
-{
-    return new NetworkFunction<TObj, R, A, B, PVoid, PVoid, PVoid, PVoid>(pObj, func);
-}
-
-template <class TObj, typename R, typename A, typename B, typename C>
-NetworkFunctionI* networkFunction(TObj* pObj, R (TObj::*func)(A, B, C))
-{
-    return new NetworkFunction<TObj, R, A, B, C, PVoid, PVoid, PVoid>(pObj, func);
-}
-
-template <class TObj, typename R, typename A, typename B, typename C, typename D>
-NetworkFunctionI* networkFunction(TObj* pObj, R (TObj::*func)(A, B, C, D))
-{
-    return new NetworkFunction<TObj, R, A, B, C, D, PVoid, PVoid>(pObj, func);
-}
-
-template <class TObj, typename R, typename A, typename B, typename C, typename D, typename E>
-NetworkFunctionI* networkFunction(TObj* pObj, R (TObj::*func)(A, B, C, D, E))
-{
-    return new NetworkFunction<TObj, R, A, B, C, D, E, PVoid>(pObj, func);
-}
-
-template <class TObj, typename R, typename A, typename B, typename C, typename D, typename E, typename F>
-NetworkFunctionI* networkFunction(TObj* pObj, R (TObj::*func)(A, B, C, D, E, F))
-{
-    return new NetworkFunction<TObj, R, A, B, C, D, E, F>(pObj, func);
+	return new NetworkFunction<R, Args...>(fnCallback, szName);
 }
 
 
@@ -540,7 +289,7 @@ class IPCEventI;
 class IPCClass : public IPCLockable
 {
 public:
-	//! Constuctor
+	//! Constructor
 	//! 
 	//! @param mang Manager
 	//! @param id Class id
@@ -548,7 +297,7 @@ public:
 	//!
 	IPCClass(IPCManager* mang, uint32 id, DesuraId itemId);
 
-	//! deconstructor
+	//! De-Constructor
 	//!
 	~IPCClass();
 

@@ -27,6 +27,7 @@ $/LicenseInfo$
 #include "Common.h"
 #include "serviceMain.h"
 #include "ServiceCoreI.h"
+#include "Tracer.h"
 
 #include <Winbase.h>
 
@@ -45,6 +46,8 @@ CGCServiceApp::CGCServiceApp()
 {
 	m_pServiceCore = nullptr;
 	m_Fh = nullptr;
+
+	m_MiniDump.setTracerSharedMemoryName(g_Tracer.getSharedMemName());
 }
 
 CGCServiceApp::~CGCServiceApp()
@@ -116,6 +119,7 @@ bool CGCServiceApp::start(int argc, char** argv)
 	m_pServiceCore->setDisconnectCallback(&OnPipeDisconnect);
 	m_pServiceCore->setCrashSettingCallback(&SetCrashSettings);
 	m_pServiceCore->startPipe();
+	m_pServiceCore->setTracer(&g_Tracer);
 
     return true;
 }

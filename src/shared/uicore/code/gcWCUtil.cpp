@@ -113,7 +113,7 @@ bool LoadCEFDll()
 {
 	if (!g_CEFDll.load(szCefDLL))
 	{
-		Warning(gcString("Failed to load cef library: {0}\n", GetLastError()));
+		WarningS("Failed to load cef library: {0}\n", GetLastError());
 		return false;
 	}
 
@@ -153,7 +153,7 @@ bool LoadCEFDll()
 
 	if (!g_pChromiumController)
 	{
-		Warning("Failed to init cef.\n");
+		WarningS("Failed to init cef.\n");
 		return false;
 	}
 
@@ -230,7 +230,7 @@ void SetCookies()
 
 	if (!cookie)
 	{
-		Warning("Cef failed to create cookie. Failed to set cookies. :(\n");
+		WarningS("Cef failed to create cookie. Failed to set cookies. :(\n");
 		return;
 	}
 

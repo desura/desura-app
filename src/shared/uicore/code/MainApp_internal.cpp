@@ -187,7 +187,7 @@ void MainApp::showProfile(DesuraId id, std::vector<std::string> args)
 	}
 	else
 	{	
-		Warning(gcString("Failed to locate item {0} to show profile.\n", id.toInt64()));
+		Warning("Failed to locate item {0} to show profile.\n", id.toInt64());
 	}
 }
 
@@ -201,7 +201,7 @@ void MainApp::showDevProfile(DesuraId id)
 	}
 	else
 	{	
-		Warning(gcString("Failed to locate item {0} to show dev profile.\n", id.toInt64()));
+		Warning("Failed to locate item {0} to show dev profile.\n", id.toInt64());
 	}
 }
 
@@ -252,7 +252,7 @@ void MainApp::changeAccountState(DesuraId id)
 
 	if (!item)
 	{
-		Warning(gcString("Could not find item {0} for account status change!", id.toInt64()));
+		Warning("Could not find item {0} for account status change!", id.toInt64());
 		return;
 	}
 

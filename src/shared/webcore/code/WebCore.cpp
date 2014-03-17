@@ -216,7 +216,7 @@ void WebCoreClass::clearNameCache()
 	}
 	catch (std::exception &ex)
 	{
-		Warning(gcString("Failed to clear namecache table: {0}\n", ex.what()));
+		Warning("Failed to clear namecache table: {0}\n", ex.what());
 	}
 }
 

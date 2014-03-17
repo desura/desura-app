@@ -38,8 +38,14 @@ class Color;
 
 void LogMsg(MSG_TYPE type, std::string msg, Color* col, std::map<std::string, std::string> *mpArgs)
 {
-	printf("[LogMsg] %s\n", msg.c_str());
+	fprintf(stdout, "[LogMsg] %s\n", msg.c_str());
 }
+
+
+#include "DesuraPrintFRedirect.h"
+
+
+
 
 void SetCrashSettings(const wchar_t* user, bool upload)
 {
@@ -51,14 +57,6 @@ void OnPipeDisconnect()
 	g_ServiceApp.onDisconnect();
 }
 
-
-void PrintfMsg(const char* format, ...)
-{
-	va_list args;
-	va_start(args, format);
-	vprintf(format, args);
-	va_end(args);
-}
 
 int main(int argc, char** argv) 
 { 

@@ -283,7 +283,7 @@ void InstallScriptRunTime::loadScript(const char* scriptFile, const char* instal
 	}
 	catch (gcException &e)
 	{
-		Warning(gcString("Failed to execute install script {0}: {1}\n", scriptFile, e));
+		Warning("Failed to execute install script {0}: {1}\n", scriptFile, e);
 		failed = true;
 	}
 

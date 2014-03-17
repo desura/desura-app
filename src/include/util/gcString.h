@@ -746,6 +746,8 @@ std::basic_string<CT> FormatArg(const T& t, FormatTypes type, size_t len, size_t
 		PAUSE_DEBUGGER();
 				return converToStringType<CT>("{Arg is not string but string type format is specified.}");
 			}
+		case HEX_BASE:
+			PrintToStream("0x", oss);
 		case HEX:
 			oss << std::hex;
 			break;
@@ -753,8 +755,7 @@ std::basic_string<CT> FormatArg(const T& t, FormatTypes type, size_t len, size_t
 		case BOOL_STRING:
 			oss << std::boolalpha;
 			break;
-		case HEX_BASE:
-			break;
+		
 		case NONE:
 			break;
 		}
@@ -1141,7 +1142,7 @@ std::basic_string<CT> Format(const CT* format,
 //
 // N arg number
 // L length
-// P percision
+// P precision
 // T Type
 
 //

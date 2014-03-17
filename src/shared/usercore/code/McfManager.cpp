@@ -241,7 +241,7 @@ void MCFManager::createMcfDbTables(const char* dataPath)
 	}
 	catch (std::exception &e)
 	{
-		Warning(gcString("Failed to create mcf item table: {0}\n", e.what()));
+		Warning("Failed to create mcf item table: {0}\n", e.what());
 	}
 
 	try
@@ -251,7 +251,7 @@ void MCFManager::createMcfDbTables(const char* dataPath)
 	}
 	catch (std::exception &e)
 	{
-		Warning(gcString("Failed to create mcf backup table: {0}\n", e.what()));
+		Warning("Failed to create mcf backup table: {0}\n", e.what());
 	}
 }
 
@@ -356,7 +356,7 @@ gcString MCFManager::newMcfPath(DesuraId id, MCFBranch branch, MCFBuild build, b
 	catch (std::exception &e)
 	{
 		curPath = "";
-		Warning(gcString("Failed to insert mcf item: {0}\n", e.what()));
+		Warning("Failed to insert mcf item: {0}\n", e.what());
 	}
 
 	return curPath;
@@ -378,7 +378,7 @@ void MCFManager::delMcfPath(DesuraId id, MCFBranch branch, MCFBuild build)
 	}
 	catch (std::exception &e)
 	{
-		Warning(gcString("Failed to delete mcf item: {0}\n", e.what()));
+		Warning("Failed to delete mcf item: {0}\n", e.what());
 	}
 }
 
@@ -412,7 +412,7 @@ void MCFManager::delAllMcfPath(DesuraId id)
 	}
 	catch (std::exception &e)
 	{
-		Warning(gcString("Failed to delete mcf items: {0}\n", e.what()));
+		Warning("Failed to delete mcf items: {0}\n", e.what());
 	}
 }
 
@@ -431,7 +431,7 @@ void MCFManager::properDelMcfBackup(DesuraId gid, DesuraId mid)
 	}
 	catch (std::exception &e)
 	{
-		Warning(gcString("Failed to delete mcf backup: {0}\n", e.what()));
+		Warning("Failed to delete mcf backup: {0}\n", e.what());
 	}
 }
 
@@ -502,7 +502,7 @@ gcString MCFManager::newMcfBackup(DesuraId gid, DesuraId mid)
 	}
 	catch (std::exception &e)
 	{
-		Warning(gcString("Failed to update mcf backup: {0}\n", e.what()));
+		Warning("Failed to update mcf backup: {0}\n", e.what());
 	}
 
 	return parPath;

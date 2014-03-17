@@ -75,7 +75,7 @@ void CVar::init(const char* name, const char* defVal, int32 flags)
 	m_bReg = g_pCVarMang->RegCVar(this);
 
 	if (!m_bReg)
-		Warning(gcString("Failed to register cvar [{0}] (maybe duplicate)\n", name));		
+		Warning("Failed to register cvar [{0}] (maybe duplicate)\n", name);		
 }
 
 void CVar::checkOsValid() const

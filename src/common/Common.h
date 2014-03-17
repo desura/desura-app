@@ -55,7 +55,7 @@ inline void DoAssert(const char* szExp, const char* szFile, int nLine)
 		}							\
 		while(false)
 #else
-	#define assert( X )
+	#define assert( X ) do { } while(false)
 #endif
 
 	#define BOOST_ENABLE_ASSERT_HANDLER 1

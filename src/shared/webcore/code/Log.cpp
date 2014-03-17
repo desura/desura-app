@@ -24,11 +24,12 @@ $/LicenseInfo$
 */
 
 #include "Common.h"
+#include "Log.h"
 #include "LogBones.cpp"
 
 extern "C"
 {
-	void RegDLLCB_WEBCORE(LogCallback* cb)
+	void CEXPORT RegDLLCB_WEBCORE(LogCallback* cb)
 	{
 		g_pLogCallback = cb;
 

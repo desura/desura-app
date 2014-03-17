@@ -321,26 +321,16 @@ void printError( bf::filesystem_error e)
 {
 #ifndef NIX
 	const char* what = e.what();
-	//has a problem under linx about path1
-
-#ifdef printf
-	#define RE_DEF_PRINTF
-	#undef printf
-#endif
+	//has a problem under linux about path1
 
 	if (strcmp("not_found_error", what) == 0)
 	{
-		printf("WARN: File %ls doe.\n", e.path1().string().c_str());
+		WarningS("File %ls dne.\n", e.path1().string().c_str());
 	}
 	else if (strcmp("path_error", what) == 0)
 	{
-		printf("WARN: Bad Path %ls.\n", e.path1().string().c_str());
+		WarningS("Bad Path %ls.\n", e.path1().string().c_str());
 	}
-
-#ifdef RE_DEF_PRINTF
-	#define printf PrintfMsg
-#endif
-
 #endif
 }
 

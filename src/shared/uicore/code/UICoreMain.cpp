@@ -562,7 +562,7 @@ public:
 
 	virtual void OnAssert(const wxChar *file, int line, const wxChar *cond, const wxChar *msg) override
 	{
-		Warning(gcString("Assert: {0} [{1}] in file {2}: {3}\n", msg, cond, file, line));
+		Warning("Assert: {0} [{1}] in file {2}: {3}\n", msg, cond, file, line);
 	}
 
 #ifdef NIX

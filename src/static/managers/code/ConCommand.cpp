@@ -40,7 +40,7 @@ ConCommand::ConCommand(const char* printname, ConCommandCallBackFn callback) : B
 
 	if (!m_bReg)
 	{
-		Warning(gcString("Failed to register ConVar [{0}] (maybe duplicate)\n", printname));		
+		Warning("Failed to register ConVar [{0}] (maybe duplicate)\n", printname);		
 	}
 }
 

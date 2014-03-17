@@ -84,7 +84,7 @@ void GetItemListThread::doRun()
 	}
 	catch (std::exception &e)
 	{
-		Warning(gcString("Failed to update cip item list: {0}\n", e.what()));
+		Warning("Failed to update cip item list: {0}\n", e.what());
 	}
 
 	uint32 prog=0;

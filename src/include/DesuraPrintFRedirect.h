@@ -23,17 +23,30 @@ Linden Research, Inc., 945 Battery Street, San Francisco, CA  94111  USA
 $/LicenseInfo$
 */
 
-#include "LogBones.h"
-#include "LogCallback.h"
+#ifdef WIN32
 
-LogCallback* g_pLogCallback = NULL;
+#include <stdio.h>
+#include <stdarg.h>
 
-void LogMsg(MSG_TYPE type, std::string msg, Color* col, std::map<std::string, std::string> *mpArgs)
+
+void DesuraPrintFRedirect(const char* format, ...)
 {
-	if (!g_pLogCallback)
-		return;
+	va_list args;
+	va_start(args, format);
+	vprintf(format, args);
 
-	g_pLogCallback->Message(type, msg.c_str(), col, mpArgs);
+	std::string strOut("\0");
+	strOut.reserve(1024);
+
+	vsnprintf(const_cast<char*>(strOut.c_str()), 1024, format, args);
+
+	LogMsg((MSG_TYPE)0, strOut, nullptr, nullptr);
+
+#ifdef DEBUG
+	OutputDebugStringA(strOut.c_str());
+#endif
+
+	va_end(args);
 }
 
-#include "DesuraPrintFRedirect.h"
+#endif

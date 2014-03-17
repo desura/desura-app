@@ -66,7 +66,7 @@ void WGTWorker::run()
 
 	if (!m_DownloadProvider || !m_DownloadProvider->isValidAndNotExpired())
 	{
-		Warning(gcString("Mcf Download Thread [{0}] failed to get valid url for download.\n", m_uiId));
+		Warning("Mcf Download Thread [{0}] failed to get valid url for download.\n", m_uiId);
 		return;
 	}
 
@@ -242,7 +242,7 @@ void WGTWorker::doDownload()
 		if (!m_pCurBlock)
 		{
 			if (status != MCFCore::Thread::BaseMCFThread::SF_STATUS_STOP)
-				Warning(gcString("The block was nullptr for Mcf Download thread {0}\n", m_uiId));
+				Warning("The block was nullptr for Mcf Download thread {0}\n", m_uiId);
 
 			return;
 		}
@@ -272,7 +272,7 @@ void WGTWorker::doDownload()
 		}
 		else if (!isStopped())
 		{
-			Warning(gcString("Mcf Server error: {0} [{1}]\n", excep, m_DownloadProvider->getUrl()));
+			Warning("Mcf Server error: {0} [{1}]\n", excep, m_DownloadProvider->getUrl());
 
 			if (excep.getErrId() == ERR_LIBCURL)
 			{

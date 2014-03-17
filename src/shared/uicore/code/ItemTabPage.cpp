@@ -140,7 +140,7 @@ public:
 		}
 		catch (...)
 		{
-			Warning(gcString("JSCallback {0} threw exception", m_szName));
+			Warning("JSCallback {0} threw exception", m_szName);
 		}
 
 		if (m_szName == "onItemListUpdated")

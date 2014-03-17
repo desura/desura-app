@@ -258,7 +258,7 @@ void InternalLink::handleInternalLink(const char* link)
 
 	if (badLink)
 	{
-		Warning(gcString("{0} [{1}]\n", Managers::GetString("#MF_BADLINK"), link));
+		Warning("{0} [{1}]\n", Managers::GetString("#MF_BADLINK"), link);
 
 		gcWString errMsg(L"{0}: {1}.", Managers::GetString("#MF_BADLINK"), link);
 		gcMessageBox(g_pMainApp->getMainWindow(), errMsg, Managers::GetString(L"#MF_ERRTITLE"));
@@ -270,7 +270,7 @@ bool InternalLink::switchTab(bool &badLink, std::vector<gcString> &list, const c
 {
 	if (list.size() < 2)
 	{
-		Warning(gcString("{0} [{1}]\n", Managers::GetString("#MF_BADLINK"), link));
+		Warning("{0} [{1}]\n", Managers::GetString("#MF_BADLINK"), link);
 		return false;
 	}
 
@@ -300,7 +300,7 @@ bool InternalLink::switchTab(bool &badLink, std::vector<gcString> &list, const c
 	}
 	else
 	{
-		Warning(gcString("{0} [{1}]\n", Managers::GetString("#MF_BADLINK"), link));
+		Warning("{0} [{1}]\n", Managers::GetString("#MF_BADLINK"), link);
 		return false;
 	}
 
@@ -360,7 +360,7 @@ bool InternalLink::processItemLink(bool &badLink, std::vector<gcString> &list, c
 
 		if (idAsNum.getItem() == 0)
 		{
-			Warning(gcString("Failed to resolve item name {0} for link {2}: {1}\n", list[2], e, link));
+			Warning("Failed to resolve item name {0} for link {2}: {1}\n", list[2], e, link);
 			gcErrorBox(form, Managers::GetString("#MF_ERRTITLE"), Managers::GetString("#MF_NAMERESOLVE"), e);
 
 			m_mWaitingItemFromMap.erase(m_mWaitingItemFromMap.find(key));
@@ -514,7 +514,7 @@ void InternalLink::handleInternalLink(DesuraId id, uint8 action, const std::vect
 	case ACTION_CLEANCOMPLEXMOD: cleanComplexMod(id);				break;
 
 	default: 
-		Warning(gcString("Unknown internal link {0} for item {1}\n.", (uint32)action, id.toInt64()));	
+		Warning("Unknown internal link {0} for item {1}\n.", (uint32)action, id.toInt64());	
 		break;
 	}
 }
@@ -776,7 +776,7 @@ void InternalLink::installCheck(DesuraId id)
 	UI::Forms::ItemForm* form = showItemForm(id, UI::Forms::INSTALL_ACTION::IA_INSTALL_CHECK);
 
 	if (!form)
-		Warning(gcString("Cant find item (or item not ready) for install check [{0}].\n", id.toInt64()));
+		Warning("Cant find item (or item not ready) for install check [{0}].\n", id.toInt64());
 }
 
 void InternalLink::verifyItem(DesuraId id, Args args)
@@ -786,7 +786,7 @@ void InternalLink::verifyItem(DesuraId id, Args args)
 	UI::Forms::ItemForm* form = showItemForm(id, UI::Forms::INSTALL_ACTION::IA_VERIFY, showForm);
 
 	if (!form)
-		Warning(gcString("Cant find item (or item not ready) for verify [{0}].\n", id.toInt64()));
+		Warning("Cant find item (or item not ready) for verify [{0}].\n", id.toInt64());
 	else if (showForm == false)
 		form->Show(false);
 }
@@ -796,7 +796,7 @@ void InternalLink::cleanComplexMod(DesuraId id)
 	UI::Forms::ItemForm* form = showItemForm(id, UI::Forms::INSTALL_ACTION::IA_CLEANCOMPLEX, true);
 
 	if (!form)
-		Warning(gcString("Cant find item (or item not ready) for clean complex mod [{0}].\n", id.toInt64()));
+		Warning("Cant find item (or item not ready) for clean complex mod [{0}].\n", id.toInt64());
 }
 
 bool InternalLink::checkForPreorder(DesuraId id)
@@ -854,7 +854,7 @@ void InternalLink::installItem(DesuraId id, Args args)
 	UI::Forms::ItemForm* form = showItemForm(id, UI::Forms::INSTALL_ACTION::IA_INSTALL, iBranch);
 
 	if (!form)
-		Warning(gcString("Cant find item (or item not ready) for install [{0}].\n", id.toInt64()));	
+		Warning("Cant find item (or item not ready) for install [{0}].\n", id.toInt64());	
 }
 
 DesuraId g_GameDiskList[] = 
@@ -945,7 +945,7 @@ void InternalLink::launchItem(DesuraId id, Args args)
 	UI::Forms::ItemForm* form = showItemForm(id, UI::Forms::INSTALL_ACTION::IA_LAUNCH);
 
 	if (!form)
-		Warning(gcString("Cant find item (or item not ready) for launch [{0}].\n", id.toInt64()));
+		Warning("Cant find item (or item not ready) for launch [{0}].\n", id.toInt64());
 
 	if (item && delFlag)
 		item->delOFlag(UserCore::Item::ItemInfoI::OPTION_NOTREMINDUPDATE);
@@ -958,7 +958,7 @@ void InternalLink::updateItem(DesuraId id, Args args)
 	UI::Forms::ItemForm* form = showItemForm(id, UI::Forms::INSTALL_ACTION::IA_UPDATE, show);
 
 	if (!form)
-		Warning(gcString("Cant find item (or item not ready) for update [{0}].\n", id.toInt64()));
+		Warning("Cant find item (or item not ready) for update [{0}].\n", id.toInt64());
 }
 
 
@@ -979,7 +979,7 @@ void InternalLink::installTestMCF(DesuraId id, Args args)
 	UI::Forms::ItemForm* form = showItemForm(id, UI::Forms::INSTALL_ACTION::IA_INSTALL_TESTMCF, iBranch, iBuild);
 
 	if (!form)
-		Warning(gcString("Cant find item (or item not ready) for install test mcf [{0}].\n", id.toInt64()));
+		Warning("Cant find item (or item not ready) for install test mcf [{0}].\n", id.toInt64());
 }
 
 
@@ -988,7 +988,7 @@ void InternalLink::uninstallMCF(DesuraId id)
 	UI::Forms::ItemForm* form = showItemForm(id, UI::Forms::INSTALL_ACTION::IA_UNINSTALL);
 
 	if (!form)
-		Warning(gcString("Cant find item (or item not ready) for uninstall [{0}].\n", id.toInt64()));
+		Warning("Cant find item (or item not ready) for uninstall [{0}].\n", id.toInt64());
 
 	form->Raise();
 }
@@ -1009,7 +1009,7 @@ void InternalLink::switchBranch(DesuraId id, Args args)
 	UI::Forms::ItemForm* form = showItemForm(id, UI::Forms::INSTALL_ACTION::IA_SWITCH_BRANCH, iBranch);
 
 	if (!form)
-		Warning(gcString("Cant find item (or item not ready) for uninstall [{0}].\n", id.toInt64()));
+		Warning("Cant find item (or item not ready) for uninstall [{0}].\n", id.toInt64());
 }
 
 
@@ -1066,7 +1066,7 @@ void InternalLink::showExeSelect(DesuraId id, bool hasSeenCDKey)
 
 	if (!item)
 	{
-		Warning(gcString("Cant find item for show exe select [{0}].\n", id.toInt64()));
+		Warning("Cant find item for show exe select [{0}].\n", id.toInt64());
 		return;
 	}
 
@@ -1085,7 +1085,7 @@ void InternalLink::showCDKey(DesuraId id, Args args)
 
 	if (!item)
 	{
-		Warning(gcString("Cant find item for show cd key [{0}].\n", id.toInt64()));
+		Warning("Cant find item for show cd key [{0}].\n", id.toInt64());
 		return;
 	}
 
@@ -1108,7 +1108,7 @@ void InternalLink::showGameDisk(DesuraId id, const char* exe, bool cdkey)
 
 	if (!item)
 	{
-		Warning(gcString("Cant find item for show game disk [{0}].\n", id.toInt64()));
+		Warning("Cant find item for show game disk [{0}].\n", id.toInt64());
 		return;
 	}
 

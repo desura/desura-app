@@ -69,16 +69,11 @@ gcString GetSpecialPath(int32 key)
 	return "SERVICE CORE IS NULL";
 }
 
-void PrintfMsg(const char* format, ...)
+TracerI *g_pTracer = nullptr;
+
+void SetTracer(TracerI *pTracer)
 {
-	va_list args;
-	va_start(args, format);
-
-	gcString str;
-	str.vformat(format, args);
-	LogMsg(MT_MSG, str);
-
-	va_end(args);
+	g_pTracer = pTracer;
 }
 
 void LogMsg(MSG_TYPE type, std::string msg, Color* col, std::map<std::string, std::string> *mpArgs)
@@ -97,6 +92,9 @@ void LogMsg(MSG_TYPE type, std::string msg, Color* col, std::map<std::string, st
 		nCol = col->getColor();
 
 	servicemain->message((int)type, msg.c_str(), nCol, mpArgs);
+
+	if (g_pTracer && type == MT_TRACE)
+		g_pTracer->trace(msg, mpArgs);
 }
 
 #endif
@@ -148,7 +146,7 @@ void IPCServiceMain::registerFunctions()
 	REG_FUNCTION_VOID( IPCServiceMain, fixFolderPermissions);
 	REG_FUNCTION_VOID( IPCServiceMain, runInstallScript);
 #else
-	REG_FUNCTION_VOID( IPCServiceMain, message );
+	REG_FUNCTION_VOID_T( IPCServiceMain, message, false );
 	REG_FUNCTION( IPCServiceMain, getSpecialPath );
 #endif
 }
@@ -361,7 +359,7 @@ void IPCServiceMain::fixFolderPermissions(const char* dir)
 	}
 	catch (gcException &e)
 	{
-		Warning(gcString("Failed to fix folder permissions: {0}\n", e));
+		Warning("Failed to fix folder permissions: {0}\n", e);
 	}
 }
 
@@ -511,7 +509,7 @@ void IPCServiceMain::updateRegKey(const char* key, const char* value)
 	}
 	catch (gcException &e)
 	{
-		Warning(gcString("Failed to set reg key: {0}\n", e));
+		Warning("Failed to set reg key: {0}\n", e);
 	}
 }
 
@@ -526,7 +524,7 @@ void IPCServiceMain::updateBinaryRegKeyBlob(const char* key, IPC::PBlob blob)
 	}
 	catch (gcException &e)
 	{
-		Warning(gcString("Failed to set reg key: {0}\n", e));
+		Warning("Failed to set reg key: {0}\n", e);
 	}
 }
 
@@ -579,7 +577,7 @@ void IPCServiceMain::runInstallScript(const char* file, const char* installpath,
 	}
 	catch (gcException &e)
 	{
-		Warning(gcString("Failed to execute script {0}: {1}\n", file, e));
+		Warning("Failed to execute script {0}: {1}\n", file, e);
 	}
 }
 

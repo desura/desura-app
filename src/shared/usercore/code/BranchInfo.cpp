@@ -437,7 +437,7 @@ void BranchInfo::processInstallScript(const XML::gcXMLElement &xmlElement)
 	}
 	catch (gcException &e)
 	{
-		Warning(gcString("Failed to save install script for {0} branch {1}: {2}\n", m_ItemId.toInt64(), m_uiBranchId, e));
+		Warning("Failed to save install script for {0} branch {1}: {2}\n", m_ItemId.toInt64(), m_uiBranchId, e);
 		m_szInstallScript = "";
 	}
 }

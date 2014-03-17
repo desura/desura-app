@@ -95,7 +95,7 @@ void InitLogging()
 	{
 		if (type == MT_TRACE)
 		{
-			Console::Trace(szMessage, pmArgs);
+			Console::trace(szMessage, pmArgs);
 			return;
 		}
 

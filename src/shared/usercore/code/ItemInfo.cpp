@@ -48,7 +48,7 @@ using namespace UserCore::Item;
 
 
 template <>
-gcString TraceClassInfo(ItemInfo *pClass)
+std::string TraceClassInfo(ItemInfo *pClass)
 {
 	return gcString("pid: {0}, id: {1}, short: {2}, status: {3}", pClass->getParentId(), pClass->getId(), pClass->getShortName(), pClass->getStatus());
 }
@@ -1213,7 +1213,7 @@ void ItemInfo::setParentId(DesuraId id)
 	}
 	catch (std::exception &e)
 	{
-		Warning(gcString("Failed to change {0} parent id: {1}\n", getName(), e.what()));
+		Warning("Failed to change {0} parent id: {1}\n", getName(), e.what());
 	}
 
 	m_iParentId = id;

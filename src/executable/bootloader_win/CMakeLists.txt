@@ -8,7 +8,7 @@ include_directories(
 )
 
 configure_file(RES/desura_exe.rc ${RC_DIR}/desura_exe.rc @ONLY)
-file(GLOB Sources code/*.cpp ${RC_DIR}/desura_exe.rc)
+file(GLOB Sources code/*.cpp ${RC_DIR}/desura_exe.rc ${COMMON_INCLUDE_DIRS}/Tracer.cpp)
 
 set(Sources "${Sources};${AdditionalSources}")
 

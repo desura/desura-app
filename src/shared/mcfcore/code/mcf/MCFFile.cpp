@@ -226,7 +226,7 @@ std::string MCFFile::getFullPath()
 		Warning("MCF: Name for MCF item was Null!\n");
 
 	if (m_szPath == "")
-		Warning(gcString("MCF: Path for {0} was Null!\n", m_szName));
+		Warning("MCF: Path for {0} was Null!\n", m_szName);
 
 	//dont just use names by them selfs other wise it will install to the desura root folder.
 	if (m_szDir == "" && m_szPath == "")

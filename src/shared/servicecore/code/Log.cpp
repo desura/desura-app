@@ -51,3 +51,5 @@ void DestroyLogging()
 {
 	safe_delete(g_pLogCallBack);
 }
+
+#include "DesuraPrintFRedirect.h"

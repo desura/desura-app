@@ -135,7 +135,7 @@ bool GetUninstallInfo(DesuraId id, UninstallInfo &info)
 	}
 	catch (std::exception &e)
 	{
-		Warning(gcString("Failed to get item {1} for uninstall update: {0}\n", e.what(), id.toInt64()));
+		WarningS("Failed to get item {1} for uninstall update: {0}\n", e.what(), id.toInt64());
 	}
 
 	return true;

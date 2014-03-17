@@ -144,7 +144,7 @@ public:
 		}
 		else
 		{
-			Warning(gcString("Cant find control {0} color {1}\n", control, id));
+			Warning("Cant find control {0} color {1}\n", control, id);
 			return Color();
 		}
 	}

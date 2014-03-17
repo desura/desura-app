@@ -111,7 +111,7 @@ ItemManager::ItemManager(User* user) : BaseManager(true)
 		}
 		catch (std::exception &e)
 		{
-			Warning(gcString("Failed to migrate old Item Info DB: {0}", e.what()));
+			Warning("Failed to migrate old Item Info DB: {0}", e.what());
 		}
 
 		UTIL::FS::delFile(oldPath);
@@ -845,7 +845,7 @@ void ItemManager::loadDbItems()
 	}
 	catch (std::exception &e)
 	{
-		Warning(gcString("Failed to load items from db: {0}\n", e.what()));
+		Warning("Failed to load items from db: {0}\n", e.what());
 	}
 
 	loadFavList();
@@ -879,7 +879,7 @@ void ItemManager::saveDbItems(bool fullSave)
 	}
 	catch (std::exception &e)
 	{
-		Warning(gcString("Failed to save items to db: {0}\n", e.what()));
+		Warning("Failed to save items to db: {0}\n", e.what());
 	}
 }
 
@@ -1023,7 +1023,7 @@ UserCore::Item::ItemInfo* ItemManager::createNewItem(DesuraId pid, DesuraId id, 
 	}
 	catch (gcException &except)
 	{
-		Warning(gcString("Parse XML failed on item with error: {0}\n", except));
+		Warning("Parse XML failed on item with error: {0}\n", except);
 		safe_delete(temp);
 	}
 
@@ -1661,7 +1661,7 @@ void ItemManager::saveItem(UserCore::Item::ItemInfoI* pItem)
 	}
 	catch (std::exception &e)
 	{
-		Warning(gcString("Failed to save item to db: {0}\n", e.what()));
+		Warning("Failed to save item to db: {0}\n", e.what());
 	}
 }
 

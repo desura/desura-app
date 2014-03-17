@@ -162,6 +162,11 @@ public:
 		return -1;
 	}
 
+	void setTracer(TracerI *) override
+	{
+
+	}
+
 private:
 	bool m_bExitCodeSet;
 	int32 m_iExitCode;

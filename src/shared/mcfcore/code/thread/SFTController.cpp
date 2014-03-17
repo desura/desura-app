@@ -360,9 +360,9 @@ void SFTController::endTask(uint32 id, uint32 status, gcException e)
 	if (status == SF_STATUS_HASHMISSMATCH)
 	{
 		if (worker->curFile)
-			Warning(gcString("\t{0}: Hash mismatch found in file {1}.\n", id, worker->curFile->getName()));
+			Warning("\t{0}: Hash mismatch found in file {1}.\n", id, worker->curFile->getName());
 		else
-			Warning(gcString("\t{0}: Hash mismatch in unknown file.\n", id));
+			Warning("\t{0}: Hash mismatch in unknown file.\n", id);
 	}
 
 	if (status != BaseMCFThread::SF_STATUS_COMPLETE)
@@ -410,7 +410,7 @@ void SFTController::reportError(uint32 id, gcException &e)
 	SFTWorkerInfo* worker = findWorker(id);
 	assert(worker);
 #endif
-	Warning(gcString("SFTControler: {0} Error: {1}.\n", id, e));
+	Warning("SFTControler: {0} Error: {1}.\n", id, e);
 	endTask(id, SF_STATUS_ERROR, e);
 }
 

@@ -32,16 +32,16 @@ $/LicenseInfo$
 #include <xstring>
 #endif
 
-class Color;
+#include "Tracer.h"
 
-void PrintfMsg(const char* format, ...)
-{
-}
+void LogMsg(MSG_TYPE type, std::string msg, Color* col, std::map<std::string, std::string> *mpArgs);
+#include "DesuraPrintFRedirect.h"
 
-enum MSG_TYPE
-{
-};
 
 void LogMsg(MSG_TYPE type, std::string msg, Color* col, std::map<std::string, std::string> *mpArgs)
 {
+	if (type == MT_TRACE)
+		g_Tracer.trace(msg, mpArgs);
+	else
+		fprintf(stdout, "%s", msg.c_str());
 }

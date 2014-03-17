@@ -115,7 +115,7 @@ void InstalledWizardThread::doRun()
 	}
 	catch (std::exception &e)
 	{
-		Warning(gcString("Failed to update cip item list: {0}\n", e.what()));
+		Warning("Failed to update cip item list: {0}\n", e.what());
 	}
 
 
@@ -157,7 +157,7 @@ void InstalledWizardThread::onGameFound(UserCore::Misc::InstallInfo &game)
 		}
 		catch (gcException &except)
 		{
-			Warning(gcString("Installed wizard had an error in checking games: {0}\n", except));
+			Warning("Installed wizard had an error in checking games: {0}\n", except);
 		}
 	}
 }
@@ -197,7 +197,7 @@ void InstalledWizardThread::onModFound(UserCore::Misc::InstallInfo &mod)
 		}
 		catch (gcException &except)
 		{
-			Warning(gcString("Installed wizard had an error in checking mods: {0}\n", except));
+			Warning("Installed wizard had an error in checking mods: {0}\n", except);
 		}
 	}
 }
@@ -323,7 +323,7 @@ void InstalledWizardThread::parseGame(DesuraId id, const XML::gcXMLElement &game
 	}
 	catch (gcException &except)
 	{
-		Warning(gcString("ItemWizard: Error in xml parsing (installed wizard, games): {0}\n", except));
+		Warning("ItemWizard: Error in xml parsing (installed wizard, games): {0}\n", except);
 		return;
 	}
 		
@@ -384,7 +384,7 @@ void InstalledWizardThread::parseMod(DesuraId parId, DesuraId id, const XML::gcX
 	}
 	catch (gcException &except)
 	{
-		Warning(gcString("ItemWizard: Error in xml parsing (installed wizard, mods): {0}\n", except));
+		Warning("ItemWizard: Error in xml parsing (installed wizard, mods): {0}\n", except);
 	}
 }
 

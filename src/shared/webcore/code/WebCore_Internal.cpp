@@ -145,7 +145,7 @@ DesuraId WebCoreClass::nameToId(const char* name, const char* type)
 			}
 			catch(std::exception &ex) 
 			{
-				Warning(gcString("Failed to update namecache in webcore: {0}\n", ex.what()));
+				Warning("Failed to update namecache in webcore: {0}\n", ex.what());
 			}	
 
 			return id;
@@ -204,7 +204,7 @@ DesuraId WebCoreClass::hashToId(const char* itemHashId)
 			}
 			catch(std::exception &ex) 
 			{
-				Warning(gcString("Failed to update namecache in webcore: {0}\n", ex.what()));
+				Warning("Failed to update namecache in webcore: {0}\n", ex.what());
 			}	
 
 			return id;

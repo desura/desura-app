@@ -24,12 +24,13 @@ $/LicenseInfo$
 */
 
 #include "Common.h"
+#include "Log.h"
 #include "LogBones.cpp"
 
 
 extern "C"
 {
-	void RegDLLCB_USERCORE(LogCallback* cb)
+	void CEXPORT RegDLLCB_USERCORE(LogCallback* cb)
 	{
 		g_pLogCallback = cb;
 

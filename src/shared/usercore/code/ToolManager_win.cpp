@@ -66,7 +66,7 @@ void ToolManager::onSpecialCheck(WCSpecialInfo &info)
 			}
 			catch (gcException)
 			{
-				Warning(gcString("Failed to open file {0} for Tool Msi Check.", filePath.getFullPath()));
+				Warning("Failed to open file {0} for Tool Msi Check.", filePath.getFullPath());
 			}
 		}
 		else
@@ -130,7 +130,7 @@ void ToolManager::onSpecialCheck(WCSpecialInfo &info)
 			}
 			catch (gcException)
 			{
-				Warning(gcString("Failed to open file {0} for Tool .Net Check.", filePath.getFullPath()));
+				Warning("Failed to open file {0} for Tool .Net Check.", filePath.getFullPath());
 			}
 		}
 		else

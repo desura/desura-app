@@ -149,7 +149,7 @@ void CreateMCFThread::compareBranches(std::vector<UserCore::Item::BranchInfo*> &
 		}
 		catch (gcException &except)
 		{
-			Warning(gcString("CreateMCF: Failed to get download providers for mcf: {0}\n", except));
+			Warning("CreateMCF: Failed to get download providers for mcf: {0}\n", except);
 			continue;
 		}
 
@@ -161,7 +161,7 @@ void CreateMCFThread::compareBranches(std::vector<UserCore::Item::BranchInfo*> &
 			}
 			catch (gcException &except)
 			{
-				Warning(gcString("CreateMCF: Failed to get dlHeaderFromWeb for mcf: {0}\n", except));
+				Warning("CreateMCF: Failed to get dlHeaderFromWeb for mcf: {0}\n", except);
 				continue;
 			}
 

@@ -228,7 +228,7 @@ void ToolTransInfo::onINComplete()
 void ToolTransInfo::onINError(gcException &e)
 {
 	gcTrace("");
-	Warning(gcString("Tool install error: {0}\n",e));
+	Warning("Tool install error: {0}\n",e);
 
 	m_uiCompleteCount = m_pTransaction->toolsList.size();
 	m_pTransaction->onErrorEvent(e);

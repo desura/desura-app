@@ -88,7 +88,7 @@ CVarManager::CVarManager() : BaseManager()
 	}
 	catch (std::exception &e)
 	{
-		Warning(gcString("Failed to create cvar tables: {0}\n", e.what()));
+		Warning("Failed to create cvar tables: {0}\n", e.what());
 	}
 
 	m_bUserLoaded = false;
@@ -212,7 +212,7 @@ void CVarManager::loadWinUser()
 	}
 	catch (std::exception &e)
 	{
-		Warning(gcString("Failed to load cvar win user: {0}\n", e.what()));
+		Warning("Failed to load cvar win user: {0}\n", e.what());
 	}
 }
 
@@ -230,7 +230,7 @@ void CVarManager::loadNormal()
 	}
 	catch (std::exception &e)
 	{
-		Warning(gcString("Failed to load cvar normal: {0}\n", e.what()));
+		Warning("Failed to load cvar normal: {0}\n", e.what());
 	}
 }
 
@@ -268,7 +268,7 @@ void CVarManager::saveUser()
 	}
 	catch (std::exception &e)
 	{
-		Warning(gcString("Failed to save cvar user: {0}\n", e.what()));
+		Warning("Failed to save cvar user: {0}\n", e.what());
 	}
 }
 
@@ -293,7 +293,7 @@ void CVarManager::saveWinUser()
 	}
 	catch (std::exception &e)
 	{
-		Warning(gcString("Failed to save cvar win user: {0}\n", e.what()));
+		Warning("Failed to save cvar win user: {0}\n", e.what());
 	}
 }
 
@@ -312,7 +312,7 @@ void CVarManager::saveNormal()
 	}
 	catch (std::exception &e)
 	{
-		Warning(gcString("Failed to save cvar normal: {0}\n", e.what()));
+		Warning("Failed to save cvar normal: {0}\n", e.what());
 	}
 }
 

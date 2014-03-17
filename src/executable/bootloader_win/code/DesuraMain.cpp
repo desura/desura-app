@@ -24,6 +24,7 @@ $/LicenseInfo$
 */
 
 #include "Common.h"
+#include "Tracer.h"
 #include "DesuraWinApp.h"
 #include "UtilBootloader.h"
 
@@ -156,6 +157,7 @@ BootLoader::BootLoader()
 	_set_error_mode(_OUT_TO_MSGBOX);
 
 	m_MDumpHandle.showMessageBox(true);
+	m_MDumpHandle.setTracerSharedMemoryName(g_Tracer.getSharedMemName());
 
 	//AfxEnableMemoryTracking(FALSE);
 	InitCommonControls();
@@ -512,6 +514,7 @@ void BootLoader::loadUICore()
 	m_pUICore->setRestartFunction(&UiCoreRestart);
 	m_pUICore->setCrashDumpSettings(&SetDumpArgs);
 	m_pUICore->setCrashDumpLevel(&SetDumpLevel);
+	m_pUICore->setTracer(&g_Tracer);
 }
 
 

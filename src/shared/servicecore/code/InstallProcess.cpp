@@ -79,7 +79,7 @@ void InstallProcess::run()
 		}
 		catch (gcException &e)
 		{
-			Warning(gcString("Failed to set path as writable for install: {0}\n", e));
+			Warning("Failed to set path as writable for install: {0}\n", e);
 		}
 	}
 #endif

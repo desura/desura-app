@@ -33,8 +33,7 @@ $/LicenseInfo$
 	#include <iostream>
 #endif
 
-
-
+#include "DesuraPrintFRedirect.h"
 
 
 
@@ -69,24 +68,9 @@ public:
 REG_FUNCTION(ShowVersion);
 
 
-void PrintfMsg(const char* format, ...)
-{
-	va_list args;
-	va_start(args, format);
-	vprintf(format, args);
-
-#ifdef DEBUG
-	char out[1024]={0};
-	vsnprintf(out, 1024, format, args);
-	OutputDebugString(out);
-#endif
-
-	va_end(args);
-}
-
 void LogMsg(MSG_TYPE type, std::string msg, Color* col, std::map<std::string, std::string> *mpArgs)
 {
-	printf("%s", msg.c_str());
+	fprintf(stdout, "%s", msg.c_str());
 }
 
 bool SortFunctionList(UtilFunction* a, UtilFunction* b)

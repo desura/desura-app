@@ -434,6 +434,7 @@ void IPCManager::processInternalMessage(uint8 type, const char* buff, uint32 siz
 
 void IPCManager::stop()
 {
+	gcTrace("");
 
 	if (!m_bDisconnected)
 		sendMessage(nullptr, 0, 0, MT_STOP);
@@ -620,6 +621,8 @@ bool IPCManager::getMessageToSend(char* buffer, uint32 buffSize, uint32& msgSize
 
 void IPCManager::disconnect(bool triggerEvent)
 {
+	gcTrace("");
+
 	m_bDisconnected = true;
 
 	if (m_pEventThread)
@@ -634,6 +637,8 @@ void IPCManager::disconnect(bool triggerEvent)
 
 void IPCManager::restart()
 {
+	gcTrace("");
+
 	m_vClassList.clear();
 	safe_delete(m_pEventThread);
 	safe_delete(m_pCallThread);

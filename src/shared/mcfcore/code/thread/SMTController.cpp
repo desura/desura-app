@@ -375,7 +375,7 @@ void SMTController::reportError(uint32 id, gcException &e)
 	SMTWorkerInfo* worker = findWorker(id);
 	assert(worker);
 #endif
-	Warning(gcString("SMTControler {0} Error: {1}.\n", id, e));
+	Warning("SMTControler {0} Error: {1}.\n", id, e);
 	onErrorEvent(e);
 }
 

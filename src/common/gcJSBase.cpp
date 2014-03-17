@@ -253,7 +253,7 @@ const char* DesuraJSBaseNonTemplate::getRegistrationCode()
 	}
 	catch (gcException &e)
 	{
-		Warning(gcString("Failed to read js binding file {0}: {1}", m_szBindingFile, e));
+		Warning("Failed to read js binding file {0}: {1}", m_szBindingFile, e);
 	}
 
 	safe_delete(buff);

@@ -224,7 +224,7 @@ void MCF::doDlHeaderFromWeb(MCFCore::Misc::MCFServerCon &msc)
 			auto bIsUserCancel = (e.getErrId() == ERR_MCFSERVER && e.getSecErrId() == ERR_USERCANCELED);
 
 			if (!bIsUserCancel)
-				Warning(gcString("Failed to download MCF Header from {1}: {0}\n", e, provider->getUrl()));
+				Warning("Failed to download MCF Header from {1}: {0}\n", e, provider->getUrl());
 		}
 	}
 
@@ -680,7 +680,7 @@ void MCF::saveXml(const char* file)
 	}
 	catch (gcException &e)
 	{
-		Warning(gcString("Failed to save mcf xml to {0}: {1}", file, e));
+		Warning("Failed to save mcf xml to {0}: {1}", file, e);
 	}
 }
 

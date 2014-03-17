@@ -1,6 +1,7 @@
 include_directories(  
   ${CMAKE_CURRENT_SOURCE_DIR}/code
   ${Boost_INCLUDE_DIR}
+  ${IPC_PIPE_INCLUDE_DIRS}
 )
 
 file(GLOB Sources code/util/gcBuff_test.cpp
@@ -13,6 +14,7 @@ file(GLOB Sources code/util/gcBuff_test.cpp
                   code/util_string/util_string_sanitizeFilePath.cpp
 				  code/util_string/UtilString.cpp
 				  code/util/util_event.cpp
+				  code/IPCTest.cpp
 )
 
 
@@ -29,6 +31,7 @@ add_library(unittest SHARED ${Sources} ${WIN_Sources})
 target_link_libraries(unittest
   util
   util_fs
+  ipc_pipe
 )
 
 link_with_gtest(unittest)

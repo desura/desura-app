@@ -86,7 +86,7 @@ bool VSBaseTask::loadMcf(gcString mcfPath)
 	}
 	catch (gcException &except)
 	{
-		Warning(gcString("Verify - MCF Error: {0}\n", except));
+		Warning("Verify - MCF Error: {0}\n", except);
 		return false;
 	}
 
