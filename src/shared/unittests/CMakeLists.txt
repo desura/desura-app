@@ -13,6 +13,8 @@ file(GLOB Sources code/util/gcBuff_test.cpp
                   code/util_string/util_string_sanitizeFilePath.cpp
 				  code/util_string/UtilString.cpp
 				  code/util/util_event.cpp
+				  code/WildCardTest.cpp
+				  code/UnitTestSetup.cpp
 )
 
 
@@ -29,6 +31,8 @@ add_library(unittest SHARED ${Sources} ${WIN_Sources})
 target_link_libraries(unittest
   util
   util_fs
+  managers
+  tinyxml2
 )
 
 link_with_gtest(unittest)
