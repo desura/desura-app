@@ -480,7 +480,7 @@ void UMcf::setRegValues(const char* szInstallPath)
 		szInstallPath = exePath;
 	}
 
-	if (m_sHeader)
+	if (m_sHeader && m_sHeader->getId())
 	{
 		char appid[100];
 		char build[100];
