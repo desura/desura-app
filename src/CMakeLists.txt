@@ -128,6 +128,11 @@ option(BUILD_TOOLS "Build various Desura tools." ON)
 
 if(BUILD_TOOLS)
   add_subdirectory(tools/mcf_util)
+  
+  if(WIN32)
+    add_subdirectory(tools/java_launcher)
+  endif()
+  
 endif()
 
 ###############################################################################
