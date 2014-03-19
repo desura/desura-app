@@ -475,7 +475,7 @@ public:
 		SetExitOnFrameDelete(true);
 
 #ifdef WIN32
-		if (UTIL::WIN::getOSId() == WINDOWS_7)
+		if (UTIL::WIN::getOSId() >= WINDOWS_7)
 		{
 			m_wmTBC = RegisterWindowMessage(L"TaskbarButtonCreated");
 			wxWindow::MSWRegisterMessageHandler(m_wmTBC, &HandleTaskBarMsg);
@@ -532,7 +532,7 @@ public:
 #ifdef WIN32
 		safe_delete(m_pServer);
 
-		if (UTIL::WIN::getOSId() == WINDOWS_7)
+		if (UTIL::WIN::getOSId() >= WINDOWS_7)
 		{
 			wxWindow::MSWUnregisterMessageHandler(m_wmTBC, &HandleTaskBarMsg);
 
