@@ -61,15 +61,34 @@ unsigned int GetOSId()
 
 	if ( VER_PLATFORM_WIN32_NT==osvi.dwPlatformId && osvi.dwMajorVersion > 4 )
 	{
-		if ( osvi.dwMajorVersion == 6 && osvi.dwMinorVersion == 1 )
+		if (osvi.dwMajorVersion == 6 && osvi.dwMinorVersion == 3)
+		{
+			if (osvi.wProductType == VER_NT_WORKSTATION)
+				ver = WINDOWS_81;
+			else
+				ver = WINDOWS_SERVER2012R2;
+		}
+		else if (osvi.dwMajorVersion == 6 && osvi.dwMinorVersion == 2)
+		{
+			if (osvi.wProductType == VER_NT_WORKSTATION)
+				ver = WINDOWS_8;
+			else
+				ver = WINDOWS_SERVER2012;
+		}
+		else if (osvi.dwMajorVersion == 6 && osvi.dwMinorVersion == 1)
+		{
+			if (osvi.wProductType == VER_NT_WORKSTATION)
+				ver = WINDOWS_7;
+			else
+				ver = WINDOWS_SERVER2008;
+		}
+		else if(osvi.dwMajorVersion == 6 && osvi.dwMinorVersion == 1)
 		{
 			if( osvi.wProductType == VER_NT_WORKSTATION )
 				ver = WINDOWS_7;
 			else 
 				ver = WINDOWS_SERVER2008;
 		}
-
-		// Test for the specific product.
 		if ( osvi.dwMajorVersion == 6 && osvi.dwMinorVersion == 0 )
 		{
 			if( osvi.wProductType == VER_NT_WORKSTATION )
