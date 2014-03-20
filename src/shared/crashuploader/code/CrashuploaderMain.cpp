@@ -203,6 +203,8 @@ bool CompressFile(gcString &filePath)
 
 #include "Tracer.h"
 
+#ifdef WIN32
+
 void DumpTracerToFile(const std::string &szTracer, std::function<void(const char*, uint32)> &fh)
 {
 	if (!fh)
@@ -274,6 +276,13 @@ void DumpTracerToFile(const std::string &szTracer, std::function<void(const char
 	CloseHandle(hMappedFile);
 }
 
+#else
+void DumpTracerToFile(const std::string &szTracer, std::function<void(const char*, uint32)> &fh)
+{
+
+}
+#endif
+
 bool PrepDumpForUpload(gcString &dumpFile)
 {
 	UTIL::FS::Path path(dumpFile, "", true);
@@ -332,15 +341,23 @@ bool UploadDump(const char* file, const char* user, int build, int branch, Deleg
 	{
 		try
 		{
+			auto valid = false;
 			log = dump + ".log";
-			UTIL::FS::FileHandle fh(log.c_str(), UTIL::FS::FILE_WRITE);
+			UTIL::FS::FileHandle fh;
 
-			std::function<void(const char*, uint32)> write = [&fh](const char* szData, uint32 nSize)
+			std::function<void(const char*, uint32)> write = [&fh, &valid, log](const char* szData, uint32 nSize)
 			{
+				if (!valid)
+					fh.open(log.c_str(), UTIL::FS::FILE_WRITE);
+
+				valid = true;
 				fh.write(szData, nSize);
 			};
 
 			DumpTracerToFile(tracer, write);
+
+			if (!valid)
+				log = "";
 		}
 		catch (...)
 		{
