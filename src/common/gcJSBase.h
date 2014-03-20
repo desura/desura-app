@@ -165,6 +165,13 @@ inline void FromJSObject(JSObjHandle& ret, JSObjHandle& arg)
 	ret = arg;
 }
 
+template <typename T>
+void FormJSObject(T &t, JSObjHandle& arg)
+{
+	//Should not get here
+	assert(false);
+}
+
 JSObjHandle ToJSObject(ChromiumDLL::JavaScriptFactoryI* factory, const MapElementI* map);
 JSObjHandle ToJSObject(ChromiumDLL::JavaScriptFactoryI* factory, const void* object);
 JSObjHandle ToJSObject(ChromiumDLL::JavaScriptFactoryI* factory, const int32 intVal);
@@ -190,20 +197,8 @@ JSObjHandle ToJSObject(ChromiumDLL::JavaScriptFactoryI* factory, const std::vect
 	return arr;
 }
 
-template <typename T>
-void setDefaultValue(T* &t)
-{
-	t = nullptr;
-}
-
-template <typename T>
-void setDefaultValue(T& t)
-{
-}
 
 #include <type_traits>
-
-
 
 template <typename T>
 typename std::enable_if<std::is_pointer<T>::value, T>::type getUserObject(ChromiumDLL::JavaScriptObjectI* pObj)
