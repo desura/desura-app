@@ -49,6 +49,16 @@ std::string TraceClassInfo(T *pClass)
 	return "";
 }
 
+template<typename CT>
+void PrintToStream(const DesuraId& t, std::basic_stringstream<CT> &oss)
+{
+	oss << t.toInt64();
+}
+
+
+
+#ifdef WITH_TRACING
+
 template <typename ... Args>
 void TraceS(const char* szFunction, const char* szClassInfo, const char* szFormat, Args ... args)
 {
@@ -90,12 +100,6 @@ void WarningT(const char* szFunction, T *pClass, const char* szFormat, Args ... 
 	TraceS(szFunction, ci.c_str(), msg.c_str());
 }
 
-template<typename CT>
-void PrintToStream(const DesuraId& t, std::basic_stringstream<CT> &oss)
-{
-	oss << t.toInt64();
-}
-
 namespace
 {
 	class FakeTracerClass
@@ -105,12 +109,33 @@ namespace
 
 #define Msg( ... ) LogMsg(MT_MSG, gcString(__VA_ARGS__))
 #define Debug( ... ) LogMsg(MT_DEBUG, gcString(__VA_ARGS__))
-
 #define Warning( ... ) WarningT(__FUNCTION__, this, __VA_ARGS__)
 #define WarningS( ... ) WarningT(__FUNCTION__, (FakeTracerClass*)nullptr, __VA_ARGS__)
-
 #define gcTrace( ... ) TraceT(__FUNCTION__, this, __VA_ARGS__)
 #define gcTraceS( ... ) TraceT(__FUNCTION__, (FakeTracerClass*)nullptr, __VA_ARGS__)
+
+
+#else
+
+template <typename ... Args>
+void TraceS(const char* szFunction, const char* szClassInfo, const char* szFormat, Args ... args)
+{
+}
+
+template <typename T, typename ... Args>
+void TraceT(const char* szFunction, T *pClass, const char* szFormat, Args ... args)
+{
+}
+
+#define Msg( ... ) LogMsg(MT_MSG, gcString(__VA_ARGS__))
+#define Debug( ... ) LogMsg(MT_DEBUG, gcString(__VA_ARGS__))
+#define Warning( ... ) LogMsg(MT_WARN, gcString(__VA_ARGS__))
+#define WarningS( ... ) LogMsg(MT_WARN, gcString(__VA_ARGS__))
+#define gcTrace( ... ) {}
+#define gcTraceS( ... ) {}
+
+#endif
+
 
 
 #ifdef WIN32

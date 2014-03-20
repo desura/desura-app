@@ -57,6 +57,11 @@ if(NOT BUILD_ONLY_CEF)
   ###############################################################################
 
   option(WITH_FLASH "enable flash support" ON)
+  if (WIN32)
+    option(WITH_TRACING "enable tracing output" ON)
+  else()
+    option(WITH_TRACING "enable tracing output" OFF)
+  endif()
 endif()
 
 ###############################################################################

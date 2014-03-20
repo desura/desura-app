@@ -45,6 +45,9 @@ typedef struct
 
 #pragma pack(pop)
 
+
+#ifdef WIN32
+
 class TracerStorage : public TracerI
 {
 public:
@@ -66,14 +69,26 @@ private:
 	const uint16 m_nNumSegments = 4096;
 	const uint16 m_nSegmentSize = 512;
 
-	volatile uint32* m_nCurLock;
+	volatile uint32* m_nCurLock = nullptr;
 
 	HANDLE m_hMappedFile = INVALID_HANDLE_VALUE;
 	char* m_szMappedMemory = nullptr;
 
 	TracerHeader_s* m_pHeader = nullptr;
-	const wchar_t* m_szSharedMemName;
+	const wchar_t* m_szSharedMemName = nullptr;
 };
+
+#else
+
+class TracerStorage : public TracerI
+{
+public:
+	void trace(const std::string &strTrace, std::map<std::string, std::string> *mpArgs) override
+	{
+	}
+};
+
+#endif
 
 extern TracerStorage g_Tracer;
 

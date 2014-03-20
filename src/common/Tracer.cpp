@@ -28,16 +28,19 @@ $/LicenseInfo$
 #else
 #include "Common.h"
 #endif
-#include <windows.h>
+
 #include "Tracer.h"
 
 TracerStorage g_Tracer;
 
+#ifdef WIN32
+#include <windows.h>
 
 
 TracerStorage::TracerStorage(const wchar_t* szSharedMemName)
 	: m_szSharedMemName(szSharedMemName)
 {
+#ifdef WITH_TRACING
 	uint32 nSize = getTotalSize() + 12;
 
 	m_hMappedFile = CreateFileMappingW(INVALID_HANDLE_VALUE, NULL, PAGE_READWRITE|SEC_COMMIT, 0, nSize, getSharedMemName());
@@ -56,11 +59,11 @@ TracerStorage::TracerStorage(const wchar_t* szSharedMemName)
 
 	for (uint32 x = 0; x < nSize; x += m_nSegmentSize)
 		(m_szMappedMemory + x)[0] = 0;
+#endif
 }
 
 TracerStorage::~TracerStorage()
 {
-
 	if (m_pHeader)
 		UnmapViewOfFile(m_pHeader);
 
@@ -69,7 +72,7 @@ TracerStorage::~TracerStorage()
 
 void TracerStorage::trace(const std::string &strTrace, std::map<std::string, std::string> *pmArgs)
 {
-	if (!m_szMappedMemory)
+	if (!m_szMappedMemory || !m_nCurLock)
 		return;
 
 	std::string strFormated = formatTrace(strTrace, pmArgs);
@@ -84,6 +87,8 @@ void TracerStorage::trace(const std::string &strTrace, std::map<std::string, std
 
 const wchar_t* TracerStorage::getSharedMemName()
 {
+#ifdef WITH_TRACING
+
 	if (m_szSharedMemName)
 		return m_szSharedMemName;
 
@@ -91,6 +96,10 @@ const wchar_t* TracerStorage::getSharedMemName()
 	return L"DESURA_CLIENT_TRACER_OUTPUT";
 #else
 	return L"DESURA_SERVER_TRACER_OUTPUT";
+#endif
+
+#else
+	return nullptr;
 #endif
 }
 
@@ -144,3 +153,6 @@ std::string TracerStorage::cleanUpString(const std::string &string)
 
 	return out;
 }
+
+
+#endif
