@@ -310,7 +310,7 @@ namespace UnitTest
 		{
 			auto res = pm.getUrl(1);
 
-			ASSERT_TRUE(res.get());
+			ASSERT_TRUE(!!res.get());
 			ASSERT_STREQ("a1", res->getName());
 		}
 
@@ -318,7 +318,7 @@ namespace UnitTest
 		{
 			auto res = pm.getUrl(1);
 
-			ASSERT_TRUE(res.get());
+			ASSERT_TRUE(!!res.get());
 			ASSERT_STREQ("a1", res->getName());
 		}
 	}
@@ -336,14 +336,14 @@ namespace UnitTest
 		{
 			auto res = pm.getUrl(1);
 
-			ASSERT_TRUE(res.get());
+			ASSERT_TRUE(!!res.get());
 			ASSERT_STREQ("a1", res->getName());
 		}
 
 		{
 			auto res = pm.getUrl(2);
 
-			ASSERT_TRUE(res.get());
+			ASSERT_TRUE(!!res.get());
 			ASSERT_STREQ("b1", res->getName());
 		}
 	}
@@ -360,21 +360,21 @@ namespace UnitTest
 		{
 			auto res = pm.getUrl(1);
 
-			ASSERT_TRUE(res.get());
+			ASSERT_TRUE(!!res.get());
 			ASSERT_STREQ("a1", res->getName());
 		}
 
 		{
 			auto res = pm.requestNewUrl(1, 1, "error");
 
-			ASSERT_TRUE(res.get());
+			ASSERT_TRUE(!!res.get());
 			ASSERT_STREQ("b1", res->getName());
 		}
 
 		{
 			auto res = pm.getUrl(1);
 
-			ASSERT_TRUE(res.get());
+			ASSERT_TRUE(!!res.get());
 			ASSERT_STREQ("b1", res->getName());
 		}
 	}
@@ -398,7 +398,7 @@ namespace UnitTest
 		{
 			auto res = pm.getUrl(1);
 
-			ASSERT_TRUE(res.get());
+			ASSERT_TRUE(!!res.get());
 			ASSERT_STREQ("a1", res->getName());
 		}
 
@@ -408,7 +408,7 @@ namespace UnitTest
 		{
 			auto res = pm.getUrl(1);
 
-			ASSERT_TRUE(res.get());
+			ASSERT_TRUE(!!res.get());
 			ASSERT_STREQ("b1", res->getName());
 		}
 	}
@@ -430,7 +430,7 @@ namespace UnitTest
 		{
 			auto res = pm.getUrl(1);
 
-			ASSERT_TRUE(res.get());
+			ASSERT_TRUE(!!res.get());
 			ASSERT_STREQ("a1", res->getName());
 		}
 
@@ -443,7 +443,7 @@ namespace UnitTest
 		{
 			auto res = pm.getUrl(1);
 
-			ASSERT_TRUE(res.get());
+			ASSERT_TRUE(!!res.get());
 			ASSERT_STREQ("b1", res->getName());
 		}
 	}

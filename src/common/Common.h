@@ -43,6 +43,10 @@ inline void DoAssert(const char* szExp, const char* szFile, int nLine)
 	PAUSE_DEBUGGER();
 }
 
+#ifdef assert
+#undef assert
+#endif
+
 #ifdef DEBUG
 	#define assert( X )				\
 		do							\
