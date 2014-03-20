@@ -208,7 +208,8 @@ void setDefaultValue(T& t)
 template <typename T>
 typename std::enable_if<std::is_pointer<T>::value, T>::type getUserObject(ChromiumDLL::JavaScriptObjectI* pObj)
 {
-	return pObj->getUserObject<std::remove_pointer<T>::type>();
+	typedef typename std::remove_pointer<T>::type X;
+	return pObj->getUserObject<X>();
 }
 
 template <typename T>
