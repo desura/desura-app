@@ -23,7 +23,9 @@ $/LicenseInfo$
 
 #include "Common.h"
 #include "IPCClass.h"
+#include "IPCParameterI.h"
 
+using namespace IPC;
 
 class IPCFixture : public ::testing::Test
 {
@@ -122,8 +124,6 @@ public:
 	bool m_bNormFunctOne = false;
 	bool m_bNormFunctTwo = false;
 };
-
-using namespace IPC;
 
 TEST_F(IPCFixture, voidFunct)
 {
