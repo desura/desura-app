@@ -425,11 +425,12 @@ bool UploadDump(const char* file, const char* user, int build, int branch, Deleg
 
 #ifdef WITH_GTEST
 #include <gtest/gtest.h>
+
 #include "Tracer.cpp"
 
 namespace UnitTest
 {
-#ifdef WITH_TRACER
+#ifdef WITH_TRACING
 
 	TEST(DumpTracerToFile, check)
 	{

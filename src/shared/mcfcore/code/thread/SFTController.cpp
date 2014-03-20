@@ -314,6 +314,8 @@ void SFTController::pokeThread()
 
 std::shared_ptr<MCFCore::MCFFile> SFTController::newTask(uint32 id)
 {
+	gcTrace("Id: {0}", id);
+
 	SFTWorkerInfo* worker = findWorker(id);
 	assert(worker);
 
@@ -354,6 +356,8 @@ std::shared_ptr<MCFCore::MCFFile> SFTController::newTask(uint32 id)
 
 void SFTController::endTask(uint32 id, uint32 status, gcException e)
 {
+	gcTrace("Id: {0}, Status: {1}", id, status);
+
 	SFTWorkerInfo* worker = findWorker(id);
 	assert(worker);
 
@@ -406,6 +410,8 @@ SFTWorkerInfo* SFTController::findWorker(uint32 id)
 
 void SFTController::reportError(uint32 id, gcException &e)
 {
+	gcTrace("Id: {0}, E: {1}", id, e);
+
 #ifdef WIN32
 	SFTWorkerInfo* worker = findWorker(id);
 	assert(worker);

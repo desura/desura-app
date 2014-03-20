@@ -141,36 +141,43 @@ bool MCF::isPaused()
 
 void MCF::pause()
 {
-	m_mThreadMutex.lock();
+	std::lock_guard<std::mutex> guard(m_mThreadMutex);
+
+	if (!m_bPaused)
+		return;
+
+	gcTrace("");
 
 	if (m_pTHandle)
 		m_pTHandle->pause();
-
-	m_mThreadMutex.unlock();
 
 	m_bPaused = true;
 }
 
 void MCF::unpause()
 {
-	m_mThreadMutex.lock();
+	std::lock_guard<std::mutex> guard(m_mThreadMutex);
+
+	if (m_bPaused)
+		return;
+
+	gcTrace("");
 
 	if (m_pTHandle)
 		m_pTHandle->unpause();
-
-	m_mThreadMutex.unlock();
 
 	m_bPaused = false;
 }
 
 void MCF::stop()
 {
+	std::lock_guard<std::mutex> guard(m_mThreadMutex);
+
 	if (m_bStopped)
 		return;
 
+	gcTrace("");
 	m_bStopped = true;
-
-	std::lock_guard<std::mutex> guard(m_mThreadMutex);
 
 	if (m_pTHandle && !m_pTHandle->isStopped())
 		m_pTHandle->stop();
@@ -306,56 +313,14 @@ void MCF::genXml(XMLSaveAndCompress *sac)
 
 uint32 MCF::findFileIndexByHash(uint64 hash)
 {
-	if (m_pFileList.size() == 0)
+	auto it = std::find_if(begin(m_pFileList), end(m_pFileList), [hash](const std::shared_ptr<MCFCore::MCFFile>& file){
+		return file->getHash() == hash;
+	});
+
+	if (it == end(m_pFileList))
 		return UNKNOWN_ITEM;
 
-	uint32 size = (uint32)m_pFileList.size();
-	uint32 index = binarySearch(hash, 0, size-1);
-
-	if (index != UNKNOWN_ITEM)
-		return index;
-
-	return UNKNOWN_ITEM;
-}
-
-
-uint32 MCF::binarySearch(uint64 hash, uint32 f, uint32 l)
-{
-	if (l == 0 && f == 0 && m_pFileList[0]->getHash() == hash)
-		return 0;
-
-	if (l==f)
-		return MCF_NOINDEX;
-
-	uint32 midIndex = (l-f)/2;
-
-	if (midIndex == 0)
-	{
-		if (m_pFileList[f]->getHash() == hash)
-			return f;
-		else if (m_pFileList[l]->getHash() == hash)
-			return l;
-		else
-			return MCF_NOINDEX;
-	}
-
-
-	midIndex += f;
-
-	uint64 midHash = m_pFileList[midIndex]->getHash();
-
-	if (midHash == hash)
-	{
-		return midIndex;
-	}
-	else if (hash > midHash )
-	{
-		return binarySearch(hash, midIndex, l);
-	}
-	else
-	{
-		return binarySearch(hash, f, midIndex);
-	}
+	return std::distance(begin(m_pFileList), it);
 }
 
 void MCF::printAll()
@@ -373,6 +338,8 @@ void MCF::printAll()
 
 bool MCF::verifyMCF()
 {
+	gcTrace("");
+
 	if (m_sHeader)
 		m_sHeader->addFlags(MCFCore::MCFHeaderI::FLAG_NONVERIFYED);
 
@@ -422,6 +389,8 @@ bool MCF::verifyMCF()
 
 bool MCF::verifyInstall(const char* path, bool flagMissing, bool useDiffs)
 {
+	gcTrace("Path: {0}", path);
+
 	if (!path)
 		throw gcException(ERR_BADPATH);
 
@@ -484,6 +453,8 @@ bool MCF::verifyInstall(const char* path, bool flagMissing, bool useDiffs)
 //cant stop remove files :P
 void MCF::removeFiles(const char* szPath, bool removeNonSave)
 {
+	gcTrace("Path: {0}", szPath);
+
 	if (!szPath)
 		throw gcException(ERR_BADPATH);
 
@@ -678,6 +649,8 @@ void MCF::makeCRC()
 
 int32 MCF::verifyAll(const char* tempPath)
 {
+	gcTrace("Path: {0}", tempPath);
+
 	if (!tempPath)
 	{
 		printf("Temp path is null.\n");

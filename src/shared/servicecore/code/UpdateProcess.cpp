@@ -85,6 +85,8 @@ void GCUpdateProcess::run()
 
 void GCUpdateProcess::install()
 {
+	gcTrace("");
+
 	if (m_szIPath == L"" || m_szMCFPath == L"")
 		throw gcException(ERR_BADPATH,"One of the paths for install was nullptr.");
 

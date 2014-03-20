@@ -82,7 +82,7 @@ bool FileExists(const wchar_t* fileName)
 extern FILE* g_pUpdateLog;
 #endif
 
-int IsServiceInstalled()
+static int GetServiceStatus()
 {
 	uint32 sres = UTIL::WIN::queryService(SERVICE_NAME);
 
@@ -137,11 +137,19 @@ int IsServiceInstalled()
 	return UPDATE_NONE;
 }
 
+int IsServiceInstalled()
+{
+	auto res = GetServiceStatus();
+	gcTraceS("Status: {0}", res);
+	return res;
+}
+
 int NeedUpdate()
 {
 #ifdef DESURA_OFFICIAL_BUILD
 	int res = NeedUpdateNonGpl();
-	
+	gcTraceS("Status: {0}", res);
+
 	if (res != UPDATE_NONE)
 		return res;
 #endif
@@ -158,6 +166,7 @@ void SetRegValues()
 void InstallService()
 {
 	unsigned int res = UTIL::WIN::queryService(SERVICE_NAME);
+	gcTraceS("Status: {0}", res);
 
 	char servicePath[255];
 
@@ -227,6 +236,8 @@ public:
 
 bool ServiceUpdate(bool validService)
 {
+	gcTraceS("Valid: {0}", validService);
+
 	if (validService)
 	{
 		ServiceInstaller si;
@@ -290,6 +301,8 @@ public:
 
 bool MoveDataFolder()
 {
+	gcTraceS("");
+
 	DataMover dm;
 
 	if (dm.run() != 0)
@@ -300,6 +313,8 @@ bool MoveDataFolder()
 
 bool FixServiceDisabled()
 {
+	gcTraceS("");
+
 	try
 	{
 		UTIL::WIN::enableService(SERVICE_NAME);

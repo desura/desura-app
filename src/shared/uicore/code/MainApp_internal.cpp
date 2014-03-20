@@ -60,12 +60,16 @@ CONCOMMAND(shownews, "shownews")
 
 void MainApp::handleInternalLink(const char* link)
 {
+	gcTrace("Link: {0}", link);
+
 	gcString strLink(link);
 	onInternalLinkStrEvent(strLink);
 }
 
 void MainApp::handleInternalLink(DesuraId id, uint8 action, std::vector<std::string> args)
 {
+	gcTrace("Id: {0}, Action: {1}", id, action);
+
 	InternalLinkInfo ili;
 
 	ili.action = action;
@@ -224,26 +228,16 @@ void MainApp::showNews()
 		return;
 	}
 
-	// std::vector<T> initialized empty
-	std::vector<UserCore::Misc::NewsItem*> news_items_vec;
+	std::vector<std::shared_ptr<UserCore::Misc::NewsItem>> news_items_vec;
+	std::lock_guard<std::mutex> guard(m_NewsLock);
 
-	m_NewsLock.lock();
-
-	if ( gc_enable_news_popups.getBool())
-	{
-		// popups allowed so point to list of news items
+	if (gc_enable_news_popups.getBool())
 		news_items_vec = m_vNewsItems;
-	}
 
 	m_pInternalLink->showNews(news_items_vec, m_vGiftItems);
 
-	safe_delete(m_vNewsItems);
-	m_vNewsItems.resize(0);
-
-	safe_delete(m_vGiftItems);
-	m_vGiftItems.resize(0);
-
-	m_NewsLock.unlock();
+	m_vNewsItems.clear();
+	m_vGiftItems.clear();
 }
 
 void MainApp::changeAccountState(DesuraId id)

@@ -36,7 +36,7 @@ class TaskI
 {
 public:
 	virtual void doTask()=0;
-	virtual void destroy()=0;
+	virtual ~TaskI(){}
 };
 
 class ServiceMainThread : public ::Thread::BaseThread
@@ -48,12 +48,14 @@ public:
 	void addTask(TaskI* task);
 
 protected:
-	void run();
-	void onStop();
+	void run() override;
+	void onStop() override;
+
+	std::shared_ptr<TaskI> popTask();
 
 private:
 	std::mutex m_vLock;
-	std::deque<TaskI*> m_vJobList;
+	std::deque<std::shared_ptr<TaskI>> m_vJobList;
 
 	::Thread::WaitCondition m_WaitCond;
 };

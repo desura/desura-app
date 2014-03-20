@@ -27,21 +27,15 @@ $/LicenseInfo$
 #include "ServiceMainThread.h"
 
 
-ServiceMainThread::ServiceMainThread() : Thread::BaseThread("ServiceMain Worker")
+ServiceMainThread::ServiceMainThread() 
+	: Thread::BaseThread("ServiceMain Worker")
 {
 }
 
 ServiceMainThread::~ServiceMainThread()
 {
-	m_vLock.lock();
-
-	for (size_t x=0; x<m_vJobList.size(); x++)
-	{
-		m_vJobList[x]->destroy();
-	}
-
+	std::lock_guard<std::mutex> guard(m_vLock);
 	m_vJobList.clear();
-	m_vLock.unlock();
 }
 
 void ServiceMainThread::addTask(TaskI* task)
@@ -49,16 +43,16 @@ void ServiceMainThread::addTask(TaskI* task)
 	if (!task)
 		return;
 
+	gcTrace("");
+
 	if (isStopped())
 	{
-		task->destroy();
+		safe_delete(task);
 		return;
 	}
 
-	m_vLock.lock();
-	m_vJobList.push_back(task);
-	m_vLock.unlock();
-
+	std::lock_guard<std::mutex> guard(m_vLock);
+	m_vJobList.push_back(std::shared_ptr<TaskI>(task));
 	m_WaitCond.notify();
 }
 
@@ -67,28 +61,30 @@ void ServiceMainThread::run()
 {
 	while (!isStopped())
 	{
-		TaskI* task = nullptr;
-
-		m_vLock.lock();
-
-		if (m_vJobList.size() > 0)
-		{
-			task = m_vJobList.front();
-			m_vJobList.pop_front();
-		}
-
-		m_vLock.unlock();
+		std::shared_ptr<TaskI> task = popTask();
 
 		if (task)
 		{
+			TraceT("ServiceMainThread::doTask", this, "");
 			task->doTask();
-			task->destroy();
+			continue;
 		}
-		else
-		{
-			m_WaitCond.wait();
-		}
+
+		m_WaitCond.wait();
 	}
+}
+
+std::shared_ptr<TaskI> ServiceMainThread::popTask()
+{
+	std::lock_guard<std::mutex> guard(m_vLock);
+
+	if (m_vJobList.empty())
+		return std::shared_ptr<TaskI>();
+
+	auto task = m_vJobList.front();
+	m_vJobList.pop_front();
+
+	return task;
 }
 
 void ServiceMainThread::onStop()

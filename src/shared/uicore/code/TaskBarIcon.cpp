@@ -230,6 +230,8 @@ wxMenu* TaskBarIcon::CreatePopupMenu(bool bOffline)
 
 void TaskBarIcon::onMenuSelect(wxCommandEvent& event)
 {
+	gcTrace("Id: {0}", event.GetId());
+
 	if (event.GetId() == mcMENU_EXIT && m_wxParent)
 	{
 		m_wxParent->Close(true);

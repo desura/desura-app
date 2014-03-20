@@ -31,7 +31,9 @@ $/LicenseInfo$
 
 #include "Tracer.h"
 
-TracerStorage g_Tracer;
+#ifdef TRACER_SHARED_MEM_NAME
+TracerStorage g_Tracer(TRACER_SHARED_MEM_NAME);
+#endif
 
 #ifdef WIN32
 #include <windows.h>
@@ -88,16 +90,7 @@ void TracerStorage::trace(const std::string &strTrace, std::map<std::string, std
 const wchar_t* TracerStorage::getSharedMemName()
 {
 #ifdef WITH_TRACING
-
-	if (m_szSharedMemName)
-		return m_szSharedMemName;
-
-#ifdef DESURA_CLIENT
-	return L"DESURA_CLIENT_TRACER_OUTPUT";
-#else
-	return L"DESURA_SERVER_TRACER_OUTPUT";
-#endif
-
+	return m_szSharedMemName;
 #else
 	return nullptr;
 #endif

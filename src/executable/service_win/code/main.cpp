@@ -25,6 +25,7 @@ $/LicenseInfo$
 
 #include "Common.h"
 #include "serviceMain.h"
+#include "Tracer.h"
 
 void ServiceMain(int argc, char** argv);
 void ControlHandler(DWORD request);
@@ -38,7 +39,10 @@ class Color;
 
 void LogMsg(MSG_TYPE type, std::string msg, Color* col, std::map<std::string, std::string> *mpArgs)
 {
-	fprintf(stdout, "[LogMsg] %s\n", msg.c_str());
+	if (type == MT_TRACE)
+		g_Tracer.trace(msg, mpArgs);
+	else
+		fprintf(stdout, "[LogMsg] %s\n", msg.c_str());
 }
 
 
@@ -69,6 +73,8 @@ int main(int argc, char** argv)
 
 	if (GetFileAttributes("desura_service_debug.txt") != 0xFFFFFFFF)
 	{
+		gcTraceS("Waiting for debugger");
+
 		while (!IsDebuggerPresent())
 			gcSleep( 500 );
 	}

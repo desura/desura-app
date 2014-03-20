@@ -1380,7 +1380,7 @@ void InternalLink::showUpdateLogApp(uint32 version)
 
 
 
-void InternalLink::showNews(std::vector<UserCore::Misc::NewsItem*> &newsItems, std::vector<UserCore::Misc::NewsItem*> &giftItems)
+void InternalLink::showNews(const std::vector<std::shared_ptr<UserCore::Misc::NewsItem>> &newsItems, const std::vector<std::shared_ptr<UserCore::Misc::NewsItem>> &giftItems)
 {
 	if (newsItems.size() > 0)
 	{

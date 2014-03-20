@@ -186,6 +186,8 @@ void SMTController::postProcessing()
 	if (m_uiNumber == 1)
 		return;
 
+	gcTrace("");
+
 	UTIL::FS::FileHandle fhSource;
 	UTIL::FS::FileHandle fhSink;
 
@@ -253,6 +255,8 @@ void SMTController::postProcessing()
 
 void SMTController::fillFileList()
 {
+	gcTrace("");
+
 	uint64 sumSize = 0;
 
 	std::vector<tFile*> vList;
@@ -308,6 +312,8 @@ uint32 SMTController::getStatus(uint32 id)
 
 std::shared_ptr<MCFCore::MCFFile> SMTController::newTask(uint32 id)
 {
+	gcTrace("Id: {0}", id);
+
 	SMTWorkerInfo* worker = findWorker(id);
 	assert(worker);
 
@@ -347,6 +353,8 @@ std::shared_ptr<MCFCore::MCFFile> SMTController::newTask(uint32 id)
 
 void SMTController::endTask(uint32 id)
 {
+	gcTrace("Id: {0}", id);
+
 	SMTWorkerInfo* worker = findWorker(id);
 	assert(worker);
 
@@ -371,6 +379,8 @@ SMTWorkerInfo* SMTController::findWorker(uint32 id)
 
 void SMTController::reportError(uint32 id, gcException &e)
 {
+	gcTrace("Id: {0}, E: {1}", id, e);
+
 #ifdef WIN32
 	SMTWorkerInfo* worker = findWorker(id);
 	assert(worker);

@@ -42,78 +42,94 @@ $/LicenseInfo$
 
 #define MAX_FRAGMENT_SIZE (20*1024*1024)
 
-class OutBuffer : public MCFCore::Misc::OutBufferI
+namespace
 {
-public:
-	OutBuffer(uint32 size)
+	static int64 ConvertTimeStringToInt(std::string timeStr)
 	{
-		m_uiBuffSize = size;
-		m_szBuffer = new char[size];
-		m_uiTotalSize = 0;
+		size_t tPos = timeStr.find('T');
+
+		if (tPos != std::string::npos)
+			timeStr = timeStr.substr(0, tPos) + timeStr.substr(tPos + 1);
+
+		return Safe::atoll(timeStr.c_str());
 	}
 
-	~OutBuffer()
+	class OutBuffer : public MCFCore::Misc::OutBufferI
 	{
-		safe_delete(m_szBuffer);
-	}
+	public:
+		OutBuffer(uint32 size)
+		{
+			m_uiBuffSize = size;
+			m_szBuffer = new char[size];
+			m_uiTotalSize = 0;
+		}
 
-	OutBuffer& operator=(OutBuffer& o)
-	{
-		m_szBuffer = o.m_szBuffer;
-		o.m_szBuffer = nullptr;
+		~OutBuffer()
+		{
+			safe_delete(m_szBuffer);
+		}
 
-		m_uiBuffSize = o.m_uiBuffSize;
-		o.m_uiBuffSize = 0;
+		OutBuffer& operator=(OutBuffer& o)
+		{
+			m_szBuffer = o.m_szBuffer;
+			o.m_szBuffer = nullptr;
 
-		m_uiTotalSize = 0;
+			m_uiBuffSize = o.m_uiBuffSize;
+			o.m_uiBuffSize = 0;
 
-		return *this;
-	}
+			m_uiTotalSize = 0;
 
-	OutBuffer& operator=(uint32 size)
-	{
-		safe_delete(m_szBuffer);
-		m_uiBuffSize = size;
-		m_szBuffer = new char[size];
-		m_uiTotalSize = 0;
+			return *this;
+		}
 
-		return *this;
-	}
+		OutBuffer& operator=(uint32 size)
+		{
+			safe_delete(m_szBuffer);
+			m_uiBuffSize = size;
+			m_szBuffer = new char[size];
+			m_uiTotalSize = 0;
 
-	virtual bool writeData(char* data, uint32 size)
-	{
-		char* bstart = m_szBuffer + m_uiTotalSize;
-		size_t bsize = size;
+			return *this;
+		}
 
-		if (bsize > m_uiBuffSize-m_uiTotalSize)
-			bsize = m_uiBuffSize-m_uiTotalSize;
+		virtual bool writeData(char* data, uint32 size)
+		{
+			char* bstart = m_szBuffer + m_uiTotalSize;
+			size_t bsize = size;
 
-		if (bsize == 0)
+			if (bsize > m_uiBuffSize - m_uiTotalSize)
+				bsize = m_uiBuffSize - m_uiTotalSize;
+
+			if (bsize == 0)
+				return true;
+
+			memcpy(bstart, data, bsize);
+			m_uiTotalSize += bsize;
+
 			return true;
+		}
 
-		memcpy(bstart, data, bsize);
-		m_uiTotalSize += bsize;
+		virtual void reset()
+		{
+			m_uiTotalSize = 0;
+		}
 
-		return true;
-	}
-	
-	virtual void reset()
-	{
-		m_uiTotalSize = 0;
-	}
-
-	char* m_szBuffer;
-	uint32 m_uiBuffSize;
-	uint32 m_uiTotalSize;
-};
+		char* m_szBuffer;
+		uint32 m_uiBuffSize;
+		uint32 m_uiTotalSize;
+	};
+}
 
 
-namespace MCFCore
-{
+
+using namespace MCFCore;
+
 
 
 void MCF::dlHeaderFromWeb()
 {
+	gcTrace("");
+
 	if (m_bStopped)
 		return;
 
@@ -271,6 +287,8 @@ void MCF::doDlHeaderFromWeb(MCFCore::Misc::MCFServerCon &msc)
 
 void MCF::dlFilesFromWeb( )
 {
+	gcTrace("");
+
 	assert(!m_pTHandle);
 
 	if (m_bStopped)
@@ -340,16 +358,6 @@ void MCF::parseFolder(const char *path, bool hashFile, bool reportProgress)
 			}
 		}
 	}
-}
-
-static int64 ConvertTimeStringToInt(std::string timeStr)
-{
-	size_t tPos = timeStr.find('T');
-
-	if (tPos != std::string::npos)
-		timeStr = timeStr.substr(0, tPos) + timeStr.substr(tPos + 1);
-
-	return Safe::atoll(timeStr.c_str());
 }
 
 void MCF::parseFolder(const char *filePath, const char *oPath)
@@ -448,6 +456,8 @@ void MCF::parseFolder(const char *filePath, const char *oPath)
 
 void MCF::saveFiles(const char* path)
 {
+	gcTrace("Path: {0}", path);
+
 	assert(!m_pTHandle);
 
 	if (m_bStopped || !path)
@@ -526,7 +536,7 @@ void MCF::saveMCF_CandSFiles()
 
 void MCF::exportMcf(const char* path)
 {
-	printf("Exporting mcf!!\n");
+	gcTrace("Path: {0}", path);
 
 	if (m_bStopped)
 		return;
@@ -569,7 +579,7 @@ void MCF::exportMcf(const char* path)
 
 void MCF::optimiseAndSaveMcf(MCFI* prevMcf, const char* path)
 {
-	printf("Optimising mcf!!\n");
+	printf("Optimizing mcf!!\n");
 
 	if (m_bStopped)
 		return;
@@ -696,6 +706,7 @@ void MCF::saveMCFHeader()
 
 void MCF::preAllocateFile()
 {
+	gcTrace("");
 	uint64 offset = getDLSize() + m_sHeader->getSize();
 
 	UTIL::FS::recMakeFolder(UTIL::FS::PathWithFile(m_szFile));
@@ -776,6 +787,8 @@ void MCF::saveMCF_Header()
 
 void MCF::parseMCF()
 {
+	gcTrace("");
+
 	if (m_bStopped)
 		return;
 
@@ -879,9 +892,6 @@ bool MCF::fixMD5AndCRC()
 }
 
 
-}
-
-
 #ifdef WITH_GTEST
 
 #include <gtest/gtest.h>
@@ -890,13 +900,13 @@ namespace UnitTest
 {
 	TEST(MCFSave, TimeConversion_NoT)
 	{
-		int64 llTime = MCFCore::ConvertTimeStringToInt("20130910080654");
+		int64 llTime = ConvertTimeStringToInt("20130910080654");
 		ASSERT_EQ(20130910080654, llTime);
 	}
 
 	TEST(MCFSave, TimeConversion_WithT)
 	{
-		int64 llTime = MCFCore::ConvertTimeStringToInt("20130910T080654");
+		int64 llTime = ConvertTimeStringToInt("20130910T080654");
 		ASSERT_EQ(20130910080654, llTime);
 	}
 }

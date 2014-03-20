@@ -69,6 +69,8 @@ extern void cleanUpIPC();
 
 void UiCoreRestart(const char* args)
 {
+	gcTraceS("Args: {0}", args);
+
 	g_bRestart = true;
 
 	if (args)
@@ -147,6 +149,8 @@ void SetDumpLevel(unsigned char level)
 
 void CustomSigAbort(int nSig)
 {
+	gcTraceS("Sig: {0}", nSig);
+
 	assert(false);
 	throw std::exception("sig abort");
 }

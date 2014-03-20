@@ -46,6 +46,8 @@ typedef void (*DumpSettingsFP)(const wchar_t*, bool);
 typedef void (*DumpSettingsFP)(const char*, bool);
 #endif
 
+class TracerI;
+
 //! Interface to setup and start the ui part of desura
 class UICoreI
 {

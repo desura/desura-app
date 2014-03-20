@@ -16,6 +16,10 @@ target_link_libraries(desura_service
   wintrust
 )
 
+add_definitions(
+  -DTRACER_SHARED_MEM_NAME=L"DESURA_SERVER_TRACER_OUTPUT"
+)
+
 if(WIN32)
   SetStaticRuntime(desura_service)
 endif()

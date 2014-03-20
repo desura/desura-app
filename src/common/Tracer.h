@@ -51,7 +51,7 @@ typedef struct
 class TracerStorage : public TracerI
 {
 public:
-	TracerStorage(const wchar_t* szSharedMemName = nullptr);
+	TracerStorage(const wchar_t* szSharedMemName);
 	~TracerStorage();
 
 	void trace(const std::string &strTrace, std::map<std::string, std::string> *mpArgs) override;
@@ -83,6 +83,10 @@ private:
 class TracerStorage : public TracerI
 {
 public:
+	TracerStorage(const wchar_t* szSharedMemName)
+	{
+	}
+
 	void trace(const std::string &strTrace, std::map<std::string, std::string> *mpArgs) override
 	{
 	}

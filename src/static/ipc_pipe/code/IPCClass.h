@@ -458,7 +458,7 @@ private:
 
 
 
-//need to reg the event on the reciever end
+//need to reg the event on the receiver end
 #define REG_EVENT( event ) registerEvent( IPC::IPCEventHandle( &event ), #event );
 #define REG_EVENT_VOID( event ) registerEvent( new IPC::IPCEventV( &event ), #event );
 
@@ -647,7 +647,6 @@ public:
 
 
 
-
 template <typename R>
 R handleReturn(IPC::IPCParameterI* r)
 {
@@ -680,218 +679,34 @@ inline void handleReturnV(IPC::IPCParameterI* r)
 }
 
 
-template <typename R>
-R functionCall(IPC::IPCClass* c, const char* name)
+template <typename R, typename ... Args>
+R functionCall(IPC::IPCClass* cl, const char* name, Args& ... args)
 {
-	IPC::IPCParameterI* r = c->callFunction( name, false );
-	return handleReturn<R>(r);
-}
-
-template <typename R, typename A>
-R functionCall(IPC::IPCClass* cl, const char* name, A a)
-{
-	IPC::IPCParameterI* r = cl->callFunction( name, false, IPC::getParameter(a));
-	return handleReturn<R>(r);
-}
-
-template <typename R, typename A, typename B>
-R functionCall(IPC::IPCClass* cl, const char* name, A a, B b)
-{
-	IPC::IPCParameterI* r = cl->callFunction( name, false, IPC::getParameter(a), IPC::getParameter(b) );
-	return handleReturn<R>(r);
-}
-
-template <typename R, typename A, typename B, typename C>
-R functionCall(IPC::IPCClass* cl, const char* name, A a, B b, C c)
-{
-	IPC::IPCParameterI* r = cl->callFunction( name, false, IPC::getParameter(a), IPC::getParameter(b), IPC::getParameter(c) );
-	return handleReturn<R>(r);
-}
-
-template <typename R, typename A, typename B, typename C, typename D>
-R functionCall(IPC::IPCClass* cl, const char* name, A a, B b, C c, D d)
-{
-	IPC::IPCParameterI* r = cl->callFunction( name, false, IPC::getParameter(a), IPC::getParameter(b), IPC::getParameter(c), IPC::getParameter(d) );
-	return handleReturn<R>(r);
-}
-
-template <typename R, typename A, typename B, typename C, typename D, typename E>
-R functionCall(IPC::IPCClass* cl, const char* name, A a, B b, C c, D d, E e)
-{
-	IPC::IPCParameterI* r = cl->callFunction( name, false, IPC::getParameter(a), IPC::getParameter(b), IPC::getParameter(c), IPC::getParameter(d), IPC::getParameter(e) );
-	return handleReturn<R>(r);
-}
-
-template <typename R, typename A, typename B, typename C, typename D, typename E, typename F>
-R functionCall(IPC::IPCClass* cl, const char* name, A a, B b, C c, D d, E e, F f)
-{
-	IPC::IPCParameterI* r = cl->callFunction( name, false, IPC::getParameter(a), IPC::getParameter(b), IPC::getParameter(c), IPC::getParameter(d), IPC::getParameter(e), IPC::getParameter(f) );
+	IPC::IPCParameterI* r = cl->callFunction(name, false, IPC::getParameter(args)...);
 	return handleReturn<R>(r);
 }
 
 
-
-
-
-
-
-
-inline void functionCallV(IPC::IPCClass* cl, const char* name)
+template <typename ... Args>
+void functionCallV(IPC::IPCClass* cl, const char* name, Args& ... args)
 {
-	IPC::IPCParameterI* r = cl->callFunction( name, false );
+	IPC::IPCParameterI* r = cl->callFunction(name, false, IPC::getParameter(args)...);
 	handleReturnV(r);
 }
 
-template <typename A>
-void functionCallV(IPC::IPCClass* cl, const char* name, A a)
+template <typename ... Args>
+void functionCallAsync(IPC::IPCClass* cl, const char* name, Args&& ... args)
 {
-	IPC::IPCParameterI* r = cl->callFunction( name, false, IPC::getParameter(a));
+	IPC::IPCParameterI* r = cl->callFunction(name, true, IPC::getParameter(args)...);
 	handleReturnV(r);
 }
 
-template <typename A, typename B>
-void functionCallV(IPC::IPCClass* cl, const char* name, A a, B b)
+template <typename ... Args>
+void loopbackCallAsync(IPC::IPCClass* cl, const char* name, Args& ... args)
 {
-	IPC::IPCParameterI* r = cl->callFunction( name, false, IPC::getParameter(a), IPC::getParameter(b) );
+	IPC::IPCParameterI* r = cl->callLoopback(name, true, IPC::getParameter(args)...);
 	handleReturnV(r);
 }
-
-template <typename A, typename B, typename C>
-void functionCallV(IPC::IPCClass* cl, const char* name, A a, B b, C c)
-{
-	IPC::IPCParameterI* r = cl->callFunction( name, false, IPC::getParameter(a), IPC::getParameter(b), IPC::getParameter(c) );
-	handleReturnV(r);
-}
-
-template <typename A, typename B, typename C, typename D>
-void functionCallV(IPC::IPCClass* cl, const char* name, A a, B b, C c, D d)
-{
-	IPC::IPCParameterI* r = cl->callFunction( name, false, IPC::getParameter(a), IPC::getParameter(b), IPC::getParameter(c), IPC::getParameter(d) );
-	handleReturnV(r);
-}
-
-template <typename A, typename B, typename C, typename D, typename E>
-void functionCallV(IPC::IPCClass* cl, const char* name, A a, B b, C c, D d, E e)
-{
-	IPC::IPCParameterI* r = cl->callFunction( name, false, IPC::getParameter(a), IPC::getParameter(b), IPC::getParameter(c), IPC::getParameter(d), IPC::getParameter(e) );
-	handleReturnV(r);
-}
-
-template <typename A, typename B, typename C, typename D, typename E, typename F>
-void functionCallV(IPC::IPCClass* cl, const char* name, A a, B b, C c, D d, E e, F f)
-{
-	IPC::IPCParameterI* r = cl->callFunction( name, false, IPC::getParameter(a), IPC::getParameter(b), IPC::getParameter(c), IPC::getParameter(d), IPC::getParameter(e), IPC::getParameter(f) );
-	handleReturnV(r);
-}
-
-
-
-
-
-
-
-
-
-
-inline void functionCallAsync(IPC::IPCClass* cl, const char* name)
-{
-	IPC::IPCParameterI* r = cl->callFunction( name, true );
-	handleReturnV(r);
-}
-
-template <typename A>
-void functionCallAsync(IPC::IPCClass* cl, const char* name, A a)
-{
-	IPC::IPCParameterI* r = cl->callFunction( name, true, IPC::getParameter(a));
-	handleReturnV(r);
-}
-
-template <typename A, typename B>
-void functionCallAsync(IPC::IPCClass* cl, const char* name, A a, B b)
-{
-	IPC::IPCParameterI* r = cl->callFunction( name, true, IPC::getParameter(a), IPC::getParameter(b) );
-	handleReturnV(r);
-}
-
-template <typename A, typename B, typename C>
-void functionCallAsync(IPC::IPCClass* cl, const char* name, A a, B b, C c)
-{
-	IPC::IPCParameterI* r = cl->callFunction( name, true, IPC::getParameter(a), IPC::getParameter(b), IPC::getParameter(c) );
-	handleReturnV(r);
-}
-
-template <typename A, typename B, typename C, typename D>
-void functionCallAsync(IPC::IPCClass* cl, const char* name, A a, B b, C c, D d)
-{
-	IPC::IPCParameterI* r = cl->callFunction( name, true, IPC::getParameter(a), IPC::getParameter(b), IPC::getParameter(c), IPC::getParameter(d) );
-	handleReturnV(r);
-}
-
-template <typename A, typename B, typename C, typename D, typename E>
-void functionCallAsync(IPC::IPCClass* cl, const char* name, A a, B b, C c, D d, E e)
-{
-	IPC::IPCParameterI* r = cl->callFunction( name, true, IPC::getParameter(a), IPC::getParameter(b), IPC::getParameter(c), IPC::getParameter(d), IPC::getParameter(e) );
-	handleReturnV(r);
-}
-
-template <typename A, typename B, typename C, typename D, typename E, typename F>
-void functionCallAsync(IPC::IPCClass* cl, const char* name, A a, B b, C c, D d, E e, F f)
-{
-	IPC::IPCParameterI* r = cl->callFunction( name, true, IPC::getParameter(a), IPC::getParameter(b), IPC::getParameter(c), IPC::getParameter(d), IPC::getParameter(e), IPC::getParameter(f) );
-	handleReturnV(r);
-}
-
-
-
-
-inline void loopbackCallAsync(IPC::IPCClass* cl, const char* name)
-{
-	IPC::IPCParameterI* r = cl->callLoopback( name, true );
-	handleReturnV(r);
-}
-
-template <typename A>
-void loopbackCallAsync(IPC::IPCClass* cl, const char* name, A a)
-{
-	IPC::IPCParameterI* r = cl->callLoopback( name, true, IPC::getParameter(a));
-	handleReturnV(r);
-}
-
-template <typename A, typename B>
-void loopbackCallAsync(IPC::IPCClass* cl, const char* name, A a, B b)
-{
-	IPC::IPCParameterI* r = cl->callLoopback( name, true, IPC::getParameter(a), IPC::getParameter(b) );
-	handleReturnV(r);
-}
-
-template <typename A, typename B, typename C>
-void loopbackCallAsync(IPC::IPCClass* cl, const char* name, A a, B b, C c)
-{
-	IPC::IPCParameterI* r = cl->callLoopback( name, true, IPC::getParameter(a), IPC::getParameter(b), IPC::getParameter(c) );
-	handleReturnV(r);
-}
-
-template <typename A, typename B, typename C, typename D>
-void loopbackCallAsync(IPC::IPCClass* cl, const char* name, A a, B b, C c, D d)
-{
-	IPC::IPCParameterI* r = cl->callLoopback( name, true, IPC::getParameter(a), IPC::getParameter(b), IPC::getParameter(c), IPC::getParameter(d) );
-	handleReturnV(r);
-}
-
-template <typename A, typename B, typename C, typename D, typename E>
-void loopbackCallAsync(IPC::IPCClass* cl, const char* name, A a, B b, C c, D d, E e)
-{
-	IPC::IPCParameterI* r = cl->callLoopback( name, true, IPC::getParameter(a), IPC::getParameter(b), IPC::getParameter(c), IPC::getParameter(d), IPC::getParameter(e) );
-	handleReturnV(r);
-}
-
-template <typename A, typename B, typename C, typename D, typename E, typename F>
-void loopbackCallAsync(IPC::IPCClass* cl, const char* name, A a, B b, C c, D d, E e, F f)
-{
-	IPC::IPCParameterI* r = cl->callLoopback( name, true, IPC::getParameter(a), IPC::getParameter(b), IPC::getParameter(c), IPC::getParameter(d), IPC::getParameter(e), IPC::getParameter(f) );
-	handleReturnV(r);
-}
-
 
 
 }

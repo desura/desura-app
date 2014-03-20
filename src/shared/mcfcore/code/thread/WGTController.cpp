@@ -286,6 +286,7 @@ bool WGTController::checkBlock(Misc::WGTBlock *block, uint32 workerId)
 	if (!sizeFail && !crcFail)
 		return true;
 
+	gcTrace("Id: {0}", workerId);
 
 	reportNegProgress(workerId, block->dlsize);
 
@@ -578,6 +579,8 @@ bool WGTController::fillBlockList()
 
 bool WGTController::stealBlocks()
 {
+	gcTrace("");
+
 	WGTWorkerInfo* largestWorker = nullptr;
 	size_t largestCount = 0;
 
@@ -640,6 +643,8 @@ bool WGTController::stealBlocks()
 
 Misc::WGTSuperBlock* WGTController::newTask(uint32 id, uint32 &status)
 {
+	gcTrace("Id: {0}", id);
+
 	WGTWorkerInfo* worker = findWorker(id);
 	assert(worker);
 
@@ -685,6 +690,8 @@ Misc::WGTSuperBlock* WGTController::newTask(uint32 id, uint32 &status)
 
 void WGTController::workerFinishedSuperBlock(uint32 id)
 {
+	gcTrace("Id: {0}", id);
+
 	WGTWorkerInfo* worker = findWorker(id);
 	assert(worker);
 
@@ -756,6 +763,8 @@ uint32 WGTController::getStatus(uint32 id)
 
 void WGTController::reportError(uint32 id, gcException &e)
 {
+	gcTrace("Id: {0}, E: {1}", id, e);
+
 	WGTWorkerInfo* worker = findWorker(id);
 	assert(worker);
 

@@ -32,10 +32,10 @@ $/LicenseInfo$
 
 namespace UTIL
 {
-namespace MISC
-{
-unsigned long CRC32(const unsigned char byte, unsigned long dwCrc32);
-}
+	namespace MISC
+	{
+		unsigned long CRC32(const unsigned char byte, unsigned long dwCrc32);
+	}
 }
 
 class CRCInfo
@@ -78,8 +78,8 @@ private:
 	uint32 m_uiBlockSize;
 };
 
-namespace MCFCore
-{
+using namespace MCFCore;
+
 
 void MCF::resetSavedFiles()
 {
@@ -302,6 +302,8 @@ void MCF::copyMissingFiles(MCFI *sourceMcf)
 
 void MCF::makeFullFile(MCFI* patchFile, const char* path)
 {
+	gcTrace("Path: {0}", path);
+
 	if (m_bStopped)
 		return;
 
@@ -427,7 +429,7 @@ void MCF::makeBackPatchMCF(MCFI* backFile, const char* path)
 
 	FullFile.setHeader(temp->getHeader());
 
-	//allways start after the header.
+	//always start after the header.
 	uint64 lastOffset = FullFile.getHeader()->getSize();
 
 	UTIL::FS::FileHandle hFileSrc;
@@ -855,5 +857,3 @@ void MCF::extractFile(const char* mcfPath, std::shared_ptr<MCFFile>& file, UTIL:
 		throw gcException(ERR_HASHMISSMATCH, "The exstracted file hash didnt match what was expected");
 }
 
-
-}

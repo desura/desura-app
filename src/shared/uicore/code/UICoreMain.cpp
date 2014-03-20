@@ -494,7 +494,7 @@ public:
 
 		if (bLanguageTest)
 		{
-			ma->m_iMode = MODE_OFFLINE;
+			ma->m_iMode = APP_MODE::MODE_OFFLINE;
 			cc_languagetest();
 			return false;
 		}

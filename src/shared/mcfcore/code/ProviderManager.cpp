@@ -219,6 +219,8 @@ std::shared_ptr<const MCFCore::Misc::DownloadProvider> ProviderManager::requestN
 
 void ProviderManager::removeAgent(uint32 id, bool setTimeOut)
 {
+	gcTrace("TimeOut: {0}", setTimeOut);
+
 	std::shared_ptr<const MCFCore::Misc::DownloadProvider> pProvider;
 
 	{
