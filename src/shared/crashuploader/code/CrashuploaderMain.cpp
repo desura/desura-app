@@ -429,6 +429,8 @@ bool UploadDump(const char* file, const char* user, int build, int branch, Deleg
 
 namespace UnitTest
 {
+#ifdef WITH_TRACER
+
 	TEST(DumpTracerToFile, check)
 	{
 		static const std::vector<std::string> vExpectedOut =
@@ -507,6 +509,8 @@ namespace UnitTest
 			x++;
 		}
 	}
+
+#endif
 }
 
 #endif
