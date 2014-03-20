@@ -76,7 +76,8 @@ public:
 		m_bHasFailed = false;
 
 #ifdef NIX
-		m_hHandle = dlopen((UTIL::OS::getRuntimeLibPath() + convertToLinuxModule(module)).c_str(), RTLD_NOW);
+		gcString strModule(convertToLinuxModule(module));
+		m_hHandle = dlopen((UTIL::OS::getRuntimeLibPath() + strModule).c_str(), RTLD_NOW);
 
 		if (!m_hHandle)
 			fprintf(stderr, "%s:%d - Error loading library %s: '%s' [LD_LIBRARY_PATH=%s]\n", __FILE__, __LINE__, strModule, dlerror(), getenv("LD_LIBRARY_PATH"));
