@@ -46,9 +46,9 @@ class IPCManager;
 #define REG_FUNCTION_VOID( class, name ) registerFunction( networkFunctionV(this, &class##::##name,  #class "::" #name  ), #name );
 #define REG_FUNCTION( class, name ) registerFunction( networkFunction(this, &class##::##name,  #class "::" #name ), #name );
 #else
-#define REG_FUNCTION_VOID_T( class, name, trace ) registerFunction( networkFunctionV(this, &class::name, trace ), #name );
-#define REG_FUNCTION_VOID( class, name ) registerFunction( networkFunctionV(this, &class::name ), #name );
-#define REG_FUNCTION( class, name ) registerFunction( networkFunction(this, &class::name ), #name );
+#define REG_FUNCTION_VOID_T( class, name, trace ) registerFunction( networkFunctionV(this, &class::name,  #class "::" #name, trace ), #name );
+#define REG_FUNCTION_VOID( class, name ) registerFunction( networkFunctionV(this, &class::name,  #class "::" #name ), #name );
+#define REG_FUNCTION( class, name ) registerFunction( networkFunction(this, &class::name,  #class "::" #name ), #name );
 #endif
 
 char* serializeList(std::vector<IPCParameterI*> &list, uint32 &size);
