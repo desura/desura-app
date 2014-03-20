@@ -563,7 +563,7 @@ void MCFFile::verifyFile(bool useDiffs)
 	}
 }
 
-void MCFFile::verifyMcf(UTIL::FS::FileHandle& file, const volatile bool &stop)
+void MCFFile::verifyMcf(UTIL::FS::FileHandle& file, std::atomic<bool> &stop)
 {
 	file.seek(getOffSet());
 

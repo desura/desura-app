@@ -215,7 +215,7 @@ void MCF::copyMissingFiles(MCFI *sourceMcf)
 
 	size_t totalCount = vSame.size()*2;
 	size_t curCount = 0;
-	bool placeholder = false;
+	std::atomic<bool> placeholder;
 
 	for (size_t x=0; x<vSame.size(); x++)
 	{

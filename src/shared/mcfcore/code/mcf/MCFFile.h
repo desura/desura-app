@@ -32,7 +32,7 @@ $/LicenseInfo$
 #include "mcfcore/MCFFileI.h"
 
 #include <string.h>
-
+#include <atomic>
 
 namespace XML
 {
@@ -205,7 +205,7 @@ public:
 	//! @param stop Cancel the verify
 	//! @see verify()
 	//!
-	void verifyMcf(UTIL::FS::FileHandle& file, const volatile bool &stop);
+	void verifyMcf(UTIL::FS::FileHandle& file, std::atomic<bool> &stop);
 
 	//! Checks to see if this file is complete on the computer. Sets a flag if true
 	//!
