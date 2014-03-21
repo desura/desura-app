@@ -92,7 +92,8 @@ bool ComplexLaunchServiceTask::initService()
 	gcException eBadItem(ERR_BADITEM);
 	gcException eFailCrtInstSvc(ERR_NULLHANDLE, "Failed to create install mcf service!\n");
 	
-	UserCore::Item::ItemInfo *pItem = getItemInfo();
+	auto pItem = getItemInfo();
+
 	if (!pItem)
 	{
 		onErrorEvent(eBadItem);
@@ -106,7 +107,7 @@ bool ComplexLaunchServiceTask::initService()
 		return false;
 	}
 
-	pItem->setPercent(0);
+	pItem->getInternal()->setPercent(0);
 	pItem->delSFlag(UserCore::Item::ItemInfoI::STATUS_READY);
 	pItem->addSFlag(UserCore::Item::ItemInfoI::STATUS_INSTALLING);
 
@@ -124,7 +125,7 @@ bool ComplexLaunchServiceTask::initService()
 		}
 		else
 		{
-			UserCore::MCFManager *mm = UserCore::GetMCFManager();
+			UserCore::MCFManagerI *mm = getUserCore()->getInternal()->getMCFManager();
 			gcString backup = mm->getMcfBackup(pItem->getId(), pItem->getInstalledModId());
 
 			if (!m_bClean)
@@ -169,7 +170,7 @@ bool ComplexLaunchServiceTask::initService()
 	}
 	else
 	{
-		UserCore::Item::ItemInfo *pParentItem = getParentItemInfo();
+		auto pParentItem = getParentItemInfo();
 		gcException eParentNull(ERR_BADITEM, "Parent was nullptr");
 
 		if (!pParentItem)
@@ -200,7 +201,7 @@ bool ComplexLaunchServiceTask::install()
 {
 	m_iMode = BACKUP;
 
-	UserCore::MCFManager *mm = UserCore::GetMCFManager();
+	UserCore::MCFManagerI *mm = getUserCore()->getInternal()->getMCFManager();
 
 	gcString path = getFullMcf();
 
@@ -263,7 +264,7 @@ bool ComplexLaunchServiceTask::install()
 
 gcString ComplexLaunchServiceTask::getFullMcf()
 {
-	UserCore::MCFManager *mm = UserCore::GetMCFManager();
+	UserCore::MCFManagerI *mm = getUserCore()->getInternal()->getMCFManager();
 	
 	gcString path = mm->getMcfPath(getItemInfo());
 
@@ -306,7 +307,7 @@ bool ComplexLaunchServiceTask::remove()
 	}
 
 	m_iMode = REMOVING;
-	UserCore::MCFManager *mm = UserCore::GetMCFManager();
+	UserCore::MCFManagerI *mm = getUserCore()->getInternal()->getMCFManager();
 
 	MCFBuild build = item->getInstalledBuild();
 	MCFBranch branch = item->getCurrentBranch()->getBranchId();
@@ -383,11 +384,11 @@ void ComplexLaunchServiceTask::onTrueComplete()
 		verify = m_pIHH->verifyAfterHashFail();
 
 	if (verify)
-		getItemHandle()->goToStageVerify(getItemInfo()->getInstalledBranch(), getItemInfo()->getInstalledBuild(), true, true, true);
+		getItemHandle()->getInternal()->goToStageVerify(getItemInfo()->getInstalledBranch(), getItemInfo()->getInstalledBuild(), true, true, true);
 	else if (m_bCompleteStage)
-		getItemHandle()->completeStage(false);
+		getItemHandle()->getInternal()->completeStage(false);
 	else if (m_bLaunch)
-		getItemHandle()->goToStageLaunch();
+		getItemHandle()->getInternal()->goToStageLaunch();
 
 	uint32 com = m_bHashMissMatch?1:0;
 	onCompleteEvent(com);
@@ -400,7 +401,7 @@ void ComplexLaunchServiceTask::completeRemove()
 	if (!item)
 		return;
 
-	UserCore::MCFManager *mm = UserCore::GetMCFManager();
+	UserCore::MCFManagerI *mm = getUserCore()->getInternal()->getMCFManager();
 	mm->delMcfBackup(item->getParentId(), m_iRemoveId);
 
 	getUserCore()->getItemManager()->setInstalledMod(item->getParentId(), DesuraId());
@@ -408,7 +409,7 @@ void ComplexLaunchServiceTask::completeRemove()
 
 void ComplexLaunchServiceTask::completeInstall()
 {
-	UserCore::Item::ItemInfo *pItem = getItemInfo();
+	auto pItem = getItemInfo();
 
 	if (pItem->isUpdating() && getMcfBuild() == pItem->getNextUpdateBuild())
 		pItem->updated();
@@ -428,17 +429,17 @@ void ComplexLaunchServiceTask::onError(gcException &e)
 	}
 
 	Warning(gcString("Error in complex launch service: {0}\n", e));
-	getItemHandle()->setPausable(false);
+	getItemHandle()->getInternal()->setPausable(false);
 
 	if (!getItemHandle()->shouldPauseOnError())
 	{
 		getItemInfo()->delSFlag(UserCore::Item::ItemInfoI::STATUS_INSTALLING|UserCore::Item::ItemInfoI::STATUS_UPDATING|UserCore::Item::ItemInfoI::STATUS_DOWNLOADING);
-		getItemHandle()->resetStage(true);
+		getItemHandle()->getInternal()->resetStage(true);
 		onStop();
 	}
 	else
 	{
-		getItemHandle()->setPaused(true, true);
+		getItemHandle()->getInternal()->setPaused(true, true);
 	}
 
 	onErrorEvent(e);
@@ -492,7 +493,7 @@ void ComplexLaunchServiceTask::onProgress(MCFCore::Misc::ProgressInfo &p)
 	}
 
 	if (oFlag == 0)
-		getItemInfo()->setPercent(percent);
+		getItemInfo()->getInternal()->setPercent(percent);
 #ifdef WIN32
 	else
 		int a =1;

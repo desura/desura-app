@@ -30,40 +30,31 @@ $/LicenseInfo$
 
 
 
-namespace UserCore
-{
-namespace ItemTask
-{
+using namespace UserCore::ItemTask;
 
 
-DownloadToolTask::DownloadToolTask(UserCore::Item::ItemHandle* handle, uint32 ttid, const char* downloadPath, MCFBranch branch, MCFBuild build) : BaseItemTask(UserCore::Item::ITEM_STAGE::STAGE_DOWNLOADTOOL, "DownloadTool", handle, branch, build)
+DownloadToolTask::DownloadToolTask(UserCore::Item::ItemHandle* handle, uint32 ttid, const char* downloadPath, MCFBranch branch, MCFBuild build) 
+	: BaseItemTask(UserCore::Item::ITEM_STAGE::STAGE_DOWNLOADTOOL, "DownloadTool", handle, branch, build)
+	, m_szDownloadPath(downloadPath)
+	, m_ToolTTID(ttid)
 {
-	m_szDownloadPath = downloadPath;
-	m_ToolTTID = ttid;
-	m_bLaunch = false;
-	m_bInstallAfter = false;
-
-	m_bCancelled = false;
 }
 
-DownloadToolTask::DownloadToolTask(UserCore::Item::ItemHandle* handle, bool launch) : BaseItemTask(UserCore::Item::ITEM_STAGE::STAGE_DOWNLOADTOOL, "DownloadTool", handle, MCFBranch(), MCFBuild())
+DownloadToolTask::DownloadToolTask(UserCore::Item::ItemHandle* handle, bool launch, uint32 ttid) 
+	: BaseItemTask(UserCore::Item::ITEM_STAGE::STAGE_DOWNLOADTOOL, "DownloadTool", handle, MCFBranch(), MCFBuild())
+	, m_ToolTTID(ttid)
+	, m_bLaunch(launch)
 {
-	m_ToolTTID = UINT_MAX;
-	m_bLaunch = launch;
-	m_bInstallAfter = true;
-
-	m_bCancelled = false;
 }
 
 DownloadToolTask::~DownloadToolTask()
 {
-
 }
 
 void DownloadToolTask::doRun()
 {
 	uint32 per = 0;
-	getItemInfo()->setPercent(per);
+	getItemInfo()->getInternal()->setPercent(per);
 
 	if (m_ToolTTID == UINT_MAX)
 		validateTools();
@@ -148,7 +139,7 @@ void DownloadToolTask::onDLProgress(UserCore::Misc::ToolProgress &p)
 	m.percent = p.percent;
 
 	onMcfProgressEvent(m);
-	getItemInfo()->setPercent(p.percent);
+	getItemInfo()->getInternal()->setPercent(p.percent);
 }
 
 void DownloadToolTask::onDLError(gcException &e)
@@ -181,26 +172,22 @@ void DownloadToolTask::onComplete()
 
 	if (notComplete)
 	{
-		getItemHandle()->completeStage(true);
+		getItemHandle()->getInternal()->completeStage(true);
 		return;
 	}
 
 	uint32 blank = 0;
 	onCompleteEvent(blank);
 
-	if (m_bInstallAfter)
+	if (HasAllFlags(getItemInfo()->getStatus(), UserCore::Item::ItemInfoI::STATUS_READY | UserCore::Item::ItemInfoI::STATUS_INSTALLED))
 	{
-		getItemHandle()->goToStageInstallTools(m_bLaunch);
+		getItemHandle()->getInternal()->goToStageInstallTools(m_bLaunch);
 	}
 	else
 	{
 		if (HasAllFlags(getItemInfo()->getStatus(), UserCore::Item::ItemInfoI::STATUS_INSTALLCOMPLEX))
-			getItemHandle()->goToStageInstallComplex(getMcfBranch(), getMcfBuild());
+			getItemHandle()->getInternal()->goToStageInstallComplex(getMcfBranch(), getMcfBuild());
 		else
-			getItemHandle()->goToStageInstall(m_szDownloadPath.c_str(), getMcfBranch());
+			getItemHandle()->getInternal()->goToStageInstall(m_szDownloadPath.c_str(), getMcfBranch());
 	}
-}
-
-
-}
 }

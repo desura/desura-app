@@ -75,7 +75,7 @@ public:
 	void setWebCore(WebCore::WebCoreI *wc);
 	void setUserCore(UserCore::UserI *uc);
 
-	void setItemHandle(UserCore::Item::ItemHandle* handle);
+	void setItemHandle(UserCore::Item::ItemHandleI* handle);
 	void setMcfBuild(MCFBuild build);
 	void setMcfBranch(MCFBranch branch);
 
@@ -86,9 +86,9 @@ public:
 protected:
 	DesuraId getItemId();
 
-	UserCore::Item::ItemHandle* getItemHandle();
-	UserCore::Item::ItemInfo* getItemInfo();
-	UserCore::Item::ItemInfo* getParentItemInfo();
+	UserCore::Item::ItemHandleI* getItemHandle();
+	UserCore::Item::ItemInfoI* getItemInfo();
+	UserCore::Item::ItemInfoI* getParentItemInfo();
 
 	WebCore::WebCoreI* getWebCore();
 	UserCore::UserI* getUserCore();
@@ -108,7 +108,7 @@ protected:
 private:
 	volatile bool m_bIsStopped;
 
-	UserCore::Item::ItemHandle* m_pHandle;
+	UserCore::Item::ItemHandleI* m_pHandle;
 	WebCore::WebCoreI* m_pWebCore;
 	UserCore::UserI* m_pUserCore;
 

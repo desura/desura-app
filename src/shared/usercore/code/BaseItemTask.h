@@ -49,76 +49,74 @@ namespace UserCore
 		class ItemInfo;
 	}
 
-namespace ItemTask
-{
+	namespace ItemTask
+	{
+		class BaseItemTask
+		{
+		public:
+			BaseItemTask(UserCore::Item::ITEM_STAGE type, const char* name, UserCore::Item::ItemHandleI* handle, MCFBranch branch = MCFBranch(), MCFBuild build = MCFBuild());
+			virtual ~BaseItemTask();
 
-class BaseItemTask
-{
-public:
-	BaseItemTask(UserCore::Item::ITEM_STAGE type, const char* name, UserCore::Item::ItemHandle* handle, MCFBranch branch = MCFBranch(), MCFBuild build = MCFBuild());
-	virtual ~BaseItemTask();
+			void setWebCore(WebCore::WebCoreI *wc);
+			void setUserCore(UserCore::UserI *uc);
 
-	void setWebCore(WebCore::WebCoreI *wc);
-	void setUserCore(UserCore::UserI *uc);
+			virtual void onStop();
+			virtual void onPause();
+			virtual void onUnpause();
+			virtual void doTask();
 
-	virtual void onStop();
-	virtual void onPause();
-	virtual void onUnpause();
-	virtual void doTask();
+			virtual void cancel();
 
-	virtual void cancel();
+			Event<uint32> onCompleteEvent;
+			Event<uint32> onProgUpdateEvent;
+			Event<gcException> onErrorEvent;
+			Event<WCSpecialInfo> onNeedWCEvent;
 
-	Event<uint32> onCompleteEvent;
-	Event<uint32> onProgUpdateEvent;
-	Event<gcException> onErrorEvent;
-	Event<WCSpecialInfo> onNeedWCEvent;
+			//download mcf
+			Event<UserCore::Misc::GuiDownloadProvider> onNewProviderEvent;
+			Event<UserCore::Misc::VerifyComplete> onVerifyCompleteEvent;
+			Event<MCFCore::Misc::ProgressInfo> onMcfProgressEvent;
+			Event<gcString> onCompleteStrEvent;
 
-	//download mcf
-	Event<UserCore::Misc::GuiDownloadProvider> onNewProviderEvent;
-	Event<UserCore::Misc::VerifyComplete> onVerifyCompleteEvent;
-	Event<MCFCore::Misc::ProgressInfo> onMcfProgressEvent;
-	Event<gcString> onCompleteStrEvent;
+			const char* getTaskName();
+			UserCore::Item::ITEM_STAGE getTaskType();
 
-	const char* getTaskName();
-	UserCore::Item::ITEM_STAGE getTaskType();
+			UserCore::Item::ItemHandleI* getItemHandle();
 
-	UserCore::Item::ItemHandle* getItemHandle();
+		protected:
+			virtual void doRun()=0;
 
-protected:
-	virtual void doRun()=0;
+			UserCore::Item::ItemInfoI* getItemInfo();
+			UserCore::Item::ItemInfoI* getParentItemInfo();
 
-	UserCore::Item::ItemInfo* getItemInfo();
-	UserCore::Item::ItemInfo* getParentItemInfo();
+			DesuraId getItemId();
 
-	DesuraId getItemId();
+			WebCore::WebCoreI* getWebCore();
+			UserCore::UserI* getUserCore();
 
-	WebCore::WebCoreI* getWebCore();
-	UserCore::UserI* getUserCore();
+			MCFBuild getMcfBuild();
+			MCFBranch getMcfBranch();
 
-	MCFBuild getMcfBuild();
-	MCFBranch getMcfBranch();
+			bool isStopped();
+			bool isPaused();
 
-	bool isStopped();
-	bool isPaused();
+			McfHandle m_hMCFile;
 
-	McfHandle m_hMCFile;
+			MCFBranch m_uiMcfBranch;
+			MCFBuild m_uiMcfBuild;
 
-	MCFBranch m_uiMcfBranch;
-	MCFBuild m_uiMcfBuild;
+		private:
+			volatile bool m_bIsStopped = false;
+			volatile bool m_bIsPaused = false;
 
-private:
-	volatile bool m_bIsStopped;
-	volatile bool m_bIsPaused;
+			UserCore::Item::ItemHandleI* m_pHandle = nullptr;
+			WebCore::WebCoreI* m_pWebCore = nullptr;
+			UserCore::UserI* m_pUserCore = nullptr;
 
-	UserCore::Item::ItemHandle* m_pHandle;
-	WebCore::WebCoreI* m_pWebCore;
-	UserCore::UserI* m_pUserCore;
-
-	UserCore::Item::ITEM_STAGE m_uiType;
-	gcString m_szName;
-};
-
-}
+			UserCore::Item::ITEM_STAGE m_uiType;
+			gcString m_szName;
+		};
+	}
 }
 
 

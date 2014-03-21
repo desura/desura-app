@@ -110,7 +110,7 @@ User::~User()
 	m_pWebCore->destroy();
 	m_pWebCore = nullptr;
 
-	DelMCFManager();
+	delete m_pMcfManager;
 }
 
 void User::onLoginItemsLoaded()
@@ -154,7 +154,7 @@ void User::init(const char* appDataPath, const char* szProviderUrl)
 
 	m_szMcfCachePath = gcString(UTIL::OS::getMcfCachePath());
 
-	InitMCFManager(appDataPath, m_szMcfCachePath.c_str());
+	m_pMcfManager = new	MCFManager(appDataPath, m_szMcfCachePath.c_str());
 	init();
 }
 
@@ -585,11 +585,18 @@ void User::testMcfCache()
 
 void User::setAvatarUrl(const char* szAvatarUrl)
 {
-	if (gcString(szAvatarUrl) != (std::string)m_szAvatarUrl)
+	if (UTIL::FS::isValidFile(szAvatarUrl))
+	{
+		setAvatarPath(szAvatarUrl);
+	}
+	else if (gcString(szAvatarUrl) != (std::string)m_szAvatarUrl)
 	{
 		m_szAvatarUrl = szAvatarUrl;
 		m_pThreadPool->queueTask(new UserCore::Task::DownloadAvatarTask(this, szAvatarUrl, m_iUserId));
 	}
 }
 
-
+MCFManagerI* User::getMCFManager()
+{
+	return m_pMcfManager;
+}

@@ -56,7 +56,7 @@ namespace Task
 class DeleteThread : public UserTask
 {
 public:
-	DeleteThread(UserCore::User* user, ::Thread::BaseThread *thread);
+	DeleteThread(UserCore::UserI* user, ::Thread::BaseThread *thread);
 	~DeleteThread();
 
 	void doTask();
@@ -83,7 +83,7 @@ public:
 	};
 
 	//need iteminfo in this case as we might try this before the item is added to the list
-	DownloadImgTask(UserCore::User* user, UserCore::Item::ItemInfo* itemInfo, uint8 image);
+	DownloadImgTask(UserCore::UserI* user, UserCore::Item::ItemInfo* itemInfo, uint8 image);
 	void doTask();
 
 	const char* getName(){return "DownloadImgTask";}
@@ -113,7 +113,7 @@ public:
 		ACCOUNT_REMOVE,
 	};
 
-	ChangeAccountTask(UserCore::User* user, DesuraId id, uint8 action);
+	ChangeAccountTask(UserCore::UserI* user, DesuraId id, uint8 action);
 	void doTask();
 
 	const char* getName(){return "ChangeAccountTask";}
@@ -148,7 +148,7 @@ public:
 class DownloadBannerTask : public UserTask
 {
 public:
-	DownloadBannerTask(UserCore::User* user, const MCFCore::Misc::DownloadProvider& dp);
+	DownloadBannerTask(UserCore::UserI* user, const MCFCore::Misc::DownloadProvider& dp);
 
 	void doTask();
 	Event<BannerCompleteInfo> onDLCompleteEvent;
@@ -168,7 +168,7 @@ private:
 class DownloadAvatarTask : public UserTask
 {
 public:
-	DownloadAvatarTask(UserCore::User* user, const char* url, uint32 userId);
+	DownloadAvatarTask(UserCore::UserI* user, const char* url, uint32 userId);
 	void doTask();
 
 	Event<gcException> onErrorEvent;
@@ -189,7 +189,7 @@ private:
 class GatherInfoTask : public UserTask
 {
 public:
-	GatherInfoTask(UserCore::User* user, DesuraId id, bool addToAccount = false);
+	GatherInfoTask(UserCore::UserI* user, DesuraId id, bool addToAccount = false);
 	void doTask();
 
 	const char* getName(){return "GatherInfoTask";}
@@ -217,7 +217,7 @@ public:
 class CDKeyTask : public UserTask
 {
 public:
-	CDKeyTask(UserCore::User* user, DesuraId id);
+	CDKeyTask(UserCore::UserI* user, DesuraId id);
 	void doTask();
 
 	Event<CDKeyEventInfo<gcString> > onCompleteEvent;
@@ -233,7 +233,7 @@ public:
 class MigrateStandaloneTask : public UserTask
 {
 public:
-	MigrateStandaloneTask(UserCore::User* user, const std::vector<UTIL::FS::Path> &fileList);
+	MigrateStandaloneTask(UserCore::UserI* user, const std::vector<UTIL::FS::Path> &fileList);
 	void doTask();
 	const char* getName(){return "MigrateStandaloneTask";}
 
@@ -248,7 +248,7 @@ private:
 class RegenLaunchScriptsTask : public UserTask
 {
 public:
-	RegenLaunchScriptsTask(UserCore::User* user);
+	RegenLaunchScriptsTask(UserCore::UserI* user);
 	void doTask();
 	const char* getName(){return "RegenLaunchScriptsTask";}
 };

@@ -41,66 +41,64 @@ namespace UserCore
 		class InstallInfo;
 	}
 }
+
 class WildcardManager;
 
 #include "MCFThread.h"
 
 namespace UserCore
 {
+	namespace Item
+	{
+		class ItemTaskGroup;
+	}
 
-namespace Item
-{
-	class ItemTaskGroup;
-}
+	namespace Thread
+	{
+		//! Installed wizard looks for items already installed on user computer
+		//!
+		class InstalledWizardThread : public MCFThread
+		{
+		public:
+			InstalledWizardThread();
+			virtual ~InstalledWizardThread();
 
-namespace Thread
-{
+		protected:
+			void doRun();
 
-//! Installed wizard looks for items already installed on user computer
-//!
-class InstalledWizardThread : public MCFThread
-{
-public:
-	InstalledWizardThread();
-	virtual ~InstalledWizardThread();
+			void parseItemsQuick(const XML::gcXMLElement &fNode);
 
-protected:
-	void doRun();
+			void parseItems1(const XML::gcXMLElement &fNode, WildcardManager *pWildCard, std::map<uint64, XML::gcXMLElement> *vMap = nullptr);
+			void parseItems2(const XML::gcXMLElement &fNode, WildcardManager *pWildCard);
 
-	void parseItemsQuick(const XML::gcXMLElement &fNode);
+			bool selectBranch(UserCore::Item::ItemInfoI *item);
+			void onItemFound(UserCore::Item::ItemInfoI *item);
 
-	void parseItems1(const XML::gcXMLElement &fNode, WildcardManager *pWildCard, std::map<uint64, XML::gcXMLElement> *vMap = nullptr);
-	void parseItems2(const XML::gcXMLElement &fNode, WildcardManager *pWildCard);
+			void onGameFound(UserCore::Misc::InstallInfo &game);
+			void onModFound(UserCore::Misc::InstallInfo &mod);
 
-	bool selectBranch(UserCore::Item::ItemInfoI *item);
-	void onItemFound(UserCore::Item::ItemInfoI *item);
+			std::vector<UserCore::Misc::InstallInfo> m_vGameList;
 
-	void onGameFound(UserCore::Misc::InstallInfo &game);
-	void onModFound(UserCore::Misc::InstallInfo &mod);
-
-	std::vector<UserCore::Misc::InstallInfo> m_vGameList;
-
-	bool m_bTriggerNewEvent;
+			bool m_bTriggerNewEvent;
 
 
-	void triggerProgress();
+			void triggerProgress();
 
-	void parseGameQuick(const XML::gcXMLElement &game);
+			void parseGameQuick(const XML::gcXMLElement &game);
 
-	void parseGame(DesuraId id, const XML::gcXMLElement &game, WildcardManager *pWildCard, const XML::gcXMLElement &info);
-	void parseMod(DesuraId parId, DesuraId id, const XML::gcXMLElement &mod, WildcardManager *pWildCard, const XML::gcXMLElement &info);
+			void parseGame(DesuraId id, const XML::gcXMLElement &game, WildcardManager *pWildCard, const XML::gcXMLElement &info);
+			void parseMod(DesuraId parId, DesuraId id, const XML::gcXMLElement &mod, WildcardManager *pWildCard, const XML::gcXMLElement &info);
 
-private:
-	UserCore::User* m_pUser;
-	UserCore::Item::ItemTaskGroup *m_pTaskGroup;
+		private:
+			UserCore::UserI* m_pUser;
+			UserCore::Item::ItemTaskGroup *m_pTaskGroup;
 
-	uint32 m_uiDone;
-	uint32 m_uiTotal;
+			uint32 m_uiDone;
+			uint32 m_uiTotal;
 
-	gcString m_szDbName;
-};
-
-}
+			gcString m_szDbName;
+		};
+	}
 }
 
 #endif //DESURA_MODWIZARDTHREAD_H

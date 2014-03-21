@@ -62,8 +62,10 @@ namespace FS
 	{
 	public:
 		Path();
-		Path(std::wstring path, std::wstring file, bool lastIsFolder);
-		Path(std::string path, std::string file, bool lastIsFolder);
+		Path(std::wstring path);
+		Path(std::string path);
+		Path(std::wstring path, std::wstring file, bool bLastIsFile = false);
+		Path(std::string path, std::string file, bool bLastIsFile = false);
 		Path(const Path& path);
 
 		File getFile() const;
@@ -90,11 +92,13 @@ namespace FS
 		size_t getFolderCount();
 		std::string getFolder(size_t index);
 
+		bool startsWith(const Path &path) const;
+
 #ifdef NIX
 		bool m_absolutePath;
 #endif
 	private:
-		void parsePath(std::string path, bool lastIsFolder = false);
+		void parsePath(std::string path, bool bLastIsFile = false);
 
 		std::vector<std::string> m_vPath;
 		File m_File;

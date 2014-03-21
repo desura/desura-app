@@ -564,3 +564,12 @@ inline void DoAssert(const char* szExp, const char* szFile, int nLine)
 	#endif
 
 #endif
+
+
+#ifdef LINK_WITH_GTEST
+#include <gtest/gtest.h>
+#endif
+
+#ifdef LINK_WITH_GMOCK
+#include <gmock/gmock.h>
+#endif

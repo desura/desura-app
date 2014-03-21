@@ -47,7 +47,7 @@ void InstallCheckTask::doRun()
 	uint32 prog = 0;
 	onCompleteEvent(prog);
 
-	getItemHandle()->completeStage(false);
+	getItemHandle()->getInternal()->completeStage(false);
 }
 
 }

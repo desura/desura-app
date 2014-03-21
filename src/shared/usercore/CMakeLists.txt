@@ -79,6 +79,7 @@ file(GLOB Sources code/BaseItemServiceTask.cpp
                   code/VSDownloadMissing.cpp
                   code/VSInstallMissing.cpp
 				  code/MCFDownloadProviders.cpp
+				  code/ComboDownloadInstallTask.cpp
 )
 
 if(WIN32)

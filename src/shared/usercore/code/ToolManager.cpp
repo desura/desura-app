@@ -572,6 +572,7 @@ void ToolManager::postParseXml()
 #endif
 
 
+
 void ToolManager::reloadTools(DesuraId id)
 {
 	//missing tools. Gather info again
@@ -597,7 +598,7 @@ void ToolManager::reloadTools(DesuraId id)
 	{
 		uNode.FirstChildElement("platforms").for_each_child("platform", [&](const XML::gcXMLElement &platform)
 		{
-			if (!m_pUser->platformFilter(platform, PlatformType::PT_Tool))
+			if (!m_pUser->platformFilter(platform, PlatformType::Tool))
 				parseXml(platform.FirstChildElement("toolinfo"));
 		});
 	}

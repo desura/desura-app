@@ -780,7 +780,10 @@ bool BranchInstallInfo::isValidFile(const gcString &strFile)
 void BranchInstallInfo::setLinkInfo(const char* szPath, const char* szExe, const char* szArgs)
 {
 	if ((m_pItem->getStatus() & ItemInfo::STATUS_LINK) != ItemInfo::STATUS_LINK)
+	{
+		assert(false);
 		return;
+	}
 
 	setPath(szPath);
 	setInsCheck(szExe);

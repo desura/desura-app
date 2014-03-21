@@ -96,7 +96,7 @@ void VerifyServiceTask::finishVerify(UserCore::Misc::VerifyComplete::VSTATUS sta
 	prog.percent = 100;
 	onMcfProgressEvent(prog);
 
-	UserCore::Item::ItemInfo* pItem = getItemInfo();
+	auto pItem = getItemInfo();
 
 	if (pItem)
 	{
@@ -109,7 +109,7 @@ void VerifyServiceTask::finishVerify(UserCore::Misc::VerifyComplete::VSTATUS sta
 		{
 			uint32 flags = UserCore::Item::ItemInfoI::STATUS_ONCOMPUTER|UserCore::Item::ItemInfoI::STATUS_DOWNLOADING|UserCore::Item::ItemInfoI::STATUS_INSTALLING|UserCore::Item::ItemInfoI::STATUS_UPDATING|UserCore::Item::ItemInfoI::STATUS_INSTALLED|UserCore::Item::ItemInfoI::STATUS_UPDATEAVAL;
 
-			pItem->resetInstalledMcf();
+			pItem->getInternal()->resetInstalledMcf();
 			pItem->delSFlag(flags);
 		}
 	}
@@ -120,16 +120,16 @@ void VerifyServiceTask::finishVerify(UserCore::Misc::VerifyComplete::VSTATUS sta
 	if (status == UserCore::Misc::VerifyComplete::V_INSTALL)
 	{
 		getItemInfo()->addToAccount();
-		getItemHandle()->goToStageInstall(installpath, getMcfBranch());
+		getItemHandle()->getInternal()->goToStageInstall(installpath, getMcfBranch());
 	}
 	else if (status == UserCore::Misc::VerifyComplete::V_DOWNLOAD)
 	{
 		getItemInfo()->addToAccount();
 
 		if (installpath)
-			getItemHandle()->goToStageDownload(installpath);
+			getItemHandle()->getInternal()->goToStageDownload(installpath);
 		else
-			getItemHandle()->goToStageDownload(getItemInfo()->getCurrentBranch()->getBranchId(), m_McfBuild);	
+			getItemHandle()->getInternal()->goToStageDownload(getItemInfo()->getCurrentBranch()->getBranchId(), m_McfBuild);	
 	}
 	else if (status == UserCore::Misc::VerifyComplete::V_SWITCHBRANCH)
 	{
@@ -138,7 +138,7 @@ void VerifyServiceTask::finishVerify(UserCore::Misc::VerifyComplete::VSTATUS sta
 	}
 	else if (endStage)
 	{
-		getItemHandle()->completeStage(true);
+		getItemHandle()->getInternal()->completeStage(true);
 	}
 }
 
@@ -244,9 +244,9 @@ bool VerifyServiceTask::checkTools()
 	getUserCore()->getToolManager()->invalidateTools(toolList);
 
 	if (!getUserCore()->getToolManager()->areAllToolsDownloaded(toolList))
-		getItemHandle()->goToStageDownloadTools(false);
+		getItemHandle()->getInternal()->goToStageDownloadTools(false);
 	else
-		getItemHandle()->goToStageInstallTools(false);
+		getItemHandle()->getInternal()->goToStageInstallTools(false);
 
 	return true;
 }
@@ -427,14 +427,14 @@ bool VerifyServiceTask::installMissingFiles()
 
 void VerifyServiceTask::updateStatus()
 {
-	UserCore::Item::ItemInfo* pItem = getItemInfo();
+	auto pItem = getItemInfo();
 
 	m_uiOldStatus = pItem->getStatus();
 
 	uint32 addFlags = UserCore::Item::ItemInfoI::STATUS_ONCOMPUTER|UserCore::Item::ItemInfoI::STATUS_VERIFING;
 	uint32 delFlags = UserCore::Item::ItemInfoI::STATUS_READY|UserCore::Item::ItemInfoI::STATUS_PAUSED|UserCore::Item::ItemInfoI::STATUS_PAUSABLE|UserCore::Item::ItemInfoI::STATUS_LINK|UserCore::Item::ItemInfoI::STATUS_DELETED;
 
-	UserCore::Item::ItemInfo* parent = getParentItemInfo();
+	auto parent = getParentItemInfo();
 
 	if (parent)
 		parent->delSFlag(UserCore::Item::ItemInfoI::STATUS_DELETED);
@@ -442,7 +442,7 @@ void VerifyServiceTask::updateStatus()
 	pItem->addSFlag(addFlags);
 	pItem->delSFlag(delFlags);
 
-	pItem->setPercent(0);
+	pItem->getInternal()->setPercent(0);
 }
 
 
@@ -451,7 +451,7 @@ bool VerifyServiceTask::checkItem()
 	gcException eBadItem(ERR_BADITEM);
 	gcException eBrchNull(ERR_BADITEM, "Item branch is null");
 	
-	UserCore::Item::ItemInfo* pItem = getItemInfo();
+	auto pItem = getItemInfo();
 
 	if (!pItem)
 	{
@@ -480,7 +480,7 @@ bool VerifyServiceTask::checkItem()
 
 bool VerifyServiceTask::checkBranch()
 {
-	UserCore::Item::ItemInfo* pItem = getItemInfo();
+	auto pItem = getItemInfo();
 	UserCore::Item::BranchInfoI* pBranch = pItem->getCurrentBranch();
 	
 	if (!pBranch)
@@ -504,7 +504,7 @@ bool VerifyServiceTask::checkBranch()
 
 bool VerifyServiceTask::checkUnAuthed()
 {
-	UserCore::Item::ItemInfo* pItem = getItemInfo();
+	auto pItem = getItemInfo();
 
 	if (m_McfBuild != 0 || HasAllFlags(pItem->getStatus(), UserCore::Item::ItemInfoI::STATUS_UNAUTHED) == false)
 		return false;
@@ -532,7 +532,7 @@ bool VerifyServiceTask::checkUnAuthed()
 		return true;
 	}
 
-	pItem->overideInstalledBuild(m_McfBuild);
+	pItem->getInternal()->overideInstalledBuild(m_McfBuild);
 	pItem->delSFlag(UserCore::Item::ItemInfoI::STATUS_UNAUTHED);
 	
 	return false;
@@ -588,7 +588,7 @@ void VerifyServiceTask::onProgress(MCFCore::Misc::ProgressInfo& prog)
 		p.percent = percent;
 		onMcfProgressEvent(p);
 
-		getItemInfo()->setPercent(percent);
+		getItemInfo()->getInternal()->setPercent(percent);
 
 		m_uiLastPercent = percent;
 	}
@@ -600,12 +600,15 @@ void VerifyServiceTask::onError(gcException& e)
 	m_bError = true;
 
 	Warning(gcString("Error in verify install: {0}\n", e));
-	getItemHandle()->setPausable(false);
+
+	auto pItem = getItemHandle()->getInternal();
+
+	pItem->setPausable(false);
 
 	if (!getItemHandle()->shouldPauseOnError())
-		getItemHandle()->resetStage(true);
+		pItem->resetStage(true);
 	else
-		getItemHandle()->setPaused(true, true);
+		pItem->setPaused(true, true);
 
 	onErrorEvent(e);
 }

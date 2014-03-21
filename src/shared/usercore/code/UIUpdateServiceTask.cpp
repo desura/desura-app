@@ -92,7 +92,7 @@ void UIUpdateServiceTask::onComplete()
 
 	onMcfProgressEvent(prog);
 
-	getItemHandle()->goToStageDownload(m_szPath.c_str());
+	getItemHandle()->getInternal()->goToStageDownload(m_szPath.c_str());
 	UIBaseServiceTask::onComplete();
 }
 

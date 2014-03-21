@@ -54,7 +54,7 @@ public:
 protected:
 	void doRun()
 	{
-		getItemHandle()->completeStage(true);
+		getItemHandle()->getInternal()->completeStage(true);
 	}
 };
 

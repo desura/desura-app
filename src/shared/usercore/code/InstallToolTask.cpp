@@ -51,7 +51,7 @@ InstallToolTask::~InstallToolTask()
 void InstallToolTask::doRun()
 {
 	uint32 per = 0;
-	getItemInfo()->setPercent(per);
+	getItemInfo()->getInternal()->setPercent(per);
 
 	std::vector<DesuraId> toolList;
 	getItemInfo()->getCurrentBranch()->getToolList(toolList);
@@ -124,7 +124,7 @@ void InstallToolTask::onINProgress(UserCore::Misc::ToolProgress &p)
 	m.percent = p.percent;
 
 	onMcfProgressEvent(m);
-	getItemInfo()->setPercent(p.percent);
+	getItemInfo()->getInternal()->setPercent(p.percent);
 }
 
 void InstallToolTask::onINError(gcException &e)
@@ -151,7 +151,7 @@ void InstallToolTask::onComplete()
 
 	if (hasError)
 	{
-		getItemHandle()->completeStage(true);
+		getItemHandle()->getInternal()->completeStage(true);
 	}
 	else
 	{
@@ -159,9 +159,9 @@ void InstallToolTask::onComplete()
 		onCompleteEvent(blank);
 
 		if (m_bLaunch)
-			getItemHandle()->goToStageLaunch();
+			getItemHandle()->getInternal()->goToStageLaunch();
 		else
-			getItemHandle()->completeStage(false);
+			getItemHandle()->getInternal()->completeStage(false);
 	}
 }
 

@@ -469,7 +469,7 @@ namespace XML
 			return v;
 		}
 
-		void LoadBuffer(char* buff, size_t buffLen)
+		void LoadBuffer(const char* buff, size_t buffLen)
 		{
 			m_XmlDoc.DeleteChildren();
 			m_eXMLLoadError = m_XmlDoc.Parse(buff, buffLen);

@@ -32,6 +32,8 @@ $/LicenseInfo$
 #include "usercore/UserCoreI.h"
 #include "webcore/WebCoreI.h"
 
+#include "User.h"
+
 namespace UserCore
 {
 namespace ItemTask
@@ -39,9 +41,8 @@ namespace ItemTask
 
 bool VSCheckMcfDownload::doTask(gcString &path)
 {
-	UserCore::MCFManager *mm = UserCore::GetMCFManager();
+	UserCore::MCFManagerI *mm = getUserCore()->getInternal()->getMCFManager();
 	path = mm->getMcfPath(getItemId(), getMcfBranch(), getMcfBuild());
-
 	return checkMcf(path);
 }
 

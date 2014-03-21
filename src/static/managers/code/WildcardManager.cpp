@@ -102,7 +102,7 @@ void WildcardManager::constructPath(const char* path, char **res, uint8 *depth)
 	(*depth)++;
 
 	if (*depth > 25)
-		throw gcException(ERR_WILDCARD, "Hit max recursion while constructing path (posible loop).");
+		throw gcException(ERR_WILDCARD, "Hit max recursion while constructing path (possible loop).");
 
 	size_t len = strlen(path);
 

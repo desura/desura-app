@@ -38,137 +38,133 @@ $/LicenseInfo$
 
 namespace UserCore
 {
-class ItemManager;
+	class ItemManager;
 
-namespace Item
-{
-
-class ItemHandle;
-
-class ItemTaskGroup : public UserCore::Item::ItemTaskGroupI, public UserCore::Item::Helper::ItemHandleHelperI
-{
-public:
-	ItemTaskGroup(UserCore::ItemManager* manager, ACTION action, uint8 activeCount = 1);
-	~ItemTaskGroup();
-
-	bool addItem(UserCore::Item::ItemHandleI* item);
-	bool addItem(UserCore::Item::ItemInfoI* item);
-
-	bool removeItem(UserCore::Item::ItemHandleI* item);
-
-	UserCore::Item::ItemHandleI* getActiveItem();
-
-	void start();
-	void pause();
-	void unpause();
-	void cancel();
-	void finalize();
-
-	virtual UserCore::Item::ItemTaskGroupI::ACTION getAction();
-	virtual void getItemList(std::vector<UserCore::Item::ItemHandleI*> &list);
-	virtual void cancelAll();
-
-	void startAction(UserCore::Item::ItemHandle* item);
-	UserCore::ItemTask::BaseItemTask* newTask(ItemHandle* handle);
-
-	uint32 getPos(UserCore::Item::ItemHandleI* item) override;
-	uint32 getCount() override;
-
-	template <typename F>
-	void sort(F f)
+	namespace Item
 	{
-		if (m_bStarted)
-			return;
+		class ItemHandle;
 
-		std::lock_guard<std::mutex> guard(m_ListLock);
-		std::sort(m_vWaitingList.begin(), m_vWaitingList.end(), f);
-	}
-
-protected:
-	virtual void onComplete(uint32 status);
-	virtual void onComplete(gcString& string);
-
-	virtual void onMcfProgress(MCFCore::Misc::ProgressInfo& info);
-	virtual void onProgressUpdate(uint32 progress);
-
-	virtual void onError(gcException e);
-	virtual void onNeedWildCard(WCSpecialInfo& info);
-
-	virtual void onDownloadProvider(UserCore::Misc::GuiDownloadProvider &provider);
-	virtual void onVerifyComplete(UserCore::Misc::VerifyComplete& info);
-
-	virtual uint32 getId();
-	virtual void setId(uint32 id);
-
-	virtual void onPause(bool state);
-
-	void finish();
-	void nextItem();
-
-	void updateEvents(UserCore::ItemTask::BaseItemTask* task);
-	void registerItemTask(UserCore::ItemTask::BaseItemTask* task);
-	void deregisterItemTask(UserCore::ItemTask::BaseItemTask* task);
-
-	class GroupItemTask :  public UserCore::ItemTask::BaseItemTask
-	{
-	public:
-		GroupItemTask(ItemHandle* handle, ItemTaskGroup* group) 
-			: BaseItemTask(UserCore::Item::ITEM_STAGE::STAGE_WAIT, "TaskGroup", handle)
+		class ItemTaskGroup : public UserCore::Item::ItemTaskGroupI, public UserCore::Item::Helper::ItemHandleHelperI
 		{
-			m_pGroup = group;
-			m_pGroup->registerItemTask(this);
-		}
+		public:
+			ItemTaskGroup(UserCore::ItemManager* manager, ACTION action, uint8 activeCount = 1);
+			~ItemTaskGroup();
 
-		~GroupItemTask()
-		{
-			m_pGroup->deregisterItemTask(this);
-		}
+			bool addItem(UserCore::Item::ItemHandleI* item);
+			bool addItem(UserCore::Item::ItemInfoI* item);
 
-		virtual void doRun()
-		{
-			m_pGroup->updateEvents(this);
-			m_WaitCon.wait();
-		}
+			bool removeItem(UserCore::Item::ItemHandleI* item);
 
-		virtual void onStop()
-		{
-			m_WaitCon.notify();
-		}
+			UserCore::Item::ItemHandleI* getActiveItem();
 
-		virtual void cancel()
-		{
-			m_WaitCon.notify();
-		}
+			void start();
+			void pause();
+			void unpause();
+			void cancel();
+			void finalize();
 
-		::Thread::WaitCondition m_WaitCon;
-		ItemTaskGroup* m_pGroup;
-	};
+			virtual UserCore::Item::ItemTaskGroupI::ACTION getAction();
+			virtual void getItemList(std::vector<UserCore::Item::ItemHandleI*> &list);
+			virtual void cancelAll();
 
+			void startAction(UserCore::Item::ItemHandle* item);
+			UserCore::ItemTask::BaseItemTask* newTask(ItemHandle* handle);
 
-private:
-	bool m_bStarted;
-	bool m_bPaused;
-	bool m_bFinal;
+			uint32 getPos(UserCore::Item::ItemHandleI* item) override;
+			uint32 getCount() override;
 
-	uint8 m_iActiveCount;
-	uint32 m_uiId;
+			template <typename F>
+			void sort(F f)
+			{
+				if (m_bStarted)
+					return;
+
+				std::lock_guard<std::mutex> guard(m_ListLock);
+				std::sort(m_vWaitingList.begin(), m_vWaitingList.end(), f);
+			}
+
+		protected:
+			virtual void onComplete(uint32 status);
+			virtual void onComplete(gcString& string);
+
+			virtual void onMcfProgress(MCFCore::Misc::ProgressInfo& info);
+			virtual void onProgressUpdate(uint32 progress);
+
+			virtual void onError(gcException e);
+			virtual void onNeedWildCard(WCSpecialInfo& info);
+
+			virtual void onDownloadProvider(UserCore::Misc::GuiDownloadProvider &provider);
+			virtual void onVerifyComplete(UserCore::Misc::VerifyComplete& info);
+
+			virtual uint32 getId();
+			virtual void setId(uint32 id);
+
+			virtual void onPause(bool state);
+
+			void finish();
+			void nextItem();
+
+			void updateEvents(UserCore::ItemTask::BaseItemTask* task);
+			void registerItemTask(UserCore::ItemTask::BaseItemTask* task);
+			void deregisterItemTask(UserCore::ItemTask::BaseItemTask* task);
+
+			class GroupItemTask :  public UserCore::ItemTask::BaseItemTask
+			{
+			public:
+				GroupItemTask(ItemHandleI* handle, ItemTaskGroup* group) 
+					: BaseItemTask(UserCore::Item::ITEM_STAGE::STAGE_WAIT, "TaskGroup", handle)
+				{
+					m_pGroup = group;
+					m_pGroup->registerItemTask(this);
+				}
+
+				~GroupItemTask()
+				{
+					m_pGroup->deregisterItemTask(this);
+				}
+
+				virtual void doRun()
+				{
+					m_pGroup->updateEvents(this);
+					m_WaitCon.wait();
+				}
+
+				virtual void onStop()
+				{
+					m_WaitCon.notify();
+				}
+
+				virtual void cancel()
+				{
+					m_WaitCon.notify();
+				}
+
+				::Thread::WaitCondition m_WaitCon;
+				ItemTaskGroup* m_pGroup;
+			};
+
+		private:
+			bool m_bStarted;
+			bool m_bPaused;
+			bool m_bFinal;
+
+			uint8 m_iActiveCount;
+			uint32 m_uiId;
 	
-	uint32 m_uiLastActive;
-	uint32 m_uiActiveItem;
+			uint32 m_uiLastActive;
+			uint32 m_uiActiveItem;
 
-	ACTION m_Action;
+			ACTION m_Action;
 
-	std::mutex m_ListLock;
-	std::vector<UserCore::Item::ItemHandleI*> m_vWaitingList;
+			std::mutex m_ListLock;
+			std::vector<UserCore::Item::ItemHandleI*> m_vWaitingList;
 
-	std::mutex m_TaskListLock;
-	std::vector<UserCore::ItemTask::BaseItemTask*> m_vTaskList;
+			std::mutex m_TaskListLock;
+			std::vector<UserCore::ItemTask::BaseItemTask*> m_vTaskList;
 
-	UserCore::ItemManager* m_pItemManager;
-};
-
-
-}
+			UserCore::ItemManager* m_pItemManager;
+		};
+	}
 }
 
 #endif //DESURA_ITEMTASKGROUP_H
