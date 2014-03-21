@@ -90,7 +90,6 @@ namespace UserCore
 			void parseMod(DesuraId parId, DesuraId id, const XML::gcXMLElement &mod, WildcardManager *pWildCard, const XML::gcXMLElement &info);
 
 		private:
-			UserCore::UserI* m_pUser;
 			UserCore::Item::ItemTaskGroup *m_pTaskGroup;
 
 			uint32 m_uiDone;

@@ -280,7 +280,7 @@ void ItemInfo::loadDb(sqlite3x::sqlite3_connection* db)
 
 		for (size_t x=0; x<vIdList.size(); x++)
 		{
-			BranchInstallInfo* bii = new BranchInstallInfo(MCFBranch::BranchFromInt(vIdList[x]), this);
+			BranchInstallInfo* bii = new BranchInstallInfo(MCFBranch::BranchFromInt(vIdList[x]), this, m_pFileSystem);
 
 			try
 			{
@@ -313,7 +313,7 @@ void ItemInfo::loadDb(sqlite3x::sqlite3_connection* db)
 			auto it = m_mBranchInstallInfo.find(vIdList[x].second);
 
 			if (it == m_mBranchInstallInfo.end())
-				m_mBranchInstallInfo[vIdList[x].second] = new BranchInstallInfo(vIdList[x].second, this);
+				m_mBranchInstallInfo[vIdList[x].second] = new BranchInstallInfo(vIdList[x].second, this, m_pFileSystem);
 
 			BranchInfo* bi = new BranchInfo(MCFBranch::BranchFromInt(vIdList[x].first), m_iId, m_mBranchInstallInfo[vIdList[x].second], 0, m_pUserCore->getUserId());
 			bi->onBranchInfoChangedEvent += delegate(this, &ItemInfo::onBranchInfoChanged);
@@ -420,7 +420,7 @@ void ItemInfo::loadBranchXmlData(const XML::gcXMLElement &branch)
 		auto it = m_mBranchInstallInfo.find(platformId);
 
 		if (it == m_mBranchInstallInfo.end())
-			m_mBranchInstallInfo[platformId] = new BranchInstallInfo(platformId, this);
+			m_mBranchInstallInfo[platformId] = new BranchInstallInfo(platformId, this, m_pFileSystem);
 
 		bi = new BranchInfo(MCFBranch::BranchFromInt(id), m_iId, m_mBranchInstallInfo[platformId], platformId, m_pUserCore->getUserId());
 		bi->onBranchInfoChangedEvent += delegate(this, &ItemInfo::onBranchInfoChanged);
@@ -534,6 +534,7 @@ void ItemInfo::loadXmlData(uint32 platform, const XML::gcXMLElement &xmlNode, ui
 	else if (isInstalled() && !isDownloadable())
 	{
 		addSFlag(UserCore::Item::ItemInfoI::STATUS_LINK);
+		delSFlag(UserCore::Item::ItemInfoI::STATUS_DELETED);
 	}
 
 	m_iChangedFlags |= ItemInfoI::CHANGED_INFO;
@@ -649,7 +650,7 @@ void ItemInfo::processSettings(uint32 platform, const XML::gcXMLElement &setNode
 	if (it == m_mBranchInstallInfo.end() && !isDownloadable())
 	{
 		//this item is not downloadable thus has no branches. Create a install info for it.
-		m_mBranchInstallInfo[platform] = new BranchInstallInfo(platform, this);
+		m_mBranchInstallInfo[platform] = new BranchInstallInfo(platform, this, m_pFileSystem);
 		it = m_mBranchInstallInfo.find(platform);
 	}
 
@@ -814,6 +815,12 @@ void ItemInfo::addSFlag(uint32 flags)
 	if (flags & ItemInfoI::STATUS_VERIFING)
 		delSFlag(ItemInfoI::STATUS_READY);
 
+	if (HasAnyFlags(flags, ItemInfoI::STATUS_DELETED))
+	{
+		shouldTriggerUpdate = true;
+		delSFlag(ItemInfoI::STATUS_INSTALLED | ItemInfoI::STATUS_ONACCOUNT | ItemInfoI::STATUS_ONCOMPUTER | ItemInfoI::STATUS_READY);
+	}
+
 	if (shouldTriggerUpdate)
 	{
 		uint32 num = 1;
@@ -970,7 +977,7 @@ void ItemInfo::processUpdateXml(const XML::gcXMLElement &node)
 			auto it = m_mBranchInstallInfo.find(platformId);
 
 			if (it == m_mBranchInstallInfo.end())
-				m_mBranchInstallInfo[platformId] = new BranchInstallInfo(platformId, this);
+				m_mBranchInstallInfo[platformId] = new BranchInstallInfo(platformId, this, m_pFileSystem);
 
 			bi = new BranchInfo(MCFBranch::BranchFromInt(id), m_iId, m_mBranchInstallInfo[platformId], platformId, m_pUserCore->getUserId());
 			bi->loadXmlData(branch);
@@ -1186,7 +1193,7 @@ void ItemInfo::setLinkInfo(const char* exe, const char* args)
 	UTIL::FS::Path path = UTIL::FS::PathWithFile(exe);
 
 	if (m_mBranchInstallInfo.size() == 0)
-		m_mBranchInstallInfo[BUILDID_PUBLIC] = new UserCore::Item::BranchInstallInfo(BUILDID_PUBLIC, this);
+		m_mBranchInstallInfo[BUILDID_PUBLIC] = new UserCore::Item::BranchInstallInfo(BUILDID_PUBLIC, this, m_pFileSystem);
 
 	BranchInstallInfo *bii = m_mBranchInstallInfo[BUILDID_PUBLIC];
 
@@ -1558,47 +1565,156 @@ namespace UnitTest
 {
 	using namespace ::testing;
 
-	TEST(ItemInfo, ThirdPartyLoad)
+	class ItemInfoThirdPartyFixture : public ::testing::Test
 	{
-		sqlite3x::sqlite3_connection db(":memory:");
-		createItemInfoDbTables(db);
-
-
-		const std::vector<std::string> vSqlCommands =
+	public:
+		ItemInfoThirdPartyFixture()
+			: i(&user, DesuraId(12884901920), &fs)
 		{
-			"INSERT INTO exe VALUES(12884901920,100,'Play','C:\\Program Files (x86)\\charlie\\Charlie.exe','','',0);",
-			"INSERT INTO installinfo VALUES(12884901920,100,'C:\\Program Files (x86)\\charlie','C:\\Program Files (x86)\\charlie\\Charlie.exe','',0,0,0);",
-			"INSERT INTO installinfoex VALUES(12884901920,100,'C:\\Program Files (x86)\\charlie\\Charlie.exe');",
-			"INSERT INTO iteminfo VALUES(12884901920,0,0,2129934,0,'dev-02','Charlie','charlie','','','','','','','dev-02','',0,0);"
-		};
+			checkPath = [](const UTIL::FS::Path& path) -> bool
+			{
+				return path.getFile().getFile() == "Charlie.exe";
+			};
 
-		for (auto s : vSqlCommands)
-		{
-			sqlite3x::sqlite3_command cmd(db, s.c_str());
-			cmd.executenonquery();
+			ON_CALL(fs, isValidFile(_)).WillByDefault(Invoke(checkPath));
+			ON_CALL(user, getUserId()).WillByDefault(Return(1));
+			ON_CALL(user, getItemsAddedEvent()).WillByDefault(Return(&m_ItemAddedEvent));
+			ON_CALL(user, getItemManager()).WillByDefault(Return(&m_ItemManager));
+
+			ON_CALL(m_ItemManager, getOnNewItemEvent()).WillByDefault(Return(&m_NewItemEvent));
 		}
 
-		std::function<bool(const UTIL::FS::Path&)> checkPath = [](const UTIL::FS::Path& path) -> bool
+		void setUpDb(sqlite3x::sqlite3_connection &db, const std::vector<std::string> &vSqlCommands)
 		{
-			return path.getFile().getFile() == "Charlie.exe";
-		};
+			createItemInfoDbTables(db);
 
-		UTIL::FS::UtilFSMock fs;
-		ON_CALL(fs, isValidFile(_)).WillByDefault(Invoke(checkPath));
+			for (auto s : vSqlCommands)
+			{
+				sqlite3x::sqlite3_command cmd(db, s.c_str());
+				cmd.executenonquery();
+			}
+		}
 
+		void resolveWildcard(WCSpecialInfo &info)
+		{
+			if (info.name == "PROGRAM_FILES")
+			{
+				info.result = "C:\\Program Files (x86)";
+				info.handled = true;
+			}
+		}
+
+		Event<DesuraId> m_NewItemEvent;
 		Event<uint32> m_ItemAddedEvent;
+
 		UserCore::UserMock user;
-		ON_CALL(user, getUserId()).WillByDefault(Return(1));
-		ON_CALL(user, getItemsAddedEvent()).WillByDefault(Return(&m_ItemAddedEvent));
+		UTIL::FS::UtilFSMock fs;
+		UserCore::ItemManagerMock m_ItemManager;
 
-		ItemInfo i(&user, DesuraId(12884901920), &fs);
+		std::function<bool(const UTIL::FS::Path&)> checkPath;
+		ItemInfo i;
+	};
 
+	static const std::vector<std::string> vSqlCommands =
+	{
+		"INSERT INTO exe VALUES(12884901920,100,'Play','C:\\Program Files (x86)\\charlie\\Charlie.exe','','',0);",
+		"INSERT INTO installinfo VALUES(12884901920,100,'C:\\Program Files (x86)\\charlie','C:\\Program Files (x86)\\charlie\\Charlie.exe','',0,0,0);",
+		"INSERT INTO installinfoex VALUES(12884901920,100,'C:\\Program Files (x86)\\charlie\\Charlie.exe');",
+		"INSERT INTO iteminfo VALUES(12884901920,0,0,2129934,0,'dev-02','Charlie','charlie','','','','','','','dev-02','',0,0);"
+	};
+
+	TEST_F(ItemInfoThirdPartyFixture, ThirdPartyLoad)
+	{
+		sqlite3x::sqlite3_connection db(":memory:");
+		
+		setUpDb(db, vSqlCommands);
 		i.loadDb(&db);
 
 		ASSERT_TRUE(i.isInstalled());
 		ASSERT_TRUE(i.isLaunchable());
 		ASSERT_FALSE(i.isDownloadable());
 	}
+
+	const char* szThirdPartyInfo =
+		"<game siteareaid=\"3\">"
+		"	<name>Charlie</name>"
+		"	<nameid>charlie</nameid>"
+		"	<expansion>0</expansion>"
+		"	<downloadable>0</downloadable>"
+		"	<uploadable>0</uploadable>"
+		"	<settings>"
+		"		<executes>"
+		"			<execute>"
+		"				<name>Play</name>"
+		"				<exe>%GAME_EXE%</exe>"
+		"				<args></args>"
+		"			</execute>"
+		"		</executes>"
+		"		<exe>%GAME_EXE%</exe>"
+		"		<args></args>"
+		"		<installlocations>"
+		"			<installlocation>"
+		"				<check>%PROGRAM_FILES%\\Charlie.exe</check>"
+		"				<path>%PROGRAM_FILES%</path>"
+		"			</installlocation>"
+		"		</installlocations>"
+		"	</settings>"
+		"	<wcards>"
+		"		<wcard name=\"GAME_PATH\" type=\"path\">%PROGRAM_FILES%\\charlie</wcard>"
+		"		<wcard name=\"GAME_EXE\" type=\"exe\">%INSTALL_PATH%\\Charlie.exe</wcard>"
+		"	</wcards>"
+		"</game>";
+			 
+
+	TEST_F(ItemInfoThirdPartyFixture, ThirdPartyDeleteAndAdd)
+	{
+		sqlite3x::sqlite3_connection db(":memory:");
+
+		setUpDb(db, vSqlCommands);
+		i.loadDb(&db);
+
+		ASSERT_TRUE(i.isInstalled());
+		ASSERT_TRUE(i.isLaunchable());
+		ASSERT_FALSE(i.isDownloadable());
+		ASSERT_FALSE(i.isDeleted());
+
+		i.addSFlag(UserCore::Item::ItemInfoI::STATUS_DELETED);
+
+		ASSERT_FALSE(i.isInstalled());
+		ASSERT_FALSE(i.isLaunchable());
+		ASSERT_FALSE(i.isDownloadable());
+		ASSERT_TRUE(i.isDeleted());
+
+		WildcardManager wildcard;
+
+		{
+			static const char* gs_szWildcardXml =
+				"<wcards>"
+				"<wcard name=\"PROGRAM_FILES\" type=\"special\">PROGRAM_FILES</wcard>"
+				"</wcards>";
+
+			tinyxml2::XMLDocument doc;
+			doc.Parse(gs_szWildcardXml);
+			wildcard.parseXML(doc.RootElement());
+		}
+
+		wildcard.onNeedSpecialEvent += delegate((ItemInfoThirdPartyFixture*)this, &ItemInfoThirdPartyFixture::resolveWildcard);
+		wildcard.onNeedInstallSpecialEvent += delegate((ItemInfoThirdPartyFixture*)this, &ItemInfoThirdPartyFixture::resolveWildcard);
+
+		EXPECT_CALL(m_ItemManager, getOnNewItemEvent()).Times(AtLeast(1)).WillRepeatedly(Return(&m_NewItemEvent));
+
+		XML::gcXMLDocument doc;
+		doc.LoadBuffer(szThirdPartyInfo, strlen(szThirdPartyInfo));
+
+		i.loadXmlData(100, doc.GetRoot("game"), 0, &wildcard, false);
+
+		ASSERT_TRUE(i.isInstalled());
+		ASSERT_TRUE(i.isLaunchable());
+		ASSERT_FALSE(i.isDownloadable());
+		ASSERT_FALSE(i.isDeleted());
+	}
+
+
 }
 
 #endif

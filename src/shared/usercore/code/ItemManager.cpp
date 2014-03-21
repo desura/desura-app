@@ -1037,7 +1037,7 @@ void ItemManager::updateItem(UserCore::Item::ItemInfo* itemInfo, ParseInfo& pi)
 	itemInfo->loadXmlData(pi.platform, pi.rootNode, newSO, pi.pWildCard, pi.reset);
 	itemInfo->processUpdateXml(pi.rootNode);
 
-	itemInfo->delSFlag(UM::ItemInfoI::STATUS_STUB);
+	itemInfo->delSFlag(UM::ItemInfoI::STATUS_STUB|UM::ItemInfoI::STATUS_DELETED);
 
 	m_pUser->getToolManager()->findJSTools(itemInfo);
 }

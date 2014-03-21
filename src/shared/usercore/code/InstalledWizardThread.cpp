@@ -45,7 +45,6 @@ namespace Thread
 
 InstalledWizardThread::InstalledWizardThread() : MCFThread( "Installed Wizard Thread" )
 {
-	m_pUser = dynamic_cast<UserCore::User*>(getUserCore());
 	m_bTriggerNewEvent = true;
 	m_pTaskGroup = nullptr;
 
@@ -262,7 +261,7 @@ void InstalledWizardThread::parseItemsQuick(const XML::gcXMLElement &fNode)
 	{
 		platforms.for_each_child("platform", [&](const XML::gcXMLElement &platform)
 		{
-			if (m_pUser->platformFilter(platform, PlatformType::Item))
+			if (getUserCore()->platformFilter(platform, PlatformType::Item))
 				return;
 
 			parseItemsQuick(platform);
@@ -432,7 +431,7 @@ void InstalledWizardThread::parseItems2(const XML::gcXMLElement &fNode, Wildcard
 
 	fNode.FirstChildElement("platforms").for_each_child("platform", [&](const XML::gcXMLElement &platform)
 	{
-		if (m_pUser->platformFilter(platform, PlatformType::Item))
+		if (getUserCore()->platformFilter(platform, PlatformType::Item))
 			return;
 
 		WildcardManager wm(pWildCard);

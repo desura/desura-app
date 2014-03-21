@@ -152,7 +152,7 @@ namespace UserCore
 
 
 #ifdef LINK_WITH_GMOCK
-#include "managers\Managers.h"
+#include "managers/Managers.h"
 
 namespace UserCore
 {
