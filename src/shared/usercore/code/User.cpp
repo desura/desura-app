@@ -527,7 +527,7 @@ bool User::platformFilter(const XML::gcXMLElement &platform, PlatformType type)
 #ifdef WIN32
 	return (id != 100);
 #elif defined NIX
-	if (type == PT_Tool)
+	if (type == PlatformType::Tool)
 		return (id != 110 && id != 120);
 #ifdef NIX64
 	if (id == 120)
