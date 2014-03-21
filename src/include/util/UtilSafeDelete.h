@@ -27,6 +27,8 @@ $/LicenseInfo$
 #define DESURA_UTILSAFEDELETE_H
 
 
+#include <memory>
+
 
 template <typename T>
 void safe_deleteA(T*& ptr)
@@ -132,6 +134,11 @@ void safe_delete(size_t argc, T **argv)
 	delete[] argv;
 }
 
+template <typename T>
+void safe_delete(std::shared_ptr<T> &pShared)
+{
+	pShared.reset();
+}
 
 
 template <typename T>

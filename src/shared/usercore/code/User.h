@@ -61,7 +61,8 @@ $/LicenseInfo$
 #include "UserIPCPipeClient.h"
 
 #include "service_pipe/IPCServiceMain.h"
-#include "GameExplorerManager.h"
+
+
 
 CEXPORT const char* GetUserCoreVersion();
 
@@ -371,46 +372,44 @@ namespace UserCore
 		gcFixedString<255> m_szProfileUrl;
 		gcFixedString<255> m_szProfileEditUrl;
 
-		bool m_bDelayLoading;
-		bool m_bAdmin;
-		bool m_bDownloadingUpdate;
+		bool m_bDelayLoading = false;
+		bool m_bAdmin = false;
+		bool m_bDownloadingUpdate = false;
+		bool m_bAltProvider = false;
 
-		uint32 m_iCartItems;
-		uint32 m_iUserId;
-		uint32 m_iUpdates;
-		uint32 m_iPms;
-		uint32 m_iThreads;
+		uint32 m_iCartItems = 0;
+		uint32 m_iUserId = 0;
+		uint32 m_iUpdates = 0;
+		uint32 m_iPms = 0;
+		uint32 m_iThreads = 0;
 
-		uint32 m_iSelectedIndex;
-		uint32 m_uiLastUpdateBuild;
-		uint32 m_uiLastUpdateVer;
+		uint32 m_iSelectedIndex = 0;
+		uint32 m_uiLastUpdateBuild = 0;
+		uint32 m_uiLastUpdateVer = 0;
 
-		UserIPCPipeClient* m_pPipeClient;
+		//Comes from thread pool, cant make shared
+		UserCore::Thread::UserThreadI* m_pUThread = nullptr;
 
-		::Thread::ThreadPool* m_pThreadPool;
+		std::shared_ptr<UserIPCPipeClient> m_pPipeClient;
+		std::shared_ptr<::Thread::ThreadPool> m_pThreadPool;
+		std::shared_ptr<WebCore::WebCoreI> m_pWebCore;
+		std::shared_ptr<UserCore::UserThreadManager> m_pThreadManager;
+		std::shared_ptr<UserCore::UploadManager> m_pUploadManager;
+		std::shared_ptr<UserCore::ItemManager> m_pItemManager;
+		std::shared_ptr<UserCore::ToolManager> m_pToolManager;
+		std::shared_ptr<UserCore::GameExplorerManagerI> m_pGameExplorerManager;
 
-		WebCore::WebCoreI* m_pWebCore;
-		UserCore::UserThreadManager* m_pThreadManager;
-		UserCore::UploadManager* m_pUploadManager;
-		UserCore::Thread::UserThreadI* m_pUThread;
-		UserCore::ItemManager* m_pItemManager;
-		UserCore::ToolManager* m_pToolManager;
-		UserCore::GameExplorerManager* m_pGameExplorerManager;
+		std::shared_ptr<UserCore::CDKeyManager> m_pCDKeyManager;
+		std::shared_ptr<UserCore::BDManager> m_pBannerDownloadManager;
+		std::shared_ptr<UserCore::CIPManager> m_pCIPManager;
+		std::shared_ptr<UserCore::MCFManager> m_pMcfManager;
 
-		UserCore::CDKeyManager* m_pCDKeyManager;
-		UserCore::BDManager* m_pBannerDownloadManager;
-		UserCore::CIPManager* m_pCIPManager;
-
-		volatile bool m_bLocked;
-		::Thread::WaitCondition *m_pWaitCond;
-
-		UserCore::MCFManager* m_pMcfManager = nullptr;
+		volatile bool m_bLocked = false;
+		::Thread::WaitCondition m_WaitCond;
 
 	#ifdef WIN32
 		HWND m_WinHandle;
 	#endif
-
-		bool m_bAltProvider;
 
 		friend class ItemManager;
 	};
@@ -479,7 +478,7 @@ namespace UserCore
 
 	inline ::Thread::ThreadPool* User::getThreadPool()
 	{
-		return m_pThreadPool;
+		return m_pThreadPool.get();
 	}
 
 	inline IPC::ServiceMainI* User::getServiceMain()
@@ -492,42 +491,42 @@ namespace UserCore
 
 	inline WebCore::WebCoreI* User::getWebCore()
 	{
-		return m_pWebCore;
+		return m_pWebCore.get();
 	}
 
 	inline UserCore::UserThreadManagerI* User::getThreadManager()
 	{
-		return m_pThreadManager;
+		return m_pThreadManager.get();
 	}
 
 	inline UserCore::UploadManagerI* User::getUploadManager()
 	{
-		return m_pUploadManager;
+		return m_pUploadManager.get();
 	}
 
 	inline UserCore::ItemManagerI* User::getItemManager()
 	{
-		return m_pItemManager;
+		return m_pItemManager.get();
 	}
 
 	inline UserCore::ToolManagerI* User::getToolManager()
 	{
-		return m_pToolManager;
+		return m_pToolManager.get();
 	}
 
 	inline UserCore::GameExplorerManagerI* User::getGameExplorerManager()
 	{
-		return m_pGameExplorerManager;
+		return m_pGameExplorerManager.get();
 	}
 
 	inline UserCore::CDKeyManagerI* User::getCDKeyManager()
 	{
-		return m_pCDKeyManager;
+		return m_pCDKeyManager.get();
 	}
 
 	inline UserCore::CIPManagerI* User::getCIPManager()
 	{
-		return m_pCIPManager;
+		return m_pCIPManager.get();
 	}
 
 	inline Event<uint32>* User::getItemsAddedEvent()
@@ -621,7 +620,7 @@ namespace UserCore
 
 	inline BDManager* User::getBDManager()
 	{
-		return m_pBannerDownloadManager;
+		return m_pBannerDownloadManager.get();
 	}
 
 	inline bool User::isAltProvider()
