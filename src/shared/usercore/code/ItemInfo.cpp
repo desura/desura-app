@@ -364,7 +364,14 @@ void ItemInfo::loadDb(sqlite3x::sqlite3_connection* db)
 		{
 			BranchInfo* bi = getCurrentBranchFull();
 
-			if (bi && UTIL::FS::isValidFile(UTIL::FS::PathWithFile(bi->getInstallInfo()->getInstallCheck())) )
+			if (!bi && HasAnyFlags(getStatus(), ItemInfoI::STATUS_LINK) && m_mBranchInstallInfo.find(BUILDID_PUBLIC) != end(m_mBranchInstallInfo))
+			{
+				m_vBranchList.push_back(new UserCore::Item::BranchInfo(MCFBranch::BranchFromInt(0), getId(), m_mBranchInstallInfo[BUILDID_PUBLIC], 0, m_pUserCore->getUserId()));
+				bi = m_vBranchList[0];
+				bi->setLinkInfo(getName());
+			}
+
+			if (bi && m_pFileSystem->isValidFile(UTIL::FS::PathWithFile(bi->getInstallInfo()->getInstallCheck())) )
 			{
 				if (!isDownloadable())
 					addSFlag(ItemInfoI::STATUS_INSTALLED);
