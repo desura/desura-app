@@ -76,14 +76,14 @@ namespace UserCore
 			//!
 			//! @param id Item internal id
 			//!
-			ItemInfo(UserCore::UserI *user, DesuraId id);
+			ItemInfo(UserCore::UserI *user, DesuraId id, UTIL::FS::UtilFSI* pFileSystem = UTIL::FS::g_pDefaultUTILFS);
 
 			//! Constructor
 			//!
 			//! @param id Item internal id
 			//! @param parid Parent internal id
 			//!
-			ItemInfo(UserCore::UserI *user, DesuraId id, DesuraId parid);
+			ItemInfo(UserCore::UserI *user, DesuraId id, DesuraId parid, UTIL::FS::UtilFSI* pFileSystem = UTIL::FS::g_pDefaultUTILFS);
 			~ItemInfo();
 
 			//inherited methods
@@ -394,6 +394,8 @@ namespace UserCore
 			std::map<uint32, BranchInstallInfo*> m_mBranchInstallInfo;
 
 			UserCore::UserI *m_pUserCore; 
+
+			UTIL::FS::UtilFSI* m_pFileSystem;
 		};
 
 

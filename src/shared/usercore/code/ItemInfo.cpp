@@ -45,16 +45,18 @@ $/LicenseInfo$
 using namespace UserCore::Item;
 
 
-ItemInfo::ItemInfo(UserCore::UserI *user, DesuraId id)
+ItemInfo::ItemInfo(UserCore::UserI *user, DesuraId id, UTIL::FS::UtilFSI* pFileSystem)
 	: m_pUserCore(user)
 	, m_iId(id)
+	, m_pFileSystem(pFileSystem)
 {
 }
 
-ItemInfo::ItemInfo(UserCore::UserI *user, DesuraId id, DesuraId parid)
+ItemInfo::ItemInfo(UserCore::UserI *user, DesuraId id, DesuraId parid, UTIL::FS::UtilFSI* pFileSystem)
 	: m_pUserCore(user)
 	, m_iId(id)
 	, m_iParentId(parid)
+	, m_pFileSystem(pFileSystem)
 {
 }
 
@@ -348,7 +350,7 @@ void ItemInfo::loadDb(sqlite3x::sqlite3_connection* db)
 
 			gcString path = mm->getMcfPath(this);
 
-			if (UTIL::FS::isValidFile(UTIL::FS::PathWithFile(path)))
+			if (m_pFileSystem->isValidFile(UTIL::FS::PathWithFile(path)))
 			{
 				if (!isDownloadable())
 					addSFlag(ItemInfoI::STATUS_INSTALLED);
@@ -479,7 +481,7 @@ void ItemInfo::loadXmlData(uint32 platform, const XML::gcXMLElement &xmlNode, ui
 		installCheckFile = mm->getMcfPath(this);
 	}
 
-	if (UTIL::FS::isValidFile(UTIL::FS::PathWithFile(installCheckFile)) && (installed || !isDownloadable()))
+	if (m_pFileSystem->isValidFile(UTIL::FS::PathWithFile(installCheckFile)) && (installed || !isDownloadable()))
 	{
 		addSFlag(ItemInfoI::STATUS_INSTALLED);
 
@@ -659,7 +661,7 @@ void ItemInfo::processSettings(uint32 platform, const XML::gcXMLElement &setNode
 		{
 			flags = ItemInfoI::STATUS_ONCOMPUTER;
 
-			if (!isDownloadable() && UTIL::FS::isValidFile(UTIL::FS::PathWithFile(pr.insCheck)))
+			if (!isDownloadable() && m_pFileSystem->isValidFile(UTIL::FS::PathWithFile(pr.insCheck)))
 				flags |= ItemInfoI::STATUS_INSTALLED;
 
 			if (pr.notFirst)
@@ -676,13 +678,13 @@ void ItemInfo::processSettings(uint32 platform, const XML::gcXMLElement &setNode
 
 void ItemInfo::setIcon(const char* icon)		
 {
-	if (!UTIL::FS::isValidFile(m_szIcon))
+	if (!m_pFileSystem->isValidFile(m_szIcon))
 		m_szIcon = "";
 
 	if (!icon)
 		return;
 
-	if (!UTIL::FS::isValidFile(icon))
+	if (!m_pFileSystem->isValidFile(icon))
 		return;
 
 	m_szIcon = UTIL::FS::PathWithFile(icon).getFullPath();
@@ -692,7 +694,7 @@ void ItemInfo::setIcon(const char* icon)
 
 void ItemInfo::setLogo(const char* logo)		
 {
-	if (!UTIL::FS::isValidFile(m_szLogo))
+	if (!m_pFileSystem->isValidFile(m_szLogo))
 		m_szLogo = "";
 
 	if (!logo)
@@ -700,7 +702,7 @@ void ItemInfo::setLogo(const char* logo)
 
 	UTIL::FS::Path path = UTIL::FS::PathWithFile(logo);
 
-	if (!UTIL::FS::isValidFile(path))
+	if (!m_pFileSystem->isValidFile(path))
 		return;
 
 	m_szLogo = path.getFullPath();
@@ -718,7 +720,7 @@ void ItemInfo::setIconUrl(const char* url)
 	if (changed)
 		m_szIconUrl = gcString(url);
 
-	if (m_szIconUrl != "" && (changed || !UTIL::FS::isValidFile(m_szIcon)) && getUserCore()->getInternal())
+	if (m_szIconUrl != "" && (changed || !m_pFileSystem->isValidFile(m_szIcon)) && getUserCore()->getInternal())
 		getUserCore()->getInternal()->downloadImage(this, UserCore::Task::DownloadImgTask::ICON);
 }
 
@@ -732,7 +734,7 @@ void ItemInfo::setLogoUrl(const char* url)
 	if (changed)
 		m_szLogoUrl = gcString(url);
 
-	if (m_szLogoUrl != "" && (changed || !UTIL::FS::isValidFile(m_szLogo)) && getUserCore()->getInternal())
+	if (m_szLogoUrl != "" && (changed || !m_pFileSystem->isValidFile(m_szLogo)) && getUserCore()->getInternal())
 		getUserCore()->getInternal()->downloadImage(this, UserCore::Task::DownloadImgTask::LOGO);
 }
 
@@ -1197,7 +1199,7 @@ void ItemInfo::setLinkInfo(const char* exe, const char* args)
 
 	try
 	{
-		UTIL::FS::recMakeFolder(UTIL::FS::PathWithFile(savePathIco));
+		m_pFileSystem->recMakeFolder(UTIL::FS::PathWithFile(savePathIco));
 		UTIL::FS::FileHandle fh(savePathIco.c_str(), UTIL::FS::FILE_WRITE);
 
 		UTIL::WIN::extractIcon(exe, [&fh](const unsigned char* buff, uint32 size) -> bool
@@ -1541,3 +1543,55 @@ void ItemInfo::setActiveExe(const char* name, MCFBranch branch)
 
 	bi->setActiveExe(name);
 }
+
+
+#ifdef LINK_WITH_GTEST
+
+namespace UnitTest
+{
+	using namespace ::testing;
+
+	TEST(ItemInfo, ThirdPartyLoad)
+	{
+		sqlite3x::sqlite3_connection db(":memory:");
+		createItemInfoDbTables(db);
+
+
+		const std::vector<std::string> vSqlCommands =
+		{
+			"INSERT INTO exe VALUES(12884901920,100,'Play','C:\\Program Files (x86)\\charlie\\Charlie.exe','','',0);",
+			"INSERT INTO installinfo VALUES(12884901920,100,'C:\\Program Files (x86)\\charlie','C:\\Program Files (x86)\\charlie\\Charlie.exe','',0,0,0);",
+			"INSERT INTO installinfoex VALUES(12884901920,100,'C:\\Program Files (x86)\\charlie\\Charlie.exe');",
+			"INSERT INTO iteminfo VALUES(12884901920,0,0,2129934,0,'dev-02','Charlie','charlie','','','','','','','dev-02','',0,0);"
+		};
+
+		for (auto s : vSqlCommands)
+		{
+			sqlite3x::sqlite3_command cmd(db, s.c_str());
+			cmd.executenonquery();
+		}
+
+		std::function<bool(const UTIL::FS::Path&)> checkPath = [](const UTIL::FS::Path& path) -> bool
+		{
+			return path.getFile().getFile() == "Charlie.exe";
+		};
+
+		UTIL::FS::UtilFSMock fs;
+		ON_CALL(fs, isValidFile(_)).WillByDefault(Invoke(checkPath));
+
+		Event<uint32> m_ItemAddedEvent;
+		UserCore::UserMock user;
+		ON_CALL(user, getUserId()).WillByDefault(Return(1));
+		ON_CALL(user, getItemsAddedEvent()).WillByDefault(Return(&m_ItemAddedEvent));
+
+		ItemInfo i(&user, DesuraId(12884901920), &fs);
+
+		i.loadDb(&db);
+
+		ASSERT_TRUE(i.isInstalled());
+		ASSERT_TRUE(i.isLaunchable());
+		ASSERT_FALSE(i.isDownloadable());
+	}
+}
+
+#endif
