@@ -27,7 +27,11 @@ $/LicenseInfo$
 #include "Theme.h"
 #include "XMLMacros.h"
 
-Theme::Theme(const char* name) : ControlList(true), ImageList(true), SpriteList(true), WebList(true)
+Theme::Theme(const char* name) 
+	: ControlList(true)
+	, ImageList(true)
+	, SpriteList(true)
+	, WebList(true)
 {
 	m_szName = gcString(name);
 }

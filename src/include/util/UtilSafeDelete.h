@@ -113,11 +113,8 @@ void safe_delete(std::deque<T>& deq)
 template <typename T, typename S>
 void safe_delete(std::map<T, S*>& map)
 {
-	typename std::map<T, S*>::iterator it;
-	typename std::map<T, S*>::iterator endit = map.end();
-
-	for (it = map.begin(); it != endit; ++it)
-		safe_delete(it->second);
+	for (auto i : map)
+		safe_delete(i.second);
 
 	map.clear();
 }

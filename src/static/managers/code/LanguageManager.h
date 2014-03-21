@@ -34,7 +34,8 @@ $/LicenseInfo$
 class LanguageString : public BaseItem
 {
 public:
-	LanguageString(const char* name) : BaseItem(name)
+	LanguageString(const char* name) 
+		: BaseItem(name)
 	{
 	}
 
