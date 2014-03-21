@@ -37,6 +37,26 @@ $/LicenseInfo$
 #define TEXT(a) a
 #endif
 
+static const std::map<OS_VERSION, std::string> gs_mWindowsVerList =
+{
+	{ WINDOWS_UNKNOWN, "Unknown" },
+	{ WINDOWS_SERVER2008, "Server 2008" },
+	{ WINDOWS_SERVER2003, "Server 2003" },
+	{ WINDOWS_SERVER2000, "Server 2000" },
+	{ WINDOWS_HOMESERVER, "Home Server" },
+	{ WINDOWS_VISTA, "Vista" },
+	{ WINDOWS_XP64, "XP64" },
+	{ WINDOWS_XP, "XP" },
+	{ WINDOWS_2000, "2000" },
+	{ WINDOWS_PRE2000, "Pre 2000" },
+	{ WINDOWS_7, "7" },
+	{ WINDOWS_8, "8" },
+	{ WINDOWS_SERVER2012, "Server 2012" },
+	{ WINDOWS_81, "8.1" },
+	{ WINDOWS_SERVER2012R2, "Server 2012 R2" },
+	{ WINDOWS_SERVER2008R2, "Server 2008 R2" }
+};
+
 namespace UTIL
 {
 	namespace WIN
@@ -90,7 +110,7 @@ namespace UTIL
 					if (osvi.wProductType == VER_NT_WORKSTATION)
 						ver = WINDOWS_7;
 					else
-						ver = WINDOWS_SERVER2008;
+						ver = WINDOWS_SERVER2008R2;
 				}
 				else if (osvi.dwMajorVersion == 6 && osvi.dwMinorVersion == 0)
 				{
@@ -136,26 +156,25 @@ namespace UTIL
 			return ver;
 		}
 
-		// The following code was taken from http://msdn.microsoft.com/en-us/library/ms724429(VS.85).aspx and remains the property of its respected owner.
+
 		void getOSString(char* dest, size_t destSize)
 		{
-#define BUFSIZE 1000
-			char pszOS[BUFSIZE];
+			auto ver = getOSId();
 
-			OSVERSIONINFOEXA osvi;
+			auto it = gs_mWindowsVerList.find(ver);
+
+			if (it == end(gs_mWindowsVerList))
+			{
+				Safe::strcpy(dest, destSize, "Non Supported version of windows.");
+				return;
+			}
+
+			gcString winVer("Windows {0}", it->second);
+
+
 			SYSTEM_INFO si;
 			PGNSI pGNSI;
-			PGPI pGPI;
-			BOOL bOsVersionInfoEx;
-			DWORD dwType;
-
 			ZeroMemory(&si, sizeof(SYSTEM_INFO));
-			ZeroMemory(&osvi, sizeof(OSVERSIONINFOEXA));
-
-			osvi.dwOSVersionInfoSize = sizeof(OSVERSIONINFOEXA);
-
-			if (!(bOsVersionInfoEx = GetVersionExA((LPOSVERSIONINFOA)&osvi)))
-				return;
 
 			// Call GetNativeSystemInfo if supported or GetSystemInfo otherwise.
 			pGNSI = (PGNSI)GetProcAddress(GetModuleHandleA(TEXT("kernel32.dll")), "GetNativeSystemInfo");
@@ -165,87 +184,27 @@ namespace UTIL
 			else
 				GetSystemInfo(&si);
 
-			if (VER_PLATFORM_WIN32_NT == osvi.dwPlatformId && osvi.dwMajorVersion > 4)
+			if (si.wProcessorArchitecture == PROCESSOR_ARCHITECTURE_AMD64)
+				winVer += ", 64-bit";
+			else if (si.wProcessorArchitecture == PROCESSOR_ARCHITECTURE_INTEL)
+				winVer += ", 32-bit";
+			else
+				winVer += ", other";
+
+			OSVERSIONINFOEXA osvi;
+			ZeroMemory(&osvi, sizeof(OSVERSIONINFOEXA));
+			osvi.dwOSVersionInfoSize = sizeof(OSVERSIONINFOEXA);
+
+			if (GetVersionExA((LPOSVERSIONINFOA)&osvi))
 			{
-				Safe::strcpy(pszOS, BUFSIZE, TEXT("Microsoft "));
-
-				if (osvi.dwMajorVersion == 6 && osvi.dwMinorVersion == 3)
-				{
-					if (osvi.wProductType == VER_NT_WORKSTATION)
-						Safe::strcat(pszOS, BUFSIZE, TEXT("Windows 8.1"));
-					else
-						Safe::strcat(pszOS, BUFSIZE, TEXT("Windows Server 2012 R2"));
-				}
-				else if (osvi.dwMajorVersion == 6 && osvi.dwMinorVersion == 2)
-				{
-					if (osvi.wProductType == VER_NT_WORKSTATION)
-						Safe::strcat(pszOS, BUFSIZE, TEXT("Windows 8"));
-					else
-						Safe::strcat(pszOS, BUFSIZE, TEXT("Windows Server 2012"));
-				}
-				else if (osvi.dwMajorVersion == 6 && osvi.dwMinorVersion == 1)
-				{
-					if (osvi.wProductType == VER_NT_WORKSTATION)
-						Safe::strcat(pszOS, BUFSIZE, TEXT("Windows 7"));
-					else
-						Safe::strcat(pszOS, BUFSIZE, TEXT("Windows Server 2008 R2"));
-				}
-				else if (osvi.dwMajorVersion == 6 && osvi.dwMinorVersion == 0)
-				{
-					if (osvi.wProductType == VER_NT_WORKSTATION)
-						Safe::strcat(pszOS, BUFSIZE, TEXT("Windows Vista"));
-					else
-						Safe::strcat(pszOS, BUFSIZE, TEXT("Windows Server 2008"));
-				}
-				else if (osvi.dwMajorVersion == 5 && osvi.dwMinorVersion == 2)
-				{
-					if (GetSystemMetrics(SM_SERVERR2))
-						Safe::strcat(pszOS, BUFSIZE, TEXT("Windows Server 2003 R2"));
-					else if (osvi.wProductType == VER_NT_WORKSTATION)
-						Safe::strcat(pszOS, BUFSIZE, TEXT("Windows XP Professional"));
-					else
-						Safe::strcat(pszOS, BUFSIZE, TEXT("Windows Server 2003"));
-				}
-				else if (osvi.dwMajorVersion == 5 && osvi.dwMinorVersion == 1)
-				{
-					Safe::strcat(pszOS, BUFSIZE, TEXT("Windows XP"));
-				}
-				else if (osvi.dwMajorVersion == 5 && osvi.dwMinorVersion == 0)
-				{
-					Safe::strcat(pszOS, BUFSIZE, TEXT("Windows 2000 "));
-
-					if (osvi.wProductType == VER_NT_WORKSTATION)
-						Safe::strcat(pszOS, BUFSIZE, TEXT("Professional"));
-					else
-						Safe::strcat(pszOS, BUFSIZE, TEXT("Server"));
-				}
-				else
-				{
-					Safe::strcat(pszOS, BUFSIZE, TEXT("Unknown (New?)"));
-				}
-
-				if (si.wProcessorArchitecture == PROCESSOR_ARCHITECTURE_AMD64)
-					Safe::strcat(pszOS, BUFSIZE, TEXT(", 64-bit"));
-				else if (si.wProcessorArchitecture == PROCESSOR_ARCHITECTURE_INTEL)
-					Safe::strcat(pszOS, BUFSIZE, TEXT(", 32-bit"));
-
 				// Include service pack (if any) and build number.
 				if (osvi.szCSDVersion[0] != '0')
-				{
-					Safe::strcat(pszOS, BUFSIZE, TEXT(" "));
-					Safe::strcat(pszOS, BUFSIZE, osvi.szCSDVersion);
-				}
+					winVer += gcString(" {0}", osvi.szCSDVersion);
 
-				char buf[80];
-				Safe::snprintf(buf, 80, TEXT(" (build %d)"), osvi.dwBuildNumber);
-				Safe::strcat(pszOS, BUFSIZE, buf);
-
-				Safe::strcpy(dest, destSize, pszOS);
+				winVer += gcString(" (build {0})", osvi.dwBuildNumber);
 			}
-			else
-			{
-				Safe::strcpy(dest, destSize, "Non Supported version of windows.\n");
-			}
+		
+			Safe::strcpy(dest, destSize, winVer.c_str());
 		}
 	}
 }
