@@ -91,11 +91,19 @@ void gtkMessageBox(const char* text, const char* title)
 } 
 #endif
 
+static void gcAssertHandler(const wxString &file, int line, const wxString &func, const wxString &cond, const wxString &msg)
+{
+	assert(false);
+	Warning(gcString("wxAssert: {0} {1} [{2}:{3}]\n", cond.c_str(), msg.c_str(), func.c_str(), line));
+}
+
 class UICore : public UICoreI
 {
 public:
 	UICore()
 	{
+		wxSetAssertHandler(&gcAssertHandler);
+
 		m_szAppVersion = nullptr;
 		m_pDumpSettings = nullptr;
 		m_pDumpLevel = nullptr;
