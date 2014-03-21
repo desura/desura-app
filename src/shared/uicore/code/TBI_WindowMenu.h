@@ -34,6 +34,11 @@ $/LicenseInfo$
 class TBIWindowMenu : public TBIBaseMenu
 {
 public:
+	TBIWindowMenu()
+		: TBIBaseMenu(nullptr)
+	{
+	}
+
 	virtual wxMenu* createMenu(uint32 &lastMenuId);
 	virtual void onMenuSelect(wxCommandEvent& event);
 

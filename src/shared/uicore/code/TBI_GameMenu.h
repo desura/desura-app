@@ -31,16 +31,12 @@ $/LicenseInfo$
 
 #include "TBI_BaseMenu.h"
 
-namespace UserCore
-{
-	class ItemManagerI;
-}
 
 class TBIGameMenu : public TBIBaseMenu
 {
 public:
 	TBIGameMenu(UserCore::ItemManagerI* pItemManager)
-		: m_pItemManager(pItemManager)
+		: TBIBaseMenu(pItemManager)
 	{
 	}
 
@@ -51,7 +47,6 @@ public:
 
 private:
 	std::map<int32, DesuraId> m_IdMapList;
-	UserCore::ItemManagerI* m_pItemManager;
 };
 
 #endif //DESURA_TBI_GAMEMENU_H
