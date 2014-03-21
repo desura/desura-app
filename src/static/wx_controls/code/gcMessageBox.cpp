@@ -285,4 +285,6 @@ void gcMessageDialog::onChar(wxKeyEvent& event)
 			wxTheClipboard->Close();
 		}
 	}
+	
+	event.Skip();
 }
