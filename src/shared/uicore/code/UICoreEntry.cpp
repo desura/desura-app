@@ -109,7 +109,7 @@ public:
 #ifdef WIN32
 		m_hUnitTest.load("unittest.dll");
 #else
-		m_hUnitTest.load("unittest.so");
+		m_hUnitTest.load("libunittest.so");
 #endif
 
 #endif
@@ -280,7 +280,7 @@ public:
 #ifdef WIN32
 		m_hUnitTest.load("unittest.dll");
 #else
-		m_hUnitTest.load("unittest.so");
+		m_hUnitTest.load("libunittest.so");
 #endif
 
 		testing::InitGoogleTest(&argc, argv);
