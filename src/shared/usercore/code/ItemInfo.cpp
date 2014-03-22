@@ -1615,14 +1615,24 @@ namespace UnitTest
 		ItemInfo i;
 	};
 
-#define ConvertToString( a ) #a
-
 	static const std::vector<std::string> vSqlCommands =
 	{
-		"INSERT INTO exe VALUES(12884901920," ConvertToString(BUILDID_PUBLIC) ",'Play','C:\\Program Files (x86)\\charlie\\Charlie.exe','','',0);",
-		"INSERT INTO installinfo VALUES(12884901920," ConvertToString(BUILDID_PUBLIC) ",'C:\\Program Files (x86)\\charlie','C:\\Program Files (x86)\\charlie\\Charlie.exe','',0,0,0);",
-		"INSERT INTO installinfoex VALUES(12884901920," ConvertToString(BUILDID_PUBLIC) ",'C:\\Program Files (x86)\\charlie\\Charlie.exe');",
+#ifdef WIN32
+		"INSERT INTO exe VALUES(12884901920,100,'Play','C:\\Program Files (x86)\\charlie\\Charlie.exe','','',0);",
+		"INSERT INTO installinfo VALUES(12884901920,100,'C:\\Program Files (x86)\\charlie','C:\\Program Files (x86)\\charlie\\Charlie.exe','',0,0,0);",
+		"INSERT INTO installinfoex VALUES(12884901920,100,'C:\\Program Files (x86)\\charlie\\Charlie.exe');",
 		"INSERT INTO iteminfo VALUES(12884901920,0,0,2129934,0,'dev-02','Charlie','charlie','','','','','','','dev-02','',0,0);"
+#elif NIX64
+		"INSERT INTO exe VALUES(12884901920,120,'Play','C:\\Program Files (x86)\\charlie\\Charlie.exe','','',0);",
+		"INSERT INTO installinfo VALUES(12884901920,120,'C:\\Program Files (x86)\\charlie','C:\\Program Files (x86)\\charlie\\Charlie.exe','',0,0,0);",
+		"INSERT INTO installinfoex VALUES(12884901920,120,'C:\\Program Files (x86)\\charlie\\Charlie.exe');",
+		"INSERT INTO iteminfo VALUES(12884901920,0,0,2129934,0,'dev-02','Charlie','charlie','','','','','','','dev-02','',0,0);"
+#else
+		"INSERT INTO exe VALUES(12884901920,110,'Play','C:\\Program Files (x86)\\charlie\\Charlie.exe','','',0);",
+		"INSERT INTO installinfo VALUES(12884901920,110,'C:\\Program Files (x86)\\charlie','C:\\Program Files (x86)\\charlie\\Charlie.exe','',0,0,0);",
+		"INSERT INTO installinfoex VALUES(12884901920,110,'C:\\Program Files (x86)\\charlie\\Charlie.exe');",
+		"INSERT INTO iteminfo VALUES(12884901920,0,0,2129934,0,'dev-02','Charlie','charlie','','','','','','','dev-02','',0,0);"
+#endif
 	};
 
 	TEST_F(ItemInfoThirdPartyFixture, ThirdPartyLoad)
