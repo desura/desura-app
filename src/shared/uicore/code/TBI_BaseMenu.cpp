@@ -27,6 +27,18 @@ $/LicenseInfo$
 #include "TBI_BaseMenu.h"
 
 #include "Managers.h"
+#include "MainApp.h"
+
+UserCore::ItemManagerI* TBIBaseMenu::getItemManager()
+{
+	if (m_pItemManager)
+		return m_pItemManager;
+
+	if (GetUserCore())
+		return GetUserCore()->getItemManager();
+
+	return nullptr;
+}
 
 void TBIBaseMenu::loadIcon(wxMenuItem *item, const char* path)
 {

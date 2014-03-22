@@ -40,7 +40,7 @@ class TBIModMenu : public TBIBaseMenu
 {
 public:
 	TBIModMenu(UserCore::ItemManagerI* pItemManager)
-		: m_pItemManager(pItemManager)
+		: TBIBaseMenu(pItemManager)
 	{
 	}
 
@@ -51,7 +51,6 @@ public:
 
 private:
 	std::map<int32, DesuraId> m_IdMapList;
-	UserCore::ItemManagerI* m_pItemManager;
 };
 
 

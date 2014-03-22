@@ -132,6 +132,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>
 
 		$('input.btnclose').click(function() {
 			desura.links.switchTab(desura.links.tab.ITEMS);
+			document.location.reload();
 		});
 
 		$('input.btnbrowse').live('click', function() {

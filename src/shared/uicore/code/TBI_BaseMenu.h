@@ -31,9 +31,19 @@ $/LicenseInfo$
 
 #include "wx/menu.h"
 
+namespace UserCore
+{
+	class ItemManagerI;
+}
+
 class TBIBaseMenu
 {
 public:
+	TBIBaseMenu(UserCore::ItemManagerI* pItemManager)
+		: m_pItemManager(pItemManager)
+	{
+	}
+
 	virtual wxMenu* createMenu(uint32 &lastMenuId)=0;
 	virtual void onMenuSelect(wxCommandEvent& event)=0;
 
@@ -42,6 +52,11 @@ public:
 
 protected:
 	void loadIcon(wxMenuItem* item, const char* icon);
+
+	UserCore::ItemManagerI* getItemManager();
+
+private:
+	UserCore::ItemManagerI* m_pItemManager;
 };
 
 #endif //DESURA_TBI_BASEMENU_H

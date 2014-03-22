@@ -42,7 +42,7 @@ class TBIUpdateMenu : public TBIBaseMenu
 {
 public:
 	TBIUpdateMenu(UserCore::ItemManagerI* pItemManager)
-		: m_pItemManager(pItemManager)
+		: TBIBaseMenu(pItemManager)
 	{
 	}
 
@@ -63,8 +63,6 @@ private:
 	uint32 modUpdateCount;
 
 	gcWString m_szMenuName;
-
-	UserCore::ItemManagerI* m_pItemManager;
 };
 
 #endif //DESURA_TBI_UPDATEMENU_H
