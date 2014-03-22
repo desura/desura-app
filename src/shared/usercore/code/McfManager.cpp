@@ -41,58 +41,41 @@ $/LicenseInfo$
 
 #define MCF_DB "mcfstoreb.sqlite"
 
-enum
+namespace
 {
-	FLAG_NONE = 0,
-	FLAG_PATCH,
-	FLAG_UNAUTHED,
-};
+	enum
+	{
+		FLAG_NONE = 0,
+		FLAG_PATCH,
+		FLAG_UNAUTHED,
+	};
 
+	bool McfInfoSort ( mcfInfo* elem1, mcfInfo* elem2 )
+	{
+		if (!elem1)
+			return false;
 
+		if (!elem2)
+			return true;
 
-
-
-bool McfInfoSort ( mcfInfo* elem1, mcfInfo* elem2 )
-{
-	if (!elem1)
-		return false;
-
-	if (!elem2)
-		return true;
-
-   return elem1->version > elem2->version;
+	   return elem1->version > elem2->version;
+	}
 }
-
-
-
-
-
-
 
 namespace UserCore
 {
-
-MCFManager* g_pMCFManager = nullptr;
-
-void InitMCFManager(const char* appDataPath, const char* mcfDataPath)
-{
-	g_pMCFManager = new MCFManager(appDataPath, mcfDataPath);
-	g_pMCFManager->init();
+	class MigrateInfo
+	{
+	public:
+		DesuraId id;
+		MCFBuild build;
+		MCFBranch branch;
+		gcString path;
+		gcString newPath;
+	};
 }
 
-void DelMCFManager()
-{
-	safe_delete(g_pMCFManager);
-}
-
-MCFManager* GetMCFManager()
-{
-	return g_pMCFManager;
-}
-
-
-
-
+using namespace UserCore;
 
 MCFManager::MCFManager(const char* appDataPath, const char* mcfDataPath)
 	: m_szAppDataPath(appDataPath)
@@ -105,16 +88,6 @@ void MCFManager::init()
 	createMcfDbTables(m_szAppDataPath.c_str());
 	migrateOldFiles();
 }
-
-class MigrateInfo
-{
-public:
-	DesuraId id;
-	MCFBuild build;
-	MCFBranch branch;
-	gcString path;
-	gcString newPath;
-};
 
 void MCFManager::getListOfBadMcfPaths(const gcString &szItemDb, std::vector<MigrateInfo> &delList, std::vector<MigrateInfo> &updateList)
 {
@@ -630,7 +603,7 @@ gcString MCFManager::getMcfSavePath()
 	return m_szMCFSavePath;
 }
 
-}
+
 
 #ifdef WITH_GTEST
 

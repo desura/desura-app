@@ -49,7 +49,7 @@ UIBaseServiceTask::~UIBaseServiceTask()
 
 bool UIBaseServiceTask::initService()
 {
-	UserCore::Item::ItemInfo* pItem = getItemInfo();
+	auto pItem = getItemInfo();
 
 	if (!pItem)
 		return false;
@@ -88,7 +88,7 @@ void UIBaseServiceTask::onServiceError(gcException& e)
 
 gcString UIBaseServiceTask::getBranchMcf(DesuraId id, MCFBranch branch, MCFBuild build)
 {
-	UserCore::MCFManager *mm = UserCore::GetMCFManager();
+	UserCore::MCFManagerI *mm = getUserCore()->getInternal()->getMCFManager();
 	gcString filePath = mm->getMcfPath(id, branch, build);
 
 	if (filePath == "" || !checkPath(filePath.c_str(), branch, build))
@@ -157,14 +157,14 @@ void UIBaseServiceTask::completeUninstall(bool removeAll, bool removeAccount)
 	prog.percent = 100;
 	onMcfProgressEvent(prog);
 
-	UserCore::Item::ItemInfo* pItem = getItemInfo();
-	pItem->resetInstalledMcf();
+	auto pItem = getItemInfo();
+	pItem->getInternal()->resetInstalledMcf();
 
 	getUserCore()->removeUninstallInfo(getItemId());
 
 	if (removeAll)
 	{
-		UserCore::MCFManager *mm = UserCore::GetMCFManager();
+		UserCore::MCFManagerI *mm = getUserCore()->getInternal()->getMCFManager();
 		mm->delAllMcfPath(getItemId());
 
 		UTIL::FS::Path path(getUserCore()->getAppDataPath(), "", false);

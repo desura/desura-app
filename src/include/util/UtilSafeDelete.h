@@ -27,6 +27,8 @@ $/LicenseInfo$
 #define DESURA_UTILSAFEDELETE_H
 
 
+#include <memory>
+
 
 template <typename T>
 void safe_deleteA(T*& ptr)
@@ -111,11 +113,8 @@ void safe_delete(std::deque<T>& deq)
 template <typename T, typename S>
 void safe_delete(std::map<T, S*>& map)
 {
-	typename std::map<T, S*>::iterator it;
-	typename std::map<T, S*>::iterator endit = map.end();
-
-	for (it = map.begin(); it != endit; ++it)
-		safe_delete(it->second);
+	for (auto i : map)
+		safe_delete(i.second);
 
 	map.clear();
 }
@@ -132,6 +131,11 @@ void safe_delete(size_t argc, T **argv)
 	delete[] argv;
 }
 
+template <typename T>
+void safe_delete(std::shared_ptr<T> &pShared)
+{
+	pShared.reset();
+}
 
 
 template <typename T>

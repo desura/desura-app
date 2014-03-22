@@ -26,10 +26,7 @@ $/LicenseInfo$
 #include "util/UtilFsPath.h"
 
 
-namespace UTIL
-{
-namespace FS
-{
+using namespace UTIL::FS;
 
 
 File::File()
@@ -85,28 +82,42 @@ Path::Path()
 #endif
 }
 
-Path::Path(std::wstring path, std::wstring file, bool lastIsFolder)
+Path::Path(std::wstring path)
+	: Path(path, L"", false)
+{
+}
+
+Path::Path(std::string path)
+	: Path(path, "", false)
+{
+}
+
+Path::Path(std::wstring path, std::wstring file, bool bLastIsFile)
 {
 #ifdef NIX
 	m_absolutePath = (path.size() > 0 && path[0] == L'/');
 #endif
 
-	parsePath(gcString(path), lastIsFolder);
+	parsePath(gcString(path), bLastIsFile);
 
-	if (lastIsFolder == false)
+	if (bLastIsFile == false)
 		m_File = File(gcString(file));
+	else
+		assert(file.empty());
 }
 
-Path::Path(std::string path, std::string file, bool lastIsFolder)
+Path::Path(std::string path, std::string file, bool bLastIsFile)
 {
 #ifdef NIX
 	m_absolutePath = (path.size() > 0 && path[0] == '/');
 #endif
 
-	parsePath(path, lastIsFolder);
+	parsePath(path, bLastIsFile);
 
-	if (lastIsFolder == false)
+	if (bLastIsFile == false)
 		m_File = File(file);
+	else
+		assert(file.empty());
 }
 
 Path::Path(const Path& path)
@@ -175,7 +186,7 @@ char Path::GetDirSeperator()
 #endif
 }
 
-void Path::parsePath(std::string p, bool lastIsFolder)
+void Path::parsePath(std::string p, bool bLastIsFile)
 {
 
 	std::vector<std::string> vList;
@@ -236,7 +247,7 @@ void Path::parsePath(std::string p, bool lastIsFolder)
 		m_vPath.erase(m_vPath.begin()+delList[x-1]);
 	}
 
-	if (lastIsFolder && m_vPath.size() > 0)
+	if (bLastIsFile && m_vPath.size() > 0)
 	{
 		m_File = File(m_vPath.back().c_str());
 		m_vPath.pop_back();
@@ -389,5 +400,16 @@ std::string Path::getFolder(size_t index)
 	return m_vPath[index];
 }
 
-}
+bool Path::startsWith(const Path &path) const
+{
+	if (path.m_vPath.size() > m_vPath.size())
+		return false;
+
+	for (size_t x = 0; x < path.m_vPath.size(); ++x)
+	{
+		if (m_vPath[x] != path.m_vPath[x])
+			return false;
+	}
+
+	return true;
 }

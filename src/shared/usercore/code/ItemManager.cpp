@@ -667,6 +667,8 @@ void ItemManager::retrieveItemInfo(DesuraId id, uint32 statusOveride, WildcardMa
 		pi.rootNode = gamesNode;
 
 		parseGamesXml(pi);
+
+		m_pUser->getToolManager()->parseXml(uNode.FirstChildElement("toolinfo"));
 	}
 	else
 	{
@@ -677,13 +679,13 @@ void ItemManager::retrieveItemInfo(DesuraId id, uint32 statusOveride, WildcardMa
 
 		uNode.FirstChildElement("platforms").for_each_child("platform", [&](const XML::gcXMLElement &platform)
 		{
-			if (!m_pUser->platformFilter(platform, PlatformType::PT_Tool))
+			if (!m_pUser->platformFilter(platform, PlatformType::Tool))
 				m_pUser->getToolManager()->parseXml(platform.FirstChildElement("toolinfo"));
 
 			platform.GetAtt("id", pi.platform);
 			parseKnownBranches(platform.FirstChildElement("games"));
 
-			if (m_pUser->platformFilter(platform, PlatformType::PT_Item))
+			if (m_pUser->platformFilter(platform, PlatformType::Item))
 				return;
 
 			pi.rootNode = platform.FirstChildElement("games");
@@ -903,7 +905,7 @@ void ItemManager::itemsNeedUpdate2(const XML::gcXMLElement &platformsNode)
 
 	platformsNode.for_each_child("platform", [this](const XML::gcXMLElement &platform)
 	{
-		if (!m_pUser->platformFilter(platform, PlatformType::PT_Item))
+		if (!m_pUser->platformFilter(platform, PlatformType::Item))
 		{
 			parseItemUpdateXml("mod", platform);
 			parseItemUpdateXml("game", platform);
@@ -1035,7 +1037,7 @@ void ItemManager::updateItem(UserCore::Item::ItemInfo* itemInfo, ParseInfo& pi)
 	itemInfo->loadXmlData(pi.platform, pi.rootNode, newSO, pi.pWildCard, pi.reset);
 	itemInfo->processUpdateXml(pi.rootNode);
 
-	itemInfo->delSFlag(UM::ItemInfoI::STATUS_STUB);
+	itemInfo->delSFlag(UM::ItemInfoI::STATUS_STUB|UM::ItemInfoI::STATUS_DELETED);
 
 	m_pUser->getToolManager()->findJSTools(itemInfo);
 }
@@ -1080,7 +1082,7 @@ void ItemManager::parseLoginXml2(const XML::gcXMLElement &gamesNode, const XML::
 		platform.GetAtt("id", pi.platform);
 		pi.rootNode = platform.FirstChildElement("games");
 
-		if (!m_pUser->platformFilter(platform, PlatformType::PT_Item))
+		if (!m_pUser->platformFilter(platform, PlatformType::Item))
 			parseGamesXml(pi);
 
 		parseKnownBranches(platform.FirstChildElement("games"));

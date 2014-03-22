@@ -34,64 +34,62 @@ $/LicenseInfo$
 #include "BaseItemTask.h"
 #include "usercore/ItemHelpersI.h"
 #include "mcfcore/MCFI.h"
+#include "usercore/ToolManagerI.h"
 
 #include "BDManager.h"
 
 namespace UserCore
 {
-namespace Task
-{
-	class DownloadBannerTask;
-}
-namespace ItemTask
-{
+	namespace Task
+	{
+		class DownloadBannerTask;
+	}
+	namespace ItemTask
+	{
+		class DownloadTask : public UserCore::ItemTask::BaseItemTask, public UserCore::Misc::BannerNotifierI
+		{
+		public:
+			DownloadTask(UserCore::Item::ItemHandle* handle, const char* mcfPath);
+			virtual ~DownloadTask();
 
-class DownloadTask : public UserCore::ItemTask::BaseItemTask, public UserCore::Misc::BannerNotifierI
-{
-public:
-	DownloadTask(UserCore::Item::ItemHandle* handle, const char* mcfPath);
-	virtual ~DownloadTask();
+		protected:
+			void doRun();
 
-protected:
-	void doRun();
+			virtual void onPause();
+			virtual void onUnpause();
+			virtual void onStop();
+			virtual void cancel();
 
-	virtual void onPause();
-	virtual void onUnpause();
-	virtual void onStop();
-	virtual void cancel();
+			void clearEvents();
 
-	void clearEvents();
+			void onProgress(MCFCore::Misc::ProgressInfo& p);
 
-	void onProgress(MCFCore::Misc::ProgressInfo& p);
+			void onBannerError(gcException &e);
+			void onBannerComplete(MCFCore::Misc::DownloadProvider &info);
 
-	void onBannerError(gcException &e);
-	void onBannerComplete(MCFCore::Misc::DownloadProvider &info);
+			void onNewProvider(MCFCore::Misc::DP_s& dp);
 
-	void onNewProvider(MCFCore::Misc::DP_s& dp);
+			void onError(gcException &e);
+			void sortLocalMcfs(MCFBranch branch, MCFBuild build);
 
-	void onError(gcException &e);
-	void sortLocalMcfs(MCFBranch branch, MCFBuild build);
+			void onComplete(gcString &savePath);
+			void onToolComplete();
 
-	void onComplete(gcString &savePath);
-	void onToolComplete();
+			void startToolDownload();
 
-	void startToolDownload();
+		private:
+			MCFBuild m_uiOldBuild;
+			MCFBranch m_uiOldBranch;
 
-private:
-	uint32 m_uiOldBuild;
-	uint32 m_uiOldBranch;
+			ToolTransactionId m_ToolTTID = -1;
 
-	uint32 m_ToolTTID;
+			bool m_bInError = false;
+			bool m_bToolDownloadComplete = false;
+			bool m_bInitFinished = false;
 
-	bool m_bInError;
-	bool m_bToolDownloadComplete;
-	bool m_bInitFinished;
-	
-
-	gcString m_szMcfPath;
-};
-
-}
+			gcString m_szMcfPath;
+		};
+	}
 }
 
 #endif //DESURA_DOWNLOADTHREAD_H

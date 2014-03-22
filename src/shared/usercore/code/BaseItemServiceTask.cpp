@@ -82,7 +82,7 @@ void BaseItemServiceTask::onStop()
 	m_WaitCond.notify();
 }
 
-IPCServiceMain* BaseItemServiceTask::getServiceMain()
+IPC::ServiceMainI* BaseItemServiceTask::getServiceMain()
 {
 	return getUserCore()->getServiceMain();
 }

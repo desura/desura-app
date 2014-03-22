@@ -34,26 +34,17 @@ $/LicenseInfo$
 #include "webcore/WebCoreI.h"
 
 
-namespace UserCore
-{
-namespace ItemTask
-{
+using namespace UserCore::ItemTask;
 
-BaseItemTask::BaseItemTask(UserCore::Item::ITEM_STAGE type, const char* name, UserCore::Item::ItemHandle* handle, MCFBranch branch, MCFBuild build)
-{
-	m_uiType = type;
 
+BaseItemTask::BaseItemTask(UserCore::Item::ITEM_STAGE type, const char* name, UserCore::Item::ItemHandleI* handle, MCFBranch branch, MCFBuild build)
+	: m_pHandle(handle)
+	, m_uiType(type)
+	, m_uiMcfBranch(branch)
+	, m_uiMcfBuild(build)
+	, m_szName(name)
+{
 	assert(handle);
-
-	m_pHandle = handle;
-	m_uiMcfBranch = branch;
-	m_uiMcfBuild = build;
-	m_bIsStopped = false;
-	m_bIsPaused = false;
-
-	m_pWebCore = nullptr;
-	m_pUserCore = nullptr;
-	m_szName = name;
 }
 
 BaseItemTask::~BaseItemTask()
@@ -122,27 +113,27 @@ void BaseItemTask::cancel()
 
 }
 
-UserCore::Item::ItemHandle* BaseItemTask::getItemHandle()
+UserCore::Item::ItemHandleI* BaseItemTask::getItemHandle()
 {
 	return m_pHandle;
 }
 
-UserCore::Item::ItemInfo* BaseItemTask::getItemInfo()
+UserCore::Item::ItemInfoI* BaseItemTask::getItemInfo()
 {
 	if (!m_pHandle)
 		return nullptr;
 
-	return m_pHandle->getItemInfoNorm();
+	return m_pHandle->getItemInfo();
 }
 
-UserCore::Item::ItemInfo* BaseItemTask::getParentItemInfo()
+UserCore::Item::ItemInfoI* BaseItemTask::getParentItemInfo()
 {
-	UserCore::Item::ItemInfo* item = getItemInfo();
+	UserCore::Item::ItemInfoI* item = getItemInfo();
 
 	if (!m_pUserCore || !item)
 		return nullptr;
 
-	return dynamic_cast<UserCore::Item::ItemInfo*>(m_pUserCore->getItemManager()->findItemInfo(item->getParentId()));
+	return m_pUserCore->getItemManager()->findItemInfo(item->getParentId());
 }
 
 DesuraId BaseItemTask::getItemId()
@@ -178,9 +169,6 @@ bool BaseItemTask::isStopped()
 bool BaseItemTask::isPaused()
 {
 	return m_bIsPaused;
-}
-
-}
 }
 
 

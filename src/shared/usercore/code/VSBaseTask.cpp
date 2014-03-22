@@ -59,7 +59,7 @@ void VSBaseTask::setUserCore(UserCore::UserI *uc)
 	m_pUserCore = uc;
 }
 
-void VSBaseTask::setItemHandle(UserCore::Item::ItemHandle* handle)
+void VSBaseTask::setItemHandle(UserCore::Item::ItemHandleI* handle)
 {
 	m_pHandle = handle;
 }
@@ -120,24 +120,24 @@ void VSBaseTask::stop()
 
 
 
-UserCore::Item::ItemHandle* VSBaseTask::getItemHandle()
+UserCore::Item::ItemHandleI* VSBaseTask::getItemHandle()
 {
 	return m_pHandle;
 }
 
-UserCore::Item::ItemInfo* VSBaseTask::getItemInfo()
+UserCore::Item::ItemInfoI* VSBaseTask::getItemInfo()
 {
-	return m_pHandle->getItemInfoNorm();
+	return m_pHandle->getItemInfo();
 }
 
-UserCore::Item::ItemInfo* VSBaseTask::getParentItemInfo()
+UserCore::Item::ItemInfoI* VSBaseTask::getParentItemInfo()
 {
-	UserCore::Item::ItemInfo* item = getItemInfo();
+	UserCore::Item::ItemInfoI* item = getItemInfo();
 
 	if (!m_pUserCore || !item)
 		return nullptr;
 
-	return dynamic_cast<UserCore::Item::ItemInfo*>(m_pUserCore->getItemManager()->findItemInfo(item->getParentId()));
+	return m_pUserCore->getItemManager()->findItemInfo(item->getParentId());
 }
 
 DesuraId VSBaseTask::getItemId()

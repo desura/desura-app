@@ -171,6 +171,8 @@ void MCFDownloadProviders::processXml(XML::gcXMLDocument &doc)
 		Safe::snprintf(temp->authkey.data(), 10, "%d", m_nUserId);
 
 		m_DownloadAuth = temp;
+
+		mNode.GetChild("authed", m_bUnAuthed);
 	}
 
 	auto urlNode = mNode.FirstChildElement("urls");
@@ -201,4 +203,9 @@ void MCFDownloadProviders::processXml(XML::gcXMLDocument &doc)
 		m_nFirstCount = m_vDownloadProviders.size();
 
 	m_bInit = true;
+}
+
+bool MCFDownloadProviders::isUnAuthed() const
+{
+	return m_bUnAuthed;
 }

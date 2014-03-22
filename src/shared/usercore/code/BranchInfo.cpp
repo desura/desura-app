@@ -566,7 +566,7 @@ namespace UnitTest
 	TEST(BranchInfo, CDKeyPerUser)
 	{
 		StubBranchItemInfo2 bi;
-		BranchInstallInfo info(1, &bi);
+		BranchInstallInfo info(1, &bi, UTIL::FS::g_pDefaultUTILFS);
 
 		BranchInfo a(MCFBranch::BranchFromInt(1), DesuraId("2", "games"), &info, 0, 123);
 		BranchInfo b(MCFBranch::BranchFromInt(1), DesuraId("2", "games"), &info, 0, 123);

@@ -110,7 +110,7 @@ void UIServiceTask::onComplete()
 {
 	completeUninstall(m_bRemoveAll, m_bRemoveAcc);
 
-	getItemHandle()->completeStage(true);
+	getItemHandle()->getInternal()->completeStage(true);
 
 	UIBaseServiceTask::onComplete();
 }

@@ -32,7 +32,10 @@ $/LicenseInfo$
 #include "BaseItemTask.h"
 #include "util_thread/BaseThread.h"
 
-class IPCServiceMain;
+namespace IPC
+{
+	class ServiceMainI;
+}
 
 namespace UserCore
 {
@@ -56,7 +59,7 @@ protected:
 
 
 
-	IPCServiceMain* getServiceMain();
+	IPC::ServiceMainI* getServiceMain();
 
 	void waitForFinish();
 	void resetFinish();

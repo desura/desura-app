@@ -81,7 +81,7 @@ bool UIComplexModServiceTask::initService()
 	m_OldBranch = getItemInfo()->getInstalledBranch();
 	m_OldBuild = getItemInfo()->getInstalledBuild();
 
-	UserCore::Item::ItemInfo* parentInfo = getParentItemInfo();
+	auto parentInfo = getParentItemInfo();
 
 	if (getItemInfo()->getInstalledModId().isOk())
 		parentInfo = getItemInfo();
@@ -119,7 +119,7 @@ bool UIComplexModServiceTask::initService()
 		return false;
 	}
 
-	UserCore::MCFManager *mm = UserCore::GetMCFManager();
+	UserCore::MCFManagerI *mm = getUserCore()->getInternal()->getMCFManager();
 
 	gcString installPath = modInfo->getPath();
 	gcString parPath = mm->getMcfBackup(parentInfo->getId(), m_idLastInstalledMod);
@@ -150,25 +150,25 @@ void UIComplexModServiceTask::onComplete()
 {
 	if (HasAllFlags(getItemInfo()->getStatus(), UserCore::Item::ItemInfoI::STATUS_INSTALLCOMPLEX))
 	{
-		UserCore::MCFManager *mm = UserCore::GetMCFManager();
+		UserCore::MCFManagerI *mm = getUserCore()->getInternal()->getMCFManager();
 		mm->delMcfBackup(getItemInfo()->getParentId(), m_idLastInstalledMod);
 	}
 
 	if (HasAllFlags(getItemInfo()->getStatus(), UserCore::Item::ItemInfoI::STATUS_LINK))
 	{
 		if (m_uiCompleteAction == CA_LAUNCH)
-			getItemHandle()->goToStageLaunch();
+			getItemHandle()->getInternal()->goToStageLaunch();
 	}
 	else
 	{
 		switch (m_uiCompleteAction)
 		{
 		case CA_INSTALL:
-			getItemHandle()->goToStageInstallComplex(getMcfBranch(), getMcfBuild());
+			getItemHandle()->getInternal()->goToStageInstallComplex(getMcfBranch(), getMcfBuild());
 			break;
 
 		case CA_UNINSTALL_BRANCH:
-			getItemHandle()->goToStageUninstallBranch(getMcfBranch(), getMcfBuild());
+			getItemHandle()->getInternal()->goToStageUninstallBranch(getMcfBranch(), getMcfBuild());
 			break;
 
 		case CA_UNINSTALL:
@@ -186,13 +186,13 @@ void UIComplexModServiceTask::onComplete()
 			break;
 
 		case CA_UIPATCH:
-			getItemHandle()->goToStageUninstallPatch(getMcfBranch(), getMcfBuild());
+			getItemHandle()->getInternal()->goToStageUninstallPatch(getMcfBranch(), getMcfBuild());
 			break;
 		};
 	}
 
 	if (m_bEndStage)
-		getItemHandle()->completeStage(true);
+		getItemHandle()->getInternal()->completeStage(true);
 
 	UIBaseServiceTask::onComplete();
 }

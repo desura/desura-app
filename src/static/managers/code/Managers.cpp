@@ -65,10 +65,14 @@ private:
 	static std::mutex mutex;
 
 	static void NewInstance();
+	static void Destroy();
 
 	// should be never ever called
 	SingletonHolder();
 };
+
+
+
 
 template <typename Class>
 inline Class &SingletonHolder<Class>::Instance()
@@ -80,17 +84,33 @@ inline Class &SingletonHolder<Class>::Instance()
 	return *instance;
 }
 
+static std::map<void*, std::function<void()>> g_SingletonCleanup;
+static std::mutex g_SingletonCleanupLock;
+
 template <typename Class>
 inline void SingletonHolder<Class>::NewInstance()
 {
-	// enter critical section
-	mutex.lock();
+	std::lock_guard<std::mutex> guard(mutex);
 
 	// check again for creation (another thread could accessed the critical section before
-	if (!instance)
-		instance = new Class();
+	if (instance)
+		return;
 
-	mutex.unlock();
+	instance = new Class();
+
+	std::lock_guard<std::mutex> sguard(g_SingletonCleanupLock);
+
+	g_SingletonCleanup[instance] = []()
+	{
+		SingletonHolder<Class>::Destroy();
+	};
+}
+
+template <typename Class>
+inline void SingletonHolder<Class>::Destroy()
+{
+	std::lock_guard<std::mutex> guard(mutex);
+	safe_delete(instance);
 }
 
 template <typename Class>
@@ -125,6 +145,12 @@ void InitManagers()
 void DestroyManagers()
 {
 	g_Managers.DestroyManagers();
+
+	std::lock_guard<std::mutex> guard(g_SingletonCleanupLock);
+	for (auto s : g_SingletonCleanup)
+		s.second();
+
+	g_SingletonCleanup.clear();
 }
 
 LanguageManagerI & GetLanguageManager()

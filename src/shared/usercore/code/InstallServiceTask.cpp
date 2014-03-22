@@ -81,7 +81,7 @@ bool InstallServiceTask::initService()
 {
 	gcException eBadItem(ERR_BADITEM);
 
-	UserCore::Item::ItemInfo *pItem = getItemInfo();
+	auto pItem = getItemInfo();
 	if (!pItem)
 	{
 		onErrorEvent(eBadItem);
@@ -98,7 +98,7 @@ bool InstallServiceTask::initService()
 
 	if (!pItem->isUpdating())
 	{
-		pItem->setPercent(0);
+		pItem->getInternal()->setPercent(0);
 		pItem->delSFlag(UserCore::Item::ItemInfoI::STATUS_DOWNLOADING|UserCore::Item::ItemInfoI::STATUS_READY);
 		pItem->addSFlag(UserCore::Item::ItemInfoI::STATUS_INSTALLING);
 	}
@@ -141,7 +141,7 @@ void InstallServiceTask::onComplete()
 	getItemHandle()->installLaunchScripts();
 #endif
 
-	UserCore::Item::ItemInfo *pItem = getItemInfo();
+	auto pItem = getItemInfo();
 
 	if (pItem->isUpdating() && getMcfBuild() == pItem->getNextUpdateBuild())
 		pItem->updated();
@@ -169,9 +169,9 @@ void InstallServiceTask::onComplete()
 	onCompleteEvent(com);
 
 	if (verify)
-		getItemHandle()->goToStageVerify(getItemInfo()->getInstalledBranch(), getItemInfo()->getInstalledBuild(), true, true, true);
+		getItemHandle()->getInternal()->goToStageVerify(getItemInfo()->getInstalledBranch(), getItemInfo()->getInstalledBuild(), true, true, true);
 	else
-		getItemHandle()->completeStage(false);
+		getItemHandle()->getInternal()->completeStage(false);
 
 	onFinish();
 }
@@ -205,11 +205,11 @@ void InstallServiceTask::onProgUpdate(MCFCore::Misc::ProgressInfo& info)
 		if (getItemInfo()->isUpdating())
 		{
 			//for updating installing is the second 50%
-			getItemInfo()->setPercent(50+info.percent/2);
+			getItemInfo()->getInternal()->setPercent(50+info.percent/2);
 		}
 		else
 		{
-			getItemInfo()->setPercent(info.percent);
+			getItemInfo()->getInternal()->setPercent(info.percent);
 		}
 
 		if (!(getItemHandle()->getItemInfo()->getStatus() & UserCore::Item::ItemInfoI::STATUS_INSTALLCOMPLEX))
@@ -230,16 +230,16 @@ void InstallServiceTask::onError(gcException &e)
 	m_bHasError = true;
 
 	Warning(gcString("Error in MCF install: {0}\n", e));
-	getItemHandle()->setPausable(false);
+	getItemHandle()->getInternal()->setPausable(false);
 
 	if (!getItemHandle()->shouldPauseOnError())
 	{
 		getItemInfo()->delSFlag(UserCore::Item::ItemInfoI::STATUS_INSTALLING|UserCore::Item::ItemInfoI::STATUS_UPDATING|UserCore::Item::ItemInfoI::STATUS_DOWNLOADING);
-		getItemHandle()->resetStage(true);
+		getItemHandle()->getInternal()->resetStage(true);
 	}
 	else
 	{
-		getItemHandle()->setPaused(true, true);
+		getItemHandle()->getInternal()->setPaused(true, true);
 	}
 
 	onErrorEvent(e);

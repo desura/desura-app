@@ -75,7 +75,13 @@ void ItemHandle::doLaunch(Helper::ItemLaunchHelperI* helper)
 
 	m_pUserCore->getItemManager()->setRecent(getItemInfo()->getId());
 
-	bool res = UTIL::WIN::launchExe(ei->getExe(), args.c_str(), needElevation, m_pUserCore->getMainWindowHandle());
+	auto pUserEx = m_pUserCore->getInternal();
+	HWND hMainWin;
+
+	if (pUserEx)
+		hMainWin = pUserEx->getMainWindowHandle();
+
+	bool res = UTIL::WIN::launchExe(ei->getExe(), args.c_str(), needElevation, hMainWin);
 
 	if (!res)
 		throw gcException(ERR_LAUNCH, GetLastError(), gcString("Failed to create {0} process. [{1}: {2}].\n", getItemInfo()->getName(), GetLastError(), ei->getExe()));

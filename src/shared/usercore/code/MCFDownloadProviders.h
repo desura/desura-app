@@ -64,6 +64,8 @@ namespace UserCore
 			dp->forceLoad(mcf.handle());
 		}
 
+		bool isUnAuthed() const;
+
 	protected:
 		void downloadXml();
 		void processXml(XML::gcXMLDocument &xmlDoc);
@@ -71,6 +73,7 @@ namespace UserCore
 
 	private:
 		bool m_bInit = false;
+		bool m_bUnAuthed = false;
 		uint32 m_nUserId = 666;
 		uint32 m_nFirstCount = 0;
 

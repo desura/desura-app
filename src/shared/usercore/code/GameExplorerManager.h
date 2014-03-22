@@ -32,6 +32,10 @@ $/LicenseInfo$
 #include "BaseManager.h"
 #include "usercore/ItemInfoI.h"
 
+#ifdef LINK_WITH_GMOCK
+#include <gmock/gmock.h>
+#endif
+
 namespace sqlite3x
 {
 	class sqlite3_connection;
@@ -39,80 +43,101 @@ namespace sqlite3x
 
 namespace UserCore
 {
-class UserI;
+	class UserI;
 
-namespace Item
-{
-	class ItemInfo;
-}
+	namespace Item
+	{
+		class ItemInfo;
+	}
 
-namespace Misc
-{
-	class GameExplorerInfo : public BaseItem
+	namespace Misc
+	{
+		class GameExplorerInfo : public BaseItem
+		{
+		public:
+			enum
+			{
+				FLAG_INSTALLED = 1,
+				FLAG_NEEDSUPATE = 2,
+			};
+
+			GameExplorerInfo(DesuraId id, UserCore::UserI* user);
+			~GameExplorerInfo();
+
+			void loadFromDb(sqlite3x::sqlite3_connection *db);
+			void saveToDb(sqlite3x::sqlite3_connection *db);
+
+			void generateDll();
+			void installDll();
+			void removeDll();
+
+			bool isInstalled();
+			bool needsUpdate();
+			bool isInstallable();
+			bool needsInstall();
+
+		protected:
+			gcWString generateXml();
+			gcString generateGuid();
+
+			void regEvent();
+
+			void translateIco(HANDLE handle, const char* icoPath);
+			void onInfoChanged(UserCore::Item::ItemInfoI::ItemInfo_s &info);
+
+		protected:
+			gcString m_szDllPath;
+			gcString m_szGuid;
+			uint32 m_uiFlags;
+
+			DesuraId m_Id;
+			UserCore::UserI* m_pUser;
+			UserCore::Item::ItemInfoI* m_pItemInfo;
+		};
+	}
+
+	class GameExplorerManagerI
 	{
 	public:
-		enum
-		{
-			FLAG_INSTALLED = 1,
-			FLAG_NEEDSUPATE = 2,
-		};
+		virtual void addItem(DesuraId item)=0;
+		virtual void removeItem(DesuraId item)=0;
 
-		GameExplorerInfo(DesuraId id, UserCore::UserI* user);
-		~GameExplorerInfo();
-
-		void loadFromDb(sqlite3x::sqlite3_connection *db);
-		void saveToDb(sqlite3x::sqlite3_connection *db);
-
-		void generateDll();
-		void installDll();
-		void removeDll();
-
-		bool isInstalled();
-		bool needsUpdate();
-		bool isInstallable();
-		bool needsInstall();
+		virtual void loadItems()=0;
+		virtual void saveItems()=0;
 
 	protected:
-		gcWString generateXml();
-		gcString generateGuid();
-
-		void regEvent();
-
-		void translateIco(HANDLE handle, const char* icoPath);
-		void onInfoChanged(UserCore::Item::ItemInfoI::ItemInfo_s &info);
-
-	protected:
-		gcString m_szDllPath;
-		gcString m_szGuid;
-		uint32 m_uiFlags;
-
-		DesuraId m_Id;
-		UserCore::UserI* m_pUser;
-		UserCore::Item::ItemInfoI* m_pItemInfo;
+		virtual ~GameExplorerManagerI(){}
 	};
-}
 
+#ifdef LINK_WITH_GMOCK
+	class GameExplorerManagerMock : public GameExplorerManagerI
+	{
+	public:
+		MOCK_METHOD1(addItem, void(DesuraId));
+		MOCK_METHOD1(removeItem, void(DesuraId));
 
-class GameExplorerManager : public BaseManager<Misc::GameExplorerInfo>
-{
-public:
-	GameExplorerManager(UserI* user);
+		MOCK_METHOD0(loadItems, void());
+		MOCK_METHOD0(saveItems, void());
+	};
+#endif
 
-	void addItem(DesuraId item);
-	void removeItem(DesuraId item);
+	class GameExplorerManager : public GameExplorerManagerI, public BaseManager<Misc::GameExplorerInfo>
+	{
+	public:
+		GameExplorerManager(UserI* user);
 
-	void loadItems();
-	void saveItems();
+		void addItem(DesuraId item) override;
+		void removeItem(DesuraId item) override;
 
-protected:
-	bool shouldInstallItems();
+		void loadItems() override;
+		void saveItems() override;
 
-private:
-	UserI* m_pUser;
+	protected:
+		bool shouldInstallItems();
 
-};
-
-
+	private:
+		UserI* m_pUser;
+	};
 }
 
 

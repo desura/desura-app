@@ -44,8 +44,8 @@ namespace ItemTask
 class DownloadToolTask : public UserCore::ItemTask::BaseItemTask
 {
 public:
-	DownloadToolTask(UserCore::Item::ItemHandle* handle, uint32 ttid, const char* downloadPath, MCFBranch branch, MCFBuild build);
-	DownloadToolTask(UserCore::Item::ItemHandle* handle, bool launch);
+	DownloadToolTask(UserCore::Item::ItemHandle* handle, ToolTransactionId ttid, const char* downloadPath, MCFBranch branch, MCFBuild build);
+	DownloadToolTask(UserCore::Item::ItemHandle* handle, bool launch, ToolTransactionId ttid = UINT_MAX);
 
 	virtual ~DownloadToolTask();
 	virtual void cancel();
@@ -66,11 +66,10 @@ protected:
 
 private:
 	gcString m_szDownloadPath;
-	uint32 m_ToolTTID;
+	ToolTransactionId m_ToolTTID = UINT_MAX;
 
-	bool m_bLaunch;
-	bool m_bInstallAfter;
-	bool m_bCancelled;
+	bool m_bLaunch = false;
+	bool m_bCancelled = false;
 
 	::Thread::WaitCondition m_WaitCond;
 };

@@ -33,6 +33,9 @@ $/LicenseInfo$
 #include "webcore/WebCoreI.h"
 #include "MCFDownloadProviders.h"
 
+
+#include "User.h"
+
 namespace UserCore
 {
 namespace ItemTask
@@ -40,7 +43,7 @@ namespace ItemTask
 
 bool VSCheckMcf::doTask(bool &goodMcf)
 {
-	UserCore::MCFManager *mm = UserCore::GetMCFManager();
+	UserCore::MCFManagerI *mm = getUserCore()->getInternal()->getMCFManager();
 	gcString filePath = mm->getMcfPath(getItemId(), getMcfBranch(), getMcfBuild());
 
 
@@ -91,7 +94,7 @@ gcString VSCheckMcf::downloadMCFHeader()
 	if (isStopped())
 		return "";
 
-	UserCore::MCFManager *mm = UserCore::GetMCFManager();
+	UserCore::MCFManagerI *mm = getUserCore()->getInternal()->getMCFManager();
 	gcString path = mm->getMcfPath(getItemId(), getMcfBranch(), getMcfBuild());
 
 	if (path == "")

@@ -55,7 +55,7 @@ GatherInfoTask::~GatherInfoTask()
 
 void GatherInfoTask::doRun()
 {
-	UserCore::Item::ItemInfo* item = getItemInfo();
+	auto item = getItemInfo();
 
 	WildcardManager wildc = WildcardManager();
 	wildc.onNeedSpecialEvent += delegate(&onNeedWCEvent);
@@ -120,7 +120,7 @@ void GatherInfoTask::completeStage()
 	if (HasAnyFlags(m_uiFlags, GI_FLAG_UPDATE))
 		getItemInfo()->addSFlag(UserCore::Item::ItemInfoI::STATUS_READY);
 
-	getItemHandle()->completeStage(true);
+	getItemHandle()->getInternal()->completeStage(true);
 }
 
 void GatherInfoTask::resetStage()
@@ -128,13 +128,13 @@ void GatherInfoTask::resetStage()
 	if (HasAnyFlags(m_uiFlags, GI_FLAG_UPDATE))
 		completeStage();
 	else
-		getItemHandle()->resetStage(true);
+		getItemHandle()->getInternal()->resetStage(true);
 }
 
 void GatherInfoTask::onError(gcException &e)
 {
 	if (!HasAnyFlags(m_uiFlags, GI_FLAG_EXISTING|GI_FLAG_UPDATE))
-		getItemHandle()->resetStage(true);
+		getItemHandle()->getInternal()->resetStage(true);
 }
 
 bool GatherInfoTask::isValidBranch()
@@ -143,7 +143,7 @@ bool GatherInfoTask::isValidBranch()
 
 	if (branch.isGlobal())
 	{
-		branch = getItemInfo()->getBestBranch(branch);
+		branch = getItemInfo()->getInternal()->getBestBranch(branch);
 		m_uiMcfBranch = branch;
 	}
 
@@ -163,7 +163,7 @@ void GatherInfoTask::onComplete()
 	if (getItemHandle()->getItemInfo()->isDownloadable())
 		checkRequirements();
 	else
-		getItemHandle()->completeStage(true);
+		getItemHandle()->getInternal()->completeStage(true);
 }
 
 
@@ -210,13 +210,13 @@ bool GatherInfoTask::handleInvalidBranch()
 	if (branch == UINT_MAX)
 	{
 		//means the item was set as a link and needs to be launched
-		getItemHandle()->goToStageLaunch();
+		getItemHandle()->getInternal()->goToStageLaunch();
 		return false;
 	}
 	else
 	{
 		if (branch.isGlobal())
-			branch = getItemInfo()->getBestBranch(branch);
+			branch = getItemInfo()->getInternal()->getBestBranch(branch);
 
 		UserCore::Item::BranchInfoI* branchInfo = getItemInfo()->getBranchById(branch);
 		checkNullBranch(branchInfo);
@@ -247,7 +247,7 @@ void GatherInfoTask::checkRequirements()
 	if (branchInfo->isPreOrderAndNotPreload())
 	{
 		//show the preorder prompt
-		getItemHandle()->goToStageLaunch();
+		getItemHandle()->getInternal()->goToStageLaunch();
 		return;
 	}
 
@@ -269,7 +269,7 @@ void GatherInfoTask::checkRequirements()
 	if (res == 0)
 	{
 		getItemHandle()->getItemInfo()->addToAccount();
-		getItemHandle()->goToStageDownload(branch, getMcfBuild(), HasAnyFlags(m_uiFlags, GI_FLAG_TEST));
+		getItemHandle()->getInternal()->goToStageDownload(branch, getMcfBuild(), HasAnyFlags(m_uiFlags, GI_FLAG_TEST));
 	}
 	else
 	{
@@ -277,12 +277,12 @@ void GatherInfoTask::checkRequirements()
 		{
 			if (HasAnyFlags(m_uiFlags, GI_FLAG_UPDATE))
 			{
-				getItemHandle()->goToStageDownload(branch, getMcfBuild(), false);
+				getItemHandle()->getInternal()->goToStageDownload(branch, getMcfBuild(), false);
 			}
 			else if (getItemHandle()->getItemInfo()->getStatus() & UserCore::Item::ItemInfoI::STATUS_INSTALLCOMPLEX)
 			{
 				if (!m_bCanceled && m_pGIHH && m_pGIHH->showComplexPrompt())
-					getItemHandle()->goToStageDownload(branch, getMcfBuild(), HasAnyFlags(m_uiFlags, GI_FLAG_TEST));
+					getItemHandle()->getInternal()->goToStageDownload(branch, getMcfBuild(), HasAnyFlags(m_uiFlags, GI_FLAG_TEST));
 				else
 					resetStage();
 			}
@@ -300,14 +300,14 @@ void GatherInfoTask::checkRequirements()
 
 				case UserCore::Item::Helper::C_INSTALL:
 						getItemInfo()->addToAccount();
-						getItemHandle()->goToStageDownload(branch, getMcfBuild(), HasAnyFlags(m_uiFlags, GI_FLAG_TEST));
+						getItemHandle()->getInternal()->goToStageDownload(branch, getMcfBuild(), HasAnyFlags(m_uiFlags, GI_FLAG_TEST));
 						break;
 
 				case UserCore::Item::Helper::C_VERIFY:
 						getItemInfo()->addToAccount();
 						getItemInfo()->addSFlag(UserCore::Item::ItemInfoI::STATUS_INSTALLED);
 						getItemInfo()->setInstalledMcf(branch, getMcfBuild());
-						getItemHandle()->goToStageVerify(branch, getMcfBuild(), true, true, true);
+						getItemHandle()->getInternal()->goToStageVerify(branch, getMcfBuild(), true, true, true);
 						break;
 
 					default:
@@ -325,7 +325,7 @@ void GatherInfoTask::checkRequirements()
 			else
 			{
 				getItemHandle()->getItemInfo()->addToAccount();
-				getItemHandle()->goToStageDownload(branch, getMcfBuild(), HasAnyFlags(m_uiFlags, GI_FLAG_TEST));
+				getItemHandle()->getInternal()->goToStageDownload(branch, getMcfBuild(), HasAnyFlags(m_uiFlags, GI_FLAG_TEST));
 			}
 		}
 	}
@@ -345,7 +345,7 @@ uint32 GatherInfoTask::validate()
 
 	if (par.isOk())
 	{
-		parInfo = getItemHandle()->getUserCore()->getItemManager()->findItemInfo(par);
+		parInfo = getUserCore()->getItemManager()->findItemInfo(par);
 
 		if (!parInfo || !(parInfo->getStatus() & UserCore::Item::ItemInfoI::STATUS_INSTALLED))
 			isValid |= UserCore::Item::Helper::V_PARENT;

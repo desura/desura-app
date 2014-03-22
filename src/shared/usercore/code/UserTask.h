@@ -34,62 +34,60 @@ $/LicenseInfo$
 
 namespace UserCore
 {
-	class User;
+	class UserI;
 
-namespace Item
-{
-	class ItemInfo;
-}
+	namespace Item
+	{
+		class ItemInfo;
+	}
 
-namespace Task
-{
+	namespace Task
+	{
+		class UserTask : public ::Thread::BaseTask
+		{
+		public:
+			//! Constuctor
+			//!
+			//! @param user Usercore handle
+			//! @param itemId Item id
+			//!
+			UserTask(UserCore::UserI *user, DesuraId itemId = DesuraId());
+			virtual ~UserTask();
 
-class UserTask : public ::Thread::BaseTask
-{
-public:
-	//! Constuctor
-	//!
-	//! @param user Usercore handle
-	//! @param itemId Item id
-	//!
-	UserTask(UserCore::User *user, DesuraId itemId = DesuraId());
-	virtual ~UserTask();
+			UserCore::UserI* getUserCore();
+			WebCore::WebCoreI* getWebCore();
 
-	UserCore::User* getUserCore();
-	WebCore::WebCoreI* getWebCore();
+		protected:
+			DesuraId getItemId();
+			UserCore::Item::ItemInfo* getItemInfo();
 
-protected:
-	DesuraId getItemId();
-	UserCore::Item::ItemInfo* getItemInfo();
+			virtual void onStop();
+			volatile bool isStopped();
 
-	virtual void onStop();
-	volatile bool isStopped();
+			volatile bool m_bStopped;
+		private:
+			DesuraId m_iId;
 
-	volatile bool m_bStopped;
-private:
-	DesuraId m_iId;
-
-	WebCore::WebCoreI* m_pWebCore;
-	UserCore::User* m_pUserCore;
-};
+			WebCore::WebCoreI* m_pWebCore;
+			UserCore::UserI* m_pUserCore;
+		};
 
 
-inline DesuraId UserTask::getItemId()
-{
-	return m_iId;
-}
+		inline DesuraId UserTask::getItemId()
+		{
+			return m_iId;
+		}
 
-inline WebCore::WebCoreI* UserTask::getWebCore()
-{
-	return m_pWebCore;
-}
+		inline WebCore::WebCoreI* UserTask::getWebCore()
+		{
+			return m_pWebCore;
+		}
 
-inline UserCore::User* UserTask::getUserCore()
-{
-	return m_pUserCore;
-}
-
-}
+		inline UserCore::UserI* UserTask::getUserCore()
+		{
+			return m_pUserCore;
+		}
+	}
 }
 
 #endif //DESURA_USERTASK_H

@@ -85,7 +85,7 @@ void User::initPipe()
 	if (m_pPipeClient)
 		return;
 
-	m_pPipeClient = new UserIPCPipeClient(getUserName(), getAppDataPath(), true);
+	m_pPipeClient = std::make_shared<UserIPCPipeClient>(getUserName(), getAppDataPath(), true);
 	m_pPipeClient->onDisconnectEvent += delegate(&onPipeDisconnect);
 
 	size_t x=0;

@@ -97,7 +97,7 @@ void UIPatchServiceTask::onComplete()
 
 	onMcfProgressEvent(prog);
 
-	getItemHandle()->goToStageDownload(getMcfBranch(), getMcfBuild());
+	getItemHandle()->getInternal()->goToStageDownload(getMcfBranch(), getMcfBuild());
 	UIBaseServiceTask::onComplete();
 }
 

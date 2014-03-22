@@ -33,7 +33,7 @@ namespace Task
 {
 
 
-UserTask::UserTask(UserCore::User *user, DesuraId id)
+UserTask::UserTask(UserCore::UserI *user, DesuraId id)
 {
 	m_pUserCore = user;
 

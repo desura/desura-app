@@ -57,10 +57,6 @@ typedef struct
 } find_s;
 
 
-MCFI::~MCFI()
-{
-}
-
 MCF::MCF()
 	: m_sHeader(std::make_shared<MCFCore::MCFHeader>())
 {

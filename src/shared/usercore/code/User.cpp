@@ -60,36 +60,6 @@ using namespace UserCore;
 User::User()
 	: m_bAltProvider(false)
 {
-	m_bLocked = false;
-	m_pWaitCond = new ::Thread::WaitCondition();
-	
-	m_pPipeClient = nullptr;
-	m_pThreadPool = nullptr;
-	m_pWebCore = nullptr;
-	m_pThreadManager = nullptr;
-	m_pUploadManager = nullptr;
-	m_pUThread = nullptr;
-	m_pItemManager = nullptr;
-	m_pToolManager = nullptr;
-	m_pGameExplorerManager = nullptr;
-	m_pCDKeyManager = nullptr;
-	m_pBannerDownloadManager = nullptr;
-	m_pCIPManager = nullptr;
-	
-	m_bAdmin = false;
-	m_bDelayLoading = false;
-	m_bDownloadingUpdate = false;
-
-	m_iCartItems = 0;
-	m_iUserId = 0;
-	m_iUpdates = 0;
-	m_iPms = 0;
-	m_iThreads = 0;
-
-	m_iSelectedIndex = 0;
-	m_uiLastUpdateBuild = 0;
-	m_uiLastUpdateVer = 0;	
-
 	onLoginItemsLoadedEvent += delegate(this, &User::onLoginItemsLoaded);
 }
 
@@ -97,7 +67,7 @@ User::~User()
 {
 	while (m_bLocked)
 	{
-		m_pWaitCond->wait(0, 500);
+		m_WaitCond.wait(0, 500);
 	}
 
 	cleanUp();
@@ -105,12 +75,8 @@ User::~User()
 	onNeedWildCardEvent -= delegate(this, &User::onNeedWildCardCB);
 
 	safe_delete(m_pThreadPool);
-	safe_delete(m_pWaitCond);
-
-	m_pWebCore->destroy();
-	m_pWebCore = nullptr;
-
-	DelMCFManager();
+	safe_delete(m_pWebCore);
+	safe_delete(m_pMcfManager);
 }
 
 void User::onLoginItemsLoaded()
@@ -126,7 +92,7 @@ void User::lockDelete()
 void User::unlockDelete()
 {
 	m_bLocked = false;
-	m_pWaitCond->notify();
+	m_WaitCond.notify();
 }
 
 void User::init(const char* appDataPath)
@@ -143,18 +109,20 @@ void User::init(const char* appDataPath, const char* szProviderUrl)
 
 	m_szAppDataPath = appDataPath;
 
-	m_pThreadPool = new ::Thread::ThreadPool(2);
+	m_pThreadPool = std::make_shared<::Thread::ThreadPool>(2);
 	m_pThreadPool->blockTasks();
 
-	m_pWebCore = (WebCore::WebCoreI*)WebCore::FactoryBuilder(WEBCORE);
+	m_pWebCore = std::shared_ptr<WebCore::WebCoreI>((WebCore::WebCoreI*)WebCore::FactoryBuilder(WEBCORE), [](WebCore::WebCoreI* pWebCore){
+		pWebCore->destroy();
+	});
+
 	m_pWebCore->init(appDataPath, szProviderUrl);
 
-	m_pBannerDownloadManager = new BDManager(this);
-	m_pCDKeyManager = new CDKeyManager(this);
+	m_pBannerDownloadManager = std::make_shared<BDManager>(this);
+	m_pCDKeyManager = std::make_shared<CDKeyManager>(this);
 
 	m_szMcfCachePath = gcString(UTIL::OS::getMcfCachePath());
-
-	InitMCFManager(appDataPath, m_szMcfCachePath.c_str());
+	m_pMcfManager = std::make_shared<MCFManager>(appDataPath, m_szMcfCachePath.c_str());
 	init();
 }
 
@@ -174,7 +142,7 @@ void User::cleanUp()
 	m_pThreadPool->blockTasks();
 	m_pWebCore->logOut();
 
-	//must delete this one first as upload threads are apart of threadmanager
+	//must delete this one first as upload threads are apart of thread manager
 	safe_delete(m_pUploadManager);
 	safe_delete(m_pUThread);
 	safe_delete(m_pThreadManager);
@@ -198,8 +166,8 @@ void User::cleanUp()
 
 void User::init()
 {
-	m_pUploadManager = new UserCore::UploadManager(this);
-	m_pThreadManager = new UserCore::UserThreadManager();
+	m_pUploadManager = std::make_shared<UserCore::UploadManager>(this);
+	m_pThreadManager = std::make_shared<UserCore::UserThreadManager>();
 	m_pThreadManager->setUserCore(this);
 
 	m_iUserId = 0;
@@ -210,14 +178,14 @@ void User::init()
 	m_uiLastUpdateVer = 0;
 	m_uiLastUpdateBuild = 0;
 
-	m_pItemManager = new ItemManager(this);
-	m_pToolManager = new ToolManager(this);
+	m_pItemManager = std::make_shared<ItemManager>(this);
+	m_pToolManager = std::make_shared<ToolManager>(this);
 
 #ifdef WIN32
-	m_pGameExplorerManager = new GameExplorerManager(this);
+	m_pGameExplorerManager = std::make_shared<GameExplorerManager>(this);
 #endif
 
-	m_pCIPManager = new CIPManager(this);
+	m_pCIPManager = std::make_shared<CIPManager>(this);
 	m_pPipeClient = nullptr;
 
 	m_bDownloadingUpdate = false;
@@ -559,7 +527,7 @@ bool User::platformFilter(const XML::gcXMLElement &platform, PlatformType type)
 #ifdef WIN32
 	return (id != 100);
 #elif defined NIX
-	if (type == PT_Tool)
+	if (type == PlatformType::Tool)
 		return (id != 110 && id != 120);
 #ifdef NIX64
 	if (id == 120)
@@ -585,11 +553,18 @@ void User::testMcfCache()
 
 void User::setAvatarUrl(const char* szAvatarUrl)
 {
-	if (gcString(szAvatarUrl) != (std::string)m_szAvatarUrl)
+	if (UTIL::FS::isValidFile(szAvatarUrl))
+	{
+		setAvatarPath(szAvatarUrl);
+	}
+	else if (gcString(szAvatarUrl) != (std::string)m_szAvatarUrl)
 	{
 		m_szAvatarUrl = szAvatarUrl;
 		m_pThreadPool->queueTask(new UserCore::Task::DownloadAvatarTask(this, szAvatarUrl, m_iUserId));
 	}
 }
 
-
+MCFManagerI* User::getMCFManager()
+{
+	return m_pMcfManager.get();
+}

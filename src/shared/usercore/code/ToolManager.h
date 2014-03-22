@@ -51,6 +51,7 @@ namespace UserCore
 #ifdef WIN32
 	class ToolIPCPipeClient;
 #endif
+
 	class User;
 
 	namespace Misc
@@ -77,35 +78,37 @@ namespace UserCore
 		~ToolManager();
 
 
-		virtual void removeTransaction(ToolTransactionId ttid, bool forced);
+		void removeTransaction(ToolTransactionId ttid, bool forced) override;
 
-		virtual ToolTransactionId downloadTools(Misc::ToolTransaction* transaction);
-		virtual ToolTransactionId installTools(Misc::ToolTransaction* transaction);
+		ToolTransactionId downloadTools(Misc::ToolTransaction* transaction) override;
+		ToolTransactionId installTools(Misc::ToolTransaction* transaction) override;
 
-		virtual bool updateTransaction(ToolTransactionId ttid, Misc::ToolTransaction* transaction);
+		bool updateTransaction(ToolTransactionId ttid, Misc::ToolTransaction* transaction) override;
 
-		virtual bool areAllToolsValid(std::vector<DesuraId> &list);
-		virtual bool areAllToolsDownloaded(std::vector<DesuraId> &list);
-		virtual bool areAllToolsInstalled(std::vector<DesuraId> &list);
+		bool areAllToolsValid(std::vector<DesuraId> &list) override;
+		bool areAllToolsDownloaded(std::vector<DesuraId> &list) override;
+		bool areAllToolsInstalled(std::vector<DesuraId> &list) override;
 
-		virtual void parseXml(const XML::gcXMLElement &toolinfoNode);
-		virtual std::string getToolName(DesuraId toolId);
+		void parseXml(const XML::gcXMLElement &toolinfoNode) override;
+		std::string getToolName(DesuraId toolId) override;
 
 		void loadItems();
-
-		virtual void findJSTools(UserCore::Item::ItemInfo* item);
-		virtual bool initJSEngine();
-		virtual void destroyJSEngine();
-
-
-		virtual void invalidateTools(std::vector<DesuraId> &list);
-
-#ifdef NIX
-		virtual void symLinkTools(std::vector<DesuraId> &list, const char* path);
-		virtual int hasNonInstallableTool(std::vector<DesuraId> &list);
-#endif
-
 		void saveItems() override;
+
+
+
+		void findJSTools(UserCore::Item::ItemInfo* item) override;
+		bool initJSEngine() override;
+		void destroyJSEngine() override;
+
+
+		void invalidateTools(std::vector<DesuraId> &list) override;
+
+	#ifdef NIX
+		void symLinkTools(std::vector<DesuraId> &list, const char* path) override;
+		int hasNonInstallableTool(std::vector<DesuraId> &list) override;
+	#endif
+
 		void reloadTools(DesuraId id) override;
 
 	protected:
@@ -147,7 +150,7 @@ namespace UserCore
 		bool m_bDeleteThread;
 
 		UserCore::User* m_pUser;
-		ToolTransactionId m_uiLastTransId;
+		ToolTransactionId m_uiLastTransId; 
 
 		std::mutex m_MapLock;
 		std::map<ToolTransactionId, Misc::ToolTransInfo*> m_mTransactions;

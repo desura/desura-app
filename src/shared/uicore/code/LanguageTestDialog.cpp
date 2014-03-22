@@ -213,6 +213,8 @@ public:
 	UserCore::Item::Misc::ExeInfoI* getActiveExe(MCFBranch branch = MCFBranch()) override { return &m_Exe1; }
 	void setActiveExe(const char* name, MCFBranch branch = MCFBranch()) override { }
 
+	ItemInfoInternalI* getInternal() override { return nullptr; }
+
 	LanguageStubExeInfo m_Exe1;
 	LanguageStubExeInfo m_Exe2;
 	LanguageStubBranch m_Branch;
@@ -327,6 +329,9 @@ public:
 #ifdef NIX
 	void installLaunchScripts() override { }
 #endif
+
+	
+	ItemHandleInternalI* getInternal() override { return nullptr; }
 
 	//Item Group
 	ItemTaskGroupI::ACTION getAction() override { return ItemTaskGroupI::A_VERIFY; }

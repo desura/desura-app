@@ -48,6 +48,8 @@ public:
 		m_uiHash = UTIL::MISC::RSHash_CSTR(name);
 	}
 
+	virtual ~BaseItem(){}
+
 	uint64 getHash(){return m_uiHash;}
 	const char* getName(){return m_szName.c_str();}
 

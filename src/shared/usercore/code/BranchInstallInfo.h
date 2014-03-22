@@ -120,7 +120,7 @@ public:
 class BranchInstallInfo
 {
 public:
-	BranchInstallInfo(uint32 biId, BranchItemInfoI *itemInfo);
+	BranchInstallInfo(uint32 biId, BranchItemInfoI *itemInfo, UTIL::FS::UtilFSI* pFileSystem);
 	~BranchInstallInfo();
 
 
@@ -230,6 +230,7 @@ private:
 	uint32 m_BiId;
 
 	BranchItemInfoI* m_pItem;
+	UTIL::FS::UtilFSI* m_pFileSystem;
 };
 
 

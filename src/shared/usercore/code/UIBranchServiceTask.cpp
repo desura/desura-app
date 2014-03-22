@@ -100,7 +100,7 @@ void UIBranchServiceTask::onComplete()
 
 	onMcfProgressEvent(prog);
 
-	getItemHandle()->goToStageDownload(getMcfBranch(), getMcfBuild(), m_bTestInstall);
+	getItemHandle()->getInternal()->goToStageDownload(getMcfBranch(), getMcfBuild(), m_bTestInstall);
 	UIBaseServiceTask::onComplete();
 }
 
