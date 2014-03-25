@@ -104,10 +104,11 @@ if (WIN32)
   
   add_dependencies(boost_s boost)
 
+  set(Boost_DIR_S ${source_dir})
   set(Boost_LIBRARY_DIR_S ${Boost_DIR_S}/stage/lib)
 
   set_property(TARGET boost_s PROPERTY FOLDER "ThirdParty")
   
-  set(Boost_FILESYSTEM_LIBRARY_S "${Boost_LIBRARY_DIR}/libboost_filesystem-${BOOST_LIB_ADD_STRING}.${BOOST_SUFFIX}")
-  set(Boost_SYSTEM_LIBRARY_S "${Boost_LIBRARY_DIR}/libboost_system-${BOOST_LIB_ADD_STRING}.${BOOST_SUFFIX}")
+  set(Boost_FILESYSTEM_LIBRARY_S "${Boost_LIBRARY_DIR_S}/libboost_filesystem-${BOOST_LIB_ADD_STRING}.${BOOST_SUFFIX}")
+  set(Boost_SYSTEM_LIBRARY_S "${Boost_LIBRARY_DIR_S}/libboost_system-${BOOST_LIB_ADD_STRING}.${BOOST_SUFFIX}")
 endif()
