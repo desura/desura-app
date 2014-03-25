@@ -35,15 +35,15 @@ $/LicenseInfo$
 #include "webcore/DownloadImageInfo.h"
 
 
-
-
 namespace WebCore
 {
+	extern gcString genUserAgent();
+}
 
 
+using namespace WebCore;
 
 
-extern gcString genUserAgent();
 
 void WebCoreClass::sendPassReminder(const char* email)
 {
@@ -156,10 +156,7 @@ void WebCoreClass::downloadBanner(MCFCore::Misc::DownloadProvider* dlp, const ch
 
 	WebCore::Misc::DownloadImageInfo dii(dlp->getBanner());
 
-	std::atomic<bool> stop = false;
+	std::atomic<bool> stop;
 	downloadImage(&dii, stop);
 	dlp->setBanner(dii.outPath.c_str());
-}
-
-
 }
