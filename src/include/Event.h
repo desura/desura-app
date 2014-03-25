@@ -526,6 +526,12 @@ inline DelegateI<>* delegate(EventV* e)
 	return new DelegateBase<>(callback, (uint64)e);
 }
 
+template <typename ... Args>
+DelegateI<Args...>* delegate(std::function<void(Args...)> &fnCallback, uint64 hash)
+{
+	return new DelegateBase<Args...>(fnCallback, hash);
+}
+
 //template <typename ... Args>
 //DelegateI<Args&...>* delegate(std::function<void(Args&...)> &fnCallback, uint64 ident)
 //{

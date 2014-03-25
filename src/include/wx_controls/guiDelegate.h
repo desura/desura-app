@@ -286,7 +286,7 @@ public:
 
 	DelegateI<Args...>* clone() override
 	{
-		return new GuiDelegate(DelegateBase<Args...>::m_fnCallback, getCompareHash(), m_pObj, m_Mode);
+		return new GuiDelegate(DelegateBase<Args...>::m_fnCallback, DelegateBase<Args...>::getCompareHash(), m_pObj, m_Mode);
 	}
 
 	void operator()(Args&... args) override
