@@ -289,6 +289,14 @@ public:
 		return new GuiDelegate(DelegateBase<Args...>::m_fnCallback, DelegateBase<Args...>::getCompareHash(), m_pObj, m_Mode);
 	}
 
+	void callback(Args& ... args)
+	{
+		if (m_bCanceled)
+			return;
+
+		DelegateBase<Args...>::operator()(args...);
+	}
+
 	void operator()(Args&... args) override
 	{	
 		if (m_bCanceled)
@@ -296,13 +304,7 @@ public:
 
 		if (m_Mode == MODE_PENDING)
 		{
-			std::function<void()> pcb = [this, args...]() mutable
-			{
-				if (m_bCanceled)
-					return;
-
-				DelegateBase<Args...>::operator()(args...);
-			};
+			std::function<void()> pcb = std::bind(&GuiDelegate<TObj, Args...>::callback, this, args...);
 
 			auto invoker = std::make_shared<Invoker>(pcb);
 			auto event = new wxGuiDelegateEvent(invoker, m_pObj->GetId());
@@ -315,13 +317,7 @@ public:
 		}
 		else if (m_Mode == MODE_PENDING_WAIT)
 		{
-			std::function<void()> pcb = [this, &args...]()
-			{
-				if (m_bCanceled)
-					return;
-
-				DelegateBase<Args...>::operator()(args...);
-			};
+			std::function<void()> pcb = std::bind(&GuiDelegate<TObj, Args...>::callback, this, std::ref(args)...);
 
 			auto invoker = std::make_shared<Invoker>(pcb);
 			auto event = new wxGuiDelegateEvent(invoker, m_pObj->GetId());
