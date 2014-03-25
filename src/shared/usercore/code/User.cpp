@@ -122,7 +122,10 @@ void User::init(const char* appDataPath, const char* szProviderUrl)
 	m_pCDKeyManager = std::make_shared<CDKeyManager>(this);
 
 	m_szMcfCachePath = gcString(UTIL::OS::getMcfCachePath());
+
 	m_pMcfManager = std::make_shared<MCFManager>(appDataPath, m_szMcfCachePath.c_str());
+	m_pMcfManager->init();
+
 	init();
 }
 
