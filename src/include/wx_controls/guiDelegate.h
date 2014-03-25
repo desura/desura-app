@@ -296,14 +296,12 @@ public:
 
 		if (m_Mode == MODE_PENDING)
 		{
-			std::function<void()> pcb = [this, args...]()
+			std::function<void()> pcb = [this, args...]() mutable
 			{
 				if (m_bCanceled)
 					return;
 
-				std::deque<RefParamsI*> vRefParams;
-				DelegateBase<Args...>::operator()(Convert<Args>(args, vRefParams)...);
-				safe_delete(vRefParams);
+				DelegateBase<Args...>::operator()(args...);
 			};
 
 			auto invoker = std::make_shared<Invoker>(pcb);
@@ -336,15 +334,7 @@ public:
 	}
 
 protected:
-	template <typename T, typename U>
-	typename RefParam<T>::NonConstType& Convert(U u, std::deque<RefParamsI*> &vParams)
-	{
-		auto pRef = new RefParam<T>(u);
-		vParams.push_front(pRef);
-		return pRef->m_T;
-	}
-
-	void setInvoker(std::shared_ptr<Invoker> &i)
+	void setInvoker(const std::shared_ptr<Invoker> &i)
 	{
 		std::lock_guard<std::mutex> guard(m_InvokerMutex);
 		m_pInvoker = i;
