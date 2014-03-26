@@ -74,7 +74,7 @@ namespace UserCore
 				STATUS_DOWNLOADING	= (1<<6),		//!< item is downloading atm
 				STATUS_INSTALLING	= (1<<7),		//!< item is installing atm
 				STATUS_UPLOADING	= (1<<8),		//!< item is uploading atm
-				STATUS_VERIFING		= (1<<9),		//!< item is verifing atm
+				STATUS_VERIFING		= (1<<9),		//!< item is verifying atm
 				STATUS_DEVELOPER	= (1<<10),	//!< user is a dev for this item
 				STATUS_STUB			= (1<<11),	//!< means it has info but no branches on this platform
 				//STATUS_FULL			= (1<<12),	//!< means it has full info
