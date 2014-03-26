@@ -423,6 +423,8 @@ void UpdateThreadOld::checkAppUpdate(const XML::gcXMLElement &uNode, std::functi
 	bool bIsNewerVersion = false;
 	bool bIsForced = false;
 
+	bool bIsQa = false;
+
 #ifdef DESURA_OFFICIAL_BUILD
 	if (m_bInternalTesting)
 	{
@@ -437,7 +439,7 @@ void UpdateThreadOld::checkAppUpdate(const XML::gcXMLElement &uNode, std::functi
 		}
 		else
 		{
-			Msg(gcString("Found app build {0}.{1}\n", appid, mcfversion));
+			Msg(gcString("Found qa app build {0}.{1}\n", appid, mcfversion));
 
 			if (m_bForceTestingUpdate)
 			{
@@ -448,6 +450,7 @@ void UpdateThreadOld::checkAppUpdate(const XML::gcXMLElement &uNode, std::functi
 			}
 
 			m_bForceTestingUpdate = false;
+			bIsQa = true;
 		}
 	}
 	else if (!processAppVersion("app", appid, mcfversion))
@@ -470,6 +473,19 @@ void UpdateThreadOld::checkAppUpdate(const XML::gcXMLElement &uNode, std::functi
 
 	if (bIsNewerVersion)
 	{
+
+#ifdef WIN32
+		if (bIsQa && mcfversion > 0)
+		{
+			//need to set appver back a build otherwise updater will ignore this build due to it being older than current
+			gcString strAppid("{0}", appid);
+			gcString strAppVer("{0}", mcfversion - 1);
+
+			m_pUser->getServiceMain()->updateRegKey(APPID, strAppid.c_str());
+			m_pUser->getServiceMain()->updateRegKey(APPBUILD, strAppVer.c_str());
+		}
+#endif
+
 		updateCallback(appid, mcfversion, bIsForced);
 		m_uiLastAppId = appid;
 		m_uiLastVersion = mcfversion;
