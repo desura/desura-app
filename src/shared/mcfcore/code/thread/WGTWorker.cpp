@@ -270,7 +270,10 @@ void WGTWorker::doDownload()
 		}
 		else if (!isStopped())
 		{
-			Warning(gcString("Mcf Server error: {0} [{1}]\n", excep, m_DownloadProvider->getUrl()));
+			if (m_DownloadProvider)
+				Warning(gcString("Mcf Server error: {0} [{1}]\n", excep, m_DownloadProvider->getUrl()));
+			else
+				Warning(gcString("Mcf Server error: {0} [NULL PROVIDER]\n", excep));
 
 			if (excep.getErrId() == ERR_LIBCURL)
 			{
