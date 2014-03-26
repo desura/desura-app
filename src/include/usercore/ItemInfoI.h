@@ -110,6 +110,7 @@ namespace UserCore
 				OPTION_NOTREMINDUPDATE = 1<<3,	//!< Dont remind about updates
 				OPTION_REMOVEFILES = 1<<4,		//!< Remove installed files
 				OPTION_DONTPROMPTGAMEDISK = 1<<5,
+				OPTION_NOTREMINDUPDATE_ONETIME = 1<<6,
 			};
 
 			enum ITEM_CHANGES

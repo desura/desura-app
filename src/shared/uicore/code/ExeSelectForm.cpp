@@ -28,6 +28,8 @@ $/LicenseInfo$
 
 #include "MainApp.h"
 
+#include "InternalLink.h"
+
 //""
 
 ExeSelectForm::ExeSelectForm(wxWindow* parent, bool hasSeenCDKey, UserCore::ItemManagerI* pItemManager) 

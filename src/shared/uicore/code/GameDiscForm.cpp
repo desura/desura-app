@@ -26,7 +26,7 @@ $/LicenseInfo$
 #include "Common.h"
 #include "GameDiscForm.h"
 #include "MainApp.h"
-
+#include "InternalLink.h"
 
 GameDiskForm::GameDiskForm(wxWindow* parent, const char* exe, bool cdkey) 
 	: gcFrame(parent, wxID_ANY, wxT("{0}: Need Game Disk"), wxDefaultPosition, wxSize( 370,145 ), wxDEFAULT_FRAME_STYLE|wxTAB_TRAVERSAL)

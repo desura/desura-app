@@ -33,6 +33,7 @@ $/LicenseInfo$
 #include "usercore/ItemHelpersI.h"
 #include "usercore/ItemInfoI.h"
 #include "usercore/ItemHandleI.h"
+#include "LinkArgs.h"
 
 class GatherInfoThread;
 class LanguageTestDialog;
@@ -72,8 +73,8 @@ namespace ItemFormPage
 ///////////////////////////////////////////////////////////////////////////////
 /// Class ItemForm
 ///////////////////////////////////////////////////////////////////////////////
-class ItemForm : public gcFrame, 
-	public UserCore::Item::Helper::ItemUninstallHelperI, 
+class ItemForm : public gcFrame,
+	public UserCore::Item::Helper::ItemUninstallHelperI,
 	public UserCore::Item::Helper::ItemLaunchHelperI,
 	public UserCore::Item::Helper::ItemHandleFactoryI
 {
@@ -101,6 +102,9 @@ public:
 	void onError(gcException &e);
 
 	bool isInit();
+
+	void pushArgs(const LinkArgs &args);
+	void popArgs();
 
 protected:
 
@@ -182,6 +186,8 @@ private:
 	wxDialog* m_pDialog;
 
 	UserCore::ToolManagerI* m_pToolManager = nullptr;
+
+	std::vector<LinkArgs> m_vArgs;
 };
 
 }

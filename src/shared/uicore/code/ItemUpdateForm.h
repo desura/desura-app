@@ -39,7 +39,7 @@ public:
 	UpdateInfoForm( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = wxT("Update [Item Name]"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 370,250 ), long style = wxDEFAULT_FRAME_STYLE|wxTAB_TRAVERSAL );
 	~UpdateInfoForm();
 
-	void setInfo(DesuraId id, bool launch = false);
+	void setInfo(DesuraId id, bool launch = false, const LinkArgs &args = LinkArgs());
 	DesuraId getItemId(){return m_uiInternId;}
 
 protected:
@@ -59,6 +59,8 @@ protected:
 private:
 	DesuraId m_uiInternId;
 	bool m_bLaunch;
+
+	LinkArgs m_Args;
 
 	DECLARE_EVENT_TABLE();
 };

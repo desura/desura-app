@@ -90,8 +90,9 @@ void UpdateInfoForm::onFormClose( wxCloseEvent& event )
 	g_pMainApp->closeForm(this->GetId());
 }
 
-void UpdateInfoForm::setInfo(DesuraId id, bool launch)
+void UpdateInfoForm::setInfo(DesuraId id, bool launch, const LinkArgs &args)
 {
+	m_Args = args;
 	m_bLaunch = launch;
 	m_uiInternId = id;
 
@@ -144,6 +145,6 @@ void UpdateInfoForm::onButtonPressed(wxCommandEvent& event)
 	}
 	else if (event.GetId() == m_butLaunch->GetId())
 	{
-		g_pMainApp->handleInternalLink(m_uiInternId, ACTION_LAUNCH, FormatArgs("noupdate"));
+		g_pMainApp->handleInternalLink(m_uiInternId, ACTION_LAUNCH, FormatArgs(m_Args, "noupdate"));
 	}
 }
