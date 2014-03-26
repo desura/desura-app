@@ -166,7 +166,7 @@ inline void FromJSObject(JSObjHandle& ret, JSObjHandle& arg)
 }
 
 template <typename T>
-void FormJSObject(T &t, JSObjHandle& arg)
+void FormJSObject(T t, JSObjHandle& arg)
 {
 	//Should not get here
 	assert(false);
