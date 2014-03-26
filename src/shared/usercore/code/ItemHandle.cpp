@@ -1408,7 +1408,7 @@ namespace UnitTest
 		MOCK_METHOD2(goToStageUninstallUpdate, void(const char* path, MCFBuild lastBuild));
 		MOCK_METHOD0(goToStageLaunch, void());
 		MOCK_METHOD4(goToStageDownloadTools, void(ToolTransactionId ttid, const char* downloadPath, MCFBranch branch, MCFBuild build));
-		MOCK_METHOD2(goToStageDownloadTools, void(bool launch, ToolTransactionId ttid = -1));
+		MOCK_METHOD2(goToStageDownloadTools, void(bool launch, ToolTransactionId ttid));
 		MOCK_METHOD1(goToStageInstallTools, void(bool launch));
 
 		MOCK_METHOD2(launchForReal, bool(Helper::ItemLaunchHelperI* helper, bool offline));
