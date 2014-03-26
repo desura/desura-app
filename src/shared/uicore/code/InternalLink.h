@@ -31,6 +31,7 @@ $/LicenseInfo$
 
 #include "MainApp.h"
 #include "ItemForm.h"
+#include "LinkArgs.h"
 
 namespace UserCore
 {
@@ -42,18 +43,6 @@ namespace UserCore
 
 class wxWindow;
 
-class Args
-{
-public:
-	Args(){}
-	Args(std::vector<std::string> args);
-
-	bool containsArg(std::string key);
-	std::string getArgValue(std::string key);
-
-private:
-	std::map<std::string, std::string> m_mArgMap;
-};
 
 class InternalLink
 {
@@ -62,7 +51,7 @@ public:
 	~InternalLink();
 
 	void handleInternalLink(const char* link);
-	void handleInternalLink(DesuraId id, uint8 action, const std::vector<std::string> &argsList = std::vector<std::string>());
+	void handleInternalLink(DesuraId id, uint8 action, const LinkArgs &argsList = LinkArgs());
 	void closeForm(int32 wxId);
 
 	void closeAll();
@@ -73,34 +62,34 @@ protected:
 	void showPreorderPrompt(DesuraId id, bool isPreload);
 
 	void installedWizard();
-	void showSettings(Args &args);
+	void showSettings(LinkArgs &args);
 
 	void installCheck(DesuraId id);
-	void installTestMCF(DesuraId id, Args args);
+	void installTestMCF(DesuraId id, LinkArgs args);
 	void uploadMCF(DesuraId id);
-	void resumeUploadMCF(DesuraId id, Args args);
+	void resumeUploadMCF(DesuraId id, LinkArgs args);
 	void createMCF(DesuraId id);
 
 
 	void cleanComplexMod(DesuraId id);
-	void installItem(DesuraId id, Args args);
-	void launchItem(DesuraId id, Args args);
-	void verifyItem(DesuraId id, Args args);
+	void installItem(DesuraId id, LinkArgs args);
+	void launchItem(DesuraId id, LinkArgs args);
+	void verifyItem(DesuraId id, LinkArgs args);
 	void uninstallMCF(DesuraId id);
 
-	void updateItem(DesuraId id, Args args);
+	void updateItem(DesuraId id, LinkArgs args);
 	
 	void showEULA(DesuraId id);
 	void showUpdateLog(DesuraId id);
 	void showUpdateLogApp(uint32 version);
 
 	void showGameDisk(DesuraId id, const char* exe, bool cdKey);
-	void showUpdateForm(DesuraId id, Args args);
-	void showCDKey(DesuraId id, Args args);
+	void showUpdateForm(DesuraId id, LinkArgs args);
+	void showCDKey(DesuraId id, LinkArgs args);
 	void showExeSelect(DesuraId id, bool hasSeenCDKey = false);
 
 	void setPauseItem(DesuraId id, bool state = true);
-	void switchBranch(DesuraId id, Args args);
+	void switchBranch(DesuraId id, LinkArgs args);
 
 
 	void regForm(DesuraId id, gcFrame *form);
@@ -108,10 +97,10 @@ protected:
 
 	void onUploadTrigger(ut& info);
 
-	void showPrompt(DesuraId id, Args args);
+	void showPrompt(DesuraId id, LinkArgs args);
 
-	UI::Forms::ItemForm* showItemForm(DesuraId id, UI::Forms::INSTALL_ACTION action, bool showForm);
-	UI::Forms::ItemForm* showItemForm(DesuraId id, UI::Forms::INSTALL_ACTION action, MCFBranch branch = MCFBranch(), MCFBuild build = MCFBuild(), bool showForm=true);
+	UI::Forms::ItemForm* showItemForm(DesuraId id, UI::Forms::INSTALL_ACTION action, bool showForm, LinkArgs args = LinkArgs());
+	UI::Forms::ItemForm* showItemForm(DesuraId id, UI::Forms::INSTALL_ACTION action, MCFBranch branch = MCFBranch(), MCFBuild build = MCFBuild(), bool showForm = true, LinkArgs args = LinkArgs());
 
 	bool processItemLink(bool &badLink, std::vector<gcString> &list, const char* link);
 	bool switchTab(bool &badLink, std::vector<gcString> &list, const char* link);

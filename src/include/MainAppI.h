@@ -30,6 +30,7 @@ $/LicenseInfo$
 #endif
 
 #include "wx_controls/gcFrame.h"
+#include "LinkArgs.h"
 
 // CANT CHANGE THE ORDER/NUMBERING OF THIS AS ITS A PART OF THE JAVASCRIPT API
 enum
@@ -85,26 +86,6 @@ enum PAGE
 class WCSpecialInfo;
 class MainForm;
 
-inline std::vector<std::string> FormatArgs(std::string a="", std::string b="", std::string c="", std::string d="", std::string e="", std::string f="")
-{
-	std::vector<std::string> res;
-
-	if (a != "")
-		res.push_back(a);
-	if (b != "")
-		res.push_back(b);
-	if (c != "")
-		res.push_back(c);
-	if (d != "")
-		res.push_back(d);
-	if (e != "")
-		res.push_back(e);
-	if (f != "")
-		res.push_back(f);
-
-	return res;
-}
-
 
 class MainAppI : public gcFrame
 {
@@ -117,7 +98,7 @@ public:
 	virtual void showMainWindow(bool raise = false)=0;
 
 	virtual void handleInternalLink(const char* link) = 0;
-	virtual void handleInternalLink(DesuraId id, uint8 action, std::vector<std::string> args = std::vector<std::string>()) = 0;
+	virtual void handleInternalLink(DesuraId id, uint8 action, const LinkArgs& args = LinkArgs()) = 0;
 
 	//this closes and destroys a sub form
 	virtual void closeForm(int32 id)=0;

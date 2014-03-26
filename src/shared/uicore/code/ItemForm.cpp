@@ -558,7 +558,9 @@ bool ItemForm::launchItem()
 	}
 	else
 	{
-		bool ignoreUpdate = HasAnyFlags(m_pItemHandle->getItemInfo()->getOptions(), UserCore::Item::ItemInfoI::OPTION_NOTREMINDUPDATE);
+		bool ignoreUpdate = HasAnyFlags(m_pItemHandle->getItemInfo()->getOptions(), UserCore::Item::ItemInfoI::OPTION_NOTREMINDUPDATE | UserCore::Item::ItemInfoI::OPTION_NOTREMINDUPDATE_ONETIME);	
+		m_pItemHandle->getItemInfo()->delOFlag(UserCore::Item::ItemInfoI::OPTION_NOTREMINDUPDATE_ONETIME);
+
 		res = m_pItemHandle->launch(this, offLine, ignoreUpdate);
 
 		//if res is true we need to keep the form open
@@ -827,27 +829,52 @@ void ItemForm::cleanUpPages()
 
 void ItemForm::showUpdatePrompt()
 {
-	g_pMainApp->handleInternalLink(m_ItemId, ACTION_PROMPT, FormatArgs("prompt=update"));
+	LinkArgs existing;
+
+	if (!m_vArgs.empty())
+		existing = m_vArgs.back();
+
+	g_pMainApp->handleInternalLink(m_ItemId, ACTION_PROMPT, FormatArgs(existing, "prompt=update"));
 }
 
 void ItemForm::showLaunchPrompt()
 {
-	g_pMainApp->handleInternalLink(m_ItemId, ACTION_PROMPT, FormatArgs("prompt=launch"));
+	LinkArgs existing;
+
+	if (!m_vArgs.empty())
+		existing = m_vArgs.back();
+
+	g_pMainApp->handleInternalLink(m_ItemId, ACTION_PROMPT, FormatArgs(existing, "prompt=launch"));
 }
 
 void ItemForm::showComplexLaunchPrompt()
 {
-	g_pMainApp->handleInternalLink(m_ItemId, ACTION_PROMPT, FormatArgs("prompt=complexlaunch"));
+	LinkArgs existing;
+
+	if (!m_vArgs.empty())
+		existing = m_vArgs.back();
+
+	g_pMainApp->handleInternalLink(m_ItemId, ACTION_PROMPT, FormatArgs(existing, "prompt=complexlaunch"));
 }
 
 void ItemForm::showEULAPrompt()
 {
-	g_pMainApp->handleInternalLink(m_ItemId, ACTION_PROMPT, FormatArgs("prompt=eula"));
+	LinkArgs existing;
+
+	if (!m_vArgs.empty())
+		existing = m_vArgs.back();
+
+	g_pMainApp->handleInternalLink(m_ItemId, ACTION_PROMPT, FormatArgs(existing, "prompt=eula"));
 }
 
 void ItemForm::showPreOrderPrompt()
 {
-	g_pMainApp->handleInternalLink(m_ItemId, ACTION_PROMPT, FormatArgs("prompt=preload"));
+	LinkArgs existing;
+
+	if (!m_vArgs.empty())
+		existing = m_vArgs.back();
+
+	g_pMainApp->handleInternalLink(m_ItemId, ACTION_PROMPT, FormatArgs(existing, "prompt=preload"));
 }
 
 #ifdef NIX
@@ -1224,6 +1251,22 @@ bool ItemForm::isInit()
 	return m_bIsInit;
 }
 
+
+void ItemForm::pushArgs(const LinkArgs &args)
+{
+	m_vArgs.push_back(args);
+}
+
+void ItemForm::popArgs()
+{
+	if (m_vArgs.empty())
+	{
+		assert(false);
+		return;
+	}
+
+	m_vArgs.pop_back();
+}
 
 
 

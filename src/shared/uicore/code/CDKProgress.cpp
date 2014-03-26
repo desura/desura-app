@@ -30,6 +30,8 @@ $/LicenseInfo$
 #include "Managers.h"
 #include "MainApp.h"
 
+#include "InternalLink.h"
+
 CDKProgress::CDKProgress(wxWindow* parent, bool launch) : BasePage(parent)
 {
 	m_bLaunch = launch;

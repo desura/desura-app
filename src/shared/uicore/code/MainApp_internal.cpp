@@ -64,7 +64,7 @@ void MainApp::handleInternalLink(const char* link)
 	onInternalLinkStrEvent(strLink);
 }
 
-void MainApp::handleInternalLink(DesuraId id, uint8 action, std::vector<std::string> args)
+void MainApp::handleInternalLink(DesuraId id, uint8 action, const LinkArgs& args)
 {
 	InternalLinkInfo ili;
 
@@ -165,7 +165,7 @@ void MainApp::loadUrl(const char* url, PAGE page)
 
 
 
-void MainApp::showProfile(DesuraId id, std::vector<std::string> args)
+void MainApp::showProfile(DesuraId id, const LinkArgs &args)
 {
 	UserCore::Item::ItemInfoI* item = GetUserCore()->getItemManager()->findItemInfo( id );
 
@@ -173,8 +173,8 @@ void MainApp::showProfile(DesuraId id, std::vector<std::string> args)
 	{
 		gcString url(item->getProfile());
 
-		if (args.size() > 0)
-			url = gcString("{0}{1}", item->getProfile(), args[0]);
+		if (!args.empty())
+			url = gcString("{0}{1}", item->getProfile(), args.first());
 
 		PAGE page = GAMES;
 			

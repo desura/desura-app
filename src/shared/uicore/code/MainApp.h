@@ -33,6 +33,7 @@ $/LicenseInfo$
 #include "webcore/WebCoreI.h"
 #include "usercore/UserCoreI.h"
 #include "usercore/UploadInfoThreadI.h"
+#include "LinkArgs.h"
 
 class gcMessageDialog;
 
@@ -47,12 +48,13 @@ const char* GetAppVersion();
 const char* GetUserCoreVersion();
 const char* GetWebCoreVersion();
 
-typedef struct
+class ut
 {
+public:
 	gcString path;
 	DesuraId id;
 	wxWindow *caller;
-} ut;
+};
 
 enum
 {
@@ -86,7 +88,7 @@ class InternalLinkInfo
 public:
 	DesuraId id;
 	uint8 action;
-	std::vector<std::string> args;
+	LinkArgs args;
 };
 
 class InternalLink;
@@ -117,8 +119,8 @@ public:
 	bool isOffline();
 	bool isLoggedIn();
 
-	void handleInternalLink(const char* link);
-	void handleInternalLink(DesuraId id, uint8 action, std::vector<std::string> args);
+	void handleInternalLink(const char* link) override;
+	void handleInternalLink(DesuraId id, uint8 action, const LinkArgs& args) override;
 
 	void closeMainForm();
 	void closeForm(int32 id);
@@ -155,7 +157,7 @@ protected:
 	void changeAccountState(DesuraId id);
 
 	void loadUrl(const char* url, PAGE page);
-	void showProfile(DesuraId id, std::vector<std::string> args = std::vector<std::string>());
+	void showProfile(DesuraId id, const LinkArgs &args = LinkArgs());
 	void showDevProfile(DesuraId id);
 	void showDevPage(DesuraId id);
 	void showNews();

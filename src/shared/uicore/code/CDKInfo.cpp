@@ -30,6 +30,8 @@ $/LicenseInfo$
 #include <wx/clipbrd.h>
 #include <branding/branding.h>
 
+#include "InternalLink.h"
+
 class SplitInfo
 {
 public:

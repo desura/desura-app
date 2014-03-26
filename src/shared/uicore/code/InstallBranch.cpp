@@ -27,7 +27,7 @@ $/LicenseInfo$
 #include "InstallBranch.h"
 
 #include "MainApp.h"
-
+#include "InternalLink.h"
 
 BEGIN_EVENT_TABLE( InstallBranch, gcDialog )
 	EVT_BUTTON( wxID_ANY, InstallBranch::onButtonClick )
