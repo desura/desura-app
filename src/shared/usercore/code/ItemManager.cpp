@@ -597,21 +597,10 @@ void ItemManager::removeItem(DesuraId id)
 	if (mList.size() > 0)
 		return;
 
-	//make sure this flag is dead. Long live the flag
-	item->delSFlag(UM::ItemInfoI::STATUS_LINK);
+	//we add a flag instead of deleting the item to save headaches arising from other areas 
+	//caching the pointer to this item. Thus they can check the flag before doing work
+	item->softDelete();
 
-	if (item->getStatus() & UM::ItemInfoI::STATUS_DEVELOPER)
-	{
-		item->delSFlag(UM::ItemInfoI::STATUS_INSTALLED|UM::ItemInfoI::STATUS_ONACCOUNT|UM::ItemInfoI::STATUS_ONCOMPUTER|UM::ItemInfoI::STATUS_READY);
-	}
-	else
-	{
-		//we add a flag instead of deleting the item to save headachs arising from other areas 
-		//caching the pointer to this item. Thus they can check the flag before doing work
-		item->addSFlag(UM::ItemInfoI::STATUS_DELETED);
-	}
-
-	item->resetInstalledMcf();
 #ifdef WIN32
 	m_pUser->getGameExplorerManager()->removeItem(id);
 #endif

@@ -369,6 +369,9 @@ void ItemInfo::loadDb(sqlite3x::sqlite3_connection* db)
 				m_vBranchList.push_back(new UserCore::Item::BranchInfo(MCFBranch::BranchFromInt(0), getId(), m_mBranchInstallInfo[BUILDID_PUBLIC], 0, m_pUserCore->getUserId()));
 				bi = m_vBranchList[0];
 				bi->setLinkInfo(getName());
+
+				m_INBranchIndex = 0;
+				m_INBranch = MCFBranch::BranchFromInt(0);
 			}
 
 			if (bi && m_pFileSystem->isValidFile(UTIL::FS::PathWithFile(bi->getInstallInfo()->getInstallCheck())) )
@@ -383,7 +386,7 @@ void ItemInfo::loadDb(sqlite3x::sqlite3_connection* db)
 		}
 	}
 
-	if ((getStatus() & ItemInfoI::STATUS_INSTALLED) && (getStatus() & ItemInfoI::STATUS_NONDOWNLOADABLE))
+	if (HasAnyFlags(getStatus(), ItemInfoI::STATUS_INSTALLED) && !isDownloadable())
 		addSFlag(ItemInfoI::STATUS_READY);
 
 	triggerCallBack();
@@ -669,9 +672,12 @@ void ItemInfo::processSettings(uint32 platform, const XML::gcXMLElement &setNode
 		{
 			flags = ItemInfoI::STATUS_ONCOMPUTER;
 
-			if (!isDownloadable() && m_pFileSystem->isValidFile(UTIL::FS::PathWithFile(pr.insCheck)))
+			if ((!isDownloadable() || pr.notFirst) && m_pFileSystem->isValidFile(UTIL::FS::PathWithFile(pr.insCheck)))
+			{
 				flags |= ItemInfoI::STATUS_INSTALLED;
-
+				setInstalledMcf(MCFBranch::BranchFromInt(0), MCFBuild::BuildFromInt(0));
+			}
+				
 			if (pr.notFirst)
 				flags |= ItemInfoI::STATUS_LINK;
 
@@ -1073,12 +1079,12 @@ void ItemInfo::broughtCheck()
 
 void ItemInfo::resetInstalledMcf()
 {
+	if (getCurrentBranchFull())
+		getCurrentBranchFull()->getInstallInfo()->resetInstalledMcf();
+
 	m_LastBranch = MCFBranch();
 	m_INBranch = MCFBranch();
 	m_INBranchIndex = -1;
-
-	if (getCurrentBranchFull())
-		getCurrentBranchFull()->getInstallInfo()->resetInstalledMcf();
 
 	onInfoChange();
 }
@@ -1204,6 +1210,8 @@ void ItemInfo::setLinkInfo(const char* exe, const char* args)
 
 	bii->setLinkInfo(path.getFolderPath().c_str(), exe, args);
 	bi->setLinkInfo(getName());
+
+	setInstalledMcf(MCFBranch::BranchFromInt(0), MCFBuild::BuildFromInt(0));
 
 	m_iStatus = STATUS_LINK|STATUS_NONDOWNLOADABLE|STATUS_READY|STATUS_ONCOMPUTER|STATUS_INSTALLED;
 
@@ -1558,6 +1566,19 @@ void ItemInfo::setActiveExe(const char* name, MCFBranch branch)
 	bi->setActiveExe(name);
 }
 
+void ItemInfo::softDelete()
+{
+	//make sure this flag is dead. Long live the flag
+	delSFlag(ItemInfoI::STATUS_LINK);
+
+	if (HasAnyFlags(getStatus(), ItemInfoI::STATUS_DEVELOPER))
+		delSFlag(ItemInfoI::STATUS_INSTALLED | ItemInfoI::STATUS_ONACCOUNT | ItemInfoI::STATUS_ONCOMPUTER | ItemInfoI::STATUS_READY);
+	else
+		addSFlag(UserCore::Item::ItemInfoI::STATUS_DELETED);
+
+	resetInstalledMcf();
+}
+
 
 #ifdef LINK_WITH_GTEST
 
@@ -1621,17 +1642,20 @@ namespace UnitTest
 		"INSERT INTO exe VALUES(12884901920,100,'Play','C:\\Program Files (x86)\\charlie\\Charlie.exe','','',0);",
 		"INSERT INTO installinfo VALUES(12884901920,100,'C:\\Program Files (x86)\\charlie','C:\\Program Files (x86)\\charlie\\Charlie.exe','',0,0,0);",
 		"INSERT INTO installinfoex VALUES(12884901920,100,'C:\\Program Files (x86)\\charlie\\Charlie.exe');",
-		"INSERT INTO iteminfo VALUES(12884901920,0,0,2129934,0,'dev-02','Charlie','charlie','','','','','','','dev-02','',0,0);"
+		"INSERT INTO iteminfo VALUES(12884901920,0,0,2129934,0,'dev-02','Charlie','charlie','','','','','','','dev-02','',0,0);",
+		"INSERT INTO branchinfo VALUES(0, 12884901920, 'Charlie', 12292, '', 0, 0, '', '', -842150451, 0, 100);"
 #elif NIX64
 		"INSERT INTO exe VALUES(12884901920,120,'Play','C:\\Program Files (x86)\\charlie\\Charlie.exe','','',0);",
 		"INSERT INTO installinfo VALUES(12884901920,120,'C:\\Program Files (x86)\\charlie','C:\\Program Files (x86)\\charlie\\Charlie.exe','',0,0,0);",
 		"INSERT INTO installinfoex VALUES(12884901920,120,'C:\\Program Files (x86)\\charlie\\Charlie.exe');",
 		"INSERT INTO iteminfo VALUES(12884901920,0,0,2129934,0,'dev-02','Charlie','charlie','','','','','','','dev-02','',0,0);"
+		"INSERT INTO branchinfo VALUES(0, 12884901920, 'Charlie', 12292, '', 0, 0, '', '', -842150451, 0, 120);"
 #else
 		"INSERT INTO exe VALUES(12884901920,110,'Play','C:\\Program Files (x86)\\charlie\\Charlie.exe','','',0);",
 		"INSERT INTO installinfo VALUES(12884901920,110,'C:\\Program Files (x86)\\charlie','C:\\Program Files (x86)\\charlie\\Charlie.exe','',0,0,0);",
 		"INSERT INTO installinfoex VALUES(12884901920,110,'C:\\Program Files (x86)\\charlie\\Charlie.exe');",
 		"INSERT INTO iteminfo VALUES(12884901920,0,0,2129934,0,'dev-02','Charlie','charlie','','','','','','','dev-02','',0,0);"
+		"INSERT INTO branchinfo VALUES(0, 12884901920, 'Charlie', 12292, '', 0, 0, '', '', -842150451, 0, 110);"
 #endif
 	};
 
@@ -1689,13 +1713,15 @@ namespace UnitTest
 		ASSERT_TRUE(i.isLaunchable());
 		ASSERT_FALSE(i.isDownloadable());
 		ASSERT_FALSE(i.isDeleted());
+		ASSERT_TRUE(!!i.getCurrentBranch());
 
-		i.addSFlag(UserCore::Item::ItemInfoI::STATUS_DELETED);
+		i.softDelete();
 
 		ASSERT_FALSE(i.isInstalled());
 		ASSERT_FALSE(i.isLaunchable());
 		ASSERT_FALSE(i.isDownloadable());
 		ASSERT_TRUE(i.isDeleted());
+		ASSERT_FALSE(!!i.getCurrentBranch());
 
 		WildcardManager wildcard;
 
@@ -1724,6 +1750,8 @@ namespace UnitTest
 		ASSERT_TRUE(i.isLaunchable());
 		ASSERT_FALSE(i.isDownloadable());
 		ASSERT_FALSE(i.isDeleted());
+
+		ASSERT_TRUE(!!i.getCurrentBranch());
 	}
 
 

@@ -316,6 +316,10 @@ namespace UserCore
 
 			bool isDeleted();
 
+			//! Remove this item from the play list
+			//!
+			void softDelete();
+
 		protected:
 			//! Event handler for item information changed. Triggers when this item information gets updated
 			//!
