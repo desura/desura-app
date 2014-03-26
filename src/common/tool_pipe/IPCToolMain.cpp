@@ -75,7 +75,10 @@ void IPCToolMain::SetupLogging()
 			nCol = col->getColor();
 
 		OutputDebugStringA(msg);
-		g_pToolMain->message((int)type, msg, nCol, mpArgs);
+		OutputDebugStringA("\n");
+
+		if (g_pToolMain)
+			g_pToolMain->message((int)type, msg, nCol, mpArgs);
 	};
 
 	safe_delete(g_pLogCallback);
