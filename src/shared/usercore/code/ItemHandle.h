@@ -244,7 +244,7 @@ namespace UserCore
 			void doLaunch(bool useXdgOpen, const char* globalExe, const char* globalArgs);
 		#endif
 
-			bool launchForReal(Helper::ItemLaunchHelperI* helper, bool offline = false);
+			virtual bool launchForReal(Helper::ItemLaunchHelperI* helper, bool offline = false);
 
 			void onTaskStart(ITEM_STAGE &stage);
 			void onTaskComplete(ITEM_STAGE &stage);
