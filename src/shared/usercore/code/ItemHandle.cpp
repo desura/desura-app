@@ -979,6 +979,28 @@ bool ItemHandle::launch(Helper::ItemLaunchHelperI* helper, bool offline, bool ig
 	if (checkPaused())
 		return true;
 
+	if (getItemInfo()->getParentId().isOk())
+	{
+		auto pParent = getUserCore()->getItemManager()->findItemInfo(getItemInfo()->getParentId());
+
+		if (pParent)
+		{
+			if (!pParent->isLaunchable())
+			{
+				gcException e(ERR_LAUNCH, gcString("Parent game is not installed. Please install {0} first.", pParent->getName()));
+				helper->launchError(e);
+				return false;
+			}
+			else if (!pParent->hasAcceptedEula())
+			{
+				if (helper)
+					helper->showEULAPrompt();
+
+				return false;
+			}
+		}
+	}
+
 	bool res = false;
 
 	if (HasAllFlags(getItemInfo()->getStatus(), UserCore::Item::ItemInfoI::STATUS_LINK))
