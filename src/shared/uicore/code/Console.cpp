@@ -275,6 +275,9 @@ void Console::applyTheme()
 
 void Console::onConsoleText(ConsoleText_s& text)
 {
+	if (text.str.empty())
+		return;
+
 	long size = m_rtDisplay->GetLastPosition();
 	if ( size > 50000)
 	{
@@ -413,7 +416,7 @@ void Console::processCommand()
 
 	m_tbInfo->Insert(cString, 0);
 	Color c(0,150,255,255);
-	MsgCol(&c, gcString("] {0}\n", cString));
+	LogMsg(MT_MSG, gcString("] {0}\n", cString), &c);
 
 	if (vArgList[0] == "condump")
 	{
@@ -446,7 +449,7 @@ void Console::processCommand()
 void Console::conDump()
 {
 	Color c(0,150,255,255);
-	MsgCol(&c, gcString("] {0}\n", "condump"));
+	LogMsg(MT_MSG, gcString("] {0}\n", "condump"), &c);
 
 	gcString dumpFile;
 	bool fileExists = false;
@@ -477,4 +480,24 @@ void Console::conDump()
 	}
 
 	Msg(gcString("Console Dump Saved To:\n{0}\n\n", dumpFile));
+}
+
+static TracerI* g_pTracer = nullptr;
+
+void Console::setTracer(TracerI *pTracer)
+{
+	g_pTracer = pTracer;
+}
+
+void Console::trace(const char* szMessage, std::map<std::string, std::string> *pmArgs)
+{
+	if (!g_pTracer)
+		return;
+
+	auto id = std::this_thread::get_id();
+
+	if (s_IgnoredThread == id)
+		return;
+
+	g_pTracer->trace(szMessage, pmArgs);
 }

@@ -332,39 +332,29 @@ namespace UTIL
 					continue;
 #endif
 
-				delEmptyFolders(folders[x]);
-			}
+		delEmptyFolders(folders[x]);
+	}
 
-			if (isFolderEmpty(filePath))
-				delFolder(filePath);
-		};
+	if (isFolderEmpty(filePath))
+		delFolder(filePath);
+};
 
-		void printError(bf::filesystem_error e)
-		{
+void printError( bf::filesystem_error e)
+{
 #ifndef NIX
-			const char* what = e.what();
-			//has a problem under linx about path1
+	const char* what = e.what();
+	//has a problem under linux about path1
 
-#ifdef printf
-#define RE_DEF_PRINTF
-#undef printf
+	if (strcmp("not_found_error", what) == 0)
+	{
+		WarningS("File %ls dne.\n", e.path1().string().c_str());
+	}
+	else if (strcmp("path_error", what) == 0)
+	{
+		WarningS("Bad Path %ls.\n", e.path1().string().c_str());
+	}
 #endif
-
-			if (strcmp("not_found_error", what) == 0)
-			{
-				printf("WARN: File %ls doe.\n", e.path1().string().c_str());
-			}
-			else if (strcmp("path_error", what) == 0)
-			{
-				printf("WARN: Bad Path %ls.\n", e.path1().string().c_str());
-			}
-
-#ifdef RE_DEF_PRINTF
-#define printf PrintfMsg
-#endif
-
-#endif
-		}
+}
 
 
 		uint32 readWholeFile(const Path& path, char** buffer)

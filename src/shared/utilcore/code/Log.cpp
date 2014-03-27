@@ -26,64 +26,7 @@ $/LicenseInfo$
 #include "Common.h"
 #include "Log.h"
 #include "LogCallback.h"
-
 #include "LogBones.cpp"
-//LogCallback* g_pLogCallback = nullptr;
-//void LogMsg(int type, std::string msg, Color* col);
-//void LogMsg(int type, std::wstring msg, Color* col);
-
-void DESURA_Msg(const char* msg, Color *col = nullptr)
-{
-	if (!msg)
-		return;
-
-	LogMsg(MT_MSG, msg, col);
-}
-
-void DESURA_Msg_W(const wchar_t* msg, Color *col = nullptr)
-{
-	if (!msg)
-		return;
-
-	LogMsg(MT_MSG, msg, col);
-}
-
-void DESURA_Warn(const char* msg)
-{
-	if (!msg)
-		return;
-
-	LogMsg(MT_WARN, msg, nullptr);
-}
-
-void DESURA_Warn_W(const wchar_t* msg)
-{
-	if (!msg)
-		return;
-
-	LogMsg(MT_WARN, msg, nullptr);
-}
-
-void DESURA_Debug(const char* msg)
-{
-#ifdef DEBUG
-	if (!msg)
-		return;
-
-	LogMsg(MT_MSG, msg, nullptr);
-#endif
-}
-
-void DESURA_Debug_W(const wchar_t* msg)
-{
-#ifdef DEBUG
-	if (!msg)
-		return;
-
-	LogMsg(MT_MSG, msg, nullptr);
-#endif
-}
-
 
 extern "C"
 {
@@ -94,15 +37,23 @@ extern "C"
 
 void InitLogging()
 {
+	LogCallback::MessageFn messageFn = [](MSG_TYPE type, const char* msg, Color* col, std::map<std::string, std::string> *mpArgs)
+	{
+#ifndef DEBUG
+		if (type == MT_DEBUG)
+			return;
+#endif
+
+		LogMsg(type, gcString(msg), col, mpArgs);
+	};
+
 	safe_delete(g_pLogCallback);
 	g_pLogCallback = new LogCallback();
+	g_pLogCallback->RegMsg(messageFn);
 
-	g_pLogCallback->RegMsg(&DESURA_Msg);
-	g_pLogCallback->RegMsg(&DESURA_Msg_W);
-	g_pLogCallback->RegWarn(&DESURA_Warn);
-	g_pLogCallback->RegWarn(&DESURA_Warn_W);
-	g_pLogCallback->RegDebug(&DESURA_Debug);
-	g_pLogCallback->RegDebug(&DESURA_Debug_W);
+	RegDLLCB_MCF(g_pLogCallback);
+	RegDLLCB_WEBCORE(g_pLogCallback);
+	RegDLLCB_USERCORE(g_pLogCallback);
 }
 
 void DestroyLogging()

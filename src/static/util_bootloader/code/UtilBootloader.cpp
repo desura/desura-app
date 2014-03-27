@@ -45,20 +45,6 @@ typedef BOOL (WINAPI* WaitForDebuggerFunc)();
 typedef BOOL (WINAPI* SetDllDirectoryFunc)(LPCTSTR lpPathName);
 
 
-//keep pipe manager happy
-void Warning(char const *, ...)
-{
-}
-
-void Debug(char const *, ...)
-{
-}
-
-void Msg(char const *, ...)
-{
-}
-
-
 namespace BootLoaderUtil
 {
 

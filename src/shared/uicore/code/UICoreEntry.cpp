@@ -36,6 +36,8 @@ $/LicenseInfo$
   #include <gtest/gtest.h>
 #endif
 
+#include "Console.h"
+
 extern "C" CEXPORT UICoreI* GetInterface();
 
 #ifdef NIX
@@ -94,7 +96,7 @@ void gtkMessageBox(const char* text, const char* title)
 static void gcAssertHandler(const wxString &file, int line, const wxString &func, const wxString &cond, const wxString &msg)
 {
 	assert(false);
-	Warning(gcString("wxAssert: {0} {1} [{2}:{3}]\n", cond.c_str(), msg.c_str(), func.c_str(), line));
+	WarningS("wxAssert: {0} {1} [{2}:{3}]\n", cond.c_str(), msg.c_str(), func.c_str(), line);
 }
 
 class UICore : public UICoreI
@@ -112,14 +114,10 @@ public:
 		m_bExitCodeSet = false;
 		m_iExitCode = 0;
 
-#if defined(DEBUG) && defined(WITH_GTEST)
-
-#ifdef WIN32
+#ifdef WITH_GTEST
 		m_hUnitTest.load("unittest.dll");
-#else
-		m_hUnitTest.load("libunittest.so");
-#endif
-
+		m_hCrashUploader.load("crashuploader.dll");
+		m_hServiceCore.load("servicecore.dll");
 #endif
 	}
 
@@ -285,17 +283,20 @@ public:
 	int runUnitTests(int argc, char** argv)
 	{
 #ifdef WITH_GTEST
-#ifdef WIN32
 		m_hUnitTest.load("unittest.dll");
-#else
-		m_hUnitTest.load("libunittest.so");
-#endif
+		m_hCrashUploader.load("crashuploader.dll");
+		m_hServiceCore.load("servicecore.dll");
 
 		testing::InitGoogleTest(&argc, argv);
 		return RUN_ALL_TESTS();
 #else
 		return 0;
 #endif
+	}
+
+	void setTracer(TracerI *pTracer) override
+	{
+		Console::setTracer(pTracer);
 	}
 
 private:
@@ -308,7 +309,11 @@ private:
 	bool m_bExitCodeSet;
 	int32 m_iExitCode;
 
+#ifdef WITH_GTEST
 	SharedObjectLoader m_hUnitTest;
+	SharedObjectLoader m_hCrashUploader;
+	SharedObjectLoader m_hServiceCore;
+#endif
 
 #ifndef WIN32
 	wxSingleInstanceChecker* m_pChecker;

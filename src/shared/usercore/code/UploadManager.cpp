@@ -114,7 +114,7 @@ void UploadManager::removeUpload(const char* key, bool stopThread)
 	}
 	catch (std::exception &e)
 	{
-		Warning(gcString("Failed to delete mcf upload: {0}\n", e.what()));
+		Warning("Failed to delete mcf upload: {0}\n", e.what());
 	}
 
 	onUpdateEvent();
@@ -156,7 +156,7 @@ uint64 UploadManager::addUpload(DesuraId id, const char* key, const char* path)
 	}
 	catch (std::exception &e)
 	{
-		Warning(gcString("Failed to add mcf upload: {0}\n", e.what()));
+		Warning("Failed to add mcf upload: {0}\n", e.what());
 	}
 
 	onUpdateEvent();
@@ -201,7 +201,7 @@ void UploadManager::load()
 	}
 	catch (std::exception &e)
 	{
-		Warning(gcString("Failed to load mcf uploads: {0}\n", e.what()));
+		Warning("Failed to load mcf uploads: {0}\n", e.what());
 	}
 		
 	m_mMutex.unlock();

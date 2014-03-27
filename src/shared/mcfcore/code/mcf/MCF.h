@@ -37,6 +37,7 @@ $/LicenseInfo$
 #include <string>
 #include <algorithm>
 #include <string.h>
+#include <atomic>
 
 #include "util_thread/BaseThread.h"
 #include "thread/UpdateThread.h"
@@ -272,7 +273,7 @@ protected:
 	//!
 	void findSameHashFile(MCF* newFile, std::vector<mcfDif_s> &vSame, std::vector<size_t> &vOther);
 
-	//! Copys one file and data from the MCF
+	//! Copies one file and data from the MCF
 	//!
 	//! @param file Source mcf file
 	//! @param lastOffset last offset in current mcf
@@ -280,15 +281,6 @@ protected:
 	//! @param hFileDest File handle to the dest mcf
 	//!
 	void copyFile(std::shared_ptr<MCFCore::MCFFile> file, uint64 &lastOffset, UTIL::FS::FileHandle& hFileSrc, UTIL::FS::FileHandle& hFileDest);
-
-
-	//! Finds a file by performing a binary search
-	//!
-	//! @param hash Hash to find
-	//! @param f Index of first item
-	//! @param l Index of last item
-	//!
-	uint32 binarySearch(uint64 hash, uint32 f, uint32 l);
 
 	//! Reports an error to objects using the error event
 	//!
@@ -323,8 +315,8 @@ private:
 	uint16 m_uiWCount = 0;
 	gcString m_szFile;
 
-	volatile bool m_bStopped = false;
-	volatile bool m_bPaused = false;
+	std::atomic<bool> m_bStopped;
+	std::atomic<bool> m_bPaused;
 
 	uint32 m_iLastSorted = 0;
 	uint32 m_uiChunkCount = 0;

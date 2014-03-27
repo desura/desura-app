@@ -72,6 +72,13 @@ void gcButton::Create( wxWindow* parent, wxWindowID id, const wxString& text, co
 #endif
 }
 
+
+template <>
+std::string TraceClassInfo(gcButton *pClass)
+{
+	return gcString("Parent: {0}, Id: {1}", pClass->GetParent()->GetName(), pClass->GetId());
+}
+
 #ifdef WIN32
 void gcButton::init(const wxSize& size)
 {
@@ -319,6 +326,8 @@ void gcButton::onMouseUp( wxMouseEvent& event )
 
 	if (rect.Contains(pos))
 	{
+		TraceT("gcButton::onClick", this, "");
+
 		wxCommandEvent event(wxEVT_COMMAND_BUTTON_CLICKED, GetId());
 		event.SetEventObject(this);
 
@@ -437,13 +446,11 @@ void gcButton::onChar(wxKeyEvent& event)
 { 
 	if (event.m_keyCode == WXK_RETURN)
 	{
-#ifdef WIN32
-		SendClickEvent();
-#else
+		TraceT("gcButton::onEnter", this, "");
+
 		wxCommandEvent event(wxEVT_COMMAND_BUTTON_CLICKED, GetId());
 		event.SetEventObject(this);
 		this->GetEventHandler()->AddPendingEvent(event);
-#endif // LINUX TODO
 	}
 	else
 	{

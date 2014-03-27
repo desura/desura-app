@@ -79,6 +79,8 @@ void WebCoreClass::init(const char* appDataPath)
 
 void WebCoreClass::init(const char* appDataPath, const char* szProviderUrl)
 {
+	gcTrace("App data path {0}, Provider {1}", appDataPath, szProviderUrl);
+
 	gcString strProvUrl(szProviderUrl);
 
 	if (strProvUrl.size() == 0)
@@ -214,7 +216,7 @@ void WebCoreClass::clearNameCache()
 	}
 	catch (std::exception &ex)
 	{
-		Warning(gcString("Failed to clear namecache table: {0}\n", ex.what()));
+		Warning("Failed to clear namecache table: {0}\n", ex.what());
 	}
 }
 

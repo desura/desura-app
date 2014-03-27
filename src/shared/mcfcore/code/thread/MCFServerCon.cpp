@@ -88,6 +88,8 @@ void MCFServerCon::connect(const MCFCore::Misc::DownloadProvider &provider, cons
 	gcString u(provider.getUrl());
 	m_bHttpDownload = u.find("http://") == 0;
 
+	gcTrace("Url: {0}", u);
+
 	if (!m_bHttpDownload)
 	{
 		if (u.find("mcf://") == 0)
@@ -113,6 +115,8 @@ void MCFServerCon::disconnect()
 {
 	if (!m_bConnected)
 		return;
+
+	gcTrace("");
 
 	m_bConnected = false;
 }

@@ -31,20 +31,6 @@ $/LicenseInfo$
 #include "MiniDumpGenerator.h"
 #include "SharedObjectLoader.h"
 
-void PrintfMsg(const char* format, ...)
-{
-	va_list args;
-	va_start(args, format);
-	vprintf(format, args);
-
-#ifdef DEBUG
-	char out[1024]={0};
-	vsnprintf_s(out, 1024, 1024, format, args);
-	OutputDebugStringA(out);
-#endif
-
-	va_end(args);
-}
 
 typedef BOOL (WINAPI* WaitForDebuggerFunc)();
 typedef BOOL (WINAPI* SetDllDirectoryFunc)(LPCTSTR lpPathName);
@@ -101,15 +87,13 @@ namespace BootLoaderUtil
 
 class Color;
 
-void LogMsg(int type, std::string msg, Color *col)
+void LogMsg(MSG_TYPE type, std::string msg, Color* col, std::map<std::string, std::string> *mpArgs)
 {
-	printf("%s", msg.c_str());
+	fprintf(stdout, "%s", msg.c_str());
 }
 
-void LogMsg(int type, std::wstring msg, Color *col)
-{
-	wprintf(L"%s", msg.c_str());
-}
+#include "DesuraPrintFRedirect.h"
+
 
 ::Thread::WaitCondition g_WaitCond;
 volatile bool g_bClientConnected = false;

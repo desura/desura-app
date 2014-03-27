@@ -115,6 +115,8 @@ void PipeBase::loopbackMessage(const char* message, uint32 size, uint32 managerI
 
 void PipeBase::run()
 {
+	gcTrace("");
+
 	while (!isStopped()) 
 	{ 
 		processEvents();

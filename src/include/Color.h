@@ -167,7 +167,7 @@ public:
 	uint8 blue;
 	uint8 alpha;
 
-	unsigned int getColor(){return (red<<24) + (green<<16) + (blue<<8) + alpha;}
+	uint32 getColor(){return (red<<24) + (green<<16) + (blue<<8) + alpha;}
 
 	//wxWidgets color
 	operator unsigned long()

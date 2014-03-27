@@ -57,11 +57,11 @@ public:
 #define REGISTER_JSEXTENDER( jsExtenderName ) static RegisterJSExtenderHelper< jsExtenderName > g_RJS;
 #define REGISTER_JS_FUNCTION( function, class ) { registerFunction( #function , newJSDelegate(this, &class::function) ); }
 
-#define REG_SIMPLE_JS_FUNCTION( function, class){ registerFunction( #function , newJSFunctionDelegate(this, &class::function) ); }
-#define REG_SIMPLE_JS_VOIDFUNCTION( function, class){ registerFunction( #function , newJSVoidFunctionDelegate(this, &class::function) ); }
+#define REG_SIMPLE_JS_FUNCTION( function, class){ registerFunction( #function , newJSFunctionDelegate(this, &class::function, false) ); }
+#define REG_SIMPLE_JS_VOIDFUNCTION( function, class){ registerFunction( #function , newJSVoidFunctionDelegate(this, &class::function, false) ); }
 
-#define REG_SIMPLE_JS_OBJ_FUNCTION( function, class){ registerFunction( #function , newJSObjFunctionDelegate(this, &class::function) ); }
-#define REG_SIMPLE_JS_OBJ_VOIDFUNCTION( function, class){ registerFunction( #function , newJSVoidObjFunctionDelegate(this, &class::function) ); }
+#define REG_SIMPLE_JS_OBJ_FUNCTION( function, class){ registerFunction( #function , newJSFunctionDelegate(this, &class::function, true)); }
+#define REG_SIMPLE_JS_OBJ_VOIDFUNCTION( function, class){ registerFunction( #function , newJSVoidFunctionDelegate(this, &class::function, true)); }
 
 
 
@@ -165,6 +165,13 @@ inline void FromJSObject(JSObjHandle& ret, JSObjHandle& arg)
 	ret = arg;
 }
 
+template <typename T>
+void FormJSObject(T t, JSObjHandle& arg)
+{
+	//Should not get here
+	assert(false);
+}
+
 JSObjHandle ToJSObject(ChromiumDLL::JavaScriptFactoryI* factory, const MapElementI* map);
 JSObjHandle ToJSObject(ChromiumDLL::JavaScriptFactoryI* factory, const void* object);
 JSObjHandle ToJSObject(ChromiumDLL::JavaScriptFactoryI* factory, const int32 intVal);
@@ -190,346 +197,107 @@ JSObjHandle ToJSObject(ChromiumDLL::JavaScriptFactoryI* factory, const std::vect
 	return arr;
 }
 
+
+#include <type_traits>
+
 template <typename T>
-void setDefaultValue(T* &t)
+typename std::enable_if<std::is_pointer<T>::value, T>::type getUserObject(ChromiumDLL::JavaScriptObjectI* pObj)
 {
-	t = nullptr;
+	typedef typename std::remove_pointer<T>::type X;
+	return pObj->getUserObject<X>();
 }
 
 template <typename T>
-void setDefaultValue(T& t)
+typename std::enable_if<!std::is_pointer<T>::value, T>::type  getUserObject(ChromiumDLL::JavaScriptObjectI* pObj)
 {
+	//should not get here
+	assert(false);
+	return T();
+}
+
+template <typename T>
+T popAndConvert(JSObjHandle* argv, size_t &x, bool bFirstIsObj)
+{
+	T t;
+
+	if (bFirstIsObj && x == 0)
+	{
+		if (argv[0]->isObject())
+			t = getUserObject<T>(argv[0]);
+	}
+	else
+	{
+		FromJSObject(t, argv[x--]);
+	}
+	
+	return t;
 }
 
 
-template <class TObj, typename R, typename A = PVoid, typename B = PVoid, typename C = PVoid, typename D = PVoid, typename E = PVoid, typename F = PVoid>
+
+template <typename R, typename ... Args>
 class JSDelegateFunction : public JSDelegateI
 {
 public:
-	typedef R (TObj::*TFunct0)();
-	typedef R (TObj::*TFunct1)(A);
-	typedef R (TObj::*TFunct2)(A, B);
-	typedef R (TObj::*TFunct3)(A, B, C);
-	typedef R (TObj::*TFunct4)(A, B, C, D);
-	typedef R (TObj::*TFunct5)(A, B, C, D, E);
-	typedef R (TObj::*TFunct6)(A, B, C, D, E, F);
-
-	JSDelegateFunction(TObj* t, TFunct0 f)
+	JSDelegateFunction(std::function<R(Args...)> fnCallback, bool bFirstIsObj = false)
+		: m_fnCallback(fnCallback)
+		, m_bFirstIsObj(bFirstIsObj)
 	{
-		init();
-		m_pObj = t;
-		m_pFunct0 = f;
-		m_uiNumParams = 0;
-	}	
-
-	JSDelegateFunction(TObj* t, TFunct1 f)
-	{
-		init();
-		m_pObj = t;
-		m_pFunct1 = f;
-		m_uiNumParams = 1;
-	}	
-
-	JSDelegateFunction(TObj* t, TFunct2 f)
-	{
-		init();
-		m_pObj = t;
-		m_pFunct2 = f;
-		m_uiNumParams = 2;
 	}
 
-	JSDelegateFunction(TObj* t, TFunct3 f)
+	JSObjHandle operator()(ChromiumDLL::JavaScriptFactoryI *factory, ChromiumDLL::JavaScriptContextI* context, JSObjHandle obj, size_t argc, JSObjHandle* argv) override
 	{
-		init();
-		m_pObj = t;
-		m_pFunct3 = f;
-		m_uiNumParams = 3;
-	}
+		if (argc < sizeof...(Args))
+			throw gcException(ERR_V8, "Not enough parameters supplied for javascript function call!");
 
-	JSDelegateFunction(TObj* t, TFunct4 f)
-	{
-		init();
-		m_pObj = t;
-		m_pFunct4 = f;
-		m_uiNumParams = 4;
-	}
-
-	JSDelegateFunction(TObj* t, TFunct5 f)
-	{
-		init();
-		m_pObj = t;
-		m_pFunct5 = f;
-		m_uiNumParams = 5;
-	}
-
-	JSDelegateFunction(TObj* t, TFunct6 f)
-	{
-		init();
-		m_pObj = t;
-		m_pFunct6 = f;
-		m_uiNumParams = 6;
-	}
-
-	void init()
-	{
-		m_pFunct0 = nullptr;
-		m_pFunct1 = nullptr;
-		m_pFunct2 = nullptr;
-		m_pFunct3 = nullptr;
-		m_pFunct4 = nullptr;
-		m_pFunct5 = nullptr;
-		m_pFunct6 = nullptr;
-	}
-
-	JSObjHandle operator()(ChromiumDLL::JavaScriptFactoryI *factory, ChromiumDLL::JavaScriptContextI* context, JSObjHandle obj, size_t argc, JSObjHandle* argv)
-	{
-		if (argc < m_uiNumParams)
-			throw gcException(ERR_V8, "Not enough paramaters supplied for javascript function call!");
-
-		JSObjHandle ret(nullptr);
-
-		A a;
-		B b;
-		C c;
-		D d;
-		E e;
-		F f;
-
-		setDefaultValue(a);
-		setDefaultValue(b);
-		setDefaultValue(c);
-		setDefaultValue(d);
-		setDefaultValue(e);
-		setDefaultValue(f);
+		size_t x = sizeof...(Args) - 1;
 
 		try
 		{
-			switch (m_uiNumParams)
-			{
-			case 6: 
-				FromJSObject(f, argv[5]);
-			case 5: 
-				FromJSObject(e, argv[4]);
-			case 4: 
-				FromJSObject(d, argv[3]);
-			case 3: 
-				FromJSObject(c, argv[2]);
-			case 2: 
-				FromJSObject(b, argv[1]);
-			case 1: 
-				FromJSObject(a, argv[0]);
-			};
-
-			R r;
-
-			switch (m_uiNumParams)
-			{
-			case 0: 
-				r = (*m_pObj.*m_pFunct0)(); 
-				break;
-
-			case 1: 
-				r = (*m_pObj.*m_pFunct1)(a);
-				break;
-
-			case 2: 
-				r = (*m_pObj.*m_pFunct2)(a, b);
-				break;
-
-			case 3: 
-				r = (*m_pObj.*m_pFunct3)(a, b, c);
-				break;
-
-			case 4: 
-				r = (*m_pObj.*m_pFunct4)(a, b, c, d);
-				break;
-
-			case 5: 
-				r = (*m_pObj.*m_pFunct5)(a, b, c, d, e); 
-				break;
-
-			case 6: 
-				r = (*m_pObj.*m_pFunct6)(a, b, c, d, e, f);
-				break;
-			};
-			
-			ret = ToJSObject(factory, r);
+			R r = m_fnCallback(popAndConvert<Args>(argv, x, m_bFirstIsObj)...);
+			return ToJSObject(factory, r);
 		}
 		catch (gcException &e)
 		{
-			throw gcException(ERR_V8, gcString("Failed to convert javascript argument: {0}", e));
+			Warning("Failed to convert js arg {0}: {1}\n", x, e);
+			throw gcException(ERR_V8, gcString("Failed to convert javascript argument: {0}", e).c_str());
 		}
 
-		return ret;
+		return factory->CreateUndefined();
 	}
 
 private:
-	// pointer to object
-	TObj* m_pObj;     
-
-	// pointer to member function
-	TFunct0 m_pFunct0;
-	TFunct1 m_pFunct1;
-	TFunct2 m_pFunct2;  
-	TFunct3 m_pFunct3;  
-	TFunct4 m_pFunct4;  
-	TFunct5 m_pFunct5;  
-	TFunct6 m_pFunct6;  
-	
-	uint32 m_uiNumParams;
+	bool m_bFirstIsObj;
+	std::function<R(Args...)> m_fnCallback;
 };
 
 
-template <class TObj, typename A = PVoid, typename B = PVoid, typename C = PVoid, typename D = PVoid, typename E = PVoid, typename F = PVoid>
+template <typename ... Args>
 class JSDelegateVoidFunction : public JSDelegateI
 {
 public:
-	typedef void (TObj::*TFunct0)();
-	typedef void (TObj::*TFunct1)(A);
-	typedef void (TObj::*TFunct2)(A, B);
-	typedef void (TObj::*TFunct3)(A, B, C);
-	typedef void (TObj::*TFunct4)(A, B, C, D);
-	typedef void (TObj::*TFunct5)(A, B, C, D, E);
-	typedef void (TObj::*TFunct6)(A, B, C, D, E, F);
-
-	JSDelegateVoidFunction(TObj* t, TFunct0 f)
+	JSDelegateVoidFunction(std::function<void(Args...)> fnCallback, bool bFirstIsObj = false)
+		: m_fnCallback(fnCallback)
+		, m_bFirstIsObj(bFirstIsObj)
 	{
-		init();
-		m_pObj = t;
-		m_pFunct0 = f;
-		m_uiNumParams = 0;
-	}	
-
-	JSDelegateVoidFunction(TObj* t, TFunct1 f)
-	{
-		init();
-		m_pObj = t;
-		m_pFunct1 = f;
-		m_uiNumParams = 1;
-	}	
-
-	JSDelegateVoidFunction(TObj* t, TFunct2 f)
-	{
-		init();
-		m_pObj = t;
-		m_pFunct2 = f;
-		m_uiNumParams = 2;
 	}
 
-	JSDelegateVoidFunction(TObj* t, TFunct3 f)
+	JSObjHandle operator()(ChromiumDLL::JavaScriptFactoryI *factory, ChromiumDLL::JavaScriptContextI* context, JSObjHandle obj, size_t argc, JSObjHandle* argv) override
 	{
-		init();
-		m_pObj = t;
-		m_pFunct3 = f;
-		m_uiNumParams = 3;
-	}
-
-	JSDelegateVoidFunction(TObj* t, TFunct4 f)
-	{
-		init();
-		m_pObj = t;
-		m_pFunct4 = f;
-		m_uiNumParams = 4;
-	}
-
-	JSDelegateVoidFunction(TObj* t, TFunct5 f)
-	{
-		init();
-		m_pObj = t;
-		m_pFunct5 = f;
-		m_uiNumParams = 5;
-	}
-
-	JSDelegateVoidFunction(TObj* t, TFunct6 f)
-	{
-		init();
-		m_pObj = t;
-		m_pFunct6 = f;
-		m_uiNumParams = 6;
-	}
-
-	void init()
-	{
-		m_pFunct0 = nullptr;
-		m_pFunct1 = nullptr;
-		m_pFunct2 = nullptr;
-		m_pFunct3 = nullptr;
-		m_pFunct4 = nullptr;
-		m_pFunct5 = nullptr;
-		m_pFunct6 = nullptr;
-	}
-
-	JSObjHandle operator()(ChromiumDLL::JavaScriptFactoryI *factory, ChromiumDLL::JavaScriptContextI* context, JSObjHandle obj, size_t argc, JSObjHandle* argv)
-	{
-		if (argc < m_uiNumParams)
+		if (argc < sizeof...(Args))
 			throw gcException(ERR_V8, "Not enough parameters supplied for javascript function call!");
 
-		A a;
-		B b;
-		C c;
-		D d;
-		E e;
-		F f;
+		JSObjHandle ret(nullptr);
 
-		setDefaultValue(a);
-		setDefaultValue(b);
-		setDefaultValue(c);
-		setDefaultValue(d);
-		setDefaultValue(e);
-		setDefaultValue(f);
+		size_t x = sizeof...(Args) - 1;
 
 		try
 		{
-			switch (m_uiNumParams)
-			{
-			case 6: 
-				FromJSObject(f, argv[5]);
-			case 5: 
-				FromJSObject(e, argv[4]);
-			case 4: 
-				FromJSObject(d, argv[3]);
-			case 3: 
-				FromJSObject(c, argv[2]);
-			case 2: 
-				FromJSObject(b, argv[1]);
-			case 1:
-				FromJSObject(a, argv[0]);
-			};
-
-			switch (m_uiNumParams)
-			{
-			case 0: 
-				(*m_pObj.*m_pFunct0)(); 
-				break;
-
-			case 1: 
-				(*m_pObj.*m_pFunct1)(a); 
-				break;
-
-			case 2: 
-				(*m_pObj.*m_pFunct2)(a, b); 
-				break;
-
-			case 3: 
-				(*m_pObj.*m_pFunct3)(a, b, c); 
-				break;
-
-			case 4: 
-				(*m_pObj.*m_pFunct4)(a, b, c, d); 
-				break;
-
-			case 5: 
-				(*m_pObj.*m_pFunct5)(a, b, c, d, e); 
-				break;
-
-			case 6: 
-				(*m_pObj.*m_pFunct6)(a, b, c, d, e, f); 
-				break;
-			};
-
+			m_fnCallback(popAndConvert<Args>(argv, x, m_bFirstIsObj)...);
 		}
 		catch (gcException &e)
 		{
+			Warning("Failed to convert js arg {0}: {1}\n", x, e);
 			throw gcException(ERR_V8, gcString("Failed to convert javascript argument: {0}", e).c_str());
 		}
 
@@ -537,350 +305,9 @@ public:
 	}
 
 private:
-	// pointer to object
-	TObj* m_pObj;     
-
-	// pointer to member function
-	TFunct0 m_pFunct0;
-	TFunct1 m_pFunct1;
-	TFunct2 m_pFunct2;  
-	TFunct3 m_pFunct3;  
-	TFunct4 m_pFunct4;  
-	TFunct5 m_pFunct5;  
-	TFunct6 m_pFunct6;  
-	
-	uint32 m_uiNumParams;
+	bool m_bFirstIsObj;
+	std::function<void(Args...)> m_fnCallback;
 };
-
-
-
-
-template <class TObj, class O, typename R, typename A = PVoid, typename B = PVoid, typename C = PVoid, typename D = PVoid, typename E = PVoid>
-class JSDelegateObjFunction : public JSDelegateI
-{
-public:
-	typedef R (TObj::*TFunct0)(O*);
-	typedef R (TObj::*TFunct1)(O*, A);
-	typedef R (TObj::*TFunct2)(O*, A, B);
-	typedef R (TObj::*TFunct3)(O*, A, B, C);
-	typedef R (TObj::*TFunct4)(O*, A, B, C, D);
-	typedef R (TObj::*TFunct5)(O*, A, B, C, D, E);
-
-	JSDelegateObjFunction(TObj* t, TFunct0 f)
-	{
-		init();
-		m_pObj = t;
-		m_pFunct0 = f;
-		m_uiNumParams = 0;
-	}	
-
-	JSDelegateObjFunction(TObj* t, TFunct1 f)
-	{
-		init();
-		m_pObj = t;
-		m_pFunct1 = f;
-		m_uiNumParams = 1;
-	}	
-
-	JSDelegateObjFunction(TObj* t, TFunct2 f)
-	{
-		init();
-		m_pObj = t;
-		m_pFunct2 = f;
-		m_uiNumParams = 2;
-	}
-
-	JSDelegateObjFunction(TObj* t, TFunct3 f)
-	{
-		init();
-		m_pObj = t;
-		m_pFunct3 = f;
-		m_uiNumParams = 3;
-	}
-
-	JSDelegateObjFunction(TObj* t, TFunct4 f)
-	{
-		init();
-		m_pObj = t;
-		m_pFunct4 = f;
-		m_uiNumParams = 4;
-	}
-
-	JSDelegateObjFunction(TObj* t, TFunct5 f)
-	{
-		init();
-		m_pObj = t;
-		m_pFunct5 = f;
-		m_uiNumParams = 5;
-	}
-
-	void init()
-	{
-		m_pFunct0 = nullptr;
-		m_pFunct1 = nullptr;
-		m_pFunct2 = nullptr;
-		m_pFunct3 = nullptr;
-		m_pFunct4 = nullptr;
-		m_pFunct5 = nullptr;
-	}
-
-	JSObjHandle operator()(ChromiumDLL::JavaScriptFactoryI *factory, ChromiumDLL::JavaScriptContextI* context, JSObjHandle obj, size_t argc, JSObjHandle* argv)
-	{
-		if (argc < m_uiNumParams+1)
-			throw gcException(ERR_V8, "Not enough parameters supplied for javascript function call!");
-
-		JSObjHandle ret(nullptr);
-
-		O* o = nullptr;
-		if (argv[0]->isObject())
-			o = argv[0]->getUserObject<O>();
-
-		A a;
-		B b;
-		C c;
-		D d;
-		E e;
-
-		setDefaultValue(a);
-		setDefaultValue(b);
-		setDefaultValue(c);
-		setDefaultValue(d);
-		setDefaultValue(e);
-
-		try
-		{
-			switch (m_uiNumParams)
-			{
-			case 5: 
-				FromJSObject(e, argv[5]);
-			case 4: 
-				FromJSObject(d, argv[4]);
-			case 3: 
-				FromJSObject(c, argv[3]);
-			case 2: 
-				FromJSObject(b, argv[2]);
-			case 1: 
-				FromJSObject(a, argv[1]);
-			};
-
-			R r;
-
-			switch (m_uiNumParams)
-			{
-			case 0: 
-				r = (*m_pObj.*m_pFunct0)(o);
-				break;
-
-			case 1: 
-				r = (*m_pObj.*m_pFunct1)(o, a); 
-				break;
-
-			case 2: 
-				r = (*m_pObj.*m_pFunct2)(o, a, b); 
-				break;
-
-			case 3: 
-				r = (*m_pObj.*m_pFunct3)(o, a, b, c); 
-				break;
-
-			case 4: 
-				r = (*m_pObj.*m_pFunct4)(o, a, b, c, d);
-				break;
-
-			case 5: 
-				r = (*m_pObj.*m_pFunct5)(o, a, b, c, d, e); 
-				break;
-			};
-
-			ret = ToJSObject(factory, r); 
-
-		}
-		catch (gcException &e)
-		{
-			throw gcException(ERR_V8, gcString("Failed to convert javascript argument: {0}", e).c_str());
-		}
-
-		return ret;
-	}
-
-private:
-	// pointer to object
-	TObj* m_pObj;     
-
-	// pointer to member function
-	TFunct0 m_pFunct0;
-	TFunct1 m_pFunct1;
-	TFunct2 m_pFunct2;  
-	TFunct3 m_pFunct3;  
-	TFunct4 m_pFunct4;  
-	TFunct5 m_pFunct5;  
-	
-	uint32 m_uiNumParams;
-};
-
-
-
-
-template <class TObj, class O, typename A = PVoid, typename B = PVoid, typename C = PVoid, typename D = PVoid, typename E = PVoid>
-class JSDelegateVoidObjFunction : public JSDelegateI
-{
-public:
-	typedef void (TObj::*TFunct0)(O*);
-	typedef void (TObj::*TFunct1)(O*, A);
-	typedef void (TObj::*TFunct2)(O*, A, B);
-	typedef void (TObj::*TFunct3)(O*, A, B, C);
-	typedef void (TObj::*TFunct4)(O*, A, B, C, D);
-	typedef void (TObj::*TFunct5)(O*, A, B, C, D, E);
-
-	JSDelegateVoidObjFunction(TObj* t, TFunct0 f)
-	{
-		init();
-		m_pObj = t;
-		m_pFunct0 = f;
-		m_uiNumParams = 0;
-	}	
-
-	JSDelegateVoidObjFunction(TObj* t, TFunct1 f)
-	{
-		init();
-		m_pObj = t;
-		m_pFunct1 = f;
-		m_uiNumParams = 1;
-	}	
-
-	JSDelegateVoidObjFunction(TObj* t, TFunct2 f)
-	{
-		init();
-		m_pObj = t;
-		m_pFunct2 = f;
-		m_uiNumParams = 2;
-	}
-
-	JSDelegateVoidObjFunction(TObj* t, TFunct3 f)
-	{
-		init();
-		m_pObj = t;
-		m_pFunct3 = f;
-		m_uiNumParams = 3;
-	}
-
-	JSDelegateVoidObjFunction(TObj* t, TFunct4 f)
-	{
-		init();
-		m_pObj = t;
-		m_pFunct4 = f;
-		m_uiNumParams = 4;
-	}
-
-	JSDelegateVoidObjFunction(TObj* t, TFunct5 f)
-	{
-		init();
-		m_pObj = t;
-		m_pFunct5 = f;
-		m_uiNumParams = 5;
-	}
-
-
-	void init()
-	{
-		m_pFunct0 = nullptr;
-		m_pFunct1 = nullptr;
-		m_pFunct2 = nullptr;
-		m_pFunct3 = nullptr;
-		m_pFunct4 = nullptr;
-		m_pFunct5 = nullptr;
-	}
-
-	JSObjHandle operator()(ChromiumDLL::JavaScriptFactoryI *factory, ChromiumDLL::JavaScriptContextI* context, JSObjHandle obj, size_t argc, JSObjHandle* argv)
-	{
-		if (argc < m_uiNumParams+1)
-			throw gcException(ERR_V8, "Not enough parameters supplied for javascript function call!");
-
-		JSObjHandle ret(nullptr);
-
-		O* o = nullptr;
-		if (argv[0]->isObject())
-			o = argv[0]->getUserObject<O>();
-
-		A a;
-		B b;
-		C c;
-		D d;
-		E e;
-
-		setDefaultValue(a);
-		setDefaultValue(b);
-		setDefaultValue(c);
-		setDefaultValue(d);
-		setDefaultValue(e);
-
-		try
-		{
-			switch (m_uiNumParams)
-			{
-			case 5: 
-				FromJSObject(e, argv[5]);
-			case 4: 
-				FromJSObject(d, argv[4]);
-			case 3: 
-				FromJSObject(c, argv[3]);
-			case 2: 
-				FromJSObject(b, argv[2]);
-			case 1: 
-				FromJSObject(a, argv[1]);
-			};
-
-			switch (m_uiNumParams)
-			{
-			case 0: 
-				(*m_pObj.*m_pFunct0)(o); 
-				break;
-
-			case 1: 
-				(*m_pObj.*m_pFunct1)(o, a); 
-				break;
-
-			case 2: 
-				(*m_pObj.*m_pFunct2)(o, a, b); 
-				break;
-
-			case 3: 
-				(*m_pObj.*m_pFunct3)(o, a, b, c); 
-				break;
-
-			case 4: 
-				(*m_pObj.*m_pFunct4)(o, a, b, c, d); 
-				break;
-
-			case 5: 
-				(*m_pObj.*m_pFunct5)(o, a, b, c, d, e); 
-				break;
-			};
-
-		}
-		catch (gcException &e)
-		{
-			throw gcException(ERR_V8, gcString("Failed to convert javascript argument: {0}", e).c_str());
-		}
-
-		return factory->CreateUndefined();
-	}
-
-private:
-	// pointer to object
-	TObj* m_pObj;     
-
-	// pointer to member function
-	TFunct0 m_pFunct0;
-	TFunct1 m_pFunct1;
-	TFunct2 m_pFunct2;  
-	TFunct3 m_pFunct3;  
-	TFunct4 m_pFunct4;  
-	TFunct5 m_pFunct5;  
-	
-	uint32 m_uiNumParams;
-};
-
 
 
 
@@ -900,7 +327,7 @@ public:
 		m_pFunction = function;
 	}
 
-	JSObjHandle operator()(ChromiumDLL::JavaScriptFactoryI *factory, ChromiumDLL::JavaScriptContextI* context, JSObjHandle obj, size_t argc, JSObjHandle* argv)
+	JSObjHandle operator()(ChromiumDLL::JavaScriptFactoryI *factory, ChromiumDLL::JavaScriptContextI* context, JSObjHandle obj, size_t argc, JSObjHandle* argv) override
 	{
 		std::vector<JSObjHandle> args;
 
@@ -915,181 +342,34 @@ private:
 	JSItemFunction m_pFunction;
 };
 
+
 template <class TObj>
 JSDelegateI* newJSDelegate(TObj* pObj, JSObjHandle (TObj::*function)(ChromiumDLL::JavaScriptFactoryI*, ChromiumDLL::JavaScriptContextI*, JSObjHandle, std::vector<JSObjHandle> &))
 {
 	return new JSDelegate<TObj>(pObj, function);
 }
 
-
-
-
-template <class TObj>
-JSDelegateI* newJSVoidFunctionDelegate(TObj* pObj, void (TObj::*func)())
+template <typename TObj, typename ... Args>
+JSDelegateI* newJSVoidFunctionDelegate(TObj* pObj, void (TObj::*func)(Args...), bool bFirstIsObject)
 {
-	return new JSDelegateVoidFunction<TObj>(pObj, func);
+	std::function<void(Args...)> fnCallback = [pObj, func](Args ... args)
+	{
+		(*pObj.*func)(args...);
+	};
+
+	return new JSDelegateVoidFunction<Args...>(fnCallback, bFirstIsObject);
 }
 
-template <class TObj, typename A>
-JSDelegateI* newJSVoidFunctionDelegate(TObj* pObj, void (TObj::*func)(A))
+template <class TObj, typename R, typename ... Args>
+JSDelegateI* newJSFunctionDelegate(TObj* pObj, R(TObj::*func)(Args...), bool bFirstIsObject)
 {
-	return new JSDelegateVoidFunction<TObj, A>(pObj, func);
+	std::function<R(Args...)> fnCallback = [pObj, func](Args ... args) -> R
+	{
+		return (*pObj.*func)(args...);
+	};
+
+	return new JSDelegateFunction<R, Args...>(fnCallback, bFirstIsObject);
 }
-
-template <class TObj, typename A, typename B>
-JSDelegateI* newJSVoidFunctionDelegate(TObj* pObj, void (TObj::*func)(A, B))
-{
-	return new JSDelegateVoidFunction<TObj, A, B>(pObj, func);
-}
-
-template <class TObj, typename A, typename B, typename C>
-JSDelegateI* newJSVoidFunctionDelegate(TObj* pObj, void (TObj::*func)(A, B, C))
-{
-	return new JSDelegateVoidFunction<TObj, A, B, C>(pObj, func);
-}
-
-template <class TObj, typename A, typename B, typename C, typename D>
-JSDelegateI* newJSVoidFunctionDelegate(TObj* pObj, void (TObj::*func)(A, B, C, D))
-{
-	return new JSDelegateVoidFunction<TObj, A, B, C, D>(pObj, func);
-}
-
-template <class TObj, typename A, typename B, typename C, typename D, typename E>
-JSDelegateI* newJSVoidFunctionDelegate(TObj* pObj, void (TObj::*func)(A, B, C, D, E))
-{
-	return new JSDelegateVoidFunction<TObj, A, B, C, D, E>(pObj, func);
-}
-
-template <class TObj, typename A, typename B, typename C, typename D, typename E, typename F>
-JSDelegateI* newJSVoidFunctionDelegate(TObj* pObj, void (TObj::*func)(A, B, C, D, E, F))
-{
-	return new JSDelegateVoidFunction<TObj, A, B, C, D, E, F>(pObj, func);
-}
-
-
-
-
-
-template <class TObj, typename R>
-JSDelegateI* newJSFunctionDelegate(TObj* pObj, R (TObj::*func)())
-{
-	return new JSDelegateFunction<TObj, R, PVoid, PVoid, PVoid, PVoid, PVoid, PVoid>(pObj, func);
-}
-
-template <class TObj, typename R, typename A>
-JSDelegateI* newJSFunctionDelegate(TObj* pObj, R (TObj::*func)(A))
-{
-	return new JSDelegateFunction<TObj, R, A, PVoid, PVoid, PVoid, PVoid, PVoid>(pObj, func);
-}
-
-template <class TObj, typename R, typename A, typename B>
-JSDelegateI* newJSFunctionDelegate(TObj* pObj, R (TObj::*func)(A, B))
-{
-	return new JSDelegateFunction<TObj, R, A, B, PVoid, PVoid, PVoid, PVoid>(pObj, func);
-}
-
-template <class TObj, typename R, typename A, typename B, typename C>
-JSDelegateI* newJSFunctionDelegate(TObj* pObj, R (TObj::*func)(A, B, C))
-{
-	return new JSDelegateFunction<TObj, R, A, B, C, PVoid, PVoid, PVoid>(pObj, func);
-}
-
-template <class TObj, typename R, typename A, typename B, typename C, typename D>
-JSDelegateI* newJSFunctionDelegate(TObj* pObj, R (TObj::*func)(A, B, C, D))
-{
-	return new JSDelegateFunction<TObj, R, A, B, C, D, PVoid, PVoid>(pObj, func);
-}
-
-template <class TObj, typename R, typename A, typename B, typename C, typename D, typename E>
-JSDelegateI* newJSFunctionDelegate(TObj* pObj, R (TObj::*func)(A, B, C, D, E))
-{
-	return new JSDelegateFunction<TObj, R, A, B, C, D, E, PVoid>(pObj, func);
-}
-
-template <class TObj, typename R, typename A, typename B, typename C, typename D, typename E, typename F>
-JSDelegateI* newJSFunctionDelegate(TObj* pObj, R (TObj::*func)(A, B, C, D, E, F))
-{
-	return new JSDelegateFunction<TObj, R, A, B, C, D, E, F>(pObj, func);
-}
-
-
-
-
-
-template <class TObj, class O>
-JSDelegateI* newJSVoidObjFunctionDelegate(TObj* pObj, void (TObj::*func)(O*))
-{
-	return new JSDelegateVoidObjFunction<TObj, O>(pObj, func);
-}
-
-template <class TObj, class O, typename A>
-JSDelegateI* newJSVoidObjFunctionDelegate(TObj* pObj, void (TObj::*func)(O*, A))
-{
-	return new JSDelegateVoidObjFunction<TObj, O, A>(pObj, func);
-}
-
-template <class TObj, class O, typename A, typename B>
-JSDelegateI* newJSVoidObjFunctionDelegate(TObj* pObj, void (TObj::*func)(O*, A, B))
-{
-	return new JSDelegateVoidObjFunction<TObj, O, A, B>(pObj, func);
-}
-
-template <class TObj, class O, typename A, typename B, typename C>
-JSDelegateI* newJSVoidObjFunctionDelegate(TObj* pObj, void (TObj::*func)(O*, A, B, C))
-{
-	return new JSDelegateVoidObjFunction<TObj, O, A, B, C>(pObj, func);
-}
-
-template <class TObj, class O, typename A, typename B, typename C, typename D>
-JSDelegateI* newJSVoidObjFunctionDelegate(TObj* pObj, void (TObj::*func)(O*, A, B, C, D))
-{
-	return new JSDelegateVoidObjFunction<TObj, O, A, B, C, D>(pObj, func);
-}
-
-template <class TObj, class O, typename A, typename B, typename C, typename D, typename E>
-JSDelegateI* newJSVoidObjFunctionDelegate(TObj* pObj, void (TObj::*func)(O*, A, B, C, D, E))
-{
-	return new JSDelegateVoidObjFunction<TObj, O, A, B, C, D, E>(pObj, func);
-}
-
-
-template <class TObj, class O, typename R>
-JSDelegateI* newJSObjFunctionDelegate(TObj* pObj, R (TObj::*func)(O*))
-{
-	return new JSDelegateObjFunction<TObj, O, R>(pObj, func);
-}
-
-template <class TObj, class O, typename R, typename A>
-JSDelegateI* newJSObjFunctionDelegate(TObj* pObj, R (TObj::*func)(O*, A))
-{
-	return new JSDelegateObjFunction<TObj, O, R, A>(pObj, func);
-}
-
-template <class TObj, class O, typename R, typename A, typename B>
-JSDelegateI* newJSObjFunctionDelegate(TObj* pObj, R (TObj::*func)(O*, A, B))
-{
-	return new JSDelegateObjFunction<TObj, O, R, A, B>(pObj, func);
-}
-
-template <class TObj, class O, typename R, typename A, typename B, typename C>
-JSDelegateI* newJSObjFunctionDelegate(TObj* pObj, R (TObj::*func)(O*, A, B, C))
-{
-	return new JSDelegateObjFunction<TObj, O, R, A, B, C>(pObj, func);
-}
-
-template <class TObj, class O, typename R, typename A, typename B, typename C, typename D>
-JSDelegateI* newJSObjFunctionDelegate(TObj* pObj, R (TObj::*func)(O*, A, B, C, D))
-{
-	return new JSDelegateObjFunction<TObj, O, R, A, B, C, D>(pObj, func);
-}
-
-template <class TObj, class O, typename R, typename A, typename B, typename C, typename D, typename E>
-JSDelegateI* newJSObjFunctionDelegate(TObj* pObj, R (TObj::*func)(O*, A, B, C, D, E))
-{
-	return new JSDelegateObjFunction<TObj, O, R, A, B, C, D, E>(pObj, func);
-}
-
-
 
 
 

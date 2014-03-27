@@ -149,6 +149,14 @@ IPCParameterI* IPCClass::callFunction(const char* name, bool async, IPCParameter
 
 IPCParameterI* IPCClass::callFunction(const char* name, bool async, std::vector<IPCParameterI*> &pList)
 {
+	static gcString s_strMessage("message"); 
+
+	if (s_strMessage != name)
+	{
+		gcString traceName("{0}::{1}", typeid(this).name(), name);
+		TraceT(traceName.c_str(), this, "Async: {0}, ArgC: {1}", async, pList.size());
+	}
+
 	IPCFunctionCall *fch;
 
 	uint32 tsize;
@@ -219,6 +227,9 @@ IPCParameterI* IPCClass::callLoopback(const char* name, bool async, IPCParameter
 
 IPCParameterI* IPCClass::callLoopback(const char* name, bool async, std::vector<IPCParameterI*> &pList)
 {
+	gcString traceName("{0}::{1}", typeid(this).name(), name);
+	TraceT(traceName.c_str(), this, "Async: {0}, ArgC: {1}", async, pList.size());
+
 	IPCFunctionCall *fch;
 
 	uint32 tsize;

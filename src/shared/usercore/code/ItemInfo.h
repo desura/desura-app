@@ -359,6 +359,7 @@ namespace UserCore
 		private:
 			bool m_bPauseCallBack = false;
 			bool m_bWasOnAccount = false;
+			bool m_bAddedToDb = false;
 
 			DesuraId m_iId;
 			DesuraId m_iParentId;

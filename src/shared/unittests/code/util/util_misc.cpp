@@ -24,6 +24,7 @@ $/LicenseInfo$
 
 #include "Common.h"
 #include "util/UtilMisc.h"
+#include "SharedObjectLoader.h"
 
 namespace UnitTest
 {
@@ -157,7 +158,7 @@ namespace UnitTest
 
 	TEST(UtilDateTime, toIsoAndBack)
 	{
-		tm t = {0};
+		tm t = { 0 };
 		t.tm_hour = 8;
 		t.tm_min = 6;
 		t.tm_sec = 56;
@@ -184,9 +185,26 @@ namespace UnitTest
 
 	TEST(UtilDateTime, BadTimeT)
 	{
-		auto out = gcTime((time_t) -1).to_iso_string();
+		auto out = gcTime((time_t)-1).to_iso_string();
 		std::string expected = "";
 
 		ASSERT_EQ(expected, out);
+	}
+
+	TEST(SharedObjectLoader, ConvertToLinux_Win)
+	{
+		SharedObjectLoader sol;
+
+		auto out = sol.convertToLinuxModule("uicore.dll");
+		ASSERT_STREQ("libuicore.so", out.c_str());
+	}
+
+
+	TEST(SharedObjectLoader, ConvertToLinux_Nix)
+	{
+		SharedObjectLoader sol;
+
+		auto out = sol.convertToLinuxModule("libuicore.so");
+		ASSERT_STREQ("libuicore.so", out.c_str());
 	}
 }

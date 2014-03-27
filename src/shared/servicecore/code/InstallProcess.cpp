@@ -60,6 +60,8 @@ InstallProcess::~InstallProcess()
 
 void InstallProcess::run()
 {
+	gcTrace("");
+
 	if (m_szIPath == "" || m_szMCFPath == "")
 	{
 		gcException errNullPath(ERR_BADPATH, gcString("One of the paths for install was nullptr. [I:{0} M:{1}]", m_szIPath, m_szMCFPath));
@@ -79,7 +81,7 @@ void InstallProcess::run()
 		}
 		catch (gcException &e)
 		{
-			Warning(gcString("Failed to set path as writable for install: {0}\n", e));
+			Warning("Failed to set path as writable for install: {0}\n", e);
 		}
 	}
 #endif
@@ -148,6 +150,8 @@ void InstallProcess::onUnpause()
 
 void InstallProcess::onError(gcException& e)
 {
+	gcTrace("E: {0}", e);
+
 	if (e.getErrId() == ERR_HASHMISSMATCH)
 	{
 		m_bHashMissMatch = true;

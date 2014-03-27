@@ -207,7 +207,7 @@ CourgetteInstance::CourgetteInstance()
 	}
 	catch (gcException &e)
 	{
-		Warning(gcString("Failed to create courgette instance: {0}\n", e));
+		Warning("Failed to create courgette instance: {0}\n", e);
 	}
 }
 

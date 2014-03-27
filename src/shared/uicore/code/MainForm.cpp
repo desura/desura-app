@@ -102,7 +102,7 @@ MainForm::MainForm(wxWindow* parent, bool offline, const char* szProvider)
 
 	SetMinSize( wxSize(700,370) );
 
-	m_iMode = MODE_UNINT;
+	m_iMode = APP_MODE::MODE_UNINT;
 	m_wxAboutForm = nullptr;	
 
 	m_pDesuraControl = new DesuraControl(this, offline, szProvider);
@@ -237,7 +237,7 @@ void MainForm::loadUrl(const char* url, PAGE page)
 
 	if (page < 0 || page >= (int32)m_vPageList.size())
 	{
-		Warning(gcString("Failed to load url [{0}] for page {1}. Cant find page.\n", url, page));
+		Warning("Failed to load url [{0}] for page {1}. Cant find page.\n", url, page);
 	}
 	else
 	{
@@ -262,12 +262,12 @@ void MainForm::Maximize(bool state)
 	m_pDesuraControl->showLeftBorder(!state);
 }
 
-void MainForm::setMode(uint8 mode)
+void MainForm::setMode(APP_MODE mode)
 {
 	if (mode == m_iMode)
 		return;
 
-	if (mode == MODE_ONLINE || mode == MODE_OFFLINE)
+	if (mode == APP_MODE::MODE_ONLINE || mode == APP_MODE::MODE_OFFLINE)
 	{
 #ifdef NIX
 		if (!gc_allow_wm_positioning.getBool())
@@ -310,6 +310,8 @@ void MainForm::onFormClose(wxCloseEvent& event)
 
 void MainForm::onMenuSelect(wxCommandEvent& event )
 {
+	gcTrace("Id: {0}", event.GetId());
+
 	switch (event.GetId())
 	{
 	case DESURA_wxLog:
@@ -341,7 +343,7 @@ void MainForm::onMenuSelect(wxCommandEvent& event )
 		break;
 
 	case DESURA_wxOffline:
-		if (m_iMode == MODE_OFFLINE)
+		if (m_iMode == APP_MODE::MODE_OFFLINE)
 			logOut();
 		else
 			goOffline();
@@ -395,7 +397,7 @@ void MainForm::showChangeLog()
 
 void MainForm::logOut()
 {
-	g_pMainApp->logOut(true, (m_iMode == MODE_OFFLINE) );
+	g_pMainApp->logOut(true, (m_iMode == APP_MODE::MODE_OFFLINE) );
 }
 
 void MainForm::showAbout()

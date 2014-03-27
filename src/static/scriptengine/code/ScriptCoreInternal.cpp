@@ -54,7 +54,7 @@ const char* ToCString(const v8::String::Utf8Value& value)
 
 void ScriptCoreInternal::OnFatalError(const char* location, const char* message)
 {
-	Warning(gcString("Fatal error in v8. Disabling runtime. \n{0}: {1}\n", location, message));
+	WarningS("Fatal error in v8. Disabling runtime. \n{0}: {1}\n", location, message);
 	s_Disabled = false;
 }
 

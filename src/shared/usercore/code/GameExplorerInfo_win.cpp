@@ -304,7 +304,7 @@ void GameExplorerInfo::generateDll()
 	}
 	catch (gcException &e)
 	{
-		Warning(gcString("Failed to read icon file: {0}\n", e));
+		Warning("Failed to read icon file: {0}\n", e);
 
 		safe_delete(logoData);
 		EndUpdateResource(handle, FALSE);

@@ -25,6 +25,7 @@ $/LicenseInfo$
 
 #include "Common.h"
 #include "serviceMain.h"
+#include "Tracer.h"
 
 void ServiceMain(int argc, char** argv);
 void ControlHandler(DWORD request);
@@ -35,10 +36,20 @@ SERVICE_STATUS_HANDLE g_hStatus;
 CGCServiceApp g_ServiceApp;
 
 class Color;
-void LogMsg(int type, std::string msg, Color *col)
-{
 
+void LogMsg(MSG_TYPE type, std::string msg, Color* col, std::map<std::string, std::string> *mpArgs)
+{
+	if (type == MT_TRACE)
+		g_Tracer.trace(msg, mpArgs);
+	else
+		fprintf(stdout, "[LogMsg] %s\n", msg.c_str());
 }
+
+
+#include "DesuraPrintFRedirect.h"
+
+
+
 
 void SetCrashSettings(const wchar_t* user, bool upload)
 {
@@ -51,14 +62,6 @@ void OnPipeDisconnect()
 }
 
 
-void PrintfMsg(const char* format, ...)
-{
-	va_list args;
-	va_start(args, format);
-	vprintf(format, args);
-	va_end(args);
-}
-
 int main(int argc, char** argv) 
 { 
 #ifdef DEBUG
@@ -70,6 +73,8 @@ int main(int argc, char** argv)
 
 	if (GetFileAttributes("desura_service_debug.txt") != 0xFFFFFFFF)
 	{
+		gcTraceS("Waiting for debugger");
+
 		while (!IsDebuggerPresent())
 			gcSleep( 500 );
 	}

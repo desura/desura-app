@@ -69,6 +69,9 @@ public:
 	//Used to ignore unit test thread
 	static void ignoreThisThread();
 
+	static void setTracer(TracerI *pTracer);
+	static void trace(const char* szMessage, std::map<std::string, std::string> *pmArgs);
+
 protected:
 	void setupAutoComplete();
 

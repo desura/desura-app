@@ -39,10 +39,7 @@ enum
 	BALLON_GAMEUPDATE,
 };
 
-bool sortGifts(UserCore::Misc::NewsItem* left, UserCore::Misc::NewsItem* right) 
-{ 
-	return strcmp(left->szTitle.c_str(), right->szTitle.c_str()) > 0;
-}
+
 
 bool sortItems(UserCore::Item::ItemInfoI* left, UserCore::Item::ItemInfoI* right) 
 { 
@@ -131,13 +128,17 @@ void TaskBarIcon::doBallonMsg()
 	}
 }
 
-void TaskBarIcon::showGiftPopup(std::vector<UserCore::Misc::NewsItem*>& itemList)
+void TaskBarIcon::showGiftPopup(const std::vector<std::shared_ptr<UserCore::Misc::NewsItem>>& itemList)
 {
 	gcWString msg;
 
-	std::sort(itemList.begin(), itemList.end(), sortGifts);
+	std::vector<std::shared_ptr<UserCore::Misc::NewsItem>> vLocal(itemList);
+	std::sort(vLocal.begin(), vLocal.end(), [](std::shared_ptr<UserCore::Misc::NewsItem> a, std::shared_ptr<UserCore::Misc::NewsItem> b)
+	{
+		return strcmp(a->szTitle.c_str(), b->szTitle.c_str()) > 0;
+	});
 
-	for (auto i : itemList)
+	for (auto i : vLocal)
 	{
 		if (i->hasBeenShown)
 			continue;

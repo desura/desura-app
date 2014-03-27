@@ -30,7 +30,8 @@ namespace IPC
 {
 
 
-PipeClient::PipeClient(const char* name, LoopbackProcessor* loopbackProcessor, uint32 managerId) : PipeBase(name, gcString("{0}- IPC Client",name).c_str()), IPCManager(loopbackProcessor, managerId, name)
+PipeClient::PipeClient(const char* name, LoopbackProcessor* loopbackProcessor, uint32 managerId) 
+	: PipeBase(name, gcString("{0}- IPC Client",name).c_str()), IPCManager(loopbackProcessor, managerId, name)
 {
 	m_pdSend.pendingConnection = false;
 	m_pdRecv.pendingConnection = false;
@@ -79,6 +80,8 @@ void PipeClient::cleanUp()
 
 void PipeClient::setUpPipes()
 {
+	gcTrace("Send: {0}, Recv: {1}", m_szSendName, m_szRecvName);
+
 	if (m_bSetUped)
 		return;
 
@@ -101,7 +104,7 @@ void PipeClient::setUpPipes()
 	BOOL rRes = WaitNamedPipe(m_szRecvName.c_str(), 30000);
 
 	if (rRes == 0)
-		throw gcException(ERR_PIPE, GetLastError(), "Failed to create PipeClient (Recieve PipeClient is busy).");
+		throw gcException(ERR_PIPE, GetLastError(), "Failed to create PipeClient (Receive PipeClient is busy).");
 		
 
 	//as this is the client connect to opposite server pipes
@@ -149,6 +152,8 @@ IPCManager* PipeClient::getManager(uint32 index)
 
 void PipeClient::disconnectAndReconnect(uint32 i) 
 { 
+	gcTrace("Id: {0}", i);
+
 	informClassesOfDisconnect();
 
 	cleanUp();

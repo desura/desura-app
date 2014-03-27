@@ -209,7 +209,7 @@ bool EventHandler::onKeyEvent(ChromiumDLL::KeyEventType type, int code, int modi
 void EventHandler::onLogConsoleMsg(const char* message, const char* source, int line)
 {
 	if (gc_enablebrowserconsole.getBool())
-		Warning(gcString("Webkit: {0} [{1} : {2}]\n", message, source, line));
+		WarningS("Webkit: {0} [{1} : {2}]\n", message, source, line);
 }
 
 void EventHandler::launchLink(const char* url)

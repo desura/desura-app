@@ -29,72 +29,128 @@ $/LicenseInfo$
 #pragma once
 #endif
 
-#ifdef WIN32
-#define printf PrintfMsg
-#endif
-void PrintfMsg(const char* format, ...);
-
 class LogCallback;
 class Color;
 
 enum MSG_TYPE
 {
 	MT_MSG,
-	MT_MSG_COL,
 	MT_WARN,
 	MT_DEBUG,
+	MT_TRACE,
 };
 
-void LogMsg(int type, std::string msg, Color *col = nullptr);
-void LogMsg(int type, std::wstring msg, Color *col = nullptr);
+void LogMsg(MSG_TYPE type, std::string msg, Color *col = nullptr, std::map<std::string, std::string> *pmArgs = nullptr);
 
 
-template<typename CT, typename ... Args>
-void Msg(const CT* szFormat, Args ... args)
+template <typename T>
+std::string TraceClassInfo(T *pClass)
 {
-	LogMsg(MT_MSG, gcBaseString<CT>(szFormat, args...));
+	return "";
 }
 
 template<typename CT>
-void Msg(gcBaseString<CT> message)
+void PrintToStream(const DesuraId& t, std::basic_stringstream<CT> &oss)
 {
-	LogMsg(MT_MSG, message);
+	oss << t.toInt64();
 }
 
-template<typename CT, typename ... Args>
-void MsgCol(Color* col, const CT* szFormat, Args ... args)
+
+
+#ifdef WITH_TRACING
+
+template <typename ... Args>
+void TraceS(const char* szFunction, const char* szClassInfo, const char* szFormat, Args ... args)
 {
-	LogMsg(MT_MSG_COL, gcBaseString<CT>(szFormat, args...), col);
+	static auto getCurrentThreadId = []()
+	{
+#ifdef WIN32
+		return ::GetCurrentThreadId();
+#else
+		return (uint64)pthread_self();
+#endif
+	};
+
+	std::map<std::string, std::string> mArgs;
+
+	mArgs["function"] = gcString(szFunction);
+	mArgs["classinfo"] = gcString(szClassInfo);
+	mArgs["thread"] = gcString("{0}", getCurrentThreadId());
+	mArgs["time"] = gcTime().to_js_string();
+
+	LogMsg(MT_TRACE, gcString(szFormat, args...), nullptr, &mArgs);
 }
 
-template<typename CT>
-void MsgCol(Color* col, gcBaseString<CT> message)
+template <typename T, typename ... Args>
+void TraceT(const char* szFunction, T *pClass, const char* szFormat, Args ... args)
 {
-	LogMsg(MT_MSG_COL, message, col);
+	auto ci = TraceClassInfo(pClass);
+	TraceS(szFunction, ci.c_str(), szFormat, args...);
 }
 
-template<typename CT, typename ... Args>
-void Warning(const CT* szFormat, Args ... args)
+template <typename T, typename ... Args>
+void WarningT(const char* szFunction, T *pClass, const char* szFormat, Args ... args)
 {
-	LogMsg(MT_WARN, gcBaseString<CT>(szFormat, args...));
+	gcString msg(szFormat, args...);
+	LogMsg(MT_WARN, msg);
+
+	msg = "Warning: " + msg;
+
+	auto ci = TraceClassInfo(pClass);
+	TraceS(szFunction, ci.c_str(), msg.c_str());
 }
 
-template<typename CT>
-void Warning(gcBaseString<CT> message)
+namespace
 {
-	LogMsg(MT_WARN, message);
+	class FakeTracerClass
+	{
+	};
 }
 
-template<typename CT, typename ... Args>
-void Debug(const CT* szFormat, Args ... args)
+#define Msg( ... ) LogMsg(MT_MSG, gcString(__VA_ARGS__))
+#define Debug( ... ) LogMsg(MT_DEBUG, gcString(__VA_ARGS__))
+#define Warning( ... ) WarningT(__FUNCTION__, this, __VA_ARGS__)
+#define WarningS( ... ) WarningT(__FUNCTION__, (FakeTracerClass*)nullptr, __VA_ARGS__)
+#define gcTrace( ... ) TraceT(__FUNCTION__, this, __VA_ARGS__)
+#define gcTraceS( ... ) TraceT(__FUNCTION__, (FakeTracerClass*)nullptr, __VA_ARGS__)
+
+
+#else
+
+template <typename ... Args>
+void TraceS(const char* szFunction, const char* szClassInfo, const char* szFormat, Args ... args)
 {
-	LogMsg(MT_DEBUG, gcBaseString<CT>(szFormat, args...));
 }
 
-template<typename CT>
-void Debug(gcBaseString<CT> message)
+template <typename T, typename ... Args>
+void TraceT(const char* szFunction, T *pClass, const char* szFormat, Args ... args)
 {
-	LogMsg(MT_DEBUG, message);
 }
+
+#define Msg( ... ) LogMsg(MT_MSG, gcString(__VA_ARGS__))
+#define Debug( ... ) LogMsg(MT_DEBUG, gcString(__VA_ARGS__))
+#define Warning( ... ) LogMsg(MT_WARN, gcString(__VA_ARGS__))
+#define WarningS( ... ) LogMsg(MT_WARN, gcString(__VA_ARGS__))
+#define gcTrace( ... ) {}
+#define gcTraceS( ... ) {}
+
+#endif
+
+
+
+#ifdef WIN32
+#define printf DesuraPrintFRedirect
+void DesuraPrintFRedirect(const char* format, ...);
+#endif
+
+class TracerI
+{
+public:
+	virtual void trace(const std::string &strTrace, std::map<std::string, std::string> *mpArgs) = 0;
+
+protected:
+	virtual ~TracerI(){}
+};
+
 
 #endif

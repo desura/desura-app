@@ -248,7 +248,7 @@ void DownloadTask::onNewProvider(MCFCore::Misc::DP_s& dp)
 
 void DownloadTask::onError(gcException &e)
 {
-	Warning(gcString("Error in MCF download: {0}\n", e));
+	Warning("Error in MCF download: {0}\n", e);
 	getItemHandle()->getInternal()->setPausable(false);
 
 	if (!getItemHandle()->shouldPauseOnError())

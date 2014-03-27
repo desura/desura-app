@@ -31,50 +31,17 @@ class Color;
 
 LogCallback* g_pLogCallBack = nullptr;
 
-void DESURA_Msg(const char* msg, Color* col = nullptr)
-{
-	Msg(msg);
-}
-
-void DESURA_Msg_W(const wchar_t* msg, Color* col = nullptr)
-{
-	gcString m(msg);
-	Msg(m.c_str());
-}
-
-void DESURA_Warn(const char* msg)
-{
-	Warning(msg);
-}
-
-void DESURA_Warn_W(const wchar_t* msg)
-{
-	gcString m(msg);
-	Warning(m.c_str());
-}
-
-void DESURA_Debug(const char* msg)
-{
-	Debug(msg);
-}
-
-void DESURA_Debug_W(const wchar_t* msg)
-{
-	gcString m(msg);
-	Debug(m.c_str());
-}
-
 
 void InitLogging(RegDLLCB_MCF cb)
 {
-	g_pLogCallBack = new LogCallback();
+	LogCallback::MessageFn messageFn = [](MSG_TYPE type, const char* msg, Color* col, std::map<std::string, std::string> *mpArgs)
+	{
+		LogMsg(type, msg, col, mpArgs);
+	};
 
-	g_pLogCallBack->RegMsg(&DESURA_Msg);
-	g_pLogCallBack->RegMsg(&DESURA_Msg_W);
-	g_pLogCallBack->RegWarn(&DESURA_Warn);
-	g_pLogCallBack->RegWarn(&DESURA_Warn_W);
-	g_pLogCallBack->RegDebug(&DESURA_Debug);
-	g_pLogCallBack->RegDebug(&DESURA_Debug_W);
+	safe_delete(g_pLogCallBack);
+	g_pLogCallBack = new LogCallback();
+	g_pLogCallBack->RegMsg(messageFn);
 
 	cb(g_pLogCallBack);
 }

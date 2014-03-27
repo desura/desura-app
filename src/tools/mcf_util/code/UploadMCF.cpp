@@ -152,7 +152,7 @@ public:
 			g_pUserHandle->unlockDelete();
 			safe_delete(g_pUserHandle);
 
-			Warning(gcString("Failed to login: {0}", e));
+			Warning("Failed to login: {0}", e);
 		}
 
 		return !!g_pUserHandle;
@@ -160,7 +160,7 @@ public:
 
 	void OnMCFCreateError(gcException &e)
 	{
-		Warning(gcString("Failed to create mcf: {0}", e));
+		Warning("Failed to create mcf: {0}", e);
 		g_WaitCon.notify();
 	}
 
@@ -191,7 +191,7 @@ public:
 
 	void OnStartUploadError(gcException &e)
 	{
-		Warning(gcString("Failed to init upload of mcf: {0}", e));
+		Warning("Failed to init upload of mcf: {0}", e);
 		g_WaitCon.notify();
 	}
 
@@ -248,7 +248,7 @@ public:
 
 	void OnUploadError(gcException &e)
 	{
-		Warning(gcString("Failed to upload of mcf: {0}", e));
+		Warning("Failed to upload of mcf: {0}", e);
 		g_WaitCon.notify();
 	}
 

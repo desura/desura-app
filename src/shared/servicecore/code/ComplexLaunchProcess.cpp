@@ -83,6 +83,8 @@ void ComplexLaunchProcess::run()
 
 void ComplexLaunchProcess::doRemove()
 {
+	gcTrace("");
+
 	if (!UTIL::FS::isValidFile(m_szRemMCFPath.c_str()) || !UTIL::FS::isValidFolder(m_szIPath.c_str()))
 	{
 		gcException errInvPath(ERR_BADPATH, gcString("One of the paths for the complex remove was invalid [IP: {0} RMCF: {1}].", m_szIPath, m_szRemMCFPath));
@@ -142,6 +144,8 @@ void ComplexLaunchProcess::doRemove()
 
 void ComplexLaunchProcess::doInstall()
 {
+	gcTrace("");
+
 	UTIL::FS::makeFolder(m_szIPath);
 
 	if (!UTIL::FS::isValidFile(m_szInsMCFPath))
@@ -206,6 +210,8 @@ void ComplexLaunchProcess::onProgress(MCFCore::Misc::ProgressInfo& p)
 
 void ComplexLaunchProcess::onError(gcException& e)
 {
+	gcTrace("E: {0}", e);
+
 	if (e.getErrId() == ERR_HASHMISSMATCH)
 		m_bHashMissMatch = true;
 	else

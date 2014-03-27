@@ -229,7 +229,7 @@ void InstallServiceTask::onError(gcException &e)
 
 	m_bHasError = true;
 
-	Warning(gcString("Error in MCF install: {0}\n", e));
+	Warning("Error in MCF install: {0}\n", e);
 	getItemHandle()->getInternal()->setPausable(false);
 
 	if (!getItemHandle()->shouldPauseOnError())

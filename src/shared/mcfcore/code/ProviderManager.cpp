@@ -212,7 +212,7 @@ gcString ProviderManager::getName(uint32 id)
 
 std::shared_ptr<const MCFCore::Misc::DownloadProvider> ProviderManager::requestNewUrl(uint32 id, uint32 errCode, const char* errMsg)
 {
-	Warning(gcString("Mcf download thread errored out. Id: {0}, Error: {2} [{1}]\n", id, errCode, errMsg));
+	Warning("Mcf download thread errored out. Id: {0}, Error: {2} [{1}]\n", id, errCode, errMsg);
 
 	removeAgent(id, true);
 	return getUrl(id);
@@ -220,6 +220,8 @@ std::shared_ptr<const MCFCore::Misc::DownloadProvider> ProviderManager::requestN
 
 void ProviderManager::removeAgent(uint32 id, bool setTimeOut)
 {
+	gcTrace("TimeOut: {0}", setTimeOut);
+
 	std::shared_ptr<const MCFCore::Misc::DownloadProvider> pProvider;
 
 	{
@@ -314,7 +316,7 @@ namespace UnitTest
 		{
 			auto res = pm.getUrl(1);
 
-			ASSERT_TRUE(res.get());
+			ASSERT_TRUE(!!res.get());
 			ASSERT_STREQ("a1", res->getName());
 		}
 
@@ -322,7 +324,7 @@ namespace UnitTest
 		{
 			auto res = pm.getUrl(1);
 
-			ASSERT_TRUE(res.get());
+			ASSERT_TRUE(!!res.get());
 			ASSERT_STREQ("a1", res->getName());
 		}
 	}
@@ -340,14 +342,14 @@ namespace UnitTest
 		{
 			auto res = pm.getUrl(1);
 
-			ASSERT_TRUE(res.get());
+			ASSERT_TRUE(!!res.get());
 			ASSERT_STREQ("a1", res->getName());
 		}
 
 		{
 			auto res = pm.getUrl(2);
 
-			ASSERT_TRUE(res.get());
+			ASSERT_TRUE(!!res.get());
 			ASSERT_STREQ("b1", res->getName());
 		}
 	}
@@ -364,21 +366,21 @@ namespace UnitTest
 		{
 			auto res = pm.getUrl(1);
 
-			ASSERT_TRUE(res.get());
+			ASSERT_TRUE(!!res.get());
 			ASSERT_STREQ("a1", res->getName());
 		}
 
 		{
 			auto res = pm.requestNewUrl(1, 1, "error");
 
-			ASSERT_TRUE(res.get());
+			ASSERT_TRUE(!!res.get());
 			ASSERT_STREQ("b1", res->getName());
 		}
 
 		{
 			auto res = pm.getUrl(1);
 
-			ASSERT_TRUE(res.get());
+			ASSERT_TRUE(!!res.get());
 			ASSERT_STREQ("b1", res->getName());
 		}
 	}
@@ -402,7 +404,7 @@ namespace UnitTest
 		{
 			auto res = pm.getUrl(1);
 
-			ASSERT_TRUE(res.get());
+			ASSERT_TRUE(!!res.get());
 			ASSERT_STREQ("a1", res->getName());
 		}
 
@@ -412,7 +414,7 @@ namespace UnitTest
 		{
 			auto res = pm.getUrl(1);
 
-			ASSERT_TRUE(res.get());
+			ASSERT_TRUE(!!res.get());
 			ASSERT_STREQ("b1", res->getName());
 		}
 	}
@@ -434,7 +436,7 @@ namespace UnitTest
 		{
 			auto res = pm.getUrl(1);
 
-			ASSERT_TRUE(res.get());
+			ASSERT_TRUE(!!res.get());
 			ASSERT_STREQ("a1", res->getName());
 		}
 
@@ -447,7 +449,7 @@ namespace UnitTest
 		{
 			auto res = pm.getUrl(1);
 
-			ASSERT_TRUE(res.get());
+			ASSERT_TRUE(!!res.get());
 			ASSERT_STREQ("b1", res->getName());
 		}
 	}

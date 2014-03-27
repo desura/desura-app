@@ -47,7 +47,7 @@ public:
 	NewsForm(wxWindow* parent);
 	~NewsForm();
 
-	void loadNewsItems(const std::vector<UserCore::Misc::NewsItem*> &itemList);
+	void loadNewsItems(const std::vector<std::shared_ptr<UserCore::Misc::NewsItem>> &itemList);
 	void loadNewsItems(const std::vector<UserCore::Misc::NewsItem> &itemList);
 
 	void setAsGift();

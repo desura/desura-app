@@ -31,9 +31,7 @@ $/LicenseInfo$
 #define DUMP_UPLOAD_URL "http://www.desura.com/api/crashupload"
 #define DUMP_UPLOAD_AGENT "Desura CrashDump Reporter"
 
-class Color;
-void LogMsg(int type, std::string msg, Color *col){}
-void LogMsg(int type, std::wstring msg, Color *col){}
+
 
 class Logger
 {
@@ -107,21 +105,31 @@ private:
 	UTIL::FS::FileHandle fh;
 };
 
+Logger g_Logger;
+
+class Color;
+void LogMsg(MSG_TYPE type, std::string msg, Color* col, std::map<std::string, std::string> *mpArgs)
+{
+	g_Logger.write(msg.c_str());
+}
+
+#include "DesuraPrintFRedirect.h"
+
 bool CompressFile(gcString &filePath);
 bool PrepDumpForUpload(gcString &dumpFile);
-bool UploadDump(const char* file, const char* user, int build, int branch, DelegateI<Prog_s&>* progress);
+bool UploadDump(const char* file, const char* user, int build, int branch, DelegateI<Prog_s&>* progress, const char* szTracer);
 
 
 extern "C"
 {
-	CEXPORT bool UploadCrash(const char* file, const char* user, int build, int branch)
+	CEXPORT bool UploadCrash(const char* file, const char* user, int build, int branch, const char* szTracer)
 	{
-		return UploadDump(file, user, build, branch, nullptr);
+		return UploadDump(file, user, build, branch, nullptr, szTracer);
 	}
 
-	CEXPORT bool UploadCrashProg(const char* file, const char* user, int build, int branch, DelegateI<Prog_s&>* progress)
+	CEXPORT bool UploadCrashProg(const char* file, const char* user, int build, int branch, DelegateI<Prog_s&>* progress, const char* szTracer)
 	{
-		return UploadDump(file, user, build, branch, progress); 
+		return UploadDump(file, user, build, branch, progress, szTracer);
 	}
 }
 
@@ -193,6 +201,87 @@ bool CompressFile(gcString &filePath)
 	return true;
 }
 
+#include "Tracer.h"
+
+#ifdef WIN32
+
+void DumpTracerToFile(const std::string &szTracer, std::function<void(const char*, uint32)> &fh)
+{
+	if (!fh)
+		return;
+
+	uint32 nSize = sizeof(TracerHeader_s);
+
+	HANDLE hMappedFile = CreateFileMappingA(INVALID_HANDLE_VALUE, NULL, PAGE_READONLY | SEC_COMMIT, 0, nSize, szTracer.c_str());
+
+	if (!hMappedFile)
+		return;
+
+	TracerHeader_s *pHeader = (TracerHeader_s*)MapViewOfFile(hMappedFile, FILE_MAP_READ, 0, 0, nSize);
+
+	if (!pHeader)
+	{
+		CloseHandle(hMappedFile);
+		return;
+	}
+
+	uint32 nDataSize = pHeader->segCount * pHeader->segSize;
+
+	UnmapViewOfFile(pHeader);
+	CloseHandle(hMappedFile);
+
+	hMappedFile = CreateFileMappingA(INVALID_HANDLE_VALUE, NULL, PAGE_READONLY | SEC_COMMIT, 0, nSize + nDataSize, szTracer.c_str());
+
+	if (!hMappedFile)
+		return;
+
+	pHeader = (TracerHeader_s*)MapViewOfFile(hMappedFile, FILE_MAP_READ, 0, 0, nSize + nDataSize);
+
+	if (!pHeader)
+	{
+		CloseHandle(hMappedFile);
+		return;
+	}
+
+
+	try
+	{
+		fh("[", 1);
+		auto bFirst = true;
+
+		for (uint32 x = 0; x < nDataSize; x += pHeader->segSize)
+		{
+			const char* szStr = &pHeader->data + x;
+			uint32 nLen = Safe::strlen(szStr, pHeader->segSize);
+
+			if (nLen > 0)
+			{
+				if (!bFirst)
+					fh(",\n\t", 3);
+				else
+					fh("\n\t", 2);
+
+				fh(szStr, nLen);
+				bFirst = false;
+			}
+		}
+
+		fh("\n]", 2);
+	}
+	catch (...)
+	{
+	}
+
+	UnmapViewOfFile(pHeader);
+	CloseHandle(hMappedFile);
+}
+
+#else
+void DumpTracerToFile(const std::string &szTracer, std::function<void(const char*, uint32)> &fh)
+{
+
+}
+#endif
 
 bool PrepDumpForUpload(gcString &dumpFile)
 {
@@ -201,16 +290,17 @@ bool PrepDumpForUpload(gcString &dumpFile)
 	if (!UTIL::FS::isValidFile(path))
 		return false;
 
-	if (Safe::stricmp(path.getFile().getFileExt().c_str(),"dmp") == 0)
+	auto strExt = path.getFile().getFileExt();
+
+	if (strExt == "dmp" || strExt == "log")
 		CompressFile(dumpFile);
 
 	return true;
 }
 
-bool UploadDump(const char* file, const char* user, int build, int branch, DelegateI<Prog_s&>* progress)
+bool UploadDump(const char* file, const char* user, int build, int branch, DelegateI<Prog_s&>* progress, const char* szTracer)
 {
-	Logger log;
-	log.write("---------------------------------------\r\n");
+	g_Logger.write("---------------------------------------\r\n");
 
 	time_t ltime; /* calendar time */
 	ltime=time(nullptr); /* get current cal time */
@@ -227,22 +317,55 @@ bool UploadDump(const char* file, const char* user, int build, int branch, Deleg
 	char* buff = asctime(t);
 #endif
 
-	log.write("%s\r\n", buff);
-	log.write("---------------------------------------\r\n");
+	g_Logger.write("%s\r\n", buff);
+	g_Logger.write("---------------------------------------\r\n");
 
-	log.write("Uploaded crash dump: [%s]\r\n", file);
+	g_Logger.write("Uploaded crash dump: [%s]\r\n", file);
 
 
 	gcString dump(file);
+	gcString tracer(szTracer);
+	gcString log;
 
 	if (PrepDumpForUpload(dump) == false)
 	{
-		log.write("Failed to prepare crash dump.\r\n");
+		g_Logger.write("Failed to prepare crash dump.\r\n");
 		return false;
 	}
 	else
 	{
-		log.write("Prepared crash dump to: [%s]\r\n", dump.c_str());
+		g_Logger.write("Prepared crash dump to: [%s]\r\n", dump.c_str());
+	}
+
+	if (!tracer.empty())
+	{
+		try
+		{
+			auto valid = false;
+			log = dump + ".log";
+			UTIL::FS::FileHandle fh;
+
+			std::function<void(const char*, uint32)> write = [&fh, &valid, log](const char* szData, uint32 nSize)
+			{
+				if (!valid)
+					fh.open(log.c_str(), UTIL::FS::FILE_WRITE);
+
+				valid = true;
+				fh.write(szData, nSize);
+			};
+
+			DumpTracerToFile(tracer, write);
+
+			if (!valid)
+				log = "";
+		}
+		catch (...)
+		{
+			log = "";
+		}
+
+		if (!log.empty())
+			PrepDumpForUpload(log);
 	}
 
 	std::string os = UTIL::OS::getOSString();
@@ -264,13 +387,16 @@ bool UploadDump(const char* file, const char* user, int build, int branch, Deleg
 
 	hh->addPostFile("crashfile", dump.c_str());
 
+	if (!log.empty())
+		hh->addPostFile("crashlog", log.c_str());
+
 	try
 	{
 		hh->postWeb();
 	}
 	catch (gcException &except)
 	{
-		log.write("Failed to upload crash: %s [%d.%d].\r\n", except.getErrMsg(), except.getErrId(), except.getSecErrId());
+		g_Logger.write("Failed to upload crash: %s [%d.%d].\r\n", except.getErrMsg(), except.getErrId(), except.getSecErrId());
 		return false;
 	}
 
@@ -279,28 +405,113 @@ bool UploadDump(const char* file, const char* user, int build, int branch, Deleg
 	try
 	{
 		doc.ProcessStatus("crashupload");
-		log.write("Uploaded dump\r\n");
+		g_Logger.write("Uploaded dump\r\n");
 		UTIL::FS::delFile(UTIL::FS::Path(dump, "", true));		
 	}
 	catch (gcException &)
 	{
-		log.write("Bad status returned from upload crash dump.\r\n");
+		g_Logger.write("Bad status returned from upload crash dump.\r\n");
 
 		gcString res;
 		res.assign(hh->getData(), hh->getDataSize());
 
-		log.write("Result: \r\n\r\n%s\r\n\r\n", res.c_str());
-		
+		g_Logger.write("Result: \r\n\r\n%s\r\n\r\n", res.c_str());
 		return false;	
 	}
 
 	return true;
 }
 
-void PrintfMsg(const char* format, ...)
+
+#ifdef WITH_GTEST
+#include <gtest/gtest.h>
+
+#include "Tracer.cpp"
+
+namespace UnitTest
 {
-	va_list args;
-	va_start(args, format);
-	vprintf(format, args);
-	va_end(args);
+#ifdef WITH_TRACING
+
+	TEST(DumpTracerToFile, check)
+	{
+		static const std::vector<std::string> vExpectedOut =
+		{
+			"[",
+			"\t{ \"message\": \"first\" },",
+			"\t{ \"message\": \"second\" },",
+			"\t{ \"message\": \"third\" }",
+			"]",
+		};
+
+		TracerStorage tracer(L"DumpTracerToFile_TEST");
+
+		gcString sharedMem(tracer.getSharedMemName());
+
+		tracer.trace("first", nullptr);
+		tracer.trace("second", nullptr);
+		tracer.trace("third", nullptr);
+
+		std::string strOutput;
+		std::function<void(const char*, uint32)> write = [&strOutput](const char* szData, uint32 nSize)
+		{
+			strOutput += std::string(szData, nSize);
+		};
+
+		DumpTracerToFile(sharedMem, write);
+
+		std::vector<std::string> vTokens;
+		UTIL::STRING::tokenize(strOutput, vTokens, "\n");
+
+		ASSERT_EQ(vExpectedOut.size(), vTokens.size());
+
+		auto x = 0;
+		for (auto e : vExpectedOut)
+		{
+			ASSERT_EQ(e, vTokens[x]);
+			x++;
+		}
+	}
+
+	TEST(DumpTracerToFile, invalidInputCheck)
+	{
+		static const std::vector<std::string> vExpectedOut =
+		{
+			"[",
+			"\t{ \"message\": \"first \\\"out\\\"\", \"name with space\": \"\\n\\t\" }",
+			"]",
+		};
+
+		TracerStorage tracer(L"DumpTracerToFile_TEST");
+
+		gcString sharedMem(tracer.getSharedMemName());
+
+		std::map<std::string, std::string> vArgs;
+		vArgs["name with space"] = "\n\t";
+
+		tracer.trace("first \"out\"", &vArgs);
+
+		std::string strOutput;
+		std::function<void(const char*, uint32)> write = [&strOutput](const char* szData, uint32 nSize)
+		{
+			strOutput += std::string(szData, nSize);
+		};
+
+		DumpTracerToFile(sharedMem, write);
+
+		std::vector<std::string> vTokens;
+		UTIL::STRING::tokenize(strOutput, vTokens, "\n");
+
+		ASSERT_EQ(vExpectedOut.size(), vTokens.size());
+
+		auto x = 0;
+		for (auto e : vExpectedOut)
+		{
+			ASSERT_EQ(e, vTokens[x]);
+			x++;
+		}
+	}
+
+#endif
 }
+
+#endif

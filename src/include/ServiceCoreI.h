@@ -34,7 +34,9 @@ $/LicenseInfo$
 typedef void (*CrashSettingFn)(const wchar_t*, bool);
 typedef void (*DisconnectFn)();
 
-//! Service core handles all the tasks that need administraton rights to perform
+class TracerI;
+
+//! Service core handles all the tasks that need administration rights to perform
 class ServiceCoreI
 {
 public:
@@ -61,6 +63,10 @@ public:
 	//! Set the disconnect callback
 	//!
 	virtual void setDisconnectCallback(DisconnectFn disconnectFn)=0;
+
+	//! Sets the tracer 
+	//!
+	virtual void setTracer(TracerI *pTracer) = 0;
 };
 
 #endif //DESURA_SERVICECOREI_H

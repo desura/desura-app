@@ -45,7 +45,7 @@ void AddGameToWindowsGameExplorer(const char* name, const char* dllPath)
 {
 	if (!dllPath || !UTIL::FS::isValidFile(dllPath))
 	{
-		Warning(gcString("Not a valid dll for {0} to install into game explorer! [{1}]\n", name, dllPath));
+		WarningS("Not a valid dll for {0} to install into game explorer! [{1}]\n", name, dllPath);
 		return;
 	}
 
@@ -53,7 +53,7 @@ void AddGameToWindowsGameExplorer(const char* name, const char* dllPath)
 
 	if (!sol.load("GameuxInstallHelper.dll"))
 	{
-		Warning(gcString("Failed to open GameuxInstallHelper.dll: {0}\n", GetLastError()));
+		WarningS("Failed to open GameuxInstallHelper.dll: {0}\n", GetLastError());
 		return;
 	}
 
@@ -62,13 +62,13 @@ void AddGameToWindowsGameExplorer(const char* name, const char* dllPath)
 
 	if (!GameExplorerInstall)
 	{
-		Warning("Failed to find install function in GameuxInstallHelper.dll\n");
+		WarningS("Failed to find install function in GameuxInstallHelper.dll\n");
 		return;
 	}
 
 	if (!GameExplorerUninstall)
 	{
-		Warning("Failed to find uninstall function in GameuxInstallHelper.dll\n");
+		WarningS("Failed to find uninstall function in GameuxInstallHelper.dll\n");
 		return;
 	}
 
@@ -86,9 +86,9 @@ void AddGameToWindowsGameExplorer(const char* name, const char* dllPath)
 	HRESULT res = GameExplorerInstall(const_cast<wchar_t*>(wFullPath.c_str()), const_cast<wchar_t*>(wFolderPath.c_str()), GIS_ALL_USERS);
 
 	if (res != 0)
-		Warning(gcString("Failed to install {0} for game explorer: {1} [{2}]\n", name, (uint32)res, dllPath));
+		WarningS("Failed to install {0} for game explorer: {1} [{2}]\n", name, (uint32)res, dllPath);
 	else
-		Msg(gcString("Installed {0} for game explorer\n", name));
+		Msg("Installed {0} for game explorer\n", name);
 }
 
 void AddDesuraToWIndowsGameExplorer()
@@ -111,7 +111,7 @@ void RemoveGameFromWindowsGameExplorer(const char* dllPath, bool deleteDl)
 
 	if (!sol.load("GameuxInstallHelper.dll"))
 	{
-		Warning(gcString("Failed to open GameuxInstallHelper.dll: {0}\n", GetLastError()));
+		WarningS("Failed to open GameuxInstallHelper.dll: {0}\n", GetLastError());
 		return;
 	}
 
@@ -119,7 +119,7 @@ void RemoveGameFromWindowsGameExplorer(const char* dllPath, bool deleteDl)
 
 	if (!GameExplorerUninstall)
 	{
-		Warning("Failed to find uninstall function in GameuxInstallHelper.dll\n");
+		WarningS("Failed to find uninstall function in GameuxInstallHelper.dll\n");
 		return;
 	}
 

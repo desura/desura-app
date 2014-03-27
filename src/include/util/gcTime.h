@@ -93,6 +93,7 @@ private:
 };
 
 #define IOS_TIME_STR_FORMAT "%Y%m%dT%H%M%S"
+#define JS_TIME_STR_FORMAT "%a %b %m %Y %H:%M:%S %Z"
 
 class gcTime
 {
@@ -200,6 +201,16 @@ public:
 		return to_iso_string(t);
 	}
 
+	std::string to_js_string() const
+	{
+		auto t = std::chrono::system_clock::to_time_t(m_TimePoint);
+
+		if (t == -1)
+			return "";
+
+		return to_js_string(t);
+	}
+
 	time_t to_time_t() const
 	{
 		return std::chrono::system_clock::to_time_t(m_TimePoint);
@@ -214,6 +225,19 @@ public:
 
 		tm source = *localtime(&t);
 		auto size = strftime(szOut, 255, IOS_TIME_STR_FORMAT, &source);
+
+		return std::string(szOut, size);
+	}
+
+	static std::string to_js_string(const time_t &t)
+	{
+		if (t == -1)
+			return "";
+
+		char szOut[255];
+
+		tm source = *localtime(&t);
+		auto size = strftime(szOut, 255, JS_TIME_STR_FORMAT, &source);
 
 		return std::string(szOut, size);
 	}

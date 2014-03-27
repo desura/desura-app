@@ -32,6 +32,15 @@ $/LicenseInfo$
 #include "wx_controls/gcFrame.h"
 #include "LinkArgs.h"
 
+enum class APP_MODE
+{
+	MODE_UNINT = 0,		//not yet setup
+	MODE_ONLINE,		//normal client
+	MODE_ONLINE_MIN,	//small client
+	MODE_OFFLINE,		//offline client
+	MODE_LOGOUT,		//logged out (no client)
+};
+
 // CANT CHANGE THE ORDER/NUMBERING OF THIS AS ITS A PART OF THE JAVASCRIPT API
 enum
 {

@@ -24,6 +24,7 @@ $/LicenseInfo$
 */
 
 #include "Common.h"
+#include "Tracer.h"
 #include "DesuraWinApp.h"
 #include "UtilBootloader.h"
 
@@ -68,6 +69,8 @@ extern void cleanUpIPC();
 
 void UiCoreRestart(const char* args)
 {
+	gcTraceS("Args: {0}", args);
+
 	g_bRestart = true;
 
 	if (args)
@@ -146,6 +149,8 @@ void SetDumpLevel(unsigned char level)
 
 void CustomSigAbort(int nSig)
 {
+	gcTraceS("Sig: {0}", nSig);
+
 	assert(false);
 	throw std::exception("sig abort");
 }
@@ -156,6 +161,7 @@ BootLoader::BootLoader()
 	_set_error_mode(_OUT_TO_MSGBOX);
 
 	m_MDumpHandle.showMessageBox(true);
+	m_MDumpHandle.setTracerSharedMemoryName(g_Tracer.getSharedMemName());
 
 	//AfxEnableMemoryTracking(FALSE);
 	InitCommonControls();
@@ -512,6 +518,7 @@ void BootLoader::loadUICore()
 	m_pUICore->setRestartFunction(&UiCoreRestart);
 	m_pUICore->setCrashDumpSettings(&SetDumpArgs);
 	m_pUICore->setCrashDumpLevel(&SetDumpLevel);
+	m_pUICore->setTracer(&g_Tracer);
 }
 
 

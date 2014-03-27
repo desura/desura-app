@@ -100,7 +100,7 @@ void ThemeManager::loadTheme(const char* theme)
 
 	if (!UTIL::FS::isValidFile(path))
 	{
-		Warning(gcString("Theme {0} is not a valid file.\n", theme));
+		Warning("Theme {0} is not a valid file.\n", theme);
 	}
 	else
 	{

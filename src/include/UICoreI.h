@@ -46,6 +46,8 @@ typedef void (*DumpSettingsFP)(const wchar_t*, bool);
 typedef void (*DumpSettingsFP)(const char*, bool);
 #endif
 
+class TracerI;
+
 //! Interface to setup and start the ui part of desura
 class UICoreI
 {
@@ -125,8 +127,12 @@ public:
 	//!	
 	virtual void setCrashDumpLevel(DumpLevelFP dlfp)=0;
 
-	//runs all unit tests
+	//! Runs all unit tests
 	virtual int runUnitTests(int argc, char** argv) = 0;
+
+	//! Set the tracer
+	//!
+	virtual void setTracer(TracerI *pTracer) = 0;
 };
 
 typedef UICoreI* (*UICoreFP)();

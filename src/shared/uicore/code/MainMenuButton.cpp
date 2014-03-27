@@ -80,6 +80,7 @@ void MainMenuButton::onMouseClick(wxCommandEvent& event)
 {
 	if (m_bIgnoreNextClick == false)
 	{
+		gcTrace("");
 		PopupMenu(m_mainMenu, 0, GetRect().GetHeight());
 	}
 	else

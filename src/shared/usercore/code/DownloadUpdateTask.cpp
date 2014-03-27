@@ -56,7 +56,7 @@ void DownloadUpdateTask::doTask()
 	}
 	catch (gcException &except)
 	{
-		Warning(gcString("Failed to download " PRODUCT_NAME " Update: {0}.\n", except));
+		Warning("Failed to download " PRODUCT_NAME " Update: {0}.\n", except);
 	}
 
 	if (!m_bStopped)
@@ -156,7 +156,7 @@ void DownloadUpdateTask::downloadUpdate()
 			}
 			catch (gcException &e)
 			{
-				Warning(gcString("Failed to update reg key: {0}\n", e));
+				Warning("Failed to update reg key: {0}\n", e);
 			}
 
 			onDownloadCompleteEvent(info);
@@ -164,7 +164,7 @@ void DownloadUpdateTask::downloadUpdate()
 	}
 	catch (gcException &e)
 	{
-		Warning(gcString("Download update failed: {0}\n", e));
+		Warning("Download update failed: {0}\n", e);
 	}
 }
 

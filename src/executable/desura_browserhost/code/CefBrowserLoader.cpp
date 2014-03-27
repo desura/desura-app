@@ -241,13 +241,13 @@ void SetCookies(const char* freeman, const char* masterchief)
 
 	if (!CEF_CreateCookie)
 	{
-		Warning("CEF_CreateCookie is nullptr. Failed to set cookies. :(\n");
+		WarningS("CEF_CreateCookie is nullptr. Failed to set cookies. :(\n");
 		return;
 	}
 
 	if (!CEF_SetCookie)
 	{
-		Warning("CEF_SetCookie is nullptr. Failed to set cookies. :(\n");
+		WarningS("CEF_SetCookie is nullptr. Failed to set cookies. :(\n");
 		return;
 	}
 
@@ -255,7 +255,7 @@ void SetCookies(const char* freeman, const char* masterchief)
 
 	if (!cookie)
 	{
-		Warning("Cef failed to create cookie. Failed to set cookies. :(\n");
+		WarningS("Cef failed to create cookie. Failed to set cookies. :(\n");
 		return;
 	}
 

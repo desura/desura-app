@@ -63,6 +63,30 @@ IPC::IPCParameterI* newParameterMacro(IPC::PBlob val)
 
 
 
+
+IPC::IPCParameterI* new_ipc_mapstringstring()
+{
+	return new IPC::PMapStringString();
+}
+
+IPC::AutoReg<IPC::PMapStringString> ar_ipc_mapstringstring = IPC::AutoReg<IPC::PMapStringString>(new_ipc_mapstringstring);
+
+IPC::IPCParameterI* newParameterMacro(std::map<std::string, std::string>& map)
+{
+	return new IPC::PMapStringString(map);
+}
+
+IPC::IPCParameterI* newParameterMacro(std::map<std::string, std::string> *pMap)
+{
+	if (pMap)
+		return new IPC::PMapStringString(*pMap);
+
+	return new IPC::PMapStringString();
+}
+
+
+
+
 namespace IPC
 {
 
@@ -649,6 +673,108 @@ uint64 PBlob::getValue(bool dup)
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+PMapStringString::PMapStringString()
+{
+}
+
+PMapStringString::PMapStringString(const std::map<std::string, std::string>& map)
+	: m_Map(map)
+{
+}
+
+PMapStringString::~PMapStringString()
+{
+}
+
+char* PMapStringString::serialize(uint32 &size)
+{
+	size = 4;
+
+	for (auto s : m_Map)
+	{
+		size += 8;
+		size += s.first.size();
+		size += s.second.size();
+	}
+
+	char* str = new char[size];
+	char* temp = str;
+
+	Uint32ToBuff(temp, m_Map.size());
+	temp += 4;
+
+	for (auto s : m_Map)
+	{
+		Uint32ToBuff(temp, s.first.size());
+		temp += 4;
+
+		Uint32ToBuff(temp, s.second.size());
+		temp += 4;
+
+		memcpy(temp, s.first.c_str(), s.first.size());
+		temp += s.first.size();
+
+		memcpy(temp, s.second.c_str(), s.second.size());
+		temp += s.second.size();
+	}
+
+	return str;
+}
+
+uint32 PMapStringString::deserialize(const char* buffer, uint32 size)
+{
+	m_Map.clear();
+
+	const char* temp = buffer;
+
+	uint32 nCount = buffToUint32(temp);
+	temp += 4;
+
+	for (uint32 x = 0; x < nCount; ++x)
+	{
+		uint32 nKeySize = buffToUint32(temp);
+		temp += 4;
+
+		uint32 nValSize = buffToUint32(temp);
+		temp += 4;
+
+		std::string key(temp, nKeySize);
+		temp += nKeySize;
+
+		std::string val(temp, nValSize);
+		temp += nValSize;
+
+		m_Map[key] = val;
+	}
+
+	return temp - buffer;
+}
+
+uint64 PMapStringString::getValue(bool dup)
+{
+	if (dup)
+		return (uint64)(new std::map<std::string, std::string>(m_Map));
+	else
+		return (uint64)&m_Map;
+}
 
 
 }

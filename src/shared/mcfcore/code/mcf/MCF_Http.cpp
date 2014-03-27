@@ -38,6 +38,8 @@ namespace MCFCore
 
 void MCF::dlHeaderFromHttp(const char* url)
 {
+	gcTrace("Url: {0}", url);
+
 	if (m_bStopped)
 		return;
 
@@ -100,6 +102,8 @@ void MCF::dlHeaderFromHttp(const char* url)
 
 void MCF::dlFilesFromHttp(const char* url, const char* installDir)
 {
+	gcTrace("Url: {0}, Dir: {1}", url, installDir);
+
 	assert(!m_pTHandle);
 
 	if (m_bStopped)

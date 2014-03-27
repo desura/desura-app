@@ -51,7 +51,7 @@ public:
 	void regEvents();
 	void deregEvents();
 
-	void showGiftPopup(std::vector<UserCore::Misc::NewsItem*>& itemList);
+	void showGiftPopup(const std::vector<std::shared_ptr<UserCore::Misc::NewsItem>>& itemList);
 
 protected:
 	friend class LanguageTestDialog;

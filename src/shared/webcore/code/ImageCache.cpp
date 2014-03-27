@@ -79,7 +79,7 @@ void ImageCache::saveToDb()
 	}
 	catch(std::exception &ex) 
 	{
-		Warning(gcString("Failed to update imagecache in webcore: {0}\n", ex.what()));
+		Warning("Failed to update imagecache in webcore: {0}\n", ex.what());
 	}
 }
 

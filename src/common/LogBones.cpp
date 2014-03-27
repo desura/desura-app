@@ -23,77 +23,17 @@ Linden Research, Inc., 945 Battery Street, San Francisco, CA  94111  USA
 $/LicenseInfo$
 */
 
-#include "Log.h"
+#include "LogBones.h"
 #include "LogCallback.h"
 
 LogCallback* g_pLogCallback = NULL;
 
-
-void PrintfMsg(const char* format, ...)
-{
-	va_list args;
-	va_start(args, format);
-
-	if (!g_pLogCallback)
-	{
-		vprintf(format, args);
-	}
-	else
-	{
-		gcString str;
-		str.vformat(format, args);
-		g_pLogCallback->Msg(str.c_str());
-	}
-
-	va_end(args);
-}
-
-void LogMsg(int type, std::string msg, Color* col)
+void LogMsg(MSG_TYPE type, std::string msg, Color* col, std::map<std::string, std::string> *mpArgs)
 {
 	if (!g_pLogCallback)
 		return;
 
-	switch (type)
-	{
-	case MT_MSG:
-		g_pLogCallback->Msg(msg.c_str());
-		break;
-
-	case MT_MSG_COL:
-		g_pLogCallback->Msg(msg.c_str(), col);
-		break;
-
-	case MT_WARN:
-		g_pLogCallback->Warn(msg.c_str());
-		break;
-
-	case MT_DEBUG:
-		g_pLogCallback->Debug(msg.c_str());
-		break;
-	};
+	g_pLogCallback->Message(type, msg.c_str(), col, mpArgs);
 }
 
-void LogMsg(int type, std::wstring msg, Color* col)
-{
-	if (!g_pLogCallback)
-		return;
-
-	switch (type)
-	{
-	case MT_MSG:
-		g_pLogCallback->Msg_W(msg.c_str());
-		break;
-
-	case MT_MSG_COL:
-		g_pLogCallback->Msg_W(msg.c_str(), col);
-		break;
-
-	case MT_WARN:
-		g_pLogCallback->Warn_W(msg.c_str());
-		break;
-
-	case MT_DEBUG:
-		g_pLogCallback->Debug_W(msg.c_str());
-		break;
-	};
-}
+#include "DesuraPrintFRedirect.h"

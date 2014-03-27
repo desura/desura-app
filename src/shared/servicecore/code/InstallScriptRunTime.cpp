@@ -266,6 +266,8 @@ void InstallScriptRunTime::loadScript(const char* scriptFile, const char* instal
 	if (!UTIL::FS::isValidFile(scriptFile))
 		return;
 
+	gcTrace("File: {0}", scriptFile);
+
 	bool failed = false;
 
 	try
@@ -283,7 +285,7 @@ void InstallScriptRunTime::loadScript(const char* scriptFile, const char* instal
 	}
 	catch (gcException &e)
 	{
-		Warning(gcString("Failed to execute install script {0}: {1}\n", scriptFile, e));
+		Warning("Failed to execute install script {0}: {1}\n", scriptFile, e);
 		failed = true;
 	}
 

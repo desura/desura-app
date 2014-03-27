@@ -24,16 +24,17 @@ $/LicenseInfo$
 */
 
 #include "Common.h"
+#include "Log.h"
 #include "LogBones.cpp"
 
 
 extern "C"
 {
-	void RegDLLCB_USERCORE(LogCallback* cb)
+	void CEXPORT RegDLLCB_USERCORE(LogCallback* cb)
 	{
 		g_pLogCallback = cb;
 
 		if (g_pLogCallback)
-			g_pLogCallback->Msg("UserCore Logging Started.\n");
+			g_pLogCallback->Message(MT_MSG, "UserCore Logging Started.\n");
 	}
 }

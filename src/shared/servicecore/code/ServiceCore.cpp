@@ -36,7 +36,7 @@ void SetCrashSettings(const wchar_t* user, bool upload)
 		g_pServiceCore->setCrashSettings(user, upload);
 }
 
-
+extern void SetTracer(TracerI *pTracer);
 
 
 ServiceCore::ServiceCore()
@@ -113,4 +113,9 @@ void ServiceCore::onDisconnect(uint32 &)
 
 	if (m_pDisconnect)
 		m_pDisconnect();
+}
+
+void ServiceCore::setTracer(TracerI *pTracer)
+{
+	::SetTracer(pTracer);
 }

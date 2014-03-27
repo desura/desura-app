@@ -55,21 +55,23 @@ bool RestartDesura(const char* args);
 void GetBuildBranch(int &build, int &branch);
 void GetString(const char* str, const char* input, char* out, size_t outSize);
 
-typedef bool (*UploadCrashFn)(const char* path, const char* user, int build, int branch);
+typedef bool (*UploadCrashFn)(const char* path, const char* user, int build, int branch, const char* szTracer);
 
 class DumpInfo
 {
 public:
-	DumpInfo(const char* file, const char* user, volatile bool &complete) 
+	DumpInfo(const char* file, const char* user, volatile bool &complete, const char* szTracer) 
 		: m_szComplete(complete)
+		, m_szTracer(szTracer)
+		, m_szFile(file)
+		, m_szUser(user)
 	{
-		m_szFile = file;
-		m_szUser = user;
 		m_szComplete = false;
 	}
 
 	const char* m_szFile;
 	const char* m_szUser;
+	const char* m_szTracer;
 	volatile bool &m_szComplete;
 };
 
@@ -124,6 +126,7 @@ void ProcessDump(const char* m_lpCmdLine)
 	volatile bool uploadComplete = true;
 	char file[255] = {0};
 	char user[255] = {0};
+	char tracer[255] = { 0 };
 
 	bool msgbox = args.hasArg("msgbox");
 	bool upload = (args.hasArg("noupload") == false);
@@ -134,9 +137,12 @@ void ProcessDump(const char* m_lpCmdLine)
 	if (args.hasArg("user"))
 		args.getString("user", user, 255);
 
+	if (args.hasArg("tracer"))
+		args.getString("tracer", tracer, 255);
+
 	if (file[0] && upload)
 	{
-		DumpInfo *di = new DumpInfo(file, user, uploadComplete);
+		DumpInfo *di = new DumpInfo(file, user, uploadComplete, tracer);
 		CDesuraWnd::BeginThread(&UploadDump, (void*)di);
 	}
 
@@ -161,6 +167,8 @@ void ProcessDump(const char* m_lpCmdLine)
 		Sleep(500);
 }
 
+
+
 UINT __stdcall UploadDump(void* dumpInfo)
 {
 	int build = 0;
@@ -169,6 +177,9 @@ UINT __stdcall UploadDump(void* dumpInfo)
 	GetBuildBranch(build, branch);
 
 	DumpInfo* di = static_cast<DumpInfo*>(dumpInfo);
+
+	char szLogFile[255] = { 0 };
+
 
 	SharedObjectLoader sol;
 
@@ -188,7 +199,7 @@ UINT __stdcall UploadDump(void* dumpInfo)
 		return -2;
 	}
 
-	if (!uploadCrash(di->m_szFile, di->m_szUser, build, branch))
+	if (!uploadCrash(di->m_szFile, di->m_szUser, build, branch, di->m_szTracer))
 	{
 		di->m_szComplete = true;
 		return -3;		

@@ -31,6 +31,7 @@ $/LicenseInfo$
 #include <mutex>
 #include <condition_variable>
 #include <chrono>
+#include <atomic>
 
 #define MS_VC_EXCEPTION 0x406D1388
 
@@ -155,8 +156,8 @@ public:
 	const std::string m_szName;
 
 	bool m_bIsRunning = false;
-	volatile bool m_bPause = false;
-	volatile bool m_bStop = false;
+	std::atomic<bool> m_bPause;
+	std::atomic<bool> m_bStop;
 
 	BaseThread::PRIORITY m_uiPriority = NORMAL;
 
@@ -176,6 +177,7 @@ BaseThread::BaseThread(const char* name)
 BaseThread::~BaseThread()
 {
 	stop();
+	join();
 	safe_delete(m_pPrivates);
 }
 
@@ -191,7 +193,11 @@ void BaseThread::start()
 
 	auto waitCond = std::make_shared<WaitCondition>();
 
+	gcTrace("Creating thread {0}", m_pPrivates->m_szName);
+
 	m_pPrivates->m_pThread = new std::thread([this, waitCond](){
+
+		gcTrace("Starting thread {0}", m_pPrivates->m_szName);
 
 		waitCond->wait();
 		assert(m_pPrivates->m_pThread);
@@ -199,7 +205,9 @@ void BaseThread::start()
 		m_pPrivates->m_bIsRunning = true;
 		applyPriority();
 		setThreadName();
-		run();	
+		run();
+
+		gcTrace("Ending thread {0}", m_pPrivates->m_szName);
 	});
 
 	waitCond->notify();
@@ -233,6 +241,11 @@ void BaseThread::pause()
 	if (m_pPrivates->m_bPause)
 		return;
 
+	gcTrace("Pausing thread {0}", m_pPrivates->m_szName);
+
+	if (m_pPrivates->m_bPause)
+		return;
+
 	m_pPrivates->m_bPause = true;
 	onPause();
 }
@@ -244,6 +257,11 @@ void BaseThread::unpause()
 	if (!m_pPrivates->m_bPause)
 		return;
 
+	gcTrace("Unpausing thread {0}", m_pPrivates->m_szName);
+
+	if (!m_pPrivates->m_bPause)
+		return;
+
 	m_pPrivates->m_bPause = false;
 	onUnpause();
 	m_pPrivates->m_PauseCond.notify_all();
@@ -251,6 +269,11 @@ void BaseThread::unpause()
 
 void BaseThread::stop()
 {
+	if (m_pPrivates->m_bStop)
+		return;
+
+	gcTrace("Stopping thread {0}", m_pPrivates->m_szName);
+
 	unpause();
 	nonBlockStop();
 	join();
@@ -275,7 +298,10 @@ void BaseThread::join()
 	try
 	{
 		if (thread->get_id() != std::thread::id() && thread->joinable())
+		{
+			gcTrace("Joining thread {0}", m_pPrivates->m_szName);
 			thread->join();
+		}
 	}
 	catch (std::exception &e)
 	{
@@ -341,7 +367,7 @@ void BaseThread::setThreadName(const char* nameOveride)
 	if (!nameOveride)
 		nameOveride = m_pPrivates->m_szName.c_str();
 
-	Debug(gcString("Setting thread name to: {0}\n", nameOveride));
+	Debug("Setting thread name to: {0}\n", nameOveride);
 
 #if defined(WIN32) && !defined(__MINGW32__)
 	THREADNAME_INFO info;

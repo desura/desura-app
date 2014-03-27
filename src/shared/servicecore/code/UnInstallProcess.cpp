@@ -48,6 +48,8 @@ UninstallProcess::~UninstallProcess()
 
 void UninstallProcess::run()
 {
+	gcTrace("");
+
 	if (m_szIPath == "" || m_szMCFPath == "")
 	{
 		gcException errPathNull(ERR_BADPATH, gcString("One of the paths for uninstall was nullptr [IP: {0} MCF: {1}].", m_szIPath, m_szMCFPath));

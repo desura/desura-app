@@ -159,7 +159,7 @@ void UploadThread::doRun()
 			else
 			{
 				m_uiContinueCount++;
-				Warning(gcString("Failed to upload chunk: {0}. Retrying.\n", except));	
+				Warning("Failed to upload chunk: {0}. Retrying.\n", except);	
 				continue;
 			}
 		}
@@ -191,7 +191,7 @@ void UploadThread::doRun()
 			else
 			{
 				m_uiContinueCount++;
-				Warning(gcString("Upload xml error! Retrying. [{0}]\n", m_pInfo->szFile));
+				Warning("Upload xml error! Retrying. [{0}]\n", m_pInfo->szFile);
 				continue;
 			}
 		}

@@ -587,43 +587,43 @@ std::basic_string<CT> ConvertTypeDouble(const T&, size_t, size_t)
 template <typename CT>
 std::basic_string<CT> ConvertTypeBool(const unsigned int& t, size_t len, size_t per)
 {
-	return FormatArg<CT, double>(t?true:false, NONE, len, per);
+	return FormatArg<CT, bool>(t ? true : false, NONE, len, per);
 }
 
 template <typename CT>
 std::basic_string<CT> ConvertTypeBool(const int& t, size_t len, size_t per)
 {
-	return FormatArg<CT, double>(t?true:false, NONE, len, per);
+	return FormatArg<CT, bool>(t ? true : false, NONE, len, per);
 }
 
 template <typename CT>
 std::basic_string<CT> ConvertTypeBool(const char& t, size_t len, size_t per)
 {
-	return FormatArg<CT, double>(t?true:false, NONE, len, per);
+	return FormatArg<CT, bool>(t ? true : false, NONE, len, per);
 }
 
 template <typename CT>
 std::basic_string<CT> ConvertTypeBool(const float& t, size_t len, size_t per)
 {
-	return FormatArg<CT, double>(t?true:false, NONE, len, per);
+	return FormatArg<CT, bool>(t ? true : false, NONE, len, per);
 }
 
 template <typename CT>
 std::basic_string<CT> ConvertTypeBool(const long long& t, size_t len, size_t per)
 {
-	return FormatArg<CT, double>(t?true:false, NONE, len, per);
+	return FormatArg<CT, bool>(t ? true : false, NONE, len, per);
 }
 
 template <typename CT>
 std::basic_string<CT> ConvertTypeBool(const unsigned long long& t, size_t len, size_t per)
 {
-	return FormatArg<CT, double>(t?true:false, NONE, len, per);
+	return FormatArg<CT, bool>(t ? true : false, NONE, len, per);
 }
 
 template <typename CT>
 std::basic_string<CT> ConvertTypeBool(const double& t, size_t len, size_t per)
 {
-	return FormatArg<CT, double>(t?true:false, NONE, len, per);
+	return FormatArg<CT, bool>(t ? true : false, NONE, len, per);
 }
 
 template <typename CT, typename T>
@@ -681,6 +681,14 @@ void PrintToStream(const std::basic_string<CT>& t, std::basic_stringstream<CT> &
 	oss << t.c_str();
 }
 
+template<typename CT>
+void PrintToStream(const char& t, std::basic_stringstream<CT> &oss)
+{
+	if (t <= 31 || t >= 127)
+		oss << "0x" << std::hex << t;
+	else
+		oss << t;
+}
 
 template <typename T, typename CT>
 void PrintToStream(const gcBaseString<T>& t, std::basic_stringstream<CT> &oss)
@@ -746,6 +754,8 @@ std::basic_string<CT> FormatArg(const T& t, FormatTypes type, size_t len, size_t
 		PAUSE_DEBUGGER();
 				return converToStringType<CT>("{Arg is not string but string type format is specified.}");
 			}
+		case HEX_BASE:
+			PrintToStream("0x", oss);
 		case HEX:
 			oss << std::hex;
 			break;
@@ -753,8 +763,7 @@ std::basic_string<CT> FormatArg(const T& t, FormatTypes type, size_t len, size_t
 		case BOOL_STRING:
 			oss << std::boolalpha;
 			break;
-		case HEX_BASE:
-			break;
+		
 		case NONE:
 			break;
 		}
@@ -1141,7 +1150,7 @@ std::basic_string<CT> Format(const CT* format,
 //
 // N arg number
 // L length
-// P percision
+// P precision
 // T Type
 
 //

@@ -393,6 +393,7 @@ bool WGTController::checkBlock(Misc::WGTBlock *block, uint32 workerId)
 	if (!sizeFail && !crcFail)
 		return true;
 
+	gcTrace("Id: {0}", workerId);
 
 	reportNegProgress(workerId, block->dlsize);
 
@@ -419,7 +420,7 @@ bool WGTController::checkBlock(Misc::WGTBlock *block, uint32 workerId)
 		fh.write(log.c_str(), log.size());
 		fh.close();
 
-		Warning(gcString("Failed crc check. Writen to log file [{0}], block saved to file [{1}].\n", logFile.getFullPath(), outFile.getFullPath()));
+		Warning("Failed crc check. Writen to log file [{0}], block saved to file [{1}].\n", logFile.getFullPath(), outFile.getFullPath());
 	}
 	catch (gcException)
 	{
@@ -565,7 +566,7 @@ bool WGTController::fillBlockList()
 
 		if (index == UNKNOWN_ITEM || !webFile || !webFile->isSaved())
 		{
-			Warning(gcString("File {0} is not in web MCF. Skipping download.\n", file->getName()));
+			Warning("File {0} is not in web MCF. Skipping download.\n", file->getName());
 			if (!started)
 				file->delFlag(MCFCore::MCFFileI::FLAG_SAVE);
 			continue;
@@ -685,6 +686,8 @@ bool WGTController::fillBlockList()
 
 Misc::WGTSuperBlock* WGTController::stealBlocks()
 {
+	gcTrace("");
+
 	WGTWorkerInfo* largestWorker = nullptr;
 	size_t largestCount = 0;
 
@@ -708,6 +711,8 @@ Misc::WGTSuperBlock* WGTController::stealBlocks()
 
 Misc::WGTSuperBlock* WGTController::newTask(uint32 id, MCFThreadStatus &status)
 {
+	gcTrace("Id: {0}", id);
+
 	WGTWorkerInfo* worker = findWorker(id);
 	assert(worker);
 
@@ -772,6 +777,8 @@ Misc::WGTSuperBlock* WGTController::newTask(uint32 id, MCFThreadStatus &status)
 
 void WGTController::workerFinishedSuperBlock(uint32 id)
 {
+	gcTrace("Id: {0}", id);
+
 	WGTWorkerInfo* worker = findWorker(id);
 	assert(worker);
 
@@ -835,10 +842,12 @@ MCFThreadStatus WGTController::getStatus(uint32 id)
 
 void WGTController::reportError(uint32 id, gcException &e)
 {
+	gcTrace("Id: {0}, E: {1}", id, e);
+
 	WGTWorkerInfo* worker = findWorker(id);
 	assert(worker);
 
-	Warning(gcString("WebGet: {0} Error: {1}.\n", id, e));
+	Warning("WebGet: {0} Error: {1}.\n", id, e);
 
 	m_pUPThread->stopThread(id);
 	worker->setStatus(MCFThreadStatus::SF_STATUS_STOP);
