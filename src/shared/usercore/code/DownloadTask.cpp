@@ -103,11 +103,9 @@ void DownloadTask::startToolDownload()
 			throw gcException(ERR_INVALID, "Tool ids cannot be resolved into tools.");
 	}
 
-	UserCore::Misc::ToolTransaction* tt = new UserCore::Misc::ToolTransaction();
-
+	UserCore::Misc::ToolTransaction* tt = new UserCore::Misc::ToolTransaction(std::move(toolList));
 	tt->onCompleteEvent += delegate(this, &DownloadTask::onToolComplete);
-	tt->toolsList = toolList;
-	
+
 	m_ToolTTID = pToolManager->downloadTools(tt);
 }
 
