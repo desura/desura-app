@@ -152,23 +152,38 @@ namespace UserCore
 }
 
 template <typename T>
-void FormJSObject(T* &t, JSObjHandle& arg)
+void FromJSObject(T &t, JSObjHandle& arg)
 {
 	//Should not get here
 	assert(false);
-	t = nullptr;
 }
 
-void FromJSObject(UserCore::Item::ItemInfoI* &item, JSObjHandle& arg);
-void FromJSObject(PVoid&, JSObjHandle& arg);
-void FromJSObject(bool& ret, JSObjHandle& arg);
-void FromJSObject(int32 &ret, JSObjHandle& arg);
-void FromJSObject(double& ret, JSObjHandle& arg);
-void FromJSObject(gcString& ret, JSObjHandle& arg);
-void FromJSObject(gcWString& ret, JSObjHandle& arg);
-void FromJSObject(std::map<gcString, gcString> &map, JSObjHandle& arg);
+template <>
+void FromJSObject<UserCore::Item::ItemInfoI*>(UserCore::Item::ItemInfoI* &item, JSObjHandle& arg);
 
-inline void FromJSObject(JSObjHandle& ret, JSObjHandle& arg)
+template <>
+void FromJSObject<PVoid>(PVoid&, JSObjHandle& arg);
+
+template <>
+void FromJSObject<bool>(bool& ret, JSObjHandle& arg);
+
+template <>
+void FromJSObject<int>(int32 &ret, JSObjHandle& arg);
+
+template <>
+void FromJSObject<double>(double& ret, JSObjHandle& arg);
+
+template <>
+void FromJSObject<gcString>(gcString& ret, JSObjHandle& arg);
+
+template <>
+void FromJSObject<gcWString>(gcWString& ret, JSObjHandle& arg);
+
+template <>
+void FromJSObject<std::map<gcString, gcString>>(std::map<gcString, gcString> &map, JSObjHandle& arg);
+
+template <>
+inline void FromJSObject<JSObjHandle>(JSObjHandle& ret, JSObjHandle& arg)
 {
 	ret = arg;
 }
@@ -228,7 +243,7 @@ T popAndConvert(JSObjHandle* argv, size_t &x, bool bFirstIsObj)
 	}
 	else
 	{
-		FromJSObject(t, argv[x--]);
+		FromJSObject<T>(t, argv[x--]);
 	}
 	
 	return t;
