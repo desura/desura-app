@@ -30,42 +30,42 @@ $/LicenseInfo$
 #include "ToolInstallThread.h"
 #endif
 
-namespace UserCore
-{
-namespace Misc
-{
+using namespace UserCore;
+using namespace UserCore::Misc;
 
-ToolTransInfo::ToolTransInfo(bool download, Misc::ToolTransaction* transaction, ToolManager* pToolManager)
+
+ToolTransInfo::ToolTransInfo(bool download, ToolTransaction* transaction, ToolManager* pToolManager)
+	: m_bIsDownload(download)
+	, m_pTransaction(std::shared_ptr<ToolTransaction>(transaction))
+	, m_pToolManager(pToolManager)
 {
-	m_bIsDownload = download;
-	m_pTransaction = transaction;
-	m_uiCompleteCount = 0;
+	assert(m_pTransaction);
 
-	m_pToolManager = pToolManager;
+	if (!m_pTransaction)
+		m_pTransaction = std::make_shared<ToolTransaction>();
 
-	if (m_bIsDownload)
+	if (!m_bIsDownload)
+		return;
+
+	for (auto t : m_pTransaction->getList())
 	{
-		for (size_t x=0; x<transaction->toolsList.size(); x++)
-		{
-			UserCore::Misc::ToolProgress tp;
+		UserCore::Misc::ToolProgress tp;
 
-			tp.done= 0;
-			tp.percent = 0;
-			tp.total = 0;
+		tp.done= 0;
+		tp.percent = 0;
+		tp.total = 0;
 				
-			ToolInfo* info = pToolManager->findItem(transaction->toolsList[x].toInt64());
+		ToolInfo* info = pToolManager->findItem(t.toInt64());
 
-			if (info)
-				tp.total = info->getDownloadSize();
+		if (info)
+			tp.total = info->getDownloadSize();
 
-			m_vProgress.push_back(tp);
-		}
+		m_vProgress.push_back(tp);
 	}
 }
 
 ToolTransInfo::~ToolTransInfo()
 {
-	safe_delete(m_pTransaction);
 }
 
 void ToolTransInfo::removeItem(DesuraId id)
@@ -75,13 +75,12 @@ void ToolTransInfo::removeItem(DesuraId id)
 	if (i == UINT_MAX)
 		return;
 
-
 	if (m_vProgress.size() >= i+1)
 		m_vProgress.erase(m_vProgress.begin()+i);
 
-	m_pTransaction->toolsList.erase(m_pTransaction->toolsList.begin()+i);
+	m_pTransaction->erase(i);
 
-	if (m_uiCompleteCount == m_pTransaction->toolsList.size())
+	if (m_uiCompleteCount == m_pTransaction->size())
 		m_pTransaction->onCompleteEvent();
 }
 
@@ -97,7 +96,7 @@ void ToolTransInfo::onDLComplete(DesuraId id)
 
 	m_uiCompleteCount++;
 
-	if (m_uiCompleteCount == m_pTransaction->toolsList.size())
+	if (m_uiCompleteCount == m_pTransaction->size())
 		m_pTransaction->onCompleteEvent();
 }
 
@@ -111,7 +110,7 @@ void ToolTransInfo::onDLError(DesuraId id, gcException e)
 	m_pTransaction->onErrorEvent(e);
 	m_uiCompleteCount++;
 
-	if (m_uiCompleteCount == m_pTransaction->toolsList.size())
+	if (m_uiCompleteCount == m_pTransaction->size())
 		m_pTransaction->onCompleteEvent();
 }
 
@@ -133,7 +132,7 @@ void ToolTransInfo::onDLProgress(DesuraId id, UserCore::Misc::ToolProgress &prog
 		tp.total += m_vProgress[x].total;
 	}
 
-	tp.percent /= m_pTransaction->toolsList.size();
+	tp.percent /= m_pTransaction->size();
 	m_pTransaction->onProgressEvent(tp);
 }
 
@@ -144,16 +143,15 @@ bool ToolTransInfo::isDownload()
 
 void ToolTransInfo::getIds(std::vector<DesuraId> &idList)
 {
-	if (m_pTransaction)
-		idList = m_pTransaction->toolsList;
+	idList = m_pTransaction->getList();
 }
 
 bool ToolTransInfo::startNextInstall(IPCToolMain* pToolMain, DesuraId &toolId)
 {
-	if (m_uiCompleteCount == m_pTransaction->toolsList.size())
+	if (m_uiCompleteCount == m_pTransaction->size())
 		return false;
 
-	toolId = m_pTransaction->toolsList[m_uiCompleteCount];
+	toolId = m_pTransaction->get(m_uiCompleteCount);
 	ToolInfo* info = m_pToolManager->findItem(toolId.toInt64());
 
 	if (!info)
@@ -188,7 +186,7 @@ bool ToolTransInfo::startNextInstall(IPCToolMain* pToolMain, DesuraId &toolId)
 		UserCore::Misc::ToolProgress prog;
 
 		prog.done = m_uiCompleteCount;
-		prog.total = m_pTransaction->toolsList.size();
+		prog.total = m_pTransaction->size();
 		prog.percent = prog.done*100/prog.total;
 
 		m_pTransaction->onProgressEvent(prog);
@@ -205,16 +203,15 @@ void ToolTransInfo::startingIPC()
 void ToolTransInfo::onINComplete()
 {
 	m_uiCompleteCount++;
-
 	UserCore::Misc::ToolProgress prog;
 
 	prog.done = m_uiCompleteCount;
-	prog.total = m_pTransaction->toolsList.size();
+	prog.total = m_pTransaction->size();
 	prog.percent = prog.done*100/prog.total;
 
 	m_pTransaction->onProgressEvent(prog);
 
-	if (m_uiCompleteCount == m_pTransaction->toolsList.size())
+	if (m_uiCompleteCount == m_pTransaction->size())
 		m_pTransaction->onCompleteEvent();		
 }
 
@@ -222,15 +219,12 @@ void ToolTransInfo::onINError(gcException &e)
 {
 	Warning(gcString("Tool install error: {0}\n",e));
 
-	m_uiCompleteCount = m_pTransaction->toolsList.size();
+	m_uiCompleteCount = m_pTransaction->size();
 	m_pTransaction->onErrorEvent(e);
 }
 
 void ToolTransInfo::updateTransaction(Misc::ToolTransaction* pTransaction)
 {
-	if (!m_pTransaction)
-		return;
-
 	m_pTransaction->onStartInstallEvent.reset();
 	m_pTransaction->onCompleteEvent.reset();
 	m_pTransaction->onErrorEvent.reset();
@@ -247,19 +241,13 @@ void ToolTransInfo::updateTransaction(Misc::ToolTransaction* pTransaction)
 	m_pTransaction->onStartIPCEvent = pTransaction->onStartIPCEvent;
 }
 
-
 size_t ToolTransInfo::getIndex(DesuraId id)
 {
-	for (size_t x=0; x<m_pTransaction->toolsList.size(); x++)
-	{
-		if (m_pTransaction->toolsList[x] == id)
-		{
-			return x;
-		}
-	}
+	auto vList = m_pTransaction->getList();
+	auto it = std::find(begin(vList), end(vList), id);
 
-	return -1;
-}
+	if (it == end(vList))
+		return -1;
 
-}
+	return std::distance(begin(vList), it);
 }

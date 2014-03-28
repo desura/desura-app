@@ -59,6 +59,15 @@ namespace UserCore
 		class ToolTransaction
 		{
 		public:
+			ToolTransaction()
+			{
+			}
+
+			ToolTransaction(const std::vector<DesuraId>& vToolsList)
+				: m_vToolsList(vToolsList)
+			{
+			}
+
 			EventV onCompleteEvent;
 			EventV onStartIPCEvent;
 
@@ -66,7 +75,38 @@ namespace UserCore
 			Event<ToolProgress> onProgressEvent;
 			Event<gcException> onErrorEvent;
 
-			std::vector<DesuraId> toolsList;
+
+			size_t size() const
+			{
+				std::lock_guard<std::mutex> guard(m_Lock);
+				return m_vToolsList.size();
+			}
+
+			std::vector<DesuraId> getList() const
+			{
+				std::lock_guard<std::mutex> guard(m_Lock);
+				return m_vToolsList;
+			}
+
+			void erase(size_t nIndex)
+			{
+				assert(nIndex < size());
+
+				std::lock_guard<std::mutex> guard(m_Lock);
+				m_vToolsList.erase(m_vToolsList.begin() + nIndex);
+			}
+
+			DesuraId get(size_t nIndex) const
+			{
+				assert(nIndex < size());
+
+				std::lock_guard<std::mutex> guard(m_Lock);
+				return m_vToolsList[nIndex];
+			}
+
+		private:
+			mutable std::mutex m_Lock;
+			std::vector<DesuraId> m_vToolsList;
 		};
 	}
 	
@@ -111,13 +151,13 @@ namespace UserCore
 		virtual void parseXml(const XML::gcXMLElement &toolinfoNode)=0;
 
 		//! Checks to see if all tool ids are valid tools
-		virtual bool areAllToolsValid(std::vector<DesuraId> &list)=0;
+		virtual bool areAllToolsValid(const std::vector<DesuraId> &list) = 0;
 
 		//! Checks to see if all tools are downloaded ready to be installed or installed
-		virtual bool areAllToolsDownloaded(std::vector<DesuraId> &list)=0;
+		virtual bool areAllToolsDownloaded(const std::vector<DesuraId> &list) = 0;
 
 		//! Checks to see if all tools are installed
-		virtual bool areAllToolsInstalled(std::vector<DesuraId> &list)=0;
+		virtual bool areAllToolsInstalled(const std::vector<DesuraId> &list) = 0;
 
 		//! Saves items to db
 		//!
@@ -171,9 +211,9 @@ namespace UserCore
 		MOCK_METHOD1(installTools, ToolTransactionId(Misc::ToolTransaction* transaction));
 		MOCK_METHOD2(updateTransaction, bool(ToolTransactionId ttid, Misc::ToolTransaction* transaction));
 		MOCK_METHOD1(parseXml, void(const XML::gcXMLElement &toolinfoNode));
-		MOCK_METHOD1(areAllToolsValid, bool(std::vector<DesuraId> &list));
-		MOCK_METHOD1(areAllToolsDownloaded, bool(std::vector<DesuraId> &list));
-		MOCK_METHOD1(areAllToolsInstalled, bool(std::vector<DesuraId> &list));
+		MOCK_METHOD1(areAllToolsValid, bool(const std::vector<DesuraId> &list));
+		MOCK_METHOD1(areAllToolsDownloaded, bool(const std::vector<DesuraId> &list));
+		MOCK_METHOD1(areAllToolsInstalled, bool(const std::vector<DesuraId> &list));
 		MOCK_METHOD0(saveItems, void());
 		MOCK_METHOD1(getToolName, std::string(DesuraId toolId));
 		MOCK_METHOD1(findJSTools, void(UserCore::Item::ItemInfo* item));
