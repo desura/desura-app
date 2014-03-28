@@ -151,6 +151,14 @@ namespace UserCore
 	}
 }
 
+template <typename T>
+void FormJSObject(T* &t, JSObjHandle& arg)
+{
+	//Should not get here
+	assert(false);
+	t = nullptr;
+}
+
 void FromJSObject(UserCore::Item::ItemInfoI* &item, JSObjHandle& arg);
 void FromJSObject(PVoid&, JSObjHandle& arg);
 void FromJSObject(bool& ret, JSObjHandle& arg);
@@ -163,13 +171,6 @@ void FromJSObject(std::map<gcString, gcString> &map, JSObjHandle& arg);
 inline void FromJSObject(JSObjHandle& ret, JSObjHandle& arg)
 {
 	ret = arg;
-}
-
-template <typename T>
-void FormJSObject(T t, JSObjHandle& arg)
-{
-	//Should not get here
-	assert(false);
 }
 
 JSObjHandle ToJSObject(ChromiumDLL::JavaScriptFactoryI* factory, const MapElementI* map);
@@ -218,7 +219,7 @@ typename std::enable_if<!std::is_pointer<T>::value, T>::type  getUserObject(Chro
 template <typename T>
 T popAndConvert(JSObjHandle* argv, size_t &x, bool bFirstIsObj)
 {
-	T t;
+	T t = T();
 
 	if (bFirstIsObj && x == 0)
 	{
@@ -232,7 +233,6 @@ T popAndConvert(JSObjHandle* argv, size_t &x, bool bFirstIsObj)
 	
 	return t;
 }
-
 
 
 template <typename R, typename ... Args>
