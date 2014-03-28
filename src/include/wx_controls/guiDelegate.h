@@ -32,9 +32,10 @@ $/LicenseInfo$
 #include <wx/wx.h>
 #include "Event.h"
 #include "util_thread/BaseThread.h"
-#include <type_traits>
 
+#include <type_traits>
 #include <memory>
+#include <atomic>
 
 class gcPanel;
 class gcDialog;
@@ -75,41 +76,79 @@ public:
 		while (!m_bDone)
 			m_WaitCond.wait(0, 500);
 	}
+	
+	bool isDone() const
+	{
+		return m_bDone;
+	}
 
 private:
 	Thread::WaitCondition m_WaitCond;
 	volatile bool m_bDone;
 };
 
+class Invoker
+{
+public:
+	Invoker(std::function<void()> &fnCallback)
+		: m_fnCallback(fnCallback)
+	{
+	}
+
+	~Invoker()
+	{
+		cancel();
+	}
+
+	void invoke()
+	{
+		std::lock_guard<std::mutex> guard(m_Lock);
+		m_fnCallback();
+		m_pHelper.done();
+	}
+
+	void cancel()
+	{
+		std::lock_guard<std::mutex> guard(m_Lock);
+		m_fnCallback = std::function<void()>();
+		m_pHelper.done();
+	}
+
+	void wait()
+	{
+		m_pHelper.wait();
+	}
+
+	bool isCanceled()
+	{
+		std::lock_guard<std::mutex> guard(m_Lock);
+		return m_pHelper.isDone();
+	}
+
+private:
+	std::mutex m_Lock;
+	EventHelper m_pHelper;
+	std::function<void()> m_fnCallback;
+};
 
 class wxGuiDelegateEvent : public wxNotifyEvent
 {
 public:
 	wxGuiDelegateEvent();
-	wxGuiDelegateEvent(std::shared_ptr<InvokeI> invoker, int winId);
-	wxGuiDelegateEvent(InvokeI* invoker, int winId);
-
+	wxGuiDelegateEvent(std::shared_ptr<Invoker> &invoker, int winId);
 	wxGuiDelegateEvent(const wxGuiDelegateEvent& event);
 
 	~wxGuiDelegateEvent();
 
-	virtual wxEvent *Clone() const;
+	wxEvent *Clone() const override;
 	void invoke();
 
 private:
-	std::shared_ptr<InvokeI> m_spDelegate;
-	InvokeI* m_pDelegate;
-
+	std::shared_ptr<Invoker> m_pDelegate;
 	DECLARE_DYNAMIC_CLASS(wxGuiDelegateEvent);
 };
 
 wxDECLARE_EVENT(wxEVT_GUIDELEGATE, wxGuiDelegateEvent);
-
-class wxDelegate
-{
-public:
-	virtual void nullObject()=0;
-};
 
 template <typename T>
 class wxGuiDelegateImplementation : public T
@@ -139,16 +178,15 @@ public:
 		cleanUpEvents();
 	}
 
-	void registerDelegate(wxDelegate* d)
+	void registerDelegate(InvokeI* d)
 	{
 		doDeregisterDelegate(d);
 
-		m_ListLock.lock();
+		std::lock_guard<std::mutex> guard(m_ListLock);
 		m_vDelgateList.push_back(d);
-		m_ListLock.unlock();
 	}
 
-	void deregisterDelegate(wxDelegate* d)
+	void deregisterDelegate(InvokeI* d)
 	{
 		bool bFound = doDeregisterDelegate(d);
 		assert( bFound );
@@ -156,34 +194,26 @@ public:
 
 	void cleanUpEvents()
 	{
-		m_ListLock.lock();
+		std::lock_guard<std::mutex> guard(m_ListLock);
 
-		for (size_t x=0; x<m_vDelgateList.size(); x++)
-			m_vDelgateList[x]->nullObject();
+		for (auto d : m_vDelgateList)
+			d->cancel();
 
 		m_vDelgateList.clear();
-
-		m_ListLock.unlock();
 	}
 
 private:
-	bool doDeregisterDelegate(wxDelegate* d)
+	bool doDeregisterDelegate(InvokeI* d)
 	{
-		bool bFound = false;
-		m_ListLock.lock();
+		std::lock_guard<std::mutex> guard(m_ListLock);
 
-		for (size_t x=0; x<m_vDelgateList.size(); x++)
-		{
-			if (m_vDelgateList[x] == d)
-			{
-				m_vDelgateList.erase(m_vDelgateList.begin()+x);
-				bFound = true;
-				break;
-			}
-		}
+		auto it = std::remove(begin(m_vDelgateList), end(m_vDelgateList), d);
 
-		m_ListLock.unlock();	
-		return bFound;
+		if (it == end(m_vDelgateList))
+			return false;
+
+		m_vDelgateList.erase(it, end(m_vDelgateList));
+		return true;
 	}
 
 	void onEventCallBack(wxGuiDelegateEvent& event)
@@ -192,314 +222,130 @@ private:
 	}
 
 	std::mutex m_ListLock;
-	std::vector<wxDelegate*> m_vDelgateList;
+	std::vector<InvokeI*> m_vDelgateList;
 };
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-template <class TObj, typename TArg>
-class Invoker : public InvokeI
+class RefParamsI
 {
 public:
-	typedef void (TObj::*TFunct)(TArg);
-	typedef typename std::remove_reference<TArg>::type TArgNonRef;
-
-	Invoker(DelegateI<TArg> *oDel, TArgNonRef* a)
-	{
-		m_pDelegate = oDel;
-		m_pArg = a;
-	}
-
-	~Invoker()
-	{
-		if (m_pDelegate)
-			m_pDelegate->destroy();
-
-		safe_delete(m_pArg);
-	}
-
-	void invoke()
-	{
-		if (m_pDelegate)
-			m_pDelegate->operator()(*m_pArg);
-	}
-
-	void cancel()
-	{
-		printf("--- Cancel Invoker\n");
-	}
-
-	DelegateI<TArg> *m_pDelegate;
-	TArgNonRef* m_pArg;
+	virtual ~RefParamsI(){}
 };
 
-
-
-
-
-
-template <class TObj, typename TArg>
-class PrimInvoker : public InvokeI
+template <typename T>
+class RefParam : public RefParamsI
 {
 public:
-	typedef void (TObj::*TFunct)(TArg); 
+	typedef typename std::remove_const<typename std::remove_reference<T>::type>::type NonConstType;
 
-	PrimInvoker(DelegateI<TArg> *oDel, TArg a) : m_Arg(a)
+	RefParam(T t)
+		: m_T(t)
 	{
-		m_pDelegate = oDel;
 	}
 
-	~PrimInvoker()
-	{
-		m_pHelper.done();
-		
-		if (m_pDelegate)
-			m_pDelegate->destroy();
-	}
+	virtual ~RefParam(){}
 
-	void invoke()
-	{
-		if (m_pDelegate)
-			m_pDelegate->operator()(m_Arg);
-	
-		m_pHelper.done();
-	}
-
-	void cancel()
-	{
-		m_pHelper.done();
-	}
-
-	void wait()
-	{
-		m_pHelper.wait();
-	}
-
-	EventHelper m_pHelper;
-	DelegateI<TArg> *m_pDelegate;
-	TArg m_Arg;
+	NonConstType m_T;
 };
 
-
-template <class TObj, typename TArg>
-class GuiDelegate : public ObjDelegate<TObj, TArg>, public wxDelegate
+template <typename TObj, typename ... Args>
+class GuiDelegate : public DelegateBase<Args...>, public InvokeI
 {
 public:
-	typedef void (TObj::*TFunct)(TArg); 
-
-	GuiDelegate(TObj* t, TFunct f, MODE mode) : ObjDelegate<TObj, TArg>(t,f)
+	GuiDelegate(std::function<void(Args&...)> callback, uint64 compareHash, TObj *pObj, MODE mode)
+		: DelegateBase<Args...>(callback, compareHash)
+		, m_Mode(mode)
+		, m_pObj(pObj)
 	{
-		m_Mode = mode;
-		m_pInvoker = nullptr;
-
-		if (ObjDelegate<TObj, TArg>::m_pObj)
-			ObjDelegate<TObj, TArg>::m_pObj->registerDelegate(this);
+		if (m_pObj)
+			m_pObj->registerDelegate(this);
 	}
-
-protected:
-	GuiDelegate(MODE mode) : ObjDelegate<TObj, TArg>()
-	{
-		m_Mode = mode;
-		m_pInvoker = nullptr;
-	}
-
-public:
-	typedef typename std::remove_reference<TArg>::type TArgNonRef;
 
 	~GuiDelegate()
 	{
-		if (ObjDelegate<TObj, TArg>::m_pObj)
-			ObjDelegate<TObj, TArg>::m_pObj->deregisterDelegate(this);
+		cancel();
 
+		if (m_pObj)
+			m_pObj->deregisterDelegate(this);
 	}
 
-	virtual void destroy()
+	void destroy() override
 	{
 		delete this;
 	}
 
-	virtual void nullObject()
+	void cancel() override
 	{
-		ObjDelegate<TObj, TArg>::m_pObj = nullptr;
-		ObjDelegate<TObj, TArg>::m_pFunct = nullptr;
-		
-		m_InvokerMutex.lock();
-		
+		std::lock_guard<std::mutex> guard(m_InvokerMutex);
+
+		m_bCanceled = true;
+
 		if (m_pInvoker)
 			m_pInvoker->cancel();
-			
-		m_InvokerMutex.unlock();
 	}
 
-	virtual DelegateI<TArg>* clone()
+	DelegateI<Args...>* clone() override
 	{
-		return new GuiDelegate(ObjDelegate<TObj, TArg>::m_pObj, ObjDelegate<TObj, TArg>::m_pFunct, m_Mode);
+		return new GuiDelegate(DelegateBase<Args...>::m_fnCallback, DelegateBase<Args...>::getCompareHash(), m_pObj, m_Mode);
 	}
 
-	void operator()(TArg& a)
+	void callback(Args& ... args)
+	{
+		if (m_bCanceled)
+			return;
+
+		DelegateBase<Args...>::operator()(args...);
+	}
+
+	void operator()(Args&... args) override
 	{	
-		if (!ObjDelegate<TObj, TArg>::m_pObj || !ObjDelegate<TObj, TArg>::m_pFunct)
+		if (m_bCanceled)
 			return;
 
 		if (m_Mode == MODE_PENDING)
 		{
-			InvokeI *i = new Invoker<TObj, TArg>(new ObjDelegate<TObj, TArg>(this), new TArgNonRef(a));
+			std::function<void()> pcb = std::bind(&GuiDelegate<TObj, Args...>::callback, this, args...);
 
-			auto event = new wxGuiDelegateEvent(std::shared_ptr<InvokeI>(i), ObjDelegate<TObj, TArg>::m_pObj->GetId());
-			ObjDelegate<TObj, TArg>::m_pObj->GetEventHandler()->QueueEvent(event);
+			auto invoker = std::make_shared<Invoker>(pcb);
+			auto event = new wxGuiDelegateEvent(invoker, m_pObj->GetId());
+			m_pObj->GetEventHandler()->QueueEvent(event);
+
 		}
 		else if (m_Mode == MODE_PROCESS || Thread::BaseThread::GetCurrentThreadId() == GetMainThreadId())
 		{
-			ObjDelegate<TObj, TArg>::operator()(a);
+			DelegateBase<Args...>::operator()(args...);
 		}
 		else if (m_Mode == MODE_PENDING_WAIT)
 		{
-			PrimInvoker<TObj, TArg> *i = new PrimInvoker<TObj, TArg>(new ObjDelegate<TObj, TArg>(this), a);
-			std::shared_ptr<InvokeI> invoker(i);
+			std::function<void()> pcb = std::bind(&GuiDelegate<TObj, Args...>::callback, this, std::ref(args)...);
 
-			auto event = new wxGuiDelegateEvent(invoker, ObjDelegate<TObj, TArg>::m_pObj->GetId());
-			ObjDelegate<TObj, TArg>::m_pObj->GetEventHandler()->QueueEvent(event);
+			auto invoker = std::make_shared<Invoker>(pcb);
+			auto event = new wxGuiDelegateEvent(invoker, m_pObj->GetId());
+			m_pObj->GetEventHandler()->QueueEvent(event);
 
-			setInvoker(i);
-			i->wait();
-			setInvoker(nullptr);
-			
-			a = i->m_Arg;
+			setInvoker(invoker);
+			invoker->wait();
+			setInvoker(std::shared_ptr<Invoker>());
 		}
 	}
-
-	MODE m_Mode;
 
 protected:
-	void setInvoker(PrimInvoker<TObj, TArg> *i)
+	void setInvoker(const std::shared_ptr<Invoker> &i)
 	{
-		m_InvokerMutex.lock();
+		std::lock_guard<std::mutex> guard(m_InvokerMutex);
 		m_pInvoker = i;
-		m_InvokerMutex.unlock();	
-	}
-
-	void init(TObj* t, TFunct f)
-	{
-		ObjDelegate<TObj, TArg>::init(t, f);
-
-		if (ObjDelegate<TObj, TArg>::m_pObj)
-			ObjDelegate<TObj, TArg>::m_pObj->registerDelegate(this);
-	}
-	
-	std::mutex m_InvokerMutex;
-	PrimInvoker<TObj, TArg> *m_pInvoker;
-};
-
-template <class TObj, typename TArg>
-class GuiPrimDelegate : public ObjDelegate<TObj, TArg>, public wxDelegate
-{
-public:
-	typedef void (TObj::*TFunct)(TArg&); 
-
-	GuiPrimDelegate(TObj* t, TFunct f, MODE mode) : ObjDelegate<TObj, TArg>(t,f)
-	{
-		m_Mode = mode;
-
-		if (ObjDelegate<TObj, TArg>::m_pObj)
-			ObjDelegate<TObj, TArg>::m_pObj->registerDelegate(this);
-
-		m_pInvoker = nullptr;
-	}
-
-	~GuiPrimDelegate()
-	{
-		if (ObjDelegate<TObj, TArg>::m_pObj)
-			ObjDelegate<TObj, TArg>::m_pObj->deregisterDelegate(this);
-	}
-
-	virtual void destroy()
-	{
-		delete this;
-	}
-
-	virtual void nullObject()
-	{
-		ObjDelegate<TObj, TArg>::m_pObj = nullptr;
-		ObjDelegate<TObj, TArg>::m_pFunct = nullptr;
-
-		m_InvokerMutex.lock();
-		
-		if (m_pInvoker)
-			m_pInvoker->cancel();
-			
-		m_InvokerMutex.unlock();
-	}
-
-	virtual DelegateI<TArg>* clone()
-	{
-		return new GuiPrimDelegate(ObjDelegate<TObj, TArg>::m_pObj, ObjDelegate<TObj, TArg>::m_pFunct, m_Mode);
-	}
-
-	void operator()(TArg& a)
-	{
-		if (!ObjDelegate<TObj, TArg>::m_pObj || !ObjDelegate<TObj, TArg>::m_pFunct)
-			return;
-
-		if (m_Mode == MODE_PENDING)
-		{
-			InvokeI *i = new Invoker<TObj, TArg>(new ObjDelegate<TObj, TArg>(this), a);
-
-			wxGuiDelegateEvent event(i, ObjDelegate<TObj, TArg>::m_pObj->GetId());
-			ObjDelegate<TObj, TArg>::m_pObj->GetEventHandler()->QueueEvent(event);
-		}
-		else if (m_Mode == MODE_PROCESS || Thread::BaseThread::GetCurrentThreadId() == GetMainThreadId())
-		{
-			ObjDelegate<TObj, TArg>::operator()(a);
-		}
-		else if (m_Mode == MODE_PENDING_WAIT)
-		{
-			PrimInvoker<TObj, TArg> *i = new PrimInvoker<TObj, TArg>(new ObjDelegate<TObj, TArg>(this), a);
-			std::shared_ptr<InvokeI> invoker(i);
-
-			wxGuiDelegateEvent event(invoker, ObjDelegate<TObj, TArg>::m_pObj->GetId());
-			ObjDelegate<TObj, TArg>::m_pObj->GetEventHandler()->QueueEvent(event);
-
-			setInvoker(i);
-			i->wait();
-			setInvoker(nullptr);
-			a = i->m_Arg;
-		}
 	}
 
 private:
 	MODE m_Mode;
-
-	void setInvoker(PrimInvoker<TObj, TArg> *i)
-	{
-		m_InvokerMutex.lock();
-		m_pInvoker = i;
-		m_InvokerMutex.unlock();
-	}
-
+	TObj *m_pObj = nullptr;
+	std::atomic<bool> m_bCanceled;
 	std::mutex m_InvokerMutex;
-	PrimInvoker<TObj, TArg> *m_pInvoker;
+	std::shared_ptr<Invoker> m_pInvoker;
 };
 
 
-
-
-
-template <class TObj>
+template <typename TObj>
 inline bool validateForm(TObj* pObj)
 {
 	gcPanel* pan = dynamic_cast<gcPanel*>(pObj);
@@ -511,23 +357,8 @@ inline bool validateForm(TObj* pObj)
 	return (pan || frm || dlg || swin || gtbi);
 }
 
-
-#define PRIMOVERIDEDELEGATE( type )	template <class TObj, type> \
-	DelegateI<type>* guiDelegate(TObj* pObj, void (TObj::*NotifyMethod)(type), MODE mode = MODE_PENDING) \
-		{if (!validateForm(pObj)){assert(false);return nullptr;}return new GuiPrimDelegate<TObj, type>(pObj, NotifyMethod, mode);}
-
-PRIMOVERIDEDELEGATE( bool& );
-PRIMOVERIDEDELEGATE( int8& );
-PRIMOVERIDEDELEGATE( int16& );
-PRIMOVERIDEDELEGATE( int32& );
-PRIMOVERIDEDELEGATE( int64& );
-PRIMOVERIDEDELEGATE( uint8& );
-PRIMOVERIDEDELEGATE( uint16& );
-PRIMOVERIDEDELEGATE( uint32& );
-PRIMOVERIDEDELEGATE( uint64& );
-
-template <class TObj, class TArg>
-DelegateI<TArg>* guiDelegate(TObj* pObj, void (TObj::*NotifyMethod)(TArg), MODE mode = MODE_PENDING)
+template <typename TObj, typename ... Args>
+DelegateI<Args...>* guiDelegate(TObj* pObj, void (TObj::*fnCallback)(Args...), MODE mode = MODE_PENDING)
 {
 	if (!validateForm(pObj))
 	{
@@ -535,198 +366,16 @@ DelegateI<TArg>* guiDelegate(TObj* pObj, void (TObj::*NotifyMethod)(TArg), MODE 
 		return nullptr;
 	}
 
-	return new GuiDelegate<TObj, TArg>(pObj, NotifyMethod, mode);
+	std::function<void(Args...)> callback = [pObj, fnCallback](Args...args)
+	{
+		(*pObj.*fnCallback)(args...);
+	};
+
+	return new GuiDelegate<TObj, Args...>(callback, MakeUint64(pObj, (void*)&typeid(fnCallback)), pObj, mode);
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-template <class TObj>
-class InvokerV : public InvokeI
-{
-public:
-	typedef void (TObj::*TFunct)(); 
-
-	InvokerV(DelegateVI *oDel)
-	{
-		m_pDelegate = oDel;
-	}
-
-	~InvokerV()
-	{
-		m_pEventHelper.done();
-		
-		if (m_pDelegate)
-			m_pDelegate->destroy();
-	}
-
-	void invoke()
-	{
-		if (m_pDelegate)
-			m_pDelegate->operator()();
-
-		m_pEventHelper.done();
-	}
-
-	void cancel()
-	{
-		m_pEventHelper.done();
-	}
-
-	void wait()
-	{
-		m_pEventHelper.wait();
-	}
-
-	EventHelper m_pEventHelper;
-	DelegateVI *m_pDelegate;
-};
-
-
-template <class TObj>
-class GuiDelegateV : public ObjDelegateV<TObj>, public wxDelegate
-{
-public:
-	typedef void (TObj::*TFunct)(); 
-
-	GuiDelegateV(TObj* t, TFunct f, MODE mode) : ObjDelegateV<TObj>(t,f)
-	{
-		m_Mode = mode;
-		m_pInvoker = nullptr;
-
-		if (ObjDelegateV<TObj>::m_pObj)
-			ObjDelegateV<TObj>::m_pObj->registerDelegate(this);
-	}
-
-protected:
-	GuiDelegateV(MODE mode) : ObjDelegateV<TObj>()
-	{
-		m_Mode = mode;
-		m_pInvoker = nullptr;
-	}
-
-public:
-	~GuiDelegateV()
-	{
-		if (ObjDelegateV<TObj>::m_pObj)
-			ObjDelegateV<TObj>::m_pObj->deregisterDelegate(this);
-	}
-
-	virtual void destroy()
-	{
-		delete this;
-	}
-
-	virtual void nullObject()
-	{
-		ObjDelegateV<TObj>::m_pObj = nullptr;
-		ObjDelegateV<TObj>::m_pFunct = nullptr;
-		
-		m_InvokerMutex.lock();
-		
-		if (m_pInvoker)
-			m_pInvoker->cancel();
-			
-		m_InvokerMutex.unlock();
-	}
-
-	virtual DelegateVI* clone()
-	{
-		return new GuiDelegateV(ObjDelegateV<TObj>::m_pObj, ObjDelegateV<TObj>::m_pFunct, m_Mode);
-	}
-
-	void operator()()
-	{
-		if (!ObjDelegateV<TObj>::m_pObj || !ObjDelegateV<TObj>::m_pFunct)
-			return;
-
-		if (m_Mode == MODE_PENDING)
-		{
-			InvokerV<TObj> *i = new InvokerV<TObj>(new ObjDelegateV<TObj>(this));
-
-			auto event = new wxGuiDelegateEvent(std::shared_ptr<InvokeI>(i), ObjDelegateV<TObj>::m_pObj->GetId());
-			ObjDelegateV<TObj>::m_pObj->GetEventHandler()->QueueEvent(event);
-		}
-		else if (m_Mode == MODE_PROCESS || Thread::BaseThread::GetCurrentThreadId() == GetMainThreadId())
-		{
-			ObjDelegateV<TObj>::operator()();
-		}
-		else if (m_Mode == MODE_PENDING_WAIT)
-		{
-			InvokerV<TObj> *i = new InvokerV<TObj>(new ObjDelegateV<TObj>(this));
-			std::shared_ptr<InvokeI> invoker(i);
-
-			auto event = new wxGuiDelegateEvent(invoker, ObjDelegateV<TObj>::m_pObj->GetId());
-			ObjDelegateV<TObj>::m_pObj->GetEventHandler()->QueueEvent(event);
-
-			setInvoker(i);
-			i->wait();
-			setInvoker(nullptr);
-		}
-	}
-
-	MODE m_Mode;
-
-protected:
-	void setInvoker(InvokerV<TObj> *i)
-	{
-		m_InvokerMutex.lock();
-		m_pInvoker = i;
-		m_InvokerMutex.unlock();
-	}
-
-	void init(TObj* t, TFunct f)
-	{
-		ObjDelegateV<TObj>::init(t, f);
-
-		if (ObjDelegateV<TObj>::m_pObj)
-			ObjDelegateV<TObj>::m_pObj->registerDelegate(this);
-	}
-	
-	std::mutex m_InvokerMutex;
-	InvokerV<TObj> *m_pInvoker;
-};
-
-
-
-
-
-
-
-
-
-
-
-
-template <class TObj>
-DelegateVI* guiDelegate(TObj* pObj, void (TObj::*NotifyMethod)(), MODE mode = MODE_PENDING)
+template <typename TObj, typename ... Args, typename TExtra>
+DelegateI<Args...>* guiExtraDelegate(TObj* pObj, void (TObj::*fnCallback)(TExtra, Args...), TExtra tExtra, MODE mode = MODE_PENDING)
 {
 	if (!validateForm(pObj))
 	{
@@ -734,207 +383,12 @@ DelegateVI* guiDelegate(TObj* pObj, void (TObj::*NotifyMethod)(), MODE mode = MO
 		return nullptr;
 	}
 
-	return new GuiDelegateV<TObj>(pObj, NotifyMethod, mode);
-}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-template <typename TObj, typename TArg, typename TExtra>
-class GuiExtraDelegate : public GuiDelegate<GuiExtraDelegate<TObj, TArg, TExtra>, TArg>
-{
-public:
-	typedef void (TObj::*TFunct)(TExtra, TArg&); 
-
-	GuiExtraDelegate(TObj* t, TExtra e, TFunct f, MODE mode) : GuiDelegate<GuiExtraDelegate<TObj, TArg, TExtra>, TArg>::GuiDelegate(mode)
+	std::function<void(Args...)> callback = [pObj, fnCallback, tExtra](Args...args)
 	{
-		m_Extra = e;
-		m_pFunct = f;
-		m_pObj = t;
+		(*pObj.*fnCallback)(tExtra, args...);
+	};
 
-		this->init(this, &GuiExtraDelegate::callBack);
-	}
-
-	void callBack(TArg& a)
-	{
-		if (m_pObj && m_pFunct)
-		{
-			(*m_pObj.*m_pFunct)(m_Extra, a);
-		}
-	}
-
-	virtual DelegateI<TArg>* clone()
-	{
-		return new GuiExtraDelegate<TObj, TArg, TExtra>(m_pObj, m_Extra, m_pFunct, GuiDelegate<GuiExtraDelegate<TObj, TArg, TExtra>, TArg>::m_Mode);
-	}
-
-	virtual bool equals(DelegateI<TArg>* di)
-	{
-		GuiExtraDelegate<TObj, TArg, TExtra> *d = dynamic_cast<GuiExtraDelegate<TObj, TArg, TExtra>*>(di);
-
-		if (!d)
-			return false;
-
-		return ((m_pObj == d->m_pObj) && (m_pFunct == d->m_pFunct) && m_Extra == d->m_Extra);
-	}
-
-	virtual void destroy()
-	{
-		delete this;
-	}
-
-	wxEvtHandler* GetEventHandler()
-	{
-		return m_pObj->GetEventHandler();
-	}
-
-	void registerDelegate(wxDelegate* d)
-	{
-		m_pObj->registerDelegate(d);
-	}
-
-	void deregisterDelegate(wxDelegate* d)
-	{
-		m_pObj->deregisterDelegate(d);
-	}
-
-	int GetId()
-	{
-		return m_pObj->GetId();
-	}
-
-	TFunct m_pFunct;   // pointer to member function
-	TObj* m_pObj;     // pointer to object
-	TExtra m_Extra;
-};
-
-template <class TObj, class TArg, class TExtra>
-DelegateI<TArg>* guiExtraDelegate(TObj* pObj, void (TObj::*NotifyMethod)(TExtra, TArg), TExtra tExtra, MODE mode = MODE_PENDING)
-{
-	if (!validateForm(pObj))
-	{
-		assert(false);
-		return nullptr;
-	}
-
-	return new GuiExtraDelegate<TObj, TArg, TExtra>(pObj, tExtra, NotifyMethod, mode);
-}
-
-
-template <typename TObj, typename TExtra>
-class GuiExtraDelegateV : public GuiDelegateV<GuiExtraDelegateV<TObj, TExtra>>
-{
-public:
-	typedef void (TObj::*TFunct)(TExtra); 
-
-	GuiExtraDelegateV(TObj* t, TExtra e, TFunct f, MODE mode) : GuiDelegateV<GuiExtraDelegateV<TObj, TExtra>>::GuiDelegateV(mode)
-	{
-		m_Extra = e;
-		m_pFunct = f;
-		m_pObj = t;
-
-		this->init(this, &GuiExtraDelegateV::callBack);
-	}
-
-	void callBack()
-	{
-		if (m_pObj && m_pFunct)
-		{
-			(*m_pObj.*m_pFunct)(m_Extra);
-		}
-	}
-
-	virtual DelegateVI* clone()
-	{
-		return new GuiExtraDelegateV<TObj, TExtra>(m_pObj, m_Extra, m_pFunct, GuiDelegateV<GuiExtraDelegateV<TObj, TExtra>>::m_Mode);
-	}
-
-	virtual bool equals(DelegateVI* di)
-	{
-		GuiExtraDelegateV<TObj, TExtra> *d = dynamic_cast<GuiExtraDelegateV<TObj, TExtra>*>(di);
-
-		if (!d)
-			return false;
-
-		return ((m_pObj == d->m_pObj) && (m_pFunct == d->m_pFunct) && m_Extra == d->m_Extra);
-	}
-
-	virtual void destroy()
-	{
-		delete this;
-	}
-
-	wxEvtHandler* GetEventHandler()
-	{
-		return m_pObj->GetEventHandler();
-	}
-
-	void registerDelegate(wxDelegate* d)
-	{
-		m_pObj->registerDelegate(d);
-	}
-
-	void deregisterDelegate(wxDelegate* d)
-	{
-		m_pObj->deregisterDelegate(d);
-	}
-
-	int GetId()
-	{
-		return m_pObj->GetId();
-	}
-
-	TFunct m_pFunct;   // pointer to member function
-	TObj* m_pObj;     // pointer to object
-	TExtra m_Extra;
-};
-
-template <class TObj, class TExtra>
-DelegateVI* guiExtraDelegate(TObj* pObj, void (TObj::*NotifyMethod)(TExtra), TExtra tExtra, MODE mode = MODE_PENDING)
-{
-	if (!validateForm(pObj))
-	{
-		assert(false);
-		return nullptr;
-	}
-
-	return new GuiExtraDelegateV<TObj, TExtra>(pObj, tExtra, NotifyMethod, mode);
+	return new GuiDelegate<TObj, Args...>(callback, MakeUint64(pObj, (void*)&typeid(fnCallback)), pObj, mode);
 }
 
 #endif //DESURA_GUIDELEGATE_H

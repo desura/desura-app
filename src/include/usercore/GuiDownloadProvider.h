@@ -52,7 +52,7 @@ public:
 	{
 	}
 
-	GuiDownloadProvider(GuiDownloadProvider& dp)
+	GuiDownloadProvider(const GuiDownloadProvider& dp)
 		: action(dp.action)
 		, provider(dp.provider)
 	{

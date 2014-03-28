@@ -979,6 +979,28 @@ bool ItemHandle::launch(Helper::ItemLaunchHelperI* helper, bool offline, bool ig
 	if (checkPaused())
 		return true;
 
+	if (getItemInfo()->getParentId().isOk())
+	{
+		auto pParent = getUserCore()->getItemManager()->findItemInfo(getItemInfo()->getParentId());
+
+		if (pParent)
+		{
+			if (!pParent->isLaunchable())
+			{
+				gcException e(ERR_LAUNCH, gcString("Parent game is not installed. Please install {0} first.", pParent->getName()));
+				helper->launchError(e);
+				return false;
+			}
+			else if (!pParent->hasAcceptedEula())
+			{
+				if (helper)
+					helper->showEULAPrompt();
+
+				return false;
+			}
+		}
+	}
+
 	bool res = false;
 
 	if (HasAllFlags(getItemInfo()->getStatus(), UserCore::Item::ItemInfoI::STATUS_LINK))
@@ -1346,3 +1368,240 @@ void ItemHandle::force()
 	group->startAction(this);
 }
 
+#ifdef LINK_WITH_GMOCK
+
+#include <gmock/gmock.h>
+
+#include "sqlite3x.hpp"
+#include "sql/ItemInfoSql.h"
+#include "usercore/ItemManagerI.h"
+#include "usercore/ItemHelpersI.h"
+#include "usercore/UserCoreI.h"
+
+namespace UnitTest
+{
+	using namespace UserCore;
+	using namespace UserCore::Item::Helper;
+	using namespace testing;
+
+	class ItemHandleMock : public ItemHandle
+	{
+	public:
+		ItemHandleMock(ItemInfo* itemInfo, UserCore::UserI* user)
+			: ItemHandle(itemInfo, user)
+		{
+		}
+
+		MOCK_METHOD1(completeStage, void(bool close));
+		MOCK_METHOD1(resetStage, void(bool close));
+		MOCK_METHOD3(goToStageGatherInfo, void(MCFBranch branch, MCFBuild build, UserCore::ItemTask::GI_FLAGS flags));
+		MOCK_METHOD3(goToStageDownload, void(MCFBranch branch, MCFBuild build, bool test));
+		MOCK_METHOD1(goToStageDownload, void(const char* path));
+		MOCK_METHOD3(goToStageInstallComplex, void(MCFBranch branch, MCFBuild build, bool launch));
+		MOCK_METHOD2(goToStageInstall, void(const char* path, MCFBranch branch));
+		MOCK_METHOD5(goToStageVerify, void(MCFBranch branch, MCFBuild build, bool files, bool tools, bool hooks));
+		MOCK_METHOD0(goToStageInstallCheck, void());
+		MOCK_METHOD2(goToStageUninstall, void(bool complete, bool account));
+		MOCK_METHOD3(goToStageUninstallBranch, void(MCFBranch branch, MCFBuild build, bool test));
+		MOCK_METHOD3(goToStageUninstallComplexBranch, void(MCFBranch branch, MCFBuild build, bool complexLaunch));
+		MOCK_METHOD2(goToStageUninstallPatch, void(MCFBranch branch, MCFBuild build));
+		MOCK_METHOD2(goToStageUninstallUpdate, void(const char* path, MCFBuild lastBuild));
+		MOCK_METHOD0(goToStageLaunch, void());
+		MOCK_METHOD4(goToStageDownloadTools, void(ToolTransactionId ttid, const char* downloadPath, MCFBranch branch, MCFBuild build));
+		MOCK_METHOD2(goToStageDownloadTools, void(bool launch, ToolTransactionId ttid));
+		MOCK_METHOD1(goToStageInstallTools, void(bool launch));
+
+		MOCK_METHOD2(launchForReal, bool(Helper::ItemLaunchHelperI* helper, bool offline));
+	};
+
+	class ItemHandleLaunchMod : public ::testing::Test
+	{
+	public:
+		ItemHandleLaunchMod()
+			: gid("1", "games")
+			, mid("2", "mods")
+			, game(&user, gid, &fs)
+			, mod(new ItemInfo(&user, mid, gid, &fs))
+		{
+
+			ON_CALL(user, getItemsAddedEvent()).WillByDefault(Return(&itemAddedEvent));
+			ON_CALL(user, getItemManager()).WillByDefault(Return(&itemManager));
+			ON_CALL(itemManager, findItemInfo(_)).WillByDefault(Invoke([&](DesuraId id) -> ItemInfoI*
+			{
+				if (id == game.getId())
+					return &game;
+
+				if (id == mod->getId())
+					return mod;
+
+				return nullptr;
+			}));
+
+			ON_CALL(fs, isValidFile(_)).WillByDefault(Invoke([](const UTIL::FS::Path& path) -> bool
+			{
+				return path.getFile().getFile() == "Charlie.exe";
+			}));
+		}
+
+		void setUpDb(sqlite3x::sqlite3_connection &db, const std::vector<std::string> &vSqlCommands)
+		{
+			createItemInfoDbTables(db);
+
+			for (auto s : vSqlCommands)
+			{
+				sqlite3x::sqlite3_command cmd(db, s.c_str());
+				cmd.executenonquery();
+			}
+		}
+
+		Event<uint32> itemAddedEvent;
+		UTIL::FS::UtilFSMock fs;
+		ItemManagerMock itemManager;
+		UserMock user;
+
+		DesuraId gid;
+		DesuraId mid;
+
+		ItemInfo game;
+		ItemInfo* mod;
+	};
+
+	TEST_F(ItemHandleLaunchMod, LaunchModWithParentNotInstalled)
+	{
+		static const std::vector<std::string> vSqlCommands =
+		{
+			"INSERT INTO iteminfo VALUES(4294967328,0,0,0,0,'dev-02','Charlie','charlie','','','','','','','dev-02','',0,0);",
+			"INSERT INTO iteminfo VALUES(8589934608,4294967328,0,0,0,'dev-02','Charlie Mod','charlie-mod','','','','','','','dev-02','',0,0);"
+		};
+
+		{
+			sqlite3x::sqlite3_connection db(":memory:");
+			setUpDb(db, vSqlCommands);
+
+			game.loadDb(&db);
+			mod->loadDb(&db);
+		}
+
+		ItemHandleMock modHandle(mod, &user);
+		ItemLaunchHelperMock ilh;
+		EXPECT_CALL(ilh, launchError(_)).Times(1);
+
+		auto res = modHandle.launch(&ilh);
+		ASSERT_FALSE(res);
+	}
+
+	TEST_F(ItemHandleLaunchMod, LaunchModWithParentNotAcceptedEula)
+	{
+		static const std::vector<std::string> vSqlCommands =
+		{
+			"INSERT INTO exe VALUES(4294967328,100,'Play','C:\\Program Files (x86)\\charlie\\Charlie.exe','','',0);",
+			"INSERT INTO installinfo VALUES(4294967328,100,'C:\\Program Files (x86)\\charlie','C:\\Program Files (x86)\\charlie\\Charlie.exe','',0,0,0);",
+			"INSERT INTO installinfoex VALUES(4294967328,100,'C:\\Program Files (x86)\\charlie\\Charlie.exe');",
+			"INSERT INTO iteminfo VALUES(4294967328,0,0,32798,0,'dev-02','Charlie','charlie','','','','','','','dev-02','',1,1);",
+			"INSERT INTO branchinfo VALUES(1, 4294967328, 'test', 0, 'http://eula.com', 0, 0, '', '', 0, 1, 100);",
+			"INSERT INTO iteminfo VALUES(8589934608,4294967328,0,0,0,'dev-02','Charlie Mod','charlie-mod','','','','','','','dev-02','',0,0);"
+		};
+
+		{
+			sqlite3x::sqlite3_connection db(":memory:");
+			setUpDb(db, vSqlCommands);
+
+			game.loadDb(&db);
+			mod->loadDb(&db);
+		}
+
+		ASSERT_TRUE(game.isInstalled());
+		ASSERT_TRUE(game.isLaunchable());
+		ASSERT_FALSE(game.hasAcceptedEula());
+
+		ItemHandleMock modHandle(mod, &user);
+		ItemLaunchHelperMock ilh;
+		EXPECT_CALL(ilh, showEULAPrompt()).Times(1);
+
+		auto res = modHandle.launch(&ilh);
+		ASSERT_FALSE(res);
+	}
+
+	TEST_F(ItemHandleLaunchMod, LaunchModWithParentInstalled_NotInstalled)
+	{
+		static const std::vector<std::string> vSqlCommands =
+		{
+			"INSERT INTO exe VALUES(4294967328,100,'Play','C:\\Program Files (x86)\\charlie\\Charlie.exe','','',0);",
+			"INSERT INTO installinfo VALUES(4294967328,100,'C:\\Program Files (x86)\\charlie','C:\\Program Files (x86)\\charlie\\Charlie.exe','',0,0,0);",
+			"INSERT INTO installinfoex VALUES(4294967328,100,'C:\\Program Files (x86)\\charlie\\Charlie.exe');",
+			"INSERT INTO iteminfo VALUES(4294967328,0,0,32798,0,'dev-02','Charlie','charlie','','','','','','','dev-02','',1,1);",
+			"INSERT INTO branchinfo VALUES(1, 4294967328, 'test', 256, 'http://eula.com', 0, 0, '', '', 0, 1, 100);",
+			"INSERT INTO iteminfo VALUES(8589934608,4294967328,0,0,0,'dev-02','Charlie Mod','charlie-mod','','','','','','','dev-02','',0,0);"
+		};
+
+		{
+			sqlite3x::sqlite3_connection db(":memory:");
+			setUpDb(db, vSqlCommands);
+
+			game.loadDb(&db);
+			mod->loadDb(&db);
+		}
+
+		ASSERT_TRUE(game.isInstalled());
+		ASSERT_TRUE(game.isLaunchable());
+		ASSERT_TRUE(game.hasAcceptedEula());
+
+		std::function<void(ITEM_STAGE&)> stageChange = [](ITEM_STAGE&){
+			//Should never change stage
+			ASSERT_TRUE(false);
+		};
+
+
+		ItemHandleMock modHandle(mod, &user);
+		*modHandle.getChangeStageEvent() += delegate(stageChange, 1);
+
+		EXPECT_CALL(modHandle, goToStageGatherInfo(_, _, _)).Times(1);
+
+		ItemLaunchHelperMock ilh;
+		auto res = modHandle.launch(&ilh);
+
+		ASSERT_TRUE(res);
+	}
+
+	TEST_F(ItemHandleLaunchMod, LaunchModWithParentInstalled_Installed)
+	{
+		static const std::vector<std::string> vSqlCommands =
+		{
+			"INSERT INTO exe VALUES(4294967328,100,'Play','C:\\Program Files (x86)\\charlie\\Charlie.exe','','',0);",
+			"INSERT INTO installinfo VALUES(4294967328,100,'C:\\Program Files (x86)\\charlie','C:\\Program Files (x86)\\charlie\\Charlie.exe','',0,0,0);",
+			"INSERT INTO installinfoex VALUES(4294967328,100,'C:\\Program Files (x86)\\charlie\\Charlie.exe');",
+			"INSERT INTO branchinfo VALUES(1, 4294967328, 'test', 256, 'http://eula.com', 0, 0, '', '', 0, 1, 100);",
+			"INSERT INTO iteminfo VALUES(4294967328,0,0,32798,0,'dev-02','Charlie','charlie','','','','','','','dev-02','',1,1);",
+			
+			"INSERT INTO exe VALUES(8589934608,100,'Play','C:\\Program Files (x86)\\charlie\\Charlie.exe','','',0);",
+			"INSERT INTO installinfo VALUES(8589934608,100,'C:\\Program Files (x86)\\charlie','C:\\Program Files (x86)\\charlie\\Charlie.exe','',0,0,0);",
+			"INSERT INTO installinfoex VALUES(8589934608,100,'C:\\Program Files (x86)\\charlie\\Charlie.exe');",
+			"INSERT INTO branchinfo VALUES(2, 8589934608, 'test', 256, 'http://eula.com', 0, 0, '', '', 0, 2, 100);",
+			"INSERT INTO iteminfo VALUES(8589934608,4294967328,0,32798,0,'dev-02','Charlie Mod','charlie-mod','','','','','','','dev-02','',2,2);"
+		};
+
+		{
+			sqlite3x::sqlite3_connection db(":memory:");
+			setUpDb(db, vSqlCommands);
+
+			game.loadDb(&db);
+			mod->loadDb(&db);
+		}
+
+		ASSERT_TRUE(game.isInstalled());
+		ASSERT_TRUE(game.isLaunchable());
+		ASSERT_TRUE(game.hasAcceptedEula());
+
+		ASSERT_TRUE(mod->isInstalled());
+		ASSERT_TRUE(mod->isLaunchable());
+		ASSERT_TRUE(mod->hasAcceptedEula());
+
+		ItemHandleMock modHandle(mod, &user);
+		EXPECT_CALL(modHandle, launchForReal(_, _)).Times(1);
+
+		ItemLaunchHelperMock ilh;
+		modHandle.launch(&ilh);
+	}
+}
+
+#endif

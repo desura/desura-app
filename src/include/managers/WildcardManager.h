@@ -45,16 +45,9 @@ enum
 class WCSpecialInfo
 {
 public:
-	WCSpecialInfo()
-	{
-		handled = false;
-		processed = false;
-	}
-
 	gcString name;
 	gcString result;
-	volatile bool handled;	//true = special wildcard resolved
-	volatile bool processed;	//true = finished processing
+	volatile bool handled = false;	//true = special wildcard resolved
 };
 
 class WildcardInfo : public BaseItem

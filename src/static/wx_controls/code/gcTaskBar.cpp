@@ -172,11 +172,11 @@ void gcTaskBarIcon::onEventClose(wxCloseEvent& event)
 
 #endif
 
-void gcTaskBarIcon::registerDelegate(wxDelegate* d)
+void gcTaskBarIcon::registerDelegate(InvokeI* d)
 {
 	if (!m_pEvents)
 	{
-		d->nullObject();
+		d->cancel();
 		return;
 	}
 
@@ -185,14 +185,14 @@ void gcTaskBarIcon::registerDelegate(wxDelegate* d)
 	if (frame)
 		frame->registerDelegate(d);
 	else
-		d->nullObject();
+		d->cancel();
 }
 
-void gcTaskBarIcon::deregisterDelegate(wxDelegate* d)
+void gcTaskBarIcon::deregisterDelegate(InvokeI* d)
 {
 	if (!m_pEvents)
 	{
-		d->nullObject();
+		d->cancel();
 		return;
 	}
 
@@ -201,7 +201,7 @@ void gcTaskBarIcon::deregisterDelegate(wxDelegate* d)
 	if (frame)
 		frame->deregisterDelegate(d);
 	else
-		d->nullObject();
+		d->cancel();
 }
 
 wxEvtHandler* gcTaskBarIcon::GetEventHandler()

@@ -35,6 +35,7 @@ $/LicenseInfo$
 
 #include "ResumeUploadInfo.h"
 #include "DLLVersion.h"
+#include <atomic>
 
 #define WEBCORE					"WEBCORE_INTERFACE_001"
 #define WEBCORE_VER				"WEBCORE_VERSION"
@@ -242,7 +243,7 @@ namespace WebCore
 		//! @param postfix Append short name to image
 		//! @param saveFolder Folder to save it to
 		//!
-		virtual void downloadImage(WebCore::Misc::DownloadImageInfo* dii, volatile bool &stop)=0;
+		virtual void downloadImage(WebCore::Misc::DownloadImageInfo* dii, std::atomic<bool> &stop) = 0;
 
 		//! Download a banner for a item download
 		//! 
@@ -302,7 +303,7 @@ namespace WebCore
 
 		//! allows extern parts to use the cookies from webcore. Gets a callback for every cookie needed.
 		//!
-		//! @param pCallback Callback to use, caller responsable for deletion
+		//! @param pCallback Callback to use, caller responsible for deletion
 		//!
 		virtual void setCookies(CookieCallbackI *pCallback)=0;
 
@@ -364,13 +365,7 @@ namespace WebCore
 		MOCK_METHOD1(hashToId, DesuraId(const char* itemHashId));
 		MOCK_METHOD4(newUpload, void(DesuraId id, const char* hash, uint64 fileSize, char **key));
 		MOCK_METHOD3(resumeUpload, void(DesuraId id, const char* key, WebCore::Misc::ResumeUploadInfo &info));
-
-		//GMock doesnt like volatile in param
-		//MOCK_METHOD2(downloadImage, void(WebCore::Misc::DownloadImageInfo* dii, volatile bool &stop));
-		void downloadImage(WebCore::Misc::DownloadImageInfo* dii, volatile bool &stop) override
-		{
-		}
-
+		MOCK_METHOD2(downloadImage, void(WebCore::Misc::DownloadImageInfo*, std::atomic<bool> &));
 		MOCK_METHOD2(downloadBanner, void(MCFCore::Misc::DownloadProvider* dlp, const char* saveFolder));
 		MOCK_METHOD2(updateAccountItem, void(DesuraId id, bool add));
 		MOCK_METHOD3(logIn, void(const char* user, const char* pass, XML::gcXMLDocument &xmlDocument));

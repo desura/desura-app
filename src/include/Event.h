@@ -69,38 +69,27 @@ class VoidEventArg
 {
 };
  
-template <typename TArg>
+template <typename ... Args>
 class DelegateI
 {
 public:
-	virtual void operator()(TArg& a)=0;
-	virtual bool equals(DelegateI<TArg>* d)=0;
-	virtual DelegateI<TArg>* clone()=0;
-	virtual void destroy()=0;
+	virtual void operator()(Args&... a) = 0;
+	virtual bool equals(DelegateI<Args...>* d) = 0;
+	virtual DelegateI<Args...>* clone() = 0;
+	virtual uint64 getCompareHash() const = 0;
+	virtual void destroy() = 0;
 
 protected:
 	virtual ~DelegateI(){};
 };
 
-class DelegateVI
-{
-public:
-	virtual void operator()()=0;
-	virtual bool equals(DelegateVI* d)=0;
-	virtual DelegateVI* clone()=0;
-	virtual void destroy()=0;
-
-protected:
-	virtual ~DelegateVI(){};
-};
-
-
 class InvokeI
 {
 public:
-	virtual ~InvokeI(){;}
-	virtual void invoke()=0;
 	virtual void cancel()=0;
+
+protected:
+	virtual ~InvokeI(){}
 };
 
 template <typename TArg, typename TDel>
@@ -313,6 +302,7 @@ public:
 				if (m_vPendingDelegates[x].second)
 					m_vPendingDelegates[x].second->destroy();
 			}
+			m_vPendingDelegates.clear();
 		}
 
 		m_bCancel = false;
@@ -377,311 +367,45 @@ private:
 
 
 
-template <typename A>
-void CallFunction(void (*func)(), A &a)
-{
-}
-
-template <typename A>
-void CallFunction(void (*func)(A &a), A &a)
-{
-	if (func)
-		(*func)(a);
-}
-
-template <typename A>
-void CallFunction(void (*func)())
-{
-	if (func)
-		(*func)();
-}
-
-template <typename A>
-void CallFunction(void (*func)(A &a))
-{
-}
-
-
-template <typename TObj>
-void CallObjectFunction(TObj* obj, void (TObj::*func)())
-{
-	if (obj && func)
-		(*obj.*func)();
-}
-
-template <typename TObj, typename A>
-void CallObjectFunction(TObj* obj, void (TObj::*func)(A a))
-{
-	assert(false);
-}
-
-
-
-template <typename TObj, typename A>
-void CallObjectFunction(TObj* obj, void (TObj::*func)(), A &a)
-{
-	assert(false);
-}
-
-template <typename TObj, typename A>
-void CallObjectFunction(TObj* obj, void (TObj::*func)(A a), A a)
-{
-	if (obj && func)
-		(*obj.*func)(a);
-}
-
-
-
-
-template <typename A, typename TDel>
-void CallEvent(EventBase<A, DelegateVI>* event, A &a)
-{
-	assert(false);
-}
-
-template <typename A, typename TDel>
-void CallEvent(EventBase<A, TDel>* event, A &a)
-{
-	if (event)
-		(*event)(a);
-}
-
-template <typename A, typename TDel>
-inline void CallEvent(EventBase<A, DelegateVI>* event)
-{
-	if (event)
-		(*event)();
-}
-
-template <typename A, typename TDel>
-void CallEvent(EventBase<A, TDel>* event)
-{
-	assert(false);
-}
-
-
-template <typename TFunct, typename TDel, typename TArg>
-class FunctDelegateBase : public TDel
+template <typename ... Args>
+class DelegateBase : public DelegateI<Args...>
 {
 public:
-	FunctDelegateBase(TFunct f)
+	DelegateBase(std::function<void(Args&...)> callback, uint64 compareHash)
+		: m_fnCallback(callback)
+		, m_ullCompareHash(compareHash)
 	{
-		m_pFunct = f;
 	}
 
-	virtual bool equals(TDel* di)
+	bool equals(DelegateI<Args...>* di) override
 	{
-		FunctDelegateBase<TFunct, TDel, TArg> *d = dynamic_cast<FunctDelegateBase<TFunct, TDel, TArg>*>(di);
-
-		if (!d)
-			return false;
-
-		return (m_pFunct == d->m_pFunct);
+		return di->getCompareHash() == m_ullCompareHash;
 	}
 
-	virtual TDel* clone()
+	DelegateI<Args...>* clone() override
 	{
-		return new FunctDelegateBase<TFunct, TDel, TArg>(m_pFunct);
+		return new DelegateBase<Args...>(m_fnCallback, m_ullCompareHash);
 	}
 
-	virtual void destroy()
+	void operator()(Args&... a) override
+	{
+		m_fnCallback(a...);
+	}
+
+	uint64 getCompareHash() const override
+	{
+		return m_ullCompareHash;
+	}
+
+	void destroy() override
 	{
 		delete this;
-	}
-
-	virtual void operator()(TArg& a)
-	{
-		//cant use this with void event
-		assert( typeid(TArg) != typeid(VoidEventArg) );
-		CallFunction<TArg>(m_pFunct, a);
-	}
-
-	virtual void operator()()
-	{
-		CallFunction<TArg>(m_pFunct);
-	}
-
-	TFunct m_pFunct;   // pointer to member function
-};
-
-
-
-template <typename TFunct, typename TDel, typename TObj, typename TArg>
-class ObjDelegateBase : public TDel
-{
-public:
-	ObjDelegateBase(TObj* t, TFunct f)
-	{
-		m_pObj = t;
-		m_pFunct = f;
-	}
-
-	ObjDelegateBase(ObjDelegateBase<TFunct, TDel, TObj,TArg> *oDel)
-	{
-		assert(oDel);
-
-		m_pObj = oDel->m_pObj;
-		m_pFunct = oDel->m_pFunct;
-	}
-
-	virtual bool equals(TDel* di)
-	{
-		ObjDelegateBase<TFunct, TDel, TObj, TArg> *d = dynamic_cast<ObjDelegateBase<TFunct, TDel, TObj, TArg>*>(di);
-
-		if (!d)
-			return false;
-
-		return ((m_pObj == d->m_pObj) && (m_pFunct == d->m_pFunct));
-	}
-
-	virtual TDel* clone()
-	{
-		return new ObjDelegateBase<TFunct, TDel, TObj, TArg>(m_pObj, m_pFunct);
-	}
-
-	virtual void destroy()
-	{
-		delete this;
-	}
-
-	virtual void operator()(TArg& a)
-	{
-		//cant use this with void event
-		assert( typeid(TArg) != typeid(VoidEventArg) );
-		CallObjectFunction<TObj, TArg>(m_pObj, m_pFunct, a);
-	}
-
-	virtual void operator()()
-	{
-		CallObjectFunction<TObj>(m_pObj, m_pFunct);
-	}
-
-	TFunct m_pFunct;   // pointer to member function
-	TObj* m_pObj;     // pointer to object
-
-protected:
-	ObjDelegateBase()
-	{
-		m_pObj = nullptr;
-		m_pFunct = nullptr;
-	}
-
-	void init(TObj* t, TFunct f)
-	{
-		m_pObj = t;
-		m_pFunct = f;
-	}
-};
-
-
-
-template <typename TArg, typename TDel>
-class ProxieDelegateBase : public TDel
-{
-public:
-	ProxieDelegateBase(EventBase<TArg, TDel>* e)
-	{
-		m_pEvent = e;
-	}
-
-	virtual bool equals(TDel* di)
-	{
-		ProxieDelegateBase<TArg, TDel> *d = dynamic_cast<ProxieDelegateBase<TArg, TDel>*>(di);
-
-		if (!d)
-			return false;
-
-		return (m_pEvent == d->m_pEvent);
-	}
-
-	virtual TDel* clone()
-	{
-		return new ProxieDelegateBase<TArg, TDel>(m_pEvent);
-	}
-
-	virtual void destroy()
-	{
-		delete this;
-	}
-
-	virtual void operator()(TArg& a)
-	{
-		//cant use this with void event
-		assert( typeid(TArg) != typeid(VoidEventArg) );
-		CallEvent<TArg, TDel>(m_pEvent, a);
-	}
-
-	virtual void operator()()
-	{
-		CallEvent<TArg, TDel>(m_pEvent);
-	}
-
-	EventBase<TArg, TDel>* m_pEvent;   // pointer to member function
-};
-
-
-
-template <typename TLambda, typename TArg, typename TDel>
-class LambdaDelegateBase : public TDel
-{
-public:
-	LambdaDelegateBase(TLambda& f) : m_pFunct(f)
-	{
-		m_uiId = (size_t)this;
-	}
-
-	virtual bool equals(TDel* di)
-	{
-		LambdaDelegateBase<TLambda, TArg, TDel> *d = dynamic_cast<LambdaDelegateBase<TLambda, TArg, TDel>*>(di);
-
-		if (!d)
-			return false;
-
-		return (m_uiId == d->m_uiId);
-	}
-
-	virtual DelegateVI* clone()
-	{
-		return new LambdaDelegateBase<TLambda, TArg, TDel>(m_pFunct, m_uiId);
-	}
-
-	virtual void destroy()
-	{
-		delete this;
-	}
-
-	virtual void operator()()
-	{
-		m_pFunct();
 	}
 
 protected:
-	LambdaDelegateBase(TLambda& f, size_t id) : m_pFunct(f)
-	{
-		m_uiId = id;
-	}
-
-	size_t m_uiId;
-	TLambda m_pFunct;   // pointer to member function
+	const uint64 m_ullCompareHash;
+	std::function<void(Args&...)> m_fnCallback;
 };
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -724,263 +448,105 @@ public:
 	}
 };
 
-typedef EventBase<VoidEventArg, DelegateVI> EventV;
+typedef EventBase<VoidEventArg, DelegateI<>> EventV;
 
 
 
-//template <class TObj, class TArg>
-//DelegateI<TArg&>* delegate(TObj* pObj, void (TObj::*NotifyMethod)(TArg&))
+
+inline uint64 MakeUint64(void* a, void* b)
+{
+	return ((uint64)a) + (((uint64)b) << 32ull);
+}
+
+
+
+template <typename TObj, typename ... Args>
+DelegateI<Args...>* delegate(TObj* pObj, void (TObj::*fnCallback)(Args...))
+{
+	std::function<void(Args...)> callback = [pObj, fnCallback](Args ... args)
+	{
+		(*pObj.*fnCallback)(args...);
+	};
+
+	return new DelegateBase<Args...>(callback, MakeUint64(pObj, (void*)&typeid(fnCallback)));
+}
+
+template <typename ... Args>
+DelegateI<Args&...>* delegate(void(*fnCallback)(Args&...))
+{
+	std::function<void(Args&...)> callback = [fnCallback](Args&... args)
+	{
+		fnCallback(args...);
+	};
+
+	return new DelegateBase<Args&...>(callback, (uint64)fnCallback);
+}
+
+
+template <typename ... Args>
+DelegateI<Args...>* delegate(void(*fnCallback)(Args...))
+{
+	std::function<void(Args&...)> callback = [fnCallback](Args&... args)
+	{
+		fnCallback(args...);
+	};
+
+	return new DelegateBase<Args&...>(callback, (uint64)fnCallback);
+}
+
+template <typename ... Args>
+DelegateI<Args&...>* delegate(Event<Args...>* e)
+{
+	std::function<void(Args&...)> callback = [e](Args& ... args)
+	{
+		(*e)(args...);
+	};
+
+	return new DelegateBase<Args&...>(callback, (uint64)e);
+}
+
+template <typename ... Args>
+DelegateI<Args...>* delegate(EventC<Args...>* e)
+{
+	std::function<void(Args&...)> callback = [e](Args& ... args)
+	{
+		(*e)(args...);
+	};
+
+	return new DelegateBase<Args...>(callback, (uint64)e);
+}
+
+inline DelegateI<>* delegate(EventV* e)
+{
+	std::function<void()> callback = [e]()
+	{
+		(*e)();
+	};
+
+	return new DelegateBase<>(callback, (uint64)e);
+}
+
+template <typename ... Args>
+DelegateI<Args...>* delegate(std::function<void(Args...)> &fnCallback, uint64 hash)
+{
+	return new DelegateBase<Args...>(fnCallback, hash);
+}
+
+//template <typename ... Args>
+//DelegateI<Args&...>* delegate(std::function<void(Args&...)> &fnCallback, uint64 ident)
 //{
-//	return new ObjDelegateBase<void (TObj::*)(TArg&), DelegateI<TArg&>, TObj, TArg&>(pObj, NotifyMethod);
+//	return new DelegateBase<Args...&>(fnCallback, ident);
 //}
 
-template <class TObj, class TArg>
-DelegateI<TArg>* delegate(TObj* pObj, void (TObj::*NotifyMethod)(TArg))
+template <typename TObj, typename ... Args, typename Extra>
+DelegateI<Args&...>* extraDelegate(TObj* pObj, void (TObj::*fnCallback)(Extra, Args&...), Extra extra)
 {
-	return new ObjDelegateBase<void (TObj::*)(TArg), DelegateI<TArg>, TObj, TArg>(pObj, NotifyMethod);
-}
-
-template <class TObj>
-DelegateVI* delegate(TObj* pObj, void (TObj::*NotifyMethod)())
-{
-	return new ObjDelegateBase<void (TObj::*)(), DelegateVI, TObj, VoidEventArg>(pObj, NotifyMethod);
-}
-
-
-
-template <class TArg>
-DelegateI<TArg&>* delegate(void (*NotifyMethod)(TArg&))
-{
-	return new FunctDelegateBase<void (*)(TArg&), DelegateI<TArg&>, TArg&>(NotifyMethod);
-}
-
-template <class TArg>
-DelegateI<TArg>* delegate(void(*NotifyMethod)(TArg))
-{
-	return new FunctDelegateBase<void(*)(TArg), DelegateI<TArg>, TArg>(NotifyMethod);
-}
-
-inline DelegateVI* delegate(void (*NotifyMethod)())
-{
-	return new FunctDelegateBase<void (*)(), DelegateVI, VoidEventArg>(NotifyMethod);
-}
-
-
-
-template <class TArg>
-DelegateI<TArg&>* delegate(Event<TArg>* e)
-{
-	return new ProxieDelegateBase<TArg&, DelegateI<TArg&> >(e);
-}
-
-template <class TArg>
-DelegateI<TArg>* delegate(EventC<TArg>* e)
-{
-	return new ProxieDelegateBase<TArg, DelegateI<TArg> >(e);
-}
-
-inline DelegateVI* delegate(EventV* e)
-{
-	return new ProxieDelegateBase<VoidEventArg, DelegateVI>(e);
-}
-
-
-//template <typename TArg>
-//DelegateI<TArg>* delegateL(std::function<void (TArg&)> & f)
-//{
-//	return new LambdaDelegateBase<std::function<void (TArg&)>, TArg, DelegateI<TArg>>(f);
-//}
-//
-//template <typename TArg>
-//DelegateI<TArg>* delegateL(const std::function<void (TArg&)> &f)
-//{
-//	return new LambdaDelegateBase<const std::function<void (TArg&)>, TArg, DelegateI<TArg>>(f);
-//}
-//
-//
-//template <typename TLambda>
-//DelegateVI* delegateLV(TLambda& f)
-//{
-//	return new LambdaDelegateBase<TLambda, VoidEventArg, DelegateVI>(f);
-//}
-//
-//template <typename TLambda>
-//DelegateVI* delegateLV(const TLambda& f)
-//{
-//	return new LambdaDelegateBase<const TLambda, VoidEventArg, DelegateVI>(f);
-//}
-
-
-
-
-
-
-
-
-
-
-
-template <typename TObj, typename TArg>
-class ObjDelegate : public ObjDelegateBase<void (TObj::*)(TArg), DelegateI<TArg>, TObj, TArg>
-{
-public:
-	typedef void (TObj::*TFunct)(TArg);
-
-	ObjDelegate(TObj* t, TFunct f) 
-		: ObjDelegateBase<void (TObj::*)(TArg), DelegateI<TArg>, TObj, TArg>(t, f)
+	std::function<void(Args&...)> callback = [pObj, fnCallback, extra](Args& ... args)
 	{
-	}
+		(*pObj.*fnCallback)(extra, args...);
+	};
 
-	ObjDelegate(ObjDelegate<TObj,TArg> *oDel) 
-		: ObjDelegateBase<void (TObj::*)(TArg), DelegateI<TArg>, TObj, TArg>(oDel)
-	{
-	}
-
-protected:
-	ObjDelegate()
-	{
-	}
-};
-
-template <typename TObj>
-class ObjDelegateV : public ObjDelegateBase<void (TObj::*)(), DelegateVI, TObj, VoidEventArg>
-{
-public:
-	typedef void (TObj::*TFunct)();
-
-	ObjDelegateV(TObj* t, TFunct f) : ObjDelegateBase<void (TObj::*)(), DelegateVI, TObj, VoidEventArg>(t, f)
-	{
-	}
-
-	ObjDelegateV(ObjDelegateV<TObj> *oDel) : ObjDelegateBase<void (TObj::*)(), DelegateVI, TObj, VoidEventArg>(oDel)
-	{
-	}
-
-protected:
-	ObjDelegateV()
-	{
-	}
-};
-
-
-
-
-
-
-
-
-
-
-
-
-#ifdef _WIN32
-#pragma warning( push )
-#pragma warning( disable : 4355 )
-#endif
-
-template <typename TObj, typename TArg, typename TExtra>
-class ExtraDelegate : public ObjDelegate<ExtraDelegate<TObj, TArg, TExtra>, TArg>
-{
-public:
-	typedef void (TObj::*TFunct)(TExtra, TArg); 
-
-	ExtraDelegate(TObj* t, TExtra e, TFunct f) : ObjDelegate<ExtraDelegate<TObj, TArg, TExtra>, TArg>(this, &ExtraDelegate::callBack), m_Extra(e)
-	{
-		m_pFunct = f;
-		m_pObj = t;
-	}
-
-	void callBack(TArg a)
-	{
-		if (m_pObj && m_pFunct)
-		{
-			(*m_pObj.*m_pFunct)(m_Extra, a);
-		}
-	}
-
-	virtual DelegateI<TArg>* clone()
-	{
-		return new ExtraDelegate<TObj, TArg, TExtra>(m_pObj, m_Extra, m_pFunct);
-	}
-
-	virtual bool equals(DelegateI<TArg>* di)
-	{
-		ExtraDelegate<TObj, TArg, TExtra> *d = dynamic_cast<ExtraDelegate<TObj, TArg, TExtra>*>(di);
-
-		if (!d)
-			return false;
-
-		return ((m_pObj == d->m_pObj) && (m_pFunct == d->m_pFunct) && m_Extra == d->m_Extra);
-	}
-
-	virtual void destroy()
-	{
-		delete this;
-	}
-
-	TFunct m_pFunct;   // pointer to member function
-	TObj* m_pObj;     // pointer to object
-	TExtra m_Extra;
-};
-
-template <class TObj, class TArg, class TExtra>
-DelegateI<TArg&>* extraDelegate(TObj* pObj, void (TObj::*NotifyMethod)(TExtra, TArg&), TExtra tExtra)
-{
-	return new ExtraDelegate<TObj, TArg&, TExtra>(pObj, tExtra, NotifyMethod);
-}
-
-template <typename TObj, typename TExtra>
-class ExtraDelegateV : public ObjDelegateV<ExtraDelegateV<TObj, TExtra> >
-{
-public:
-	typedef void (TObj::*TFunct)(TExtra); 
-
-	ExtraDelegateV(TObj* t, TExtra e, TFunct f) : ObjDelegateV<ExtraDelegateV<TObj, TExtra> >(this, &ExtraDelegateV::callBack)
-	{
-		m_Extra = e;
-		m_pFunct = f;
-		m_pObj = t;
-	}
-
-	void callBack()
-	{
-		if (m_pObj && m_pFunct)
-		{
-			(*m_pObj.*m_pFunct)(m_Extra);
-		}
-	}
-
-	virtual DelegateVI* clone()
-	{
-		return new ExtraDelegateV<TObj, TExtra>(m_pObj, m_Extra, m_pFunct);
-	}
-
-	virtual bool equals(DelegateVI* di)
-	{
-		ExtraDelegateV<TObj, TExtra> *d = dynamic_cast<ExtraDelegateV<TObj, TExtra>*>(di);
-
-		if (!d)
-			return false;
-
-		return ((m_pObj == d->m_pObj) && (m_pFunct == d->m_pFunct) && m_Extra == d->m_Extra);
-	}
-
-	virtual void destroy()
-	{
-		delete this;
-	}
-
-	TFunct m_pFunct;   // pointer to member function
-	TObj* m_pObj;     // pointer to object
-	TExtra m_Extra;
-};
-
-#pragma warning( pop )
-
-template <class TObj, class TExtra>
-DelegateVI* extraDelegate(TObj* pObj, void (TObj::*NotifyMethod)(TExtra), TExtra tExtra)
-{
-	return new ExtraDelegateV<TObj, TExtra>(pObj, tExtra, NotifyMethod);
+	return new DelegateBase<Args&...>(callback, MakeUint64(pObj, (void*)&typeid(fnCallback)));
 }
 
 
