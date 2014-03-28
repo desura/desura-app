@@ -28,51 +28,64 @@ $/LicenseInfo$
 #include "managers/CVar.h"
 #include "CVarManager.h"
 
-CVar::CVar(const char* name, const char* defVal, int32 flags, CVarCallBackFn callBack) : BaseItem(name)
+namespace
 {
-	m_cbCallBack = callBack;
-	m_cbCallBackUser = nullptr;
+	std::function<bool(const CVar*, const char*)> convertToStdFunction(CVarCallBackFn callback)
+	{
+		std::function<bool(const CVar*, const char*)> fn = [callback](const CVar* cvar, const char* szVal)
+		{
+			if (callback)
+				return callback(cvar, szVal);
 
-	init(name, defVal, flags);
+			return true;
+		};
+
+		return fn;
+	}
 }
 
-CVar::CVar(const char* name, const char* defVal, int32 flags, CVarUserCallBackFn callBack) : BaseItem(name)
+CVar::CVar(const char* name, const char* defVal, int32 flags, CVarCallBackFn callBack, CVarRegTargetI *pManager)
+	: CVar(name, defVal, flags, convertToStdFunction(callBack), pManager)
 {
-	m_cbCallBackUser = callBack;
-	m_cbCallBack = nullptr;
+}
 
-	init(name, defVal, flags);
+CVar::CVar(const char* szName, const char* szDefVal, int32 nFlags, std::function<bool(const CVar*, const char*)> callback, CVarRegTargetI *pManager)
+	: BaseItem(szName)
+	, m_fnCallback(callback)
+	, m_szData(szDefVal)
+	, m_szDefault(szDefVal)
+	, m_iFlags(nFlags)
+	, m_pCVarManager(pManager)
+{
+	if (!m_pCVarManager)
+	{
+		InitCVarManger();
+		m_pCVarManager = g_pCVarRegTarget;
+	}
+
+	reg(szName);
 }
 
 CVar::~CVar()
 {
-	if (g_pCVarMang && m_bReg)
-		g_pCVarMang->UnRegCVar(this);
+	if (m_pCVarManager && m_bReg)
+		m_pCVarManager->UnRegCVar(this);
 }
 
-void CVar::init(const char* name, const char* defVal, int32 flags)
+void CVar::reg(const char* name)
 {
-	m_pUserData = nullptr;
-
-	m_szData = defVal;
-	m_szDefault = defVal;
-	m_iFlags = flags;
-
-	m_bInCallback = false;
-	m_bReg = false;
-
 #ifdef WIN32
-	if (flags&CVAR_LINUX_ONLY)
+	if (m_iFlags&CVAR_LINUX_ONLY)
 		return;
 #else
-	if (flags&CVAR_WINDOWS_ONLY)
+	if (m_iFlags&CVAR_WINDOWS_ONLY)
 		return;
 #endif	
 
-	if (!g_pCVarMang)
-		g_pCVarMang = new CVarManager();
+	if (!m_pCVarManager)
+		return;
 
-	m_bReg = g_pCVarMang->RegCVar(this);
+	m_bReg = m_pCVarManager->RegCVar(this);
 
 	if (!m_bReg)
 		Warning(gcString("Failed to register cvar [{0}] (maybe duplicate)\n", name));		
@@ -96,7 +109,7 @@ bool CVar::getBool() const
 {
 	checkOsValid();
 
-	if (Safe::stricmp(m_szData.c_str(), "true")==0 || Safe::stricmp(m_szData.c_str(), "1")==0)
+	if (m_szData == "1" || m_szData == "true" || m_szData == "T" || m_szData == "TRUE" || m_szData == "True")
 		return true;
 
 	return false;
@@ -170,13 +183,13 @@ void CVar::setValue(const char* s)
 		setValueOveride(s);
 }
 
-void CVar::setValueOveride(const char* s)
+void CVar::setValueOveride(const char* s, bool bLoadFromDb)
 {
 	if (s && strcmp(s, m_szData.c_str()) == 0)
 		return;
 
-	//we are in the call back all ready. Accept value to stop infint loop
-	if (m_bInCallback) 
+	//we are in the call back all ready. Accept value to stop infant loop
+	if (m_bInCallback || (bLoadFromDb && HasAnyFlags(m_iFlags, CFLAG_NOCALLBACKONLOAD)))
 	{
 		m_szData = s;
 		return;
@@ -186,11 +199,8 @@ void CVar::setValueOveride(const char* s)
 
 	m_bInCallback = true;
 
-	if (m_cbCallBack)
-		res = m_cbCallBack(this, s);
-
-	else if (m_cbCallBackUser)
-		res = m_cbCallBackUser(this, s, m_pUserData);
+	if (m_fnCallback)
+		res = m_fnCallback(this, s);
 
 	m_bInCallback = false;
 
@@ -218,14 +228,4 @@ void CVar::parseCommand(std::vector<gcString> &vArgList)
 		Msg(gcString("  Value: {0}\n", m_szData));	
 		Msg("\n");
 	}
-}
-
-void CVar::setUserData(void* data)
-{
-	m_pUserData = data;
-}
-
-void* CVar::getUserData()
-{
-	return m_pUserData;
 }
