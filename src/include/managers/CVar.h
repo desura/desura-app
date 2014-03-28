@@ -64,7 +64,7 @@ public:
 	//! @param callBack Function to call when value changes. Return true to accept, false to reject
 	//! @param userCallBack Function to call when value changes with user data. Return true to accept, false to reject
 	CVar(const char* name, const char* defVal, int32 flags = CFLAG_NOFLAGS, CVarCallBackFn callBack = nullptr, CVarRegTargetI *pManager = g_pCVarRegTarget);
-	CVar(const char* szName, const char* szDefVal, int32 nFlags, std::function<bool(const CVar*, const char*)> &callback, CVarRegTargetI *pManager = g_pCVarRegTarget);
+	CVar(const char* szName, const char* szDefVal, int32 nFlags, std::function<bool(const CVar*, const char*)> callback, CVarRegTargetI *pManager = g_pCVarRegTarget);
 
 	~CVar();
 

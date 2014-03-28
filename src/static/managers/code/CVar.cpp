@@ -28,19 +28,20 @@ $/LicenseInfo$
 #include "managers/CVar.h"
 #include "CVarManager.h"
 
-
-
-std::function<bool(const CVar*, const char*)> convertToStdFunction(CVarCallBackFn callback)
+namespace
 {
-	std::function<bool(const CVar*, const char*)> fn = [callback](const CVar* cvar, const char* szVal)
+	std::function<bool(const CVar*, const char*)> convertToStdFunction(CVarCallBackFn callback)
 	{
-		if (callback)
-			return callback(cvar, szVal);
+		std::function<bool(const CVar*, const char*)> fn = [callback](const CVar* cvar, const char* szVal)
+		{
+			if (callback)
+				return callback(cvar, szVal);
 
-		return true;
-	};
+			return true;
+		};
 
-	return fn;
+		return fn;
+	}
 }
 
 CVar::CVar(const char* name, const char* defVal, int32 flags, CVarCallBackFn callBack, CVarRegTargetI *pManager)
@@ -48,7 +49,7 @@ CVar::CVar(const char* name, const char* defVal, int32 flags, CVarCallBackFn cal
 {
 }
 
-CVar::CVar(const char* szName, const char* szDefVal, int32 nFlags, std::function<bool(const CVar*, const char*)> &callback, CVarRegTargetI *pManager)
+CVar::CVar(const char* szName, const char* szDefVal, int32 nFlags, std::function<bool(const CVar*, const char*)> callback, CVarRegTargetI *pManager)
 	: BaseItem(szName)
 	, m_fnCallback(callback)
 	, m_szData(szDefVal)
