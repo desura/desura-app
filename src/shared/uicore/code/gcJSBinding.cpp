@@ -32,7 +32,8 @@ $/LicenseInfo$
 
 REGISTER_JSEXTENDER(DesuraJSBinding);
 
-void FromJSObject(UserCore::Item::ItemInfoI* &item, JSObjHandle& arg)
+template <>
+void FromJSObject<UserCore::Item::ItemInfoI*>(UserCore::Item::ItemInfoI* &item, JSObjHandle& arg)
 {
 	if (arg->isObject() == false)
 		return;
