@@ -16,6 +16,7 @@ file(GLOB Sources code/util/gcBuff_test.cpp
 				  code/util/util_event.cpp
 				  code/WildCardTest.cpp
 				  code/UnitTestSetup.cpp
+				  code/CVarTest.cpp
 )
 
 

@@ -53,12 +53,12 @@ public:
 	{
 	}
 
-	void OnTestIterationStart(const UnitTest& unit_test, int iteration)
+	void OnTestIterationStart(const ::testing::UnitTest& unit_test, int iteration)
 	{
 		onStartEvent();
 	}
 
-	void OnTestIterationEnd(const UnitTest& unit_test, int iteration)
+	void OnTestIterationEnd(const ::testing::UnitTest& unit_test, int iteration)
 	{
 		onEndEvent();
 	}
@@ -136,7 +136,7 @@ static gcUnitTestWatcher* SetupTestWatcher()
 {
 	gcUnitTestWatcher* pWatcher = new gcUnitTestWatcher();
 
-	TestEventListeners& listeners = UnitTest::GetInstance()->listeners();
+	TestEventListeners& listeners = ::testing::UnitTest::GetInstance()->listeners();
 	listeners.Append(pWatcher);
 	
 #ifdef WIN32
