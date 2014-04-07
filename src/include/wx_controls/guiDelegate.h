@@ -257,6 +257,8 @@ public:
 		, m_Mode(mode)
 		, m_pObj(pObj)
 	{
+		assert(m_pObj);
+
 		if (m_pObj)
 			m_pObj->registerDelegate(this);
 	}
@@ -264,9 +266,6 @@ public:
 	~GuiDelegate()
 	{
 		cancel();
-
-		if (m_pObj)
-			m_pObj->deregisterDelegate(this);
 	}
 
 	void destroy() override
@@ -282,6 +281,11 @@ public:
 
 		if (m_pInvoker)
 			m_pInvoker->cancel();
+
+		if (m_pObj)
+			m_pObj->deregisterDelegate(this);
+
+		m_pObj = nullptr;
 	}
 
 	DelegateI<Args...>* clone() override
