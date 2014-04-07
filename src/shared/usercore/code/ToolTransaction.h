@@ -35,48 +35,46 @@ class IPCToolMain;
 
 namespace UserCore
 {
-namespace Misc
-{
+	namespace Misc
+	{
+		class ToolTransInfo
+		{
+		public:
+			ToolTransInfo(bool download, ToolTransaction* transaction, ToolManager* pToolManager);
+			~ToolTransInfo();
 
-class ToolTransInfo
-{
-public:
-	ToolTransInfo(bool download, ToolTransaction* transaction, ToolManager* pToolManager);
-	~ToolTransInfo();
+			void removeItem(DesuraId id);
 
-	void removeItem(DesuraId id);
+			void onDLComplete(DesuraId id);
+			void onDLError(DesuraId id, gcException e);
+			void onDLProgress(DesuraId id, UserCore::Misc::ToolProgress &prog);
 
-	void onDLComplete(DesuraId id);
-	void onDLError(DesuraId id, gcException e);
-	void onDLProgress(DesuraId id, UserCore::Misc::ToolProgress &prog);
+			void onINComplete();
+			void onINError(gcException &e);
 
-	void onINComplete();
-	void onINError(gcException &e);
-
-	bool isDownload();
-	bool startNextInstall(IPCToolMain* pToolMain, DesuraId &toolId);
-
-
-	void getIds(std::vector<DesuraId> &idList);
-	void startingIPC();
-	void updateTransaction(Misc::ToolTransaction* pTransaction);
+			bool isDownload();
+			bool startNextInstall(IPCToolMain* pToolMain, DesuraId &toolId);
 
 
-protected:
-	size_t getIndex(DesuraId id);
+			void getIds(std::vector<DesuraId> &idList);
+			void startingIPC();
+			void updateTransaction(Misc::ToolTransaction* pTransaction);
 
 
-private:
-	bool m_bIsDownload;
-	uint32 m_uiCompleteCount;
+		protected:
+			size_t getIndex(DesuraId id);
 
-	Misc::ToolTransaction* m_pTransaction;
-	std::vector<UserCore::Misc::ToolProgress> m_vProgress;
 
-	ToolManager* m_pToolManager;
-};
+		private:
+			bool m_bIsDownload = false;
+			uint32 m_uiCompleteCount = 0;
 
-}
+			std::shared_ptr<Misc::ToolTransaction> m_pTransaction;
+			std::vector<UserCore::Misc::ToolProgress> m_vProgress;
+
+			ToolManager* m_pToolManager = nullptr;
+		};
+	}
 }
 
 #endif //DESURA_TOOLTRANSACTION_H

@@ -464,7 +464,7 @@ private:
 
 //need to link the event on the sender end. Do not link on both ends other wise it will get in a loop
 #define LINK_EVENT( event, type ) event += new IPC::IPCDelegate< type& >( this , #event );
-#define LINK_EVENT_VOID( event ) event += new IPC::IPCDelegateV( this , #event );
+#define LINK_EVENT_VOID( event ) event += new IPC::IPCDelegate<>( this , #event );
 
 
 class IPCEventI
@@ -525,8 +525,13 @@ IPCEventI* IPCEventHandle( Event<T> *e )
 
 
 
-template <typename TArg>
-class IPCDelegate : public DelegateI<TArg>
+template <typename ... Args>
+void emptyTemplateFunction(Args && ... args)
+{
+}
+
+template <typename ... Args>
+class IPCDelegate : public DelegateI<Args...>
 {
 public:
 	IPCDelegate(IPCClass* c, const char* name)
@@ -541,36 +546,41 @@ public:
 		m_pClass = c;
 	}
 
-	virtual bool equals(DelegateI<TArg>* di)
+	bool equals(DelegateI<Args...>* di) override
 	{
-		IPCDelegate<TArg> *d = dynamic_cast<IPCDelegate<TArg>*>(di);
-
-		if (!d)
-			return false;
-
-		return ((m_uiHash == d->m_uiHash) && (m_pClass == d->m_pClass));
+		return di->getCompareHash() == getCompareHash();
 	}
 
-	virtual DelegateI<TArg>* clone()
+	DelegateI<Args...>* clone() override
 	{
-		return new IPCDelegate(m_pClass, m_uiHash);
+		return new IPCDelegate<Args...>(m_pClass, m_uiHash);
 	}
 
-	virtual void destroy()
+	void destroy() override
 	{
 		delete this;
 	}
 
-	virtual void operator()(TArg& a)
+	uint64 getCompareHash() const override
 	{
-		IPCParameterI* p = IPC::getParameter( a );
+		return MakeUint64(m_pClass, (void*)m_uiHash);
+	}
 
-		uint32 size;
-		const char* data = p->serialize(size);
+	void operator()(Args&... a)
+	{
+		std::deque<IPCParameterI*> dqParams;
+		emptyTemplateFunction<Args...>(pushParms<Args>(a, dqParams)...);
+
+		assert(dqParams.size() <= 1);
+
+		std::vector<IPCParameterI*> vParams(begin(dqParams), end(dqParams));
+
+		uint32 size = 0;
+		const char* data = serializeList(vParams, size);
 
 		char* buff = new char[size + IPCEventTriggerSIZE];
-		IPCEventTrigger *et = (IPCEventTrigger*)buff;
 
+		IPCEventTrigger *et = (IPCEventTrigger*)buff;
 		et->size = size;
 		et->eventHash = m_uiHash;
 
@@ -580,68 +590,21 @@ public:
 
 		safe_delete(buff);
 		safe_delete(data);
-		safe_delete(p);
+		safe_delete(vParams);
 	}
 
+protected:
+	template <typename U>
+	U pushParms(U &u, std::deque<IPCParameterI*> &vParams)
+	{
+		vParams.push_front(IPC::getParameter(u));
+		return u;
+	}
+
+private:
 	uint32 m_uiHash;
 	IPCClass* m_pClass;
 };
-
-
-class IPCDelegateV : public DelegateVI
-{
-public:
-	IPCDelegateV(IPCClass* c, const char* name)
-	{
-		m_uiHash = UTIL::MISC::RSHash_CSTR(name);
-		m_pClass = c;
-	}
-
-	IPCDelegateV(IPCClass* c, uint32 hash)
-	{
-		m_uiHash = hash;
-		m_pClass = c;
-	}
-
-	virtual bool equals(DelegateVI* di)
-	{
-		IPCDelegateV *d = dynamic_cast<IPCDelegateV*>(di);
-
-		if (!d)
-			return false;
-
-		return ((m_uiHash == d->m_uiHash) && (m_pClass == d->m_pClass));
-	}
-
-	virtual DelegateVI* clone()
-	{
-		return new IPCDelegateV(m_pClass, m_uiHash);
-	}
-
-	virtual void destroy()
-	{
-		delete this;
-	}
-
-	virtual void operator()()
-	{
-		char* buff = new char[IPCEventTriggerSIZE];
-		IPCEventTrigger *et = (IPCEventTrigger*)buff;
-
-		et->size = 0;
-		et->eventHash = m_uiHash;
-
-		m_pClass->sendMessage(MT_EVENTTRIGGER, (const char*)et, sizeofStruct(et) );
-
-		safe_delete(buff);
-	}
-
-	uint32 m_uiHash;
-	IPCClass* m_pClass;
-};
-
-
-
 
 
 

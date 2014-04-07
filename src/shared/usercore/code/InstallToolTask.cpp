@@ -61,14 +61,13 @@ void InstallToolTask::doRun()
 	
 	if (!getUserCore()->getToolManager()->areAllToolsInstalled(toolList))
 	{
-		UserCore::Misc::ToolTransaction* tt = new UserCore::Misc::ToolTransaction();
+		UserCore::Misc::ToolTransaction* tt = new UserCore::Misc::ToolTransaction(toolList);
 
 		tt->onCompleteEvent += delegate(this, &InstallToolTask::onINComplete);
 		tt->onErrorEvent += delegate(this, &InstallToolTask::onINError);
 		tt->onProgressEvent += delegate(this, &InstallToolTask::onINProgress);
 		tt->onStartInstallEvent += delegate(this, &InstallToolTask::onINStart);
 		tt->onStartIPCEvent += delegate(this, &InstallToolTask::onIPCStart);
-		tt->toolsList = toolList;
 
 		m_ToolTTID = getUserCore()->getToolManager()->installTools(tt);
 		gcException e(ERR_BADID, "Failed to install tools as transaction was cancelled.");

@@ -56,14 +56,17 @@ public:
 		if (!root.get() || root->isNull())
 			return nullptr;
 
-		if (g_EventMap.find("__desura__") == g_EventMap.end())
-			g_EventMap["__desura__"] = root->getValue("desura");
+		if (!g_EventMap["__root__"])
+			g_EventMap["__root__"] = root;
 
-		if (g_EventMap.find("__events__") == g_EventMap.end())
-			g_EventMap["__events__"] = g_EventMap["__desura__"]->getValue("events");
+		if (!findAndAdd("__root__", "__desura__", "desura"))
+			return nullptr;
 
-		if (g_EventMap.find("__internal__") == g_EventMap.end())
-			g_EventMap["__internal__"] = g_EventMap["__events__"]->getValue("internal");
+		if (!findAndAdd("__desura__", "__events__", "events"))
+			return nullptr;
+
+		if (!findAndAdd("__events__", "__internal__", "internal"))
+			return nullptr;
 
 		ChromiumDLL::JSObjHandle ret = g_EventMap["__internal__"]->getValue(name.c_str());
 		g_EventMap[name] = ret;
@@ -88,6 +91,22 @@ public:
 		std::lock_guard<std::mutex> al(m_EventLock);
 		s_bMapValid = bState;
 	}
+
+protected:
+	bool findAndAdd(const char* parentKey, const char* childKey, const char* childName)
+	{
+		if (!g_EventMap[parentKey])
+			return false;
+
+		if (!g_EventMap[childKey])
+			g_EventMap[childKey] = g_EventMap[parentKey]->getValue(childName);
+
+		if (!g_EventMap[childKey])
+			return false;
+
+		return true;
+	}
+
 private:
 	std::mutex m_EventLock;
 	std::map<gcString, ChromiumDLL::JSObjHandle> g_EventMap;
