@@ -49,7 +49,7 @@ $/LicenseInfo$
 
 using namespace Desurium;
 
-UINT __stdcall UploadDump(void* dumpInfo);
+UINT UploadDump(const std::string &strFile, const std::string &strUser);
 
 bool RestartDesura(const char* args);
 void GetBuildBranch(int &build, int &branch);
@@ -57,21 +57,6 @@ void GetString(const char* str, const char* input, char* out, size_t outSize);
 
 typedef bool (*UploadCrashFn)(const char* path, const char* user, int build, int branch);
 
-class DumpInfo
-{
-public:
-	DumpInfo(const char* file, const char* user, volatile bool &complete) 
-		: m_szComplete(complete)
-	{
-		m_szFile = file;
-		m_szUser = user;
-		m_szComplete = false;
-	}
-
-	const char* m_szFile;
-	const char* m_szUser;
-	volatile bool &m_szComplete;
-};
 
 void TerminateDesura()
 {
@@ -90,62 +75,64 @@ void TerminateDesura()
 		if (aProcesses[i] == curPID)
 			continue;
 
-		HANDLE hProcess = OpenProcess(PROCESS_QUERY_INFORMATION|PROCESS_TERMINATE, 0, aProcesses[i]);
+		HANDLE hProcess = OpenProcess(PROCESS_QUERY_INFORMATION | PROCESS_TERMINATE | PROCESS_VM_READ, 0, aProcesses[i]);
 
 		if (!hProcess)
 			continue;
 
 		char buffer[50] = {0};
-		GetModuleBaseName(hProcess, 0, buffer, 50);
-		
-		if(strcmp("desura.exe", buffer)==0)
-		{
-			TerminateProcess(hProcess, 0);
-			CloseHandle(hProcess);
 
-			break;
-		}
-		else
-		{
-			CloseHandle(hProcess);
-		}
+		if (GetModuleBaseName(hProcess, 0, buffer, 50) > 0 && strcmp("desura.exe", buffer) == 0)
+			TerminateProcess(hProcess, 0);
+		
+		CloseHandle(hProcess);
 	}
 }
 
+#include <thread>
 
 void ProcessDump(const char* m_lpCmdLine)
 {
-//#ifdef DEBUG
-//	BootLoaderUtil::WaitForDebugger();
-//#endif
-
 	UTIL::MISC::CMDArgs args(m_lpCmdLine);
 
-	volatile bool uploadComplete = true;
-	char file[255] = {0};
-	char user[255] = {0};
+	std::thread thread;
+	std::string file;
+	std::string user;
+
+	file.resize(255);
+	user.resize(255);
 
 	bool msgbox = args.hasArg("msgbox");
 	bool upload = (args.hasArg("noupload") == false);
 
 	if (args.hasArg("file"))
-		args.getString("file", file, 255);
+		args.getString("file", &file[0], 255);
 
 	if (args.hasArg("user"))
-		args.getString("user", user, 255);
+		args.getString("user", &user[0], 255);
 
 	if (file[0] && upload)
 	{
-		DumpInfo *di = new DumpInfo(file, user, uploadComplete);
-		CDesuraWnd::BeginThread(&UploadDump, (void*)di);
+		thread = std::thread([file, user](){
+			try
+			{
+				UploadDump(file, user);
+				TerminateDesura();
+			}
+			catch (...)
+			{
+			}
+		});
+	}
+	else
+	{
+		TerminateDesura();
 	}
 
 	if (msgbox)
 	{
 		CrashAlert ca;
 		int res = ca.DoModal();
-
-		TerminateDesura();
 
 		if (res == IDOK) //restart
 		{
@@ -157,44 +144,38 @@ void ProcessDump(const char* m_lpCmdLine)
 		}
 	}
 
-	while (uploadComplete == false)
-		Sleep(500);
+	try
+	{
+		if (thread.get_id() != std::thread::id() && thread.joinable())
+			thread.join();
+	}
+	catch (...)
+	{
+	}
 }
 
-UINT __stdcall UploadDump(void* dumpInfo)
+SharedObjectLoader g_CrashUploader;
+
+UINT UploadDump(const std::string &strFile, const std::string &strUser)
 {
 	int build = 0;
 	int branch = 0;
 
 	GetBuildBranch(build, branch);
 
-	DumpInfo* di = static_cast<DumpInfo*>(dumpInfo);
-
-	SharedObjectLoader sol;
-
 	const char* modualName = "crashuploader.dll";
 
-	if (!sol.load(modualName))
-	{
-		di->m_szComplete = true;
+	if (!g_CrashUploader.load(modualName))
 		return -1;
-	}
 
-	UploadCrashFn uploadCrash = sol.getFunction<UploadCrashFn>("UploadCrash");
+	UploadCrashFn uploadCrash = g_CrashUploader.getFunction<UploadCrashFn>("UploadCrash");
 
-	if (uploadCrash == nullptr)
-	{
-		di->m_szComplete = true;
+	if (!uploadCrash)
 		return -2;
-	}
 
-	if (!uploadCrash(di->m_szFile, di->m_szUser, build, branch))
-	{
-		di->m_szComplete = true;
+	if (!uploadCrash(strFile.c_str(), strUser.c_str(), build, branch))
 		return -3;		
-	}
 
-	di->m_szComplete = true;
 	return 0;
 }
 
