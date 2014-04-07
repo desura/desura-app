@@ -197,7 +197,7 @@ public:
 		std::lock_guard<std::mutex> guard(m_ListLock);
 
 		for (auto d : m_vDelgateList)
-			d->cancel();
+			d->cancel(false);
 
 		m_vDelgateList.clear();
 	}
@@ -273,7 +273,7 @@ public:
 		delete this;
 	}
 
-	void cancel() override
+	void cancel(bool bDeregister = true) override
 	{
 		std::lock_guard<std::mutex> guard(m_InvokerMutex);
 
@@ -282,7 +282,7 @@ public:
 		if (m_pInvoker)
 			m_pInvoker->cancel();
 
-		if (m_pObj)
+		if (m_pObj && bDeregister)
 			m_pObj->deregisterDelegate(this);
 
 		m_pObj = nullptr;
