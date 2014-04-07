@@ -1,2 +1,6 @@
-for %%i in (C:\Checkout\Desurium_Windows_NMake_Nightly_Master\build\RelWithDebInfo_Out\*.exe) do ("C:\Program Files\Microsoft SDKs\Windows\v7.1\Bin\signtool.exe" sign -f C:\buildscripts1\shared\build-secrets\code-signing\authenticode-cert.pfx -p lindenlab -t http://timestamp.comodoca.com/authenticode %%i)
-for %%i in (C:\Checkout\Desurium_Windows_NMake_Nightly_Master\build\RelWithDebInfo_Out\bin\*core.dll) do ("C:\Program Files\Microsoft SDKs\Windows\v7.1\Bin\signtool.exe" sign -f C:\buildscripts1\shared\build-secrets\code-signing\authenticode-cert.pfx -p lindenlab -t http://timestamp.comodoca.com/authenticode  %%i)
+REM BINPATH path to exe's and bin files
+REM SIGNTOOL tool to use to sign exes and dlls
+REM CERTPATH cert to use to sign
+
+for %%i in (%BINPATH%\*.exe) do ("%SIGNTOOL%" sign -f "%CERTPATH%" -p lindenlab -t http://timestamp.comodoca.com/authenticode %%i)
+for %%i in (%BINPATH%\bin\*core.dll) do ("%SIGNTOOL%" sign -f "%CERTPATH%" -p lindenlab -t http://timestamp.comodoca.com/authenticode %%i)
