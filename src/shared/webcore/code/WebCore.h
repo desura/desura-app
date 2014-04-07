@@ -47,12 +47,6 @@ namespace XML
 namespace WebCore
 {
 
-namespace Misc
-{
-	class DumpInfo;
-}
-
-
 class PostString : public std::string
 {
 public:
