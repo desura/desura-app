@@ -94,12 +94,12 @@ protected:
 	void loadCVarFromDb(CVar *var, const char* szSql, gcString strExtra);
 
 private:
-	uint32 m_uiUserId;
+	uint32 m_uiUserId = -1;
 	gcString m_szCVarDb;
 
-	bool m_bUserLoaded;
-	bool m_bWinUserLoaded;
-	bool m_bNormalLoaded;
+	bool m_bUserLoaded = false;
+	bool m_bWinUserLoaded = false;
+	bool m_bNormalLoaded = false;
 };
 
 #endif //DESURA_CVAR_MANAGER_H
