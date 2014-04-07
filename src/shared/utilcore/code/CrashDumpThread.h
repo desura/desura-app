@@ -30,7 +30,6 @@ $/LicenseInfo$
 #endif
 
 #include "util_thread\BaseThread.h"
-#include "webcore\DumpInfo.h"
 #include "SharedObjectLoader.h"
 
 #include "Event.h"
