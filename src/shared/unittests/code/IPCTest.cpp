@@ -316,6 +316,27 @@ TEST_F(IPCClassFixture, FullVoidEvent)
 
 #include <limits>
 
+namespace
+{
+	template <typename U>
+	void AssertEq(U param, U val)
+	{
+		ASSERT_EQ(param, val);
+	}
+
+	template <>
+	void AssertEq<const char*>(const char* param,const char* val)
+	{
+		ASSERT_STREQ(param, val);
+	}
+
+	template <>
+	void AssertEq<double>(double param, double val)
+	{
+		ASSERT_DOUBLE_EQ(param, val);
+	}
+}
+
 template <typename Param, typename PType>
 class IPCParameterFixture : public ::testing::TestWithParam<PType>
 {
@@ -339,26 +360,8 @@ public:
 			uint32 nUsed = p.deserialize(szBuff, nSize);
 
 			ASSERT_EQ(nUsed, nSize);
-			AssertEq<PType>(getParameterValue<PType>(&p, false));
+			AssertEq<PType>(GetParam(), getParameterValue<PType>(&p, false));
 		}
-	}
-
-	template <typename U>
-	void AssertEq(U val)
-	{
-		ASSERT_EQ(GetParam(), val);
-	}
-
-	template <>
-	void AssertEq<const char*>(const char* val)
-	{
-		ASSERT_STREQ(GetParam(), val);
-	}
-
-	template <>
-	void AssertEq<double>(double val)
-	{
-		ASSERT_DOUBLE_EQ(GetParam(), val);
 	}
 };
 
@@ -374,32 +377,32 @@ typedef IPCParameterFixture<PException, gcException> ParamTestException;
 
 TEST_P(ParamTestUint32, PUint32)
 {
-	run();
+	ParamTestUint32::run();
 }
 
 TEST_P(ParamTestInt32, PInt32)
 {
-	run();
+	ParamTestInt32::run();
 }
 
 TEST_P(ParamTestBool, PBool)
 {
-	run();
+	ParamTestBool::run();
 }
 
 TEST_P(ParamTestUint64, PUint64)
 {
-	run();
+	ParamTestUint64::run();
 }
 
 TEST_P(ParamTestDouble, PDouble)
 {
-	run();
+	ParamTestDouble::run();
 }
 
 TEST_P(ParamTestString, PString)
 {
-	run();
+	ParamTestString::run();
 }
 
 
