@@ -69,7 +69,7 @@ bool CheckCert()
 		L"bin\\usercore.dll",
 		L"bin\\webcore.dll",
 		L"bin\\mcfcore.dll",
-		L"bin\\servicecore_c.dll",
+		L"bin\\servicecore.dll",
 	};
 
 	char *moduleName[] = 
@@ -80,7 +80,7 @@ bool CheckCert()
 		"usercore.dll",
 		"webcore.dll",
 		"mcfcore.dll",
-		"servicecore_c.dll",
+		"servicecore.dll",
 	};
 
 	bool allGood = true;
@@ -117,8 +117,8 @@ bool CheckCert()
 		return false;
 
 	Safe::snprintf(curPos, curSize,	"\n"
-								"It is adviseable to do a full update instead of proceding as\n"
-								"you might be running unoffical code.\n"
+								"It is advisable to do a full update instead of proceeding as\n"
+								"you might be running unofficial code.\n"
 								"\n"
 								"Do you want to do a full update now?");
 
