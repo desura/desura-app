@@ -1,6 +1,7 @@
 include_directories(  
   ${CMAKE_CURRENT_SOURCE_DIR}/code
   ${Boost_INCLUDE_DIR}
+  ${IPC_PIPE_INCLUDE_DIRS}
 )
 
 file(GLOB Sources code/util/gcBuff_test.cpp
@@ -17,6 +18,7 @@ file(GLOB Sources code/util/gcBuff_test.cpp
 				  code/WildCardTest.cpp
 				  code/UnitTestSetup.cpp
 				  code/CVarTest.cpp
+				  code/IPCTest.cpp
 )
 
 
@@ -35,6 +37,7 @@ target_link_libraries(unittest
   util_fs
   managers
   tinyxml2
+  ipc_pipe
 )
 
 link_with_gtest(unittest)

@@ -36,79 +36,76 @@ IPC::IPCParameterI* new_void()
 	return new IPC::PVoid();
 }
 
-IPC::AutoReg<void> a = IPC::AutoReg<void>( &new_void );
+IPC::AutoReg<void> a = IPC::AutoReg<void>(&new_void);
 
 //REGTYPE( PVoid, void );
-REGTYPE( IPC::PUint32, uint8 );
-REGTYPE( IPC::PUint32, uint32 );
-REGTYPE( IPC::PInt32, int32 );
-REGTYPE( IPC::PUint64, uint64 );
-REGTYPE( IPC::PBool, bool );
-REGTYPE( IPC::PException, gcException );
-REGTYPEP( IPC::PString, char );
-REGTYPEC( IPC::PString, char const, charconst );
-REGTYPE( IPC::PDouble, double );
+REGTYPE(IPC::PUint32, uint8);
+REGTYPE(IPC::PUint32, uint32);
+REGTYPE(IPC::PInt32, int32);
+REGTYPE(IPC::PUint64, uint64);
+REGTYPE(IPC::PBool, bool);
+REGTYPE(IPC::PException, gcException);
+REGTYPEP(IPC::PString, char);
+REGTYPEC(IPC::PString, char const, charconst);
+REGTYPE(IPC::PDouble, double);
 
-IPC::IPCParameterI* new_ipc_blob ()
+IPC::IPCParameterI* new_ipc_blob()
 {
 	return new IPC::PBlob();
 }
 
-IPC::AutoReg<IPC::PBlob> ar_ipc_blob = IPC::AutoReg<IPC::PBlob>( new_ipc_blob );
+IPC::AutoReg<IPC::PBlob> ar_ipc_blob = IPC::AutoReg<IPC::PBlob>(new_ipc_blob);
 
 IPC::IPCParameterI* newParameterMacro(IPC::PBlob val)
 {
 	return new IPC::PBlob(val);
 }
 
-
-
 namespace IPC
 {
+	std::map<uint32, newFunc> *g_vParameterType = nullptr;
 
-std::map<uint32, newFunc> *g_vParameterType = nullptr;
-
-class AutoCleanUp
-{
-public:
-	~AutoCleanUp()
+	class AutoCleanUp
 	{
-		safe_delete(g_vParameterType);
-	}
-};
+	public:
+		~AutoCleanUp()
+		{
+			safe_delete(g_vParameterType);
+		}
+	};
 
-AutoCleanUp acu;
+	AutoCleanUp acu;
 
-void RegType(const std::type_info& type, newFunc funct)
-{
-	if (!g_vParameterType)
+	void RegType(const std::type_info& type, newFunc funct)
 	{
-		g_vParameterType = new std::map<uint32, newFunc>;
+		if (!g_vParameterType)
+		{
+			g_vParameterType = new std::map<uint32, newFunc>;
+		}
+
+		uint32 hash = UTIL::MISC::RSHash_CSTR(type.name());
+		(*g_vParameterType)[hash] = funct;
 	}
 
-	uint32 hash = UTIL::MISC::RSHash_CSTR(type.name());
-	(*g_vParameterType)[ hash ] = funct;
+	IPCParameterI* newParameter(uint32 type, const char* buff, uint32 size)
+	{
+		if (!g_vParameterType)
+			return new PVoid();
+
+		std::map<uint32, newFunc>::iterator it = g_vParameterType->find(type);
+
+		if (it == g_vParameterType->end())
+			return new PVoid();
+
+		IPCParameterI* p = it->second();
+		p->deserialize(buff, size);
+
+		return p;
+	}
 }
 
-IPCParameterI* newParameter(uint32 type, const char* buff, uint32 size)
-{
-	if (!g_vParameterType)
-		return new PVoid();
 
-	std::map<uint32, newFunc>::iterator it = g_vParameterType->find(type);
-
-	if (it == g_vParameterType->end())
-		return new PVoid();
-
-	IPCParameterI* p = it->second();
-	p->deserialize(buff, size);
-
-	return p;
-}
-
-
-
-
+using namespace IPC;
 
 
 
@@ -116,10 +113,13 @@ PVoid::PVoid()
 {
 }
 
-char* PVoid::serialize(uint32 &size)
+uint32 PVoid::getSerializeSize()
 {
-	size = 0;
-	return nullptr;
+	return 0;
+}
+
+void PVoid::serialize(char* szBuffer)
+{
 }
 
 uint32 PVoid::deserialize(const char* buffer, uint32 size)
@@ -133,6 +133,12 @@ uint64 PVoid::getValue(bool dup)
 }
 
 
+
+
+
+
+
+
 PBool::PBool()
 {
 	m_bValue = false;
@@ -143,20 +149,22 @@ PBool::PBool(bool val)
 	m_bValue = val;
 }
 
-char* PBool::serialize(uint32 &size)
+uint32 PBool::getSerializeSize()
 {
-	size = 1;
-	char* str = new char[1];
-	str[0] = m_bValue;
-	return str;
+	return 1;
+}
+
+void PBool::serialize(char* szBuffer)
+{
+	szBuffer[0] = m_bValue;
 }
 
 uint32 PBool::deserialize(const char* buffer, uint32 size)
 {
 	if (size >= 1)
 	{
-		m_bValue = buffer[0]?true:false;
-			return 1;
+		m_bValue = buffer[0] ? true : false;
+		return 1;
 	}
 
 	return 0;
@@ -166,6 +174,10 @@ uint64 PBool::getValue(bool dup)
 {
 	return (uint64)m_bValue;
 }
+
+
+
+
 
 
 PUint32::PUint32()
@@ -178,15 +190,17 @@ PUint32::PUint32(uint32 val)
 	m_uiValue = val;
 }
 
-char* PUint32::serialize(uint32 &size)
+uint32 PUint32::getSerializeSize()
 {
-	size = 4;
-	char* str = new char[4];
-	str[0] = m_uiValue&0xFF;
-	str[1] = (m_uiValue>>8)&0xFF;
-	str[2] = (m_uiValue>>16)&0xFF;
-	str[3] = (m_uiValue>>24)&0xFF;
-	return str;
+	return 4;
+}
+
+void PUint32::serialize(char* szBuffer)
+{
+	szBuffer[0] = m_uiValue & 0xFF;
+	szBuffer[1] = (m_uiValue >> 8) & 0xFF;
+	szBuffer[2] = (m_uiValue >> 16) & 0xFF;
+	szBuffer[3] = (m_uiValue >> 24) & 0xFF;
 }
 
 uint32 PUint32::deserialize(const char* buffer, uint32 size)
@@ -220,16 +234,17 @@ PInt32::PInt32(int32 value)
 	m_iValue = value;
 }
 
-char* PInt32::serialize(uint32 &size)
+uint32 PInt32::getSerializeSize()
 {
-	size = 4;
+	return 4;
+}
 
-	char* str = new char[4];
-	str[0] = m_iValue&0xFF;
-	str[1] = (m_iValue>>8)&0xFF;
-	str[2] = (m_iValue>>16)&0xFF;
-	str[3] = (m_iValue>>24)&0xFF;
-	return str;
+void PInt32::serialize(char* szBuffer)
+{
+	szBuffer[0] = m_iValue & 0xFF;
+	szBuffer[1] = (m_iValue >> 8) & 0xFF;
+	szBuffer[2] = (m_iValue >> 16) & 0xFF;
+	szBuffer[3] = (m_iValue >> 24) & 0xFF;
 }
 
 uint32 PInt32::deserialize(const char* buffer, uint32 size)
@@ -269,16 +284,16 @@ PUint64::PUint64(uint64 val)
 	m_uiValue = val;
 }
 
-char* PUint64::serialize(uint32 &size)
+uint32 PUint64::getSerializeSize()
 {
-	size = 8;
-	char* str = new char[8];
+	return 8;
+}
 
+void PUint64::serialize(char* szBuffer)
+{
 	uint64_u u;
 	u.num = m_uiValue;
-
-	memcpy(str, u.data, 8);
-	return str;
+	memcpy(szBuffer, u.data, 8);
 }
 
 uint32 PUint64::deserialize(const char* buffer, uint32 size)
@@ -300,6 +315,11 @@ uint64 PUint64::getValue(bool dup)
 }
 
 
+
+
+
+
+
 typedef union
 {
 	char data[8];
@@ -317,16 +337,16 @@ PDouble::PDouble(double val)
 	m_dValue = val;
 }
 
-char* PDouble::serialize(uint32 &size)
+uint32 PDouble::getSerializeSize()
 {
-	size = 8;
-	char* str = new char[8];
+	return 8;
+}
 
+void PDouble::serialize(char* szBuffer)
+{
 	double_u u;
 	u.num = m_dValue;
-
-	memcpy(str, u.data, 8);
-	return str;
+	memcpy(szBuffer, u.data, 8);
 }
 
 uint32 PDouble::deserialize(const char* buffer, uint32 size)
@@ -342,9 +362,13 @@ uint32 PDouble::deserialize(const char* buffer, uint32 size)
 	return 0;
 }
 
+
+
 uint64 PDouble::getValue(bool dup)
 {
-	return (uint64)m_dValue;
+	DoubleAndUint64 du;
+	du.d = m_dValue;
+	return du.u;
 }
 
 
@@ -352,62 +376,45 @@ uint64 PDouble::getValue(bool dup)
 
 PString::PString()
 {
-	m_szValue = nullptr;
 }
 
 PString::PString(const char* v)
 {
-	m_szValue = nullptr;
-
 	if (v)
-	{
-		size_t len = strlen(v);
-		m_szValue = new char[len+1];
-		Safe::strcpy(m_szValue, len+1, v);
-		m_szValue[len]='\0';
-	}
+		m_szValue = std::string(v);
+	else
+		m_bNull = true;
 }
 
-PString::~PString()
+uint32 PString::getSerializeSize()
 {
-	delete [] m_szValue;
+	if (m_bNull)
+		return 0;
+
+	return 4 + m_szValue.size();
 }
 
-
-
-
-char* PString::serialize(uint32 &size)
+void PString::serialize(char* szBuffer)
 {
-	if (!m_szValue)
-	{
-		size = 0;
-		return nullptr;
-	}
+	if (m_bNull)
+		return;
 
-	uint32 strsize = strlen(m_szValue);
+	uint32 strsize = m_szValue.size();
 
-	if (strsize == 0)
-	{
-		size = 0;
-		return nullptr;
-	}
+	szBuffer[0] = strsize & 0xFF;
+	szBuffer[1] = (strsize >> 8) & 0xFF;
+	szBuffer[2] = (strsize >> 16) & 0xFF;
+	szBuffer[3] = (strsize >> 24) & 0xFF;
 
-	size = strsize+4;
-
-
-	char* str = new char[strsize+4];
-
-	str[0] = strsize&0xFF;
-	str[1] = (strsize>>8)&0xFF;
-	str[2] = (strsize>>16)&0xFF;
-	str[3] = (strsize>>24)&0xFF;
-
-	memcpy(str+4, m_szValue, strsize);
-	return str;
+	if (strsize > 0)
+		memcpy(szBuffer + 4, m_szValue.c_str(), strsize);
 }
 
 uint32 PString::deserialize(const char* buffer, uint32 size)
 {
+	m_szValue = "";
+	m_bNull = true;
+
 	if (size < 4)
 		return 0;
 
@@ -416,29 +423,31 @@ uint32 PString::deserialize(const char* buffer, uint32 size)
 	if (strsize > size - 4)
 		return 0;
 
-	safe_delete(m_szValue);
-
-	m_szValue = new char[strsize+1];
-	memcpy(m_szValue, buffer+4, strsize);
-	m_szValue[strsize] = '\0';
-
-	return 4+strsize;
+	m_bNull = false;
+	m_szValue = std::string(buffer + 4, strsize);
+	return 4 + strsize;
 }
 
 
 uint64 PString::getValue(bool dup)
 {
+	if (m_bNull)
+		return 0;
+
 	if (dup)
 	{
 		char *res = nullptr;
-		Safe::strcpy(&res, m_szValue, 255);
+		Safe::strcpy(&res, m_szValue.c_str(), m_szValue.size());
 		return (uint64)res;
 	}
 	else
 	{
-		return (uint64)m_szValue;
+		return (uint64)m_szValue.c_str();
 	}
 }
+
+
+
 
 
 
@@ -457,7 +466,15 @@ PException::~PException()
 	safe_delete(exception);
 }
 
-char* PException::serialize(uint32 &size)
+uint32 PException::getSerializeSize()
+{
+	const char* msg = exception->getErrMsg();
+	uint32 msgSize = strlen(msg);
+
+	return 12 + msgSize;
+}
+
+void PException::serialize(char* szBuffer)
 {
 	uint32 e1 = exception->getErrId();
 	uint32 e2 = exception->getSecErrId();
@@ -465,28 +482,22 @@ char* PException::serialize(uint32 &size)
 	const char* msg = exception->getErrMsg();
 	uint32 msgSize = strlen(msg);
 
-	size = msgSize + 12;
+	szBuffer[0] = e1 & 0xFF;
+	szBuffer[1] = (e1 >> 8) & 0xFF;
+	szBuffer[2] = (e1 >> 16) & 0xFF;
+	szBuffer[3] = (e1 >> 24) & 0xFF;
 
-	char* str = new char[size];
+	szBuffer[4] = e2 & 0xFF;
+	szBuffer[5] = (e2 >> 8) & 0xFF;
+	szBuffer[6] = (e2 >> 16) & 0xFF;
+	szBuffer[7] = (e2 >> 24) & 0xFF;
 
-	str[0] = e1&0xFF;
-	str[1] = (e1>>8)&0xFF;
-	str[2] = (e1>>16)&0xFF;
-	str[3] = (e1>>24)&0xFF;
+	szBuffer[8] = msgSize & 0xFF;
+	szBuffer[9] = (msgSize >> 8) & 0xFF;
+	szBuffer[10] = (msgSize >> 16) & 0xFF;
+	szBuffer[11] = (msgSize >> 24) & 0xFF;
 
-	str[4] = e2&0xFF;
-	str[5] = (e2>>8)&0xFF;
-	str[6] = (e2>>16)&0xFF;
-	str[7] = (e2>>24)&0xFF;
-
-	str[8] = msgSize&0xFF;
-	str[9] = (msgSize>>8)&0xFF;
-	str[10] = (msgSize>>16)&0xFF;
-	str[11] = (msgSize>>24)&0xFF;
-
-	memcpy(&str[12], msg, msgSize);
-
-	return str;
+	memcpy(&szBuffer[12], msg, msgSize);
 }
 
 uint32 PException::deserialize(const char* buffer, uint32 size)
@@ -500,21 +511,21 @@ uint32 PException::deserialize(const char* buffer, uint32 size)
 		return 0;
 
 	e1 = buffToUint32(buffer);
-	e2 = buffToUint32(buffer+4);
-	msgSize = buffToUint32(buffer+8);
+	e2 = buffToUint32(buffer + 4);
+	msgSize = buffToUint32(buffer + 8);
 
 	if (msgSize > size - 12)
 		return 0;
 
-	msg = new char[msgSize+1];
-	memcpy(msg, buffer+12, msgSize);
+	msg = new char[msgSize + 1];
+	memcpy(msg, buffer + 12, msgSize);
 	msg[msgSize] = '\0';
 
 	safe_delete(exception);
 	exception = new gcException((ERROR_ID)e1, e2, msg);
 	safe_delete(msg);
 
-	return 12+msgSize;
+	return 12 + msgSize;
 }
 
 uint64 PException::getValue(bool dup)
@@ -596,22 +607,20 @@ PBlob::~PBlob()
 	safe_delete(m_szData);
 }
 
-char* PBlob::serialize(uint32 &size)
+uint32 PBlob::getSerializeSize()
 {
-	size = m_uiSize;
+	return 4 + m_uiSize;
+}
 
-	char *ret = new char[size+4];
-
-	ret[0] = m_uiSize&0xFF;
-	ret[1] = (m_uiSize>>8)&0xFF;
-	ret[2] = (m_uiSize>>16)&0xFF;
-	ret[3] = (m_uiSize>>24)&0xFF;
+void PBlob::serialize(char* szBuffer)
+{
+	szBuffer[0] = m_uiSize & 0xFF;
+	szBuffer[1] = (m_uiSize >> 8) & 0xFF;
+	szBuffer[2] = (m_uiSize >> 16) & 0xFF;
+	szBuffer[3] = (m_uiSize >> 24) & 0xFF;
 
 	if (m_uiSize > 0)
-		memcpy(ret+4, m_szData, size);
-
-	size+=4;
-	return ret;
+		memcpy(szBuffer + 4, m_szData, m_uiSize);
 }
 
 uint32 PBlob::deserialize(const char* buffer, uint32 size)
@@ -629,10 +638,10 @@ uint32 PBlob::deserialize(const char* buffer, uint32 size)
 	if (m_uiSize > 0)
 	{
 		m_szData = new char[m_uiSize];
-		memcpy(m_szData, buffer+4, m_uiSize);
+		memcpy(m_szData, buffer + 4, m_uiSize);
 	}
 
-	return 4+m_uiSize;
+	return 4 + m_uiSize;
 }
 
 uint64 PBlob::getValue(bool dup)
@@ -645,12 +654,6 @@ uint64 PBlob::getValue(bool dup)
 	{
 		return (uint64)this;
 	}
-}
-
-
-
-
-
 }
 
 
