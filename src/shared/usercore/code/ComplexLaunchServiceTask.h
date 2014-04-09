@@ -38,74 +38,74 @@ class IPCComplexLaunch;
 namespace UserCore
 {
 
-namespace Item
-{
-	namespace Helper
+	namespace Item
 	{
-		class InstallerHandleHelperI;
-	}
-}
-
-namespace ItemTask
-{
-
-
-class ComplexLaunchServiceTask : public BaseItemServiceTask
-{
-public:
-	ComplexLaunchServiceTask(UserCore::Item::ItemHandle *handle, bool clean, MCFBranch branch, MCFBuild build, UserCore::Item::Helper::InstallerHandleHelperI* ihh);
-	~ComplexLaunchServiceTask();
-
-	void completeStage()
-	{
-		m_bLaunch = false;
-		m_bCompleteStage=true;
+		namespace Helper
+		{
+			class InstallerHandleHelperI;
+		}
 	}
 
-	void launch()
+	namespace ItemTask
 	{
-		m_bLaunch = true;
-		m_bCompleteStage=false;
+
+
+		class ComplexLaunchServiceTask : public BaseItemServiceTask
+		{
+		public:
+			ComplexLaunchServiceTask(UserCore::Item::ItemHandle *handle, bool clean, MCFBranch branch, MCFBuild build, UserCore::Item::Helper::InstallerHandleHelperI* ihh);
+			~ComplexLaunchServiceTask();
+
+			void completeStage()
+			{
+				m_bLaunch = false;
+				m_bCompleteStage = true;
+			}
+
+			void launch()
+			{
+				m_bLaunch = true;
+				m_bCompleteStage = false;
+			}
+
+		protected:
+			bool initService();
+			void onComplete();
+
+			void onProgress(MCFCore::Misc::ProgressInfo& prog);
+			void onError(gcException &e);
+
+			bool backUp();
+			bool install();
+			bool remove();
+			bool removeAndInstall();
+
+			void completeRemove();
+			void completeInstall();
+
+			gcString getFullMcf();
+			void onFinish();
+
+			void onTrueComplete();
+			bool isFilesToRestore();
+
+		private:
+			bool m_bClean;
+			bool m_bHashMissMatch;
+
+			uint8 m_iTier;
+			uint8 m_iMode;
+
+			DesuraId m_iRemoveId;
+
+			IPCComplexLaunch* m_pIPCIM;
+
+			bool m_bCompleteStage;
+			bool m_bLaunch;
+
+			UserCore::Item::Helper::InstallerHandleHelperI* m_pIHH;
+		};
 	}
-
-protected:
-	bool initService();
-	void onComplete();
-
-	void onProgress(MCFCore::Misc::ProgressInfo& prog);
-	void onError(gcException &e);
-
-	bool backUp();
-	bool install();
-	bool remove();
-	bool removeAndInstall();
-
-	void completeRemove();
-	void completeInstall();
-
-	gcString getFullMcf();
-	void onFinish();
-
-	void onTrueComplete();
-
-private:
-	bool m_bClean;
-	bool m_bHashMissMatch;
-
-	uint8 m_iTier;
-	uint8 m_iMode;
-
-	DesuraId m_iRemoveId;
-
-	IPCComplexLaunch* m_pIPCIM;
-
-	bool m_bCompleteStage;
-	bool m_bLaunch;
-
-	UserCore::Item::Helper::InstallerHandleHelperI* m_pIHH;
-};
-
-}
 }
 
 #endif //DESURA_COMPLEXLAUNCHSERVICE_H

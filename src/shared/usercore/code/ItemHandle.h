@@ -36,6 +36,8 @@ $/LicenseInfo$
 #include "util_thread/BaseThread.h"
 #include "usercore/ToolManagerI.h"
 
+#include <memory>
+
 class BaseHandler;
 
 namespace UserCore
@@ -57,6 +59,7 @@ namespace UserCore
 			GI_FLAG_EXISTING = 1<<1,
 			GI_FLAG_UPDATE = 1<<2,
 			GI_FLAG_TEST = 1<<3,
+			GI_FLAG_LAUNCH = 1<<4,
 		};
 	}
 
@@ -129,6 +132,7 @@ namespace UserCore
 		{
 		public:
 			ItemHandle(ItemInfo* itemInfo, UserCore::UserI* user);
+			ItemHandle(std::shared_ptr<UserCore::Item::ItemInfo> &itemInfo, UserCore::UserI* user);
 			~ItemHandle();
 
 			void setFactory(Helper::ItemHandleFactoryI* factory) override;
@@ -226,6 +230,8 @@ namespace UserCore
 			//used to get around the is in stage check
 			bool installPrivate(MCFBranch branch, MCFBuild build, UserCore::ItemTask::GI_FLAGS flags);
 
+			bool isCurrentlyInstalledGameOrMod();
+
 		protected:
 			Event<ITEM_STAGE> onChangeStageEvent;
 			Event<gcException> onErrorEvent;
@@ -269,7 +275,7 @@ namespace UserCore
 
 			std::recursive_mutex m_ThreadMutex;
 			UserCore::Item::ItemThread *m_pThread = nullptr;
-			UserCore::Item::ItemInfo* m_pItemInfo = nullptr;
+			std::shared_ptr<UserCore::Item::ItemInfo> m_pItemInfo;
 			UserCore::UserI* m_pUserCore = nullptr;
 
 			Helper::ItemHandleFactoryI* m_pFactory = nullptr;
