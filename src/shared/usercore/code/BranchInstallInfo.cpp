@@ -464,11 +464,11 @@ UserCore::Item::Misc::ExeInfoI* BranchInstallInfo::getActiveExe()
 
 	if (!ei)
 	{
-		uint32 rank = -1;
+		uint32 rank = 0;
 
 		for (auto exe : m_vExeList)
 		{
-			if (exe->m_uiRank > rank)
+			if (!ei || exe->m_uiRank > rank)
 			{
 				ei = exe;
 				rank = exe->m_uiRank;
