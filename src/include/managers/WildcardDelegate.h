@@ -50,9 +50,6 @@ public:
 	~WildCardDelegate()
 	{
 		cancel();
-
-		if (m_pObj)
-			m_pObj->deregisterDelegate(this);
 	}
 
 	void operator()(WCSpecialInfo& a) override
@@ -90,7 +87,7 @@ public:
 		delete this;
 	}
 
-	void cancel() override
+	void cancel(bool bDeregister = true) override
 	{
 		std::lock_guard<std::mutex> guard(m_InvokerMutex);
 
@@ -98,6 +95,11 @@ public:
 
 		if (m_pInvoker)
 			m_pInvoker->cancel();
+
+		if (m_pObj && bDeregister)
+			m_pObj->deregisterDelegate(this);
+
+		m_pObj = nullptr;
 	}
 
 	bool equals(DelegateI<WCSpecialInfo&>* di) override

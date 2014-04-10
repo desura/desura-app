@@ -92,6 +92,8 @@ public:
 	void setUserData(void* data);
 	void* getUserData();
 
+	void deregister();
+
 protected:
 	void setValueOveride(const char* s, bool bLoadFromDb = false);
 	const char* getExitString();

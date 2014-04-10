@@ -45,11 +45,33 @@ public:
 
 	bool Create(Desurium::CDesuraWnd *pParent, const Desurium::CRect& rect, UINT nID, DWORD dwStyle = WS_VISIBLE) override;
 
-	void setTotal(int total){m_iTotal=total;}
 	void setDone(int done);
 	int getDone();
-	void setProgress(int prog){m_iProg = prog;refresh();}
-	void setMode(int mode){m_iMode = mode; m_iProg = 0;refresh();}
+
+	void setProgress(int prog)
+	{
+		if (prog < 0)
+			prog = 0;
+
+		m_iProg = prog;
+		refresh();
+	}
+
+	void setMode(int mode)
+	{
+		m_iMode = mode; 
+		m_iProg = 0;
+		m_iTotal = 0;
+		refresh();
+	}
+
+	void setTotal(int total)
+	{
+		if (total < 0)
+			total = 0;
+
+		m_iTotal = total;
+	}
 
 	void refresh()
 	{

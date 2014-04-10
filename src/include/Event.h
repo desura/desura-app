@@ -86,7 +86,7 @@ protected:
 class InvokeI
 {
 public:
-	virtual void cancel()=0;
+	virtual void cancel(bool bDeregister = true) = 0;
 
 protected:
 	virtual ~InvokeI(){}

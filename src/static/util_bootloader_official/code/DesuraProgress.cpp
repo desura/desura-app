@@ -285,10 +285,10 @@ void DesuraProgress::OnPaint()
 	{
 		process = (m_iMode == MODE_DOWNLOADING)?"Downloading":"Installing";
 
-		if (m_iTotal == 0)
-			_snprintf_s(progress, 255, _TRUNCATE, "%0d%%", m_iProg);
+		if (m_iMode == MODE_DOWNLOADING)
+			_snprintf_s(progress, 255, _TRUNCATE, "%.2f/%.2f MiB", getDone() / 1024.0 / 1024.0, m_iTotal / 1024.0 / 1024.0);
 		else
-			_snprintf_s(progress, 255, _TRUNCATE, "%.2f/%.2f MiB", getDone()/1024.0/1024.0, m_iTotal/1024.0/1024.0);
+			_snprintf_s(progress, 255, _TRUNCATE, "%0d%%", m_iProg);
 	}
 
 	CSize tsize = memDC.GetOutputTextExtent(progress, strlen(progress));

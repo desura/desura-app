@@ -256,14 +256,7 @@ bool MiniDumpGenerator::dumpreport(const wchar_t* file)
 	STARTUPINFOW StartupInfo = {0};
 
 	wchar_t launchArg[512] = {0};
-
-#ifdef _DEBUG
-	const wchar_t* exeName = L"dumpgen-d.exe";
-#else
-	const wchar_t* exeName = L"dumpgen.exe";
-#endif
-
-	_snwprintf_s(launchArg, 512, _TRUNCATE, L"%s -crashreport -file \"%s\"", exeName, file);
+	_snwprintf_s(launchArg, 512, _TRUNCATE, L"dumpgen.exe -crashreport -file \"%s\"", file);
 
 	if (m_bShowMsgBox)
 		wcscat_s(launchArg, 512, L" -msgbox");

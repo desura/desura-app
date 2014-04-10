@@ -64,7 +64,6 @@ namespace WebCore
 
 	namespace Misc
 	{
-		class DumpInfo;
 		class DownloadImageInfo;
 	}
 

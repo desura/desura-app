@@ -274,7 +274,7 @@ bool OnQaTestingChange(CVar* var, const char* val)
 	return true;
 }
 
-CVar gc_qa_testing("gc_qa_testing", "0", CFLAG_USER|CFLAG_NOCALLBACKONLOAD, (CVarCallBackFn)&OnQaTestingChange);
+CVar gc_qa_testing("gc_qa_testing", "0", CFLAG_NOCALLBACKONLOAD, (CVarCallBackFn)&OnQaTestingChange);
 
 CONCOMMAND(cc_forcetestingupdate, "force_testing_update")
 {
