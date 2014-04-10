@@ -414,7 +414,7 @@ ProcessResult BranchInstallInfo::processSettings(const XML::gcXMLElement &setNod
 			if (iPathRes)
 				setPath(iPathRes);
 			else
-				Warning(gcString("ItemInfo: Install path for {0} is nullptr.\n"));
+				Warning("ItemInfo: Install path for {0} is nullptr.\n");
 		}
 		catch (gcException &)
 		{
@@ -492,7 +492,7 @@ void BranchInstallInfo::setActiveExe(const char* name)
 		}
 	}
 
-	Warning(gcString("Failed to set active exe to [{0}]\n", name));
+	Warning("Failed to set active exe to [{0}]\n", name);
 }
 
 void BranchInstallInfo::getExeList(std::vector<UserCore::Item::Misc::ExeInfoI*> &list)

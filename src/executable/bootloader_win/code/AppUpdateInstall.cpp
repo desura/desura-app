@@ -93,6 +93,8 @@ AppUpdateInstall::~AppUpdateInstall()
 
 void AppUpdateInstall::startService()
 {
+	gcTrace("");
+
 	uint32 res = UTIL::WIN::queryService(SERVICE_NAME);
 
 	if (res != SERVICE_STATUS_STOPPED)
@@ -128,11 +130,15 @@ void AppUpdateInstall::startService()
 
 void AppUpdateInstall::stopService()
 {
+	gcTrace("");
+
 	UTIL::WIN::stopService(SERVICE_NAME);
 }
 
 void AppUpdateInstall::onIPCDisconnect()
 {
+	gcTrace("");
+
 	m_pPrivates->m_iResult = 4;
 	SetEvent(m_pEvent);
 }
@@ -198,6 +204,8 @@ int AppUpdateInstall::run()
 
 void AppUpdateInstall::onError(gcException& e)
 {
+	gcTrace("Error: {0}", e);
+
 	if (m_pPrivates->m_bTestMode)
 	{
 		m_pPrivates->m_iResult = e.getErrId();
@@ -224,6 +232,8 @@ void AppUpdateInstall::onProgress(uint32& p)
 
 void AppUpdateInstall::onComplete()
 {
+	gcTrace("");
+
 	SetEvent(m_pEvent);
 	m_pPrivates->m_iResult = 0;
 }

@@ -40,7 +40,8 @@ $/LicenseInfo$
   #include <Shellapi.h>
 #endif
 
-void FromJSObject(UserCore::Misc::UploadInfoThreadI* &upload, JSObjHandle& arg)
+template <>
+void FromJSObject<UserCore::Misc::UploadInfoThreadI*>(UserCore::Misc::UploadInfoThreadI* &upload, JSObjHandle& arg)
 {
 	if (arg->isObject())
 		upload = arg->getUserObject<UserCore::Misc::UploadInfoThreadI>();

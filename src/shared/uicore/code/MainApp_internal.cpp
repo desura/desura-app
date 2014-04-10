@@ -60,12 +60,16 @@ CONCOMMAND(shownews, "shownews")
 
 void MainApp::handleInternalLink(const char* link)
 {
+	gcTrace("Link: {0}", link);
+
 	gcString strLink(link);
 	onInternalLinkStrEvent(strLink);
 }
 
 void MainApp::handleInternalLink(DesuraId id, uint8 action, const LinkArgs& args)
 {
+	gcTrace("Id: {0}, Action: {1}", id, action);
+
 	InternalLinkInfo ili;
 
 	ili.action = action;
@@ -187,7 +191,7 @@ void MainApp::showProfile(DesuraId id, const LinkArgs &args)
 	}
 	else
 	{	
-		Warning(gcString("Failed to locate item {0} to show profile.\n", id.toInt64()));
+		Warning("Failed to locate item {0} to show profile.\n", id.toInt64());
 	}
 }
 
@@ -201,7 +205,7 @@ void MainApp::showDevProfile(DesuraId id)
 	}
 	else
 	{	
-		Warning(gcString("Failed to locate item {0} to show dev profile.\n", id.toInt64()));
+		Warning("Failed to locate item {0} to show dev profile.\n", id.toInt64());
 	}
 }
 
@@ -224,26 +228,16 @@ void MainApp::showNews()
 		return;
 	}
 
-	// std::vector<T> initialized empty
-	std::vector<UserCore::Misc::NewsItem*> news_items_vec;
+	std::vector<std::shared_ptr<UserCore::Misc::NewsItem>> news_items_vec;
+	std::lock_guard<std::mutex> guard(m_NewsLock);
 
-	m_NewsLock.lock();
-
-	if ( gc_enable_news_popups.getBool())
-	{
-		// popups allowed so point to list of news items
+	if (gc_enable_news_popups.getBool())
 		news_items_vec = m_vNewsItems;
-	}
 
 	m_pInternalLink->showNews(news_items_vec, m_vGiftItems);
 
-	safe_delete(m_vNewsItems);
-	m_vNewsItems.resize(0);
-
-	safe_delete(m_vGiftItems);
-	m_vGiftItems.resize(0);
-
-	m_NewsLock.unlock();
+	m_vNewsItems.clear();
+	m_vGiftItems.clear();
 }
 
 void MainApp::changeAccountState(DesuraId id)
@@ -252,7 +246,7 @@ void MainApp::changeAccountState(DesuraId id)
 
 	if (!item)
 	{
-		Warning(gcString("Could not find item {0} for account status change!", id.toInt64()));
+		Warning("Could not find item {0} for account status change!", id.toInt64());
 		return;
 	}
 

@@ -55,7 +55,7 @@ public:
 	void closeForm(int32 wxId);
 
 	void closeAll();
-	void showNews(std::vector<UserCore::Misc::NewsItem*> &newsItems, std::vector<UserCore::Misc::NewsItem*> &giftItems);
+	void showNews(const std::vector<std::shared_ptr<UserCore::Misc::NewsItem>> &newsItems, const std::vector<std::shared_ptr<UserCore::Misc::NewsItem>> &giftItems);
 	void showAppUpdate(uint32 version);
 
 protected:

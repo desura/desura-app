@@ -29,104 +29,35 @@ $/LicenseInfo$
 #pragma once
 #endif
 
+#include <functional>
+#include "LogBones.h"
+
 class Color;
-
-typedef void (* MsgCallBackFn)(const char*, Color*);
-typedef void (* MsgCallBackWFn)(const wchar_t*, Color*);
-
-typedef void (* SpecialCallBackFn)(const char*);
-typedef void (* SpecialCallBackWFn)(const wchar_t*);
-
 
 
 class LogCallback
 {
 public:
-	LogCallback()
-	{
-		m_cbMsg = nullptr;
-		m_cbMsgW = nullptr;
-		m_cbWarn = nullptr;
-		m_cbWarnW = nullptr;
-		m_cbDebug = nullptr;
-		m_cbDebugW = nullptr;
-	}
+	typedef std::function<void(MSG_TYPE, const char*, Color*, std::map<std::string, std::string>*)> MessageFn;
 
-	void Msg(const char* msg, Color* col = nullptr)
+	void Message(MSG_TYPE type, const char* msg, Color* col = nullptr, std::map<std::string, std::string>* mpArgs = nullptr)
 	{
 		if (m_cbMsg)
-			m_cbMsg(msg, col);
+			m_cbMsg(type, msg, col, mpArgs);
 	}
 
-	void Msg_W(const wchar_t* msg, Color* col = nullptr)
-	{
-		if (m_cbMsgW)
-			m_cbMsgW(msg, col);
-	}
-
-	void Warn(const char* msg)
-	{
-		if (m_cbWarn)
-			m_cbWarn(msg);
-	}
-
-	void Warn_W(const wchar_t* msg)
-	{
-		if (m_cbWarnW)
-			m_cbWarnW(msg);
-	}
-
-	void Debug(const char* msg)
-	{
-		if (m_cbDebug)
-			m_cbDebug(msg);
-	}
-
-	void Debug_W(const wchar_t* msg)
-	{
-		if (m_cbDebugW)
-			m_cbDebugW(msg);
-	}
-
-	void RegMsg(MsgCallBackFn cb)
+	void RegMsg(MessageFn &cb)
 	{
 		m_cbMsg = cb;
 	}
 
-	void RegMsg(MsgCallBackWFn cb)
+	void Reset()
 	{
-		m_cbMsgW = cb;
-	}
-
-	void RegWarn(SpecialCallBackFn cb)
-	{
-		m_cbWarn = cb;
-	}
-
-	void RegWarn(SpecialCallBackWFn cb)
-	{
-		m_cbWarnW = cb;
-	}
-
-	void RegDebug(SpecialCallBackFn cb)
-	{
-		m_cbDebug = cb;
-	}	
-
-	void RegDebug(SpecialCallBackWFn cb)
-	{
-		m_cbDebugW = cb;
+		m_cbMsg = MessageFn();
 	}
 
 private:
-	MsgCallBackFn		m_cbMsg;
-	MsgCallBackWFn		m_cbMsgW;
-	
-	SpecialCallBackFn	m_cbWarn;
-	SpecialCallBackWFn	m_cbWarnW;
-
-	SpecialCallBackFn	m_cbDebug;
-	SpecialCallBackWFn	m_cbDebugW;
+	MessageFn m_cbMsg;
 };
 
 #endif //DESURA_LOG_CALLBACK_H

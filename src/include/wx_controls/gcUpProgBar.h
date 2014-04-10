@@ -24,7 +24,7 @@ $/LicenseInfo$
 */
 
 #ifndef DESURA_GCUPPROGBAR_H
-#define DESURA__GCUPPROGBAR_H
+#define DESURA_GCUPPROGBAR_H
 #ifdef _WIN32
 #pragma once
 #endif

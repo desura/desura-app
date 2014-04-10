@@ -24,23 +24,24 @@ $/LicenseInfo$
 */
 
 #include "StdAfx.h"
+
+#include <map>
 #ifdef __MINGW32__
 #include <string>
 #else
 #include <xstring>
 #endif
 
-class Color;
+#include "Tracer.h"
 
-void PrintfMsg(const char* format, ...)
+void LogMsg(MSG_TYPE type, std::string msg, Color* col, std::map<std::string, std::string> *mpArgs);
+#include "DesuraPrintFRedirect.h"
+
+
+void LogMsg(MSG_TYPE type, std::string msg, Color* col, std::map<std::string, std::string> *mpArgs)
 {
+	if (type == MT_TRACE)
+		g_Tracer.trace(msg, mpArgs);
+	else
+		fprintf(stdout, "%s", msg.c_str());
 }
-
-void LogMsg(int type, std::string msg, Color* col)
-{
-}
-
-void LogMsg(int type, std::wstring msg, Color* col)
-{
-}
-

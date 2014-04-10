@@ -599,7 +599,7 @@ void VerifyServiceTask::onError(gcException& e)
 {
 	m_bError = true;
 
-	Warning(gcString("Error in verify install: {0}\n", e));
+	Warning("Error in verify install: {0}\n", e);
 
 	auto pItem = getItemHandle()->getInternal();
 

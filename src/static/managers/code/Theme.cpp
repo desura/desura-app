@@ -65,7 +65,7 @@ Color Theme::getColor(const char* name, const char* id)
 
 	if (strcmp(name, "default")!=0)
 	{
-		Warning(gcString("Cant find color {0} for control {1}, getting default\n", id, name));
+		Warning("Cant find color {0} for control {1}, getting default\n", id, name);
 		return getColor("default", id);
 	}
 

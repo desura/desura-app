@@ -70,9 +70,13 @@ public:
 	//!
 	void setDumpLevel(unsigned char level);
 	
-	//! Sets a callback function when a crash occures
+	//! Sets a callback function when a crash occurs
 	//!
 	void setCrashCallback(CrashCallbackFn callback);
+
+	//! Sets the tracer to dump on crash
+	//!
+	void setTracerSharedMemoryName(const CHAR_T *pTracer);
 
 #ifdef WIN32
 	virtual bool filter(FilterWrapper* fw);
@@ -90,9 +94,10 @@ private:
 	bool m_bShowMsgBox;
 	bool m_bNoUpload;
 
-	CHAR_T *m_szUser;
+	CHAR_T *m_szUser = nullptr;
+	CHAR_T *m_szTracerMemoryName = nullptr;
+
 	CrashCallbackFn m_pCrashCallback;
-	
 	static google_breakpad::ExceptionHandler *s_pExceptionHandler;
 };
 

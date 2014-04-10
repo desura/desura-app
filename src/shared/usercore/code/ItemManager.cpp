@@ -111,7 +111,7 @@ ItemManager::ItemManager(User* user) : BaseManager(true)
 		}
 		catch (std::exception &e)
 		{
-			Warning(gcString("Failed to migrate old Item Info DB: {0}", e.what()));
+			Warning("Failed to migrate old Item Info DB: {0}", e.what());
 		}
 
 		UTIL::FS::delFile(oldPath);
@@ -582,6 +582,7 @@ void ItemManager::getNewItems(std::vector<UserCore::Item::ItemInfoI*> &rList)
 
 void ItemManager::removeItem(DesuraId id)
 {
+	gcTrace("ItemId {0}", id);
 	UserCore::Item::ItemInfo* item = findItemInfoNorm(id);
 
 	if (!item)
@@ -614,11 +615,14 @@ void ItemManager::removeItem(DesuraId id)
 
 void ItemManager::retrieveItemInfoAsync(DesuraId id, bool addToAccount)
 {
+	gcTrace("ItemId {0}", id);
 	m_pUser->m_pThreadPool->queueTask(new UserCore::Task::GatherInfoTask(m_pUser, id, addToAccount));
 }
 
 void ItemManager::retrieveItemInfo(DesuraId id, uint32 statusOveride, WildcardManager* pWildCard, MCFBranch mcfBranch, MCFBuild mcfBuild, bool reset)
 {
+	gcTrace("ItemId {0}", id);
+
 	assert(m_pUser->m_pWebCore);
 
 	XML::gcXMLDocument doc;
@@ -832,7 +836,7 @@ void ItemManager::loadDbItems()
 	}
 	catch (std::exception &e)
 	{
-		Warning(gcString("Failed to load items from db: {0}\n", e.what()));
+		Warning("Failed to load items from db: {0}\n", e.what());
 	}
 
 	loadFavList();
@@ -866,7 +870,7 @@ void ItemManager::saveDbItems(bool fullSave)
 	}
 	catch (std::exception &e)
 	{
-		Warning(gcString("Failed to save items to db: {0}\n", e.what()));
+		Warning("Failed to save items to db: {0}\n", e.what());
 	}
 }
 
@@ -991,6 +995,7 @@ void ItemManager::generateInfoMaps(const XML::gcXMLElement &gamesNode, InfoMaps*
 
 UserCore::Item::ItemInfo* ItemManager::createNewItem(DesuraId pid, DesuraId id, ParseInfo& pi)
 {
+	gcTrace("ItemId {0}", id);
 	UserCore::Item::ItemInfo* temp = new UserCore::Item::ItemInfo(m_pUser, id, pid);
 	UserCore::Item::ItemHandle* handle = new UserCore::Item::ItemHandle(temp, m_pUser);
 
@@ -1009,7 +1014,7 @@ UserCore::Item::ItemInfo* ItemManager::createNewItem(DesuraId pid, DesuraId id, 
 	}
 	catch (gcException &except)
 	{
-		Warning(gcString("Parse XML failed on item with error: {0}\n", except));
+		Warning("Parse XML failed on item with error: {0}\n", except);
 		safe_delete(temp);
 	}
 
@@ -1249,6 +1254,7 @@ void ItemManager::parseModXml(UserCore::Item::ItemInfo* parent, DesuraId id, Par
 
 void ItemManager::setFavorite(DesuraId id, bool fav)
 {
+	gcTrace("ItemId {0}, Fav {1}", id, fav);
 	sqlite3x::sqlite3_connection db(getItemInfoDb(m_szAppPath.c_str()).c_str());
 
 	try
@@ -1646,7 +1652,7 @@ void ItemManager::saveItem(UserCore::Item::ItemInfoI* pItem)
 	}
 	catch (std::exception &e)
 	{
-		Warning(gcString("Failed to save item to db: {0}\n", e.what()));
+		Warning("Failed to save item to db: {0}\n", e.what());
 	}
 }
 

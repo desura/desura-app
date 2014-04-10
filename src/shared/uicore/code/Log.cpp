@@ -34,7 +34,7 @@ $/LicenseInfo$
 #include "LogBones.cpp"
 
 
-static Console* logForm;
+static Console* g_pConsole;
 
 extern bool admin_cb(CVar* var, const char* val);
 
@@ -50,79 +50,26 @@ CVar admin_developer("admin_developer", "0", CFLAG_ADMIN|CFLAG_NOSAVE, (CVarCall
 #endif
 
 
-
-
-void DESURA_Msg(const char* msg, Color *col = nullptr)
-{
-	if (logForm)
-		logForm->appendText(msg, col?*col:Color(0));
-}
-
-void DESURA_Msg(const wchar_t* msg, Color *col = nullptr)
-{
-	if (logForm)
-		logForm->appendText(msg, col?*col:Color(0));
-}
-
-void DESURA_Warn(const char* msg)
-{
-	if (logForm)
-		logForm->appendText(msg, Color(0xFF000000));
-
-	if (gc_showerror.getBool())
-		ShowLogForm(false);
-}
-
-void DESURA_Warn(const wchar_t* msg)
-{
-	if (logForm)
-		logForm->appendText(msg, Color(0xFF000000));
-
-	if (gc_showerror.getBool())
-		ShowLogForm(false);
-}
-
-void DESURA_Debug(const char* msg)
-{
-	if (logForm && gc_debug.getBool())
-		logForm->appendText(msg, Color(0x0000FF00));
-}
-
-void DESURA_Debug(const wchar_t* msg)
-{
-	if (logForm && gc_debug.getBool())
-		logForm->appendText(msg, Color(0x0000FF00));
-}
-
-
-
-
-
-
-
-
-
-
 void HideLogForm()
 {
-	if (!logForm)
+	if (!g_pConsole)
 		 return;
 	
-	logForm->Show(false);
+	g_pConsole->Show(false);
 }
 
 void ShowLogForm(bool forced)
 {
-	if (!logForm)
+	if (!g_pConsole)
 		 return;
 	
 	if (!g_pMainApp->isLoggedIn() && !g_pMainApp->isOffline())
 		return;
 
-	if (!forced && logForm->IsShownOnScreen())
+	if (!forced && g_pConsole->IsShownOnScreen())
 		return;
 
-	logForm->postShowEvent();
+	g_pConsole->postShowEvent();
 }
 
 extern "C"
@@ -136,31 +83,55 @@ extern "C"
 
 void LoggingapplyTheme()
 {
-	if (!logForm)
+	if (!g_pConsole)
 		 return;
 
-	logForm->applyTheme();
+	g_pConsole->applyTheme();
 }
 
 void InitLogging()
 {
-	if (logForm)
-		safe_delete(logForm);
+	LogCallback::MessageFn messageFn = [&](MSG_TYPE type, const char* szMessage, Color *pColor, std::map<std::string, std::string> *pmArgs)
+	{
+		if (type == MT_TRACE)
+		{
+			Console::trace(szMessage, pmArgs);
+			return;
+		}
 
-	logForm = new Console(nullptr);
-	
+		if (!g_pConsole)
+			return;
+
+		if (type == MT_MSG)
+		{
+			g_pConsole->appendText(szMessage, pColor ? *pColor : Color(0));
+		}
+		else if (type == MT_WARN)
+		{
+			g_pConsole->appendText(szMessage, Color(0xFF000000));
+
+			if (gc_showerror.getBool())
+				ShowLogForm(false);
+		}
+		else if (type == MT_DEBUG)
+		{
+			if (gc_debug.getBool())
+				g_pConsole->appendText(szMessage, Color(0x0000FF00));
+		}
+	};
+
+
+	if (g_pConsole)
+		safe_delete(g_pConsole);
+
+	g_pConsole = new Console(nullptr);
 
 	Msg("UICore Logging Started\n");
 
 	safe_delete(g_pLogCallback);
-	g_pLogCallback = new LogCallback();
 
-	g_pLogCallback->RegMsg((MsgCallBackFn)&DESURA_Msg);
-	g_pLogCallback->RegMsg((MsgCallBackWFn)&DESURA_Msg);
-	g_pLogCallback->RegWarn((SpecialCallBackFn)&DESURA_Warn);
-	g_pLogCallback->RegWarn((SpecialCallBackWFn)&DESURA_Warn);
-	g_pLogCallback->RegDebug((SpecialCallBackFn)&DESURA_Debug);
-	g_pLogCallback->RegDebug((SpecialCallBackWFn)&DESURA_Debug);
+	g_pLogCallback = new LogCallback();
+	g_pLogCallback->RegMsg(messageFn);
 
 	RegDLLCB_MCF(g_pLogCallback);
 	RegDLLCB_WEBCORE(g_pLogCallback);
@@ -169,13 +140,13 @@ void InitLogging()
 
 void RegLogWithWindow()
 {
-	GetWindowManager().registerWindow(logForm);
+	GetWindowManager().registerWindow(g_pConsole);
 }
 
 void DestroyLogging()
 {
-	logForm->Destroy();
-	logForm = nullptr;
+	g_pConsole->Destroy();
+	g_pConsole = nullptr;
 
 	RegDLLCB_MCF(nullptr);
 	RegDLLCB_WEBCORE(nullptr);

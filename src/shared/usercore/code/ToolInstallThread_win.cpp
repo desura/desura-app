@@ -76,6 +76,7 @@ bool ToolInstallThread::preInstallStart()
 
 void ToolInstallThread::onPipeDisconnect()
 {
+	gcTrace("");
 	m_MapLock.lock();
 	
 	gcException e(ERR_PIPE, "Pipe to Tool Install Helper Disconnected. Failed to install tools.");
@@ -97,6 +98,7 @@ void ToolInstallThread::onPipeDisconnect()
 
 void ToolInstallThread::startIPC()
 {
+	gcTrace("");
 	if (m_pIPCClient)
 		return;
 

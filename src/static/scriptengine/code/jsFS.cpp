@@ -27,7 +27,8 @@ $/LicenseInfo$
 #include "Common.h"
 #include "jsFS.h"
 
-void FromJSObject(UTIL::FS::FileHandle* &jsItem, JSObjHandle& arg)
+template <>
+void FromJSObject<UTIL::FS::FileHandle*>(UTIL::FS::FileHandle* &jsItem, JSObjHandle& arg)
 {
 	if (arg->isObject())
 		jsItem = arg->getUserObject<UTIL::FS::FileHandle>();
@@ -120,7 +121,7 @@ void* FileSystemJSBinding::OpenFileForWrite(gcString file)
 	catch (gcException &e)
 	{
 		safe_delete(handle);
-		Warning(gcString("Failed to to open file in scriptcore: {0}\n", e));
+		Warning("Failed to to open file in scriptcore: {0}\n", e);
 	}
 
 	return nullptr;
@@ -138,7 +139,7 @@ bool FileSystemJSBinding::WriteFile(UTIL::FS::FileHandle* handle, gcString strin
 	}
 	catch (gcException &e)
 	{
-		Warning(gcString("Failed to write to file in scriptcore: {0}\n", e));
+		Warning("Failed to write to file in scriptcore: {0}\n", e);
 	}
 
 	return false;

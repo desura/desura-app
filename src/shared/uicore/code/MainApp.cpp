@@ -214,15 +214,7 @@ MainApp::MainApp()
 {
 	Bind(wxEVT_CLOSE_WINDOW, &MainApp::onClose, this);
 
-	m_wxLoginForm = nullptr;
-	m_wxTBIcon = nullptr;
-	m_wxMainForm = nullptr;
-	
-	m_bQuiteMode = false;
-	m_bLoggedIn = false;
-	m_iMode = MODE_LOGOUT;
-
-	//need to overide the value in corecount if not set
+	//need to override the value in core count if not set
 	if (gc_corecount.getInt() == 0)
 	{
 		//need to change the value so it will trigger the cvar callback
@@ -230,11 +222,6 @@ MainApp::MainApp()
 		gc_corecount.setValue(0);
 	}
 
-	m_pOfflineDialog = nullptr;
-	m_pInternalLink = nullptr;
-#ifdef WITH_GTEST
-	m_UnitTestForm = nullptr;
-#endif
 	onLoginAcceptedEvent += guiDelegate(this, &MainApp::onLoginAcceptedCB);
 	onInternalLinkEvent += guiDelegate(this, &MainApp::onInternalLink);
 	onInternalLinkStrEvent += guiDelegate(this, &MainApp::onInternalStrLink);
@@ -254,7 +241,6 @@ MainApp::~MainApp()
 	}
 #endif
 
-	safe_delete(m_vNewsItems);
 	safe_delete(m_pInternalLink);
 
 	//delete user first so threads will not die when they try to access webcore
@@ -296,6 +282,8 @@ wxWindow* MainApp::getTopLevelWindow()
 
 void MainApp::Init(int argc, wxCmdLineArgsArray &argv)
 {
+	gcTrace("");
+
 	if (argc > 0)
 	{
 		for (int x=0; x<argc; x++)
@@ -371,6 +359,8 @@ bool MainApp::isQuietMode()
 
 void MainApp::logIn(const char* user, const char* pass)
 {
+	gcTrace("User: {0}", user);
+
 	std::lock_guard<std::mutex> a(m_UserLock);
 
 	safe_delete(g_pUserHandle);
@@ -385,7 +375,7 @@ void MainApp::logIn(const char* user, const char* pass)
 	{
 		//need to do this here as news items will be passed onlogin
 		*g_pUserHandle->getNewsUpdateEvent() += delegate(this, &MainApp::onNewsUpdate);
-		*g_pUserHandle->getGiftUpdateEvent() += delegate(this, &MainApp::onGiftUpdate);
+		*g_pUserHandle->getGiftUpdateEvent() += delegate((MainAppNoUI*)this, &MainAppNoUI::onGiftUpdate);
 		*g_pUserHandle->getNeedCvarEvent() += delegate(this, &MainApp::onNeedCvar);
 
 		g_pUserHandle->lockDelete();
@@ -402,7 +392,7 @@ void MainApp::logIn(const char* user, const char* pass)
 		g_pUserHandle->logOut();
 
 		*g_pUserHandle->getNewsUpdateEvent() -= delegate(this, &MainApp::onNewsUpdate);
-		*g_pUserHandle->getGiftUpdateEvent() -= delegate(this, &MainApp::onGiftUpdate);
+		*g_pUserHandle->getGiftUpdateEvent() -= delegate((MainAppNoUI*)this, &MainAppNoUI::onGiftUpdate);
 		*g_pUserHandle->getNeedCvarEvent() -= delegate(this, &MainApp::onNeedCvar);
 
 		g_pUserHandle->unlockDelete();
@@ -413,6 +403,8 @@ void MainApp::logIn(const char* user, const char* pass)
 
 void MainApp::logOut(bool bShowLogin, bool autoLogin)
 {
+	gcTrace("");
+
 	m_pInternalLink->closeAll();
 	safe_delete(m_pInternalLink);
 
@@ -442,7 +434,7 @@ void MainApp::logOut(bool bShowLogin, bool autoLogin)
 	closeMainForm();
 
 	m_bLoggedIn = false;
-	m_iMode = MODE_UNINT;
+	m_iMode = APP_MODE::MODE_UNINT;
 
 	if (bShowLogin)
 		showLogin(!autoLogin);
@@ -455,6 +447,8 @@ void MainApp::logOut(bool bShowLogin, bool autoLogin)
 
 void MainApp::goOffline()
 {
+	gcTrace("");
+
 	if (!m_pOfflineDialog)
 		m_pOfflineDialog = new gcMessageDialog(nullptr, Managers::GetString(L"#MF_OFFLINE"), Managers::GetString(L"#MF_OFFLINE_TITLE"), wxYES_NO | wxICON_QUESTION);
 
@@ -472,17 +466,17 @@ void MainApp::goOffline()
 
 bool MainApp::isOffline()
 {
-	return (m_iMode == MODE_OFFLINE);
+	return (m_iMode == APP_MODE::MODE_OFFLINE);
 }
 
 bool MainApp::isLoggedIn()
 {
-	return (m_iMode == MODE_ONLINE);
+	return (m_iMode == APP_MODE::MODE_ONLINE);
 }
 
 void MainApp::offlineMode()
 {
-	if (m_iMode == MODE_OFFLINE)
+	if (m_iMode == APP_MODE::MODE_OFFLINE)
 		return;
 
 	if (m_bLoggedIn)
@@ -513,7 +507,7 @@ void MainApp::offlineMode()
 	}
 
 	GetCVarManager()->loadUser(GetUserCore()->getUserId());
-	m_iMode = MODE_OFFLINE;
+	m_iMode = APP_MODE::MODE_OFFLINE;
 
 	showMainWindow();
 	m_pInternalLink = new InternalLink(this);
@@ -521,7 +515,7 @@ void MainApp::offlineMode()
 
 void MainApp::showMainWindow(bool raise)
 {
-	if (!m_bLoggedIn && m_iMode != MODE_OFFLINE)
+	if (!m_bLoggedIn && m_iMode != APP_MODE::MODE_OFFLINE)
 	{
 		showLogin();
 	}
@@ -534,6 +528,8 @@ void MainApp::showMainWindow(bool raise)
 
 void MainApp::onClose(wxCloseEvent& event)
 {
+	gcTrace("");
+
 	if (m_wxLoginForm)
 	{
 		m_wxLoginForm->Show(false);
@@ -576,6 +572,8 @@ EventV* MainApp::getLoginEvent()
 
 void MainApp::onLoginAccepted(bool saveLoginInfo, bool autologin)
 {
+	gcTrace("");
+
 	std::pair<bool,bool> res(saveLoginInfo, autologin);
 	onLoginAcceptedEvent(res);
 }
@@ -611,7 +609,7 @@ void MainApp::onLoginAcceptedCB(std::pair<bool,bool> &loginInfo)
 	SetCrashDumpSettings(userName.c_str(), gc_uploaddumps.getBool());
 
 	m_bLoggedIn = true;
-	m_iMode = MODE_ONLINE;
+	m_iMode = APP_MODE::MODE_ONLINE;
 
 	bool showMain = !(autologin && gc_silentlaunch.getBool());
 	showMainForm(false, showMain);
@@ -674,7 +672,7 @@ void MainApp::showMainForm(bool raise, bool show)
 	}
 
 	if (!m_wxMainForm)
-		m_wxMainForm = new MainForm(this, m_iMode == MODE_OFFLINE, m_strServiceProvider.c_str());
+		m_wxMainForm = new MainForm(this, m_iMode == APP_MODE::MODE_OFFLINE, m_strServiceProvider.c_str());
 
 	if (m_wxMainForm->IsIconized())
 	{
@@ -725,24 +723,25 @@ void MainApp::onAppUpdateProg(uint32& prog)
 
 void MainApp::onAppUpdate(UserCore::Misc::UpdateInfo& info)
 {
+	gcTrace("");
+
 	setProgressState(P_NONE);
 	m_pInternalLink->showAppUpdate(info.branch);
 }
 
 void MainApp::onNewsUpdate(std::vector<UserCore::Misc::NewsItem*>& itemList)
 {
-	m_NewsLock.lock();
+	gcTrace("");
 
-	for (size_t x=0; x<itemList.size(); x++)
+	std::lock_guard<std::mutex> guard(m_NewsLock);
+
+	for (auto i : itemList)
 	{
-		if (!itemList[x])
+		if (!i)
 			continue;
 
-		UserCore::Misc::NewsItem* temp = new UserCore::Misc::NewsItem(itemList[x]);
-		m_vNewsItems.push_back(temp);
+		m_vNewsItems.push_back(std::make_shared<UserCore::Misc::NewsItem>(i));
 	}
-
-	m_NewsLock.unlock();
 }
 
 void MainApp::onNotifyGiftUpdate()
@@ -750,44 +749,39 @@ void MainApp::onNotifyGiftUpdate()
 	m_wxTBIcon->showGiftPopup(m_vGiftItems);
 }
 
-void MainApp::onGiftUpdate(std::vector<UserCore::Misc::NewsItem*>& itemList)
+void MainAppNoUI::onGiftUpdate(std::vector<UserCore::Misc::NewsItem*>& itemList)
 {
-	std::vector<UserCore::Misc::NewsItem*> oldList;
+	std::vector<std::shared_ptr<UserCore::Misc::NewsItem>> oldList;
+	std::vector<std::shared_ptr<UserCore::Misc::NewsItem>> output;
 
-	m_NewsLock.lock();
-
-	oldList = m_vGiftItems;
-	m_vGiftItems.clear();
-
-	for (size_t x=0; x<itemList.size(); x++)
 	{
-		if (!itemList[x])
-			continue;
+		std::lock_guard<std::mutex> guard(m_NewsLock);
 
-		m_vGiftItems.push_back(new UserCore::Misc::NewsItem(itemList[x]));
-	}
+		oldList = m_vGiftItems;
+		m_vGiftItems.clear();
 
-	size_t count =0;
-
-	for (size_t x=0; x<itemList.size(); x++)
-	{
-		for (size_t y=0; y<oldList.size(); y++)
+		for (auto i : itemList)
 		{
-			if (oldList[y]->id == itemList[x]->id)
-			{
-				count++;
-				oldList[y]->hasBeenShown = true;
-				break;
-			}
+			if (!i)
+				continue;
+
+			m_vGiftItems.push_back(std::make_shared<UserCore::Misc::NewsItem>(i));
 		}
+
+		auto it = std::set_intersection(begin(m_vGiftItems), end(m_vGiftItems), begin(oldList), end(oldList), std::back_inserter(output),
+			[](std::shared_ptr<UserCore::Misc::NewsItem> a, std::shared_ptr<UserCore::Misc::NewsItem> b){
+			return a->id < b->id;
+		});
+
+		for (auto i : output)
+			i->hasBeenShown = true;
 	}
 
-	m_NewsLock.unlock();
-
-	safe_delete(oldList);
-
-	if (m_vGiftItems.size() != count)
+	if (m_vGiftItems.size() != output.size())
+	{
+		gcTrace("");
 		onNotifyGiftUpdateEvent();
+	}
 }
 
 void MainApp::onNeedCvar(UserCore::Misc::CVar_s& info)
@@ -808,13 +802,16 @@ void MainApp::onCookieUpdate()
 
 void MainApp::onPipeDisconnect()
 {
+	gcTrace("");
 	DesuraServiceError dse(getMainWindow());
 	dse.ShowModal();
 }
 
 void MainApp::newAccountLogin(const char* username, const char* cookie)
 {
-	if (!m_bLoggedIn && m_iMode != MODE_OFFLINE && m_wxLoginForm)
+	gcTrace("User: {0}", username);
+
+	if (!m_bLoggedIn && m_iMode != APP_MODE::MODE_OFFLINE && m_wxLoginForm)
 		m_wxLoginForm->newAccountLogin(username, cookie);
 }
 
@@ -830,7 +827,7 @@ void MainApp::showUnitTest()
 
 void MainApp::newAccountLoginError(const char* szErrorMessage)
 {
-	if (!m_bLoggedIn && m_iMode != MODE_OFFLINE && m_wxLoginForm)
+	if (!m_bLoggedIn && m_iMode != APP_MODE::MODE_OFFLINE && m_wxLoginForm)
 		m_wxLoginForm->newAccountLoginError(szErrorMessage);
 }
 
@@ -898,6 +895,101 @@ namespace UnitTest
 		ASSERT_TRUE(isSafeUrl("http://desura.blah.com", &a));
 		ASSERT_TRUE(isSafeUrl("http://www.desura.blah.com", &a));
 		ASSERT_TRUE(isSafeUrl("http://api.desura.blah.com", &a));
+	}
+
+	class MainAppFixture : public ::testing::Test
+	{
+	public:
+		MainAppFixture()
+		{
+			m_MainApp.onNotifyGiftUpdateEvent += delegate(this, &MainAppFixture::onGiftUpdateCallback);
+		}
+
+		void setExistingGift(UserCore::Misc::NewsItem* pItem)
+		{
+			m_MainApp.m_vGiftItems.push_back(std::shared_ptr<UserCore::Misc::NewsItem>(pItem));
+		}
+
+		void onGiftUpdate(std::vector<UserCore::Misc::NewsItem*> &itemList)
+		{
+			m_MainApp.onGiftUpdate(itemList);
+		}
+
+		void onGiftUpdateCallback()
+		{
+			m_bHitGiftUpdate = true;
+		}
+
+		bool m_bHitGiftUpdate = false;
+		MainAppNoUI m_MainApp;
+	};
+
+	TEST_F(MainAppFixture, GiftUpdate_NoneExisting)
+	{
+		std::vector<UserCore::Misc::NewsItem*> itemList;
+		itemList.push_back(new UserCore::Misc::NewsItem(1, 1, "", ""));
+
+		onGiftUpdate(itemList);
+		ASSERT_TRUE(m_bHitGiftUpdate);
+	}
+
+	TEST_F(MainAppFixture, GiftUpdate_OneExisting_Diff)
+	{
+		std::vector<UserCore::Misc::NewsItem*> itemList;
+		itemList.push_back(new UserCore::Misc::NewsItem(2, 1, "", ""));
+
+		setExistingGift(new UserCore::Misc::NewsItem(1, 1, "", ""));
+		onGiftUpdate(itemList);
+		ASSERT_TRUE(m_bHitGiftUpdate);
+	}
+
+	TEST_F(MainAppFixture, GiftUpdate_OneExisting_Same)
+	{
+		std::vector<UserCore::Misc::NewsItem*> itemList;
+		itemList.push_back(new UserCore::Misc::NewsItem(1, 1, "", ""));
+
+		setExistingGift(new UserCore::Misc::NewsItem(1, 1, "", ""));
+		onGiftUpdate(itemList);
+		ASSERT_FALSE(m_bHitGiftUpdate);
+	}
+
+	TEST_F(MainAppFixture, GiftUpdate_ManyExisting_Same)
+	{
+		std::vector<UserCore::Misc::NewsItem*> itemList;
+		itemList.push_back(new UserCore::Misc::NewsItem(1, 1, "", ""));
+		itemList.push_back(new UserCore::Misc::NewsItem(2, 1, "", ""));
+
+		setExistingGift(new UserCore::Misc::NewsItem(1, 1, "", ""));
+		setExistingGift(new UserCore::Misc::NewsItem(2, 1, "", ""));
+
+		onGiftUpdate(itemList);
+		ASSERT_FALSE(m_bHitGiftUpdate);
+	}
+
+	TEST_F(MainAppFixture, GiftUpdate_ManyExisting_Diff_NoOverlap)
+	{
+		std::vector<UserCore::Misc::NewsItem*> itemList;
+		itemList.push_back(new UserCore::Misc::NewsItem(1, 1, "", ""));
+		itemList.push_back(new UserCore::Misc::NewsItem(2, 1, "", ""));
+
+		setExistingGift(new UserCore::Misc::NewsItem(10, 1, "", ""));
+		setExistingGift(new UserCore::Misc::NewsItem(11, 1, "", ""));
+
+		onGiftUpdate(itemList);
+		ASSERT_TRUE(m_bHitGiftUpdate);
+	}
+
+	TEST_F(MainAppFixture, GiftUpdate_ManyExisting_Diff_SomeOverlap)
+	{
+		std::vector<UserCore::Misc::NewsItem*> itemList;
+		itemList.push_back(new UserCore::Misc::NewsItem(1, 1, "", ""));
+		itemList.push_back(new UserCore::Misc::NewsItem(2, 1, "", ""));
+
+		setExistingGift(new UserCore::Misc::NewsItem(1, 1, "", ""));
+		setExistingGift(new UserCore::Misc::NewsItem(11, 1, "", ""));
+
+		onGiftUpdate(itemList);
+		ASSERT_TRUE(m_bHitGiftUpdate);
 	}
 }
 

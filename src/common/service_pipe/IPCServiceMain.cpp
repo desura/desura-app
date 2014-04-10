@@ -33,10 +33,10 @@ $/LicenseInfo$
 #include "IPCUpdateApp.h"
 #include <branding/servicecore_version.h>
 
+#include "Color.h"
+
 #ifndef DESURA_CLIENT
 #include "InstallScriptRunTime.h"
-#else
-#include "Color.h"
 #endif
 
 #include "SharedObjectLoader.h"
@@ -66,63 +66,36 @@ gcString GetSpecialPath(int32 key)
 		return std::string(str.getData(), str.getSize());
 	}
 
-	return "SERVICE CORE IS nullptr";
+	return "SERVICE CORE IS NULL";
 }
 
-void PrintfMsg(const char* format, ...)
+TracerI *g_pTracer = nullptr;
+
+void SetTracer(TracerI *pTracer)
+{
+	g_pTracer = pTracer;
+}
+
+void LogMsg(MSG_TYPE type, std::string msg, Color* col, std::map<std::string, std::string> *mpArgs)
 {
 	if (!servicemain || !g_bLogEnabled)
 		return;
 
-	va_list args;
-	va_start(args, format);
-
-	gcString str;
-	str.vformat(format, args);
-	servicemain->message(str.c_str());
-
-	va_end(args);
-}
-
-void LogMsg(int type, std::string msg, Color* col)
-{
-	if (!servicemain || !g_bLogEnabled)
+#ifndef DEBUG
+	if (type == MT_DEBUG)
 		return;
+#endif
 
-	switch (type)
-	{
-	case MT_MSG:
-	case MT_MSG_COL:
-		servicemain->message(msg.c_str());
-		break;
+	uint64 nCol = -1;
 
-	case MT_WARN:
-		servicemain->warning(msg.c_str());
-		break;
-	};
+	if (col)
+		nCol = col->getColor();
+
+	servicemain->message((int)type, msg.c_str(), nCol, mpArgs);
+
+	if (g_pTracer && type == MT_TRACE)
+		g_pTracer->trace(msg, mpArgs);
 }
-
-void LogMsg(int type, std::wstring msg, Color* col)
-{
-	if (!servicemain || !g_bLogEnabled)
-		return;
-
-	switch (type)
-	{
-	case MT_MSG:
-	case MT_MSG_COL:
-		servicemain->message(gcString(msg).c_str());
-		break;
-
-	case MT_WARN:
-		servicemain->warning(gcString(msg).c_str());
-		break;
-	};
-}
-
-
-
-
 
 #endif
 
@@ -171,17 +144,10 @@ void IPCServiceMain::registerFunctions()
 
 	REG_FUNCTION_VOID( IPCServiceMain, updateShortCuts);
 	REG_FUNCTION_VOID( IPCServiceMain, fixFolderPermissions);
-
 	REG_FUNCTION_VOID( IPCServiceMain, runInstallScript);
-
 #else
-
-	REG_FUNCTION_VOID( IPCServiceMain, warning );
-	REG_FUNCTION_VOID( IPCServiceMain, message );
-	REG_FUNCTION_VOID( IPCServiceMain, debug );
-
+	REG_FUNCTION_VOID_T( IPCServiceMain, message, false );
 	REG_FUNCTION( IPCServiceMain, getSpecialPath );
-
 #endif
 }
 
@@ -215,23 +181,34 @@ IPC::PBlob IPCServiceMain::getSpecialPath(int32 key)
 	return IPC::PBlob(path, strlen(path));
 }
 
-void IPCServiceMain::warning(const char* msg)
+void IPCServiceMain::message(int type, const char* msg, uint64 col, std::map<std::string, std::string> *mpArgs)
 {
-	Color c(0xFF, 0x99, 0x33);
-	MsgCol(&c, gcString("DS: {0}", msg));
-}
+	Color color;
+	Color *pCol = &color;
 
-void IPCServiceMain::message(const char* msg)
-{
-	Color c(65, 209, 7);
-	MsgCol(&c, gcString("DS: {0}", msg));
-}
+	if (col != -1)
+		color = Color((uint32)col);
+	else if (type == MT_DEBUG)
+		color = Color(0x65, 0x33, 0x66);
+	else if (type == MT_WARN)
+		color = Color(0xFF, 0x99, 0x33);
+	else
+		color = Color(65, 209, 7);
 
-void IPCServiceMain::debug(const char* msg)
-{
-	Color c(0x65, 0x33, 0x66);
-	MsgCol(&c, gcString("DS: {0}", msg));
-}	
+	std::map<std::string, std::string> args;
+
+	if (type == MT_TRACE)
+	{
+		if (mpArgs)
+			(*mpArgs)["app"] = "Service";
+
+		LogMsg((MSG_TYPE)type, gcString(msg), pCol, mpArgs);
+	}
+	else
+	{
+		LogMsg((MSG_TYPE)type, gcString("Service: {0}", msg), pCol, mpArgs);
+	}
+}
 
 void IPCServiceMain::updateRegKey(const char* key, const char* value)
 {
@@ -333,19 +310,9 @@ IPC::PBlob IPCServiceMain::getSpecialPath(int32 key)
 	return IPC::functionCall<IPC::PBlob, int32>(this, "getSpecialPath", key);
 }
 
-void IPCServiceMain::warning(const char* msg)
+void IPCServiceMain::message(int type, const char* msg, uint64 col, std::map<std::string, std::string> *mpArgs)
 {
-	IPC::functionCallAsync(this, "warning", msg);
-}
-
-void IPCServiceMain::message(const char* msg)
-{
-	IPC::functionCallAsync(this, "message", msg);
-}
-
-void IPCServiceMain::debug(const char* msg)
-{
-	IPC::functionCallAsync(this, "debug", msg);
+	IPC::functionCallAsync(this, "message", type, msg, col, mpArgs);
 }
 
 void IPCServiceMain::startThread()
@@ -392,7 +359,7 @@ void IPCServiceMain::fixFolderPermissions(const char* dir)
 	}
 	catch (gcException &e)
 	{
-		Warning(gcString("Failed to fix folder permissions: {0}\n", e));
+		Warning("Failed to fix folder permissions: {0}\n", e);
 	}
 }
 
@@ -542,7 +509,7 @@ void IPCServiceMain::updateRegKey(const char* key, const char* value)
 	}
 	catch (gcException &e)
 	{
-		Warning(gcString("Failed to set reg key: {0}\n", e));
+		Warning("Failed to set reg key: {0}\n", e);
 	}
 }
 
@@ -557,7 +524,7 @@ void IPCServiceMain::updateBinaryRegKeyBlob(const char* key, IPC::PBlob blob)
 	}
 	catch (gcException &e)
 	{
-		Warning(gcString("Failed to set reg key: {0}\n", e));
+		Warning("Failed to set reg key: {0}\n", e);
 	}
 }
 
@@ -610,7 +577,7 @@ void IPCServiceMain::runInstallScript(const char* file, const char* installpath,
 	}
 	catch (gcException &e)
 	{
-		Warning(gcString("Failed to execute script {0}: {1}\n", file, e));
+		Warning("Failed to execute script {0}: {1}\n", file, e);
 	}
 }
 

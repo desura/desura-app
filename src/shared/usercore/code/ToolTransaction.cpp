@@ -70,6 +70,7 @@ ToolTransInfo::~ToolTransInfo()
 
 void ToolTransInfo::removeItem(DesuraId id)
 {
+	gcTrace("ToolId {0}", id);
 	size_t i = getIndex(id);
 
 	if (i == UINT_MAX)
@@ -86,6 +87,7 @@ void ToolTransInfo::removeItem(DesuraId id)
 
 void ToolTransInfo::onDLComplete(DesuraId id)
 {
+	gcTrace("ToolId {0}", id);
 	size_t i = getIndex(id);
 
 	if (i == UINT_MAX)
@@ -102,6 +104,7 @@ void ToolTransInfo::onDLComplete(DesuraId id)
 
 void ToolTransInfo::onDLError(DesuraId id, gcException e)
 {
+	gcTrace("ToolId {0}", id);
 	size_t i = getIndex(id);
 
 	if (i == UINT_MAX)
@@ -148,6 +151,8 @@ void ToolTransInfo::getIds(std::vector<DesuraId> &idList)
 
 bool ToolTransInfo::startNextInstall(IPCToolMain* pToolMain, DesuraId &toolId)
 {
+	gcTrace("ToolId {0}", toolId);
+
 	if (m_uiCompleteCount == m_pTransaction->size())
 		return false;
 
@@ -197,11 +202,13 @@ bool ToolTransInfo::startNextInstall(IPCToolMain* pToolMain, DesuraId &toolId)
 
 void ToolTransInfo::startingIPC()
 {
+	gcTrace("");
 	m_pTransaction->onStartIPCEvent();
 }
 
 void ToolTransInfo::onINComplete()
 {
+	gcTrace("");
 	m_uiCompleteCount++;
 	UserCore::Misc::ToolProgress prog;
 
@@ -217,7 +224,8 @@ void ToolTransInfo::onINComplete()
 
 void ToolTransInfo::onINError(gcException &e)
 {
-	Warning(gcString("Tool install error: {0}\n",e));
+	gcTrace("");
+	Warning("Tool install error: {0}\n",e);
 
 	m_uiCompleteCount = m_pTransaction->size();
 	m_pTransaction->onErrorEvent(e);

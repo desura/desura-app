@@ -50,7 +50,7 @@ public:
 
 	virtual void loadFrame(long style);
 
-	void setMode(uint8 mode);
+	void setMode(APP_MODE mode);
 
 	void onSubFormClose(uint32 eventId);
 	void showAbout();
@@ -83,7 +83,7 @@ private:
 	AboutForm* m_wxAboutForm;
 	DesuraControl* m_pDesuraControl;
 
-	uint8 m_iMode;
+	APP_MODE m_iMode = APP_MODE::MODE_LOGOUT;
 	std::vector<baseTabPage*> m_vPageList;
 };
 

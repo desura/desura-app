@@ -47,7 +47,8 @@ public:
 	UserCore::Item::BranchInfoI* m_pBranch;
 };
 
-void FromJSObject(UserItem* &jsItem, JSObjHandle& arg)
+template <>
+void FromJSObject<UserItem*>(UserItem* &jsItem, JSObjHandle& arg)
 {
 	if (arg->isObject())
 		jsItem = dynamic_cast<UserItem*>(arg->getUserObject<ScriptCoreItemI>());
@@ -299,7 +300,7 @@ void ToolManager::findJSTools(UserCore::Item::ItemInfo* item)
 			gcString errMsg(e.getErrMsg());
 
 			if (errMsg.find("ToolSetup is not defined") == std::string::npos)
-				Warning(gcString("Failed to execute toolsetup: {0}\n", e));
+				Warning("Failed to execute toolsetup: {0}\n", e);
 		}
 
 		instance->destory();
@@ -332,9 +333,9 @@ bool ToolManager::initJSEngine()
 	if (!res)
 	{
 #ifdef WIN32
-		Warning(gcString("Failed to load scriptcore.dll: {0}\n", GetLastError()));
+		Warning("Failed to load scriptcore.dll: {0}\n", GetLastError());
 #else
-		Warning(gcString("Failed to load libscriptcore.so: {0}\n", dlerror()));
+		Warning("Failed to load libscriptcore.so: {0}\n", dlerror());
 #endif
 		unloadJSEngine();
 	}

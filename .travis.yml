@@ -9,7 +9,7 @@ before_install:
   - if [ $CC == "clang" ]; then export CC=clang-3.4 && export CXX=clang++-3.4; fi
   - if [ $CC == "gcc" ]; then export CC=gcc-4.8 && export CXX=g++-4.8; fi
 script:
-  - cmake . -DBUILD_CEF=off -DDEBUG=on -DWITH_GTEST=ON -DBUILD_TESTS=ON
+  - cmake . -DBUILD_CEF=off -DDEBUG=on -DWITH_GTEST=ON -DBUILD_TESTS=ON -DCTEST_OUTPUT_ON_FAILURE=ON
   - make -j4
   - ctest --output-on-failure .
 after_success:

@@ -35,7 +35,7 @@ void gcImage::setImage(const char* image)
 {
 	if (!image || !UTIL::FS::isValidFile(UTIL::FS::Path(image, "", true)))
 	{
-		Warning(gcString("Failed to find image [{0}]\n", image));
+		Warning("Failed to find image [{0}]\n", image);
 		return;
 	}
 
@@ -44,7 +44,7 @@ void gcImage::setImage(const char* image)
 
 	if (!IsOk())
 	{
-		Warning(gcString("Failed to load image {0}\n", image));
+		Warning("Failed to load image {0}\n", image);
 	}
 }
 

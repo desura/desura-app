@@ -144,7 +144,7 @@ void DownloadToolTask::onDLProgress(UserCore::Misc::ToolProgress &p)
 void DownloadToolTask::onDLError(gcException &e)
 {
 	//Dont worry about errors here. We will sort them out on launch
-	Warning(gcString("Failed to download tool: {0}\n", e));
+	Warning("Failed to download tool: {0}\n", e);
 }
 
 void DownloadToolTask::onDLComplete()

@@ -134,7 +134,7 @@ bool UIBaseServiceTask::checkPath(const char* path, MCFBranch branch, MCFBuild b
 	}
 	catch (gcException &except)
 	{
-		Warning(gcString("Uninstall Branch: MCF Error: {0}\n", except));
+		Warning("Uninstall Branch: MCF Error: {0}\n", except);
 		return false;
 	}
 

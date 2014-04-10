@@ -58,12 +58,13 @@ gcString getString(JSObjHandle& arg)
 	return ret;
 }
 
-
-void FromJSObject(PVoid&, JSObjHandle& arg)
+template <>
+void FromJSObject<PVoid>(PVoid&, JSObjHandle& arg)
 {
 }
 
-void FromJSObject(bool& ret, JSObjHandle& arg)
+template <>
+void FromJSObject<bool>(bool& ret, JSObjHandle& arg)
 {
 	if (arg->isBool())
 		ret = arg->getBoolValue();
@@ -82,7 +83,8 @@ void FromJSObject(bool& ret, JSObjHandle& arg)
 	}
 }
 
-void FromJSObject(int32 &ret, JSObjHandle& arg)
+template <>
+void FromJSObject<int32>(int32 &ret, JSObjHandle& arg)
 {
 	if (arg->isInt())
 		ret = arg->getIntValue();
@@ -100,7 +102,8 @@ void FromJSObject(int32 &ret, JSObjHandle& arg)
 	}
 }
 
-void FromJSObject(double& ret, JSObjHandle& arg)
+template <>
+void FromJSObject<double>(double& ret, JSObjHandle& arg)
 {
 	if (arg->isInt())
 		ret = arg->getIntValue();
@@ -110,7 +113,8 @@ void FromJSObject(double& ret, JSObjHandle& arg)
 		throw gcException(ERR_INVALIDDATA, "Failed to convert javascript arg to double");
 }
 
-void FromJSObject(gcString& ret, JSObjHandle& arg)
+template <>
+void FromJSObject<gcString>(gcString& ret, JSObjHandle& arg)
 {
 	if (arg->isString())
 	{
@@ -134,7 +138,8 @@ void FromJSObject(gcString& ret, JSObjHandle& arg)
 	}
 }
 
-void FromJSObject(gcWString& ret, JSObjHandle& arg)
+template <>
+void FromJSObject<gcWString>(gcWString& ret, JSObjHandle& arg)
 {
 	gcString str;
 	FromJSObject(str, arg);
@@ -253,7 +258,7 @@ const char* DesuraJSBaseNonTemplate::getRegistrationCode()
 	}
 	catch (gcException &e)
 	{
-		Warning(gcString("Failed to read js binding file {0}: {1}", m_szBindingFile, e));
+		Warning("Failed to read js binding file {0}: {1}", m_szBindingFile, e);
 	}
 
 	safe_delete(buff);

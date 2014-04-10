@@ -55,7 +55,8 @@ public:
 	gcString m_szInstallPath;
 };
 
-void FromJSObject(ServiceItem* &jsItem, JSObjHandle& arg)
+template <>
+void FromJSObject<ServiceItem*>(ServiceItem* &jsItem, JSObjHandle& arg)
 {
 	if (arg->isObject())
 		jsItem = dynamic_cast<ServiceItem*>(arg->getUserObject<ScriptCoreItemI>());
@@ -266,6 +267,8 @@ void InstallScriptRunTime::loadScript(const char* scriptFile, const char* instal
 	if (!UTIL::FS::isValidFile(scriptFile))
 		return;
 
+	gcTrace("File: {0}", scriptFile);
+
 	bool failed = false;
 
 	try
@@ -283,7 +286,7 @@ void InstallScriptRunTime::loadScript(const char* scriptFile, const char* instal
 	}
 	catch (gcException &e)
 	{
-		Warning(gcString("Failed to execute install script {0}: {1}\n", scriptFile, e));
+		Warning("Failed to execute install script {0}: {1}\n", scriptFile, e);
 		failed = true;
 	}
 

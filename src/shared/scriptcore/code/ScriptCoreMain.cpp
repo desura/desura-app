@@ -143,7 +143,7 @@ CEXPORT void RegDLLCB_SCRIPT(LogCallback* cb)
 	g_pLogCallback = cb;
 
 	if (g_pLogCallback)
-		g_pLogCallback->Msg("ScriptCore Logging Started.\n");
+		g_pLogCallback->Message(MT_MSG, "ScriptCore Logging Started.\n");
 }
 
 }

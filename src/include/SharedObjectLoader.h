@@ -68,6 +68,11 @@ public:
 		unload();
 	}
 
+    void dontUnloadOnDelete()
+    {
+        m_bIgnoreUnload = true;
+    }
+
 	bool load(const char* module)
 	{
 		if (m_hHandle)
@@ -76,10 +81,11 @@ public:
 		m_bHasFailed = false;
 
 #ifdef NIX
-		m_hHandle = dlopen((UTIL::OS::getRuntimeLibPath() + module).c_str(), RTLD_NOW);
+		gcString strModule(convertToLinuxModule(module));
+		m_hHandle = dlopen((UTIL::OS::getRuntimeLibPath() + strModule).c_str(), RTLD_NOW);
 
 		if (!m_hHandle)
-			fprintf(stderr, "%s:%d - Error loading library %s: '%s' [LD_LIBRARY_PATH=%s]\n", __FILE__, __LINE__, module, dlerror(), getenv("LD_LIBRARY_PATH"));
+			fprintf(stderr, "%s:%d - Error loading library %s: '%s' [LD_LIBRARY_PATH=%s]\n", __FILE__, __LINE__, strModule.c_str(), dlerror(), getenv("LD_LIBRARY_PATH"));
 #else
 		m_hHandle = LoadLibraryA(module);
 #endif
@@ -92,12 +98,15 @@ public:
 		if (!m_hHandle)
 			return;
 
+        if (!m_bIgnoreUnload)
+        {
 #ifdef NIX
-		if (dlclose(m_hHandle) != 0)
-			printf("%s:%d - Error unloading library: '%s'\n", __FILE__, __LINE__, dlerror());
+            if (dlclose(m_hHandle) != 0)
+                printf("%s:%d - Error unloading library: '%s'\n", __FILE__, __LINE__, dlerror());
 #else
-		FreeLibrary(m_hHandle);
+            FreeLibrary(m_hHandle);
 #endif
+        }
 
 		m_hHandle = nullptr;
 	}
@@ -141,7 +150,28 @@ public:
 		m_bHasFailed = false;
 	}
 
+	std::string convertToLinuxModule(const char* szModule)
+	{
+		gcString strModule(szModule);
+
+		if (strModule.find(".dll") == strModule.size() - 4)
+			strModule = gcString("lib") + strModule.substr(0, strModule.size() - 3) + "so";
+
+		return strModule;
+	}
+
+	std::string convertToMacModule(const char* szModule)
+	{
+		gcString strModule(szModule);
+
+		if (strModule.find(".dll") == strModule.size() - 4)
+			strModule = gcString("lib") + strModule.substr(0, strModule.size() - 3) + "dylib";
+
+		return strModule;
+	}
+
 private:
+    bool m_bIgnoreUnload = false;
 	mutable bool m_bHasFailed;
 	mutable SOHANDLE m_hHandle;
 };

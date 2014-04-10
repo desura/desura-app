@@ -104,7 +104,7 @@ void DownloadImgTask::doTask()
 	}
 	catch (gcException &e)
 	{
-		Warning(gcString("Failed to download image {0}: {1}\n", path, e));
+		Warning("Failed to download image {0}: {1}\n", path, e);
 	}
 }
 
@@ -151,7 +151,7 @@ void ChangeAccountTask::doTask()
 	catch (gcException &except)
 	{
 		if (except.getSecErrId() != 107)
-			Warning(gcString("Error in Change Account task: {0}.\n", except));
+			Warning("Error in Change Account task: {0}.\n", except);
 	}
 }
 
@@ -179,7 +179,7 @@ void DownloadBannerTask::doTask()
 	}
 	catch (gcException &e)
 	{
-		Warning(gcString("Failed to download banner: {0}\n", e));
+		Warning("Failed to download banner: {0}\n", e);
 		m_DPInfo.complete = false;
 	}
 
@@ -278,7 +278,7 @@ void GatherInfoTask::doTask()
 	}
 	catch(gcException &e)
 	{
-		Warning(gcString("Failed to gather item info in task: {0}\n", e));
+		Warning("Failed to gather item info in task: {0}\n", e);
 	}
 }
 

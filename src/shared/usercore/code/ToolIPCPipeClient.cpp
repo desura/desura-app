@@ -112,6 +112,7 @@ void ToolIPCPipeClient::tryStart()
 
 void ToolIPCPipeClient::startHelper()
 {
+	gcTrace("");
 	const char* launchArg = "toolhelper.exe";
 
 	SHELLEXECUTEINFO info;
@@ -150,6 +151,7 @@ void ToolIPCPipeClient::startHelper()
 
 void ToolIPCPipeClient::stopHelper()
 {
+	gcTrace("");
 	m_pServiceMain = nullptr;
 }
 

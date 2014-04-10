@@ -1,0 +1,157 @@
+<html>
+<head>
+	<link rel="stylesheet" href="http://code.jquery.com/ui/1.10.4/themes/smoothness/jquery-ui.css">
+	<link rel="stylesheet" href="jquery.svg.package-1.4.5/jquery.svg.css">
+	<link rel="stylesheet" href="jquery.qtip.custom/jquery.qtip.css">
+	<script src="http://code.jquery.com/jquery-1.9.1.js"></script>
+	<script src="http://code.jquery.com/ui/1.10.4/jquery-ui.js"></script>
+	
+	<script src="jquery.svg.package-1.4.5/jquery.svg.js"></script>
+	<script src="jquery.qtip.custom/jquery.qtip.js"></script>
+	
+	<title>Desura Log Processor</title>
+</head>
+<body>
+
+<input type="file" id="files" name="files[]" multiple />
+
+<div style="clear:both;"></div>
+
+<div id="list" style="float:left;">
+</div>
+
+<div id="svgintro"></div>
+
+<script>
+	var svg = null;
+
+	$('#svgintro').svg({onLoad: function(s){
+		svg = s;
+	}});
+	
+	onMouseEnterSvg = function(evt){
+		$(evt.target).qtip();
+	}
+
+	var reader = new FileReader();
+	reader.onload = function(e) {
+		var arr = $.parseJSON(reader.result);
+		
+		var width = 50;
+		var height = 25;
+		var count = {};
+		var y = 50;
+		
+		var numThreads = 0;
+		var threads = {};
+		
+		var threadStarted = [];
+		var threadStopped = [];
+		
+		svg.clear();
+		
+		$.each(arr, function(i, v){
+		
+			if (count[v['function']])
+				count[v['function']] = count[v['function']] + 1;
+			else
+				count[v['function']] = 1;
+
+			var thread = 1;
+			var newThread = false;
+				
+			if (threads[v['thread']]) {
+				thread = threads[v['thread']]['id'];
+			}
+			else {
+				newThread = true;
+			
+				numThreads += 1;
+				thread = numThreads;
+				threads[v['thread']] = {'id' : thread, 'lasty': y + height};
+			}
+					
+			var fillCol = 'white';
+			var lineCol = 'black';
+			
+			if (v['app'] == "Service"){
+				lineCol = "blue";
+			}
+			else if (v['app'] == "Tool"){
+				lineCol = "green";
+			}
+			
+			var x = 10 + ((thread-1) * (width + 10));
+							
+			svg.rect(x, y, 20, height, {fill: fillCol, stroke: lineCol, strokeWidth: 2, onmouseenter: "onMouseEnterSvg(evt)", title: JSON.stringify(v, null, "<br />")});
+			
+			if (v['function'].indexOf("Thread::BaseThread") == 0) {
+				svg.text(x + 25, y + 20, v['message'], {fill: lineCol});
+			}
+			else if (v['function'].indexOf("Unknown") == 0) {
+				svg.text(x + 25, y + 20, v['function'] + " (" + v['message'] + ")", {fill: 'red'});
+			}
+			else {
+				if (v['classinfo'])
+					svg.text(x + 25, y + 20, v['function'] + "(" + v['classinfo'] + ", " + v['message'] + ")", {fill: lineCol});
+				else
+					svg.text(x + 25, y + 20, v['function'] + "(" + v['message'] + ")", {fill: lineCol});
+			}
+			
+			if (newThread) {
+				svg.rect(x, 10, width, height, {fill: fillCol, stroke: lineCol, strokeWidth: 2});
+				svg.text(x + 5, 10 + 20, v['thread'], {fill: lineCol});			
+			}
+			else {
+				svg.line(x + 10, threads[v['thread']]['lasty'], x + 10, y, {stroke: lineCol, strokeWidth: 2});
+			}
+	
+			if (v['function'].indexOf("Thread::BaseThread::start::") == 0 && v['message'].indexOf("Starting thread") >= 0 && threadStarted.length > 0) {
+				var xStart = 10 + ((threadStarted[0]['id']-1) * (width + 10)) + 20;
+			
+				svg.line(xStart, threadStarted[0]['ypos'] + height, x, y, {stroke: lineCol, strokeWidth: 2});
+				threadStarted.shift();
+			}
+	
+			threads[v['thread']]['lasty'] = y + height;
+			
+			if (v['function'] == "Thread::BaseThread::start") {
+				threadStarted.push({id: thread, ypos: y});
+			}
+			
+			if (v['function'] == "Thread::BaseThread::stop") {
+				threadStopped.push({id: thread, ypos: y});
+			}
+
+			y += height + 5;
+		});
+			
+		$(svg._container.firstChild).height(y);
+		$(svg._container.firstChild).width(10 + (numThreads * width + 10) + 1000);	
+		
+		var out = "<table><tr><th>Function</th><th>Count</th></tr>";
+		
+		$.each(count, function(k, v){
+			out += "<tr><td>" + k + "</td><td>" + v + "</td></tr>";
+		});
+		
+		out += "</table>";
+
+		$("#list").html(out);
+	}; 
+  
+	$("#files").change(function(evt){
+		var files = evt.target.files;
+
+		if (!files || files.length == 0){
+			$("#list").html("Invalid file selected");
+			return;
+		}
+
+		reader.readAsText(files[0]);
+	});
+</script>
+
+
+</body>
+</html>

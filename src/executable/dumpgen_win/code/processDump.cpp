@@ -55,7 +55,7 @@ bool RestartDesura(const char* args);
 void GetBuildBranch(int &build, int &branch);
 void GetString(const char* str, const char* input, char* out, size_t outSize);
 
-typedef bool (*UploadCrashFn)(const char* path, const char* user, int build, int branch);
+typedef bool (*UploadCrashFn)(const char* path, const char* user, int build, int branch, const char* szTracer);
 
 
 void TerminateDesura()
@@ -98,9 +98,11 @@ void ProcessDump(const char* m_lpCmdLine)
 	std::thread thread;
 	std::string file;
 	std::string user;
+	std::string tracer;
 
 	file.resize(255);
 	user.resize(255);
+	tracer.resize(255);
 
 	bool msgbox = args.hasArg("msgbox");
 	bool upload = (args.hasArg("noupload") == false);
@@ -111,12 +113,15 @@ void ProcessDump(const char* m_lpCmdLine)
 	if (args.hasArg("user"))
 		args.getString("user", &user[0], 255);
 
+	if (args.hasArg("tracer"))
+		args.getString("tracer", &tracer[0], 255);
+
 	if (file[0] && upload)
 	{
-		thread = std::thread([file, user](){
+		thread = std::thread([file, user, tracer](){
 			try
 			{
-				UploadDump(file, user);
+				UploadDump(file, user, tracer);
 				TerminateDesura();
 			}
 			catch (...)
@@ -156,7 +161,7 @@ void ProcessDump(const char* m_lpCmdLine)
 
 SharedObjectLoader g_CrashUploader;
 
-UINT UploadDump(const std::string &strFile, const std::string &strUser)
+UINT UploadDump(const std::string &strFile, const std::string &strUser, const std::string &strTracer)
 {
 	int build = 0;
 	int branch = 0;
@@ -173,7 +178,7 @@ UINT UploadDump(const std::string &strFile, const std::string &strUser)
 	if (!uploadCrash)
 		return -2;
 
-	if (!uploadCrash(strFile.c_str(), strUser.c_str(), build, branch))
+	if (!uploadCrash(strFile.c_str(), strUser.c_str(), build, branch, strTracer.c_str()))
 		return -3;		
 
 	return 0;

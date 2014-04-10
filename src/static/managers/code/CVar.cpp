@@ -87,7 +87,7 @@ void CVar::reg(const char* name)
 	m_bReg = m_pCVarManager->RegCVar(this);
 
 	if (!m_bReg)
-		Warning(gcString("Failed to register cvar [{0}] (maybe duplicate)\n", name));		
+		Warning("Failed to register cvar [{0}] (maybe duplicate)\n", name);		
 }
 
 void CVar::deregister()

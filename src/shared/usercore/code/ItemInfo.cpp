@@ -43,6 +43,15 @@ $/LicenseInfo$
 
 
 using namespace UserCore::Item;
+namespace UM = UserCore::Item;
+
+using namespace UserCore::Item;
+
+template <>
+std::string TraceClassInfo(ItemInfo *pClass)
+{
+	return gcString("pid: {0}, id: {1}, short: {2}, status: {3}", pClass->getParentId(), pClass->getId(), pClass->getShortName(), pClass->getStatus());
+}
 
 
 ItemInfo::ItemInfo(UserCore::UserI *user, DesuraId id, UTIL::FS::UtilFSI* pFileSystem)
@@ -68,6 +77,11 @@ ItemInfo::~ItemInfo()
 
 void ItemInfo::deleteFromDb(sqlite3x::sqlite3_connection* db)
 {
+	if (!m_bAddedToDb)
+		return;
+
+	gcTrace("");
+
 	try
 	{
 		sqlite3x::sqlite3_command cmd(*db, "DELETE FROM iteminfo WHERE internalid=?;");
@@ -183,6 +197,8 @@ void ItemInfo::saveDbFull(sqlite3x::sqlite3_connection* db)
 	if (!db)
 		return;
 
+	m_bAddedToDb = true;
+
 	uint32 status = m_iStatus&(~ItemInfoI::STATUS_DEVELOPER);
 
 	sqlite3x::sqlite3_command cmd(*db, "REPLACE INTO iteminfo VALUES (?,?,?,?,?, ?,?,?,?,?, ?,?,?,?,?, ?,?,?);");
@@ -226,6 +242,8 @@ void ItemInfo::loadDb(sqlite3x::sqlite3_connection* db)
 {
 	if (!db)
 		return;
+
+	m_bAddedToDb = true;
 
 	sqlite3x::sqlite3_command cmd(*db, "SELECT * FROM iteminfo WHERE internalid=?;");
 	cmd.bind(1, (long long int)m_iId.toInt64());
@@ -394,6 +412,8 @@ void ItemInfo::loadDb(sqlite3x::sqlite3_connection* db)
 
 void ItemInfo::loadBranchXmlData(const XML::gcXMLElement &branch)
 {
+	gcTrace("");
+
 	uint32 id = 0;
 	branch.GetAtt("id", id);
 
@@ -443,6 +463,8 @@ void ItemInfo::loadBranchXmlData(const XML::gcXMLElement &branch)
 
 void ItemInfo::loadXmlData(uint32 platform, const XML::gcXMLElement &xmlNode, uint16 statusOveride, WildcardManager* pWildCard, bool reset)
 {
+	gcTrace("");
+
 	if (!xmlNode.IsValid())
 		throw gcException(ERR_BADXML);
 
@@ -552,6 +574,8 @@ void ItemInfo::loadXmlData(uint32 platform, const XML::gcXMLElement &xmlNode, ui
 
 void ItemInfo::processInfo(const XML::gcXMLElement &xmlEl)
 {
+	gcTrace("");
+
 	//desura info
 	xmlEl.GetChild("name", this, &ItemInfo::setName);
 	xmlEl.GetChild("nameid", m_szShortName);
@@ -629,6 +653,8 @@ void ItemInfo::processInfo(const XML::gcXMLElement &xmlEl)
 
 void ItemInfo::processSettings(uint32 platform, const XML::gcXMLElement &setNode, WildcardManager* pWildCard, bool reset)
 {
+	gcTrace("");
+
 	bool hasBroughtItem = false;
 
 	for (size_t x=0; x<m_vBranchList.size(); x++)
@@ -754,6 +780,8 @@ void ItemInfo::setLogoUrl(const char* url)
 
 void ItemInfo::addToAccount()
 {
+	gcTrace("");
+
 	if (this->getStatus() & ItemInfoI::STATUS_ONACCOUNT)
 		return;
 
@@ -766,6 +794,8 @@ void ItemInfo::addToAccount()
 
 void ItemInfo::removeFromAccount()
 {
+	gcTrace("");
+
 	delSFlag(ItemInfoI::STATUS_ONACCOUNT);
 
 	if (!getUserCore()->getInternal())
@@ -794,8 +824,10 @@ void ItemInfo::triggerCallBack()
 
 void ItemInfo::addSFlag(uint32 flags)
 {
-	if (m_iStatus == flags)
+	if (HasAllFlags(m_iStatus, flags))
 		return;
+
+	gcTrace("Flag {0}", flags);
 
 	bool shouldTriggerUpdate = (m_iStatus&ItemInfoI::STATUS_DEVELOPER || HasAnyFlags(flags, (ItemInfoI::STATUS_INSTALLED|ItemInfoI::STATUS_ONCOMPUTER|ItemInfoI::STATUS_ONACCOUNT|ItemInfoI::STATUS_PAUSED|ItemInfoI::STATUS_UPDATEAVAL)));
 
@@ -838,6 +870,11 @@ void ItemInfo::addSFlag(uint32 flags)
 
 void ItemInfo::delSFlag(uint32 flags)
 {
+	if (!HasAnyFlags(m_iStatus, flags))
+		return;
+
+	gcTrace("Flag {0}", flags);
+
 	bool wasDeleted = isDeleted();
 
 	m_iStatus &= (~flags);
@@ -857,16 +894,19 @@ void ItemInfo::delSFlag(uint32 flags)
 
 void ItemInfo::addPFlag(uint8 flags)
 {
+	gcTrace("Flag {0}", flags);
 	m_iPermissions |= flags;
 }
 
 void ItemInfo::delPFlag(uint8 flags)
 {
+	gcTrace("Flag {0}", flags);
 	m_iPermissions &= (~flags);
 }
 
 void ItemInfo::addOFlag(uint8 flags)
 {
+	gcTrace("Flag {0}", flags);
 	m_iOptions |= flags;
 
 	if (flags & ItemInfoI::OPTION_NOUPDATE)
@@ -881,6 +921,7 @@ void ItemInfo::addOFlag(uint8 flags)
 
 void ItemInfo::delOFlag(uint8 flags)
 {
+	gcTrace("Flag {0}", flags);
 	m_iOptions &= (~flags);
 }
 
@@ -957,6 +998,7 @@ bool ItemInfo::compare(const char* filter)
 
 void ItemInfo::processUpdateXml(const XML::gcXMLElement &node)
 {
+	gcTrace("");
 	node.FirstChildElement("branches").for_each_child("branch", [this](const XML::gcXMLElement &branch)
 	{
 		uint32 id = 0;
@@ -1079,7 +1121,6 @@ void ItemInfo::broughtCheck()
 
 void ItemInfo::resetInstalledMcf()
 {
-	if (getCurrentBranchFull())
 		getCurrentBranchFull()->getInstallInfo()->resetInstalledMcf();
 
 	m_LastBranch = MCFBranch();
@@ -1091,6 +1132,7 @@ void ItemInfo::resetInstalledMcf()
 
 bool ItemInfo::setInstalledMcf(MCFBranch branch, MCFBuild build)
 {
+	gcTrace("Branch {0}, Build {1}", branch, build);
 	for (size_t x=0; x<m_vBranchList.size(); x++)
 	{
 		if (m_vBranchList[x]->getBranchId() == branch)
@@ -1149,6 +1191,8 @@ const char* ItemInfo::getEulaUrl()
 
 void ItemInfo::acceptEula()
 {
+	gcTrace("");
+
 	if (m_INBranchIndex == UINT_MAX)
 		return;
 
@@ -1179,7 +1223,7 @@ void ItemInfo::setParentId(DesuraId id)
 	}
 	catch (std::exception &e)
 	{
-		Warning(gcString("Failed to change {0} parent id: {1}\n", getName(), e.what()));
+		Warning("Failed to change {0} parent id: {1}\n", getName(), e.what());
 	}
 
 	m_iParentId = id;

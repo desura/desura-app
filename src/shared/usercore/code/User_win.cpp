@@ -86,7 +86,7 @@ void User::saveLoginInfo()
 		}
 		catch (gcException &e)
 		{
-			Warning(gcString("Failed to open file to save login info: {0}.\n", e));
+			Warning("Failed to open file to save login info: {0}.\n", e);
 		}
 
 		LocalFree(out.pbData);

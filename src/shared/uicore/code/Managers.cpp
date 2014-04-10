@@ -50,7 +50,7 @@ bool LangChanged(CVar* var, const char* val)
 		return true;
 	}
 
-	Warning(gcString("Failed to Load Language file: {0}\n", val));
+	WarningS("Failed to Load Language file: {0}\n", val);
 	return false;
 
 }
@@ -66,7 +66,7 @@ bool ThemeChanged(CVar* var, const char* val)
 	bool isValid = UTIL::FS::isValidFile(path);
 
 	if (!isValid)
-		Warning(gcString("Theme {0} is not a valid theme file.\n", val));
+		WarningS("Theme {0} is not a valid theme file.\n", val);
 
 	return isValid;
 }

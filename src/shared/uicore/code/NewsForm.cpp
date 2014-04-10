@@ -80,7 +80,7 @@ void NewsForm::setAsGift()
 	SetTitle(m_szTitle.c_str());
 }
 
-void NewsForm::loadNewsItems(const std::vector<UserCore::Misc::NewsItem*> &itemList)
+void NewsForm::loadNewsItems(const std::vector<std::shared_ptr<UserCore::Misc::NewsItem>> &itemList)
 {
 	for (auto i : itemList)
 	{

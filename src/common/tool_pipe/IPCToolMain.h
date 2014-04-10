@@ -47,9 +47,7 @@ public:
 	IPCToolMain(IPC::IPCManager* mang, uint32 id, DesuraId itemId);
 	~IPCToolMain();
 
-	void warning(const char* msg);
-	void message(const char* msg);
-	void debug(const char* msg);
+	void message(int type, const char* msg, uint64 col, std::map<std::string, std::string> *mpArgs);
 
 #ifdef DESURA_CLIENT
 	gcException installTool(UserCore::ToolInfo* info);
@@ -66,7 +64,7 @@ public:
 
 private:
 #ifndef DESURA_CLIENT
-	ToolInstallThread *m_pThread;
+	ToolInstallThread *m_pThread = nullptr;
 #endif
 
 	void registerFunctions();

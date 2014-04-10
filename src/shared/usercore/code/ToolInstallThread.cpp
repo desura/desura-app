@@ -83,6 +83,8 @@ void ToolInstallThread::onStop()
 
 void ToolInstallThread::doFirstInstall()
 {
+	gcTrace("");
+
 	m_InstallLock.lock();
 	uint32 size = m_dvInstallQue.size();
 	m_InstallLock.unlock();
@@ -126,6 +128,8 @@ bool ToolInstallThread::hasToolMain()
 
 void ToolInstallThread::doNextInstall()
 {
+	gcTrace("");
+
 	if (m_bStillInstalling)
 		return;
 
@@ -153,6 +157,8 @@ void ToolInstallThread::doNextInstall()
 
 void ToolInstallThread::onINComplete(int32 &result)
 {
+	gcTrace("Result {0}", result);
+
 	m_bStillInstalling = false;
 
 	ToolInfo* tool = m_pToolManager->findItem(m_CurrentInstallId.toInt64());
@@ -178,7 +184,7 @@ void ToolInstallThread::onINComplete(int32 &result)
 		{
 			int32 r = result;
 
-			Warning(gcString("The tool install [{2}] result didnt match what was expected [Actual: {0}, Expected: {1}]", r, tool->getResultString(), tool->getName()));
+			Warning("The tool install [{3}] result didnt match what was expected [Actual: {0}, Expected: {1}]", r, tool->getResultString(), tool->getName());
 			gcException e(ERR_BADRESPONSE, gcString("The tool {0} failed to install (Bad result)", tool->getName()));
 			it->second->onINError(e);
 			m_CurrentInstall = -1;

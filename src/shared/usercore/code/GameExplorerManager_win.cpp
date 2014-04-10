@@ -44,7 +44,7 @@ GameExplorerManager::GameExplorerManager(UserI* user) : BaseManager<Misc::GameEx
 	}
 	catch (std::exception &e)
 	{
-		Warning(gcString("Failed to create game explorer db: {0}\n", e.what()));
+		Warning("Failed to create game explorer db: {0}\n", e.what());
 	}
 }
 
@@ -108,7 +108,7 @@ void GameExplorerManager::loadItems()
 	}
 	catch (std::exception &e)
 	{
-		Warning(gcString("Failed to load game explorer db: {0}\n", e.what()));
+		Warning("Failed to load game explorer db: {0}\n", e.what());
 		return;
 	}
 
@@ -145,7 +145,7 @@ void GameExplorerManager::loadItems()
 		}
 		catch (gcException &e)
 		{
-			Warning(gcString("Failed to generate dll for game explorer: {0}", e));
+			Warning("Failed to generate dll for game explorer: {0}", e);
 		}
 	}
 }
@@ -166,7 +166,7 @@ void GameExplorerManager::saveItems()
 	}
 	catch (std::exception &e)
 	{
-		Warning(gcString("Failed to save game explorer db: {0}\n", e.what()));
+		Warning("Failed to save game explorer db: {0}\n", e.what());
 	}
 }
 

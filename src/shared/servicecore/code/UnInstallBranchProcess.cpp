@@ -55,6 +55,8 @@ UninstallBranchProcess::~UninstallBranchProcess()
 
 void UninstallBranchProcess::run()
 {
+	gcTrace("");
+
 	if (m_szOldMcfPath == "" || m_szNewMcfPath == "")
 	{
 		onFinishEvent();
@@ -121,6 +123,7 @@ void UninstallBranchProcess::onUnpause()
 
 void UninstallBranchProcess::onError(gcException& e)
 {
+	gcTrace("E: {0}", e);
 	onErrorEvent(e);
 }
 

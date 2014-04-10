@@ -134,7 +134,7 @@ void ValidateTask::doRun()
 		catch (gcException &e)
 		{
 			//something failed, delete the file and continue
-			Warning(gcString("Failed to parse MCF file, removing it: {0}\n", e));
+			Warning("Failed to parse MCF file, removing it: {0}\n", e);
 			UTIL::FS::delFile(savePath);
 		}
 	}
@@ -254,7 +254,7 @@ bool ValidateTask::checkExistingMcf(gcString savePath)
 
 	if (!idMatch || !branchMatch || !buildMatch)
 	{
-		Warning(gcString("Mcf Header didnt match: ID:{0}, Branch:{1}, Build:{2}, Path: [{3}]\n", idMatch, branchMatch, buildMatch, savePath));
+		Warning("Mcf Header didnt match: ID:{0}, Branch:{1}, Build:{2}, Path: [{3}]\n", idMatch, branchMatch, buildMatch, savePath);
 		throw gcException(ERR_BADHEADER, "Mcf header didnt match required header");
 	}
 
@@ -552,7 +552,7 @@ void ValidateTask::onProgress(MCFCore::Misc::ProgressInfo& p)
 
 void ValidateTask::onError(gcException &e)
 {
-	Warning(gcString("Error in MCF validate: {0}\n", e));
+	Warning("Error in MCF validate: {0}\n", e);
 	m_bInError=true;
 	getItemHandle()->getInternal()->completeStage(true);
 

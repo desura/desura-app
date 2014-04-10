@@ -102,6 +102,8 @@ namespace MCFCore
 
 			bool checkBlock(MCFCore::Thread::Misc::WGTBlock *block);
 
+            virtual bool isThreadStopped();
+
 		private:
 			friend class UnitTest::TestWGTWorker;
 

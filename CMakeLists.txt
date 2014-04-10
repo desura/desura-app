@@ -18,6 +18,7 @@
 #   PACKAGE_TYPE    DEB                 Which packages should be created with "make package"
 #   FORCE_SYS_DEPS  OFF                 Force the use of system libs
 #   WITH_FLASH      ON                  Build with flash support
+#   WITH_TRACING	ON (WIN32)			Build with tracing support
 #
 #   BREAKPAD_URL                        URL to breakdpad archive, should be rev. 850
 #   CEF_URL                             URL to cef archive, should be rev. 291
@@ -77,7 +78,7 @@
 # some overrides
 ###############################################################################
 
-# TODO: silent output for externel dependencies
+# TODO: silent output for external dependencies
 project(Desura)
 
 if(APPLE) 
@@ -195,6 +196,10 @@ if(NOT BUILD_ONLY_CEF)
   if(WITH_GTEST AND WITH_GMOCK)
     find_package(GMock 1.7 ${REQUIRED_IF_OPTION})
     add_definitions(-DGMOCK_LINKED_AS_SHARED_LIBRARY -DWITH_GMOCK) 
+  endif()
+
+  if (WITH_TRACING)
+    add_definitions(-DWITH_TRACING)
   endif()
 endif()
 

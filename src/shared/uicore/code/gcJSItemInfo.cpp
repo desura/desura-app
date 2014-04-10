@@ -44,7 +44,8 @@ REGISTER_JSEXTENDER(DesuraJSItemInfo);
 }*/ // In gcJSBinding.cpp
 
 
-void FromJSObject(std::map<gcString, gcString> &map, JSObjHandle& arg)
+template <>
+void FromJSObject<std::map<gcString, gcString>>(std::map<gcString, gcString> &map, JSObjHandle& arg)
 {
 	if (arg->isArray() == false && arg->isObject() == false)
 		return;

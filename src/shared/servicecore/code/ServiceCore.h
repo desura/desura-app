@@ -44,17 +44,18 @@ public:
 	~ServiceCore();
 
 
-	virtual void startPipe();
-	virtual void stopPipe();
+	void startPipe() override;
+	void stopPipe() override;
 
-	virtual bool stopService(const char* serviceName);
+	bool stopService(const char* serviceName) override;
 
-	virtual void destroy();
+	void destroy() override;
 
-	virtual void setCrashSettingCallback(CrashSettingFn crashSettingFn);
-	virtual void setDisconnectCallback(DisconnectFn disconnectFn);
+	void setCrashSettingCallback(CrashSettingFn crashSettingFn) override;
+	void setDisconnectCallback(DisconnectFn disconnectFn) override;
 
 	void setCrashSettings(const wchar_t* user, bool upload);
+	void setTracer(TracerI *pTracer) override;
 
 protected:
 	void onDisconnect(uint32 &);

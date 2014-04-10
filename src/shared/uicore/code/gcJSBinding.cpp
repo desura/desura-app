@@ -32,7 +32,8 @@ $/LicenseInfo$
 
 REGISTER_JSEXTENDER(DesuraJSBinding);
 
-void FromJSObject(UserCore::Item::ItemInfoI* &item, JSObjHandle& arg)
+template <>
+void FromJSObject<UserCore::Item::ItemInfoI*>(UserCore::Item::ItemInfoI* &item, JSObjHandle& arg)
 {
 	if (arg->isObject() == false)
 		return;
@@ -158,7 +159,7 @@ JSObjHandle DesuraJSBinding::getLocalString(ChromiumDLL::JavaScriptFactoryI *m_p
 		}
 		else
 		{
-			Warning(gcString("Bad type for getLocalString format in arg {0} [{1}]\n", x, str));
+			Warning("Bad type for getLocalString format in arg {0} [{1}]\n", x, str);
 		}
 	}
 
@@ -498,7 +499,7 @@ CONCOMMAND( cc_addlink, "gc_link_add" )
 {
 	if (vArgList.size() < 4)
 	{
-		Warning("Need args: [name] [exe] [args]\n");
+		WarningS("Need args: [name] [exe] [args]\n");
 	}
 	else
 	{
