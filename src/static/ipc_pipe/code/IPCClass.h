@@ -78,27 +78,32 @@ protected:
 	IPCParameterI* setupParam(std::vector<IPCParameterI*> &vPList, const std::vector<IPCParameter*> &vParamList, uint32 &x)
 	{
 		IPCParameterI* pParam = IPC::getParameter<A>();
-		auto msg = vParamList[x];
+        auto msg = vParamList[x];
 
-        fprintf(stdout, "## setupParam ##\n", msg->type);
-        fprintf(stdout, "Msg Type: %d\n", msg->type);
-        fprintf(stdout, "Param Type: %d\n", msg->type);
-        fprintf(stdout, "X: %d\n", x);
-
-		if (msg->type != pParam->getType())
-			assert(false);
-		else
+        if (msg->type != pParam->getType())
+            assert(false);
+        else
 			pParam->deserialize(&msg->data, msg->size);
 
 		vPList[x] = pParam;
+ #ifdef __clang__
+        ++x;
+ #else
 		--x;
+#endif
 		return pParam;
 	}
 
 	template <typename A>
 	IPCParameterI* popElement(const std::vector<IPCParameterI*> &vPList, uint32 &x)
 	{
+#ifdef __clang__
+        size_t nPos = x;
+        ++x;
+        return vPList[nPos];
+#else
 		return vPList[--x];
+#endif
 	}
 
 	template <typename ... Args>
@@ -126,7 +131,11 @@ protected:
 			vPList.push_back(nullptr);
 		}
 
-		uint32 x = vPList.size()-1;
+#ifdef __clang__
+        uint32 x = 0;
+#else
+        uint32 x = vPList.size()-1;
+#endif
 		emptyTemplateFunction(setupParam<Args>(vPList, vParamList, x)...);
 
 		return nullptr;
@@ -159,7 +168,11 @@ public:
 		{
 			TraceT(m_strFunctionName.c_str(), this, "");
 
-			uint32 x = vPList.size();
+#ifdef __clang__
+            uint32 x = 0;
+#else
+            uint32 x = vPList.size();
+#endif
 			auto res = callFunction(popElement<Args>(vPList, x)...);
 
 			ret = IPC::getParameter(res, true);
@@ -173,7 +186,7 @@ public:
 
 		if (!ret)
 			return IPC::getParameter<R>();
-		else
+        else
 			return ret;
 	}
 
@@ -220,7 +233,11 @@ public:
 			if (m_bTrace)
 				TraceT(m_strFunctionName.c_str(), this, "");
 
+#ifdef __clang__
+            uint32 x = 0;
+#else
 			uint32 x = vPList.size();
+#endif
 			callFunction(popElement<Args>(vPList, x)...);
 	
 		}
@@ -263,7 +280,6 @@ NetworkFunctionI* networkFunctionV(TObj* pObj, void(TObj::*func)(Args...), const
 	return new NetworkFunctionVoid<Args...>(fnCallback, szName, bTrace);
 }
 
-
 template <typename TObj, typename R, typename ... Args>
 NetworkFunctionI* networkFunction(TObj* pObj, R (TObj::*func)(Args...), const char* szName)
 {
@@ -297,7 +313,7 @@ public:
 	//! Constructor
 	//! 
 	//! @param mang Manager
-	//! @param id Class id
+    //! @param id Class id
 	//! @param itemId Active item id (used for filtering)
 	//!
 	IPCClass(IPCManager* mang, uint32 id, DesuraId itemId);
