@@ -30,7 +30,8 @@ $/LicenseInfo$
 #include "usercore/ItemInfoI.h"
 #include "usercore/BranchInfoI.h"
 
-void FromJSObject(UserCore::Item::BranchInfoI* &branch, JSObjHandle& arg)
+template <>
+void FromJSObject<UserCore::Item::BranchInfoI*>(UserCore::Item::BranchInfoI* &branch, JSObjHandle& arg)
 {
 	if (arg->isObject())
 		branch = arg->getUserObject<UserCore::Item::BranchInfoI>();

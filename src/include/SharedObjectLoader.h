@@ -68,6 +68,11 @@ public:
 		unload();
 	}
 
+    void dontUnloadOnDelete()
+    {
+        m_bIgnoreUnload = true;
+    }
+
 	bool load(const char* module)
 	{
 		if (m_hHandle)
@@ -93,12 +98,15 @@ public:
 		if (!m_hHandle)
 			return;
 
+        if (!m_bIgnoreUnload)
+        {
 #ifdef NIX
-		if (dlclose(m_hHandle) != 0)
-			printf("%s:%d - Error unloading library: '%s'\n", __FILE__, __LINE__, dlerror());
+            if (dlclose(m_hHandle) != 0)
+                printf("%s:%d - Error unloading library: '%s'\n", __FILE__, __LINE__, dlerror());
 #else
-		FreeLibrary(m_hHandle);
+            FreeLibrary(m_hHandle);
 #endif
+        }
 
 		m_hHandle = nullptr;
 	}
@@ -163,6 +171,7 @@ public:
 	}
 
 private:
+    bool m_bIgnoreUnload = false;
 	mutable bool m_bHasFailed;
 	mutable SOHANDLE m_hHandle;
 };

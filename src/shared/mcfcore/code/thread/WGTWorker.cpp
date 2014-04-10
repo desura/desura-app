@@ -33,7 +33,7 @@ using namespace MCFCore::Thread;
 
 
 WGTWorker::WGTWorker(WGTControllerI* controller, uint16 id, MCFCore::Misc::ProviderManager &provMng) 
-	: BaseThread( "WebGet Worker Thread" )
+    : BaseThread( "WebGet Worker Thread" )
 	, m_ProvMng(provMng)
 	, m_uiId(id)
 	, m_pCT(controller)
@@ -74,7 +74,7 @@ void WGTWorker::run()
 	m_pMcfCon->setDPInformation(name.c_str());
 	m_pMcfCon->onProgressEvent += delegate(this, &WGTWorker::onProgress);
 
-	while (!isStopped())
+    while (!isThreadStopped())
 	{
 		MCFThreadStatus status = m_pCT->getStatus(m_uiId);
 
@@ -131,9 +131,14 @@ void WGTWorker::reset()
 {
 }
 
+bool WGTWorker::isThreadStopped()
+{
+    return BaseThread::isStopped();
+}
+
 bool WGTWorker::writeData(char* data, uint32 size)
 {
-	if (isStopped())
+    if (isThreadStopped())
 		return false;
 
 	if (m_bError)
@@ -157,7 +162,7 @@ bool WGTWorker::writeData(char* data, uint32 size)
 	if (!block)
 		return false;
 
-	size_t done = m_pCurBlock->done;
+    size_t done = m_pCurBlock->done;
 
 	if (done == 0)
 	{
@@ -268,7 +273,7 @@ void WGTWorker::doDownload()
 		{
 			//do nothing. Block errored out before or client paused.
 		}
-		else if (!isStopped())
+        else if (!isThreadStopped())
 		{
 			if (m_DownloadProvider)
 				Warning("Mcf Server error: {0} [{1}]\n", excep, m_DownloadProvider->getUrl());
@@ -496,6 +501,11 @@ namespace UnitTest
 			for (int x = 0; x < nRunCount; x++)
 				doDownload();
 		}
+
+        bool isThreadStopped() override
+        {
+            return false;
+        }
 	};
 
 	class TestDownloadProviders : public MCFCore::Misc::DownloadProvidersI
@@ -544,7 +554,7 @@ namespace UnitTest
 		}
 
 		void AddBlock(int nSize)
-		{
+        {
 			std::shared_ptr<MCFCore::Thread::Misc::WGTBlock> a(new MCFCore::Thread::Misc::WGTBlock());
 			a->size = nSize;
 			a->fileOffset = Controller.m_SuperBlock.size;
@@ -600,7 +610,7 @@ namespace UnitTest
 		MCFCore::Misc::ProviderManager ProviderManager;
 		
 		std::vector<std::shared_ptr<MCFCore::Thread::Misc::WGTBlock>> m_vBlocks;
-		TestWGTWorker Worker;
+        TestWGTWorker Worker;
 		StubWGTController Controller;
 
 		MCFCore::Misc::GetFile_s FileAuth;	

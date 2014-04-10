@@ -55,7 +55,8 @@ public:
 	gcString m_szInstallPath;
 };
 
-void FromJSObject(ServiceItem* &jsItem, JSObjHandle& arg)
+template <>
+void FromJSObject<ServiceItem*>(ServiceItem* &jsItem, JSObjHandle& arg)
 {
 	if (arg->isObject())
 		jsItem = dynamic_cast<ServiceItem*>(arg->getUserObject<ScriptCoreItemI>());

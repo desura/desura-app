@@ -115,9 +115,16 @@ public:
 		m_iExitCode = 0;
 
 #ifdef WITH_GTEST
-		m_hUnitTest.load("unittest.dll");
-		m_hCrashUploader.load("crashuploader.dll");
-		m_hServiceCore.load("servicecore.dll");
+        m_hUnitTest.load("unittest.dll");
+        m_hCrashUploader.load("crashuploader.dll");
+        m_hServiceCore.load("servicecore.dll");
+
+#ifdef NIX
+        //need to not unload these as it crashes the app on exit deleting the tests
+        m_hUnitTest.dontUnloadOnDelete();
+        m_hCrashUploader.dontUnloadOnDelete();
+        m_hServiceCore.dontUnloadOnDelete();
+#endif
 #endif
 	}
 
@@ -283,10 +290,6 @@ public:
 	int runUnitTests(int argc, char** argv)
 	{
 #ifdef WITH_GTEST
-		m_hUnitTest.load("unittest.dll");
-		m_hCrashUploader.load("crashuploader.dll");
-		m_hServiceCore.load("servicecore.dll");
-
 		testing::InitGoogleTest(&argc, argv);
 		return RUN_ALL_TESTS();
 #else

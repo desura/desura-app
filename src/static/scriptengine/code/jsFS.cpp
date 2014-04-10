@@ -27,7 +27,8 @@ $/LicenseInfo$
 #include "Common.h"
 #include "jsFS.h"
 
-void FromJSObject(UTIL::FS::FileHandle* &jsItem, JSObjHandle& arg)
+template <>
+void FromJSObject<UTIL::FS::FileHandle*>(UTIL::FS::FileHandle* &jsItem, JSObjHandle& arg)
 {
 	if (arg->isObject())
 		jsItem = arg->getUserObject<UTIL::FS::FileHandle>();
