@@ -80,6 +80,11 @@ protected:
 		IPCParameterI* pParam = IPC::getParameter<A>();
 		auto msg = vParamList[x];
 
+        fprintf(stdout, "## setupParam ##\n", msg->type);
+        fprintf(stdout, "Msg Type: %d\n", msg->type);
+        fprintf(stdout, "Param Type: %d\n", msg->type);
+        fprintf(stdout, "X: %d\n", x);
+
 		if (msg->type != pParam->getType())
 			assert(false);
 		else
