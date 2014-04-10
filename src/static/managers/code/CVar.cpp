@@ -68,8 +68,7 @@ CVar::CVar(const char* szName, const char* szDefVal, int32 nFlags, std::function
 
 CVar::~CVar()
 {
-	if (m_pCVarManager && m_bReg)
-		m_pCVarManager->UnRegCVar(this);
+	deregister();
 }
 
 void CVar::reg(const char* name)
@@ -89,6 +88,15 @@ void CVar::reg(const char* name)
 
 	if (!m_bReg)
 		Warning("Failed to register cvar [{0}] (maybe duplicate)\n", name);		
+}
+
+void CVar::deregister()
+{
+	if (m_pCVarManager && m_bReg)
+		m_pCVarManager->UnRegCVar(this);
+
+	m_bReg = false;
+	m_pCVarManager = nullptr;
 }
 
 void CVar::checkOsValid() const

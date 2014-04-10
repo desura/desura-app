@@ -75,7 +75,10 @@ bool CGCServiceApp::start(int argc, char** argv)
 		}
 	}
 
-	if (!SetDllPath(wdir.size()?wdir.c_str():nullptr))
+	if (wdir.empty())
+		wdir = ".\\bin";
+
+	if (!SetDllPath(wdir.c_str()))
 	{
 		log("Failed to set dll path. :(\n");
 		return false;
@@ -86,7 +89,10 @@ bool CGCServiceApp::start(int argc, char** argv)
 
 #if !defined(DEBUG) && defined(DESURA_OFFICIAL_BUILD) && defined(WITH_CODESIGN)
 	char message[255] = {0};
-	if (ValidateCert(L".\\bin\\servicecore.dll", message, 255) != ERROR_SUCCESS)
+
+	gcWString strPath("{0}\\servicecore.dll", wdir);
+
+	if (ValidateCert(strPath.c_str(), message, 255) != ERROR_SUCCESS)
 	{
 		log("Failed cert check on servicecore.dll: ");
 		log(message);
@@ -94,6 +100,7 @@ bool CGCServiceApp::start(int argc, char** argv)
 		return false;
 	}
 #endif
+
 	if (!m_SCDLL.load("servicecore.dll")) 
 	{
 		log("Failed to load servicecore.dll.\n");

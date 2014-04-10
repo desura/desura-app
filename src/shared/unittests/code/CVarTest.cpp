@@ -138,4 +138,17 @@ namespace UnitTest
 			CVar test("test", "0", flags, nullptr, &rt);
 		}
 	}
+
+	TEST_F(CVarTestFixture, deregister)
+	{
+		InSequence s;
+
+		EXPECT_CALL(rt, RegCVar(_)).Times(1).WillOnce(Return(true));
+		EXPECT_CALL(rt, UnRegCVar(_)).Times(1).RetiresOnSaturation();
+
+		CVar test("test", "0", 0, nullptr, &rt);
+		test.deregister();
+
+		EXPECT_CALL(rt, UnRegCVar(_)).Times(0);
+	}
 }
