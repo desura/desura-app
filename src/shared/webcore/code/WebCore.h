@@ -119,7 +119,7 @@ public:
 	virtual DesuraId hashToId(const char* itemHashId);
 	virtual void newUpload(DesuraId id, const char* hash, uint64 fileSize, char **key);
 	virtual void resumeUpload(DesuraId id, const char* key, WebCore::Misc::ResumeUploadInfo &info);
-	virtual void downloadImage(WebCore::Misc::DownloadImageInfo *dii, volatile bool &stop);
+	virtual void downloadImage(WebCore::Misc::DownloadImageInfo *dii, std::atomic<bool> &stop);
 	virtual void downloadBanner(MCFCore::Misc::DownloadProvider* dlp, const char* saveFolder);
 	virtual void updateAccountItem(DesuraId id, bool add);
 	virtual void clearNameCache();
@@ -169,7 +169,7 @@ protected:
 
 	EventV onCookieUpdateEvent;
 
-	void onHttpProg(volatile bool& stop, Prog_s& prog);
+	void onHttpProg(std::atomic<bool>* stop, Prog_s& prog);
 
 private:
 	bool m_bUserAuth;

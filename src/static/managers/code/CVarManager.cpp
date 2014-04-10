@@ -32,13 +32,16 @@ $/LicenseInfo$
 #endif
 
 CVarManager* g_pCVarMang = nullptr;
-
+CVarRegTargetI* g_pCVarRegTarget = nullptr;
 
 void InitCVarManger()
 {
 	if (!g_pCVarMang)
+	{
 		g_pCVarMang = new CVarManager();
-
+		g_pCVarRegTarget = g_pCVarMang;
+	}
+		
 	g_pCVarMang->loadNormal();
 	g_pCVarMang->loadWinUser();
 }
@@ -155,7 +158,7 @@ void CVarManager::loadCVarFromDb(CVar *var, const char* szSql, gcString strExtra
 		if (reader.read())
 		{
 			std::string value = reader.getstring(0);
-			var->setValueOveride(value.c_str());
+			var->setValueOveride(value.c_str(), true);
 		}
 	}
 	catch (std::exception &)
@@ -340,7 +343,7 @@ void CVarManager::loadFromDb(sqlite3x::sqlite3_reader &reader)
 		CVar* temp = findItem(name.c_str());
 
 		if (temp)
-			temp->setValueOveride(value.c_str());
+			temp->setValueOveride(value.c_str(), true);
 	}
 }
 

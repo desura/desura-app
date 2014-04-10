@@ -47,20 +47,21 @@ enum
 class CVarManager;
 
 extern CVarManager* g_pCVarMang;
+extern CVarRegTargetI* g_pCVarRegTarget;
 
 void InitCVarManger();
 void DestroyCVarManager();
 void SaveCVars();
 
 
-class CVarManager : public BaseManager<CVar>, public CVarManagerI
+class CVarManager : public BaseManager<CVar>, public CVarManagerI, public CVarRegTargetI
 {
 public:
 	CVarManager();
 	~CVarManager();
 
-	bool RegCVar(CVar* var);
-	void UnRegCVar(CVar* var);
+	bool RegCVar(CVar* var) override;
+	void UnRegCVar(CVar* var) override;
 
 	void cleanUserCvars();
 

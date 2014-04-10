@@ -62,12 +62,11 @@ void DownloadToolTask::doRun()
 	std::vector<DesuraId> toolList;
 	getItemInfo()->getCurrentBranch()->getToolList(toolList);
 
-	UserCore::Misc::ToolTransaction* tt = new UserCore::Misc::ToolTransaction();
+	UserCore::Misc::ToolTransaction* tt = new UserCore::Misc::ToolTransaction(std::move(toolList));
 
 	tt->onCompleteEvent += delegate(this, &DownloadToolTask::onDLComplete);
 	tt->onErrorEvent += delegate(this, &DownloadToolTask::onDLError);
 	tt->onProgressEvent += delegate(this, &DownloadToolTask::onDLProgress);
-	tt->toolsList = toolList;
 	
 	if (m_ToolTTID != UINT_MAX)
 	{

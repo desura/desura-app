@@ -184,13 +184,13 @@ void ToolManager::removeTransaction(ToolTransactionId ttid, bool forced)
 
 ToolTransactionId ToolManager::downloadTools(Misc::ToolTransaction* transaction)
 {
-	if (!areAllToolsValid(transaction->toolsList))
+	if (!areAllToolsValid(transaction->getList()))
 	{
 		safe_delete(transaction);
 		return -1;
 	}
 
-	if (areAllToolsDownloaded(transaction->toolsList))
+	if (areAllToolsDownloaded(transaction->getList()))
 	{
 		safe_delete(transaction);
 		return -1;
@@ -213,13 +213,13 @@ ToolTransactionId ToolManager::downloadTools(Misc::ToolTransaction* transaction)
 
 ToolTransactionId ToolManager::installTools(Misc::ToolTransaction* transaction)
 {
-	if (!areAllToolsValid(transaction->toolsList))
+	if (!areAllToolsValid(transaction->getList()))
 	{
 		safe_delete(transaction);
 		return -1;
 	}
 
-	if (areAllToolsInstalled(transaction->toolsList))
+	if (areAllToolsInstalled(transaction->getList()))
 	{
 		safe_delete(transaction);
 		return -2;	
@@ -471,11 +471,11 @@ bool ToolManager::updateTransaction(ToolTransactionId ttid, Misc::ToolTransactio
 	return found;
 }
 
-bool ToolManager::areAllToolsValid(std::vector<DesuraId> &list)
+bool ToolManager::areAllToolsValid(const std::vector<DesuraId> &list)
 {
-	for (size_t x=0; x<list.size(); x++)
+	for (auto t : list)
 	{
-		ToolInfo* info = findItem(list[x].toInt64());
+		ToolInfo* info = findItem(t.toInt64());
 
 		if (!info)
 			return false;
@@ -484,11 +484,11 @@ bool ToolManager::areAllToolsValid(std::vector<DesuraId> &list)
 	return true;
 }
 
-bool ToolManager::areAllToolsDownloaded(std::vector<DesuraId> &list)
+bool ToolManager::areAllToolsDownloaded(const std::vector<DesuraId> &list)
 {
-	for (size_t x=0; x<list.size(); x++)
+	for (auto t : list)
 	{
-		ToolInfo* info = findItem(list[x].toInt64());
+		ToolInfo* info = findItem(t.toInt64());
 
 		if (!info || (!info->isDownloaded() && !info->isInstalled()))
 			return false;
@@ -497,11 +497,11 @@ bool ToolManager::areAllToolsDownloaded(std::vector<DesuraId> &list)
 	return true;
 }
 
-bool ToolManager::areAllToolsInstalled(std::vector<DesuraId> &list)
+bool ToolManager::areAllToolsInstalled(const std::vector<DesuraId> &list)
 {
-	for (size_t x=0; x<list.size(); x++)
+	for (auto t : list)
 	{
-		ToolInfo* info = findItem(list[x].toInt64());
+		ToolInfo* info = findItem(t.toInt64());
 
 		if (!info || !info->isInstalled())
 			return false;

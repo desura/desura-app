@@ -47,7 +47,8 @@ public:
 	UserCore::Item::BranchInfoI* m_pBranch;
 };
 
-void FromJSObject(UserItem* &jsItem, JSObjHandle& arg)
+template <>
+void FromJSObject<UserItem*>(UserItem* &jsItem, JSObjHandle& arg)
 {
 	if (arg->isObject())
 		jsItem = dynamic_cast<UserItem*>(arg->getUserObject<ScriptCoreItemI>());

@@ -41,82 +41,87 @@ class WildCardDelegate : public DelegateI<WCSpecialInfo&>, public InvokeI
 {
 public:
 	WildCardDelegate(TObj* t)
+		: m_pObj(t)
 	{
-		m_pObj = t;
-		m_bCompleted = true;
-		m_bCancel = false;
+		if (m_pObj)
+			m_pObj->registerDelegate(this);
 	}
 
 	~WildCardDelegate()
 	{
-		while (!m_bCompleted)
-			gcSleep(250);
+		cancel();
+
+		if (m_pObj)
+			m_pObj->deregisterDelegate(this);
 	}
 
-	void operator()(WCSpecialInfo& a)
+	void operator()(WCSpecialInfo& a) override
 	{
-		if (a.handled || m_pObj->isStopped())
+		if (a.handled || m_bCanceled)
 			return;
 
-		m_bCompleted = false;
-		a.processed = false;
-	
-		m_pWildCardInfo = &a;
-		wxGuiDelegateEvent event((InvokeI*)this, m_pObj->GetId());
-		m_pObj->GetEventHandler()->AddPendingEvent(event);
-
-		while (!a.processed && !m_pObj->isStopped())
+		std::function<void()> callback = [&a, this]()
 		{
-			if (a.processed || m_bCancel)
-				break;
+			if (m_bCanceled)
+				return;
 
-			gcSleep(1000);
-		}
+			g_pMainApp->processWildCards(a, m_pObj);
+		};
 
-		m_bCompleted = true;
+		auto invoker = std::make_shared<Invoker>(callback);
+
+		wxGuiDelegateEvent event(invoker, m_pObj->GetId());
+		m_pObj->GetEventHandler()->AddPendingEvent(event);
+		
+		std::shared_ptr<Invoker> empty;
+
+		setInvoker(invoker);
+		invoker->wait();
+		setInvoker(empty);
 	}
 
-	virtual DelegateI<WCSpecialInfo&>* clone()
+	DelegateI<WCSpecialInfo&>* clone() override
 	{
 		return new WildCardDelegate(m_pObj);
 	}
 
-	virtual void destroy()
+	void destroy() override
 	{
 		delete this;
 	}
 
-	virtual void cancel()
+	void cancel() override
 	{
-		m_bCancel = true;
+		std::lock_guard<std::mutex> guard(m_InvokerMutex);
+
+		m_bCanceled = true;
+
+		if (m_pInvoker)
+			m_pInvoker->cancel();
 	}
 
-	virtual void invoke()
+	bool equals(DelegateI<WCSpecialInfo&>* di) override
 	{
-		if (!m_pWildCardInfo)
-			return;
-
-		if (!m_bCancel)
-			g_pMainApp->processWildCards(*m_pWildCardInfo, m_pObj);
-
-		m_pWildCardInfo->processed = true;
+		return di->getCompareHash() == getCompareHash();
 	}
 
-	virtual bool equals(DelegateI<WCSpecialInfo&>* di)
+	uint64 getCompareHash() const
 	{
-		WildCardDelegate<TObj> *d = dynamic_cast<WildCardDelegate<TObj>*>(di);
-
-		if (!d)
-			return false;
-
-		return (m_pObj == d->m_pObj);
+		return (uint64)m_pObj;
 	}
 
-	volatile bool m_bCompleted;
-	volatile bool m_bCancel;
+protected:
+	void setInvoker(std::shared_ptr<Invoker> &i)
+	{
+		std::lock_guard<std::mutex> guard(m_InvokerMutex);
+		m_pInvoker = i;
+	}
 
+private:
 	TObj* m_pObj;
-	WCSpecialInfo* m_pWildCardInfo;
+	std::atomic<bool> m_bCanceled;
+	std::mutex m_InvokerMutex;
+	std::shared_ptr<Invoker> m_pInvoker;
 };
 
 template <class TObj>

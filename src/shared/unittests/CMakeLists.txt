@@ -18,6 +18,7 @@ file(GLOB Sources code/util/gcBuff_test.cpp
 				  code/WildCardTest.cpp
 				  code/UnitTestSetup.cpp
 				  code/IPCTest.cpp
+				  code/CVarTest.cpp
 )
 
 

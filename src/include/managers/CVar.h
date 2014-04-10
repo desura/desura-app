@@ -39,12 +39,20 @@ enum
 
 	CVAR_LINUX_ONLY = 1<<5,		//!< CVar is linux only
 	CVAR_WINDOWS_ONLY = 1<<6,	//!< CVar is windows only
+	CFLAG_NOCALLBACKONLOAD = 1<<7, //!< Dont hit the callback on load from db
 };
 
 class CVar;
 
 typedef bool (*CVarCallBackFn)(const CVar* cvar, const char* value);
-typedef bool (*CVarUserCallBackFn)(const CVar* cvar, const char* value, void* userData);
+
+class CVarRegTargetI;
+extern CVarRegTargetI* g_pCVarRegTarget;
+
+namespace UnitTest
+{
+	class CVarTestFixture;
+}
 
 //! CVar is a variable that is saved into a db and can be changed via console
 class CVar : public BaseItem
@@ -55,8 +63,9 @@ public:
 	//! @param flags Flags as outlined above
 	//! @param callBack Function to call when value changes. Return true to accept, false to reject
 	//! @param userCallBack Function to call when value changes with user data. Return true to accept, false to reject
-	CVar(const char* name, const char* defVal, int32 flags = CFLAG_NOFLAGS, CVarCallBackFn callBack = nullptr);
-	CVar(const char* name, const char* defVal, int32 flags, CVarUserCallBackFn userCallBack);
+	CVar(const char* name, const char* defVal, int32 flags = CFLAG_NOFLAGS, CVarCallBackFn callBack = nullptr, CVarRegTargetI *pManager = g_pCVarRegTarget);
+	CVar(const char* szName, const char* szDefVal, int32 nFlags, std::function<bool(const CVar*, const char*)> callback, CVarRegTargetI *pManager = g_pCVarRegTarget);
+
 	~CVar();
 
 	bool	getBool() const;
@@ -84,10 +93,10 @@ public:
 	void* getUserData();
 
 protected:
-	void setValueOveride(const char* s);
+	void setValueOveride(const char* s, bool bLoadFromDb = false);
 	const char* getExitString();
 
-	void init(const char* name, const char* defVal, int32 flags);
+	void reg(const char* name);
 	void checkOsValid() const;
 
 private:
@@ -95,17 +104,17 @@ private:
 	gcString m_szDefault;
 	gcString m_szExitData;
 
-	CVarCallBackFn m_cbCallBack;
-	CVarUserCallBackFn m_cbCallBackUser;
+	const std::function<bool(const CVar*, const char*)> m_fnCallback;
+	CVarRegTargetI *m_pCVarManager;
 
-	void* m_pUserData;
+	const uint32 m_iFlags;
 
-	uint32 m_iFlags;
-	bool m_bReg;
-	bool m_bInCallback;
+	bool m_bReg = false;
+	bool m_bInCallback = false;
 
 	friend class CVarManager;
 	friend class DesuraJSSettings;
+	friend class UnitTest::CVarTestFixture;
 };
 
 #endif

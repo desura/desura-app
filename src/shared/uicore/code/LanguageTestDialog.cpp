@@ -250,9 +250,9 @@ public:
 	ToolTransactionId installTools(UserCore::Misc::ToolTransaction* transaction) override { return ToolTransactionId(); }
 	bool updateTransaction(ToolTransactionId ttid, UserCore::Misc::ToolTransaction* transaction) override { return false; }
 	void parseXml(const XML::gcXMLElement &toolinfoNode) override { }
-	bool areAllToolsValid(std::vector<DesuraId> &list) override { return false; }
-	bool areAllToolsDownloaded(std::vector<DesuraId> &list) override { return false; }
-	bool areAllToolsInstalled(std::vector<DesuraId> &list) override { return false; }
+	bool areAllToolsValid(const std::vector<DesuraId> &list) override { return false; }
+	bool areAllToolsDownloaded(const std::vector<DesuraId> &list) override { return false; }
+	bool areAllToolsInstalled(const std::vector<DesuraId> &list) override { return false; }
 	void saveItems() override { }
 	std::string getToolName(DesuraId toolId) override { return "[Test Tool]"; }
 	void findJSTools(UserCore::Item::ItemInfo* item) override { }

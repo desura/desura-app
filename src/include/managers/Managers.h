@@ -124,6 +124,13 @@ protected:
 	virtual ~CVarManagerI(){};
 };
 
+class CVarRegTargetI
+{
+public:
+	virtual bool RegCVar(CVar* var) = 0;
+	virtual void UnRegCVar(CVar* var) = 0;
+};
+
 class CCommandManagerI
 {
 public:

@@ -35,13 +35,11 @@ CVar gc_steamuser("gc_steamuser", "", CFLAG_USER|CVAR_WINDOWS_ONLY);
 
 void MainApp::processWildCards(WCSpecialInfo &info, wxWindow* parent)
 {
-	if (!info.handled)
-	{
-		if (Safe::stricmp("STEAMUSER", info.name.c_str()) == 0)
-			getSteamUser(&info, parent);
-	}
+	if (info.handled)
+		return;
 
-	info.processed = true;
+	if (Safe::stricmp("STEAMUSER", info.name.c_str()) == 0)
+		getSteamUser(&info, parent);
 }
 
 void MainApp::getSteamUser(WCSpecialInfo *info, wxWindow *parent)

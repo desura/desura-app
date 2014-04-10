@@ -54,8 +54,8 @@ public:
 	///////////////////////////////////////////////////////
 	// guiDelegate overrides
 	///////////////////////////////////////////////////////
-	virtual void registerDelegate(wxDelegate* d);
-	virtual void deregisterDelegate(wxDelegate* d);
+	void registerDelegate(InvokeI* d);
+	void deregisterDelegate(InvokeI* d);
 
 	virtual wxEvtHandler* GetEventHandler();
 	virtual int GetId();

@@ -29,26 +29,24 @@ $/LicenseInfo$
 wxDEFINE_EVENT(wxEVT_GUIDELEGATE, wxGuiDelegateEvent);
 IMPLEMENT_DYNAMIC_CLASS(wxGuiDelegateEvent, wxNotifyEvent)
 
-wxGuiDelegateEvent::wxGuiDelegateEvent() : wxNotifyEvent(wxEVT_GUIDELEGATE, 0)
+
+
+wxGuiDelegateEvent::wxGuiDelegateEvent() 
+	: wxNotifyEvent(wxEVT_GUIDELEGATE, 0)
 {
-	m_pDelegate = nullptr;
 }
 
-wxGuiDelegateEvent::wxGuiDelegateEvent(std::shared_ptr<InvokeI> invoker, int winId) : wxNotifyEvent(wxEVT_GUIDELEGATE, winId)
+wxGuiDelegateEvent::wxGuiDelegateEvent(std::shared_ptr<Invoker> &invoker, int winId)
+	: wxNotifyEvent(wxEVT_GUIDELEGATE, winId)
+	, m_pDelegate(invoker)
 {
-	m_pDelegate = nullptr;
-	m_spDelegate = invoker;
+	assert(m_pDelegate);
 }
 
-wxGuiDelegateEvent::wxGuiDelegateEvent(InvokeI* invoker, int winId) : wxNotifyEvent(wxEVT_GUIDELEGATE, winId)
+wxGuiDelegateEvent::wxGuiDelegateEvent(const wxGuiDelegateEvent& event) 
+	: wxNotifyEvent(event)
+	, m_pDelegate(event.m_pDelegate)
 {
-	m_pDelegate = invoker;
-}
-
-wxGuiDelegateEvent::wxGuiDelegateEvent(const wxGuiDelegateEvent& event) : wxNotifyEvent(event)
-{
-	m_spDelegate = event.m_spDelegate;
-	m_pDelegate = event.m_pDelegate;
 }
 
 wxGuiDelegateEvent::~wxGuiDelegateEvent()
@@ -62,11 +60,10 @@ wxEvent *wxGuiDelegateEvent::Clone() const
 
 void wxGuiDelegateEvent::invoke()
 {
-	if (m_spDelegate.get())
-		m_spDelegate->invoke();
-
 	if (m_pDelegate)
 		m_pDelegate->invoke();
+	else
+		assert(false);
 }
 
 

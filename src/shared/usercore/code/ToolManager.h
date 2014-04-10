@@ -85,9 +85,9 @@ namespace UserCore
 
 		bool updateTransaction(ToolTransactionId ttid, Misc::ToolTransaction* transaction) override;
 
-		bool areAllToolsValid(std::vector<DesuraId> &list) override;
-		bool areAllToolsDownloaded(std::vector<DesuraId> &list) override;
-		bool areAllToolsInstalled(std::vector<DesuraId> &list) override;
+		bool areAllToolsValid(const std::vector<DesuraId> &list) override;
+		bool areAllToolsDownloaded(const std::vector<DesuraId> &list) override;
+		bool areAllToolsInstalled(const std::vector<DesuraId> &list) override;
 
 		void parseXml(const XML::gcXMLElement &toolinfoNode) override;
 		std::string getToolName(DesuraId toolId) override;

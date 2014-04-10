@@ -35,15 +35,15 @@ $/LicenseInfo$
 #include "webcore/DownloadImageInfo.h"
 
 
-
-
 namespace WebCore
 {
+	extern gcString genUserAgent();
+}
 
 
+using namespace WebCore;
 
 
-extern gcString genUserAgent();
 
 void WebCoreClass::sendPassReminder(const char* email)
 {
@@ -93,12 +93,12 @@ void WebCoreClass::getInstalledItemList(XML::gcXMLDocument &xmlDocument)
 	xmlDocument.ProcessStatus("itemwizard");
 }
 
-void WebCoreClass::onHttpProg(volatile bool& stop, Prog_s& prog)
+void WebCoreClass::onHttpProg(std::atomic<bool>* stop, Prog_s& prog)
 {
-	prog.abort = stop;
+	prog.abort = *stop;
 }
 
-void WebCoreClass::downloadImage(WebCore::Misc::DownloadImageInfo *dii, volatile bool &stop)
+void WebCoreClass::downloadImage(WebCore::Misc::DownloadImageInfo *dii, std::atomic<bool> &stop)
 {
 	if (!dii)
 		throw gcException(ERR_BADITEM);
@@ -128,7 +128,7 @@ void WebCoreClass::downloadImage(WebCore::Misc::DownloadImageInfo *dii, volatile
 	HttpHandle hh(imageUrl);
 
 	hh->setUserAgent(getUserAgent());
-	hh->getProgressEvent() += extraDelegate<WebCoreClass, Prog_s, volatile bool&>(this, &WebCoreClass::onHttpProg, stop);
+	hh->getProgressEvent() += extraDelegate(this, &WebCoreClass::onHttpProg, &stop);
 
 	hh->getWeb();
 		
@@ -156,10 +156,7 @@ void WebCoreClass::downloadBanner(MCFCore::Misc::DownloadProvider* dlp, const ch
 
 	WebCore::Misc::DownloadImageInfo dii(dlp->getBanner());
 
-	bool stop = false;
+	std::atomic<bool> stop;
 	downloadImage(&dii, stop);
 	dlp->setBanner(dii.outPath.c_str());
-}
-
-
 }

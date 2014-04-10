@@ -363,8 +363,27 @@ void UMcfFile::remove(const wchar_t* dir)
 #endif
 }
 
+class AutoCleanupDelegate
+{
+public:
+	AutoCleanupDelegate(DelegateI<ProgressCB&>* del)
+		: m_pDel(del)
+	{
+	}
+
+	~AutoCleanupDelegate()
+	{
+		if (m_pDel)
+			m_pDel->destroy();
+	}
+
+	DelegateI<ProgressCB&> *m_pDel;
+};
+
 uint8 UMcfFile::readMCFAndSave(FILEHANDLE hFile, const wchar_t* dir, uint64 offset, DelegateI<ProgressCB&> *del)
 {
+	AutoCleanupDelegate acd(del);
+
 	if (!IsValidFileHandle(hFile))
 		return MCFF_ERR_INVALIDHANDLE;
 
@@ -395,9 +414,6 @@ uint8 UMcfFile::readMCFAndSave(FILEHANDLE hFile, const wchar_t* dir, uint64 offs
 		res = decompressAndSave(hFile, hSaveFile, offset, del);
 	else
 		res = saveData(hFile, hSaveFile, offset, del);
-
-	if (del)
-		del->destroy();
 
 	FileClose(hSaveFile);
 
