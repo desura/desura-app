@@ -384,15 +384,15 @@ void ComplexLaunchServiceTask::onTrueComplete()
 	if (m_bHashMissMatch && m_pIHH)
 		verify = m_pIHH->verifyAfterHashFail();
 
+	uint32 com = m_bHashMissMatch ? 1 : 0;
+	onCompleteEvent(com);
+
 	if (verify)
 		getItemHandle()->getInternal()->goToStageVerify(getItemInfo()->getInstalledBranch(), getItemInfo()->getInstalledBuild(), true, true, true);
 	else if (m_bCompleteStage)
-		getItemHandle()->getInternal()->completeStage(true);
+		getItemHandle()->getInternal()->completeStage(false);
 	else if (m_bLaunch)
 		getItemHandle()->getInternal()->goToStageLaunch();
-
-	uint32 com = m_bHashMissMatch?1:0;
-	onCompleteEvent(com);
 }
 
 void ComplexLaunchServiceTask::completeRemove()
