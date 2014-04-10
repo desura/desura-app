@@ -351,7 +351,11 @@ public:
 	{
 		m_uiErrId = errId;
 		m_uiSecErrId = secErrId;
-		assign(errMsg[errId]);
+
+		if (errId < (sizeof(errMsg) / sizeof(char*)))
+			assign(errMsg[errId]);
+		else
+			assign("Invalid error id");
 	}
 
 	gcException& operator =(gcException const &e)
