@@ -49,7 +49,7 @@ $/LicenseInfo$
 
 using namespace Desurium;
 
-UINT UploadDump(const std::string &strFile, const std::string &strUser);
+UINT UploadDump(const std::string &strFile, const std::string &strUser, const std::string &strTracer);
 
 bool RestartDesura(const char* args);
 void GetBuildBranch(int &build, int &branch);

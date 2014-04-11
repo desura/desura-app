@@ -15,6 +15,10 @@ macro(use_unicode_here)
   add_definitions(-D_UNICODE -DUNICODE -DwxUSE_UNICODE)
 endmacro()
 
+if(WITH_CODESIGN)
+	add_definitions(-DWITH_CODESIGN)
+endif()
+
 if(DEBUG)
     add_definitions(-DDEBUG -D_DEBUG)
 else()

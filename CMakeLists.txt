@@ -9,6 +9,7 @@
 #   BUILD_TESTS     ON                  Build various unit tests
 #   WITH_GTEST      ON                  Add GTest support
 #	WITH_GMOCK		ON					Add GMock support (note: WITH_GTEST must be on)
+#	WITH_CODESIGN	OFF					Check code sign on dlls/exe (WIN32 Only)
 #   BUILD_TOOLS     ON                  Build various Desura tools
 #   OFFICIAL_BUILD  OFF                 for official build only
 #   BRANDING        depends on          which branding should be used?
