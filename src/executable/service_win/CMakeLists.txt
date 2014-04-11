@@ -13,6 +13,7 @@ file(GLOB
 add_executable(desura_service ${Sources} ${COMMON_SOURCE})
 target_link_libraries(desura_service
   mdump_s
+  util_s
   wintrust
 )
 
