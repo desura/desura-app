@@ -172,7 +172,9 @@ void MCFDownloadProviders::processXml(XML::gcXMLDocument &doc)
 
 		m_DownloadAuth = temp;
 
-		mNode.GetChild("authed", m_bUnAuthed);
+		bool bAuthed = true;
+		if (mNode.GetChild("authed", bAuthed))
+			m_bUnAuthed = !bAuthed;
 	}
 
 	auto urlNode = mNode.FirstChildElement("urls");
