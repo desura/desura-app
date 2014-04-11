@@ -47,7 +47,7 @@ void initFactory()
 	char message[255] = {0};
 	if (UTIL::WIN::validateCert(L".\\bin\\mcfcore.dll", message, 255) != ERROR_SUCCESS)
 	{
-		Warning(gcString("Cert validation failed on mcfcore.dll: {0}\n", message));
+		WarningS(gcString("Cert validation failed on mcfcore.dll: {0}\n", message));
 		exit(-1);
 	}
 #endif
