@@ -145,6 +145,7 @@ void CGCServiceApp::stop()
 {
 	if (m_pServiceCore)
 	{
+		m_pServiceCore->setTracer(nullptr);
 		m_pServiceCore->stopPipe();
 		m_pServiceCore->destroy();
 	}
