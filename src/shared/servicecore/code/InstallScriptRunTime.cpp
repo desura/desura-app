@@ -181,7 +181,7 @@ protected:
 			char message[255] = {0};
 			if (UTIL::WIN::validateCert(L".\\bin\\scriptcore.dll", message, 255) != ERROR_SUCCESS)
 			{
-				Warning(gcString("Cert validation failed on scriptcore.dll: {0}\n", message));
+				WarningS("Cert validation failed on scriptcore.dll: {0}\n", message);
 				return false;
 			}
 	#endif
