@@ -71,6 +71,16 @@ namespace
 using namespace UserCore::Item;
 
 
+template <>
+extern std::string TraceClassInfo(ItemInfo *pClass);
+
+template <>
+std::string TraceClassInfo(ItemHandle *pClass)
+{
+	return gcString("[{0}] stage: {1}, {2}", (uint32)pClass, (uint32)pClass->getStage(), TraceClassInfo(pClass->getItemInfoNorm()));
+}
+
+
 ItemHandle::ItemHandle(ItemInfo* itemInfo, UserCore::UserI* user)
 	: m_pItemInfo(std::shared_ptr<ItemInfo>(itemInfo))
 	, m_pUserCore(user)
