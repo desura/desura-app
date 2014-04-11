@@ -79,6 +79,12 @@ public:
 	virtual uint64 getCompareHash() const = 0;
 	virtual void destroy() = 0;
 
+	//override this to auto remove invalid delegates
+	virtual bool isValid()
+	{
+		return true;
+	}
+
 protected:
 	virtual ~DelegateI(){};
 };
@@ -350,6 +356,20 @@ protected:
 		}
 
 		m_vPendingDelegates.clear();
+	}
+
+	void removeInvalidDelegates()
+	{
+		std::vector<TDel*> vTemp = m_vDelegates;
+		m_vDelegates.clear();
+
+		for (auto p : vTemp)
+		{
+			if (!p || !p->isValid())
+				p->destroy();
+			else
+				m_vDelegates.push_back(p);
+		}
 	}
 
 private:

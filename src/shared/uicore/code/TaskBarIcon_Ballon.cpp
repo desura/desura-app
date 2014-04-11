@@ -251,42 +251,36 @@ void TaskBarIcon::tagItems()
 	if (!GetUserCore())
 		return;
 
+	auto updateDelegate = [this](UserCore::Item::ItemInfoI* game)
+	{
+		const uint32 hasFlags = UserCore::Item::ItemInfoI::STATUS_DELETED;
+		const uint32 notFlags = UserCore::Item::ItemInfoI::STATUS_ONACCOUNT | UserCore::Item::ItemInfoI::STATUS_ONCOMPUTER | UserCore::Item::ItemInfoI::STATUS_DEVELOPER;
+
+		*game->getInfoChangeEvent() -= guiDelegate(this, &TaskBarIcon::onItemChanged);
+
+		if (HasAnyFlags(game->getStatus(), hasFlags))
+			return;
+
+		if (!HasAnyFlags(game->getStatus(), notFlags))
+			return;
+
+		*game->getInfoChangeEvent() += guiDelegate(this, &TaskBarIcon::onItemChanged);
+	};
+
 	std::vector<UserCore::Item::ItemInfoI*> gList;
 	GetUserCore()->getItemManager()->getGameList(gList, true);
 
-	for (size_t x=0; x<gList.size(); x++)
+	for (auto game : gList)
 	{
-		UserCore::Item::ItemInfoI* game = gList[x];
+		updateDelegate(game);
 
-		if (game->getStatus() & UserCore::Item::ItemInfoI::STATUS_DELETED || (!(game->getStatus() & (UserCore::Item::ItemInfoI::STATUS_ONACCOUNT|UserCore::Item::ItemInfoI::STATUS_ONCOMPUTER)) && (game->getStatus() & UserCore::Item::ItemInfoI::STATUS_DEVELOPER)))
-		{
-			*game->getInfoChangeEvent() -= guiDelegate(this, &TaskBarIcon::onItemChanged);
-			continue;
-		}
-
-		if (!(game->getStatus() & (UserCore::Item::ItemInfoI::STATUS_ONACCOUNT|UserCore::Item::ItemInfoI::STATUS_ONCOMPUTER)))
-			continue;
-
-		*game->getInfoChangeEvent() += guiDelegate(this, &TaskBarIcon::onItemChanged);
-
-#ifdef WIN32
+#ifndef UI_HIDE_MODS
 		std::vector<UserCore::Item::ItemInfoI*> mList;
 		GetUserCore()->getItemManager()->getModList(game->getId(), mList, true);
 
-		for (size_t y=0; y<mList.size(); y++)
+		for (auto mod : mList)
 		{
-			UserCore::Item::ItemInfoI* mod = mList[y];
-
-			if (mod->getStatus() & UserCore::Item::ItemInfoI::STATUS_DELETED || (!(mod->getStatus() & (UserCore::Item::ItemInfoI::STATUS_ONACCOUNT|UserCore::Item::ItemInfoI::STATUS_ONCOMPUTER)) && (mod->getStatus() & UserCore::Item::ItemInfoI::STATUS_DEVELOPER)))
-			{
-				*mod->getInfoChangeEvent() -= guiDelegate(this, &TaskBarIcon::onItemChanged);
-				continue;
-			}
-
-			if (!(mod->getStatus() & (UserCore::Item::ItemInfoI::STATUS_ONACCOUNT|UserCore::Item::ItemInfoI::STATUS_ONCOMPUTER)))
-				continue;
-
-			*mod->getInfoChangeEvent() += guiDelegate(this, &TaskBarIcon::onItemChanged);
+			updateDelegate(mod);
 		}
 #endif
 	}

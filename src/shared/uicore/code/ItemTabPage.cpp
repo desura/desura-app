@@ -422,8 +422,11 @@ void ItemTabPage::onItemsUpdate()
 	std::vector<UserCore::Item::ItemInfoI*> aList;
 	GetUserCore()->getItemManager()->getAllItems(aList);
 
-	for (size_t x=0; x<aList.size(); x++)
-		*aList[x]->getInfoChangeEvent() += guiDelegate(this, &ItemTabPage::onItemUpdate);
+	for (auto game : aList)
+	{
+		*game->getInfoChangeEvent() -= guiDelegate(this, &ItemTabPage::onItemUpdate);
+		*game->getInfoChangeEvent() += guiDelegate(this, &ItemTabPage::onItemUpdate);
+	}
 
 	postEvent("onItemListUpdated");
 }

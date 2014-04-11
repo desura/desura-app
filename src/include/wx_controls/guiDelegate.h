@@ -268,6 +268,11 @@ public:
 		cancel();
 	}
 
+	bool isValid() override
+	{
+		return !m_bCanceled;
+	}
+
 	void destroy() override
 	{
 		delete this;
