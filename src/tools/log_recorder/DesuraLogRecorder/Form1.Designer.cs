@@ -31,13 +31,14 @@
             this.dgMessages = new System.Windows.Forms.DataGridView();
             this.butRecord = new System.Windows.Forms.Button();
             this.butConnect = new System.Windows.Forms.Button();
+            this.butExport = new System.Windows.Forms.Button();
             this.Time = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.App = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.Thread = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.Function = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.Module = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.Message = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.ClassInfo = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.butExport = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.dgMessages)).BeginInit();
             this.SuspendLayout();
             // 
@@ -57,6 +58,7 @@
             this.App,
             this.Thread,
             this.Function,
+            this.Module,
             this.Message,
             this.ClassInfo});
             this.dgMessages.Location = new System.Drawing.Point(12, 40);
@@ -88,6 +90,17 @@
             this.butConnect.Text = "Connect";
             this.butConnect.UseVisualStyleBackColor = true;
             this.butConnect.Click += new System.EventHandler(this.butConnect_Click);
+            // 
+            // butExport
+            // 
+            this.butExport.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.butExport.Location = new System.Drawing.Point(699, 12);
+            this.butExport.Name = "butExport";
+            this.butExport.Size = new System.Drawing.Size(75, 23);
+            this.butExport.TabIndex = 3;
+            this.butExport.Text = "Export";
+            this.butExport.UseVisualStyleBackColor = true;
+            this.butExport.Click += new System.EventHandler(this.butExport_Click);
             // 
             // Time
             // 
@@ -121,6 +134,14 @@
             this.Function.ReadOnly = true;
             this.Function.Width = 71;
             // 
+            // Module
+            // 
+            this.Module.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.DisplayedCells;
+            this.Module.HeaderText = "Module";
+            this.Module.Name = "Module";
+            this.Module.ReadOnly = true;
+            this.Module.Width = 65;
+            // 
             // Message
             // 
             this.Message.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
@@ -134,17 +155,6 @@
             this.ClassInfo.HeaderText = "Class Info";
             this.ClassInfo.Name = "ClassInfo";
             this.ClassInfo.ReadOnly = true;
-            // 
-            // butExport
-            // 
-            this.butExport.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.butExport.Location = new System.Drawing.Point(699, 12);
-            this.butExport.Name = "butExport";
-            this.butExport.Size = new System.Drawing.Size(75, 23);
-            this.butExport.TabIndex = 3;
-            this.butExport.Text = "Export";
-            this.butExport.UseVisualStyleBackColor = true;
-            this.butExport.Click += new System.EventHandler(this.butExport_Click);
             // 
             // Form1
             // 
@@ -168,13 +178,14 @@
         private System.Windows.Forms.DataGridView dgMessages;
         private System.Windows.Forms.Button butRecord;
         private System.Windows.Forms.Button butConnect;
+        private System.Windows.Forms.Button butExport;
         private System.Windows.Forms.DataGridViewTextBoxColumn Time;
         private System.Windows.Forms.DataGridViewTextBoxColumn App;
         private System.Windows.Forms.DataGridViewTextBoxColumn Thread;
         private System.Windows.Forms.DataGridViewTextBoxColumn Function;
+        private System.Windows.Forms.DataGridViewTextBoxColumn Module;
         private System.Windows.Forms.DataGridViewTextBoxColumn Message;
         private System.Windows.Forms.DataGridViewTextBoxColumn ClassInfo;
-        private System.Windows.Forms.Button butExport;
     }
 }
 

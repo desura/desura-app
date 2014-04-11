@@ -126,6 +126,7 @@ namespace DesuraLogRecorder
             row.Cells.Add(new DataGridViewTextBoxCell() { Value = app });
             row.Cells.Add(new DataGridViewTextBoxCell() { Value = thread });
             row.Cells.Add(new DataGridViewTextBoxCell() { Value = GetDymProp(r, "function", "") });
+            row.Cells.Add(new DataGridViewTextBoxCell() { Value = GetDymProp(r, "module", "") });
             row.Cells.Add(new DataGridViewTextBoxCell() { Value = message });
             row.Cells.Add(new DataGridViewTextBoxCell() { Value = GetDymProp(r, "classinfo", "") });
 
@@ -150,7 +151,7 @@ namespace DesuraLogRecorder
 
             while (true)
             {
-                UInt32 curPos = accessor.ReadUInt32(12) % _BlockCount;
+                UInt32 curPos = accessor.ReadUInt32(4) % _BlockCount;
 
                 var bag = _MissingItems;
                 _MissingItems = new ConcurrentBag<int>();
@@ -266,6 +267,7 @@ namespace DesuraLogRecorder
                 var first = dgMessages.Rows[dgMessages.Rows.GetFirstRow(DataGridViewElementStates.None)].Cells[0];
 
                 row.Cells.Add(new DataGridViewTextBoxCell() { Value = first.Value });
+                row.Cells.Add(new DataGridViewTextBoxCell() { Value = "" });
                 row.Cells.Add(new DataGridViewTextBoxCell() { Value = "" });
                 row.Cells.Add(new DataGridViewTextBoxCell() { Value = "" });
                 row.Cells.Add(new DataGridViewTextBoxCell() { Value = "" });
