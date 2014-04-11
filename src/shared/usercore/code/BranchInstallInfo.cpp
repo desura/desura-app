@@ -782,7 +782,7 @@ void BranchInstallInfo::setLinkInfo(const char* szPath, const char* szExe, const
 {
 	if ((m_pItem->getStatus() & ItemInfo::STATUS_LINK) != ItemInfo::STATUS_LINK)
 	{
-		assert(false);
+		gcAssert(false);
 		return;
 	}
 

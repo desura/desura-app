@@ -55,7 +55,7 @@ HINSTANCE g_hInstDLL;
 
 void CustomSigAbort(int nSig)
 {
-	assert(false);
+	gcAssert(false);
 	throw std::exception("sig abort");
 }
 
@@ -235,9 +235,8 @@ public:
 		m_pOldTraits = oldTraits;
 	}
 
-	virtual bool ShowAssertDialog(const wxString &msg) override
 	{
-		Warning(gcString("wx Assert: {0}\n", msg.mb_str()));
+		Warning("wx gcAssert: {0}\n", msg.mb_str());
 		return true;
 	}
 
@@ -562,7 +561,6 @@ public:
 
 	virtual void OnAssert(const wxChar *file, int line, const wxChar *cond, const wxChar *msg) override
 	{
-		Warning("Assert: {0} [{1}] in file {2}: {3}\n", msg, cond, file, line);
 	}
 
 #ifdef NIX
@@ -582,17 +580,17 @@ public:
 		}
 		catch (const gcException &e)
 		{
-			assert(false);
+			gcAssert(false);
 			Warning("OnExceptionInMainLoop gcException: {0}\n", e.what());
 		}
 		catch (const std::exception &e)
 		{
-			assert(false);
+			gcAssert(false);
 			Warning("OnExceptionInMainLoop std::exception: {0}\n", e.what());
 		}
 		catch (...)
 		{
-			assert(false);
+			gcAssert(false);
 			Warning("OnExceptionInMainLoop Unknown exception\n");
 		}
 		

@@ -38,7 +38,7 @@ void UpdateUninstallTask::doTask()
 	auto service = m_pUser->getServiceMain();
 	auto itemManager = m_pUser->getItemManager();
 
-	assert(service && itemManager);
+	gcAssert(service && itemManager);
 
 	std::vector<UserCore::Item::ItemInfoI*> aList;
 	itemManager->getAllItems(aList);

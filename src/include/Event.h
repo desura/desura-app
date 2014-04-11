@@ -129,16 +129,16 @@ public:
 	void assertType()
 	{
 		//shouldnt be using char* and wchar_t* in events as they can leak memory. Use gcString instead
-		assert( typeid(TArg) != typeid(char*) );
-		assert( typeid(TArg) != typeid(wchar_t*) );
-		assert( typeid(TArg) != typeid(const char*) );
-		assert( typeid(TArg) != typeid(const wchar_t*) );
+		gcAssert(typeid(TArg) != typeid(char*));
+		gcAssert(typeid(TArg) != typeid(wchar_t*));
+		gcAssert(typeid(TArg) != typeid(const char*));
+		gcAssert(typeid(TArg) != typeid(const wchar_t*));
 	}
 
 	void operator()(TArg a)
 	{
 		//cant use this with void event
-		assert( typeid(TArg) != typeid(VoidEventArg) );
+		gcAssert(typeid(TArg) != typeid(VoidEventArg));
 
 		std::lock_guard<std::recursive_mutex> guard(m_Lock);
 		migratePending();
@@ -345,7 +345,10 @@ protected:
 				if (findInfo(p.second) == UNKNOWN_ITEM)
 					m_vDelegates.push_back(p.second);
 				else
+				{
+					gcAssert(false);
 					p.second->destroy();
+				}
 			}
 			else
 			{

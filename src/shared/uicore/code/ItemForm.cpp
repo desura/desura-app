@@ -749,7 +749,7 @@ void ItemForm::onStageChange(ITEM_STAGE &stage)
 	else
 	{
 		//shouldn't get here!!!!!
-		assert(false);
+		gcAssert(false);
 		return;
 	}
 
@@ -1261,7 +1261,7 @@ void ItemForm::popArgs()
 {
 	if (m_vArgs.empty())
 	{
-		assert(false);
+		gcAssert(false);
 		return;
 	}
 

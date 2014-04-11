@@ -312,7 +312,7 @@ void gcFrame::onWindowClose(wxCloseEvent& event)
 
 void gcFrame::setMessageBox(wxWindow *pDialog)
 {
-	assert((!pDialog && m_pMessageBox) || (pDialog && !m_pMessageBox));
+	gcAssert((!pDialog && m_pMessageBox) || (pDialog && !m_pMessageBox));
 	m_pMessageBox = pDialog;
 
 	if (!pDialog && m_bPendingClose)

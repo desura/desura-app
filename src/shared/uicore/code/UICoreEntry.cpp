@@ -95,8 +95,7 @@ void gtkMessageBox(const char* text, const char* title)
 
 static void gcAssertHandler(const wxString &file, int line, const wxString &func, const wxString &cond, const wxString &msg)
 {
-	assert(false);
-	WarningS("wxAssert: {0} {1} [{2}:{3}]\n", cond.c_str(), msg.c_str(), func.c_str(), line);
+	gcAssert(false);
 }
 
 class UICore : public UICoreI

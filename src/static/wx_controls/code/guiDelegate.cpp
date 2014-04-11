@@ -40,7 +40,7 @@ wxGuiDelegateEvent::wxGuiDelegateEvent(std::shared_ptr<Invoker> &invoker, int wi
 	: wxNotifyEvent(wxEVT_GUIDELEGATE, winId)
 	, m_pDelegate(invoker)
 {
-	assert(m_pDelegate);
+	gcAssert(m_pDelegate);
 }
 
 wxGuiDelegateEvent::wxGuiDelegateEvent(const wxGuiDelegateEvent& event) 
@@ -63,7 +63,7 @@ void wxGuiDelegateEvent::invoke()
 	if (m_pDelegate)
 		m_pDelegate->invoke();
 	else
-		assert(false);
+		gcAssert(false);
 }
 
 

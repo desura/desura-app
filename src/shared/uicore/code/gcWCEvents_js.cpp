@@ -144,7 +144,7 @@ public:
 	//dont use. Need for template
 	CrumbExtender() : DesuraJSBase("CrumbExtender", "")
 	{
-		assert(false);
+		gcAssert(false);
 	}
 
 	virtual bool preExecuteValidation(const char* function, uint32 functionHash, JSObjHandle object, size_t argc, JSObjHandle* argv)
@@ -196,7 +196,7 @@ public:
 	//Dont use
 	ContextMenuExtender() : DesuraJSBase("ContextMenuExtender", "")
 	{
-		assert(false);
+		gcAssert(false);
 	}
 
 	ContextMenuExtender(gcWebControlI* parent) : DesuraJSBase("ContextMenuExtender", "")

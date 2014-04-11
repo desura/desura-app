@@ -623,7 +623,7 @@ void ItemManager::retrieveItemInfo(DesuraId id, uint32 statusOveride, WildcardMa
 {
 	gcTrace("ItemId {0}", id);
 
-	assert(m_pUser->m_pWebCore);
+	gcAssert(m_pUser->m_pWebCore);
 
 	XML::gcXMLDocument doc;
 	m_pUser->m_pWebCore->getItemInfo(id, doc, mcfBranch, mcfBuild);

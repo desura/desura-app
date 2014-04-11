@@ -50,7 +50,7 @@ namespace MCFCore
 				m_iOwner = -1;
 				m_uiErrCount++;
 				m_tExpTime = gcTime() + std::chrono::seconds(getTimeOut());
-				assert(isInTimeOut());
+				gcAssert(isInTimeOut());
 			}
 
 			bool isInTimeOut()

@@ -81,7 +81,7 @@ protected:
         auto msg = vParamList[x];
 
         if (msg->type != pParam->getType())
-            assert(false);
+			gcAssert(false);
         else
 			pParam->deserialize(&msg->data, msg->size);
 
@@ -592,7 +592,7 @@ public:
 		std::deque<IPCParameterI*> dqParams;
 		emptyTemplateFunction<Args...>(pushParms<Args>(a, dqParams)...);
 
-		assert(dqParams.size() <= 1);
+		gcAssert(dqParams.size() <= 1);
 
 		std::vector<IPCParameterI*> vParams(begin(dqParams), end(dqParams));
 

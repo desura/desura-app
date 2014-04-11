@@ -265,7 +265,7 @@ public:
 
 		//upload
 		UserCore::Misc::UploadInfoThreadI* info = g_pUserHandle->getUploadManager()->findItem(g_strUploadHash.c_str());
-		assert(info);
+		gcAssert(info);
 
 		*info->getUploadProgressEvent() += delegate(this, &UploadMCF::OnUploadProgress);
 		*info->getErrorEvent() += delegate(this, &UploadMCF::OnUploadError);

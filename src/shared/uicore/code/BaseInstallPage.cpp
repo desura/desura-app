@@ -166,7 +166,7 @@ void BaseInstallPage::setInfo(DesuraId id, UserCore::Item::ItemInfoI* pItemInfo)
 
 void BaseInstallPage::setInfo(UserCore::Item::ItemHandleI* pItemHandle)
 {
-	assert(pItemHandle);
+	gcAssert(pItemHandle);
 
 	m_pItemHandle = pItemHandle;
 	BasePage::setInfo(pItemHandle->getItemInfo()->getId(), pItemHandle->getItemInfo());

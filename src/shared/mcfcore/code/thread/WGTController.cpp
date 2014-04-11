@@ -714,7 +714,7 @@ Misc::WGTSuperBlock* WGTController::newTask(uint32 id, MCFThreadStatus &status)
 	gcTrace("Id: {0}", id);
 
 	WGTWorkerInfo* worker = findWorker(id);
-	assert(worker);
+	gcAssert(worker);
 
 	status = worker->getStatus();
 
@@ -780,7 +780,7 @@ void WGTController::workerFinishedSuperBlock(uint32 id)
 	gcTrace("Id: {0}", id);
 
 	WGTWorkerInfo* worker = findWorker(id);
-	assert(worker);
+	gcAssert(worker);
 
 	Misc::WGTSuperBlock* block = worker->resetCurrentBlock();
 
@@ -815,7 +815,7 @@ void WGTController::workerFinishedSuperBlock(uint32 id)
 void WGTController::workerFinishedBlock(uint32 id, Misc::WGTBlock* block)
 {
 	WGTWorkerInfo* worker = findWorker(id);
-	assert(worker);
+	gcAssert(worker);
 
 	if (!block || !worker)
 		return;
@@ -829,7 +829,7 @@ void WGTController::workerFinishedBlock(uint32 id, Misc::WGTBlock* block)
 MCFThreadStatus WGTController::getStatus(uint32 id)
 {
 	WGTWorkerInfo* worker = findWorker(id);
-	assert(worker);
+	gcAssert(worker);
 
 	if (isPaused())
 		return MCFThreadStatus::SF_STATUS_PAUSE;
@@ -845,7 +845,7 @@ void WGTController::reportError(uint32 id, gcException &e)
 	gcTrace("Id: {0}, E: {1}", id, e);
 
 	WGTWorkerInfo* worker = findWorker(id);
-	assert(worker);
+	gcAssert(worker);
 
 	Warning("WebGet: {0} Error: {1}.\n", id, e);
 
@@ -861,8 +861,8 @@ void WGTController::reportError(uint32 id, gcException &e)
 void WGTController::reportProgress(uint32 id, uint64 ammount)
 {
 	WGTWorkerInfo* worker = findWorker(id);
-	assert(worker);
-	assert(m_pUPThread);
+	gcAssert(worker);
+	gcAssert(m_pUPThread);
 
 	worker->ammountDone += ammount;
 	m_pUPThread->reportProg(id, worker->ammountDone);
@@ -871,8 +871,8 @@ void WGTController::reportProgress(uint32 id, uint64 ammount)
 void WGTController::reportNegProgress(uint32 id, uint64 ammount)
 {
 	WGTWorkerInfo* worker = findWorker(id);
-	assert(worker);
-	assert(m_pUPThread);
+	gcAssert(worker);
+	gcAssert(m_pUPThread);
 
 	worker->ammountDone -= ammount;
 	m_pUPThread->reportProg(id, worker->ammountDone);

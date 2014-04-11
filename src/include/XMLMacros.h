@@ -319,7 +319,7 @@ namespace XML
 
 		gcXMLElement FirstChildElement(const char* name)
 		{
-			assert(m_pConstElement);
+			gcAssert(m_pConstElement);
 
 			if (!m_pConstElement)
 				return gcXMLElement();
@@ -332,7 +332,7 @@ namespace XML
 
 		const gcXMLElement FirstChildElement(const char* name) const
 		{
-			assert(m_pConstElement);
+			gcAssert(m_pConstElement);
 
 			if (!m_pConstElement)
 				return gcXMLElement();
@@ -342,7 +342,7 @@ namespace XML
 
 		gcXMLElement NewElement(const char* szName)
 		{
-			assert(m_pElement && m_XmlDoc);
+			gcAssert(m_pElement && m_XmlDoc);
 
 			if (!m_pElement || !m_XmlDoc)
 				return gcXMLElement();
@@ -356,7 +356,7 @@ namespace XML
 		template <typename T>
 		void SetAttribute(const char* szName, T tVal)
 		{
-			assert(m_pElement);
+			gcAssert(m_pElement);
 
 			if (!m_pElement)
 				return;
@@ -366,7 +366,7 @@ namespace XML
 
 		void SetText(const char* szText)
 		{
-			assert(m_pElement);
+			gcAssert(m_pElement);
 
 			if (!m_pElement)
 				return;

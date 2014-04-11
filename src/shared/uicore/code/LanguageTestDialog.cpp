@@ -276,7 +276,7 @@ public:
 	void setFactory(Helper::ItemHandleFactoryI* factory) override { }
 	void addHelper(Helper::ItemHandleHelperI* helper) override 
 	{
-		assert(m_pHelper == nullptr);
+		gcAssert(m_pHelper == nullptr);
 		m_pHelper = helper;
 	}
 

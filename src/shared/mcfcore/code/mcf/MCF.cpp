@@ -79,13 +79,13 @@ MCF::~MCF()
 
 void MCF::disableCompression()
 {
-	assert(m_sHeader);
+	gcAssert(m_sHeader);
 	m_sHeader->addFlags(MCFCore::MCFHeaderI::FLAG_NOTCOMPRESSED);
 }
 
 bool MCF::isCompressed()
 {
-	assert(m_sHeader);
+	gcAssert(m_sHeader);
 	return !(m_sHeader->getFlags() & MCFCore::MCFHeaderI::FLAG_NOTCOMPRESSED);
 }
 
@@ -122,7 +122,7 @@ void MCF::setHeader(MCFCore::MCFHeaderI* head)
 
 void MCF::setHeader(DesuraId id, MCFBranch branch, MCFBuild build)
 {
-	assert(m_sHeader);
+	gcAssert(m_sHeader);
 	m_sHeader->setBranch(branch);
 	m_sHeader->setType(id.getType());
 	m_sHeader->setBuild(build);
@@ -186,7 +186,7 @@ void MCF::setServerCon(MCFCore::Misc::MCFServerCon *pMCFServerCon)
 {
 	std::lock_guard<std::mutex> guard(m_mThreadMutex);
 
-	assert((pMCFServerCon && !m_pMCFServerCon) || (!pMCFServerCon && m_pMCFServerCon));
+	gcAssert((pMCFServerCon && !m_pMCFServerCon) || (!pMCFServerCon && m_pMCFServerCon));
 	m_pMCFServerCon = pMCFServerCon;
 }
 
@@ -781,7 +781,7 @@ bool MCF::verifyUnitTest(MCFI* mcf)
 {
 	MCF *temp = static_cast<MCF*>(mcf);
 
-	assert(temp);
+	gcAssert(temp);
 
 	std::vector<mcfDif_s> vSame;
 	std::vector<mcfDif_s> vDiff;
@@ -834,7 +834,7 @@ void MCF::getReadHandle(UTIL::FS::FileHandle& handle)
 
 void MCF::getWriteHandle(UTIL::FS::FileHandle& handle)
 {
-	assert(m_uiFileOffset == 0);
+	gcAssert(m_uiFileOffset == 0);
 	handle.open(m_szFile.c_str(), UTIL::FS::FILE_WRITE, m_uiFileOffset);
 }
 

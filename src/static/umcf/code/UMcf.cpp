@@ -206,7 +206,7 @@ void UMcf::removeOldFiles(const wchar_t* installPath)
 
 void UMcf::moveOldFiles(const wchar_t* installPath, const wchar_t* fileName)
 {
-	assert(g_vProblemFilesPath.size() == g_vProblemFiles.size());
+	gcAssert(g_vProblemFilesPath.size() == g_vProblemFiles.size());
 
 	size_t x = 0;
 

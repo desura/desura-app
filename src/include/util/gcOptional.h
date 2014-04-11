@@ -86,13 +86,13 @@ public:
 
 	T& value()
 	{
-		assert(m_bIsSet);
+		gcAssert(m_bIsSet);
 		return m_tVal;
 	}
 
 	const T& value() const
 	{
-		assert(m_bIsSet);
+		gcAssert(m_bIsSet);
 		return m_tVal;
 	}
 

@@ -103,7 +103,7 @@ Path::Path(std::wstring path, std::wstring file, bool bLastIsFile)
 	if (bLastIsFile == false)
 		m_File = File(gcString(file));
 	else
-		assert(file.empty());
+		gcAssert(file.empty());
 }
 
 Path::Path(std::string path, std::string file, bool bLastIsFile)
@@ -117,7 +117,7 @@ Path::Path(std::string path, std::string file, bool bLastIsFile)
 	if (bLastIsFile == false)
 		m_File = File(file);
 	else
-		assert(file.empty());
+		gcAssert(file.empty());
 }
 
 Path::Path(const Path& path)

@@ -109,7 +109,7 @@ namespace Misc
 		//!
 		DownloadProvider(const XML::gcXMLElement &xmlElement)
 		{
-			assert(xmlElement.IsValid());
+			gcAssert(xmlElement.IsValid());
 
 			const std::string strBanner = xmlElement.GetChild("banner");
 			setBanner(strBanner.c_str());

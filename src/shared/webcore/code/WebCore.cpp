@@ -187,7 +187,7 @@ void WebCoreClass::setCookie(const char* sess)
 
 void WebCoreClass::setCookies(CookieCallbackI *pCallback)
 {
-	assert(pCallback);
+	gcAssert(pCallback);
 
 	if (!pCallback)
 		return;

@@ -138,7 +138,7 @@ void UploadProgPage::run()
 		return;
 
 	UserCore::Misc::UploadInfoThreadI* info = GetUploadMng()->findItem(m_uiUploadHash);
-	assert(info);
+	gcAssert(info);
 
 	*info->getActionEvent() += guiDelegate(this, &UploadProgPage::onAction);
 	*info->getUploadProgressEvent() += guiDelegate(this, &UploadProgPage::onProgress);
@@ -159,7 +159,7 @@ void UploadProgPage::run()
 void UploadProgPage::onButClick( wxCommandEvent& event )
 { 
 	UserCore::Misc::UploadInfoThreadI* info = GetUploadMng()->findItem(m_uiUploadHash);
-	assert(info);
+	gcAssert(info);
 
 	if (event.GetId() == m_butPause->GetId())
 	{
@@ -195,7 +195,7 @@ void UploadProgPage::onChecked(wxCommandEvent& event)
 		return;
 
 	UserCore::Misc::UploadInfoThreadI* info = GetUploadMng()->findItem(m_uiUploadHash);
-	assert(info);
+	gcAssert(info);
 
 	info->setDelMcf(m_cbDeleteMcf->GetValue());
 }

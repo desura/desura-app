@@ -44,7 +44,7 @@ BaseItemTask::BaseItemTask(UserCore::Item::ITEM_STAGE type, const char* name, Us
 	, m_uiMcfBuild(build)
 	, m_szName(name)
 {
-	assert(handle);
+	gcAssert(handle);
 }
 
 BaseItemTask::~BaseItemTask()

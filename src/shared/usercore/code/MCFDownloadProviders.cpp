@@ -39,7 +39,7 @@ MCFDownloadProviders::MCFDownloadProviders(WebCore::WebCoreI* pWebCore, int nUse
 
 void MCFDownloadProviders::setInfo(DesuraId id, MCFBranch branch, MCFBuild build)
 {
-	assert(!m_bInit);
+	gcAssert(!m_bInit);
 
 	m_Id = id;
 	m_Build = build;
@@ -79,7 +79,7 @@ size_t MCFDownloadProviders::size()
 
 void MCFDownloadProviders::forceLoad(MCFCore::MCFI* pMcf)
 {
-	assert(pMcf);
+	gcAssert(pMcf);
 
 	{
 		std::lock_guard<std::mutex> guard(m_UpdateLock);
@@ -87,7 +87,7 @@ void MCFDownloadProviders::forceLoad(MCFCore::MCFI* pMcf)
 	}
 
 	auto header = pMcf->getHeader();
-	assert(header);
+	gcAssert(header);
 	
 	header->setBuild(m_Build);
 	header->setBranch(m_Branch);

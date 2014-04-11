@@ -170,8 +170,8 @@ void UpdateThreadOld::onForcePoll(std::tuple<gcOptional<bool>, gcOptional<bool>,
 	}
 #else
 	//shouldn't be using these in non official builds
-	assert(!second);
-	assert(!third);
+	gcAssert(!second);
+	gcAssert(!third);
 #endif
 
 	m_WaitCond.notify();

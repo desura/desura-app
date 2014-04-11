@@ -72,8 +72,8 @@ SFTController::~SFTController()
 
 void SFTController::run()
 {
-	assert(m_uiNumber);
-	assert(m_szFile);
+	gcAssert(m_uiNumber);
+	gcAssert(m_szFile);
 
 	UTIL::FS::FileHandle fh;
 
@@ -275,7 +275,7 @@ bool SFTController::fillBuffers(UTIL::FS::FileHandle& fileHandle)
 MCFThreadStatus SFTController::getStatus(uint32 id)
 {
 	SFTWorkerInfo* worker = findWorker(id);
-	assert(worker);
+	gcAssert(worker);
 
 	if (isPaused())
 		return MCFThreadStatus::SF_STATUS_PAUSE;
@@ -289,7 +289,7 @@ MCFThreadStatus SFTController::getStatus(uint32 id)
 std::shared_ptr<SFTWorkerBuffer> SFTController::getBlock(uint32 id, MCFThreadStatus &status)
 {
 	SFTWorkerInfo* worker = findWorker(id);
-	assert(worker);
+	gcAssert(worker);
 
 	std::shared_ptr<SFTWorkerBuffer> temp = nullptr;
 
@@ -317,7 +317,7 @@ std::shared_ptr<MCFCore::MCFFile> SFTController::newTask(uint32 id)
 	gcTrace("Id: {0}", id);
 
 	SFTWorkerInfo* worker = findWorker(id);
-	assert(worker);
+	gcAssert(worker);
 
 	if (worker->status != MCFThreadStatus::SF_STATUS_NULL)
 		return nullptr;
@@ -359,7 +359,7 @@ void SFTController::endTask(uint32 id, MCFThreadStatus status, gcException e)
 	gcTrace("Id: {0}, Status: {1}", id, (uint32)status);
 
 	SFTWorkerInfo* worker = findWorker(id);
-	assert(worker);
+	gcAssert(worker);
 
 	if (status == MCFThreadStatus::SF_STATUS_HASHMISSMATCH)
 	{
@@ -414,7 +414,7 @@ void SFTController::reportError(uint32 id, gcException &e)
 
 #ifdef WIN32
 	SFTWorkerInfo* worker = findWorker(id);
-	assert(worker);
+	gcAssert(worker);
 #endif
 	Warning("SFTControler: {0} Error: {1}.\n", id, e);
 	endTask(id, MCFThreadStatus::SF_STATUS_ERROR, e);
@@ -423,8 +423,8 @@ void SFTController::reportError(uint32 id, gcException &e)
 void SFTController::reportProgress(uint32 id, uint64 ammount)
 {
 	SFTWorkerInfo* worker = findWorker(id);
-	assert(worker);
-	assert(m_pUPThread);
+	gcAssert(worker);
+	gcAssert(m_pUPThread);
 
 	worker->ammountDone += ammount;
 

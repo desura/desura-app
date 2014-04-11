@@ -39,7 +39,7 @@ ToolTransInfo::ToolTransInfo(bool download, ToolTransaction* transaction, ToolMa
 	, m_pTransaction(std::shared_ptr<ToolTransaction>(transaction))
 	, m_pToolManager(pToolManager)
 {
-	assert(m_pTransaction);
+	gcAssert(m_pTransaction);
 
 	if (!m_pTransaction)
 		m_pTransaction = std::make_shared<ToolTransaction>();

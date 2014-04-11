@@ -414,7 +414,7 @@ void WebCoreClass::getDownloadProviders(DesuraId id, XML::gcXMLDocument &xmlDocu
 
 gcString WebCoreClass::getAppUpdateDownloadUrl(uint32 &appId, uint32 &appBuild)
 {
-	assert(appId);
+	gcAssert(appId);
 
 	PostMap postData;
 
