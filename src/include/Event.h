@@ -336,6 +336,8 @@ protected:
 	{
 		std::lock_guard<std::recursive_mutex> guard(m_PendingLock);
 
+		removeInvalidDelegates();
+
 		for (auto p : m_vPendingDelegates)
 		{
 			if (p.first)
