@@ -59,6 +59,12 @@ void PrintToStream(const DesuraId& t, std::basic_stringstream<CT> &oss)
 
 #ifdef WITH_TRACING
 
+#ifdef WIN32
+#ifndef _delayimp_h
+extern "C" IMAGE_DOS_HEADER __ImageBase;
+#endif
+#endif
+
 template <typename ... Args>
 void TraceS(const char* szFunction, const char* szClassInfo, const char* szFormat, Args ... args)
 {
@@ -77,6 +83,14 @@ void TraceS(const char* szFunction, const char* szClassInfo, const char* szForma
 	mArgs["classinfo"] = gcString(szClassInfo);
 	mArgs["thread"] = gcString("{0}", getCurrentThreadId());
 	mArgs["time"] = gcTime().to_js_string();
+
+#ifdef WIN32
+	char szModuleName[255];
+	GetModuleFileNameA(reinterpret_cast<HMODULE>(&__ImageBase), szModuleName, 255);
+
+	auto t = std::string(szModuleName, 255);
+	mArgs["module"] = t.substr(t.find_last_of('\\') + 1);
+#endif
 
 	LogMsg(MT_TRACE, gcString(szFormat, args...), nullptr, &mArgs);
 }
