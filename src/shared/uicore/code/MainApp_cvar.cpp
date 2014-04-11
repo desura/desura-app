@@ -120,7 +120,7 @@ CONCOMMAND(cc_CheckCert, "checkcert")
 
 #ifndef DEBUG
 		if (res == TRUST_E_NOSIGNATURE)
-			Warning(gcString("Warning: {0}: {1}\n", modulesNames[x], msg));
+			WarningS(gcString("Warning: {0}: {1}\n", modulesNames[x], msg));
 		else
 #endif
 			Msg(gcString("{0}: {1}\n", modulesNames[x], msg));
