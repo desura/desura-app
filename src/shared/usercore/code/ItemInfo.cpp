@@ -1129,6 +1129,7 @@ void ItemInfo::broughtCheck()
 
 void ItemInfo::resetInstalledMcf()
 {
+	if (getCurrentBranchFull() && getCurrentBranchFull()->getInstallInfo())
 		getCurrentBranchFull()->getInstallInfo()->resetInstalledMcf();
 
 	m_LastBranch = MCFBranch();
