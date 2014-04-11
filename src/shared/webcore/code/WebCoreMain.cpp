@@ -71,7 +71,7 @@ gcString genUserAgent()
 	else
 	{
 		szUserAgent = gcString("Desura/UNKNOWN.VERSION ({0})", osVer);
-		Warning("Failed to generate useragent string.\n");
+		WarningS("Failed to generate useragent string.\n");
 	}
 
 #endif

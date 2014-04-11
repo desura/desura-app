@@ -51,6 +51,7 @@ if(NOT BUILD_ONLY_CEF)
   if(WIN32)
     option(DEBUG_CEF "turn on/off debugging in CEF" OFF)
     option(DEBUG_V8 "turn on/off debugging in v8" OFF)
+	option(WITH_CODESIGN "Check codesign on dll's and exe's" OFF)
   endif()
 
   ###############################################################################
