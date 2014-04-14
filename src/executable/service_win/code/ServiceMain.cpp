@@ -78,6 +78,9 @@ bool CGCServiceApp::start(int argc, char** argv)
 	if (wdir.empty())
 		wdir = ".\\bin";
 
+	DeleteFile("desura_service_old.exe");
+	DeleteFile("desura_old.exe");
+
 	if (!SetDllPath(wdir.c_str()))
 	{
 		log("Failed to set dll path. :(\n");
@@ -90,7 +93,7 @@ bool CGCServiceApp::start(int argc, char** argv)
 #if !defined(DEBUG) && defined(DESURA_OFFICIAL_BUILD) && defined(WITH_CODESIGN)
 	char message[255] = {0};
 
-	gcWString strPath("{0}\\servicecore.dll", wdir);
+	gcWString strPath(".\\bin\\servicecore.dll");
 
 	if (ValidateCert(strPath.c_str(), message, 255) != ERROR_SUCCESS)
 	{
