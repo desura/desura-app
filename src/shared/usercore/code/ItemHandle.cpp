@@ -72,12 +72,12 @@ using namespace UserCore::Item;
 
 
 template <>
-extern std::string TraceClassInfo(ItemInfo *pClass);
+std::string TraceClassInfo(ItemInfo *pClass);
 
 template <>
 std::string TraceClassInfo(ItemHandle *pClass)
 {
-	return gcString("[{0}] stage: {1}, {2}", (uint32)pClass, (uint32)pClass->getStage(), TraceClassInfo(pClass->getItemInfoNorm()));
+    return gcString("[{0}] stage: {1}, {2}", (uint64)pClass, (uint32)pClass->getStage(), TraceClassInfo(pClass->getItemInfoNorm()));
 }
 
 
