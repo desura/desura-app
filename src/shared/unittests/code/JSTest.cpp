@@ -76,9 +76,22 @@ namespace UnitTest
 		MOCK_METHOD2(getFunctionName, void(char* buff, size_t buffsize));
 		MOCK_METHOD0(getFunctionHandler, ChromiumDLL::JavaScriptExtenderI*());
 		MOCK_METHOD1(executeFunction, ChromiumDLL::JSObjHandle(ChromiumDLL::JavaScriptFunctionArgs*));
-		MOCK_METHOD0(addRef, void());
-		MOCK_METHOD0(delRef, void());
 		MOCK_METHOD0(getUserObject, void*());
+
+		void addRef() override
+		{
+			++m_nRefCount;
+		}
+
+		void delRef() override
+		{
+			--m_nRefCount;
+
+			if (m_nRefCount == 0)
+				delete this;
+		}
+
+		int m_nRefCount = 1;
 	};
 
 
