@@ -1420,7 +1420,7 @@ void ItemHandle::force()
 #include "usercore/ItemHelpersI.h"
 #include "usercore/UserCoreI.h"
 
-#include "MCFManager.h"
+#include "McfManager.h"
 
 namespace UnitTest
 {
