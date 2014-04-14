@@ -91,7 +91,7 @@ namespace UnitTest
 				delete this;
 		}
 
-		int m_nRefCount = 1;
+		int m_nRefCount = 0;
 	};
 
 
