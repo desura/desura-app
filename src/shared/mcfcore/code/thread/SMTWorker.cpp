@@ -72,7 +72,7 @@ SMTWorker::~SMTWorker()
 
 void SMTWorker::run()
 {
-	assert(m_pCT);
+	gcAssert(m_pCT);
 
 	while (!isStopped())
 	{
@@ -121,8 +121,8 @@ void SMTWorker::run()
 
 void SMTWorker::doWork()
 {
-	assert(m_pCurFile);
-	assert(m_phFhSink);
+	gcAssert(m_pCurFile);
+	gcAssert(m_phFhSink);
 
 	uint32 buffSize = BLOCKSIZE;
 	bool endFile = false;

@@ -360,6 +360,8 @@ void ItemForm::setItemId(DesuraId id)
 
 void ItemForm::init(INSTALL_ACTION action, MCFBranch branch, MCFBuild build, bool showForm, UserCore::Item::ItemHandleI* pItemHandle)
 {
+	gcTrace("Action: {0}, Branch: {1}, Build: {2}", (uint32)action, branch, build);
+
 	m_bIsInit = true;
 
 	if (action == INSTALL_ACTION::IA_NONE)
@@ -749,7 +751,7 @@ void ItemForm::onStageChange(ITEM_STAGE &stage)
 	else
 	{
 		//shouldn't get here!!!!!
-		assert(false);
+		gcAssert(false);
 		return;
 	}
 
@@ -1261,7 +1263,7 @@ void ItemForm::popArgs()
 {
 	if (m_vArgs.empty())
 	{
-		assert(false);
+		gcAssert(false);
 		return;
 	}
 

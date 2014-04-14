@@ -189,7 +189,7 @@ public:
 	void deregisterDelegate(InvokeI* d)
 	{
 		bool bFound = doDeregisterDelegate(d);
-		assert( bFound );
+		gcAssert(bFound);
 	}
 
 	void cleanUpEvents()
@@ -257,7 +257,7 @@ public:
 		, m_Mode(mode)
 		, m_pObj(pObj)
 	{
-		assert(m_pObj);
+		gcAssert(m_pObj);
 
 		if (m_pObj)
 			m_pObj->registerDelegate(this);
@@ -266,6 +266,11 @@ public:
 	~GuiDelegate()
 	{
 		cancel();
+	}
+
+	bool isValid() override
+	{
+		return !m_bCanceled;
 	}
 
 	void destroy() override
@@ -366,7 +371,7 @@ DelegateI<Args...>* guiDelegate(TObj* pObj, void (TObj::*fnCallback)(Args...), M
 {
 	if (!validateForm(pObj))
 	{
-		assert(false);
+		gcAssert(false);
 		return nullptr;
 	}
 
@@ -383,7 +388,7 @@ DelegateI<Args...>* guiExtraDelegate(TObj* pObj, void (TObj::*fnCallback)(TExtra
 {
 	if (!validateForm(pObj))
 	{
-		assert(false);
+		gcAssert(false);
 		return nullptr;
 	}
 

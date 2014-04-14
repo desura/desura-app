@@ -464,11 +464,11 @@ UserCore::Item::Misc::ExeInfoI* BranchInstallInfo::getActiveExe()
 
 	if (!ei)
 	{
-		uint32 rank = -1;
+		uint32 rank = 0;
 
 		for (auto exe : m_vExeList)
 		{
-			if (exe->m_uiRank > rank)
+			if (!ei || exe->m_uiRank > rank)
 			{
 				ei = exe;
 				rank = exe->m_uiRank;
@@ -782,7 +782,7 @@ void BranchInstallInfo::setLinkInfo(const char* szPath, const char* szExe, const
 {
 	if ((m_pItem->getStatus() & ItemInfo::STATUS_LINK) != ItemInfo::STATUS_LINK)
 	{
-		assert(false);
+		gcAssert(false);
 		return;
 	}
 

@@ -235,7 +235,7 @@ bool WGTWorker::checkBlock(Misc::WGTBlock *block)
 
 void WGTWorker::doDownload()
 {
-	assert(m_pMcfCon);
+	gcAssert(m_pMcfCon);
 
 	if (!m_pCurBlock)
 	{

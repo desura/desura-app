@@ -37,7 +37,7 @@ namespace UserCore
 		UpdateUninstallTask(UserI *pUser)
 			: m_pUser(pUser)
 		{
-			assert(m_pUser);
+			gcAssert(m_pUser);
 		}
 
 		virtual ~UpdateUninstallTask()

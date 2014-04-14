@@ -40,7 +40,7 @@ UploadResumeThread::UploadResumeThread(DesuraId id, const char* key, WebCore::Mi
 
 void UploadResumeThread::doRun()
 {
-	assert(m_pUpInfo);
+	gcAssert(m_pUpInfo);
 
 	getWebCore()->resumeUpload(getItemId(), m_szKey.c_str(), *m_pUpInfo);
 

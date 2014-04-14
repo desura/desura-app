@@ -38,7 +38,7 @@ BaseMCFThread::BaseMCFThread(uint16 num, MCFCore::MCF* caller, const char* name)
 	: BaseThread( name )
 	, m_rvFileList(caller->getFileList())
 {
-	assert(caller);
+	gcAssert(caller);
 
 	m_szFile = caller->getFile();
 	m_bCompress = caller->isCompressed();

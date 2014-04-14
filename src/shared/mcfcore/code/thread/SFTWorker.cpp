@@ -60,7 +60,7 @@ SFTWorker::~SFTWorker()
 
 void SFTWorker::run()
 {
-	assert(m_pCT);
+	gcAssert(m_pCT);
 
 	while (true)
 	{

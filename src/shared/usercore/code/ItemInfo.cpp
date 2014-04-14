@@ -704,10 +704,18 @@ void ItemInfo::processSettings(uint32 platform, const XML::gcXMLElement &setNode
 				setInstalledMcf(MCFBranch::BranchFromInt(0), MCFBuild::BuildFromInt(0));
 			}
 				
-			if (pr.notFirst)
+			if (!isDownloadable() || pr.notFirst)
 				flags |= ItemInfoI::STATUS_LINK;
 
 			addSFlag(flags);
+		}
+
+		if (HasAnyFlags(getStatus(), UserCore::Item::ItemInfoI::STATUS_LINK))
+		{
+			if (m_vBranchList.size() == 0)
+				m_vBranchList.push_back(new UserCore::Item::BranchInfo(MCFBranch::BranchFromInt(0), getId(), it->second, 0, m_pUserCore->getUserId()));
+
+			setInstalledMcf(MCFBranch::BranchFromInt(0), MCFBuild::BuildFromInt(0));
 		}
 	}
 	else
@@ -1121,6 +1129,7 @@ void ItemInfo::broughtCheck()
 
 void ItemInfo::resetInstalledMcf()
 {
+	if (getCurrentBranchFull() && getCurrentBranchFull()->getInstallInfo())
 		getCurrentBranchFull()->getInstallInfo()->resetInstalledMcf();
 
 	m_LastBranch = MCFBranch();

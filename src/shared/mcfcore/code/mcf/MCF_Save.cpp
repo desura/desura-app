@@ -289,7 +289,7 @@ void MCF::dlFilesFromWeb( )
 {
 	gcTrace("");
 
-	assert(!m_pTHandle);
+	gcAssert(!m_pTHandle);
 
 	if (m_bStopped)
 		return;
@@ -464,7 +464,7 @@ void MCF::saveFiles(const char* path)
 {
 	gcTrace("Path: {0}", path);
 
-	assert(!m_pTHandle);
+	gcAssert(!m_pTHandle);
 
 	if (m_bStopped || !path)
 		return;
@@ -535,7 +535,7 @@ void MCF::saveMCF_CandSFiles()
 	uint64 filesize = UTIL::FS::getFileSize(m_szFile);
 
 	if (filesize > offset)
-		assert(false);
+		gcAssert(false);
 #endif
 }
 

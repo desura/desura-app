@@ -38,7 +38,7 @@ namespace WIN
 
 void changeServiceAccess(const char* szName)
 {
-	assert(szName);
+	gcAssert(szName);
 
 	SC_HANDLE scm = nullptr;
 	SC_HANDLE Service = nullptr;
@@ -222,7 +222,7 @@ BOOL doStartService(SC_HANDLE Service, const char* szName, std::vector<std::stri
 
 void startService(const char* szName, std::vector<std::string> &args)
 {
-	assert(szName);
+	gcAssert(szName);
 	gcWString wName(szName);
 
 	SC_HANDLE scm, Service;
@@ -332,7 +332,7 @@ void startService(const char* szName, std::vector<std::string> &args)
 
 void stopService(const char* szName)
 {
-	assert(szName);
+	gcAssert(szName);
 	gcWString wName(szName);
 
 	SC_HANDLE scm, Service;
@@ -375,8 +375,8 @@ void stopService(const char* szName)
 
 void installService(const char* szName, const char* szPath, const char* szDispName)
 {
-	assert(szName);
-	assert(szPath);
+	gcAssert(szName);
+	gcAssert(szPath);
 
 	gcWString wName(szName);
 	gcWString wPath(szPath);

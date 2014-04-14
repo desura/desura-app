@@ -200,7 +200,7 @@ void BaseThread::start()
 		gcTrace("Starting thread {0}", m_pPrivates->m_szName);
 
 		waitCond->wait();
-		assert(m_pPrivates->m_pThread);
+		gcAssert(m_pPrivates->m_pThread);
 
 		m_pPrivates->m_bIsRunning = true;
 		applyPriority();

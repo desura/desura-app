@@ -49,10 +49,6 @@ typedef void(*CEF_DoWorkFn)();
 typedef void(*CEF_PostCallbackFn)(ChromiumDLL::CallbackI*);
 
 
-
-
-#include <assert.h>
-
 static void CEF_Stop_Legacy();
 
 

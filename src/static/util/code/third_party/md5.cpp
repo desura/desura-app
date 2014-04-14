@@ -44,7 +44,6 @@ documentation and/or software.
 #include "md5.h"
 #include "Common.h" // KP 28apr2011 - For Safe:snprintf
 
-#include <assert.h>
 #include <string>
 #include <string.h>
 
@@ -323,7 +322,7 @@ void MD5::transform(unsigned char block[64])
 	unsigned int a = m_State[0], b = m_State[1], c = m_State[2], d = m_State[3], x[16];
 
 	decode(x, block, 64);
-	assert(!m_Finalized);  // not just a user error, since the method is private
+	gcAssert(!m_Finalized);  // not just a user error, since the method is private
 
 	/* Round 1 */
 	FF(a, b, c, d, x[ 0], S11, 0xd76aa478); /* 1 */

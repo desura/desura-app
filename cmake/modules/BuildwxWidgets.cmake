@@ -77,7 +77,7 @@ else()
     CONFIGURE_COMMAND ./configure
         --enable-shared --enable-unicode ${CONFIGURE_DEBUG}
         --enable-monolithic --with-flavour=desura --enable-threads --with-opengl=no --disable-palette2
-        --disable-joystick --disable-mediactrl --prefix=${wxWidgets_INSTALL_DIR} --enable-permissive
+		--disable-joystick --disable-mediactrl --prefix=${wxWidgets_INSTALL_DIR} --enable-permissive
   )
   
   set(wxWidgets_LIBRARY_DIRS ${wxWidgets_INSTALL_DIR}/lib)

@@ -151,7 +151,7 @@ void CustomSigAbort(int nSig)
 {
 	gcTraceS("Sig: {0}", nSig);
 
-	assert(false);
+	gcAssert(false);
 	throw std::exception("sig abort");
 }
 
@@ -286,7 +286,7 @@ bool BootLoader::preLaunchCheck(UTIL::MISC::CMDArgs &args)
 	if (args.hasArg("testcrash"))
 	{
 		BootLoader *ai = nullptr;
-		//ai->AssertValid();
+		//ai->gcAssertValid();
 	}
 
 	unsigned int osid = BootLoaderUtil::GetOSId();

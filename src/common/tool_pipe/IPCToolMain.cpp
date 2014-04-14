@@ -43,7 +43,7 @@ static IPCToolMain *g_pToolMain;
 IPCToolMain::IPCToolMain(IPC::IPCManager* mang, uint32 id, DesuraId itemId) 
 	: IPC::IPCClass(mang, id, itemId)
 {
-	assert(!g_pToolMain);
+	gcAssert(!g_pToolMain);
 
 	registerFunctions();
 	g_pToolMain = this;

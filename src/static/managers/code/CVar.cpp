@@ -105,10 +105,10 @@ void CVar::checkOsValid() const
 #ifdef DEBUG
 #ifdef WIN32
 	if (m_iFlags&CVAR_LINUX_ONLY)
-		assert(true);
+		gcAssert(true);
 #else
 	if (m_iFlags&CVAR_WINDOWS_ONLY)
-		assert(true);
+		gcAssert(true);
 #endif	
 #endif
 }

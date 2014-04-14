@@ -46,7 +46,8 @@ ComplexLaunchProcess::ComplexLaunchProcess() : Thread::BaseThread("Complex Launc
 
 ComplexLaunchProcess::~ComplexLaunchProcess()
 {
-
+	stop();
+	join();
 }
 
 void ComplexLaunchProcess::setRemove(const char* modMcfPath, const char* backupMcfPath, const char* installPath, const char* installScript)

@@ -106,43 +106,6 @@ class PVoid
 {
 };
 
-template <typename T>
-void FromJSObject(std::map<gcString, T> &map, JSObjHandle& arg)
-{
-	if (arg->isObject() == false)
-		throw gcException();
-
-	for (int x=0; x<arg->getNumberOfKeys(); x++)
-	{
-		char key[255] = {0};
-		arg->getKey(x, key, 255);
-
-		if (!key[0])
-			continue;
-
-		T t;
-		JSObjHandle objH =  arg->getValue(key);
-		FromJSObject(t, objH);
-		map[gcString(key)] = t;
-	}
-}
-
-template <typename T>
-void FromJSObject(std::vector<T> &list, JSObjHandle& arg)
-{
-	if (arg->isArray() == false)
-		throw gcException();
-
-	for (size_t x=0; x<(size_t)arg->getArrayLength(); x++)
-	{
-		T t;
-		JSObjHandle objH = arg->getValue(x); 
-		FromJSObject(t, objH);
-		list.push_back(t);
-	}
-}
-
-
 namespace UserCore
 {
 	namespace Item
@@ -155,7 +118,46 @@ template <typename T>
 void FromJSObject(T &t, JSObjHandle& arg)
 {
 	//Should not get here
-	assert(false);
+	gcAssert(false);
+}
+
+
+template <typename U>
+void FromJSObject(std::map<gcString, U> &map, JSObjHandle& arg)
+{
+	if (arg->isObject() == false)
+		throw gcException(ERR_INVALID, "Cant convert js object into map (!isObject)");
+
+	auto nKeyCount = arg->getNumberOfKeys();
+	for (int x = 0; x<nKeyCount; x++)
+	{
+		char key[255] = {0};
+		arg->getKey(x, key, 255);
+
+		if (!key[0])
+			continue;
+
+		U t;
+		JSObjHandle objH =  arg->getValue(key);
+		FromJSObject(t, objH);
+		map[gcString(key)] = t;
+	}
+}
+
+template <typename U>
+void FromJSObject(std::vector<U> &list, JSObjHandle& arg)
+{
+	if (arg->isArray() == false)
+		throw gcException(ERR_INVALID, "Cant convert js object into vector (!isArray)");
+
+	auto nCount = arg->getArrayLength();
+	for (int x = 0; x<nCount; x++)
+	{
+		U t;
+		JSObjHandle objH = arg->getValue(x); 
+		FromJSObject(t, objH);
+		list.push_back(t);
+	}
 }
 
 template <>
@@ -227,7 +229,7 @@ template <typename T>
 typename std::enable_if<!std::is_pointer<T>::value, T>::type  getUserObject(ChromiumDLL::JavaScriptObjectI* pObj)
 {
 	//should not get here
-	assert(false);
+	gcAssert(false);
 	return T();
 }
 
@@ -243,7 +245,8 @@ T popAndConvert(JSObjHandle* argv, size_t &x, bool bFirstIsObj)
 	}
 	else
 	{
-		FromJSObject<T>(t, argv[x--]);
+		FromJSObject(t, argv[x]);
+		--x;
 	}
 	
 	return t;

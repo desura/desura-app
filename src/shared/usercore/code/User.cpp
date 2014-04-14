@@ -485,7 +485,7 @@ void User::setCounts(uint32 msgs, uint32 updates, uint32 threads, uint32 cart)
 
 void User::updateUninstallInfo()
 {
-	assert(false); //shouldnt be used no more
+	gcAssert(false); //shouldnt be used no more
 }
 
 void User::updateUninstallInfo(DesuraId id, uint64 installSize)

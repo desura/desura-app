@@ -119,8 +119,8 @@ void SMTController::onStop()
 
 void SMTController::run()
 {
-	assert(m_uiNumber);
-	assert(m_szFile);
+	gcAssert(m_uiNumber);
+	gcAssert(m_szFile);
 
 	fillFileList();
 	m_pUPThread->start();
@@ -323,7 +323,7 @@ void SMTController::fillFileList()
 MCFThreadStatus SMTController::getStatus(uint32 id)
 {
 	SMTWorkerInfo* worker = findWorker(id);
-	assert(worker);
+	gcAssert(worker);
 
 	if (isPaused())
 		return MCFThreadStatus::SF_STATUS_PAUSE;
@@ -339,7 +339,7 @@ std::shared_ptr<MCFCore::MCFFile> SMTController::newTask(uint32 id)
 	gcTrace("Id: {0}", id);
 
 	SMTWorkerInfo* worker = findWorker(id);
-	assert(worker);
+	gcAssert(worker);
 
 	if (worker->status != MCFThreadStatus::SF_STATUS_NULL)
 		return nullptr;
@@ -380,7 +380,7 @@ void SMTController::endTask(uint32 id)
 	gcTrace("Id: {0}", id);
 
 	SMTWorkerInfo* worker = findWorker(id);
-	assert(worker);
+	gcAssert(worker);
 
 	worker->status = MCFThreadStatus::SF_STATUS_NULL;
 
@@ -404,7 +404,7 @@ void SMTController::reportError(uint32 id, gcException &e)
 
 #ifdef WIN32
 	SMTWorkerInfo* worker = findWorker(id);
-	assert(worker);
+	gcAssert(worker);
 #endif
 	Warning("SMTControler {0} Error: {1}.\n", id, e);
 	onErrorEvent(e);
@@ -413,8 +413,8 @@ void SMTController::reportError(uint32 id, gcException &e)
 void SMTController::reportProgress(uint32 id, uint64 ammount)
 {
 	SMTWorkerInfo* worker = findWorker(id);
-	assert(worker);
-	assert(m_pUPThread);
+	gcAssert(worker);
+	gcAssert(m_pUPThread);
 
 	m_pUPThread->reportProg(id, worker->ammountDone + ammount);
 }

@@ -389,7 +389,7 @@ void InstalledWizardThread::parseMod(DesuraId parId, DesuraId id, const XML::gcX
 
 void InstalledWizardThread::parseItems1(const XML::gcXMLElement &fNode, WildcardManager *pWildCard, std::map<uint64, XML::gcXMLElement> *vMap)
 {
-	assert(pWildCard);
+	gcAssert(pWildCard);
 
 	if (!fNode.IsValid())
 		return;
@@ -413,7 +413,7 @@ void InstalledWizardThread::parseItems1(const XML::gcXMLElement &fNode, Wildcard
 
 void InstalledWizardThread::parseItems2(const XML::gcXMLElement &fNode, WildcardManager *pWildCard)
 {
-	assert(pWildCard);
+	gcAssert(pWildCard);
 
 	if (!fNode.IsValid())
 		return;
@@ -457,7 +457,7 @@ void InstalledWizardThread::onItemFound(UserCore::Item::ItemInfoI *item)
 		if (!m_pTaskGroup)
 		{
 			UserCore::ItemManager* im = dynamic_cast<UserCore::ItemManager*>(getUserCore()->getItemManager());
-			assert(im);
+			gcAssert(im);
 			m_pTaskGroup = im->newTaskGroup(UserCore::Item::ItemTaskGroupI::A_VERIFY);
 			m_pTaskGroup->start();
 		}

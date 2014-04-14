@@ -134,7 +134,7 @@ DelegateI<WCSpecialInfo&>* wcDelegate(TObj* pObj)
 
 	if (!pan && !frm)
 	{
-		assert(false);
+		gcAssert(false);
 		return nullptr;
 	}
 

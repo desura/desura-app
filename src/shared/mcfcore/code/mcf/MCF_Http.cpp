@@ -104,7 +104,7 @@ void MCF::dlFilesFromHttp(const char* url, const char* installDir)
 {
 	gcTrace("Url: {0}, Dir: {1}", url, installDir);
 
-	assert(!m_pTHandle);
+	gcAssert(!m_pTHandle);
 
 	if (m_bStopped)
 		return;

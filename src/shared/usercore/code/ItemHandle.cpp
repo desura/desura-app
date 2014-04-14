@@ -71,10 +71,27 @@ namespace
 using namespace UserCore::Item;
 
 
+template <>
+std::string TraceClassInfo(ItemInfo *pClass);
+
+template <>
+std::string TraceClassInfo(ItemHandle *pClass)
+{
+    return gcString("[{0}] stage: {1}, {2}", (uint64)pClass, (uint32)pClass->getStage(), TraceClassInfo(pClass->getItemInfoNorm()));
+}
+
+
 ItemHandle::ItemHandle(ItemInfo* itemInfo, UserCore::UserI* user)
-	: m_pItemInfo(itemInfo)
+	: m_pItemInfo(std::shared_ptr<ItemInfo>(itemInfo))
 	, m_pUserCore(user)
 	, m_pEventHandler(new ItemHandleEvents(m_vHelperList))
+{
+}
+
+ItemHandle::ItemHandle(std::shared_ptr<ItemInfo> &itemInfo, UserCore::UserI* user)
+: m_pItemInfo(itemInfo)
+, m_pUserCore(user)
+, m_pEventHandler(new ItemHandleEvents(m_vHelperList))
 {
 }
 
@@ -96,12 +113,12 @@ UserCore::UserI* ItemHandle::getUserCore()
 
 UserCore::Item::ItemInfoI* ItemHandle::getItemInfo()
 {
-	return m_pItemInfo;
+	return m_pItemInfo.get();
 }
 
 UserCore::Item::ItemInfo* ItemHandle::getItemInfoNorm()
 {
-	return m_pItemInfo;
+	return m_pItemInfo.get();
 }
 
 bool ItemHandle::getLock(void* obj)
@@ -712,10 +729,6 @@ void ItemHandle::addHelper(Helper::ItemHandleHelperI* helper)
 bool ItemHandle::preDownloadCheck(MCFBranch branch, bool test)
 {
 	UserCore::Item::ItemInfoI* parentInfo = m_pUserCore->getItemManager()->findItemInfo(getItemInfo()->getParentId());
-
-#ifdef WIN32
-	bool isComplex = HasAllFlags(getItemInfo()->getStatus(), UserCore::Item::ItemInfoI::STATUS_INSTALLCOMPLEX);
-#endif
 	bool isParentDemo = false;
 
 	if (parentInfo && parentInfo->getCurrentBranch())
@@ -778,7 +791,7 @@ bool ItemHandle::update()
 	uint32 flags = UserCore::Item::ItemInfoI::STATUS_READY|UserCore::Item::ItemInfoI::STATUS_INSTALLED|UserCore::Item::ItemInfoI::STATUS_UPDATEAVAL;
 
 	gcException eNoBranches(ERR_NOUPDATE, "This item has no installed branches.");
-	gcException eNoUpdates(ERR_NOUPDATE, "There is no update avaliable for this item.");
+	gcException eNoUpdates(ERR_NOUPDATE, "There is no update available for this item.");
 
 	if (!branch)
 	{
@@ -851,7 +864,7 @@ bool ItemHandle::installPrivate(MCFBranch branch, MCFBuild build, UserCore::Item
 	bool isParentComplex	= getItemInfo()->isParentToComplex();
 	bool isComplex			= getItemInfo()->isComplex();
 	bool installReady		= getItemInfo()->isLaunchable();
-	bool needBranchSwitch	= (iBranch != 0 && iBranch != branch);
+	bool needBranchSwitch	= (iBranch != 0 && iBranch != branch) || (isComplex && !isCurrentlyInstalledGameOrMod());
 	bool isValidBranch		= bInfo && HasAnyFlags(bInfo->getFlags(), BranchInfoI::BF_DEMO|BranchInfoI::BF_FREE|BranchInfoI::BF_ONACCOUNT|BranchInfoI::BF_TEST);
 
 	if (isValidBranch && installReady && needBranchSwitch)
@@ -860,7 +873,7 @@ bool ItemHandle::installPrivate(MCFBranch branch, MCFBuild build, UserCore::Item
 			return false;
 
 		if (isComplex || isParentComplex)
-			goToStageUninstallComplexBranch(branch, build, false);
+			goToStageUninstallComplexBranch(branch, build, HasAnyFlags(flags, UserCore::ItemTask::GI_FLAG_LAUNCH));
 		else
 			goToStageUninstallBranch(branch, build, HasAnyFlags(flags, UserCore::ItemTask::GI_FLAG_TEST));
 	}
@@ -1001,6 +1014,9 @@ bool ItemHandle::launch(Helper::ItemLaunchHelperI* helper, bool offline, bool ig
 	if (checkPaused())
 		return true;
 
+
+
+
 	if (getItemInfo()->getParentId().isOk())
 	{
 		auto pParent = getUserCore()->getItemManager()->findItemInfo(getItemInfo()->getParentId());
@@ -1030,7 +1046,7 @@ bool ItemHandle::launch(Helper::ItemLaunchHelperI* helper, bool offline, bool ig
 		if (getItemInfo()->getInstalledModId().isOk())
 		{
 			UserCore::Item::ItemInfoI* mod = m_pUserCore->getItemManager()->findItemInfo(getItemInfo()->getInstalledModId());
-			
+
 			if (!mod || !HasAllFlags(mod->getStatus(), UserCore::Item::ItemInfoI::STATUS_INSTALLCOMPLEX))
 			{
 				return launchForReal(helper);
@@ -1038,7 +1054,7 @@ bool ItemHandle::launch(Helper::ItemLaunchHelperI* helper, bool offline, bool ig
 			else
 			{
 				goToStageUninstallComplexBranch(getItemInfo()->getInstalledBranch(), getItemInfo()->getInstalledBuild(), true);
-				return true;				
+				return true;
 			}
 		}
 		else if (getItemInfo()->isLaunchable())
@@ -1061,21 +1077,21 @@ bool ItemHandle::launch(Helper::ItemLaunchHelperI* helper, bool offline, bool ig
 			installCheck();
 		else
 			install(helper, MCFBranch());
-		
+
 		res = true;
 	}
 	else
 	{
 		bool hasPreorder = false;
 
-		for (size_t x=0; x<getItemInfo()->getBranchCount(); x++)
+		for (size_t x = 0; x<getItemInfo()->getBranchCount(); x++)
 		{
 			if (getItemInfo()->getBranch(x)->isPreOrderAndNotPreload())
 			{
 				hasPreorder = true;
 				break;
 			}
-		}		
+		}
 
 		if (getItemInfo()->getCurrentBranch() == nullptr && hasPreorder)
 		{
@@ -1083,12 +1099,12 @@ bool ItemHandle::launch(Helper::ItemLaunchHelperI* helper, bool offline, bool ig
 			res = false;
 		}
 
-		if (HasAnyFlags(getItemInfo()->getStatus(), UserCore::Item::ItemInfoI::STATUS_DOWNLOADING|UserCore::Item::ItemInfoI::STATUS_VERIFING|UserCore::Item::ItemInfoI::STATUS_INSTALLING))
+		if (HasAnyFlags(getItemInfo()->getStatus(), UserCore::Item::ItemInfoI::STATUS_DOWNLOADING | UserCore::Item::ItemInfoI::STATUS_VERIFING | UserCore::Item::ItemInfoI::STATUS_INSTALLING))
 		{
 			verify(true, false, false);
 			res = true;
 		}
-		else if (!HasAnyFlags(getItemInfo()->getStatus(), UserCore::Item::ItemInfoI::STATUS_READY|UserCore::Item::ItemInfoI::STATUS_UPDATEAVAL))
+		else if (!HasAnyFlags(getItemInfo()->getStatus(), UserCore::Item::ItemInfoI::STATUS_READY | UserCore::Item::ItemInfoI::STATUS_UPDATEAVAL))
 		{
 			if (HasAllFlags(getItemInfo()->getStatus(), UserCore::Item::ItemInfoI::STATUS_NONDOWNLOADABLE))
 				installCheck();
@@ -1097,11 +1113,11 @@ bool ItemHandle::launch(Helper::ItemLaunchHelperI* helper, bool offline, bool ig
 
 			res = true;
 		}
-		else if (HasAnyFlags(getItemInfo()->getStatus(), UserCore::Item::ItemInfoI::STATUS_DOWNLOADING|UserCore::Item::ItemInfoI::STATUS_INSTALLING))
+		else if (HasAnyFlags(getItemInfo()->getStatus(), UserCore::Item::ItemInfoI::STATUS_DOWNLOADING | UserCore::Item::ItemInfoI::STATUS_INSTALLING))
 		{
 			if (HasAllFlags(getItemInfo()->getStatus(), UserCore::Item::ItemInfoI::STATUS_PAUSED))
 				getItemInfo()->delSFlag(UserCore::Item::ItemInfoI::STATUS_PAUSED);
-			
+
 			verify(true, false, false);
 			res = true;
 		}
@@ -1123,25 +1139,11 @@ bool ItemHandle::launch(Helper::ItemLaunchHelperI* helper, bool offline, bool ig
 		{
 			bool isComplex = HasAllFlags(getItemInfo()->getStatus(), UserCore::Item::ItemInfoI::STATUS_INSTALLCOMPLEX);
 
-			if (isComplex)
+			if (isComplex && !isCurrentlyInstalledGameOrMod())
 			{
-				bool parCLF = false;
-
-				if (getItemInfo()->getParentId().isOk())
-				{
-					UserCore::Item::ItemInfoI* par = m_pUserCore->getItemManager()->findItemInfo(getItemInfo()->getParentId());
-					parCLF = (par && par->getInstalledModId() != getItemInfo()->getId());
-				}
-				else
-				{
-					parCLF = getItemInfo()->getInstalledModId().isOk();
-				}
-
-				if (parCLF)
-				{
-					install(getItemInfo()->getInstalledBranch(), getItemInfo()->getInstalledBuild(), UserCore::ItemTask::GI_FLAG_EXISTING);
-					return true;
-				}
+				UserCore::ItemTask::GI_FLAGS flags = (UserCore::ItemTask::GI_FLAGS)(UserCore::ItemTask::GI_FLAG_EXISTING | UserCore::ItemTask::GI_FLAG_LAUNCH);
+				install(getItemInfo()->getInstalledBranch(), getItemInfo()->getInstalledBuild(), flags);
+				return true;
 			}
 
 			if (!getItemInfo()->hasAcceptedEula())
@@ -1172,6 +1174,20 @@ bool ItemHandle::launch(Helper::ItemLaunchHelperI* helper, bool offline, bool ig
 	}
 
 	return res;
+}
+
+bool ItemHandle::isCurrentlyInstalledGameOrMod()
+{
+	if (!getItemInfo()->isComplex())
+		return true;
+
+	if (getItemInfo()->getParentId().isOk())
+	{
+		UserCore::Item::ItemInfoI* par = m_pUserCore->getItemManager()->findItemInfo(getItemInfo()->getParentId());
+		return (par && par->getInstalledModId() == getItemInfo()->getId());
+	}
+
+	return !getItemInfo()->getInstalledModId().isOk();
 }
 
 bool ItemHandle::switchBranch(MCFBranch branch)
@@ -1232,7 +1248,7 @@ void ItemHandle::cancelCurrentStage()
 
 void ItemHandle::getStatusStr(LanguageManagerI & pLangMng, char* buffer, uint32 buffsize)
 {
-	getStatusStr_s(this, m_pItemInfo, m_uiStage, m_pGroup, pLangMng, buffer, buffsize);
+	getStatusStr_s(this, m_pItemInfo.get(), m_uiStage, m_pGroup, pLangMng, buffer, buffsize);
 }
 
 void ItemHandle::getStatusStr_s(UserCore::Item::ItemHandleI* pItemHandle, UserCore::Item::ItemInfoI *pItemInfo, UserCore::Item::ITEM_STAGE nStage
@@ -1404,6 +1420,8 @@ void ItemHandle::force()
 #include "usercore/ItemHelpersI.h"
 #include "usercore/UserCoreI.h"
 
+#include "McfManager.h"
+
 namespace UnitTest
 {
 	using namespace UserCore;
@@ -1414,6 +1432,11 @@ namespace UnitTest
 	{
 	public:
 		ItemHandleMock(ItemInfo* itemInfo, UserCore::UserI* user)
+			: ItemHandle(itemInfo, user)
+		{
+		}
+
+		ItemHandleMock(std::shared_ptr<ItemInfo> &itemInfo, UserCore::UserI* user)
 			: ItemHandle(itemInfo, user)
 		{
 		}
@@ -1624,6 +1647,292 @@ namespace UnitTest
 
 		ItemHandleMock modHandle(mod, &user);
 		EXPECT_CALL(modHandle, launchForReal(_, _)).Times(1);
+
+		ItemLaunchHelperMock ilh;
+		modHandle.launch(&ilh);
+	}
+
+
+
+	class ItemHandleComplexMods : public ::testing::Test
+	{
+	public:
+		ItemHandleComplexMods()
+			: gid("1", "games")
+			, midA("2", "mods")
+			, midB("3", "mods")
+			, game(std::make_shared<ItemInfo>(&user, gid, &fs))
+			, modA(std::make_shared<ItemInfo>(&user, midA, gid, &fs))
+			, modB(std::make_shared<ItemInfo>(&user, midB, gid, &fs))
+		{
+
+			ON_CALL(user, getItemsAddedEvent()).WillByDefault(Return(&itemAddedEvent));
+			ON_CALL(user, getItemManager()).WillByDefault(Return(&itemManager));
+			ON_CALL(user, getInternal()).WillByDefault(Return(&userInternalMock));
+
+			ON_CALL(userInternalMock, getMCFManager()).WillByDefault(Return(&mcfManager));
+
+			ON_CALL(itemManager, findItemInfo(_)).WillByDefault(Invoke([&](DesuraId id) -> ItemInfoI*
+			{
+				if (id == game->getId())
+					return game.get();
+
+				if (id == modA->getId())
+					return modA.get();
+
+				if (id == modB->getId())
+					return modB.get();
+
+				return nullptr;
+			}));
+
+			ON_CALL(fs, isValidFile(_)).WillByDefault(Invoke([](const UTIL::FS::Path& path) -> bool
+			{
+				return path.getFile().getFile() == "Charlie.exe" || path.getFile().getFile() == "existing.file";
+			}));
+		}
+
+		void setUpDb(sqlite3x::sqlite3_connection &db, const std::vector<std::string> &vSqlCommands)
+		{
+			createItemInfoDbTables(db);
+
+			for (auto s : vSqlCommands)
+			{
+				sqlite3x::sqlite3_command cmd(db, s.c_str());
+				cmd.executenonquery();
+			}
+
+			game->loadDb(&db);
+			modA->loadDb(&db);
+			modB->loadDb(&db);
+		}
+
+		Event<uint32> itemAddedEvent;
+		UTIL::FS::UtilFSMock fs;
+		ItemManagerMock itemManager;
+		MCFManagerMock mcfManager;
+		UserMock user;
+		UserInternalMock userInternalMock;
+
+		DesuraId gid;
+		DesuraId midA;
+		DesuraId midB;
+
+		std::shared_ptr<UserCore::Item::ItemInfo> game;
+		std::shared_ptr<UserCore::Item::ItemInfo> modA;
+		std::shared_ptr<UserCore::Item::ItemInfo> modB;	
+	};
+
+	TEST_F(ItemHandleComplexMods, LaunchParent_ModNotInstalled)
+	{
+		ON_CALL(mcfManager, getMcfPath(_, _)).WillByDefault(Return(gcString()));
+		ON_CALL(mcfManager, getMcfPath(Eq(game.get()), _)).WillByDefault(Return(gcString("existing.file")));
+
+		static const std::vector<std::string> vSqlCommands =
+		{
+			"INSERT INTO exe VALUES(4294967328,100,'Play','C:\\ComplexGame\\Charlie.exe','','',0);",
+			"INSERT INTO installinfo VALUES(4294967328,100,'C:\\ComplexGame','C:\\ComplexGame\\Charlie.exe','',0,0,0);",
+			"INSERT INTO installinfoex VALUES(4294967328,100,'C:\\ComplexGame\\Charlie.exe');",
+			"INSERT INTO branchinfo VALUES(1, 4294967328, 'test', 260, 'http://eula.com', 0, 0, '', '', 0, 1, 100);",
+			"INSERT INTO iteminfo VALUES(4294967328,0,0,1081374,0,'dev-02','Complex Game','complex-game','','','','','','','dev-02','',1,1);",
+
+			"INSERT INTO iteminfo VALUES(8589934608,4294967328,0,1048580,0,'dev-02','Complex Mod A','complex-mod-a','','','','','','','dev-02','',2,2);"
+		};
+
+		{
+			sqlite3x::sqlite3_connection db(":memory:");
+			setUpDb(db, vSqlCommands);
+		}
+
+		ASSERT_TRUE(game->isInstalled());
+		ASSERT_TRUE(game->isLaunchable());
+		ASSERT_TRUE(game->isComplex());
+		ASSERT_FALSE(game->getInstalledModId().isOk());
+
+		ASSERT_FALSE(modA->isInstalled());
+		ASSERT_FALSE(modA->isLaunchable());
+		ASSERT_TRUE(modA->isComplex());
+
+		ItemHandleMock gameHandle(game, &user);
+		EXPECT_CALL(gameHandle, launchForReal(_, _)).Times(1);
+
+		ItemLaunchHelperMock ilh;
+		gameHandle.launch(&ilh);
+	}
+
+	TEST_F(ItemHandleComplexMods, LaunchParent_ModInstalled)
+	{
+		ON_CALL(mcfManager, getMcfPath(_, _)).WillByDefault(Return(gcString()));
+		ON_CALL(mcfManager, getMcfPath(Eq(modA.get()), _)).WillByDefault(Return(gcString("existing.file")));
+		ON_CALL(mcfManager, getMcfPath(Eq(game.get()), _)).WillByDefault(Return(gcString("existing.file")));
+
+		static const std::vector<std::string> vSqlCommands =
+		{
+			"INSERT INTO exe VALUES(4294967328,100,'Play','C:\\ComplexGame\\Charlie.exe','','',0);",
+			"INSERT INTO installinfo VALUES(4294967328,100,'C:\\ComplexGame','C:\\ComplexGame\\Charlie.exe','',8589934608,0,0);",
+			"INSERT INTO installinfoex VALUES(4294967328,100,'C:\\ComplexGame\\Charlie.exe');",
+			"INSERT INTO branchinfo VALUES(1, 4294967328, 'test', 260, 'http://eula.com', 0, 0, '', '', 0, 1, 100);",
+			"INSERT INTO iteminfo VALUES(4294967328,0,0,1081374,0,'dev-02','Complex Game','complex-game','','','','','','','dev-02','',1,1);",
+
+			"INSERT INTO exe VALUES(8589934608,100,'Play','C:\\ComplexGame\\Charlie.exe','','',0);",
+			"INSERT INTO installinfo VALUES(8589934608,100,'C:\\ComplexGame','C:\\ComplexGame\\Charlie.exe','',0,0,0);",
+			"INSERT INTO installinfoex VALUES(8589934608,100,'C:\\ComplexGame\\Charlie.exe');",
+			"INSERT INTO branchinfo VALUES(2, 8589934608, 'test', 260, 'http://eula.com', 0, 0, '', '', 0, 2, 100);",
+			"INSERT INTO iteminfo VALUES(8589934608,4294967328,0,1081374,0,'dev-02','Complex Mod A','complex-mod-a','','','','','','','dev-02','',2,2);"
+		};
+
+		{
+			sqlite3x::sqlite3_connection db(":memory:");
+			setUpDb(db, vSqlCommands);
+		}
+
+		ASSERT_TRUE(game->isInstalled());
+		ASSERT_TRUE(game->isLaunchable());
+		ASSERT_TRUE(game->isComplex());
+		ASSERT_EQ(midA, game->getInstalledModId());
+
+		ASSERT_TRUE(modA->isInstalled());
+		ASSERT_TRUE(modA->isLaunchable());
+		ASSERT_TRUE(modA->isComplex());
+
+		ItemHandleMock gameHandle(game, &user);
+		EXPECT_CALL(gameHandle, goToStageUninstallComplexBranch(_, _, _)).Times(1);
+
+		ItemLaunchHelperMock ilh;
+		gameHandle.launch(&ilh);
+	}
+
+	TEST_F(ItemHandleComplexMods, LaunchMod_ModNotInstalled)
+	{
+		ON_CALL(mcfManager, getMcfPath(_, _)).WillByDefault(Return(gcString()));
+		ON_CALL(mcfManager, getMcfPath(Eq(game.get()), _)).WillByDefault(Return(gcString("existing.file")));
+
+		static const std::vector<std::string> vSqlCommands =
+		{
+			"INSERT INTO exe VALUES(4294967328,100,'Play','C:\\ComplexGame\\Charlie.exe','','',0);",
+			"INSERT INTO installinfo VALUES(4294967328,100,'C:\\ComplexGame','C:\\ComplexGame\\Charlie.exe','',0,0,0);",
+			"INSERT INTO installinfoex VALUES(4294967328,100,'C:\\ComplexGame\\Charlie.exe');",
+			"INSERT INTO branchinfo VALUES(1, 4294967328, 'test', 260, 'http://eula.com', 0, 0, '', '', 0, 1, 100);",
+			"INSERT INTO iteminfo VALUES(4294967328,0,0,1081374,0,'dev-02','Complex Game','complex-game','','','','','','','dev-02','',1,1);",
+
+			"INSERT INTO exe VALUES(8589934608,100,'Play','C:\\ComplexGame\\Charlie.exe','','',0);",
+			"INSERT INTO installinfo VALUES(8589934608,100,'C:\\ComplexGame','C:\\ComplexGame\\Charlie.exe','',0,0,0);",
+			"INSERT INTO installinfoex VALUES(8589934608,100,'C:\\ComplexGame\\Charlie.exe');",
+			"INSERT INTO branchinfo VALUES(2, 8589934608, 'test', 260, 'http://eula.com', 0, 0, '', '', 0, 2, 100);",
+			"INSERT INTO iteminfo VALUES(8589934608,4294967328,0,1048580,0,'dev-02','Complex Mod A','complex-mod-a','','','','','','','dev-02','',2,2);"
+		};
+
+		{
+			sqlite3x::sqlite3_connection db(":memory:");
+			setUpDb(db, vSqlCommands);
+		}
+
+		ASSERT_TRUE(game->isInstalled());
+		ASSERT_TRUE(game->isLaunchable());
+		ASSERT_TRUE(game->isComplex());
+		ASSERT_FALSE(game->getInstalledModId().isOk());
+
+		ASSERT_FALSE(modA->isInstalled());
+		ASSERT_FALSE(modA->isLaunchable());
+		ASSERT_TRUE(modA->isComplex());
+
+		ItemHandleMock modHandle(modA, &user);
+		EXPECT_CALL(modHandle, goToStageGatherInfo(_, _, _)).Times(1);
+
+		ItemLaunchHelperMock ilh;
+		modHandle.launch(&ilh);
+	}
+
+	TEST_F(ItemHandleComplexMods, LaunchModA_ModAInstalled)
+	{
+		ON_CALL(mcfManager, getMcfPath(_, _)).WillByDefault(Return(gcString()));
+		ON_CALL(mcfManager, getMcfPath(Eq(modA.get()), _)).WillByDefault(Return(gcString("existing.file")));
+		ON_CALL(mcfManager, getMcfPath(Eq(game.get()), _)).WillByDefault(Return(gcString("existing.file")));
+
+		static const std::vector<std::string> vSqlCommands =
+		{
+			"INSERT INTO exe VALUES(4294967328,100,'Play','C:\\ComplexGame\\Charlie.exe','','',0);",
+			"INSERT INTO installinfo VALUES(4294967328,100,'C:\\ComplexGame','C:\\ComplexGame\\Charlie.exe','',8589934608,0,0);",
+			"INSERT INTO installinfoex VALUES(4294967328,100,'C:\\ComplexGame\\Charlie.exe');",
+			"INSERT INTO branchinfo VALUES(1, 4294967328, 'test', 260, 'http://eula.com', 0, 0, '', '', 0, 1, 100);",
+			"INSERT INTO iteminfo VALUES(4294967328,0,0,1081374,0,'dev-02','Complex Game','complex-game','','','','','','','dev-02','',1,1);",
+
+			"INSERT INTO exe VALUES(8589934608,100,'Play','C:\\ComplexGame\\Charlie.exe','','',0);",
+			"INSERT INTO installinfo VALUES(8589934608,100,'C:\\ComplexGame','C:\\ComplexGame\\Charlie.exe','',0,0,0);",
+			"INSERT INTO installinfoex VALUES(8589934608,100,'C:\\ComplexGame\\Charlie.exe');",
+			"INSERT INTO branchinfo VALUES(2, 8589934608, 'test', 260, 'http://eula.com', 0, 0, '', '', 0, 2, 100);",
+			"INSERT INTO iteminfo VALUES(8589934608,4294967328,0,1081374,0,'dev-02','Complex Mod A','complex-mod-a','','','','','','','dev-02','',2,2);"
+		};
+
+		{
+			sqlite3x::sqlite3_connection db(":memory:");
+			setUpDb(db, vSqlCommands);
+		}
+
+		ASSERT_TRUE(game->isInstalled());
+		ASSERT_TRUE(game->isLaunchable());
+		ASSERT_TRUE(game->isComplex());
+		ASSERT_EQ(midA, game->getInstalledModId());
+
+		ASSERT_TRUE(modA->isInstalled());
+		ASSERT_TRUE(modA->isLaunchable());
+		ASSERT_TRUE(modA->isComplex());
+
+		ItemHandleMock modHandle(modA, &user);
+		EXPECT_CALL(modHandle, launchForReal(_, _)).Times(1);
+
+		ItemLaunchHelperMock ilh;
+		modHandle.launch(&ilh);
+	}
+
+	TEST_F(ItemHandleComplexMods, LaunchModA_ModBInstalled)
+	{
+		ON_CALL(mcfManager, getMcfPath(_, _)).WillByDefault(Return(gcString()));
+		ON_CALL(mcfManager, getMcfPath(Eq(modA.get()), _)).WillByDefault(Return(gcString("existing.file")));
+		ON_CALL(mcfManager, getMcfPath(Eq(modB.get()), _)).WillByDefault(Return(gcString("existing.file")));
+		ON_CALL(mcfManager, getMcfPath(Eq(game.get()), _)).WillByDefault(Return(gcString("existing.file")));
+
+		static const std::vector<std::string> vSqlCommands =
+		{
+			"INSERT INTO exe VALUES(4294967328,100,'Play','C:\\ComplexGame\\Charlie.exe','','',0);",
+			"INSERT INTO installinfo VALUES(4294967328,100,'C:\\ComplexGame','C:\\ComplexGame\\Charlie.exe','',12884901904,0,0);",
+			"INSERT INTO installinfoex VALUES(4294967328,100,'C:\\ComplexGame\\Charlie.exe');",
+			"INSERT INTO branchinfo VALUES(1, 4294967328, 'test', 260, 'http://eula.com', 0, 0, '', '', 0, 1, 100);",
+			"INSERT INTO iteminfo VALUES(4294967328,0,0,1081374,0,'dev-02','Complex Game','complex-game','','','','','','','dev-02','',1,1);",
+
+			"INSERT INTO exe VALUES(8589934608,100,'Play','C:\\ComplexGame\\Charlie.exe','','',0);",
+			"INSERT INTO installinfo VALUES(8589934608,100,'C:\\ComplexGame','C:\\ComplexGame\\Charlie.exe','',0,0,0);",
+			"INSERT INTO installinfoex VALUES(8589934608,100,'C:\\ComplexGame\\Charlie.exe');",
+			"INSERT INTO branchinfo VALUES(2, 8589934608, 'test', 260, 'http://eula.com', 0, 0, '', '', 0, 2, 100);",
+			"INSERT INTO iteminfo VALUES(8589934608,4294967328,0,1048580,0,'dev-02','Complex Mod A','complex-mod-a','','','','','','','dev-02','',2,2);"
+
+			"INSERT INTO exe VALUES(12884901904,100,'Play','C:\\ComplexGame\\Charlie.exe','','',0);",
+			"INSERT INTO installinfo VALUES(12884901904,100,'C:\\ComplexGame','C:\\ComplexGame\\Charlie.exe','',0,0,0);",
+			"INSERT INTO installinfoex VALUES(12884901904,100,'C:\\ComplexGame\\Charlie.exe');",
+			"INSERT INTO branchinfo VALUES(3, 12884901904, 'test', 260, 'http://eula.com', 0, 0, '', '', 0, 3, 100);",
+			"INSERT INTO iteminfo VALUES(12884901904,4294967328,0,1081374,0,'dev-02','Complex Mod B','complex-mod-b','','','','','','','dev-02','',3,3);"
+		};
+
+		{
+			sqlite3x::sqlite3_connection db(":memory:");
+			setUpDb(db, vSqlCommands);
+		}
+
+		ASSERT_TRUE(game->isInstalled());
+		ASSERT_TRUE(game->isLaunchable());
+		ASSERT_TRUE(game->isComplex());
+		ASSERT_EQ(midB, game->getInstalledModId());
+
+		ASSERT_FALSE(modA->isInstalled());
+		ASSERT_FALSE(modA->isLaunchable());
+		ASSERT_TRUE(modA->isComplex());
+
+		ASSERT_TRUE(modB->isInstalled());
+		ASSERT_TRUE(modB->isLaunchable());
+		ASSERT_TRUE(modB->isComplex());
+
+		ItemHandleMock modHandle(modA, &user);
+		EXPECT_CALL(modHandle, goToStageGatherInfo(_, _, _)).Times(1);
 
 		ItemLaunchHelperMock ilh;
 		modHandle.launch(&ilh);

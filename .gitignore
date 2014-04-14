@@ -13,3 +13,4 @@ bin/
 qtcreator-build/
 qtcreator-install/
 CMakeLists.txt.user
+src/tools/log_recorder/DesuraLogRecorder/obj/
