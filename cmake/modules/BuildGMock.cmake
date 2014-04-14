@@ -20,7 +20,7 @@ set(GMOCK_INCLUDE_DIRS "${source_dir}/include")
 set(GTEST_INCLUDE_DIRS "${source_dir}/gtest/include")
 
 if(WIN32)
-  if(DEBUG)
+  if(CMAKE_BUILD_TYPE EQUAL DEBUG)
     set(GMOCK_DIR "Debug")
   else(CMAKE_BUILD_TYPE EQUAL "RelWithDebInfo")
     set(GMOCK_DIR "RelWithDebInfo")
