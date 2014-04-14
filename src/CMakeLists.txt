@@ -232,7 +232,3 @@ if(NOT V8_FOUND)
   add_dependencies(scriptcore v8)
   add_dependencies(scriptengine v8)
 endif()
-
-if(NOT GTEST_FOUND AND WITH_GTEST)
-  add_dependencies(uicore gtest)
-endif()
