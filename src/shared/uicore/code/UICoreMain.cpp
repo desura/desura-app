@@ -235,6 +235,7 @@ public:
 		m_pOldTraits = oldTraits;
 	}
 
+    virtual bool ShowAssertDialog(const wxString &msg) override
 	{
 		Warning("wx gcAssert: {0}\n", msg.mb_str());
 		return true;
