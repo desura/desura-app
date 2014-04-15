@@ -17,27 +17,13 @@ if(NOT WITH_GMOCK)
 	  source_dir
 	)
 
-
-
 	set(GTEST_INCLUDE_DIRS "${source_dir}/include")
-
+	
 	if(WIN32)
-	  if(DEBUG)
-		set(GTEST_DIR "Debug")
-	  else(CMAKE_BUILD_TYPE EQUAL "RelWithDebInfo")
-		set(GTEST_DIR "RelWithDebInfo")
-	  else()
-		set(GTEST_DIR ".")
-	  endif()
-	  
-	  set(GTEST_LIBRARIES "${source_dir}/${GTEST_DIR}/gtest.lib")
-	  # currently we don't need them, but we should keep it here
-	  # set(GTEST_MAIN_LIBRARIES "${source_dir}/${GTEST_DIR}/gtest_main.lib")
-	  set(GTEST_INSTALL_LIBS "${source_dir}/${GTEST_DIR}/gtest.dll")
+	  set(GTEST_LIBRARIES "${source_dir}/${CMAKE_BUILD_TYPE}/gtest.lib")
+	  set(GTEST_INSTALL_LIBS "${source_dir}/${CMAKE_BUILD_TYPE}/gtest.dll")
 	else()
 	  set(GTEST_LIBRARIES "${source_dir}/libgtest.so")
-	  # currently we don't need them, but we should keep it here
-	  # set(GTEST_MAIN_LIBRARIES "${source_dir}/libgtest_main.so")
 	  set(GTEST_INSTALL_LIBS "${source_dir}/libgtest.so")
 	endif()
 

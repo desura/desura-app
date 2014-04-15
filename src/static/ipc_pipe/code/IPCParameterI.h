@@ -37,7 +37,8 @@ class IPCParameterI
 public:
 	virtual ~IPCParameterI(){}
 
-	virtual char* serialize(uint32 &size)=0;
+	virtual uint32 getSerializeSize() = 0;
+	virtual void serialize(char* szBuffer)=0;
 	virtual uint32 deserialize(const char* buffer, uint32 size)=0;
 
 	virtual uint64 getValue(bool dup = false)=0;

@@ -386,31 +386,25 @@ void IPCManager::processInternalMessage(uint8 type, const char* buff, uint32 siz
 	else if (type == MT_CREATECLASS)
 	{
 		IPCCreateClass *cc = (IPCCreateClass*)buff;
-		IPCParameterI* res = createClass(cc->hash, cc->id);
 
-		uint32 bsize = 0;
-		char* data = res->serialize(bsize);
+		auto res = std::unique_ptr<IPCParameterI>(createClass(cc->hash, cc->id));
+		uint32 bsize = res->getSerializeSize();
 
-		IPCParameter pc;
-		pc.size = bsize;
-		pc.type = res->getType();
-
-		safe_delete(res);
-
-		char* nbuff = new char[bsize+IPCCreateClassRetSIZE+IPCParameterSIZE];
-
+		gcBuff tempBuff(bsize + IPCCreateClassRetSIZE + IPCParameterSIZE);
+		char* nbuff = tempBuff.c_ptr();
 
 		IPCCreateClassRet *cr = (IPCCreateClassRet*)nbuff;
 		cr->id = cc->id;
 		cr->size = bsize + IPCParameterSIZE;
 		cr->lock = cc->lock;
 
-		memcpy(&cr->data, &pc, IPCParameterSIZE); 
-		memcpy(&cr->data+IPCParameterSIZE, data, bsize); 
+		IPCParameter* pc = (IPCParameter*)&cr->data;
+		pc->size = bsize;
+		pc->type = res->getType();
+
+		res->serialize(&pc->data);
 
 		sendMessage( (const char*)cr, sizeofStruct(cr), 0, MT_CREATECLASSRETURN);
-		safe_delete(nbuff);
-		safe_delete(data);
 	}
 	else if (type == MT_CREATECLASSRETURN)
 	{

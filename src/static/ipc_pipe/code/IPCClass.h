@@ -301,7 +301,7 @@ NetworkFunctionI* networkFunction(TObj* pObj, R (TObj::*func)(Args...), const ch
 
 
 class IPCEventI;
-
+class IPCManagerI;
 
 
 
@@ -316,9 +316,9 @@ public:
     //! @param id Class id
 	//! @param itemId Active item id (used for filtering)
 	//!
-	IPCClass(IPCManager* mang, uint32 id, DesuraId itemId);
+	IPCClass(IPCManagerI* mang, uint32 id, DesuraId itemId);
 
-	//! De-Constructor
+	//! DeConstructor
 	//!
 	~IPCClass();
 
@@ -359,12 +359,12 @@ public:
 	//!
 	//! @param name Function name
 	//! @param async Do an async function call (immediate void return)
-	//! @param a Paramater one
-	//! @param b Paramater two
-	//! @param c Paramater three
-	//! @param d Paramater four
-	//! @param e Paramater five
-	//! @param f Paramater six
+	//! @param a Parameter one
+	//! @param b Parameter two
+	//! @param c Parameter three
+	//! @param d Parameter four
+	//! @param e Parameter five
+	//! @param f Parameter six
 	//! @return Result
 	//!
 	IPCParameterI* callFunction(const char* name, bool async=false, IPCParameterI* a = nullptr, IPCParameterI* b = nullptr, IPCParameterI* c = nullptr, IPCParameterI* d = nullptr, IPCParameterI* e = nullptr, IPCParameterI* f = nullptr);
@@ -383,12 +383,12 @@ public:
 	//!
 	//! @param name Function name
 	//! @param async Do an async function call (immediate void return)
-	//! @param a Paramater one
-	//! @param b Paramater two
-	//! @param c Paramater three
-	//! @param d Paramater four
-	//! @param e Paramater five
-	//! @param f Paramater six
+	//! @param a Parameter one
+	//! @param b Parameter two
+	//! @param c Parameter three
+	//! @param d Parameter four
+	//! @param e Parameter five
+	//! @param f Parameter six
 	//! @return Result
 	//!
 	IPCParameterI* callLoopback(const char* name, bool async=false, IPCParameterI* a = nullptr, IPCParameterI* b = nullptr, IPCParameterI* c = nullptr, IPCParameterI* d = nullptr, IPCParameterI* e = nullptr, IPCParameterI* f = nullptr);
@@ -427,7 +427,7 @@ protected:
 	//!
 	void setItemId(DesuraId itemId){m_uiItemId = itemId;}
 	
-	IPCManager* m_pManager;	//!< Manager
+	IPCManagerI* m_pManager;	//!< Manager
 
 
 	//! Handles a new message from other side
@@ -492,7 +492,7 @@ class IPCEventI
 {
 public:
 	virtual ~IPCEventI(){;}
-	virtual void trigger(char* buff, uint32 size)=0;
+	virtual void trigger(std::vector<IPCParameterI*> &vParams) = 0;
 };
 
 
@@ -505,15 +505,16 @@ public:
 		m_pEvent = e;
 	}	
 
-	void trigger(char* buff, uint32 size)
+	void trigger(std::vector<IPCParameterI*> &vParams)
 	{
-		IPCParameterI *r = IPC::getParameter<E>();
-		r->deserialize(buff, size);
+		if (vParams.size() != 1)
+		{
+			gcAssert(false);
+			return;
+		}
 
-		E ret = IPC::getParameterValue<E>(r);
+		E ret = IPC::getParameterValue<E>(vParams[0]);
 		m_pEvent->operator()(ret);
-
-		safe_delete(r);
 	}
 
 private:
@@ -529,7 +530,7 @@ public:
 		m_pEvent = e;
 	}	
 
-	void trigger(char* buff, uint32 size)
+	void trigger(std::vector<IPCParameterI*> &vParams)
 	{
 		m_pEvent->operator()();
 	}

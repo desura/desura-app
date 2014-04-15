@@ -54,6 +54,11 @@ IPC::IPCParameterI* newParameterS(T t)
 
 namespace IPC
 {
+	typedef union
+	{
+		uint64 u;
+		double d;
+	} DoubleAndUint64;
 
 	template <typename T>
 	uint32 getType()
@@ -117,7 +122,8 @@ namespace IPC
 		PVoid();
 		PVoid(uint64 v){}
 
-		char* serialize(uint32 &size);
+		uint32 getSerializeSize() override;
+		void serialize(char* szBuffer) override;
 		uint32 deserialize(const char* buffer, uint32 size);
 		uint64 getValue(bool dup);
 
@@ -131,7 +137,8 @@ namespace IPC
 		PBool();
 		PBool(bool val);
 
-		char* serialize(uint32 &size);
+		uint32 getSerializeSize() override;
+		void serialize(char* szBuffer) override;
 		uint32 deserialize(const char* buffer, uint32 size);
 		uint64 getValue(bool dup);
 
@@ -148,8 +155,8 @@ namespace IPC
 		PUint32();
 		PUint32(uint32 val);
 
-
-		char* serialize(uint32 &size);
+		uint32 getSerializeSize() override;
+		void serialize(char* szBuffer) override;
 		uint32 deserialize(const char* buffer, uint32 size);
 		uint64 getValue(bool dup);
 
@@ -166,7 +173,8 @@ namespace IPC
 		PInt32();
 		PInt32(int32 val);
 
-		char* serialize(uint32 &size);
+		uint32 getSerializeSize() override;
+		void serialize(char* szBuffer) override;
 		uint32 deserialize(const char* buffer, uint32 size);
 		uint64 getValue(bool dup);
 
@@ -183,7 +191,8 @@ namespace IPC
 		PUint64();
 		PUint64(uint64 val);
 
-		char* serialize(uint32 &size);
+		uint32 getSerializeSize() override;
+		void serialize(char* szBuffer) override;
 		uint32 deserialize(const char* buffer, uint32 size);
 		uint64 getValue(bool dup);
 
@@ -201,7 +210,8 @@ namespace IPC
 		PDouble();
 		PDouble(double val);
 
-		char* serialize(uint32 &size);
+		uint32 getSerializeSize() override;
+		void serialize(char* szBuffer) override;
 		uint32 deserialize(const char* buffer, uint32 size);
 		uint64 getValue(bool dup);
 
@@ -218,9 +228,9 @@ namespace IPC
 	public:
 		PString();
 		PString(const char* str);
-		~PString();
 
-		char* serialize(uint32 &size);
+		uint32 getSerializeSize() override;
+		void serialize(char* szBuffer) override;
 		uint32 deserialize(const char* buffer, uint32 size);
 		uint64 getValue(bool dup);
 
@@ -228,7 +238,8 @@ namespace IPC
 		static uint32 getTypeS(){ return IPC::getType<char*>(); }
 
 	private:
-		char* m_szValue;
+		bool m_bNull = false;
+		std::string m_szValue;
 	};
 
 
@@ -239,7 +250,8 @@ namespace IPC
 		PException(gcException& e);
 		~PException();
 
-		char* serialize(uint32 &size);
+		uint32 getSerializeSize() override;
+		void serialize(char* szBuffer) override;
 		uint32 deserialize(const char* buffer, uint32 size);
 		uint64 getValue(bool dup);
 
@@ -262,7 +274,8 @@ namespace IPC
 		PBlob(uint64 val);
 		~PBlob();
 
-		char* serialize(uint32 &size);
+		uint32 getSerializeSize() override;
+		void serialize(char* szBuffer) override;
 		uint32 deserialize(const char* buffer, uint32 size);
 		uint64 getValue(bool dup);
 
@@ -287,7 +300,8 @@ namespace IPC
 		PMapStringString(const std::map<std::string, std::string>& e);
 		~PMapStringString();
 
-		char* serialize(uint32 &size);
+		uint32 getSerializeSize() override;
+		void serialize(char* szBuffer) override;
 		uint32 deserialize(const char* buffer, uint32 size);
 		uint64 getValue(bool dup);
 
@@ -388,6 +402,20 @@ namespace IPC
 		return (R)p->getValue(dup);
 	}
 
+	template <>
+	inline double getParameterValue<double>(IPCParameterI* p, bool dup)
+	{
+		DoubleAndUint64 du;
+		du.u = p->getValue(dup);
+		return du.d;
+	}
+
+	template <>
+	inline std::map<std::string, std::string> getParameterValue<std::map<std::string, std::string>>(IPCParameterI* p, bool dup)
+	{
+		std::map<std::string, std::string> res(*reinterpret_cast<std::map<std::string, std::string>*>(p->getValue(false)));
+		return res;
+	}
 }
 
 
