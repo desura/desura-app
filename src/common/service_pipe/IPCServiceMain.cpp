@@ -91,7 +91,15 @@ void LogMsg(MSG_TYPE type, std::string msg, Color* col, std::map<std::string, st
 	if (col)
 		nCol = col->getColor();
 
-	servicemain->message((int)type, msg.c_str(), nCol, *mpArgs);
+	if (mpArgs)
+	{
+		servicemain->message((int)type, msg.c_str(), nCol, *mpArgs);
+	}
+	else
+	{
+		std::map<std::string, std::string> mEmpty;
+		servicemain->message((int)type, msg.c_str(), nCol, mEmpty);
+	}
 
 	if (g_pTracer && type == MT_TRACE)
 		g_pTracer->trace(msg, mpArgs);
