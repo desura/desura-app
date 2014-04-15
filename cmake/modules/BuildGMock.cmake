@@ -20,22 +20,10 @@ set(GMOCK_INCLUDE_DIRS "${source_dir}/include")
 set(GTEST_INCLUDE_DIRS "${source_dir}/gtest/include")
 
 if(WIN32)
-  if(CMAKE_BUILD_TYPE EQUAL DEBUG)
-    set(GMOCK_DIR "Debug")
-  else(CMAKE_BUILD_TYPE EQUAL "RelWithDebInfo")
-    set(GMOCK_DIR "RelWithDebInfo")
-  else()
-    set(GMOCK_DIR ".")
-  endif()
-  
-  set(GMOCK_LIBRARIES "${source_dir}/${GMOCK_DIR}/gmock.lib")
-  # currently we don't need them, but we should keep it here
-  # set(GMOCK_MAIN_LIBRARIES "${source_dir}/${GTEST_DIR}/gtest_main.lib")
-  set(GMOCK_INSTALL_LIBS "${source_dir}/${GMOCK_DIR}/gmock.dll")
+  set(GMOCK_LIBRARIES "${source_dir}/${CMAKE_BUILD_TYPE}/gmock.lib")
+  set(GMOCK_INSTALL_LIBS "${source_dir}/${CMAKE_BUILD_TYPE}/gmock.dll")
 else()
   set(GMOCK_LIBRARIES "${source_dir}/libgmock.so")
-  # currently we don't need them, but we should keep it here
-  # set(GMOCK_MAIN_LIBRARIES "${source_dir}/libgtest_main.so")
   set(GMOCK_INSTALL_LIBS "${source_dir}/libgmock.so")
 endif()
 
