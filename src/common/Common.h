@@ -37,7 +37,7 @@ $/LicenseInfo$
 		#define PAUSE_DEBUGGER()
 	#endif
 
-inline void DogcAssert(const char* szExp, const char* szFile, int nLine)
+inline void DoAssert(const char* szExp, const char* szFile, int nLine)
 {
 	PAUSE_DEBUGGER();
 }
@@ -53,7 +53,7 @@ inline void DogcAssert(const char* szExp, const char* szFile, int nLine)
 			bool bFailed = !(X);	\
 			if (bFailed)			\
 			{						\
-				DogcAssert( #X , __FILE__ , __LINE__ );	\
+				DoAssert( #X , __FILE__ , __LINE__ );	\
 			}						\
 		}							\
 		while(false)
