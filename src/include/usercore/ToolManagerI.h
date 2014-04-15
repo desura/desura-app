@@ -90,7 +90,7 @@ namespace UserCore
 
 			void erase(size_t nIndex)
 			{
-				assert(nIndex < size());
+				gcAssert(nIndex < size());
 
 				std::lock_guard<std::mutex> guard(m_Lock);
 				m_vToolsList.erase(m_vToolsList.begin() + nIndex);
@@ -98,7 +98,7 @@ namespace UserCore
 
 			DesuraId get(size_t nIndex) const
 			{
-				assert(nIndex < size());
+				gcAssert(nIndex < size());
 
 				std::lock_guard<std::mutex> guard(m_Lock);
 				return m_vToolsList[nIndex];
