@@ -126,12 +126,28 @@ void User::logInCleanUp()
 
 void User::logIn(const char* user, const char* pass)
 {
-	doLogIn(user, pass, false);
+	try
+	{
+		doLogIn(user, pass, false);
+	}
+	catch (...)
+	{
+		logOut();
+		throw;
+	}
 }
 
 void User::logInTool(const char* user, const char* pass)
 {
-	doLogIn(user, pass, true);
+	try
+	{
+		doLogIn(user, pass, true);
+	}
+	catch (...)
+	{
+		logOut();
+		throw;
+	}
 }
 
 void User::doLogIn(const char* user, const char* pass, bool bTestOnly)
@@ -147,10 +163,7 @@ void User::doLogIn(const char* user, const char* pass, bool bTestOnly)
 	auto uNode = doc.GetRoot("memberlogin");
 
 	if (!uNode.IsValid())
-	{
-		logOut();
 		throw gcException(ERR_BADXML);
-	}
 
 	uint32 version = 0;
 	uNode.GetAtt("version", version);
@@ -183,13 +196,28 @@ void User::doLogIn(const char* user, const char* pass, bool bTestOnly)
 	if (bTestOnly)
 		return;
 
-	gcString appDataPath = UTIL::OS::getAppDataPath();
-
 	initPipe();
 
 #ifdef WIN32
-	if (getServiceMain())
-		getServiceMain()->fixFolderPermissions(appDataPath.c_str());
+	auto fixFolderPermissions = [this](const char* strName, const char* szPath)
+	{
+		try
+		{
+			if (getServiceMain())
+				getServiceMain()->fixFolderPermissions(szPath);
+		}
+		catch (gcException* e)
+		{
+			Warning("Failed to set {0} path to be writeable: {1}", strName, e);
+		}
+		catch (...)
+		{
+			Warning("Failed to set {0} path to be writeable: (Unknown error)", strName);
+		}
+	};
+
+	gcString appDataPath = UTIL::OS::getAppDataPath();
+	fixFolderPermissions("AppData", appDataPath.c_str());
 
 	try
 	{
@@ -197,16 +225,14 @@ void User::doLogIn(const char* user, const char* pass, bool bTestOnly)
 	}
 	catch (...)
 	{
-		if (getServiceMain())
-			getServiceMain()->fixFolderPermissions(m_szMcfCachePath.c_str());
+		fixFolderPermissions("Mcf Cache", m_szMcfCachePath.c_str());
 
 		try
 		{
 			testMcfCache();
 		}
-		catch (gcException &e)
+		catch (...)
 		{
-			Warning("Failed to set mcf cache path to be writeable: {0}", e);
 		}
 	}
 #endif
@@ -230,25 +256,17 @@ void User::doLogIn(const char* user, const char* pass, bool bTestOnly)
 	m_pToolManager->loadItems();
 	m_pItemManager->loadItems();
 
-	try
+	if (m_bDelayLoading)
 	{
-		if (m_bDelayLoading)
-		{
-			//do nothing as the update thread will grab it
-		}
-		else if (version == 2)
-		{
-			m_pItemManager->parseLoginXml2(memNode.FirstChildElement("games"), memNode.FirstChildElement("platforms"));
-		}
-		else
-		{
-			m_pItemManager->parseLoginXml(memNode.FirstChildElement("games"), memNode.FirstChildElement("developer"));
-		}
+		//do nothing as the update thread will grab it
 	}
-	catch (gcException &)
+	else if (version == 2)
 	{
-		logOut();
-		throw;
+		m_pItemManager->parseLoginXml2(memNode.FirstChildElement("games"), memNode.FirstChildElement("platforms"));
+	}
+	else
+	{
+		m_pItemManager->parseLoginXml(memNode.FirstChildElement("games"), memNode.FirstChildElement("developer"));
 	}
 
 	auto newsNode = memNode.FirstChildElement("news");
@@ -276,7 +294,6 @@ void User::doLogIn(const char* user, const char* pass, bool bTestOnly)
 		getThreadPool()->queueTask(new UpdateUninstallTask(this));
 #endif
 	}
-		
 
 #ifdef WIN32
 	gcString val("\"{0}\"", UTIL::OS::getCurrentDir(L"desura.exe"));
