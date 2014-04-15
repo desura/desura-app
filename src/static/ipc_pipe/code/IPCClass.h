@@ -682,15 +682,41 @@ void functionCallV(IPC::IPCClass* cl, const char* name, Args& ... args)
 template <typename ... Args>
 void functionCallAsync(IPC::IPCClass* cl, const char* name, Args&& ... args)
 {
-	IPC::IPCParameterI* r = cl->callFunction(name, true, IPC::getParameter(args)...);
-	handleReturnV(r);
+	try
+	{
+		IPC::IPCParameterI* r = cl->callFunction(name, true, IPC::getParameter(args)...);
+		handleReturnV(r);
+	}
+	catch (gcException &e)
+	{
+		if (std::string("message") != name)
+			WarningS("Unhandled exception calling {0} async: {1}", name, e);
+	}
+	catch (...)
+	{
+		if (std::string("message") != name)
+			WarningS("Unhandled unknown exception calling {0} async.", name);
+	}
 }
 
 template <typename ... Args>
 void loopbackCallAsync(IPC::IPCClass* cl, const char* name, Args& ... args)
 {
-	IPC::IPCParameterI* r = cl->callLoopback(name, true, IPC::getParameter(args)...);
-	handleReturnV(r);
+	try
+	{
+		IPC::IPCParameterI* r = cl->callLoopback(name, true, IPC::getParameter(args)...);
+		handleReturnV(r);
+	}
+	catch (gcException &e)
+	{
+		if (std::string("message") != name)
+			WarningS("Unhandled exception calling {0} async: {1}", name, e);
+	}
+	catch (...)
+	{
+		if (std::string("message") != name)
+			WarningS("Unhandled unknown exception calling {0} async.", name);
+	}
 }
 
 

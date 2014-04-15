@@ -377,7 +377,7 @@ namespace IPC
 	template <typename T>
 	IPCParameterI* getParameter(T base, bool delBase = false)
 	{
-		IPCParameterI* ret = newParameterS((T)base);
+		IPCParameterI* ret = newParameterS(base);
 
 		if (delBase)
 			param_delete(base);

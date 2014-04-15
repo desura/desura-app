@@ -157,6 +157,7 @@ void CGCServiceApp::stop()
 		fclose(m_Fh);
 
 	m_Fh = nullptr;
+	m_pServiceCore = nullptr;
 }
 
 void CGCServiceApp::log(const char* msg)

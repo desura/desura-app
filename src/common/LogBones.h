@@ -85,7 +85,7 @@ void TraceS(const char* szFunction, const char* szClassInfo, const char* szForma
 	mArgs["time"] = gcTime().to_js_string();
 
 #ifdef WIN32
-	char szModuleName[255];
+	char szModuleName[255] = { 0 };
 	GetModuleFileNameA(reinterpret_cast<HMODULE>(&__ImageBase), szModuleName, 255);
 
 	auto t = std::string(szModuleName, 255);

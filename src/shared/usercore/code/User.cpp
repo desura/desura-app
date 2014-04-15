@@ -192,6 +192,8 @@ void User::init()
 	m_pPipeClient = nullptr;
 
 	m_bDownloadingUpdate = false;
+
+	onNeedWildCardEvent.reset();
 	onNeedWildCardEvent += delegate(this, &User::onNeedWildCardCB);
 
 	m_iThreads = 0;

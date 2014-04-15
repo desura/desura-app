@@ -63,7 +63,7 @@ public:
 	//Sets the api version the client supports
 	void SetApiVersion(int nVersion) override
 	{
-		assert(CEF_Init);
+		gcAssert(CEF_Init);
 
 		if (CEF_SetApiVersion)
 			CEF_SetApiVersion(nVersion);
@@ -71,7 +71,7 @@ public:
 
 	void DoMsgLoop() override
 	{
-		assert(CEF_Init);
+		gcAssert(CEF_Init);
 
 		if (CEF_DoWork)
 			CEF_DoWork();
@@ -79,7 +79,7 @@ public:
 
 	void Stop() override
 	{
-		assert(CEF_Init);
+		gcAssert(CEF_Init);
 
 		if (CEF_Stop)
 			CEF_Stop();
@@ -89,7 +89,7 @@ public:
 
 	bool RegisterJSExtender(ChromiumDLL::JavaScriptExtenderI* extender) override
 	{
-		assert(CEF_Init);
+		gcAssert(CEF_Init);
 
 		if (CEF_RegisterJSExtender)
 			return CEF_RegisterJSExtender(extender);
@@ -100,7 +100,7 @@ public:
 
 	bool RegisterSchemeExtender(ChromiumDLL::SchemeExtenderI* extender) override
 	{
-		assert(CEF_Init);
+		gcAssert(CEF_Init);
 
 		if (CEF_RegisterSchemeExtender)
 			return CEF_RegisterSchemeExtender(extender);
@@ -111,7 +111,7 @@ public:
 
 	void DeleteCookie(const char* url, const char* name) override
 	{
-		assert(CEF_Init);
+		gcAssert(CEF_Init);
 
 		if (CEF_DeleteCookie)
 			CEF_DeleteCookie(url, name);
@@ -119,7 +119,7 @@ public:
 
 	ChromiumDLL::CookieI* CreateCookie() override
 	{
-		assert(CEF_Init);
+		gcAssert(CEF_Init);
 
 		if (CEF_CreateCookie)
 			return CEF_CreateCookie();
@@ -129,7 +129,7 @@ public:
 
 	void SetCookie(const char* url, ChromiumDLL::CookieI* cookie) override
 	{
-		assert(CEF_Init);
+		gcAssert(CEF_Init);
 
 		if (CEF_SetCookie)
 			CEF_SetCookie(url, cookie);
@@ -139,7 +139,7 @@ public:
 	// Form handle as HWND
 	ChromiumDLL::ChromiumBrowserI* NewChromiumBrowser(int* formHandle, const char *name, const char* defaultUrl) override
 	{
-		assert(CEF_Init);
+		gcAssert(CEF_Init);
 
 		if (CEF_NewChromiumBrowser)
 			return CEF_NewChromiumBrowser(formHandle, name, defaultUrl);
@@ -150,19 +150,19 @@ public:
 	//Creates a offscreen browser renderer
 	ChromiumDLL::ChromiumRendererI* NewChromiumRenderer(int* formHandle, const char* defaultUrl, int width, int height) override
 	{
-		assert(false);
+		gcAssert(false);
 		return nullptr;
 	}
 
 	// Return true to handle msg
 	void SetLogHandler(ChromiumDLL::LogMessageHandlerFn logFn) override
 	{
-		assert(false);
+		gcAssert(false);
 	}
 
 	void PostCallback(ChromiumDLL::CallbackI* callback) override
 	{
-		assert(CEF_Init);
+		gcAssert(CEF_Init);
 
 		if (CEF_PostCallback)
 			CEF_PostCallback(callback);
@@ -170,7 +170,7 @@ public:
 
 	bool Init(bool threaded, const char* cachePath, const char* logPath, const char* userAgent)
 	{
-		assert(CEF_Init);
+		gcAssert(CEF_Init);
 
 		if (CEF_Init)
 			return CEF_Init(threaded, cachePath, logPath, userAgent);
