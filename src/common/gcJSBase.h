@@ -246,8 +246,13 @@ T popAndConvert(JSObjHandle* argv, size_t &x, bool bFirstIsObj)
 	else
 	{
 		FromJSObject(t, argv[x]);
-		--x;
 	}
+	
+#ifdef __clang__
+	++x;
+#else
+	--x;
+#endif	
 	
 	return t;
 }
@@ -268,7 +273,11 @@ public:
 		if (argc < sizeof...(Args))
 			throw gcException(ERR_V8, "Not enough parameters supplied for javascript function call!");
 
+#ifdef __clang__
+		size_t x = 0;
+#else
 		size_t x = sizeof...(Args) - 1;
+#endif
 
 		try
 		{
@@ -307,7 +316,11 @@ public:
 
 		JSObjHandle ret(nullptr);
 
+#ifdef __clang__
+		size_t x = 0;
+#else
 		size_t x = sizeof...(Args) - 1;
+#endif
 
 		try
 		{
