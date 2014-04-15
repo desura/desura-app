@@ -27,7 +27,6 @@ $/LicenseInfo$
 #include "serviceMain.h"
 #include "Tracer.h"
 
-void ServiceMain(int argc, char** argv);
 void ControlHandler(DWORD request);
 
 SERVICE_STATUS g_ServiceStatus; 
@@ -61,6 +60,47 @@ void OnPipeDisconnect()
 	g_ServiceApp.onDisconnect();
 }
 
+HANDLE g_WaitEvent = nullptr;
+HANDLE g_StopEvent = nullptr;
+
+
+void WINAPI ServiceMain(DWORD argc, char** argv)
+{
+	g_WaitEvent = CreateEvent(nullptr, false, false, nullptr);
+
+	g_ServiceStatus.dwServiceType        = SERVICE_WIN32; 
+	g_ServiceStatus.dwCurrentState = SERVICE_START_PENDING;
+	g_ServiceStatus.dwControlsAccepted = SERVICE_ACCEPT_STOP | SERVICE_ACCEPT_SHUTDOWN;
+	g_ServiceStatus.dwWin32ExitCode = 0;
+	g_ServiceStatus.dwServiceSpecificExitCode = 0;
+	g_ServiceStatus.dwCheckPoint = 0;
+	g_ServiceStatus.dwWaitHint = 0;
+
+	g_hStatus = RegisterServiceCtrlHandler(SERVICE_NAME, (LPHANDLER_FUNCTION)ControlHandler);
+
+	if (!g_ServiceApp.start(argc, argv))
+	{
+		g_ServiceStatus.dwCurrentState = SERVICE_STOPPED;
+		g_ServiceStatus.dwWin32ExitCode = -1;
+		SetServiceStatus(g_hStatus, &g_ServiceStatus);
+	}
+	else
+	{
+		g_ServiceStatus.dwCurrentState = SERVICE_RUNNING;
+		SetServiceStatus(g_hStatus, &g_ServiceStatus);
+
+		while (g_ServiceStatus.dwCurrentState == SERVICE_RUNNING)
+			WaitForSingleObject(g_WaitEvent, INFINITE);
+	}
+
+	g_ServiceApp.stop();
+
+	CloseHandle(g_WaitEvent);
+	g_WaitEvent = nullptr;
+
+	if (g_StopEvent)
+		SetEvent(g_StopEvent);
+}
 
 int main(int argc, char** argv) 
 { 
@@ -97,50 +137,18 @@ int main(int argc, char** argv)
 	{
 		SERVICE_TABLE_ENTRY ServiceTable[2];
 		ServiceTable[0].lpServiceName = SERVICE_NAME;
-		ServiceTable[0].lpServiceProc = (LPSERVICE_MAIN_FUNCTION)ServiceMain;
+		ServiceTable[0].lpServiceProc = &ServiceMain;
 
 		ServiceTable[1].lpServiceName = nullptr;
 		ServiceTable[1].lpServiceProc = nullptr;
 
+		g_StopEvent = CreateEvent(nullptr, false, false, nullptr);
 		StartServiceCtrlDispatcher(ServiceTable);
+		WaitForSingleObject(g_StopEvent, INFINITE);
+
+		CloseHandle(g_StopEvent);
+		g_StopEvent = nullptr;
 	}
-}
-
-HANDLE g_WaitEvent = nullptr;
-
-void ServiceMain(int argc, char** argv) 
-{ 
-	g_WaitEvent = CreateEvent(nullptr, false, false, nullptr);
-
-    g_ServiceStatus.dwServiceType        = SERVICE_WIN32; 
-    g_ServiceStatus.dwCurrentState       = SERVICE_START_PENDING; 
-    g_ServiceStatus.dwControlsAccepted   = SERVICE_ACCEPT_STOP | SERVICE_ACCEPT_SHUTDOWN;
-    g_ServiceStatus.dwWin32ExitCode      = 0; 
-    g_ServiceStatus.dwServiceSpecificExitCode = 0; 
-    g_ServiceStatus.dwCheckPoint         = 0; 
-    g_ServiceStatus.dwWaitHint           = 0; 
-
-	g_hStatus = RegisterServiceCtrlHandler(SERVICE_NAME, (LPHANDLER_FUNCTION)ControlHandler); 
-	
-	if (!g_ServiceApp.start(argc, argv))
-	{
-		g_ServiceStatus.dwCurrentState       = SERVICE_STOPPED; 
-		g_ServiceStatus.dwWin32ExitCode      = -1; 
-		SetServiceStatus(g_hStatus, &g_ServiceStatus);
-	}
-	else
-	{
-		g_ServiceStatus.dwCurrentState = SERVICE_RUNNING; 
-		SetServiceStatus(g_hStatus, &g_ServiceStatus);
-
-		while (g_ServiceStatus.dwCurrentState == SERVICE_RUNNING)
-			WaitForSingleObject(g_WaitEvent, INFINITE);
-	}
-
-	g_ServiceApp.stop();
-
-	CloseHandle(g_WaitEvent);
-	g_WaitEvent = nullptr;
 }
 
 void ControlHandler(DWORD request) 
