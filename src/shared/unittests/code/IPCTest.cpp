@@ -109,7 +109,7 @@ TEST_F(IPCFixture, voidFunctTwo)
 
 	auto pFunct = networkFunctionV<IPCFixture>(this, &IPCFixture::voidFunctTwo, "");
 
-	addParameter<char*>("apple");
+	addParameter<const char*>("apple");
 	addParameter<int>(6789);
 
 	auto pRet = call(pFunct);
@@ -123,7 +123,7 @@ TEST_F(IPCFixture, setCrashSettings)
 	auto pFunct = networkFunctionV<IPCFixture>(this, &IPCFixture::setCrashSettings, "");
 
 	addParameter<bool>(true);
-	addParameter<char*>("lodle");
+	addParameter<const char*>("lodle");
 
 	auto pRet = call(pFunct);
 	ASSERT_EQ(IPC::getType<void>(), pRet->getType());
@@ -164,7 +164,7 @@ TEST_F(IPCFixture, normFunctTwo)
 	EXPECT_CALL(*this, normFunctTwo(StrEq("cherry"), Eq(6789))).Times(1).WillOnce(Return(true));
 	auto pFunct = networkFunction<IPCFixture>(this, &IPCFixture::normFunctTwo, "");
 
-	addParameter<char*>("cherry");
+	addParameter<const char*>("cherry");
 	addParameter<int>(6789);
 
 	auto pRet = call(pFunct);
@@ -361,7 +361,7 @@ public:
 		gcBuff szBuff(1);
 
 		{
-			Param p(GetParam());
+			Param p(::testing::TestWithParam<PType>::GetParam());
 
 			nSize = p.getSerializeSize();
 			szBuff = gcBuff(nSize);
@@ -374,7 +374,7 @@ public:
 			uint32 nUsed = p.deserialize(szBuff, nSize);
 
 			ASSERT_EQ(nUsed, nSize);
-			AssertEq<PType>(GetParam(), getParameterValue<PType>(&p, false));
+			AssertEq<PType>(::testing::TestWithParam<PType>::GetParam(), getParameterValue<PType>(&p, false));
 		}
 	}
 };
