@@ -26,6 +26,7 @@ $/LicenseInfo$
 #include "Common.h"
 
 #include <branding/branding.h>
+#include "umcf/UMcf.h"
 
 #ifdef WIN32
 #include <ShlObj.h>
@@ -78,6 +79,9 @@ void UpdateShortCuts()
 		UTIL::FS::delFile(spThree);
 		UTIL::WIN::createShortCut(gcWString(spThree).c_str(), uninstall.c_str(), wd.c_str(), "", true);
 	}
+
+	UMcf u;
+	u.setRegValues(curDir);
 }
 #else
 
