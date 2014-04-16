@@ -417,12 +417,12 @@ void MainApp::logOut(bool bShowLogin, bool autoLogin)
 			g_pUserHandle = nullptr;
 			DesuraJSBinding::gs_pItemManager = nullptr;
 
+			*user->getPipeDisconnectEvent() -= guiDelegate(this, &MainApp::onPipeDisconnect);
 			user->logOut(!autoLogin);
 
 			*user->getAppUpdateProgEvent()				-= guiDelegate(this, &MainApp::onAppUpdateProg);
 			*user->getAppUpdateCompleteEvent()			-= guiDelegate(this, &MainApp::onAppUpdate);
 			*user->getWebCore()->getCookieUpdateEvent() -= guiDelegate(this, &MainApp::onCookieUpdate);
-			*user->getPipeDisconnectEvent()				-= guiDelegate(this, &MainApp::onPipeDisconnect);
 
 			safe_delete(user);
 		}
@@ -802,6 +802,9 @@ void MainApp::onCookieUpdate()
 
 void MainApp::onPipeDisconnect()
 {
+	if (!m_bLoggedIn)
+		return;
+
 	gcTrace("");
 	DesuraServiceError dse(getMainWindow());
 	dse.ShowModal();
