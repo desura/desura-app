@@ -132,6 +132,10 @@ void FromJSObject<gcString>(gcString& ret, JSObjHandle& arg)
 	{
 		ret = gcString("{0}", arg->getDoubleValue());
 	}
+	else if (arg->isNull() || arg->isUndefined())
+	{
+		ret = "";
+	}
 	else
 	{
 		throw gcException(ERR_INVALIDDATA, "Failed to convert javascript arg to string");
