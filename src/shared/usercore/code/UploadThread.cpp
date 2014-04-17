@@ -101,6 +101,7 @@ void UploadThread::doRun()
 
 	gcString url = getWebCore()->getUrl(WebCore::McfUpload);
 	m_hHttpHandle->setUrl(url.c_str());
+	m_hHttpHandle->getProgressEvent() += delegate(this, &UploadThread::onProgress);
 
 	UTIL::MISC::Buffer buffer(m_uiChunkSize);
 
@@ -138,8 +139,7 @@ void UploadThread::doRun()
 		m_hHttpHandle->addPostText("sitearea", type.c_str());
 		m_hHttpHandle->addPostFileAsBuff("mcf", "upload.mcf", buffer, chunkSize);
 		m_hHttpHandle->addPostText("uploadsize", chunkSize);
-		m_hHttpHandle->getProgressEvent()  += delegate(this,  &UploadThread::onProgress);
-
+		
 		uint8 res = 0;
 
 		//need to check here a second time incase we where paused or by fluke missed the check the first time as m_hHttpHandle->CleanUp() removes the abort flag.
