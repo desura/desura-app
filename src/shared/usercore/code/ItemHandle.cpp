@@ -728,24 +728,37 @@ void ItemHandle::addHelper(Helper::ItemHandleHelperI* helper)
 
 bool ItemHandle::preDownloadCheck(MCFBranch branch, bool test)
 {
-	UserCore::Item::ItemInfoI* parentInfo = m_pUserCore->getItemManager()->findItemInfo(getItemInfo()->getParentId());
-	bool isParentDemo = false;
-
-	if (parentInfo && parentInfo->getCurrentBranch())
-		isParentDemo = HasAllFlags(parentInfo->getCurrentBranch()->getFlags(), UserCore::Item::BranchInfoI::BF_DEMO|UserCore::Item::BranchInfoI::BF_TEST);
-
 	UserCore::Item::BranchInfoI* branchInfo = getItemInfo()->getBranchById(branch);
+	UserCore::Item::ItemInfoI* parentInfo = m_pUserCore->getItemManager()->findItemInfo(getItemInfo()->getParentId());
 
 	gcException eExist(ERR_INVALID, "Branch does not exist.");
 	gcException eRelease(ERR_INVALID, "Branch has no releases available for download.");
-	gcException eDemo(ERR_INVALID, "Parent game is a demo. Please install on the full version only.");
 
 	if (!branchInfo)
 		onErrorEvent(eExist);
 	else if (!branchInfo->isDownloadable() && !test)
 		onErrorEvent(eRelease);
-	else if (isParentDemo)
-		onErrorEvent(eDemo);
+	else if (parentInfo)
+	{
+		gcException eDemo(ERR_INVALID, gcString("Parent game is a demo. Please install {0} on the full version only.", parentInfo->getName()));
+		gcException eParentNotReady(ERR_INVALID, gcString("Parent game is not installed. Please install {0} first.", parentInfo->getName()));
+
+		bool isParentDemo = false;
+		bool bParentNotReady = false;
+
+		if (parentInfo && parentInfo->getCurrentBranch())
+			isParentDemo = HasAllFlags(parentInfo->getCurrentBranch()->getFlags(), UserCore::Item::BranchInfoI::BF_DEMO | UserCore::Item::BranchInfoI::BF_TEST);
+
+		if (parentInfo && !parentInfo->isLaunchable())
+			bParentNotReady = true;
+
+		if (isParentDemo)
+			onErrorEvent(eDemo);
+		else if (bParentNotReady)
+			onErrorEvent(eParentNotReady);
+		else
+			return true;
+	}
 	else
 		return true;
 
