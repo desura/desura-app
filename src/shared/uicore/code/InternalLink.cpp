@@ -819,7 +819,10 @@ void InternalLink::launchItem(DesuraId id, LinkArgs args)
 	g_pMainApp->showPlay();
 
 	if (checkForPreorder(id))
+	{
+		showPreorderPrompt(id, false);
 		return;
+	}
 
 	UserCore::Item::ItemInfoI* item = GetUserCore()->getItemManager()->findItemInfo(id);
 
