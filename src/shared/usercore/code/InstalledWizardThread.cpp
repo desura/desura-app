@@ -261,6 +261,9 @@ void InstalledWizardThread::parseItemsQuick(const XML::gcXMLElement &fNode)
 	{
 		platforms.for_each_child("platform", [&](const XML::gcXMLElement &platform)
 		{
+			if (isStopped())
+				return;
+
 			if (getUserCore()->platformFilter(platform, PlatformType::Item))
 				return;
 
@@ -271,6 +274,9 @@ void InstalledWizardThread::parseItemsQuick(const XML::gcXMLElement &fNode)
 	{
 		fNode.FirstChildElement("games").for_each_child("game", [&](const XML::gcXMLElement &game)
 		{
+			if (isStopped())
+				return;
+
 			const std::string id = game.GetAtt("siteareaid");
 			DesuraId gameId(id.c_str(), "games");
 
@@ -336,8 +342,11 @@ void InstalledWizardThread::parseGame(DesuraId id, const XML::gcXMLElement &game
 
 	std::map<uint64, XML::gcXMLElement> mModMap;
 
-	info.FirstChildElement("mods").for_each_child("mods", [&mModMap](const XML::gcXMLElement &mod)
+	info.FirstChildElement("mods").for_each_child("mods", [&mModMap, this](const XML::gcXMLElement &mod)
 	{
+		if (isStopped())
+			return;
+
 		const std::string szId = mod.GetAtt("siteareaid");
 		DesuraId internId(szId.c_str(), "mods");
 
@@ -347,6 +356,9 @@ void InstalledWizardThread::parseGame(DesuraId id, const XML::gcXMLElement &game
 
 	game.FirstChildElement("mods").for_each_child("mods", [&](const XML::gcXMLElement &mod)
 	{
+		if (isStopped())
+			return;
+
 		const std::string szId = mod.GetAtt("siteareaid");
 		DesuraId internId(szId.c_str(), "mods");
 
@@ -396,6 +408,9 @@ void InstalledWizardThread::parseItems1(const XML::gcXMLElement &fNode, Wildcard
 
 	fNode.FirstChildElement("games").for_each_child("game", [&](const XML::gcXMLElement &game)
 	{
+		if (isStopped())
+			return;
+
 		const std::string szId = game.GetAtt("siteareaid");
 		DesuraId gameId(szId.c_str(), "games");
 
@@ -422,6 +437,9 @@ void InstalledWizardThread::parseItems2(const XML::gcXMLElement &fNode, Wildcard
 
 	fNode.FirstChildElement("games").for_each_child("game", [&](const XML::gcXMLElement &game)
 	{
+		if (isStopped())
+			return;
+
 		const std::string szId = game.GetAtt("siteareaid");
 		DesuraId gameId(szId.c_str(), "games");
 
@@ -431,6 +449,9 @@ void InstalledWizardThread::parseItems2(const XML::gcXMLElement &fNode, Wildcard
 
 	fNode.FirstChildElement("platforms").for_each_child("platform", [&](const XML::gcXMLElement &platform)
 	{
+		if (isStopped())
+			return;
+
 		if (getUserCore()->platformFilter(platform, PlatformType::Item))
 			return;
 
