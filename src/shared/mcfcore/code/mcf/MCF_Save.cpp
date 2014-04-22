@@ -315,25 +315,7 @@ void MCF::dlFilesFromWeb( )
 	temp->onErrorEvent += delegate(&onErrorEvent);
 	temp->onProviderEvent += delegate(&onProviderEvent);
 
-	m_mThreadMutex.lock();
-	m_pTHandle = temp;
-	m_mThreadMutex.unlock();
-
-	if (m_bStopped)
-		return;
-
-	try
-	{
-		m_pTHandle->start();
-		m_pTHandle->join();
-		safe_delete(m_pTHandle);
-	}
-	catch (gcException &)
-	{
-		safe_delete(m_pTHandle);
-		throw;
-	}
-
+	runThread(temp);
 	saveMCF_Header();
 }
 
@@ -475,24 +457,7 @@ void MCF::saveFiles(const char* path)
 	temp->onProgressEvent +=delegate(&onProgressEvent);
 	temp->onErrorEvent += delegate(&onErrorEvent);
 
-	m_mThreadMutex.lock();
-	m_pTHandle = temp;
-	m_mThreadMutex.unlock();
-
-	if (m_bStopped)
-		return;
-
-	try
-	{
-		m_pTHandle->start();
-		m_pTHandle->join();
-		safe_delete(m_pTHandle);
-	}
-	catch (gcException &)
-	{
-		safe_delete(m_pTHandle);
-		throw;
-	}
+	runThread(temp);
 }
 
 
@@ -511,24 +476,7 @@ void MCF::saveMCF_CandSFiles()
 	temp->onProgressEvent +=delegate(&onProgressEvent);
 	temp->onErrorEvent += delegate(&onErrorEvent);
 
-	m_mThreadMutex.lock();
-	m_pTHandle = temp;
-	m_mThreadMutex.unlock();
-
-	if (m_bStopped)
-		return;
-
-	try
-	{
-		m_pTHandle->start();
-		m_pTHandle->join();
-		safe_delete(m_pTHandle);
-	}
-	catch (gcException &)
-	{
-		safe_delete(m_pTHandle);
-		throw;
-	}
+	runThread(temp);
 
 #ifdef DEBUG
 	uint64 offset = getDLSize() + m_sHeader->getSize();
@@ -538,6 +486,39 @@ void MCF::saveMCF_CandSFiles()
 		gcAssert(false);
 #endif
 }
+
+
+void MCF::runThread(MCFCore::Thread::BaseMCFThread* pThread)
+{
+	{
+		std::lock_guard<std::mutex> guard(m_mThreadMutex);
+		m_pTHandle = pThread;
+	}
+
+	if (m_bStopped)
+	{
+		std::lock_guard<std::mutex> guard(m_mThreadMutex);
+		safe_delete(m_pTHandle);
+		return;
+	}
+		
+	try
+	{
+		pThread->start();
+		pThread->join();
+
+		std::lock_guard<std::mutex> guard(m_mThreadMutex);
+		safe_delete(m_pTHandle);
+	}
+	catch (gcException &)
+	{
+		std::lock_guard<std::mutex> guard(m_mThreadMutex);
+		safe_delete(m_pTHandle);
+
+		throw;
+	}
+}
+
 
 
 void MCF::exportMcf(const char* path)

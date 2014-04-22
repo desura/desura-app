@@ -119,20 +119,7 @@ void MCF::dlFilesFromHttp(const char* url, const char* installDir)
 	temp->onProgressEvent +=delegate(&onProgressEvent);
 	temp->onErrorEvent += delegate(&onErrorEvent);
 
-	m_pTHandle = temp;
-
-	try
-	{
-		m_pTHandle->start();
-		m_pTHandle->join();
-		safe_delete(m_pTHandle);
-	}
-	catch (gcException &)
-	{
-		safe_delete(m_pTHandle);
-		throw;
-	}
-
+	runThread(temp);
 	saveMCF_Header();
 }
 

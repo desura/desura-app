@@ -72,9 +72,8 @@ MCF::MCF(std::shared_ptr<MCFCore::Misc::DownloadProvidersI> pDownloadProviders)
 
 MCF::~MCF()
 {
-	m_mThreadMutex.lock();
+	std::lock_guard<std::mutex> guard(m_mThreadMutex);
 	safe_delete(m_pTHandle);
-	m_mThreadMutex.unlock();
 }
 
 void MCF::disableCompression()
