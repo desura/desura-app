@@ -105,12 +105,16 @@ void InstalledWizardThread::doRun()
 		sqlite3x::sqlite3_connection db(m_szDbName.c_str());
 		sqlite3x::sqlite3_command cmd(db, "REPLACE INTO cipiteminfo (internalid, name) VALUES (?,?);");
 
+		sqlite3x::sqlite3_transaction trans(db);
+
 		for (size_t x=0; x<m_vGameList.size(); x++)
 		{
 			cmd.bind(1, (long long int)m_vGameList[x].getId().toInt64());
 			cmd.bind(2, std::string(m_vGameList[x].getName()) ); 
 			cmd.executenonquery();
 		}
+
+		trans.commit();
 	}
 	catch (std::exception &e)
 	{
@@ -261,6 +265,9 @@ void InstalledWizardThread::parseItemsQuick(const XML::gcXMLElement &fNode)
 	{
 		platforms.for_each_child("platform", [&](const XML::gcXMLElement &platform)
 		{
+			if (isStopped())
+				return;
+
 			if (getUserCore()->platformFilter(platform, PlatformType::Item))
 				return;
 
@@ -271,6 +278,9 @@ void InstalledWizardThread::parseItemsQuick(const XML::gcXMLElement &fNode)
 	{
 		fNode.FirstChildElement("games").for_each_child("game", [&](const XML::gcXMLElement &game)
 		{
+			if (isStopped())
+				return;
+
 			const std::string id = game.GetAtt("siteareaid");
 			DesuraId gameId(id.c_str(), "games");
 
@@ -336,8 +346,11 @@ void InstalledWizardThread::parseGame(DesuraId id, const XML::gcXMLElement &game
 
 	std::map<uint64, XML::gcXMLElement> mModMap;
 
-	info.FirstChildElement("mods").for_each_child("mods", [&mModMap](const XML::gcXMLElement &mod)
+	info.FirstChildElement("mods").for_each_child("mods", [&mModMap, this](const XML::gcXMLElement &mod)
 	{
+		if (isStopped())
+			return;
+
 		const std::string szId = mod.GetAtt("siteareaid");
 		DesuraId internId(szId.c_str(), "mods");
 
@@ -347,6 +360,9 @@ void InstalledWizardThread::parseGame(DesuraId id, const XML::gcXMLElement &game
 
 	game.FirstChildElement("mods").for_each_child("mods", [&](const XML::gcXMLElement &mod)
 	{
+		if (isStopped())
+			return;
+
 		const std::string szId = mod.GetAtt("siteareaid");
 		DesuraId internId(szId.c_str(), "mods");
 
@@ -396,6 +412,9 @@ void InstalledWizardThread::parseItems1(const XML::gcXMLElement &fNode, Wildcard
 
 	fNode.FirstChildElement("games").for_each_child("game", [&](const XML::gcXMLElement &game)
 	{
+		if (isStopped())
+			return;
+
 		const std::string szId = game.GetAtt("siteareaid");
 		DesuraId gameId(szId.c_str(), "games");
 
@@ -422,6 +441,9 @@ void InstalledWizardThread::parseItems2(const XML::gcXMLElement &fNode, Wildcard
 
 	fNode.FirstChildElement("games").for_each_child("game", [&](const XML::gcXMLElement &game)
 	{
+		if (isStopped())
+			return;
+
 		const std::string szId = game.GetAtt("siteareaid");
 		DesuraId gameId(szId.c_str(), "games");
 
@@ -431,6 +453,9 @@ void InstalledWizardThread::parseItems2(const XML::gcXMLElement &fNode, Wildcard
 
 	fNode.FirstChildElement("platforms").for_each_child("platform", [&](const XML::gcXMLElement &platform)
 	{
+		if (isStopped())
+			return;
+
 		if (getUserCore()->platformFilter(platform, PlatformType::Item))
 			return;
 

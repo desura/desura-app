@@ -100,7 +100,7 @@ void MWProgressPage::dispose()
 {
 	GetParent()->Disconnect( wxEVT_CLOSE_WINDOW, wxCloseEventHandler( MWProgressPage::onClose ), nullptr, this );
 	m_bStopped = true;
-	safe_delete(m_pThread);
+	m_pThread->nonBlockStop();
 }
 
 void MWProgressPage::onButtonClicked( wxCommandEvent& event )

@@ -55,6 +55,10 @@ void InstallInfo::loadXmlData(const XML::gcXMLElement &xmlNode, WildcardManager*
 	}
 
 	xmlNode.GetChild("name", m_szName);
+
+	if (!xmlNode.FirstChildElement("settings").IsValid())
+		return;
+
 	auto icsNode = xmlNode.FirstChildElement("settings").FirstChildElement("installlocations");
 
 	if (!icsNode.IsValid())
