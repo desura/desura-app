@@ -105,12 +105,16 @@ void InstalledWizardThread::doRun()
 		sqlite3x::sqlite3_connection db(m_szDbName.c_str());
 		sqlite3x::sqlite3_command cmd(db, "REPLACE INTO cipiteminfo (internalid, name) VALUES (?,?);");
 
+		sqlite3x::sqlite3_transaction trans(db);
+
 		for (size_t x=0; x<m_vGameList.size(); x++)
 		{
 			cmd.bind(1, (long long int)m_vGameList[x].getId().toInt64());
 			cmd.bind(2, std::string(m_vGameList[x].getName()) ); 
 			cmd.executenonquery();
 		}
+
+		trans.commit();
 	}
 	catch (std::exception &e)
 	{
