@@ -249,7 +249,6 @@ public:
 	MOCK_METHOD0(uint32FunctionCB, uint32());
 	MOCK_METHOD0(voidFunctionCB, void());
 
-
 	uint32 callUint32Function()
 	{
 		return IPC::functionCall<uint32>(this, "uint32FunctionCB");
@@ -448,3 +447,122 @@ INSTANTIATE_TEST_CASE_P(map_perm, ParamTestMap, ::testing::Values(g_MapEmpty, g_
 
 
 
+
+class IPCClassFixturePart : public ::testing::Test, protected IPCClass, protected IPCManagerI
+{
+public:
+	IPCClassFixturePart()
+		: IPCClass(this, 0, DesuraId())
+	{
+		REG_FUNCTION_VOID(IPCClassFixturePart, message);
+	}
+
+	MOCK_METHOD4(message, void(int, const char*, uint64, std::map<std::string, std::string>));
+
+	void call(int type, const char* msg, uint64 col, std::map<std::string, std::string> mArgs, uint32 nMaxSize)
+	{
+		m_nMaxMessageSize = nMaxSize;
+		IPC::functionCallAsync(this, "message", type, msg, col, mArgs);
+	}
+
+	void sendMessage(const char* buff, uint32 size, uint32 id, uint8 type) override
+	{
+		IPCFunctionCall *fch = (IPCFunctionCall*)buff;
+		fch->size = m_nMaxMessageSize;
+
+		messageRecived(type, buff, size);
+	}
+
+	void sendLoopbackMessage(const char* buff, uint32 size, uint32 id, uint8 type) override
+	{
+		IPCFunctionCall *fch = (IPCFunctionCall*)buff;
+		fch->size = m_nMaxMessageSize;
+
+		messageRecived(type, buff, size);
+	}
+
+	void destroyClass(IPCClass* obj) override
+	{
+	}
+
+	bool isDisconnected() override
+	{
+		return false;
+	}
+
+	WeakPtr<IPCClass> createClass(const char* name) override
+	{
+		return WeakPtr<IPCClass>();
+	}
+
+private:
+	uint32 m_nMaxMessageSize;
+};
+
+TEST_F(IPCClassFixturePart, zeroBuffer)
+{
+	EXPECT_CALL(*this, message(_, _, _, _)).WillOnce(Invoke([](int type, const char* msg, uint64 col, std::map<std::string, std::string> mArgs){
+
+		EXPECT_EQ(0, type);
+		EXPECT_EQ(nullptr, msg);
+		EXPECT_EQ(0, col);
+		EXPECT_EQ(0, mArgs.size());
+
+	}));
+
+	std::map<std::string, std::string> a;
+	a["hi"] = "hello";
+
+	call(2, "hello", 123, a, 0);
+}
+
+TEST_F(IPCClassFixturePart, partBuffer_1)
+{
+	EXPECT_CALL(*this, message(_, _, _, _)).WillOnce(Invoke([](int type, const char* msg, uint64 col, std::map<std::string, std::string> mArgs){
+
+		EXPECT_EQ(2, type);
+		EXPECT_EQ(nullptr, msg);
+		EXPECT_EQ(0, col);
+		EXPECT_EQ(0, mArgs.size());
+
+	}));
+
+	std::map<std::string, std::string> a;
+	a["hi"] = "hello";
+
+	call(2, "hello", 123, a, 11);
+}
+
+TEST_F(IPCClassFixturePart, partBuffer_2)
+{
+	EXPECT_CALL(*this, message(_, _, _, _)).WillOnce(Invoke([](int type, const char* msg, uint64 col, std::map<std::string, std::string> mArgs){
+
+		EXPECT_EQ(2, type);
+		EXPECT_STREQ("hello", msg);
+		EXPECT_EQ(0, col);
+		EXPECT_EQ(0, mArgs.size());
+
+	}));
+
+	std::map<std::string, std::string> a;
+	a["hi"] = "hello";
+
+	call(2, "hello", 123, a, 14);
+}
+
+TEST_F(IPCClassFixturePart, partBuffer_3)
+{
+	EXPECT_CALL(*this, message(_, _, _, _)).WillOnce(Invoke([](int type, const char* msg, uint64 col, std::map<std::string, std::string> mArgs){
+
+		EXPECT_EQ(2, type);
+		EXPECT_STREQ("hello", msg);
+		EXPECT_EQ(123, col);
+		EXPECT_EQ(0, mArgs.size());
+
+	}));
+
+	std::map<std::string, std::string> a;
+	a["hi"] = "hello";
+
+	call(2, "hello", 123, a, 45);
+}

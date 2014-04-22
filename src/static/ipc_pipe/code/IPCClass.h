@@ -80,12 +80,16 @@ protected:
 		IPCParameterI* pParam = IPC::getParameter<A>();
         auto msg = vParamList[x];
 
-        if (msg->type != pParam->getType())
-			gcAssert(false);
-        else
-			pParam->deserialize(&msg->data, msg->size);
+		if (msg)
+		{
+			if (msg->type != pParam->getType())
+				gcAssert(false);
+			else
+				pParam->deserialize(&msg->data, msg->size);
+		}
 
 		vPList[x] = pParam;
+
  #ifdef __clang__
         ++x;
  #else
@@ -122,13 +126,28 @@ protected:
 
 		std::vector<IPCParameter*> vParamList;
 
+		uint32 done = 0;
+
 		for (int x = 0; x < sizeof...(Args); ++x)
 		{
-			auto msg = (IPCParameter*)buff;
-			buff += sizeofStruct(msg);
+			if (done >= size)
+			{
+				Warning("Failed to decode IPC argument {0} for {1}, not enough data.", x, m_strFunctionName);
 
-			vParamList.push_back(msg);
-			vPList.push_back(nullptr);
+				vParamList.push_back(nullptr);
+				vPList.push_back(nullptr);
+			}
+			else
+			{
+				auto msg = (IPCParameter*)buff;
+				auto s = sizeofStruct(msg);
+
+				done += s;
+				buff += s;
+
+				vParamList.push_back(msg);
+				vPList.push_back(nullptr);
+			}
 		}
 
 #ifdef __clang__
@@ -460,6 +479,8 @@ protected:
 	//!
 	virtual void handleEventTrigger(const char* buff, uint32 size);
 
+protected:
+	IPCParameterI* doHandleFunctionCall(const char* buff, uint32 size, uint32 &nFunctionId, uint32 &nFunctionHash);
 
 private:
 	uint32 m_uiId;
