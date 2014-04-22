@@ -306,28 +306,51 @@ void IPCClass::messageRecived(uint8 type, const char* buff, uint32 size)
 	}
 }
 
-void IPCClass::handleFunctionCall(const char* buff, uint32 size, bool async)
+IPCParameterI* IPCClass::doHandleFunctionCall(const char* buff, uint32 size, uint32 &nFunctionId, uint32 &nFunctionHash)
 {
+	if (size < IPCFunctionCallSIZE)
+		throw gcException(ERR_IPC, "IPC Handle Function call buffer size is too small.");
+
 	IPCFunctionCall *fch = (IPCFunctionCall*)buff;
 
-	std::map<uint32,NetworkFunctionI*>::iterator it;
+	if (size < fch->size + IPCFunctionCallSIZE)
+	{
+		Warning("IPC Handle Function call buffer size is too small. Some args might have invalid data.");
+		fch->size = size - IPCFunctionCallSIZE;
+	}
+
+	nFunctionId = fch->id;
+	nFunctionHash = fch->functionHash;
+
+	std::map<uint32, NetworkFunctionI*>::iterator it;
 	it = m_mFunc.find(fch->functionHash);
 
+	if (it == m_mFunc.end())
+	{
+		Warning("Failed to find function for function call \n");
+		throw gcException(ERR_IPC, gcString("Failed to find function [H:{0}, NP:{1}]!", fch->functionHash, fch->numP));
+	}
+
+	return it->second->call(&fch->data, fch->size, fch->numP);
+}
+
+void IPCClass::handleFunctionCall(const char* buff, uint32 size, bool async)
+{
+	uint32 nFunctionId = 0;
+	uint32 nFunctionHash = 0;
 	std::shared_ptr<IPCParameterI> ret;
 
-	if (it != m_mFunc.end())
+	try
 	{
-		ret = std::shared_ptr<IPCParameterI>(it->second->call(&fch->data, fch->size, fch->numP));
+		ret = std::shared_ptr<IPCParameterI>(doHandleFunctionCall(buff, size, nFunctionId, nFunctionHash));
 	}
-	else
+	catch (gcException &e)
 	{
-		gcException errFindFailed(ERR_IPC, gcString("Failed to find function [H:{0}, NP:{1}]!", fch->functionHash, fch->numP));
-		ret = std::make_shared<PException>(errFindFailed);
-		Warning("Failed to find function for function call \n");
+		ret = std::make_shared<PException>(e);
 	}
 
 	//dont worry about return for async calls.
-	if (async)
+	if (async || nFunctionHash == 0)
 		return;
 
 	if (!ret)
@@ -342,9 +365,9 @@ void IPCClass::handleFunctionCall(const char* buff, uint32 size, bool async)
 	memset(nbuff, 1, bsize);
 
 	IPCFunctionCall *fchr = (IPCFunctionCall*)nbuff;
-	fchr->id = fch->id;
+	fchr->id = nFunctionId;
 	fchr->numP = 1;
-	fchr->functionHash = fch->functionHash;
+	fchr->functionHash = nFunctionHash;
 	fchr->size = dsize + IPCParameterSIZE;
 
 	IPCParameter *p = (IPCParameter*)&fchr->data;

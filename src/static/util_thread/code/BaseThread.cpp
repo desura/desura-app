@@ -197,17 +197,35 @@ void BaseThread::start()
 
 	m_pPrivates->m_pThread = new std::thread([this, waitCond](){
 
-		gcTrace("Starting thread {0}", m_pPrivates->m_szName);
+		try
+		{
+			gcTrace("Starting thread {0}", m_pPrivates->m_szName);
 
-		waitCond->wait();
-		gcAssert(m_pPrivates->m_pThread);
+			waitCond->wait();
+			gcAssert(m_pPrivates->m_pThread);
 
-		m_pPrivates->m_bIsRunning = true;
-		applyPriority();
-		setThreadName();
-		run();
+			m_pPrivates->m_bIsRunning = true;
+			applyPriority();
+			setThreadName();
+			run();
 
-		gcTrace("Ending thread {0}", m_pPrivates->m_szName);
+			gcTrace("Ending thread {0}", m_pPrivates->m_szName);
+		}
+		catch (gcException &e)
+		{
+			gcAssert(false);
+			Warning("Unhandled gcException in thread {0}: {1}", m_pPrivates->m_szName, e);
+		}
+		catch (std::exception &e)
+		{
+			gcAssert(false);
+			Warning("Unhandled std::exception in thread {0}: {1}", m_pPrivates->m_szName, e.what());
+		}
+		catch (...)
+		{
+			gcAssert(false);
+			Warning("Unhandled exception in thread {0}", m_pPrivates->m_szName);
+		}
 	});
 
 	waitCond->notify();
