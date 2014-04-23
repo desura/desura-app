@@ -123,10 +123,8 @@ file(GLOB Sources       code/AboutForm.cpp
 
 if(WIN32)
   file(GLOB PlattformSources
-                        code/CefIPCPipeClient.cpp
                         code/ChromiumMenuInfoFromMem.cpp
                         code/gcWCEvents_win.cpp
-                        code/gcWebHost.cpp
 )
 # code/HeaderButton.cpp code/UninstallForm.cpp code/TabHandler.cpp
 else()

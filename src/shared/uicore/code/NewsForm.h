@@ -35,11 +35,7 @@ $/LicenseInfo$
 #include "wx/wx.h"
 
 
-#ifdef ENABLE_OUTOFPROCESS_BROWSER
-	typedef gcMiscWebHost NewsBrowser;
-#else
-	typedef gcMiscWebControl NewsBrowser;
-#endif
+typedef gcMiscWebControl NewsBrowser;
 
 class NewsForm : public gcFrame 
 {

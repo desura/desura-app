@@ -29,7 +29,6 @@ $/LicenseInfo$
 #include "Managers.h"
 #include "MainApp.h"
 
-#include "gcWebHost.h"
 #include "gcWebControl.h"
 #include "gcJSBinding.h"
 

@@ -27,7 +27,6 @@ $/LicenseInfo$
 #include "HtmlTabPage.h"
 #include "MainApp.h"
 
-#include "gcWebHost.h"
 #include "gcWebControl.h"
 
 #include "ItemToolBarControl.h"
@@ -121,22 +120,10 @@ void HtmlTabPage::newBrowser(const char* homeUrl)
 	if (m_pWebControl)
 		return;
 
-#ifdef ENABLE_OUTOFPROCESS_BROWSER
-	if (m_SearchArea == GAMES)
-	{
-		gcWebHost* host = new gcWebHost(this, homeUrl, g_szSearchArea[m_SearchArea]);
+	gcWebControl* host = new gcWebControl(this, homeUrl);
 
-		m_pWebPanel = host;
-		m_pWebControl = host; 
-	}
-	else
-#endif
-	{
-		gcWebControl* host = new gcWebControl(this, homeUrl);
-
-		m_pWebPanel = host;
-		m_pWebControl = host; 
-	}
+	m_pWebPanel = host;
+	m_pWebControl = host; 
 }
 
 void HtmlTabPage::constuctBrowser()
