@@ -65,20 +65,18 @@ namespace MCFCore
 		public:
 			WGTWorkerInfo(WGTControllerI* con, uint32 i, MCFCore::Misc::ProviderManager &provMng)
 				: id(i)
-				, workThread(new WGTWorker(con, i, provMng))
+				, m_pWorkThread(new WGTWorker(con, i, provMng))
 			{
-				workThread->setPriority(::Thread::BaseThread::BELOW_NORMAL);
+				m_pWorkThread->setPriority(::Thread::BaseThread::BELOW_NORMAL);
 			}
 
 			~WGTWorkerInfo()
 			{
-				delete workThread;
+				safe_delete(m_pWorkThread);
 				safe_delete(vBuffer);
 			}
 
 			const uint32 id;
-			WGTWorker * const workThread;
-
 			uint64 ammountDone = 0;
 					
 			void setCurrentBlock(Misc::WGTSuperBlock* pBlock)
@@ -185,12 +183,57 @@ namespace MCFCore
 				status = newStatus;
 			}
 
+			void stop()
+			{
+				m_pWorkThread->stop();
+			}
+
+			void start()
+			{
+				m_pWorkThread->start();
+			}
+
+			void reportError(gcException &e, gcString &strProv)
+			{
+				m_pWorkThread->reportError(e, strProv);
+			}
+
 		private:
+			WGTWorker* m_pWorkThread;
+
 			MCFThreadStatus status = MCFThreadStatus::SF_STATUS_CONTINUE;
 			Misc::WGTSuperBlock* curBlock = nullptr;
 
 			std::mutex mutex;
 			std::deque<Misc::WGTBlock*> vBuffer;
+		};
+
+		class WGTWorkerList
+		{
+		public:
+			WGTWorkerList()
+			{
+
+			}
+
+			~WGTWorkerList()
+			{
+				safe_delete(m_vWorkerList);
+			}
+
+			void createWorkers(WGTControllerI *pController, uint32 nCount, MCFCore::Misc::ProviderManager &pProvManager)
+			{
+				for (uint16 x = 0; x<nCount; x++)
+					m_vWorkerList.push_back(new WGTWorkerInfo(pController, nCount, pProvManager));
+			}
+
+			operator const std::vector<WGTWorkerInfo*>& ()
+			{
+				return m_vWorkerList;
+			}
+
+		private:
+			std::vector<WGTWorkerInfo*> m_vWorkerList;
 		};
 	}
 }
@@ -200,10 +243,13 @@ using namespace MCFCore::Thread;
 
 
 
+
 WGTController::WGTController(std::shared_ptr<MCFCore::Misc::DownloadProvidersI> pDownloadProviders, uint16 numWorkers, MCFCore::MCF* caller, bool checkMcf) 
 	: MCFCore::Thread::BaseMCFThread(numWorkers, caller, "WebGet Controller Thread")
 	, m_ProvManager(pDownloadProviders)
 	, m_bCheckMcf(checkMcf)
+	, m_pWorkerList(std::make_unique<WGTWorkerList>())
+	, m_vWorkerList(*m_pWorkerList.get())
 {
 	if (m_uiNumber > pDownloadProviders->size())
 		m_uiNumber = pDownloadProviders->size();
@@ -219,7 +265,7 @@ WGTController::~WGTController()
 	if (m_bDoingStop)
 		gcSleep(500);
 
-	safe_delete(m_vWorkerList);
+	m_pWorkerList.reset();
 
 	m_pFileMutex.lock();
 	safe_delete(m_vSuperBlockList);
@@ -283,7 +329,7 @@ void WGTController::run()
 	m_pUPThread->stop();
 
 	for (auto worker : m_vWorkerList)
-		worker->workThread->stop();
+		worker->stop();
 
 	if (m_iAvailbleWork == 0)
 	{
@@ -313,13 +359,12 @@ void WGTController::run()
 
 void WGTController::createWorkers()
 {
-	for (uint16 x=0; x<m_uiNumber; x++)
-	{
-		WGTWorkerInfo* temp = new WGTWorkerInfo(this, (uint32)x, m_ProvManager);
-		m_vWorkerList.push_back(temp);
+	m_pWorkerList->createWorkers(this, m_uiNumber, m_ProvManager);
 
-		temp->workThread->start();
-		m_iRunningWorkers++;
+	for (auto w : m_vWorkerList)
+	{
+		w->start();
+		++m_iRunningWorkers;
 	}
 }
 
@@ -447,8 +492,10 @@ bool WGTController::checkBlock(Misc::WGTBlock *block, uint32 workerId)
 	else if (crcFail)
 		e = gcException(ERR_INVALIDDATA, "Crc of the download chunk didnt match what was expected");
 
-	m_vWorkerList[workerId]->workThread->reportError(e, block->provider);
+	auto w = findWorker(workerId);
 
+	if (w)
+		w->reportError(e, block->provider);
 
 	return false;
 }
@@ -880,14 +927,12 @@ void WGTController::reportNegProgress(uint32 id, uint64 ammount)
 
 WGTWorkerInfo* WGTController::findWorker(uint32 id)
 {
-	if (id >= m_vWorkerList.size())
-		return nullptr;
+	auto it = std::find_if(begin(m_vWorkerList), end(m_vWorkerList), [id](WGTWorkerInfo* w){
+		return w->id == id;
+	});
 
-	for (size_t x=0; x<m_vWorkerList.size(); x++)
-	{
-		if (m_vWorkerList[x]->id == id)
-			return m_vWorkerList[x];
-	}
+	if (it != end(m_vWorkerList))
+		return *it;
 
 	return nullptr;
 }
@@ -898,11 +943,8 @@ void WGTController::onStop()
 
 	BaseMCFThread::onStop();
 
-	for (size_t x=0; x<m_vWorkerList.size(); x++)
-	{
-		if (m_vWorkerList[x] && m_vWorkerList[x]->workThread)
-			m_vWorkerList[x]->workThread->stop();
-	}
+	for (auto w : m_vWorkerList)
+		w->stop();
 
 	//get thread running again.
 	m_WaitCondition.notify();

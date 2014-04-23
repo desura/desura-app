@@ -46,6 +46,7 @@ namespace MCFCore
 	{
 		class WGTWorkerInfo;
 
+		class WGTWorkerList;
 
 		//! Web Get Thread controller. Downloads mcf from mcf servers
 		//!
@@ -135,11 +136,14 @@ namespace MCFCore
 			bool m_bCheckMcf = false;
 			volatile bool m_bDoingStop = false;
 
-			std::vector<WGTWorkerInfo*> m_vWorkerList;
+			std::unique_ptr<WGTWorkerList> m_pWorkerList;
+			const std::vector<WGTWorkerInfo*>& m_vWorkerList;
 			std::deque<Misc::WGTSuperBlock*> m_vSuperBlockList;
 			std::vector<uint32> m_vDlFiles;
 
 			::Thread::WaitCondition m_WaitCondition;
+
+			
 
 #ifdef DEBUG
 			uint64 m_uiSaved = 0;
