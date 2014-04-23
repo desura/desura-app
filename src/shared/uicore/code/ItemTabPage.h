@@ -43,8 +43,8 @@ public:
 	ItemTabPage(wxWindow* parent, gcWString homePage);
 	~ItemTabPage();
 
-	virtual BaseToolBarControl* getToolBarControl();
-	virtual void reset();
+	virtual std::shared_ptr<BaseToolBarControl> getToolBarControl() override;
+	virtual void reset() override;
 
 protected:
 	virtual void onSearch(const wchar_t* value){;}
@@ -86,8 +86,8 @@ private:
 	std::mutex m_UploadMutex;
 	std::map<std::string, uint32> m_vUploadProgress;
 
-	bool m_bNotifiedOfLowSpace;
-	ItemToolBarControl* m_pItemControlBar;
+	bool m_bNotifiedOfLowSpace = false;
+	std::shared_ptr<ItemToolBarControl> m_pItemControlBar;
 
 	wxTimer m_PingTimer;
 	bool m_bPingBack = true;

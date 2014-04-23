@@ -47,26 +47,34 @@ const char* g_szSearchArea[] =
 
 DesuraJSBinding *GetJSBinding();
 
-HtmlTabPage::HtmlTabPage(wxWindow* parent, gcString homePage, PAGE area) : baseTabPage( parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL|wxNO_BORDER )
+HtmlTabPage::HtmlTabPage(wxWindow* parent, gcString homePage, PAGE area) 
+	: BaseTabPage(parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL|wxNO_BORDER )
+	, m_szHomePage(homePage)
+	, m_pBSBrowserSizer(new wxBoxSizer(wxVERTICAL))
+	, m_SearchArea(area)
 {
-	m_pWebControl = nullptr;
-	m_pWebPanel = nullptr;
-
-	m_szHomePage = homePage;
-
 	SetBackgroundColour(wxColour( 0, 0, 0 ));
 
-	m_pControlBar = new HtmlToolBarControl(parent);
+	m_pControlBar = std::shared_ptr<HtmlToolBarControl>(new HtmlToolBarControl(parent), [this](HtmlToolBarControl *pControl){
+		pControl->onSearchEvent -= guiDelegate(this, &HtmlTabPage::onSearch);
+		pControl->onFullSearchEvent -= guiDelegate(this, &HtmlTabPage::onFullSearch);
+		pControl->onButtonClickedEvent -= guiDelegate(this, &HtmlTabPage::onButtonClicked);
+
+		if (m_pControlBar)
+		{
+			m_pWebControl->onPageStartEvent -= delegate(&pControl->onPageStartLoadingEvent);
+			m_pWebControl->onPageLoadEvent -= delegate(&pControl->onPageEndLoadingEvent);
+		}
+
+		pControl->Destroy();
+	});
+
 	m_pControlBar->onSearchEvent += guiDelegate(this, &HtmlTabPage::onSearch);
 	m_pControlBar->onFullSearchEvent += guiDelegate(this, &HtmlTabPage::onFullSearch);
-
-	m_pBSBrowserSizer = new wxBoxSizer( wxVERTICAL );
+	m_pControlBar->onButtonClickedEvent += guiDelegate(this, &HtmlTabPage::onButtonClicked);
 
 	this->SetSizer( m_pBSBrowserSizer );
 	this->Layout();
-
-	m_SearchArea = area;
-	m_pControlBar->onButtonClickedEvent += guiDelegate(this, &HtmlTabPage::onButtonClicked);
 
 	if (GetUserCore())
 		GetUserCore()->getCIPManager()->getItemsUpdatedEvent() += guiDelegate(this, &HtmlTabPage::onCIPUpdate);
@@ -76,21 +84,13 @@ HtmlTabPage::~HtmlTabPage()
 {
 	if (m_pControlBar)
 	{
-		m_pControlBar->onButtonClickedEvent -= guiDelegate(this, &HtmlTabPage::onButtonClicked);
-		m_pControlBar->onSearchEvent -= guiDelegate(this, &HtmlTabPage::onSearch);
+		gcAssert(m_pControlBar.unique());
+		m_pControlBar.reset();
 	}
 
 	if (m_pWebControl)
 	{
 		m_pWebControl->onNewURLEvent -= delegate(this, &HtmlTabPage::onNewUrl);
-		m_pWebControl->onPageLoadEvent -= guiDelegate(this, &HtmlTabPage::onPageLoad);
-
-		if (m_pControlBar)
-		{
-			m_pWebControl->onPageStartEvent -= delegate(&m_pControlBar->onPageStartLoadingEvent);
-			m_pWebControl->onPageLoadEvent -= delegate(&m_pControlBar->onPageEndLoadingEvent);
-		}
-
 		m_pWebControl->onClearCrumbsEvent -= guiDelegate(this, &HtmlTabPage::clearCrumbs);
 		m_pWebControl->onAddCrumbEvent -= guiDelegate(this, &HtmlTabPage::addCrumb);
 		m_pWebControl->onFindEvent -= guiDelegate(this, &HtmlTabPage::onFind);
@@ -108,15 +108,10 @@ void HtmlTabPage::onFind()
 
 void HtmlTabPage::killControlBar()
 {
-	m_pControlBar->onButtonClickedEvent -= guiDelegate(this, &HtmlTabPage::onButtonClicked);
-	m_pControlBar->onSearchEvent -= guiDelegate(this, &HtmlTabPage::onSearch);
-	m_pControlBar->onFullSearchEvent -= guiDelegate(this, &HtmlTabPage::onFullSearch);
-
-	m_pControlBar->Destroy();
-	m_pControlBar = nullptr;
+	m_pControlBar.reset();
 }
 
-BaseToolBarControl* HtmlTabPage::getToolBarControl()
+std::shared_ptr<BaseToolBarControl> HtmlTabPage::getToolBarControl()
 {
 	return m_pControlBar;
 }
@@ -178,7 +173,7 @@ void HtmlTabPage::setSelected(bool state)
 	if (state && !m_pWebControl)
 		constuctBrowser();
 
-	baseTabPage::setSelected(state);
+	BaseTabPage::setSelected(state);
 }
 
 void HtmlTabPage::setCurUrl(const char* page)

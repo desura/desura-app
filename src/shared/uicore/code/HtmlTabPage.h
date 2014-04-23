@@ -42,7 +42,7 @@ class HtmlToolBarControl;
 class BaseToolBarControl;
 class gcWebControlI;
 
-class HtmlTabPage : public baseTabPage
+class HtmlTabPage : public BaseTabPage
 {
 public:
 	HtmlTabPage(wxWindow* parent, gcString homePage, PAGE area = NONE);
@@ -52,7 +52,7 @@ public:
 	void goHome();
 	void setSelected(bool state);
 
-	virtual BaseToolBarControl* getToolBarControl();
+	virtual std::shared_ptr<BaseToolBarControl> getToolBarControl();
 
 protected:
 	virtual void onButtonClicked(int32& id);
@@ -73,10 +73,10 @@ protected:
 	void killControlBar();
 	void onCIPUpdate();
 
-	gcWebControlI* m_pWebControl;
-	gcPanel* m_pWebPanel;
+	gcWebControlI* m_pWebControl = nullptr;
+	gcPanel* m_pWebPanel = nullptr;
 
-	HtmlToolBarControl* m_pControlBar;
+	std::shared_ptr<HtmlToolBarControl> m_pControlBar;
 
 
 	friend class MainForm;
@@ -91,7 +91,7 @@ private:
 	wxBoxSizer* m_bBSSizerControl;
 
 	gcString m_szHomePage;
-	PAGE m_SearchArea;
+	PAGE m_SearchArea = PAGE::NONE;
 };
 
 #endif //DESURA_PageHtml_H

@@ -128,7 +128,10 @@ void MainForm::initPages(bool offline)
 {
 	const char* url = GetGCThemeManager()->getWebPage("playlist");
 
-	ItemTabPage *itemPage = new ItemTabPage(m_pDesuraControl, url);
+	auto itemPage = std::shared_ptr<ItemTabPage>(new ItemTabPage(m_pDesuraControl, url), [](HtmlTabPage *pPage){
+		pPage->Destroy();
+	});
+
 	itemPage->constuctBrowser();
 
 	m_vPageList.push_back(itemPage);
@@ -143,7 +146,10 @@ void MainForm::initPages(bool offline)
 			if (GetWebCore())
 				url = GetWebCore()->getUrl(g_uiUrlList[x]);
 
-			HtmlTabPage* page = new HtmlTabPage(m_pDesuraControl, url, (PAGE)x);
+			auto page = std::shared_ptr<HtmlTabPage>(new HtmlTabPage(m_pDesuraControl, url, (PAGE)x), [](HtmlTabPage *pPage){
+				pPage->Destroy();
+			});
+
 			m_vPageList.push_back(page);
 
 			if (!gc_noloadtab.getBool() && g_bLoadDefault[x])
@@ -241,7 +247,7 @@ void MainForm::loadUrl(const char* url, PAGE page)
 	}
 	else
 	{
-		HtmlTabPage *ph = dynamic_cast<HtmlTabPage*>(m_vPageList[page]);
+		auto ph = std::dynamic_pointer_cast<HtmlTabPage>(m_vPageList[page]);
 
 		if (ph)
 			ph->loadUrl(url);
