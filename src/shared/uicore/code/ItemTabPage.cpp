@@ -29,7 +29,6 @@ $/LicenseInfo$
 #include "Managers.h"
 #include "MainApp.h"
 
-#include "gcWebHost.h"
 #include "gcWebControl.h"
 #include "gcJSBinding.h"
 
@@ -227,24 +226,26 @@ ItemTabPage::ItemTabPage(wxWindow* parent, gcWString homePage)
 	: HtmlTabPage(parent, homePage, ITEMS)
 	, m_PingTimer(this)
 {
-	m_bNotifiedOfLowSpace = false;
-	m_pItemControlBar = new ItemToolBarControl(parent);
-	m_pItemControlBar->onSearchEvent += guiDelegate(this, &ItemTabPage::onSearchStr);
-
-	m_pWebControl = nullptr;
-
-	if (m_pWebControl)
-	{
-		m_pWebControl->onPageStartEvent -= delegate(&m_pControlBar->onPageStartLoadingEvent);
-		m_pWebControl->onPageLoadEvent -= delegate(&m_pControlBar->onPageEndLoadingEvent);
-
-		m_pWebControl->onPageStartEvent += delegate(&m_pItemControlBar->onPageStartLoadingEvent);
-		m_pWebControl->onPageLoadEvent += delegate(&m_pItemControlBar->onPageEndLoadingEvent);
-	}
 
 	killControlBar();
 
+	m_pItemControlBar = std::shared_ptr<ItemToolBarControl>(new ItemToolBarControl(parent), [this](ItemToolBarControl* pControl){
+
+		pControl->onButtonClickedEvent -= guiDelegate(this, &ItemTabPage::onButtonClicked);
+		pControl->onSearchEvent -= guiDelegate(this, &ItemTabPage::onSearchStr);
+
+		if (m_pWebControl)
+		{
+			m_pWebControl->onPageStartEvent -= delegate(&pControl->onPageStartLoadingEvent);
+			m_pWebControl->onPageLoadEvent -= delegate(&pControl->onPageEndLoadingEvent);
+		}
+
+		pControl->Destroy();
+	});
+
+	m_pItemControlBar->onSearchEvent += guiDelegate(this, &ItemTabPage::onSearchStr);
 	m_pItemControlBar->onButtonClickedEvent += guiDelegate(this, &ItemTabPage::onButtonClicked);
+
 	g_JSEventMap.setValid(true);
 
 	Bind(wxEVT_TIMER, &ItemTabPage::onPingTimer, this);
@@ -257,11 +258,8 @@ ItemTabPage::~ItemTabPage()
 	g_JSEventMap.setValid(false);
 	g_JSEventMap.reset();
 
-	m_pItemControlBar->onButtonClickedEvent -= guiDelegate(this, &ItemTabPage::onButtonClicked);
-	m_pItemControlBar->onSearchEvent -= guiDelegate(this, &ItemTabPage::onSearchStr);
-
-	m_pWebControl->onPageStartEvent -= delegate(&m_pItemControlBar->onPageStartLoadingEvent);
-	m_pWebControl->onPageLoadEvent -= delegate(&m_pItemControlBar->onPageEndLoadingEvent);
+	gcAssert(m_pItemControlBar.unique());
+	m_pItemControlBar.reset();
 
 	if (GetUserCore())
 	{
@@ -312,7 +310,7 @@ void ItemTabPage::postEvent(const char* name, const char* arg1, const char* arg2
 	BrowserUICallback(new JSCallback(webCtrl->getJSContext(), name, arg1, arg2));
 }
 
-BaseToolBarControl* ItemTabPage::getToolBarControl()
+std::shared_ptr<BaseToolBarControl> ItemTabPage::getToolBarControl()
 {
 	return m_pItemControlBar;
 }

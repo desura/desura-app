@@ -28,7 +28,7 @@ $/LicenseInfo$
 
 #include "Managers.h"
 
-baseTabPage::baseTabPage( wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style ) : gcPanel( parent, id, pos, size, style )
+BaseTabPage::BaseTabPage( wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style ) : gcPanel( parent, id, pos, size, style )
 {
 	SetBackgroundColour( wxColor(GetGCThemeManager()->getColor("tabpage","bg")) );
 	
@@ -36,17 +36,17 @@ baseTabPage::baseTabPage( wxWindow* parent, wxWindowID id, const wxPoint& pos, c
 	m_bShowProg = false;
 }
 
-baseTabPage::~baseTabPage()
+BaseTabPage::~BaseTabPage()
 {
 
 }
 
-void baseTabPage::setSelected(bool state)
+void BaseTabPage::setSelected(bool state)
 {
 	Show(state);
 }
 
-void baseTabPage::setProgress(const char* caption, int32 prog)
+void BaseTabPage::setProgress(const char* caption, int32 prog)
 {
 	m_szProgCap = caption;
 	m_iProgress = prog;

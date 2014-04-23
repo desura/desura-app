@@ -33,11 +33,11 @@ $/LicenseInfo$
 
 class BaseToolBarControl;
 
-class baseTabPage : public gcPanel
+class BaseTabPage : public gcPanel
 {
 public:
-	baseTabPage( wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 500,300 ), long style = 0 );
-	~baseTabPage();
+	BaseTabPage(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(500, 300), long style = 0);
+	~BaseTabPage();
 
 	void setProgress(const char* caption, int32 prog);
 
@@ -48,7 +48,7 @@ public:
 	bool showProg(){return m_bShowProg;}
 
 	virtual void setSelected(bool state);
-	virtual BaseToolBarControl* getToolBarControl()=0;
+	virtual std::shared_ptr<BaseToolBarControl> getToolBarControl()=0;
 
 	const char* getProgCap()
 	{

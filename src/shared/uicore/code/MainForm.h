@@ -37,7 +37,7 @@ class CustomInstallPath;
 class MainFormLeftBorder;
 class AboutForm;
 class DesuraControl;
-class baseTabPage;
+class BaseTabPage;
 
 ///////////////////////////////////////////////////////////////////////////////
 /// Class MainForm
@@ -84,7 +84,7 @@ private:
 	DesuraControl* m_pDesuraControl;
 
 	APP_MODE m_iMode = APP_MODE::MODE_LOGOUT;
-	std::vector<baseTabPage*> m_vPageList;
+	std::vector<std::shared_ptr<BaseTabPage>> m_vPageList;
 };
 
 #endif //DESURA_MAIN_FORM_H

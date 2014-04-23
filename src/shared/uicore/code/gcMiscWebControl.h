@@ -127,15 +127,6 @@ private:
 	gcString m_szCurrentUrl;
 };
 
-
 typedef gcMiscWebControlBase<gcWebControl> gcMiscWebControl;
-
-#ifdef WIN32
-	#include "gcWebHost.h"
-	typedef gcMiscWebControlBase<gcWebHost> gcMiscWebHost;
-#else
-	typedef gcMiscWebControlBase<gcWebControl> gcMiscWebHost;
-#endif
-
 
 #endif //DESURA_GCMISCWEBCONTROL_H

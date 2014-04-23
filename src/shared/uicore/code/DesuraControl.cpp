@@ -222,17 +222,6 @@ DesuraControl::DesuraControl(gcFrame* parent, bool offline, const char* szProvid
 
 DesuraControl::~DesuraControl()
 {
-	for (size_t x=0; x<m_vTabInfo.size(); x++)
-	{
-		if (m_vTabInfo[x]->page)
-			m_vTabInfo[x]->page->Destroy();
-
-		if (m_vTabInfo[x]->header)
-			m_vTabInfo[x]->header->Destroy();
-
-		safe_delete(m_vTabInfo[x]);
-	}
-
 	if (GetUserCore())
 	{
 		*GetUserCore()->getNewAvatarEvent() -= guiDelegate(this, &DesuraControl::onNewAvatar);
@@ -258,29 +247,29 @@ void DesuraControl::onActiveToggle(bool &state)
 
 	if (m_iIndex != UNKNOWN_ITEM && m_iIndex < m_vTabInfo.size())
 	{	
-		if (m_vTabInfo[m_iIndex]->header)
-			m_vTabInfo[m_iIndex]->header->onActiveToggle(state);
+		if (m_vTabInfo[m_iIndex].header)
+			m_vTabInfo[m_iIndex].header->onActiveToggle(state);
 	}
 
 	this->Thaw();
 	Refresh(false);
 }
 
-void DesuraControl::addPage(baseTabPage *page, const char* tabName)
+void DesuraControl::addPage(std::shared_ptr<BaseTabPage> page, const char* tabName)
 {
 	if (!page && !tabName)
 		return;
 
-	tabInfo_s *temp = new tabInfo_s;
+	tabInfo_s temp;
 	
-	temp->page = page;
-	temp->header = page->getToolBarControl();
-	temp->id = m_pMenuStrip->addButton(tabName);
+	temp.page = page;
+	temp.header = page->getToolBarControl();
+	temp.id = m_pMenuStrip->addButton(tabName);
 
 	m_vTabInfo.push_back(temp);
 
-	temp->page->Show(false);
-	temp->header->Show(false);
+	temp.page->Show(false);
+	temp.header->Show(false);
 
 	this->Layout();
 	page->progressUpdateEvent += delegate(this, &DesuraControl::onProgressUpdate);
@@ -294,7 +283,7 @@ void DesuraControl::setActivePage_ID(int32 id)
 
 	for (size_t x=0; x<m_vTabInfo.size(); x++)
 	{
-		if (m_vTabInfo[x] && m_vTabInfo[x]->id == id)
+		if (m_vTabInfo[x].id == id)
 		{
 			setActivePage((PAGE)x);
 			break;
@@ -310,8 +299,8 @@ void DesuraControl::setActivePage(PAGE index, bool reset)
 	if (m_vTabInfo.size() == 0 || (size_t)index > m_vTabInfo.size()-1)
 		return;
 
-	if (m_iIndex != UINT_MAX && m_vTabInfo[m_iIndex]->header)
-		m_vTabInfo[m_iIndex]->header->Show(false);
+	if (m_iIndex != UINT_MAX && m_vTabInfo[m_iIndex].header)
+		m_vTabInfo[m_iIndex].header->Show(false);
 
 	this->Freeze();
 
@@ -321,22 +310,22 @@ void DesuraControl::setActivePage(PAGE index, bool reset)
 
 	if (m_iIndex != UINT_MAX)
 	{
-		unloadSearch(m_vTabInfo[m_iIndex]->page);
-		m_vTabInfo[m_iIndex]->page->setSelected(false);
-		m_vTabInfo[m_iIndex]->page->Show(false);
+		unloadSearch(m_vTabInfo[m_iIndex].page);
+		m_vTabInfo[m_iIndex].page->setSelected(false);
+		m_vTabInfo[m_iIndex].page->Show(false);
 	}
 
-	loadSearch(m_vTabInfo[index]->page);
-	m_vTabInfo[index]->page->setSelected(true);
-	m_vTabInfo[index]->page->SetFocus();
-	m_vTabInfo[index]->page->Show(true);
-	m_vTabInfo[index]->header->Show(true);
+	loadSearch(m_vTabInfo[index].page);
+	m_vTabInfo[index].page->setSelected(true);
+	m_vTabInfo[index].page->SetFocus();
+	m_vTabInfo[index].page->Show(true);
+	m_vTabInfo[index].header->Show(true);
 
 	if (reset)
-		m_vTabInfo[index]->page->reset();
+		m_vTabInfo[index].page->reset();
 	
-	m_sizerContent->Add( m_vTabInfo[index]->page, 1, wxEXPAND|wxBOTTOM, 1 );
-	m_sizerHeader->Add( m_vTabInfo[index]->header, 1, wxEXPAND|wxBOTTOM, 1 );
+	m_sizerContent->Add(m_vTabInfo[index].page.get(), 1, wxEXPAND | wxBOTTOM, 1);
+	m_sizerHeader->Add(m_vTabInfo[index].header.get(), 1, wxEXPAND | wxBOTTOM, 1);
 
 	this->Thaw();
 	this->Layout();
@@ -353,11 +342,11 @@ void DesuraControl::updateStatusBar(uint32 index)
 {
 }
 
-void DesuraControl::unloadSearch(baseTabPage* page)
+void DesuraControl::unloadSearch(std::shared_ptr<BaseTabPage> &page)
 {
 }
 
-void DesuraControl::loadSearch(baseTabPage* page)
+void DesuraControl::loadSearch(std::shared_ptr<BaseTabPage> &page)
 {
 }
 
@@ -407,7 +396,7 @@ void DesuraControl::onDesuraUpdate(uint32& prog)
 {
 }
 
-void DesuraControl::setBaseTabPage(PAGE pageId, baseTabPage *page)
+void DesuraControl::setBaseTabPage(PAGE pageId, std::shared_ptr<BaseTabPage> &page)
 {
 	if ((size_t)pageId >= m_vTabInfo.size())
 		return;
@@ -415,32 +404,32 @@ void DesuraControl::setBaseTabPage(PAGE pageId, baseTabPage *page)
 	bool shouldShowPage = false;
 	bool shouldShowHeader = false;
 
-	if (m_vTabInfo[pageId]->page)
+	if (m_vTabInfo[pageId].page)
 	{
-		shouldShowPage = m_vTabInfo[pageId]->page->IsShown();
-		m_vTabInfo[pageId]->page->Show(false);
-		m_vTabInfo[pageId]->page->Destroy();
+		shouldShowPage = m_vTabInfo[pageId].page->IsShown();
+		m_vTabInfo[pageId].page->Show(false);
+		m_vTabInfo[pageId].page->Destroy();
 	}
 
-	if (m_vTabInfo[pageId]->page)
+	if (m_vTabInfo[pageId].page)
 	{
-		shouldShowHeader = m_vTabInfo[pageId]->header->IsShown();
-		m_vTabInfo[pageId]->header->Show(false);
-		m_vTabInfo[pageId]->header->Destroy();
+		shouldShowHeader = m_vTabInfo[pageId].header->IsShown();
+		m_vTabInfo[pageId].header->Show(false);
+		m_vTabInfo[pageId].header->Destroy();
 	}
 
-	m_vTabInfo[pageId]->page = page;
+	m_vTabInfo[pageId].page = page;
 
 	if (page)
-		m_vTabInfo[pageId]->header = page->getToolBarControl();
+		m_vTabInfo[pageId].header = page->getToolBarControl();
 	else
-		m_vTabInfo[pageId]->header = nullptr;
+		m_vTabInfo[pageId].header = nullptr;
 
-	if (m_vTabInfo[pageId]->page)
-		m_vTabInfo[pageId]->page->Show(shouldShowPage);
+	if (m_vTabInfo[pageId].page)
+		m_vTabInfo[pageId].page->Show(shouldShowPage);
 
-	if (m_vTabInfo[pageId]->header)
-		m_vTabInfo[pageId]->header->Show(shouldShowHeader);
+	if (m_vTabInfo[pageId].header)
+		m_vTabInfo[pageId].header->Show(shouldShowHeader);
 }
 
 PAGE DesuraControl::getActivePage()

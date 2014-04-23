@@ -32,27 +32,24 @@ $/LicenseInfo$
 #include "wx_controls/gcControls.h"
 #include "MainAppI.h"
 
-class baseTabPage;
+class BaseTabPage;
 class MainMenuButton;
 class MenuStrip;
 class ButtonStrip;
 class UsernameBox;
 class gcStatusBar;
-
+class gcMainCustomFrameImpl;
+class MainFormLeftBorder;
+class DesuraMenuFiller;
+class FrameButtons;
 class BaseToolBarControl;
 
 typedef struct
 {
 	int32 id;
-	baseTabPage* page;
-	BaseToolBarControl* header;
+	std::shared_ptr<BaseTabPage> page;
+	std::shared_ptr<BaseToolBarControl> header;
 } tabInfo_s;
-
-class baseTabPage;
-class gcMainCustomFrameImpl;
-class MainFormLeftBorder;
-class DesuraMenuFiller;
-class FrameButtons;
 
 ///////////////////////////////////////////////////////////////////////////////
 /// Class tabPage
@@ -63,7 +60,7 @@ public:
 	DesuraControl(gcFrame* parent, bool offline, const char* szProvider);
 	~DesuraControl();
 
-	void addPage(baseTabPage *page, const char* tabName);
+	void addPage(std::shared_ptr<BaseTabPage> page, const char* tabName);
 
 	void setActivePage(PAGE index, bool reset = false);
 	void setActivePage_ID(int32 id);
@@ -71,7 +68,7 @@ public:
 	void showLeftBorder(bool state);
 	void refreshSearch();
 
-	void setBaseTabPage(PAGE pageId, baseTabPage *page);
+	void setBaseTabPage(PAGE pageId, std::shared_ptr<BaseTabPage> &page);
 	PAGE getActivePage();
 
 protected:
@@ -87,8 +84,8 @@ protected:
 
 	gcImageButton *m_pAvatar;
 
-	void unloadSearch(baseTabPage* page);
-	void loadSearch(baseTabPage* page);
+	void unloadSearch(std::shared_ptr<BaseTabPage> &page);
+	void loadSearch(std::shared_ptr<BaseTabPage> &page);
 	void updateStatusBar(uint32 index);
 
 	void onButtonClicked( wxCommandEvent& event );
@@ -103,7 +100,7 @@ protected:
 	void onActiveToggle(bool &state);
 
 private:
-	std::vector<tabInfo_s*> m_vTabInfo;
+	std::vector<tabInfo_s> m_vTabInfo;
 	uint32 m_iIndex;
 
 	bool m_bDownloadingUpdate;
