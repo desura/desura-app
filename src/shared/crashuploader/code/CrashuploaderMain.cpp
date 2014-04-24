@@ -302,18 +302,18 @@ bool UploadDump(const char* file, const char* user, int build, int branch, Deleg
 		if (!log.empty())
 			PrepDumpForUpload(log);
 
+#ifdef WIN32
+		//Let desura exit now.
+		gcString tracerEventName("Global\\{0}Event", tracer);
+
+		auto hHandle = OpenEvent(EVENT_MODIFY_STATE, FALSE, tracerEventName.c_str());
+
+		if (hHandle)
 		{
-			//Let desura exit now.
-			gcString tracerEventName("Global\\{0}Event", tracer);
-
-			auto hHandle = OpenEvent(EVENT_MODIFY_STATE, FALSE, tracerEventName.c_str());
-
-			if (hHandle)
-			{
-				SetEvent(hHandle);
-				CloseHandle(hHandle);
-			}
+			SetEvent(hHandle);
+			CloseHandle(hHandle);
 		}
+#endif
 	}
 
 	std::string os = UTIL::OS::getOSString();
