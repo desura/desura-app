@@ -36,6 +36,7 @@ $/LicenseInfo$
 
 typedef bool (*UploadCrashFn)(const char* path, const char* user, int build, int branch);
 typedef bool (*UploadCrashProgFn)(const char* path, const char* user, int build, int branch, DelegateI<Prog_s&>* prog);
+typedef bool (*UploadCrashProgExFn)(const char* path, const char* user, int build, int branch, DelegateI<Prog_s&>* prog, const char* szTracer);
 
 class CrashDumpThread : public Thread::BaseThread
 {
@@ -57,8 +58,9 @@ protected:
 	void uploadProgress(Prog_s& prog);
 
 
-	UploadCrashFn uploadCrash;
-	UploadCrashProgFn uploadCrashProg;
+	UploadCrashFn uploadCrash = nullptr;
+	UploadCrashProgFn uploadCrashProg = nullptr;
+	UploadCrashProgExFn uploadCrashProgEx = nullptr;
 
 	gcString m_szDumpPath;
 

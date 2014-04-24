@@ -39,7 +39,7 @@ file(GLOB Sources code/BZip2.cpp
 
 if(WIN32)
   use_unicode_here()
-  add_definitions(-DWXUSINGDLL)
+  add_definitions(-DWXUSINGDLL -DTRACER_SHARED_MEM_NAME=L"DESURA_CLIENT_TRACER_OUTPUT")
   set(WINDOWS_LIBRARIES msi Wintrust Psapi)
 else()
   set(PLATTFORM_SOURCES code/Browser.cpp

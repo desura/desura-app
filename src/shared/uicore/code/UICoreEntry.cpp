@@ -115,13 +115,11 @@ public:
 
 #ifdef WITH_GTEST
         m_hUnitTest.load("unittest.dll");
-        m_hCrashUploader.load("crashuploader.dll");
         m_hServiceCore.load("servicecore.dll");
 
 #ifdef NIX
         //need to not unload these as it crashes the app on exit deleting the tests
         m_hUnitTest.dontUnloadOnDelete();
-        m_hCrashUploader.dontUnloadOnDelete();
         m_hServiceCore.dontUnloadOnDelete();
 #endif
 #endif
@@ -313,7 +311,6 @@ private:
 
 #ifdef WITH_GTEST
 	SharedObjectLoader m_hUnitTest;
-	SharedObjectLoader m_hCrashUploader;
 	SharedObjectLoader m_hServiceCore;
 #endif
 
