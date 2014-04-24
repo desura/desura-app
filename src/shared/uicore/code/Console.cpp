@@ -96,6 +96,12 @@ CONCOMMAND(crashconsole, "crashconsole")
 	}
 }
 
+CONCOMMAND(crashapp, "crashapp")
+{
+	Console *pConsole = (Console*)nullptr;
+	pConsole->Destroy();
+}
+
 // log everything to a text window (GUI only of course)
 class  wxLogRichTextCtrl : public wxLog
 {

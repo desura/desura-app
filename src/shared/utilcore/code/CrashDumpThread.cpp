@@ -68,6 +68,7 @@ bool CrashDumpThread::loadCrashReporter()
 	if (!uploadCrashProg)
 		return false;
 
+	uploadCrashProgEx = sol.getFunction<UploadCrashProgExFn>("UploadCrashProgEx");
 	return true;
 }
 
@@ -87,6 +88,15 @@ void CrashDumpThread::uploadDump(const char* dumpFile)
 
 	if (szAppBuild.size() > 0)
 		build = Safe::atoi(szAppBuild.c_str());
+
+#ifdef TRACER_SHARED_MEM_NAME
+	if (uploadCrashProgEx)
+	{
+		gcString strTracerName(TRACER_SHARED_MEM_NAME);
+		uploadCrashProgEx(dumpFile, gc_lastusername.getString(), build, branch, delegate(this, &CrashDumpThread::uploadProgress), strTracerName.c_str());
+		return;
+	}
+#endif
 
 	uploadCrashProg(dumpFile, gc_lastusername.getString(), build, branch, delegate(this, &CrashDumpThread::uploadProgress));
 }

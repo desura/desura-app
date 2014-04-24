@@ -97,6 +97,7 @@ MiniDumpGenerator::~MiniDumpGenerator()
 
 	delete[] m_szTracerMemoryName;
 	delete[] m_szUser;
+	delete[] m_szTracerMemoryEventName;
 }
 
 void MiniDumpGenerator::showMessageBox(bool state)
@@ -130,14 +131,25 @@ void MiniDumpGenerator::setTracerSharedMemoryName(const CHAR_T *pTracer)
 	if (m_szTracerMemoryName)
 		delete[] m_szTracerMemoryName;
 
+	if (m_szTracerMemoryEventName)
+		delete[] m_szTracerMemoryEventName;
+
 	if (!pTracer)
 	{
 		m_szTracerMemoryName = nullptr;
+		m_szTracerMemoryEventName = nullptr;
 	}
 	else
 	{
 		m_szTracerMemoryName = new wchar_t[255];
 		wcsncpy_s(m_szTracerMemoryName, 255, pTracer, 255);
+
+		m_szTracerMemoryEventName = new wchar_t[255];
+		m_szTracerMemoryEventName[0] = 0;
+
+		wcscat_s(m_szTracerMemoryEventName, 255, L"Global\\");
+		wcscat_s(m_szTracerMemoryEventName, 255, pTracer);
+		wcscat_s(m_szTracerMemoryEventName, 255, L"Event");
 	}
 }
 
@@ -218,6 +230,12 @@ bool MiniDumpGenerator::complete(const wchar_t* dump_path, const wchar_t* minidu
 	wcscat_s(fullPath, 255, L".dmp");
 
 
+	HANDLE hMutex = nullptr;
+
+	//Give dumpgen a chance to grab shared memory event log
+	if (m_szTracerMemoryEventName)
+		hMutex = CreateEventW(nullptr, FALSE, FALSE, m_szTracerMemoryEventName);
+
 	if (dumpreport(fullPath) == false && m_bShowMsgBox && succeeded)
 	{
 		char msg[1024];
@@ -233,6 +251,13 @@ bool MiniDumpGenerator::complete(const wchar_t* dump_path, const wchar_t* minidu
 											"future releases.");
 
 		::MessageBox(nullptr, msg, PRODUCT_NAME " Crash", MB_OK);
+	}
+
+	//Give dumpgen a chance to grab shared memory event log
+	if (hMutex)
+	{
+		WaitForSingleObject(hMutex, 10 * 1000);
+		CloseHandle(hMutex);
 	}
 
 	return succeeded;
@@ -277,7 +302,6 @@ bool MiniDumpGenerator::dumpreport(const wchar_t* file)
 	}
 
 	BOOL res = CreateProcessW(nullptr, launchArg, nullptr, nullptr, false, NORMAL_PRIORITY_CLASS, nullptr, exePath, &StartupInfo, &ProcInfo );
-
 	return res?true:false;
 }
 

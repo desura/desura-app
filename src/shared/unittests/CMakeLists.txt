@@ -3,6 +3,7 @@ include_directories(
   ${Boost_INCLUDE_DIR}
   ${IPC_PIPE_INCLUDE_DIRS}
   ${CEF_INCLUDE_DIRS}
+  ${CMAKE_CURRENT_SOURCE_DIR}/../crashuploader/code
 )
 
 file(GLOB Sources code/util/gcBuff_test.cpp
@@ -21,6 +22,7 @@ file(GLOB Sources code/util/gcBuff_test.cpp
 				  code/IPCTest.cpp
 				  code/CVarTest.cpp
 				  code/JSTest.cpp
+				  code/CrashDumpTest.cpp
 )
 
 

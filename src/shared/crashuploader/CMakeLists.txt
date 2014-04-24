@@ -32,4 +32,3 @@ if(WIN32)
 endif()
 
 install_library(crashuploader)
-link_with_gtest(crashuploader)

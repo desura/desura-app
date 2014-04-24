@@ -122,6 +122,7 @@ gcWebControl::~gcWebControl()
 {
 	m_pChromeBrowser->setEventCallback(nullptr);
 	m_pChromeBrowser->destroy();
+	m_pChromeBrowser = nullptr;
 
 	safe_delete(m_pEventHandler);
 }

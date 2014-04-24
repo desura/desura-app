@@ -55,7 +55,7 @@ bool RestartDesura(const char* args);
 void GetBuildBranch(int &build, int &branch);
 void GetString(const char* str, const char* input, char* out, size_t outSize);
 
-typedef bool (*UploadCrashFn)(const char* path, const char* user, int build, int branch, const char* szTracer);
+typedef bool(*UploadCrashExFn)(const char* path, const char* user, int build, int branch, const char* szTracer);
 
 
 void TerminateDesura()
@@ -173,7 +173,7 @@ UINT UploadDump(const std::string &strFile, const std::string &strUser, const st
 	if (!g_CrashUploader.load(modualName))
 		return -1;
 
-	UploadCrashFn uploadCrash = g_CrashUploader.getFunction<UploadCrashFn>("UploadCrash");
+	UploadCrashExFn uploadCrash = g_CrashUploader.getFunction<UploadCrashExFn>("UploadCrashEx");
 
 	if (!uploadCrash)
 		return -2;

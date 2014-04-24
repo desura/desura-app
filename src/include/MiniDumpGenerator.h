@@ -91,11 +91,12 @@ protected:
 
 private:
 	bool m_bCreatedHandle;
-	bool m_bShowMsgBox;
-	bool m_bNoUpload;
+	bool m_bShowMsgBox = false;
+	bool m_bNoUpload = false;
 
 	CHAR_T *m_szUser = nullptr;
 	CHAR_T *m_szTracerMemoryName = nullptr;
+	CHAR_T *m_szTracerMemoryEventName = nullptr;
 
 	CrashCallbackFn m_pCrashCallback;
 	static google_breakpad::ExceptionHandler *s_pExceptionHandler;

@@ -161,8 +161,7 @@ BootLoader::BootLoader()
 	_set_error_mode(_OUT_TO_MSGBOX);
 
 	m_MDumpHandle.showMessageBox(true);
-	m_MDumpHandle.setTracerSharedMemoryName(g_Tracer.getSharedMemName());
-
+	
 	//AfxEnableMemoryTracking(FALSE);
 	InitCommonControls();
 
@@ -181,6 +180,8 @@ BootLoader::~BootLoader()
 
 void BootLoader::InitInstance()
 {
+	m_MDumpHandle.setTracerSharedMemoryName(g_Tracer.getSharedMemName());
+
 	UTIL::MISC::CMDArgs args(m_lpCmdLine);
 	
 	if (args.hasArg("waitfordebugger"))
