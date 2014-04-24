@@ -103,7 +103,10 @@ public:
 	void invoke()
 	{
 		std::lock_guard<std::mutex> guard(m_Lock);
-		m_fnCallback();
+
+		if (m_fnCallback)
+			m_fnCallback();
+
 		m_pHelper.done();
 	}
 
@@ -287,6 +290,8 @@ public:
 		if (m_pInvoker)
 			m_pInvoker->cancel();
 
+		cancelPendingInvokers();
+
 		if (m_pObj && bDeregister)
 			m_pObj->deregisterDelegate(this);
 
@@ -316,9 +321,10 @@ public:
 			std::function<void()> pcb = std::bind(&GuiDelegate<TObj, Args...>::callback, this, args...);
 
 			auto invoker = std::make_shared<Invoker>(pcb);
+			addPendingInvoker(invoker);
+
 			auto event = new wxGuiDelegateEvent(invoker, m_pObj->GetId());
 			m_pObj->GetEventHandler()->QueueEvent(event);
-
 		}
 		else if (m_Mode == MODE_PROCESS || Thread::BaseThread::GetCurrentThreadId() == GetMainThreadId())
 		{
@@ -345,12 +351,44 @@ protected:
 		m_pInvoker = i;
 	}
 
+	void addPendingInvoker(const std::shared_ptr<Invoker> &i)
+	{
+		std::lock_guard<std::mutex> guard(m_InvokerMutex);
+		m_vPendingInvokers.push_back(i);
+	}
+
+	void cancelPendingInvokers()
+	{
+		removePendingInvokers();
+
+		for (auto i : m_vPendingInvokers)
+		{
+			auto invoker = i.lock();
+
+			if (!invoker)
+				continue;
+
+			invoker->cancel();
+		}
+	}
+
+	void removePendingInvokers()
+	{
+		auto it = std::remove_if(begin(m_vPendingInvokers), end(m_vPendingInvokers), [](std::weak_ptr<Invoker> &invoker){
+			return invoker.expired();
+		});
+
+		m_vPendingInvokers.erase(it, end(m_vPendingInvokers));
+	}
+
 private:
 	MODE m_Mode;
 	TObj *m_pObj = nullptr;
 	std::atomic<bool> m_bCanceled;
 	std::mutex m_InvokerMutex;
 	std::shared_ptr<Invoker> m_pInvoker;
+
+	std::vector<std::weak_ptr<Invoker>> m_vPendingInvokers;
 };
 
 
