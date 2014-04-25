@@ -82,6 +82,10 @@ void UpdateShortCuts()
 
 	UMcf u;
 	u.setRegValues(curDir);
+
+
+	UTIL::WIN::delRegValue(gcString("HKEY_LOCAL_MACHINE\\Software\\Microsoft\\Windows NT\\CurrentVersion\\AppCompatFlags\\Layers\\{0}", UTIL::STRING::urlEncode(exe)));
+	UTIL::WIN::delRegValue(gcString("HKEY_CURRENT_USER\\Software\\Microsoft\\Windows NT\\CurrentVersion\\AppCompatFlags\\Layers\\{0}", UTIL::STRING::urlEncode(exe)));
 }
 #else
 
