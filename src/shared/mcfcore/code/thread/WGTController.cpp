@@ -85,11 +85,15 @@ namespace MCFCore
 
 				curBlock = pBlock;
 				status = MCFThreadStatus::SF_STATUS_CONTINUE;
+
+				gcTrace("");
 			}
 
 			Misc::WGTSuperBlock* resetCurrentBlock()
 			{
 				std::lock_guard<std::mutex> guard(mutex);
+
+				gcTrace("");
 
 				auto block = curBlock;
 				curBlock = nullptr;
@@ -136,12 +140,17 @@ namespace MCFCore
 			Misc::WGTSuperBlock* getCurrentBlock()
 			{
 				std::lock_guard<std::mutex> al(mutex);
+
+				gcTrace("");
+
 				return curBlock;
 			}
 
 			Misc::WGTSuperBlock* splitCurrentBlock(size_t halfWay)
 			{
 				std::lock_guard<std::mutex> al(mutex);
+
+				gcTrace("");
 
 				if (!curBlock)
 					return nullptr;
@@ -198,6 +207,11 @@ namespace MCFCore
 				m_pWorkThread->reportError(e, strProv);
 			}
 
+			std::string toTracerString()
+			{
+				return gcString("CurBlock: {0}, Status: {1}", (uint64)curBlock, (uint32)status);
+			}
+
 		private:
 			WGTWorker* m_pWorkThread;
 
@@ -224,7 +238,7 @@ namespace MCFCore
 			void createWorkers(WGTControllerI *pController, uint32 nCount, MCFCore::Misc::ProviderManager &pProvManager)
 			{
 				for (uint16 x = 0; x<nCount; x++)
-					m_vWorkerList.push_back(new WGTWorkerInfo(pController, nCount, pProvManager));
+					m_vWorkerList.push_back(new WGTWorkerInfo(pController, x, pProvManager));
 			}
 
 			operator const std::vector<WGTWorkerInfo*>& ()
@@ -236,6 +250,12 @@ namespace MCFCore
 			std::vector<WGTWorkerInfo*> m_vWorkerList;
 		};
 	}
+}
+
+template <>
+std::string TraceClassInfo<MCFCore::Thread::WGTWorkerInfo>(MCFCore::Thread::WGTWorkerInfo *pClass)
+{
+	return pClass->toTracerString();
 }
 
 
@@ -756,8 +776,10 @@ Misc::WGTSuperBlock* WGTController::stealBlocks()
 	return largestWorker->splitCurrentBlock(halfWay);
 }
 
-Misc::WGTSuperBlock* WGTController::newTask(uint32 id, MCFThreadStatus &status)
+bool WGTController::newTask(uint32 id, MCFThreadStatus &status, Misc::WGTSuperBlock* &pSuperBlock)
 {
+	gcAssert(!pSuperBlock);
+
 	gcTrace("Id: {0}", id);
 
 	WGTWorkerInfo* worker = findWorker(id);
@@ -766,12 +788,12 @@ Misc::WGTSuperBlock* WGTController::newTask(uint32 id, MCFThreadStatus &status)
 	status = worker->getStatus();
 
 	if (status != MCFThreadStatus::SF_STATUS_CONTINUE)
-		return nullptr;
+		return false;
 
-	Misc::WGTSuperBlock* pSuperBlock = worker->getCurrentBlock();
+	pSuperBlock = worker->getCurrentBlock();
 
 	if (pSuperBlock)
-		return pSuperBlock;
+		return true;
 
 	auto bNoMoreWork = false;
 	
@@ -810,19 +832,19 @@ Misc::WGTSuperBlock* WGTController::newTask(uint32 id, MCFThreadStatus &status)
 		//get thread running again.
 		m_WaitCondition.notify();
 
-		return nullptr;
+		return false;
 	}
 
 	if (!pSuperBlock)
-		return newTask(id, status);
+		return newTask(id, status, pSuperBlock);
 
 	worker->setCurrentBlock(pSuperBlock);
 	status = MCFThreadStatus::SF_STATUS_CONTINUE;
 
-	return pSuperBlock;
+	return true;
 }
 
-void WGTController::workerFinishedSuperBlock(uint32 id)
+void WGTController::workerFinishedSuperBlock(uint32 id, Misc::WGTSuperBlock* &pSuperBlock)
 {
 	gcTrace("Id: {0}", id);
 
@@ -830,6 +852,9 @@ void WGTController::workerFinishedSuperBlock(uint32 id)
 	gcAssert(worker);
 
 	Misc::WGTSuperBlock* block = worker->resetCurrentBlock();
+
+	gcAssert(block == pSuperBlock);
+	pSuperBlock = nullptr;
 
 	if (!block)
 	{
@@ -844,15 +869,13 @@ void WGTController::workerFinishedSuperBlock(uint32 id)
 
 		safe_delete(block);
 
-		m_pFileMutex.lock();
+		std::lock_guard<std::mutex> guard(m_pFileMutex);
 		m_iAvailbleWork--;
-		m_pFileMutex.unlock();
 	}
 	else
 	{
-		m_pFileMutex.lock();
+		std::lock_guard<std::mutex> guard(m_pFileMutex);
 		m_vSuperBlockList.push_back(block);
-		m_pFileMutex.unlock();
 	}
 
 	//get thread running again.
@@ -887,9 +910,11 @@ MCFThreadStatus WGTController::getStatus(uint32 id)
 	return worker->getStatus();
 }
 
-void WGTController::reportError(uint32 id, gcException &e)
+void WGTController::reportError(uint32 id, gcException &e, Misc::WGTSuperBlock* &pSuperBlock)
 {
 	gcTrace("Id: {0}, E: {1}", id, e);
+
+	workerFinishedSuperBlock(id, pSuperBlock);
 
 	WGTWorkerInfo* worker = findWorker(id);
 	gcAssert(worker);

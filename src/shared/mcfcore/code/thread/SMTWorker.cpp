@@ -40,7 +40,8 @@ namespace MCFCore
 namespace Thread
 {
 
-SMTWorker::SMTWorker(SMTController* controller, uint32 id, UTIL::FS::FileHandle* fileHandle) : BaseThread( "SaveMCF Thread" )
+SMTWorker::SMTWorker(SMTController* controller, uint32 id, UTIL::FS::FileHandle* fileHandle) 
+	: BaseThread( gcString("SaveMCF Thread {0}", id).c_str() )
 {
 	m_pCT = controller;
 	m_uiId = id;
