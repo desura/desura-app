@@ -64,7 +64,7 @@ namespace MCFCore
 		class WGTWorker : public ::Thread::BaseThread, protected MCFCore::Misc::OutBufferI
 		{
 		public:
-			//! Constuctor
+			//! Constructor
 			//! 
 			//! @param controller Parent class
 			//! @param id Worker id
