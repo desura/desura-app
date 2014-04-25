@@ -102,19 +102,27 @@ public:
 
 	void invoke()
 	{
-		std::lock_guard<std::mutex> guard(m_Lock);
+		std::lock_guard<std::recursive_mutex> guard(m_Lock);
+
+		m_bInCallback = true;
 
 		if (m_fnCallback)
 			m_fnCallback();
+
+		m_bInCallback = false;
 
 		m_pHelper.done();
 	}
 
 	void cancel()
 	{
-		std::lock_guard<std::mutex> guard(m_Lock);
-		m_fnCallback = std::function<void()>();
-		m_pHelper.done();
+		std::lock_guard<std::recursive_mutex> guard(m_Lock);
+
+		if (!m_bInCallback)
+		{
+			m_fnCallback = std::function<void()>();
+			m_pHelper.done();
+		}
 	}
 
 	void wait()
@@ -124,12 +132,13 @@ public:
 
 	bool isCanceled()
 	{
-		std::lock_guard<std::mutex> guard(m_Lock);
+		std::lock_guard<std::recursive_mutex> guard(m_Lock);
 		return m_pHelper.isDone();
 	}
 
 private:
-	std::mutex m_Lock;
+	bool m_bInCallback = false;
+	std::recursive_mutex m_Lock;
 	EventHelper m_pHelper;
 	std::function<void()> m_fnCallback;
 };
