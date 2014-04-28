@@ -174,7 +174,7 @@ void PipeBase::processEvents()
 #ifdef IPC_DEBUG
 	if (fh)
 	{
-		fprintf(fh, "Triggered even0328t %d\n", i);
+		fprintf(fh, "Triggered event %d\n", i);
 		fflush(fh);
 	}
 #endif
@@ -204,7 +204,7 @@ void PipeBase::processEvents()
 			if (err == ERROR_IO_INCOMPLETE)
 				fSuccess = GetOverlappedResult(data->hPipe, &data->oOverlap, &cbRet, TRUE);
 
-			if (!fSuccess || (cbRet == 0 && data->sender == false) || (cbRet != data->size && data->sender == true))
+			if (!fSuccess || (cbRet == 0 && data->sender == false)) // || (cbRet != data->size && data->sender == true)
 			{
 				disconnectAndReconnect(i);
 				ResetEvent(m_hEventsArr[i]);
@@ -270,7 +270,7 @@ bool PipeBase::performRead(PipeData* data, IPCManager* mng)
 	}
 	else
 	{
-		//error
+		gcAssert(false);
 	}
 
 	return false;
@@ -307,7 +307,7 @@ bool PipeBase::performWrite(PipeData* data, IPCManager* mng)
 	} 
 	else
 	{
-		//error
+		gcAssert(false);
 	}
 
 	return false;

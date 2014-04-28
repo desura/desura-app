@@ -776,6 +776,12 @@ uint32 PMapStringString::deserialize(const char* buffer, uint32 size)
 		uint32 nValSize = buffToUint32(temp);
 		temp += 4;
 
+		if ((temp - buffer) + nKeySize + nValSize > size)
+		{
+			gcAssert(false);
+			break;
+		}
+
 		std::string key(temp, nKeySize);
 		temp += nKeySize;
 
