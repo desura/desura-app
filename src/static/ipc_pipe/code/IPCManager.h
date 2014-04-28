@@ -33,6 +33,7 @@ $/LicenseInfo$
 #include "IPCMessage.h"
 #include "IPCLockable.h"
 #include "IPCPipeAuth.h"
+#include <atomic>
 
 #include "util_thread/BaseThread.h"
 
@@ -89,6 +90,7 @@ public:
 	virtual WeakPtr<IPCClass> createClass(const char* name) = 0;
 };
 
+class PendingPartRecvMessage;
 
 //! Manages IPC Communication 
 //!
@@ -239,6 +241,8 @@ protected:
 	void stop();
 
 
+	void joinPartMessages(std::vector<PipeMessage*> &vMessages);
+
 private:
 	int32 m_mClassId;
 
@@ -266,6 +270,12 @@ private:
 	LoopbackProcessor* m_pLoopbackProcessor;
 
 	gcString m_szThreadName;
+
+	std::atomic<uint64> m_nMsgSerial;
+	std::mutex m_PartLock;
+	std::map<uint64, std::vector<PipeMessage*>> m_mOutstandingPartMessages;
+
+	std::shared_ptr<PendingPartRecvMessage> m_pPendingMessage;
 };
 
 

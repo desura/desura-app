@@ -43,10 +43,13 @@ typedef struct
 	uint32 id;
 	uint32 type;
 	uint32 size;
+	uint8 part;		//if message is split this is the part
+	uint8 totparts; //total number of parts
+	uint64 serial;  //part message serial number
 	char data;
 } PACK IPCMessage;
 
-#define IPCMessageSIZE 16
+#define IPCMessageSIZE 26
 
 typedef struct
 {

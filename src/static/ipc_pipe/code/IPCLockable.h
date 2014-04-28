@@ -63,7 +63,7 @@ public:
 	void timedWait()
 	{
 		if (!m_bTriggered)
-			waitCond.wait(5); //wait on mutex
+			waitCond.wait(30); //wait on mutex
 	}
 
 	bool wait(int sec, int milli)
