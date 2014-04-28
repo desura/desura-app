@@ -133,6 +133,8 @@ TaskBarIcon::TaskBarIcon(wxWindow *parent, UserCore::ItemManagerI* pItemManager)
 	
 	m_imgCount = GetGCThemeManager()->getImageHandle("#count_background");
 	updateIcon();	
+
+	onItemChangedEvent += guiDelegate(this, &TaskBarIcon::onItemChanged);
 }
 
 TaskBarIcon::~TaskBarIcon()
