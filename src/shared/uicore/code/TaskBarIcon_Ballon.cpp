@@ -219,6 +219,11 @@ void TaskBarIcon::swapUpdateList()
 	m_vNextUpdateList.erase(m_vNextUpdateList.begin(), m_vNextUpdateList.end());
 }
 
+void TaskBarIcon::onItemChangedNonGui(UserCore::Item::ItemInfoI::ItemInfo_s& info)
+{
+	onItemChangedEvent(info);
+}
+
 void TaskBarIcon::onItemChanged(UserCore::Item::ItemInfoI::ItemInfo_s& info)
 {
 	if (!GetUserCore())
@@ -256,7 +261,7 @@ void TaskBarIcon::tagItems()
 		const uint32 hasFlags = UserCore::Item::ItemInfoI::STATUS_DELETED;
 		const uint32 notFlags = UserCore::Item::ItemInfoI::STATUS_ONACCOUNT | UserCore::Item::ItemInfoI::STATUS_ONCOMPUTER | UserCore::Item::ItemInfoI::STATUS_DEVELOPER;
 
-		*game->getInfoChangeEvent() -= guiDelegate(this, &TaskBarIcon::onItemChanged);
+		*game->getInfoChangeEvent() -= delegate(this, &TaskBarIcon::onItemChangedNonGui);
 
 		if (HasAnyFlags(game->getStatus(), hasFlags))
 			return;
@@ -264,7 +269,7 @@ void TaskBarIcon::tagItems()
 		if (!HasAnyFlags(game->getStatus(), notFlags))
 			return;
 
-		*game->getInfoChangeEvent() += guiDelegate(this, &TaskBarIcon::onItemChanged);
+		*game->getInfoChangeEvent() += delegate(this, &TaskBarIcon::onItemChangedNonGui);
 	};
 
 	std::vector<UserCore::Item::ItemInfoI*> gList;

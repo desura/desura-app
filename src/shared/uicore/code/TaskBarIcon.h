@@ -67,6 +67,7 @@ protected:
 	void onUpdate();
 
 	void onItemChanged(UserCore::Item::ItemInfoI::ItemInfo_s& info);
+	void onItemChangedNonGui(UserCore::Item::ItemInfoI::ItemInfo_s& info);
 
 	void tagItems();
 	void onItemsAdded(uint32&);
@@ -88,6 +89,8 @@ protected:
 
 private:
 	void showMainWindow();
+
+	Event<UserCore::Item::ItemInfoI::ItemInfo_s> onItemChangedEvent;
 
 	uint32 m_iLastBallon;
 	uint32 m_uiLastCount;
