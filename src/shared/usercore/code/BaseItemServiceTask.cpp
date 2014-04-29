@@ -27,11 +27,7 @@ $/LicenseInfo$
 #include "BaseItemServiceTask.h"
 #include "User.h"
 
-namespace UserCore
-{
-namespace ItemTask
-{
-
+using namespace UserCore::ItemTask;
 
 BaseItemServiceTask::BaseItemServiceTask(UserCore::Item::ITEM_STAGE type, const char* name, UserCore::Item::ItemHandle* handle, MCFBranch branch, MCFBuild build) 
 	: BaseItemTask(type, name, handle, branch, build)
@@ -48,6 +44,9 @@ BaseItemServiceTask::~BaseItemServiceTask()
 void BaseItemServiceTask::setFinished()
 {
 	m_bFinished = true;
+
+	//some one might be waitForFinish on us
+	m_WaitCond.notify();
 }
 
 void BaseItemServiceTask::resetFinish()
@@ -59,21 +58,21 @@ void BaseItemServiceTask::waitForFinish()
 {
 	if (!m_bFinished)
 		m_WaitCond.wait();
+
+	m_bFinished = true;
 }
 
 void BaseItemServiceTask::doRun()
 {
 	m_bStarted = true;
-	m_bFinished = false;
+	resetFinish();
 
 	bool shouldWait = initService();
+
 	if (shouldWait && !m_bFinished && !isStopped())
 		m_WaitCond.wait();
 
-	m_bFinished = true;
-
-	//some one might be waitForFinish on us
-	m_WaitCond.notify();
+	setFinished();
 }
 
 void BaseItemServiceTask::onStop()
@@ -96,8 +95,4 @@ void BaseItemServiceTask::onFinish()
 bool BaseItemServiceTask::hasStarted()
 {
 	return m_bStarted;
-}
-
-
-}
 }

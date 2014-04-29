@@ -144,6 +144,8 @@ namespace MCFCore
 			::Thread::WaitCondition m_WaitCondition;
 
 			
+			std::mutex m_McfLock;
+			MCFCore::MCF* m_pCurMcf;
 
 #ifdef DEBUG
 			uint64 m_uiSaved = 0;
