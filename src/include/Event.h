@@ -143,12 +143,12 @@ public:
 		std::lock_guard<std::recursive_mutex> guard(m_Lock);
 		migratePending();
 
-		for (size_t x=0; x<m_vDelegates.size(); x++)
+		for (auto d : m_vDelegates)
 		{
-			if (!m_vDelegates[x])
+			if (!d)
 				continue;
 
-			m_pCurDelegate = m_vDelegates[x];
+			m_pCurDelegate = d;
 			m_pCurDelegate->operator()(a);
 			m_pCurDelegate = nullptr;
 	
@@ -164,12 +164,12 @@ public:
 		std::lock_guard<std::recursive_mutex> guard(m_Lock);
 		migratePending();
 
-		for (size_t x=0; x<m_vDelegates.size(); x++)
+		for (auto d : m_vDelegates)
 		{
-			if (!m_vDelegates[x])
+			if (!d)
 				continue;
 
-			m_pCurDelegate = m_vDelegates[x];
+			m_pCurDelegate = d;
 			m_pCurDelegate->operator()();
 			m_pCurDelegate = nullptr;
 
@@ -184,16 +184,13 @@ public:
 	{
 		std::lock_guard<std::recursive_mutex> guard(m_Lock);
 
-		std::vector<TDel*> temp = m_vDelegates;
-		std::vector<TDel*> eTemp = e.m_vDelegates;
+		for (auto d : m_vDelegates)
+			d->destroy();
 
 		m_vDelegates.clear();
 
-		for (size_t x=0; x<eTemp.size(); x++)
-			m_vDelegates.push_back(eTemp[x]->clone());
-
-		for (size_t x=0; x<temp.size(); x++)
-			temp[x]->destroy();
+		for (auto d : e.m_vDelegates)
+			m_vDelegates.push_back(d->clone());
 
 		return *this;
 	}
@@ -202,10 +199,8 @@ public:
 	{
 		std::lock_guard<std::recursive_mutex> guard(m_Lock);
 
-		for (size_t x=0; x<e.m_vDelegates.size(); x++)
+		for (auto d : e.m_vDelegates)
 		{
-			TDel* d = e.m_vDelegates[x];
-
 			if (findInfo(d) == UNKNOWN_ITEM)
 				m_vDelegates.push_back(d->clone());
 		}
@@ -249,13 +244,13 @@ public:
 			m_vPendingDelegates.push_back(std::pair<bool, TDel*>(true, d->clone()));
 		}
 		
-		if (m_Lock.try_lock())
-		{
-			migratePending();
-			m_Lock.unlock();
-		}
-
 		d->destroy();
+
+		std::unique_lock<std::recursive_mutex> uLock(m_Lock, std::defer_lock);
+
+		if (uLock.try_lock())
+			migratePending();
+
 		return *this;
 	}
 
@@ -269,19 +264,22 @@ public:
 			m_vPendingDelegates.push_back(std::pair<bool, TDel*>(false, d->clone()));
 		}
 
-		if (m_Lock.try_lock())
-		{
+		d->destroy();
+
+		std::unique_lock<std::recursive_mutex> uLock(m_Lock, std::defer_lock);
+
+		if (uLock.try_lock())
 			migratePending();
-			m_Lock.unlock();
-		}
 
 		return *this;
 	}
 
 	void reset()
 	{
-		if (!this || !&m_vDelegates)
+		if (!this)
 			return;
+
+		std::lock_guard<std::recursive_mutex> guard(m_Lock);
 
 		m_bCancel = true;
 		InvokeI* i = dynamic_cast<InvokeI*>(m_pCurDelegate);
@@ -289,25 +287,22 @@ public:
 		if (i)
 			i->cancel();
 
-
+		for (auto d : m_vDelegates)
 		{
-			std::lock_guard<std::recursive_mutex> guard(m_Lock);
-			for (size_t x=0; x<m_vDelegates.size(); x++)
-			{
-				if (m_vDelegates[x])
-					m_vDelegates[x]->destroy();
-			}
-
-			m_vDelegates.clear();
+			if (d)
+				d->destroy();
 		}
 
+		m_vDelegates.clear();
+	
 		{
 			std::lock_guard<std::recursive_mutex> guard(m_PendingLock);
-			for (size_t x=0; x<m_vPendingDelegates.size(); x++)
+			for (auto p : m_vPendingDelegates)
 			{
-				if (m_vPendingDelegates[x].second)
-					m_vPendingDelegates[x].second->destroy();
+				if (p.second)
+					p.second->destroy();
 			}
+
 			m_vPendingDelegates.clear();
 		}
 
@@ -356,7 +351,10 @@ protected:
 				p.second->destroy();
 
 				if (index != UNKNOWN_ITEM)
-					m_vDelegates.erase(m_vDelegates.begin()+index);
+				{
+					m_vDelegates[index]->destroy();
+					m_vDelegates.erase(m_vDelegates.begin() + index);
+				}
 			}
 		}
 

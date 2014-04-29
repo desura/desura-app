@@ -36,6 +36,7 @@ $/LicenseInfo$
 #include <type_traits>
 #include <memory>
 #include <atomic>
+#include <list>
 
 class gcPanel;
 class gcDialog;
@@ -264,10 +265,14 @@ template <typename TObj, typename ... Args>
 class GuiDelegate : public DelegateBase<Args...>, public InvokeI
 {
 public:
-	GuiDelegate(std::function<void(Args&...)> callback, uint64 compareHash, TObj *pObj, MODE mode)
+	GuiDelegate(std::function<void(Args&...)> callback, uint64 compareHash, TObj *pObj, MODE mode, const char* szFile, uint32 nLine)
 		: DelegateBase<Args...>(callback, compareHash)
 		, m_Mode(mode)
 		, m_pObj(pObj)
+#ifdef DEBUG
+		, m_szFile(szFile)
+		, m_nLine(nLine)
+#endif
 	{
 		gcAssert(m_pObj);
 
@@ -309,7 +314,11 @@ public:
 
 	DelegateI<Args...>* clone() override
 	{
-		return new GuiDelegate(DelegateBase<Args...>::m_fnCallback, DelegateBase<Args...>::getCompareHash(), m_pObj, m_Mode);
+#ifdef DEBUG
+		return new GuiDelegate(DelegateBase<Args...>::m_fnCallback, DelegateBase<Args...>::getCompareHash(), m_pObj, m_Mode, m_szFile, m_nLine);
+#else
+		return new GuiDelegate(DelegateBase<Args...>::m_fnCallback, DelegateBase<Args...>::getCompareHash(), m_pObj, m_Mode, "", 0);
+#endif
 	}
 
 	void callback(Args& ... args)
@@ -363,12 +372,13 @@ protected:
 	void addPendingInvoker(const std::shared_ptr<Invoker> &i)
 	{
 		std::lock_guard<std::mutex> guard(m_InvokerMutex);
+		removePendingExpiredInvokers();
 		m_vPendingInvokers.push_back(i);
 	}
 
 	void cancelPendingInvokers()
 	{
-		removePendingInvokers();
+		removePendingExpiredInvokers();
 
 		for (auto i : m_vPendingInvokers)
 		{
@@ -379,15 +389,15 @@ protected:
 
 			invoker->cancel();
 		}
+
+		m_vPendingInvokers.clear();
 	}
 
-	void removePendingInvokers()
+	void removePendingExpiredInvokers()
 	{
-		auto it = std::remove_if(begin(m_vPendingInvokers), end(m_vPendingInvokers), [](std::weak_ptr<Invoker> &invoker){
+		m_vPendingInvokers.remove_if([](std::weak_ptr<Invoker> &invoker){
 			return invoker.expired();
 		});
-
-		m_vPendingInvokers.erase(it, end(m_vPendingInvokers));
 	}
 
 private:
@@ -397,7 +407,12 @@ private:
 	std::mutex m_InvokerMutex;
 	std::shared_ptr<Invoker> m_pInvoker;
 
-	std::vector<std::weak_ptr<Invoker>> m_vPendingInvokers;
+	std::list<std::weak_ptr<Invoker>> m_vPendingInvokers;
+
+#ifdef DEBUG
+	const char* m_szFile = nullptr;
+	uint32 m_nLine = 0;
+#endif
 };
 
 
@@ -413,8 +428,17 @@ inline bool validateForm(TObj* pObj)
 	return (pan || frm || dlg || swin || gtbi);
 }
 
+#ifdef DEBUG
+#define guiDelegate( ... ) guiDelegateImpl(__FILE__, __LINE__, __VA_ARGS__)
+#define guiExtraDelegate( ... ) guiExtraDelegateImpl(__FILE__, __LINE__, __VA_ARGS__)
+#else
+#define guiDelegate( ... ) guiDelegateImpl("", 0, __VA_ARGS__)
+#define guiExtraDelegate( ... ) guiExtraDelegateImpl("", 0, __VA_ARGS__)
+#endif
+
+
 template <typename TObj, typename ... Args>
-DelegateI<Args...>* guiDelegate(TObj* pObj, void (TObj::*fnCallback)(Args...), MODE mode = MODE_PENDING)
+DelegateI<Args...>* guiDelegateImpl(const char* szFile, uint32 nLine, TObj * pObj, void (TObj::*fnCallback)(Args...), MODE mode = MODE_PENDING)
 {
 	if (!validateForm(pObj))
 	{
@@ -427,11 +451,11 @@ DelegateI<Args...>* guiDelegate(TObj* pObj, void (TObj::*fnCallback)(Args...), M
 		(*pObj.*fnCallback)(args...);
 	};
 
-	return new GuiDelegate<TObj, Args...>(callback, MakeUint64(pObj, (void*)&typeid(fnCallback)), pObj, mode);
+	return new GuiDelegate<TObj, Args...>(callback, MakeUint64(pObj, (void*)&typeid(fnCallback)), pObj, mode, szFile, nLine);
 }
 
 template <typename TObj, typename ... Args, typename TExtra>
-DelegateI<Args...>* guiExtraDelegate(TObj* pObj, void (TObj::*fnCallback)(TExtra, Args...), TExtra tExtra, MODE mode = MODE_PENDING)
+DelegateI<Args...>* guiExtraDelegateImpl(const char* szFile, uint32 nLine, TObj* pObj, void (TObj::*fnCallback)(TExtra, Args...), TExtra tExtra, MODE mode = MODE_PENDING)
 {
 	if (!validateForm(pObj))
 	{
@@ -444,7 +468,7 @@ DelegateI<Args...>* guiExtraDelegate(TObj* pObj, void (TObj::*fnCallback)(TExtra
 		(*pObj.*fnCallback)(tExtra, args...);
 	};
 
-	return new GuiDelegate<TObj, Args...>(callback, MakeUint64(pObj, (void*)&typeid(fnCallback)), pObj, mode);
+	return new GuiDelegate<TObj, Args...>(callback, MakeUint64(pObj, (void*)&typeid(fnCallback)), pObj, mode, szFile, nLine);
 }
 
 #endif //DESURA_GUIDELEGATE_H

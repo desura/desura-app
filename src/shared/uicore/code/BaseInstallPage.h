@@ -36,64 +36,62 @@ class ItemHandleHelper;
 
 namespace UI
 {
-namespace Forms
-{
-namespace ItemFormPage
-{
-
-class BaseInstallPage : public ::BasePage 
-{
-public:
-	BaseInstallPage(wxWindow* parent);
-	~BaseInstallPage();
-
-	virtual void init()=0;
-
-	virtual void onComplete(uint32& status);
-	virtual void onProgressUpdate(uint32& progress);
-	virtual void onError(gcException& e);
-
-	virtual void onMcfProgress(MCFCore::Misc::ProgressInfo& info);
-	virtual void onComplete(gcString& str);
-	virtual void onNewItem(gcString& item);
-	virtual void onItemFound(DesuraId& id);
-	virtual void onDownloadProvider(UserCore::Misc::GuiDownloadProvider& provider);
-
-	virtual void onItemUpdate(UserCore::Item::ItemInfoI::ItemInfo_s& info);
-	virtual void onVerifyComplete(UserCore::Misc::VerifyComplete& info);
-	virtual void onPause(bool &state);
-
-	void setInfo(DesuraId id, UserCore::Item::ItemInfoI* pItemInfo);
-	void setInfo(UserCore::Item::ItemHandleI* pItemHandle);
-
-	void pause(bool state);
-	void nonBlockStop();
-	void stop();
-	
-	void registerHandle();
-	void deregisterHandle();	
-
-protected:
-	UserCore::Item::ItemHandleI* getItemHandle()
+	namespace Forms
 	{
-		return m_pItemHandle;
-	};
+		namespace ItemFormPage
+		{
 
-	virtual void run()
-	{
+			class BaseInstallPage : public ::BasePage
+			{
+			public:
+				BaseInstallPage(wxWindow* parent);
+				~BaseInstallPage();
+
+				virtual void init() = 0;
+
+				virtual void onComplete(uint32& status);
+				virtual void onProgressUpdate(uint32& progress);
+				virtual void onError(gcException& e);
+
+				virtual void onMcfProgress(MCFCore::Misc::ProgressInfo& info);
+				virtual void onComplete(gcString& str);
+				virtual void onDownloadProvider(UserCore::Misc::GuiDownloadProvider& provider);
+
+				virtual void onItemUpdate(UserCore::Item::ItemInfoI::ItemInfo_s& info);
+				virtual void onVerifyComplete(UserCore::Misc::VerifyComplete& info);
+				virtual void onPause(bool &state);
+
+				void setInfo(DesuraId id, UserCore::Item::ItemInfoI* pItemInfo);
+				void setInfo(UserCore::Item::ItemHandleI* pItemHandle);
+
+				void pause(bool state);
+				void nonBlockStop();
+				void stop();
+
+				void registerHandle();
+				void deregisterHandle();
+
+			protected:
+				UserCore::Item::ItemHandleI* getItemHandle()
+				{
+					return m_pItemHandle;
+				};
+
+				void run() override
+				{
+				}
+
+				void dispose() override
+				{
+				}
+
+			private:
+				std::unique_ptr<ItemHandleHelper> m_pIHH;
+				UserCore::Item::ItemHandleI* m_pItemHandle = nullptr;
+			};
+
+		}
 	}
-
-	virtual void dispose()
-	{
-	}
-
-private:
-	ItemHandleHelper* m_pIHH;
-	UserCore::Item::ItemHandleI* m_pItemHandle;
-};
-
-}
-}
 }
 
 
