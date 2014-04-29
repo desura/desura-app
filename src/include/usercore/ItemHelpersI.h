@@ -147,6 +147,9 @@ namespace UserCore
 				virtual void setId(uint32 id) = 0;
 
 				virtual void onPause(bool state) = 0;
+
+			protected:
+				virtual ~ItemHandleHelperI(){}
 			};
 
 
