@@ -203,7 +203,9 @@ void BaseInstallPage::deregisterHandle()
 	if (m_pItemHandle)
 	{
 		*m_pItemHandle->getItemInfo()->getInfoChangeEvent() -= guiDelegate(this, &BaseInstallPage::onItemUpdate);
-		m_pItemHandle->delHelper(m_pIHH.get());
+
+		if (m_pIHH.get())
+			m_pItemHandle->delHelper(m_pIHH.get());
 	}
 
 	m_pIHH.reset();
