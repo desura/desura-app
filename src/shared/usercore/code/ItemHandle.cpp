@@ -218,6 +218,9 @@ void ItemHandle::releaseLock(void* obj)
 
 void ItemHandle::delHelper(Helper::ItemHandleHelperI* helper)
 {
+	if (!helper)
+		return;
+
 	for (size_t x=0; x<m_vHelperList.size(); x++)
 	{
 		if (m_vHelperList[x]->getId() == helper->getId())
