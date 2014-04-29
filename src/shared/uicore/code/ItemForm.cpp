@@ -252,10 +252,8 @@ private:
 
 
 
-namespace UI
-{
-namespace Forms
-{
+using namespace UI::Forms;
+
 
 ItemForm::ItemForm(wxWindow* parent, const char* action, const char* id) 
 	: gcFrame( parent, wxID_ANY, L"[Install Form]", wxDefaultPosition, wxSize( 370,280 ), wxCAPTION|wxCLOSE_BOX|wxFRAME_FLOAT_ON_PARENT|wxSYSTEM_MENU|wxTAB_TRAVERSAL|wxMINIMIZE_BOX )
@@ -1269,11 +1267,4 @@ void ItemForm::popArgs()
 
 	m_vArgs.pop_back();
 }
-
-
-
-}
-}
-
-
 

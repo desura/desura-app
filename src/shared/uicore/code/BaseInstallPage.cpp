@@ -41,116 +41,87 @@ public:
 		m_uiId = 0;
 	}
 
-	virtual void onChangeStage(uint32 stage)
-	{
-		onChangeStageEvent(stage);
-	}
-
-	virtual void onComplete(uint32 status)
+	Event<uint32> onCompleteEvent;
+	void onComplete(uint32 status) override
 	{
 		onCompleteEvent(status);
 	}
 
-	virtual void onComplete(gcString& string)
+	Event<gcString> onCompleteStrEvent;
+	void onComplete(gcString& string) override
 	{
 		onCompleteStrEvent(string);
 	}
 
-	virtual void onMcfProgress(MCFCore::Misc::ProgressInfo& info)
+	Event<MCFCore::Misc::ProgressInfo> onMcfProgressEvent;
+	void onMcfProgress(MCFCore::Misc::ProgressInfo& info) override
 	{
 		onMcfProgressEvent(info);
 	}
 
-	virtual void onProgressUpdate(uint32 progress)
+	Event<uint32> onProgressUpdateEvent;
+	void onProgressUpdate(uint32 progress) override
 	{
 		onProgressUpdateEvent(progress);
 	}
 
-	virtual void onError(gcException e)
+	Event<gcException> onErrorEvent;
+	void onError(gcException e) override
 	{
 		onErrorEvent(e);
 	}
 
-	virtual void onNeedWildCard(WCSpecialInfo& info)
+	Event<WCSpecialInfo> onNeedWildCardEvent;
+	void onNeedWildCard(WCSpecialInfo& info) override
 	{
 		onNeedWildCardEvent(info);
 	}
 
-	
-	virtual void onNewItem(gcString& string)
-	{
-		onNewItemEvent(string);
-	}
-
-	virtual void onItemFound(DesuraId id)
-	{
-		onItemFoundEvent(id);
-	}
-
-	virtual void onDownloadProvider(UserCore::Misc::GuiDownloadProvider& provider)
+	Event<UserCore::Misc::GuiDownloadProvider> onDownloadProviderEvent;
+	void onDownloadProvider(UserCore::Misc::GuiDownloadProvider& provider) override
 	{
 		onDownloadProviderEvent(provider);
 	}
 
-	void onVerifyComplete(UserCore::Misc::VerifyComplete& info)
+	Event<UserCore::Misc::VerifyComplete> onVerifyCompleteEvent;
+	void onVerifyComplete(UserCore::Misc::VerifyComplete& info) override
 	{
 		onVerifyCompleteEvent(info);
 	}
 
-	void onPause(bool state)
+	Event<bool> onPauseEvent;
+	void onPause(bool state) override
 	{
 		onPauseEvent(state);
 	}
 
-	virtual uint32 getId()
+	virtual uint32 getId() override
 	{
 		return m_uiId;
 	}
 
-	virtual void setId(uint32 id)
+	void setId(uint32 id) override
 	{
 		m_uiId = id;
 	}
-
-
-	Event<uint32> onChangeStageEvent;
-
-	Event<uint32> onCompleteEvent;
-	Event<gcString> onCompleteStrEvent;
-
-	Event<MCFCore::Misc::ProgressInfo> onMcfProgressEvent;
-	Event<uint32> onProgressUpdateEvent;
-
-	Event<gcException> onErrorEvent;
-	Event<WCSpecialInfo> onNeedWildCardEvent;
-
-	Event<gcString> onNewItemEvent;
-	Event<DesuraId> onItemFoundEvent;
-
-	Event<UserCore::Misc::GuiDownloadProvider> onDownloadProviderEvent;
-	Event<UserCore::Misc::VerifyComplete> onVerifyCompleteEvent;
-
-	Event<bool> onPauseEvent;
 
 private:
 	uint32 m_uiId;
 };
 
-namespace UI
-{
-namespace Forms
-{
-namespace ItemFormPage
-{
+
+
+
+using namespace UI::Forms::ItemFormPage;
+
 
 typedef void (BaseInstallPage::*onCompleteIntFn)(uint32&);
 typedef void (BaseInstallPage::*onCompleteStrFn)(gcString&);
 
 
- BaseInstallPage::BaseInstallPage(wxWindow* parent) : BasePage(parent)
+ BaseInstallPage::BaseInstallPage(wxWindow* parent) 
+	 : BasePage(parent)
  {
-	 m_pItemHandle = nullptr;
-	 m_pIHH = nullptr;
  }
 
  BaseInstallPage::~BaseInstallPage()
@@ -197,7 +168,7 @@ void BaseInstallPage::registerHandle()
 	ItemForm* inf = dynamic_cast<ItemForm*>(GetParent());
 	deregisterHandle();
 
-	m_pIHH = new ItemHandleHelper();
+	m_pIHH = std::make_unique<ItemHandleHelper>();
 
 	m_pIHH->onCompleteEvent += guiDelegate(this, (onCompleteIntFn)&BaseInstallPage::onComplete);
 	m_pIHH->onProgressUpdateEvent += guiDelegate(this, &BaseInstallPage::onProgressUpdate);
@@ -206,26 +177,24 @@ void BaseInstallPage::registerHandle()
 
 	m_pIHH->onMcfProgressEvent += guiDelegate(this, &BaseInstallPage::onMcfProgress);
 	m_pIHH->onCompleteStrEvent += guiDelegate(this, (onCompleteStrFn)&BaseInstallPage::onComplete);
-	m_pIHH->onNewItemEvent += guiDelegate(this, &BaseInstallPage::onNewItem);
-	m_pIHH->onItemFoundEvent += guiDelegate(this, &BaseInstallPage::onItemFound);
 	m_pIHH->onDownloadProviderEvent += guiDelegate(this, &BaseInstallPage::onDownloadProvider);
 
 	m_pIHH->onVerifyCompleteEvent += guiDelegate(this, &BaseInstallPage::onVerifyComplete);
 	m_pIHH->onPauseEvent += guiDelegate(this, &BaseInstallPage::onPause);
 
-	m_pItemHandle->addHelper(m_pIHH);
+	m_pItemHandle->addHelper(m_pIHH.get());
 	*m_pItemHandle->getItemInfo()->getInfoChangeEvent() += guiDelegate(this, &BaseInstallPage::onItemUpdate);
 }
 
 void BaseInstallPage::deregisterHandle()
 {
-	if (!m_pItemHandle || !m_pIHH)
-		return;
-
-	m_pItemHandle->delHelper(m_pIHH);
-	safe_delete(m_pIHH);
-
-	*m_pItemHandle->getItemInfo()->getInfoChangeEvent() -= guiDelegate(this, &BaseInstallPage::onItemUpdate);
+	if (m_pItemHandle)
+	{
+		*m_pItemHandle->getItemInfo()->getInfoChangeEvent() -= guiDelegate(this, &BaseInstallPage::onItemUpdate);
+		m_pItemHandle->delHelper(m_pIHH.get());
+	}
+		
+	m_pIHH.reset();
 }
 
 
@@ -250,14 +219,6 @@ void BaseInstallPage::onComplete(gcString& str)
 {
 }
 
-void BaseInstallPage::onNewItem(gcString& item)
-{
-}
-
-void BaseInstallPage::onItemFound(DesuraId& id)
-{
-}
-
 void BaseInstallPage::onDownloadProvider(UserCore::Misc::GuiDownloadProvider& provider)
 {
 }
@@ -272,8 +233,4 @@ void BaseInstallPage::onVerifyComplete(UserCore::Misc::VerifyComplete& info)
 
 void BaseInstallPage::onPause(bool &state)
 {
-}
-
-}
-}
 }
