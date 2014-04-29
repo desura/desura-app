@@ -122,6 +122,7 @@ typedef void (BaseInstallPage::*onCompleteStrFn)(gcString&);
  BaseInstallPage::BaseInstallPage(wxWindow* parent) 
 	 : BasePage(parent)
  {
+	 Bind(wxEVT_CLOSE_WINDOW, &BaseInstallPage::onFormClose, this);
  }
 
  BaseInstallPage::~BaseInstallPage()
@@ -129,6 +130,11 @@ typedef void (BaseInstallPage::*onCompleteStrFn)(gcString&);
 	 deregisterHandle();
  }
 
+ void BaseInstallPage::onFormClose(wxCloseEvent& event)
+ {
+	 deregisterHandle();
+	 m_pItemHandle = nullptr;
+ }
  
 void BaseInstallPage::setInfo(DesuraId id, UserCore::Item::ItemInfoI* pItemInfo)
 {
@@ -137,6 +143,8 @@ void BaseInstallPage::setInfo(DesuraId id, UserCore::Item::ItemInfoI* pItemInfo)
 
 void BaseInstallPage::setInfo(UserCore::Item::ItemHandleI* pItemHandle)
 {
+	gcTrace("");
+
 	gcAssert(pItemHandle);
 
 	m_pItemHandle = pItemHandle;
@@ -162,6 +170,8 @@ void BaseInstallPage::stop()
 
 void BaseInstallPage::registerHandle()
 {
+	gcTrace("");
+
 	if (!m_pItemHandle)
 		return;
 
@@ -188,12 +198,14 @@ void BaseInstallPage::registerHandle()
 
 void BaseInstallPage::deregisterHandle()
 {
+	gcTrace("");
+
 	if (m_pItemHandle)
 	{
 		*m_pItemHandle->getItemInfo()->getInfoChangeEvent() -= guiDelegate(this, &BaseInstallPage::onItemUpdate);
 		m_pItemHandle->delHelper(m_pIHH.get());
 	}
-		
+
 	m_pIHH.reset();
 }
 

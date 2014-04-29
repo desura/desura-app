@@ -60,11 +60,14 @@ using namespace UserCore;
 User::User()
 	: m_bAltProvider(false)
 {
+	gcTrace("");
 	onLoginItemsLoadedEvent += delegate(this, &User::onLoginItemsLoaded);
 }
 
 User::~User() 
 {
+	gcTrace("");
+
 	while (m_bLocked)
 	{
 		m_WaitCond.wait(0, 500);

@@ -85,6 +85,8 @@ namespace UI
 				{
 				}
 
+				void onFormClose(wxCloseEvent& event);
+
 			private:
 				std::unique_ptr<ItemHandleHelper> m_pIHH;
 				UserCore::Item::ItemHandleI* m_pItemHandle = nullptr;
