@@ -41,6 +41,8 @@ $/LicenseInfo$
 CreateProgPage::CreateProgPage(wxWindow* parent) 
 	: BasePage(parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL)
 {
+	gcTrace("");
+
 	Bind(wxEVT_COMMAND_BUTTON_CLICKED, &CreateProgPage::onButtonClick, this); 
 
 	m_staticText3 = new gcStaticText( this, wxID_ANY, Managers::GetString(L"#CF_PROG"), wxDefaultPosition, wxDefaultSize, 0 );
@@ -114,6 +116,8 @@ void CreateProgPage::onButtonClick( wxCommandEvent& event )
 {
 	if (event.GetId() == m_butCancel->GetId())
 	{
+		gcTrace("But Cancel");
+
 		//need to remove these so they dont cause any more wxEvents once this dies
 		//other wise app crashes and god kills a kitten. 
 		if (m_pThread)
@@ -134,6 +138,8 @@ void CreateProgPage::onButtonClick( wxCommandEvent& event )
 	}
 	else if (event.GetId() == m_butPause->GetId())
 	{
+		gcTrace("But Pause");
+
 		gcFrame* par = dynamic_cast<gcFrame*>(GetParent());
 
 		if (m_bThreadPaused)
@@ -215,6 +221,8 @@ void CreateProgPage::finished()
 
 void CreateProgPage::onComplete(gcString& path)
 {
+	gcTrace("Path: {0}", path);
+
 	gcFrame* par = dynamic_cast<gcFrame*>(GetParent());
 	
 	if (par)
