@@ -269,6 +269,8 @@ void WGTWorker::doDownload()
 	}
 	catch (gcException &excep)
 	{
+		takeProgressOff();
+
 		if (excep.getErrId() == ERR_MCFSERVER && excep.getSecErrId() == ERR_USERCANCELED)
 		{
 			//do nothing. Block errored out before or client paused.
@@ -298,7 +300,6 @@ void WGTWorker::doDownload()
 			}
 		}
 
-		takeProgressOff();
 		return;
 	}
 
@@ -334,6 +335,11 @@ void WGTWorker::onStop()
 
 void WGTWorker::takeProgressOff()
 {
+	gcAssert(m_pCurBlock);
+
+	if (!m_pCurBlock)
+		return;
+
 	m_pCT->reportNegProgress(m_uiId, m_pCurBlock->done);
 	m_pCurBlock->done = 0;
 
