@@ -60,7 +60,7 @@ void HideLogForm()
 
 void ShowLogForm(bool forced)
 {
-	if (!g_pConsole)
+	if (!g_pConsole || !g_pMainApp)
 		 return;
 	
 	if (!g_pMainApp->isLoggedIn() && !g_pMainApp->isOffline())
