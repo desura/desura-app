@@ -54,11 +54,17 @@ public:
 	void showProg(const char* path);
 	void showOverView(const char* path);
 
-	DesuraId getItemId(){return m_uiInternId;}
+	Event<ut> onUploadTriggerEvent;
 
-	Event<ut> onUploadTriggerEvent; 
+	DesuraId getItemId()
+	{
+		return m_uiInternId;
+	}
 
-	void cancelPrompt(){m_bPromptClose = false;}
+	void cancelPrompt()
+	{
+		m_bPromptClose = false;
+	}
 
 protected:
 	friend class LanguageTestDialog;

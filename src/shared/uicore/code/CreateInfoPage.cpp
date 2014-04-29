@@ -43,6 +43,8 @@ END_EVENT_TABLE()
 CreateInfoPage::CreateInfoPage(wxWindow* parent) 
 	: BasePage(parent, wxID_ANY, wxDefaultPosition, wxSize( 445,100 ), wxTAB_TRAVERSAL)
 {
+	gcTrace("");
+
 	m_tbItemFiles = nullptr;
 
 	wxFlexGridSizer* fgSizer1;
@@ -113,6 +115,8 @@ void CreateInfoPage::onButtonClicked( wxCommandEvent& event )
 {
 	if (event.GetId() == m_butCreate->GetId())
 	{
+		gcTrace("But Create");
+
 		CreateMCFForm* temp = dynamic_cast<CreateMCFForm*>(GetParent());
 
 		gcString path((const wchar_t*)m_tbItemFiles->GetValue().c_str());
@@ -120,10 +124,12 @@ void CreateInfoPage::onButtonClicked( wxCommandEvent& event )
 	}
 	else if (event.GetId() == m_butCancel->GetId())
 	{
+		gcTrace("But Cancel");
 		GetParent()->Close();
 	}	
 	else if (event.GetId() == m_butFile->GetId())
 	{
+		gcTrace("But Browse");
 		showDialog();
 	}
 }

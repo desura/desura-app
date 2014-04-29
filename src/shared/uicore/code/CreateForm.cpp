@@ -40,6 +40,8 @@ CreateMCFForm::CreateMCFForm(wxWindow* parent, UserCore::ItemManagerI* pItemMana
 	, m_bsSizer(new wxBoxSizer(wxVERTICAL))
 	, m_pItemManager(pItemManager)
 {
+	gcTrace("");
+
 	if (!m_pItemManager)
 		m_pItemManager = GetUserCore()->getItemManager();
 
@@ -57,6 +59,8 @@ CreateMCFForm::~CreateMCFForm()
 
 void CreateMCFForm::onFormClose(wxCloseEvent& event)
 {
+	gcTrace("");
+
 	if (m_bPromptClose)
 	{
 		if (gcMessageBox(this, Managers::GetString(L"#CONFIRM_PROMPT"), Managers::GetString(L"#CONFIRM"), wxICON_QUESTION|wxYES_NO) != wxYES)
@@ -72,6 +76,8 @@ void CreateMCFForm::onFormClose(wxCloseEvent& event)
 
 void CreateMCFForm::updateInfo(uint32& count)
 {
+	gcTrace("");
+
 	UserCore::Item::ItemInfoI *item = m_pItemManager->findItemInfo(m_uiInternId);
 
 	if (item)
@@ -91,6 +97,8 @@ void CreateMCFForm::updateInfo(uint32& count)
 
 void CreateMCFForm::setInfo(DesuraId id)
 {
+	gcTrace("Id: {0}", id);
+
 	UserCore::Item::ItemInfoI *item = m_pItemManager->findItemInfo(id);
 
 	if (!item)
@@ -129,6 +137,8 @@ void CreateMCFForm::setTitle(const char* szItemName, const wchar_t* szFormat)
 
 void CreateMCFForm::showInfo()
 {
+	gcTrace("");
+
 	cleanUpPages();
 
 	CreateInfoPage *pPage = new CreateInfoPage(this);
@@ -144,6 +154,8 @@ void CreateMCFForm::showInfo()
 
 void CreateMCFForm::showProg(const char* path)
 {
+	gcTrace("Path: {0}", path);
+
 	cleanUpPages();
 
 	CreateProgPage* pPage = new CreateProgPage(this);
@@ -159,6 +171,8 @@ void CreateMCFForm::showProg(const char* path)
 
 void CreateMCFForm::showOverView(const char* path)
 {
+	gcTrace("Path: {0}", path);
+
 	cleanUpPages();
 
 	CreateMCFOverview* pPage = new CreateMCFOverview(this);

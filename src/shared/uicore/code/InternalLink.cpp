@@ -470,36 +470,31 @@ void InternalLink::handleInternalLink(DesuraId id, uint8 action, const LinkArgs 
 
 void InternalLink::closeForm(int32 wxId)
 {
-	for (size_t x=0; x<m_vSubForms.size(); x++)
+	if (wxId == m_iNewsFormId)
+		m_iNewsFormId = 0;
+
+	if (wxId == m_iGiftFormId)
+		m_iGiftFormId = 0;
+
+	for (auto f : m_mFormMap)
 	{
-		if (m_vSubForms[x]->GetId() == wxId)
+		if (f.second && f.second->GetId() == wxId)
 		{
-			CreateMCFForm *temp = dynamic_cast<CreateMCFForm*>(m_vSubForms[x]);
-			if (temp)
-				temp->onUploadTriggerEvent -= delegate(this, &InternalLink::onUploadTrigger);
-
-
-			std::map<uint64,gcFrame*>::iterator it;
-			for (it = m_mFormMap.begin(); it != m_mFormMap.end(); ++it)
-			{
-				if (it->second && it->second->GetId() == wxId)
-				{
-					it->second = nullptr;
-					break;
-				}
-			}
-
-			if (wxId == m_iNewsFormId)
-				m_iNewsFormId = 0;
-
-			if (wxId == m_iGiftFormId)
-				m_iGiftFormId = 0;
-
-			m_vSubForms[x]->Destroy();
-			m_vSubForms.erase(m_vSubForms.begin() +x);
+			m_mFormMap[f.first] = nullptr;
 			break;
 		}
 	}
+
+	auto it = std::find_if(begin(m_vSubForms), end(m_vSubForms), [wxId](wxFrame* pFrame)
+	{
+		return pFrame->GetId() == wxId;
+	});
+
+	if (it == end(m_vSubForms))
+		return;
+
+	(*it)->Destroy();
+	m_vSubForms.erase(it);
 }
 
 
@@ -1197,6 +1192,8 @@ void InternalLink::resumeUploadMCF(DesuraId id, LinkArgs args)
 
 void InternalLink::createMCF(DesuraId id)
 {
+	gcTrace("Id: {0}", id);
+
 	UserCore::Item::ItemInfoI* item = GetUserCore()->getItemManager()->findItemInfo( id );
 
 	if (!GetUserCore()->isAdmin() && !item)
@@ -1218,8 +1215,6 @@ void InternalLink::createMCF(DesuraId id)
 	form->Raise();
 #endif
 
-	//m_wxCreateMCF_Form->Connect( wxEVT_CLOSE_WINDOW, wxCloseEventHandler( MainForm::OnFrameClose ) );
-		
 	m_vSubForms.push_back(form);
 }
 
@@ -1227,6 +1222,8 @@ void InternalLink::createMCF(DesuraId id)
 
 void InternalLink::onUploadTrigger(ut& info)
 {
+	gcTrace("Id: {0}", info.id);
+
 	FINDFORM(info.id, UploadMCFForm);
 
 	UserCore::Item::ItemInfoI* item = GetUserCore()->getItemManager()->findItemInfo( info.id );
