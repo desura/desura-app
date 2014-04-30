@@ -201,6 +201,7 @@ void UploadMCFForm::cleanUpPages()
 		m_pPage->Show(false);
 		m_pPage->Close();
 		m_pPage->dispose();
+		m_pPage->Destroy();
 		m_pPage = nullptr;
 	}
 }

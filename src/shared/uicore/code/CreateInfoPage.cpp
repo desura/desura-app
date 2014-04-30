@@ -35,63 +35,47 @@ $/LicenseInfo$
 
 #include "CreateForm.h"
 
-BEGIN_EVENT_TABLE( CreateInfoPage, BasePage )
-	EVT_BUTTON( wxID_ANY, CreateInfoPage::onButtonClicked )
-	EVT_TEXT( wxID_ANY, CreateInfoPage::onTextChange )
-END_EVENT_TABLE()
-
 CreateInfoPage::CreateInfoPage(wxWindow* parent) 
 	: BasePage(parent, wxID_ANY, wxDefaultPosition, wxSize( 445,100 ), wxTAB_TRAVERSAL)
 {
+	Bind(wxEVT_BUTTON, &CreateInfoPage::onButtonClicked, this);
+	Bind(wxEVT_TEXT, &CreateInfoPage::onTextChange, this);
+
 	gcTrace("");
 
-	m_tbItemFiles = nullptr;
+	m_tbItemFiles = new wxTextCtrl(this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0);
 
-	wxFlexGridSizer* fgSizer1;
-	fgSizer1 = new wxFlexGridSizer( 4, 1, 0, 0 );
-	fgSizer1->AddGrowableCol( 0 );
-	fgSizer1->AddGrowableRow( 2 );
-	fgSizer1->SetFlexibleDirection( wxBOTH );
-	fgSizer1->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
+	m_labText = new gcStaticText(this, wxID_ANY, Managers::GetString(L"#CF_PROMPT"), wxDefaultPosition, wxDefaultSize, 0);
+	m_labText->Wrap(-1);
 
-
+	m_butFile = new gcButton(this, wxID_ANY, Managers::GetString(L"#BROWSE"));
+	m_butCreate = new gcButton(this, wxID_ANY, Managers::GetString(L"#OK"), wxDefaultPosition, wxDefaultSize, 0);
+	m_butCancel = new gcButton(this, wxID_ANY, Managers::GetString(L"#CANCEL"), wxDefaultPosition, wxDefaultSize, 0);
 	
 	wxBoxSizer* bSizer5 = new wxBoxSizer( wxHORIZONTAL );
-	
-	m_labText = new gcStaticText( this, wxID_ANY, Managers::GetString(L"#CF_PROMPT"), wxDefaultPosition, wxDefaultSize, 0 );
-	m_labText->Wrap( -1 );
 	bSizer5->Add( m_labText, 0, wxALIGN_BOTTOM|wxALL, 5 );
-	
-	
 
 	wxBoxSizer* bSizer8 = new wxBoxSizer( wxHORIZONTAL );
-	
-	m_tbItemFiles = new wxTextCtrl( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
 	bSizer8->Add( m_tbItemFiles, 1, wxBOTTOM|wxLEFT, 5 );
-	
-	m_butFile = new gcButton(this, wxID_ANY, Managers::GetString(L"#BROWSE"));
 	bSizer8->Add( m_butFile, 0, wxALIGN_CENTER_VERTICAL|wxBOTTOM|wxRIGHT|wxLEFT, 5 );
-	
-
-
 
 	wxBoxSizer* bSizer2 = new wxBoxSizer( wxHORIZONTAL );
-	
 	bSizer2->Add( 0, 0, 1, wxEXPAND, 5 );
-	
-	m_butCreate = new gcButton( this, wxID_ANY, Managers::GetString(L"#OK"), wxDefaultPosition, wxDefaultSize, 0 );
 	bSizer2->Add( m_butCreate, 0, wxTOP|wxBOTTOM|wxLEFT, 5 );
-	
-	m_butCancel = new gcButton( this, wxID_ANY, Managers::GetString(L"#CANCEL"), wxDefaultPosition, wxDefaultSize, 0 );
 	bSizer2->Add( m_butCancel, 0, wxALL, 5 );
 	
+	wxFlexGridSizer* fgSizer1;
+	fgSizer1 = new wxFlexGridSizer(4, 1, 0, 0);
+	fgSizer1->AddGrowableCol(0);
+	fgSizer1->AddGrowableRow(2);
+	fgSizer1->SetFlexibleDirection(wxBOTH);
+	fgSizer1->SetNonFlexibleGrowMode(wxFLEX_GROWMODE_SPECIFIED);
 
 	fgSizer1->Add( bSizer5, 0, wxEXPAND, 5 );
 	fgSizer1->Add( bSizer8, 0, wxEXPAND, 5 );
 	fgSizer1->Add(0, 0, 0, wxEXPAND, 5);
 	fgSizer1->Add( bSizer2, 0, wxEXPAND, 5 );
 
-	
 	this->SetSizer( fgSizer1 );
 	this->Layout();
 }
@@ -167,9 +151,9 @@ bool CreateInfoPage::validatePath(wxTextCtrl* ctrl, bool type)
 	gcString dir((const wchar_t*)ctrl->GetValue().c_str());
 
 	if (type == TYPE_FOLDER)
-		doesExsist = UTIL::FS::isValidFolder(UTIL::FS::PathWithFile(dir));
+		doesExsist = UTIL::FS::isValidFolder(dir);
 	else
-		doesExsist = UTIL::FS::isValidFile(UTIL::FS::PathWithFile(dir));
+		doesExsist = UTIL::FS::isValidFile(dir);
 
 	if (doesExsist)
 		ctrl->SetForegroundColour( *wxBLACK );
