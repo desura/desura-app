@@ -54,10 +54,9 @@ public:
 	void run() override {}
 	
 protected:
-
 	gcStaticText* m_labText;
 
-	wxTextCtrl* m_tbItemFiles;
+	wxTextCtrl* m_tbItemFiles = nullptr;
 	
 	gcButton* m_butCreate;
 	gcButton* m_butCancel;
@@ -72,9 +71,6 @@ protected:
 	void validateInput();
 
 	void showDialog();
-
-private:
-	DECLARE_EVENT_TABLE()
 };
 
 

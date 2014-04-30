@@ -68,8 +68,6 @@ private:
 
 	gcString m_szPath;
 	gcString m_szFolderPath;
-
-	DECLARE_EVENT_TABLE()
 };
 
 

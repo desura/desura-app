@@ -34,13 +34,11 @@ $/LicenseInfo$
   #include <Shellapi.h>
 #endif
 
-BEGIN_EVENT_TABLE( CreateMCFOverview, BasePage )
-	EVT_BUTTON( wxID_ANY, CreateMCFOverview::onButtonClick )
-END_EVENT_TABLE()
-
 CreateMCFOverview::CreateMCFOverview(wxWindow* parent) 
 	: BasePage(parent, wxID_ANY, wxDefaultPosition, wxSize( 415,148 ), wxTAB_TRAVERSAL)
 {
+	Bind(wxEVT_BUTTON, &CreateMCFOverview::onButtonClick, this);
+
 	gcTrace("");
 
 	wxFlexGridSizer* fgSizer2;

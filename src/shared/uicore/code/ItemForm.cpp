@@ -818,6 +818,7 @@ void ItemForm::cleanUpPages()
 
 		m_pPage->Show(false);
 		m_pPage->Close();
+		m_pPage->Destroy();
 		m_pPage = nullptr;
 	}
 }
