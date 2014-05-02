@@ -42,6 +42,8 @@ WGTWorker::WGTWorker(WGTControllerI* controller, uint16 id, MCFCore::Misc::Provi
 
 WGTWorker::~WGTWorker()
 {
+	stop();
+
 	m_DeleteMutex.lock();
 	safe_delete(m_pMcfCon);
 	m_DeleteMutex.unlock();

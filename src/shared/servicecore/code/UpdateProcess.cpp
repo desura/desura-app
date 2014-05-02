@@ -48,6 +48,7 @@ GCUpdateProcess::GCUpdateProcess(const char* mcfpath, const char* inspath, bool 
 GCUpdateProcess::~GCUpdateProcess()
 {
 	stop();
+
 	safe_delete(m_pUMcf);
 	safe_delete(m_pOldMcf);
 }

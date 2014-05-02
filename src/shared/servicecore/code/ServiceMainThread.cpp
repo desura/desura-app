@@ -34,6 +34,8 @@ ServiceMainThread::ServiceMainThread()
 
 ServiceMainThread::~ServiceMainThread()
 {
+	stop();
+
 	std::lock_guard<std::mutex> guard(m_vLock);
 	m_vJobList.clear();
 }

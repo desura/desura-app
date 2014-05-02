@@ -39,9 +39,10 @@ UninstallProcess::UninstallProcess(const char* mcfpath, const char* inspath, con
 	m_uiLastProg = 0;
 }
 
-
 UninstallProcess::~UninstallProcess()
 {
+	stop();
+
 	if (m_pMcfHandle)
 		mcfDelFactory(m_pMcfHandle);
 }
