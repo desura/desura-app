@@ -280,7 +280,7 @@ WGTController::WGTController(std::shared_ptr<MCFCore::Misc::DownloadProvidersI> 
 
 WGTController::~WGTController()
 {
-	join();
+	stop();
 
 	if (m_bDoingStop)
 		gcSleep(500);

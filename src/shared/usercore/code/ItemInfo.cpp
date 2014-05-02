@@ -1006,7 +1006,7 @@ bool ItemInfo::compare(const char* filter)
 
 void ItemInfo::processUpdateXml(const XML::gcXMLElement &node)
 {
-	gcTrace("");
+	//gcTrace("");
 	node.FirstChildElement("branches").for_each_child("branch", [this](const XML::gcXMLElement &branch)
 	{
 		uint32 id = 0;

@@ -36,10 +36,8 @@ $/LicenseInfo$
 #include "GameExplorerManager.h"
 #endif
 
-namespace UserCore
-{
-namespace ItemTask
-{
+using namespace UserCore::ItemTask;
+
 
 DownloadTask::DownloadTask(UserCore::Item::ItemHandle* handle, const char* mcfPath) 
 	: BaseItemTask(UserCore::Item::ITEM_STAGE::STAGE_DOWNLOAD, "Download", handle)
@@ -265,10 +263,4 @@ void DownloadTask::cancel()
 	getItemHandle()->getInternal()->setPausable(false);
 	onStop();
 	getItemHandle()->getInternal()->resetStage(true);
-}
-
-
-
-
-}
 }
