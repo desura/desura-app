@@ -138,7 +138,7 @@ void MCF::pause()
 {
 	std::lock_guard<std::mutex> guard(m_mThreadMutex);
 
-	if (!m_bPaused)
+	if (m_bPaused)
 		return;
 
 	gcTrace("");
@@ -153,7 +153,7 @@ void MCF::unpause()
 {
 	std::lock_guard<std::mutex> guard(m_mThreadMutex);
 
-	if (m_bPaused)
+	if (!m_bPaused)
 		return;
 
 	gcTrace("");
