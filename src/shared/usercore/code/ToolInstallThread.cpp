@@ -41,8 +41,7 @@ namespace Misc
 
 void ToolInstallThread::run()
 {
-
-	uint32 timeout = 5*60; //five mins
+	const uint32 timeout = 5*60; //five mins
 
 	while (!isStopped())
 	{
@@ -54,7 +53,7 @@ void ToolInstallThread::run()
 		if (isStopped())
 			break;
 
-		bool timedout = m_InstallWait.wait(timeout);
+		m_InstallWait.wait(0, 300);
 
 		if (m_bStillInstalling)
 			continue;
@@ -63,10 +62,14 @@ void ToolInstallThread::run()
 		uint32 size = m_dvInstallQue.size();
 		m_InstallLock.unlock();
 
-		if (timedout && size == 0)
+		if (size == 0)
 		{
+			bool timedout = m_InstallWait.wait(timeout);
+
+			if (!timedout)
+				continue;
+
 			//timeout happened. Stop
-			
 #ifdef WIN32
 			safe_delete(m_pIPCClient);
 #endif
