@@ -68,6 +68,7 @@ SFTController::SFTController(uint16 num, MCFCore::MCF* caller, const char* path)
 
 SFTController::~SFTController()
 {
+	stop();
 }
 
 void SFTController::run()

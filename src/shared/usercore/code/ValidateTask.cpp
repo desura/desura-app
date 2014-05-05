@@ -122,6 +122,10 @@ void ValidateTask::doRun()
 			else
 			{
 				//local mcf. Reset every thing
+				m_hMCFile->getErrorEvent().reset();
+				m_hMCFile->getProgEvent().reset();
+
+				
 				m_hMCFile->getErrorEvent() += delegate(&onErrorEvent);
 				m_hMCFile->getProgEvent() += delegate(this, &ValidateTask::onProgress);
 

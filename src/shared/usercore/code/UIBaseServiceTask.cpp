@@ -32,10 +32,7 @@ $/LicenseInfo$
 #include "mcfcore/MCFMain.h"
 #include "MCFDownloadProviders.h"
 
-namespace UserCore
-{
-namespace ItemTask
-{
+using namespace UserCore::ItemTask;
 
 
 UIBaseServiceTask::UIBaseServiceTask(UserCore::Item::ITEM_STAGE stage, const char* taskname, UserCore::Item::ItemHandle* handle, MCFBranch installBranch, MCFBuild installBuild) 
@@ -45,10 +42,13 @@ UIBaseServiceTask::UIBaseServiceTask(UserCore::Item::ITEM_STAGE stage, const cha
 
 UIBaseServiceTask::~UIBaseServiceTask()
 {
+	gcTrace("");
 }
 
 bool UIBaseServiceTask::initService()
 {
+	gcTrace("");
+
 	auto pItem = getItemInfo();
 
 	if (!pItem)
@@ -149,6 +149,8 @@ void UIBaseServiceTask::onStop()
 
 void UIBaseServiceTask::completeUninstall(bool removeAll, bool removeAccount)
 {
+	gcTrace("");
+
 #ifdef NIX
 	removeScripts();
 #endif
@@ -182,6 +184,8 @@ void UIBaseServiceTask::completeUninstall(bool removeAll, bool removeAccount)
 
 void UIBaseServiceTask::onComplete()
 {
+	gcTrace("");
+
 	uint32 com = 0;
 	onCompleteEvent(com);
 	onFinish();
@@ -217,7 +221,3 @@ void UIBaseServiceTask::removeScripts()
 	UTIL::FS::delEmptyFolders(path);
 }
 #endif
-
-
-}
-}

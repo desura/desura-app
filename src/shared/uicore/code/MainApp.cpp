@@ -408,6 +408,8 @@ void MainApp::logOut(bool bShowLogin, bool autoLogin)
 	m_pInternalLink->closeAll();
 	safe_delete(m_pInternalLink);
 
+	closeMainForm();
+
 	{
 		std::lock_guard<std::mutex> a(m_UserLock);
 		if (g_pUserHandle)
@@ -430,8 +432,6 @@ void MainApp::logOut(bool bShowLogin, bool autoLogin)
 
 	GetCVarManager()->saveAll();
 	GetCVarManager()->cleanUserCvars();
-
-	closeMainForm();
 
 	m_bLoggedIn = false;
 	m_iMode = APP_MODE::MODE_UNINT;
