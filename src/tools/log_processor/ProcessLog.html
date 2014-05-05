@@ -23,6 +23,19 @@
 <div id="svgintro"></div>
 
 <script>
+function unicodeCharEscape(charCode) {
+    return "#" + charCode;
+}
+
+function unicodeEscape(string) {
+    return string.split("")
+                 .map(function (char) {
+                     var charCode = char.charCodeAt(0);
+                     return (charCode >= 127 || charCode < 8 || (charCode > 13 && charCode <= 31)) ? "0x" + charCode : char;
+                 })
+                 .join("");
+}
+
 	var svg = null;
 
 	$('#svgintro').svg({onLoad: function(s){
@@ -35,7 +48,8 @@
 
 	var reader = new FileReader();
 	reader.onload = function(e) {
-		var arr = $.parseJSON(reader.result);
+
+		var arr = $.parseJSON(unicodeEscape(reader.result));
 		
 		var width = 50;
 		var height = 25;
