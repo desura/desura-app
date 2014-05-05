@@ -58,6 +58,9 @@ void DownloadTask::doRun()
 	if (!pItem)
 		throw gcException(ERR_BADID);
 
+	if (!pItem->getCurrentBranch())
+		throw gcException(ERR_INVALID, "Current Branch Is NULL");
+
 	m_hMCFile->setFile(m_szMcfPath.c_str());
 	m_hMCFile->parseMCF();
 
