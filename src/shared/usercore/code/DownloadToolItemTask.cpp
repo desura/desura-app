@@ -33,14 +33,14 @@ $/LicenseInfo$
 using namespace UserCore::ItemTask;
 
 
-DownloadToolTask::DownloadToolTask(UserCore::Item::ItemHandle* handle, uint32 ttid, const char* downloadPath, MCFBranch branch, MCFBuild build) 
+DownloadToolTask::DownloadToolTask(gcRefPtr<UserCore::Item::ItemHandleI> handle, uint32 ttid, const char* downloadPath, MCFBranch branch, MCFBuild build)
 	: BaseItemTask(UserCore::Item::ITEM_STAGE::STAGE_DOWNLOADTOOL, "DownloadTool", handle, branch, build)
 	, m_szDownloadPath(downloadPath)
 	, m_ToolTTID(ttid)
 {
 }
 
-DownloadToolTask::DownloadToolTask(UserCore::Item::ItemHandle* handle, bool launch, uint32 ttid) 
+DownloadToolTask::DownloadToolTask(gcRefPtr<UserCore::Item::ItemHandleI> handle, bool launch, uint32 ttid)
 	: BaseItemTask(UserCore::Item::ITEM_STAGE::STAGE_DOWNLOADTOOL, "DownloadTool", handle, MCFBranch(), MCFBuild())
 	, m_ToolTTID(ttid)
 	, m_bLaunch(launch)

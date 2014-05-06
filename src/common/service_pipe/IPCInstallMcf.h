@@ -36,7 +36,7 @@ $/LicenseInfo$
 class InstallProcess;
 
 
-class IPCInstallMcf : public IPC::IPCClass
+class IPCInstallMcf : public IPC::IPCClass, public gcRefCount
 {
 public:
 	IPCInstallMcf(IPC::IPCManager* mang, uint32 id, DesuraId itemId);

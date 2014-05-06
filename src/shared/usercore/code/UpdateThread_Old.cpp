@@ -248,7 +248,7 @@ void UpdateThreadOld::checkFreeSpace()
 	if (space < limit)
 	{
 		std::pair<bool, char> arg = std::pair<bool, char>((sysPath[0] == dataPath[0]), dataPath[0]);
-		m_pUser->getLowSpaceEvent()->operator()(arg);
+		m_pUser->getLowSpaceEvent()(arg);
 	}
 }
 #endif
@@ -256,7 +256,7 @@ void UpdateThreadOld::checkFreeSpace()
 
 void UpdateThreadOld::parseXML(const XML::gcXMLDocument &doc)
 {
-	UserCore::User *pUser = dynamic_cast<UserCore::User*>(m_pUser);
+	auto pUser = gcRefPtr<UserCore::User>::dyn_cast(m_pUser);
 
 	if (!pUser)
 		return;
@@ -354,7 +354,7 @@ bool UpdateThreadOld::onMessageReceived(const char* resource, const XML::gcXMLEl
 	return false;
 }
 
-void UpdateThreadOld::setInfo(UserCore::UserI* user, WebCore::WebCoreI* webcore)
+void UpdateThreadOld::setInfo(gcRefPtr<UserCore::UserI> &user, gcRefPtr<WebCore::WebCoreI> &webcore)
 {
 	m_pUser = user;
 	m_pWebCore = webcore;
@@ -362,7 +362,7 @@ void UpdateThreadOld::setInfo(UserCore::UserI* user, WebCore::WebCoreI* webcore)
 
 void UpdateThreadOld::loadLoginItems()
 {
-	UserCore::ItemManager* im = dynamic_cast<UserCore::ItemManager*>(m_pUser->getItemManager());
+	auto im = gcRefPtr<UserCore::ItemManager>::dyn_cast(m_pUser->getItemManager());
 
 	XML::gcXMLDocument doc;
 
@@ -381,10 +381,10 @@ void UpdateThreadOld::loadLoginItems()
 	im->enableSave();
 
 #ifdef WIN32
-	m_pUser->getThreadPool()->queueTask(new UpdateUninstallTask(m_pUser));
+	m_pUser->getThreadPool()->queueTask(gcRefPtr<UpdateUninstallTask>::create(m_pUser));
 #endif
 
-	m_pUser->getLoginItemsLoadedEvent()->operator()();
+	m_pUser->getLoginItemsLoadedEvent()();
 }
 
 

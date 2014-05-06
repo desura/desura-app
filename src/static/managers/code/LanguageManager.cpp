@@ -35,7 +35,7 @@ $/LicenseInfo$
 
 
 LanguageManager::LanguageManager() 
-	: BaseManager<LanguageString>( true )
+	: BaseManager<LanguageString>()
 {
 	// load english files by default
 	std::wstring path = UTIL::OS::getDataPath(L"language/english.xml");
@@ -95,11 +95,11 @@ bool LanguageManager::loadFromFile(const char* file)
 		if (name.empty() || val.empty())
 			return;
 
-		LanguageString* temp = dynamic_cast<LanguageString*>(this->BaseManager::findItem(name.c_str()));
+		auto temp = BaseManager::findItem(name.c_str());
 
 		if (!temp)
 		{
-			temp = new LanguageString(name.c_str());
+			temp = gcRefPtr<LanguageString>::create(name.c_str());
 			this->addItem( temp );
 		}
 

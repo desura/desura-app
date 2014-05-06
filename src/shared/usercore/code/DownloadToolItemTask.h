@@ -37,44 +37,41 @@ $/LicenseInfo$
 
 namespace UserCore
 {
-namespace ItemTask
-{
+	namespace ItemTask
+	{
+		class DownloadToolTask : public UserCore::ItemTask::BaseItemTask
+		{
+		public:
+			DownloadToolTask(gcRefPtr<UserCore::Item::ItemHandleI> handle, ToolTransactionId ttid, const char* downloadPath, MCFBranch branch, MCFBuild build);
+			DownloadToolTask(gcRefPtr<UserCore::Item::ItemHandleI> handle, bool launch, ToolTransactionId ttid = UINT_MAX);
 
+			virtual ~DownloadToolTask();
+			virtual void cancel();
 
-class DownloadToolTask : public UserCore::ItemTask::BaseItemTask
-{
-public:
-	DownloadToolTask(UserCore::Item::ItemHandle* handle, ToolTransactionId ttid, const char* downloadPath, MCFBranch branch, MCFBuild build);
-	DownloadToolTask(UserCore::Item::ItemHandle* handle, bool launch, ToolTransactionId ttid = UINT_MAX);
+		protected:
+			void doRun();
 
-	virtual ~DownloadToolTask();
-	virtual void cancel();
+			virtual void onPause();
+			virtual void onUnpause();
+			virtual void onStop();
 
-protected:
-	void doRun();
+			void onDLProgress(UserCore::Misc::ToolProgress &p);
+			void onDLError(gcException &e);
+			void onDLComplete();
 
-	virtual void onPause();
-	virtual void onUnpause();
-	virtual void onStop();
+			void onComplete();
+			void validateTools();
 
-	void onDLProgress(UserCore::Misc::ToolProgress &p);
-	void onDLError(gcException &e);
-	void onDLComplete();
+		private:
+			gcString m_szDownloadPath;
+			ToolTransactionId m_ToolTTID = UINT_MAX;
 
-	void onComplete();
-	void validateTools();
+			bool m_bLaunch = false;
+			bool m_bCancelled = false;
 
-private:
-	gcString m_szDownloadPath;
-	ToolTransactionId m_ToolTTID = UINT_MAX;
-
-	bool m_bLaunch = false;
-	bool m_bCancelled = false;
-
-	::Thread::WaitCondition m_WaitCond;
-};
-
-}
+			::Thread::WaitCondition m_WaitCond;
+		};
+	}
 }
 
 #endif //DESURA_DOWNLOADTOOLITEMTASK_H

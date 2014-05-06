@@ -35,26 +35,23 @@ class IPCUninstallBranch;
 
 namespace UserCore
 {
-namespace ItemTask
-{
+	namespace ItemTask
+	{
+		class UIUpdateServiceTask : public UIBaseServiceTask
+		{
+		public:
+			UIUpdateServiceTask(gcRefPtr<UserCore::Item::ItemHandleI> handle, const char* path, MCFBuild lastBuild);
+			~UIUpdateServiceTask();
 
+		protected:
+			virtual bool initService();
+			virtual void onComplete();
 
-class UIUpdateServiceTask : public UIBaseServiceTask
-{
-public:
-	UIUpdateServiceTask(UserCore::Item::ItemHandle* handle, const char* path, MCFBuild lastBuild);
-	~UIUpdateServiceTask();
-
-protected:
-	virtual bool initService();
-	virtual void onComplete();
-
-private:
-	IPCUninstallBranch* m_pIPCIM;
-	gcString m_szPath;
-};
-
-}
+		private:
+			gcRefPtr<IPCUninstallBranch> m_pIPCIM;
+			gcString m_szPath;
+		};
+	}
 }
 
 

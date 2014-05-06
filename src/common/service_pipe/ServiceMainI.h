@@ -43,7 +43,7 @@ class IPCUninstallBranch;
 
 namespace IPC
 {
-	class ServiceMainI
+	class ServiceMainI : public gcRefBase
 	{
 	public:
 		virtual void updateRegKey(const char* key, const char* value)=0;
@@ -113,6 +113,8 @@ namespace IPC
 		MOCK_METHOD2(addItemGameToGameExplorer, void(const char*, const char*));
 		MOCK_METHOD2(removeGameFromGameExplorer, void(const char*, bool));
 #endif
+
+		gc_MOCK_REFCOUNTING(ServiceMainMock);
 	};
 #endif
 }

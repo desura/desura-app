@@ -29,12 +29,10 @@ $/LicenseInfo$
 #include "ItemHandleEvents.h"
 #include "ItemManager.h"
 
-namespace UserCore
-{
-namespace Item
-{
+using namespace UserCore::Item;
 
-ItemTaskGroup::ItemTaskGroup(UserCore::ItemManager* manager, ACTION action, uint8 activeCount) 
+
+ItemTaskGroup::ItemTaskGroup(gcRefPtr<UserCore::ItemManager> manager, ACTION action, uint8 activeCount)
 {
 	m_Action = action;
 
@@ -61,7 +59,7 @@ UserCore::Item::ItemTaskGroupI::ACTION ItemTaskGroup::getAction()
 	return m_Action;
 }
 
-void ItemTaskGroup::getItemList(std::vector<UserCore::Item::ItemHandleI*> &list)
+void ItemTaskGroup::getItemList(std::vector<gcRefPtr<ItemHandleI>> &list)
 {
 	m_ListLock.lock();
 	for (size_t x=0; x<m_vWaitingList.size(); x++)
@@ -77,7 +75,7 @@ void ItemTaskGroup::cancelAll()
 
 	for (auto i : m_vWaitingList)
 	{
-		auto handle = dynamic_cast<ItemHandle*>(i);
+		auto handle = gcRefPtr<ItemHandle>::dyn_cast(i);
 
 		if (handle)
 			handle->setTaskGroup(nullptr);
@@ -90,17 +88,17 @@ void ItemTaskGroup::cancelAll()
 		delete this;
 }
 
-bool ItemTaskGroup::addItem(UserCore::Item::ItemInfoI* item)
+bool ItemTaskGroup::addItem(gcRefPtr<UserCore::Item::ItemInfoI> item)
 {
 	return addItem(m_pItemManager->findItemHandle(item->getId()));
 }
 
-bool ItemTaskGroup::addItem(UserCore::Item::ItemHandleI* item)
+bool ItemTaskGroup::addItem(gcRefPtr<ItemHandleI> item)
 {
 	if (!item)
 		return false;
 
-	UserCore::Item::ItemHandle* handle = dynamic_cast<UserCore::Item::ItemHandle*>(item);
+	auto handle = gcRefPtr<ItemHandle>::dyn_cast(item);
 
 	if (!handle)
 		return false;
@@ -134,12 +132,12 @@ bool ItemTaskGroup::addItem(UserCore::Item::ItemHandleI* item)
 	return true;
 }
 
-bool ItemTaskGroup::removeItem(UserCore::Item::ItemHandleI* item)
+bool ItemTaskGroup::removeItem(gcRefPtr<ItemHandleI> item)
 {
 	if (!item)
 		return false;
 
-	UserCore::Item::ItemHandle* handle = dynamic_cast<UserCore::Item::ItemHandle*>(item);
+	auto handle = gcRefPtr<ItemHandle>::dyn_cast(item);
 
 	if (!handle)
 		return false;
@@ -173,7 +171,7 @@ bool ItemTaskGroup::removeItem(UserCore::Item::ItemHandleI* item)
 	return true;
 }
 
-UserCore::Item::ItemHandleI* ItemTaskGroup::getActiveItem()
+gcRefPtr<ItemHandleI> ItemTaskGroup::getActiveItem()
 {
 	if (m_uiActiveItem >= m_vWaitingList.size())
 		return nullptr;
@@ -185,7 +183,7 @@ void ItemTaskGroup::nextItem()
 {
 	onProgressUpdate(100);
 
-	UserCore::Item::ItemHandleI* item = getActiveItem();
+	gcRefPtr<ItemHandleI> item = getActiveItem();
 
 	if (item)
 		item->delHelper(this);
@@ -210,11 +208,11 @@ void ItemTaskGroup::nextItem()
 
 		item = getActiveItem();
 		item->addHelper(this);
-		startAction(dynamic_cast<UserCore::Item::ItemHandle*>(item));
+		startAction(gcRefPtr<ItemHandle>::dyn_cast(item));
 	}
 }
 
-void ItemTaskGroup::startAction(UserCore::Item::ItemHandle* item)
+void ItemTaskGroup::startAction(gcRefPtr<UserCore::Item::ItemHandle> item)
 {
 	if (!item)
 		return;
@@ -332,12 +330,12 @@ void ItemTaskGroup::onPause(bool state)
 {
 }
 
-UserCore::ItemTask::BaseItemTask* ItemTaskGroup::newTask(ItemHandle* handle)
+gcRefPtr<UserCore::ItemTask::BaseItemTask> ItemTaskGroup::newTask(gcRefPtr<ItemHandle> handle)
 {
-	return new GroupItemTask(handle, this);
+	return gcRefPtr<GroupItemTask>::create(handle, this);
 }
 
-void ItemTaskGroup::updateEvents(UserCore::ItemTask::BaseItemTask* task)
+void ItemTaskGroup::updateEvents(gcRefPtr<UserCore::ItemTask::BaseItemTask> task)
 {
 	m_TaskListLock.lock();
 
@@ -361,14 +359,14 @@ void ItemTaskGroup::updateEvents(UserCore::ItemTask::BaseItemTask* task)
 	m_TaskListLock.unlock();
 }
 
-void ItemTaskGroup::registerItemTask(UserCore::ItemTask::BaseItemTask* task)
+void ItemTaskGroup::registerItemTask(gcRefPtr<UserCore::ItemTask::BaseItemTask> task)
 {
 	m_TaskListLock.lock();
 	m_vTaskList.push_back(task);
 	m_TaskListLock.unlock();
 }
 
-void ItemTaskGroup::deregisterItemTask(UserCore::ItemTask::BaseItemTask* task)
+void ItemTaskGroup::deregisterItemTask(gcRefPtr<UserCore::ItemTask::BaseItemTask> task)
 {
 	m_TaskListLock.lock();
 
@@ -384,7 +382,7 @@ void ItemTaskGroup::deregisterItemTask(UserCore::ItemTask::BaseItemTask* task)
 	m_TaskListLock.unlock();
 }
 
-uint32 ItemTaskGroup::getPos(UserCore::Item::ItemHandleI* item)
+uint32 ItemTaskGroup::getPos(gcRefPtr<ItemHandleI> item)
 {
 	uint32 res = 0;
 
@@ -423,7 +421,4 @@ uint32 ItemTaskGroup::getCount()
 		res -= m_uiLastActive;
 
 	return res;
-}
-
-}
 }

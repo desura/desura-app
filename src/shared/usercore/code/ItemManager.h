@@ -47,196 +47,197 @@ class InfoMaps;
 namespace UserCore
 {
 
-namespace Item
-{
-	class ItemTaskGroup;
-}
+	namespace Item
+	{
+		class ItemTaskGroup;
+	}
 
-class ItemManager : public ItemManagerI, public BaseManager<UserCore::Item::ItemHandle>
-{
-public:
-	ItemManager(User* user);
-	~ItemManager();
+	class ItemManager : public ItemManagerI, public BaseManager<UserCore::Item::ItemHandle>
+	{
+	public:
+		ItemManager(gcRefPtr<User> user);
+		~ItemManager();
 
-	typedef std::map<uint64, UserCore::Item::ItemHandle*>::iterator itemIterator;
+		typedef std::map<uint64, gcRefPtr<UserCore::Item::ItemHandle>>::iterator itemIterator;
 
-	virtual void loadItems();
-	virtual void saveItems();
+		void loadItems() override;
+		void saveItems() override;
 
-	virtual bool isInstalled(DesuraId id);
-	virtual void removeItem(DesuraId id);
+		bool isInstalled(DesuraId id) override;
+		void removeItem(DesuraId id) override;
 
-	virtual void getCIP(DesuraId id, char** buff);
-	virtual void retrieveItemInfo(DesuraId id, uint32 statusOveride = 0, WildcardManager* pWildCard = nullptr, MCFBranch branch = MCFBranch(), MCFBuild mcfBuild = MCFBuild(), bool reset = false);
-	virtual void retrieveItemInfoAsync(DesuraId id, bool addToAccount);
+		void getCIP(DesuraId id, char** buff) override;
+		void retrieveItemInfo(DesuraId id, uint32 statusOveride = 0, gcRefPtr<WildcardManager> pWildCard = gcRefPtr<WildcardManager>(), MCFBranch branch = MCFBranch(), MCFBuild mcfBuild = MCFBuild(), bool reset = false) override;
+		void retrieveItemInfoAsync(DesuraId id, bool addToAccount) override;
 
-	virtual uint32 getDevItemCount();
+		uint32 getDevItemCount() override;
 
-	virtual UserCore::Item::ItemInfoI* findItemInfo(DesuraId id);
-	virtual UserCore::Item::ItemHandleI* findItemHandle(DesuraId id);
+		gcRefPtr<UserCore::Item::ItemInfoI> findItemInfo(DesuraId id) override;
+		gcRefPtr<UserCore::Item::ItemHandleI> findItemHandle(DesuraId id) override;
 
-	virtual uint32 getCount();
-	virtual UserCore::Item::ItemInfoI* getItemInfo(uint32 index);
-	virtual UserCore::Item::ItemHandleI* getItemHandle(uint32 index);
+		uint32 getCount() override;
+		gcRefPtr<UserCore::Item::ItemInfoI> getItemInfo(uint32 index) override;
+		gcRefPtr<UserCore::Item::ItemHandleI> getItemHandle(uint32 index) override;
 
-	virtual void getAllItems(std::vector<UserCore::Item::ItemInfoI*> &aList);
-	virtual void getGameList(std::vector<UserCore::Item::ItemInfoI*> &gList, bool includeDeleted = false);
-	virtual void getModList(DesuraId gameId, std::vector<UserCore::Item::ItemInfoI*> &mList, bool includeDeleted = false);
-	virtual void getDevList(std::vector<UserCore::Item::ItemInfoI*> &dList);
-	virtual void getLinkList(std::vector<UserCore::Item::ItemInfoI*> &lList);
-	virtual void getFavList(std::vector<UserCore::Item::ItemInfoI*> &fList);
-	virtual void getRecentList(std::vector<UserCore::Item::ItemInfoI*> &rList);
-	virtual void getNewItems(std::vector<UserCore::Item::ItemInfoI*> &tList);
+		void getAllItems(std::vector<gcRefPtr<UserCore::Item::ItemInfoI>> &aList) override;
+		void getGameList(std::vector<gcRefPtr<UserCore::Item::ItemInfoI>> &gList, bool includeDeleted = false) override;
+		void getModList(DesuraId gameId, std::vector<gcRefPtr<UserCore::Item::ItemInfoI>> &mList, bool includeDeleted = false) override;
+		void getDevList(std::vector<gcRefPtr<UserCore::Item::ItemInfoI>> &dList) override;
+		void getLinkList(std::vector<gcRefPtr<UserCore::Item::ItemInfoI>> &lList) override;
+		void getFavList(std::vector<gcRefPtr<UserCore::Item::ItemInfoI>> &fList) override;
+		void getRecentList(std::vector<gcRefPtr<UserCore::Item::ItemInfoI>> &rList) override;
+		void getNewItems(std::vector<gcRefPtr<UserCore::Item::ItemInfoI>> &tList) override;
 
-	virtual void itemsNeedUpdate(const XML::gcXMLElement &itemsNode);
-	virtual void itemsNeedUpdate2(const XML::gcXMLElement &platformsNode);
+		void itemsNeedUpdate(const XML::gcXMLElement &itemsNode) override;
+		void itemsNeedUpdate2(const XML::gcXMLElement &platformsNode) override;
 
-	virtual EventV* getOnUpdateEvent();
-	virtual Event<DesuraId>* getOnRecentUpdateEvent();
-	virtual Event<DesuraId>* getOnFavoriteUpdateEvent();
-	virtual Event<DesuraId>* getOnNewItemEvent();
+		EventV& getOnUpdateEvent() override;
+		Event<DesuraId>& getOnRecentUpdateEvent() override;
+		Event<DesuraId>& getOnFavoriteUpdateEvent() override;
+		Event<DesuraId>& getOnNewItemEvent() override;
 
-	virtual void setFavorite(DesuraId id, bool fav);
-	virtual void setRecent(DesuraId id);
-	virtual void setInstalledMod(DesuraId parentId, DesuraId modId);
-	
-	virtual void checkItems();
+		void setFavorite(DesuraId id, bool fav) override;
+		void setRecent(DesuraId id) override;
+		void setInstalledMod(DesuraId parentId, DesuraId modId) override;
 
-	void setNew(DesuraId &id);
+		void checkItems() override;
 
-	UserCore::Item::ItemInfo* findItemInfoNorm(DesuraId id);
-	UserCore::Item::ItemHandle* findItemHandleNorm(DesuraId id);
+		void setNew(DesuraId &id);
 
-	void enableSave();
-	UserCore::Item::ItemTaskGroup* newTaskGroup(uint32 type);
+		gcRefPtr<UserCore::Item::ItemInfo> findItemInfoNorm(DesuraId id);
+		gcRefPtr<UserCore::Item::ItemHandle> findItemHandleNorm(DesuraId id);
 
-	virtual DesuraId addLink(const char* name, const char* exe, const char* args);
-	virtual void updateLink(DesuraId id, const char* args);
+		void enableSave();
+		gcRefPtr<UserCore::Item::ItemTaskGroup> newTaskGroup(uint32 type);
 
-	virtual bool isKnownBranch(MCFBranch branch, DesuraId id);
-	virtual bool isItemFavorite(DesuraId id);
-	
-	virtual void regenLaunchScripts();
-	
-	void saveItem(UserCore::Item::ItemInfoI* pItem) override;
+		DesuraId addLink(const char* name, const char* exe, const char* args) override;
+		void updateLink(DesuraId id, const char* args) override;
 
-protected:
-	class ParseInfo;
+		bool isKnownBranch(MCFBranch branch, DesuraId id) override;
+		bool isItemFavorite(DesuraId id) override;
 
-	void parseXml(uint16 statusOverride = 0);
+		void regenLaunchScripts() override;
 
-	void parseLoginXml(const XML::gcXMLElement &gamesNode, const XML::gcXMLElement &devNodes);
-	void parseLoginXml2(const XML::gcXMLElement &gamesNode, const XML::gcXMLElement &platformNodes);
-	void postParseLoginXml();
+		void saveItem(gcRefPtr<UserCore::Item::ItemInfoI> pItem) override;
 
-	void parseGamesXml(ParseInfo &pi);
-	void parseGameXml(DesuraId id, ParseInfo &pi);
+		gc_IMPLEMENT_REFCOUNTING(ItemManager);
 
-	void parseModsXml(UserCore::Item::ItemInfo* parent, ParseInfo &pi);
-	void parseModXml(UserCore::Item::ItemInfo* parent, DesuraId id, ParseInfo &pi);
+	protected:
+		class ParseInfo;
 
-	void parseItemUpdateXml(const char* area, const XML::gcXMLElement &itemsNode);
+		void parseXml(uint16 statusOverride = 0);
 
-	UserCore::Item::ItemInfo* createNewItem(DesuraId pid, DesuraId id, ParseInfo &pi);
-	void updateItem(UserCore::Item::ItemInfo* info, ParseInfo &pi);
+		void parseLoginXml(const XML::gcXMLElement &gamesNode, const XML::gcXMLElement &devNodes);
+		void parseLoginXml2(const XML::gcXMLElement &gamesNode, const XML::gcXMLElement &platformNodes);
+		void postParseLoginXml();
 
-	DesuraId getParentId(const XML::gcXMLElement &gameNode, const XML::gcXMLElement &infoNode);
+		void parseGamesXml(ParseInfo &pi);
+		void parseGameXml(DesuraId id, ParseInfo &pi);
 
-	void processLeftOvers(InfoMaps &maps, bool addMissing);
+		void parseModsXml(gcRefPtr<UserCore::Item::ItemInfo> parent, ParseInfo &pi);
+		void parseModXml(gcRefPtr<UserCore::Item::ItemInfo> parent, DesuraId id, ParseInfo &pi);
 
-	//! Finds the index of an item given the internal id
-	//!
-	//! @param internId Internal id of item
-	//! @return Item index
-	//!
-	uint32 findItemIndex(DesuraId id);
+		void parseItemUpdateXml(const char* area, const XML::gcXMLElement &itemsNode);
 
+		gcRefPtr<UserCore::Item::ItemInfo> createNewItem(DesuraId pid, DesuraId id, ParseInfo &pi);
+		void updateItem(gcRefPtr<UserCore::Item::ItemInfo> info, ParseInfo &pi);
 
-	void loadDbItems();
-	void saveDbItems(bool fullSave = false);
-	void updateItemIds();
+		DesuraId getParentId(const XML::gcXMLElement &gameNode, const XML::gcXMLElement &infoNode);
 
-	friend class User;
-	friend class UpdateThreadOld;
+		void processLeftOvers(InfoMaps &maps, bool addMissing);
 
-	EventV onUpdateEvent;
-	Event<DesuraId> onRecentUpdateEvent;
-	Event<DesuraId> onFavoriteUpdateEvent;
-	Event<DesuraId> onNewItemEvent;
-
-	void migrateOldItemInfo(const char* olddb, const char* newdb);
-	void migrateStandaloneFiles();
-
-	void generateInfoMaps(const XML::gcXMLElement &gamesNode, InfoMaps* maps);
+		//! Finds the index of an item given the internal id
+		//!
+		//! @param internId Internal id of item
+		//! @return Item index
+		//!
+		uint32 findItemIndex(DesuraId id);
 
 
-	void parseKnownBranches(const XML::gcXMLElement &gamesNode);
+		void loadDbItems();
+		void saveDbItems(bool fullSave = false);
+		void updateItemIds();
 
-	void onNewItem(DesuraId id);
-	bool isDelayLoading();
+		friend class User;
+		friend class UpdateThreadOld;
 
-	void loadFavList();
+		EventV onUpdateEvent;
+		Event<DesuraId> onRecentUpdateEvent;
+		Event<DesuraId> onFavoriteUpdateEvent;
+		Event<DesuraId> onNewItemEvent;
 
-private:
-	uint32 m_uiDelayCount;
-	gcString m_szAppPath;
+		void migrateOldItemInfo(const char* olddb, const char* newdb);
+		void migrateStandaloneFiles();
 
-	bool m_bEnableSave;
-	bool m_bFirstLogin;
-
-	User* m_pUser;
-
-	std::mutex m_BranchLock;
-	std::map<MCFBranch, DesuraId> m_mBranchMapping;
-
-	std::mutex m_FavLock;
-	std::vector<DesuraId> m_vFavList;
-};
+		void generateInfoMaps(const XML::gcXMLElement &gamesNode, InfoMaps* maps);
 
 
+		void parseKnownBranches(const XML::gcXMLElement &gamesNode);
+
+		void onNewItem(DesuraId id);
+		bool isDelayLoading();
+
+		void loadFavList();
+
+	private:
+		uint32 m_uiDelayCount;
+		gcString m_szAppPath;
+
+		bool m_bEnableSave;
+		bool m_bFirstLogin;
+
+		gcRefPtr<User> m_pUser;
+
+		std::mutex m_BranchLock;
+		std::map<MCFBranch, DesuraId> m_mBranchMapping;
+
+		std::mutex m_FavLock;
+		std::vector<DesuraId> m_vFavList;
+	};
 
 
-inline uint32 ItemManager::getCount()
-{
-	return BaseManager::getCount();
-}
-
-inline UserCore::Item::ItemInfoI* ItemManager::getItemInfo(uint32 index)
-{
-	UserCore::Item::ItemHandleI* handle = getItemHandle(index);
-
-	if (handle)
-		return handle->getItemInfo();
-
-	return nullptr;
-}
-
-inline UserCore::Item::ItemHandleI* ItemManager::getItemHandle(uint32 index)
-{
-	return BaseManager::getItem(index);
-}
 
 
-inline EventV* ItemManager::getOnUpdateEvent()
-{
-	return &onUpdateEvent;
-}
+	inline uint32 ItemManager::getCount()
+	{
+		return BaseManager::getCount();
+	}
 
-inline Event<DesuraId>* ItemManager::getOnRecentUpdateEvent()
-{
-	return &onRecentUpdateEvent;
-}
+	inline gcRefPtr<UserCore::Item::ItemInfoI> ItemManager::getItemInfo(uint32 index)
+	{
+		auto handle = getItemHandle(index);
 
-inline Event<DesuraId>* ItemManager::getOnFavoriteUpdateEvent()
-{
-	return &onFavoriteUpdateEvent;
-}
+		if (handle)
+			return handle->getItemInfo();
 
-inline Event<DesuraId>* ItemManager::getOnNewItemEvent()
-{
-	return &onNewItemEvent;
-}
+		return nullptr;
+	}
 
+	inline gcRefPtr<UserCore::Item::ItemHandleI> ItemManager::getItemHandle(uint32 index)
+	{
+		return BaseManager::getItem(index);
+	}
+
+
+	inline EventV& ItemManager::getOnUpdateEvent()
+	{
+		return onUpdateEvent;
+	}
+
+	inline Event<DesuraId>& ItemManager::getOnRecentUpdateEvent()
+	{
+		return onRecentUpdateEvent;
+	}
+
+	inline Event<DesuraId>& ItemManager::getOnFavoriteUpdateEvent()
+	{
+		return onFavoriteUpdateEvent;
+	}
+
+	inline Event<DesuraId>& ItemManager::getOnNewItemEvent()
+	{
+		return onNewItemEvent;
+	}
 }
 
 #endif //DESURA_ITEMMANAGER_H

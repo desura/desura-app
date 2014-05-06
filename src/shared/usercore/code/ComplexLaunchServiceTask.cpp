@@ -35,10 +35,7 @@ $/LicenseInfo$
 
 #include "McfManager.h"
 
-namespace UserCore
-{
-namespace ItemTask
-{
+using namespace UserCore::ItemTask;
 
 enum
 {
@@ -55,17 +52,11 @@ enum
 	T_UPDATEREMOVE,
 };
 
-ComplexLaunchServiceTask::ComplexLaunchServiceTask(UserCore::Item::ItemHandle *handle, bool clean, MCFBranch branch, MCFBuild build, UserCore::Item::Helper::InstallerHandleHelperI* ihh) 
+ComplexLaunchServiceTask::ComplexLaunchServiceTask(gcRefPtr<UserCore::Item::ItemHandleI> handle, bool clean, MCFBranch branch, MCFBuild build, gcRefPtr<UserCore::Item::Helper::InstallerHandleHelperI> &ihh) 
 	: BaseItemServiceTask(UserCore::Item::ITEM_STAGE::STAGE_INSTALL_COMPLEX, "ComplexLaunch", handle, branch, build)
+	, m_pIHH(ihh)
+	, m_bClean(clean)
 {
-	m_pIPCIM = nullptr;
-	m_iTier = 0;
-	m_iMode = 0;
-	m_bClean = clean;
-	m_bCompleteStage = false;
-	m_bLaunch = false;
-	m_bHashMissMatch = false;
-	m_pIHH = ihh;
 }
 
 ComplexLaunchServiceTask::~ComplexLaunchServiceTask()
@@ -504,8 +495,4 @@ void ComplexLaunchServiceTask::onProgress(MCFCore::Misc::ProgressInfo &p)
 
 	p.percent = percent;
 	onMcfProgressEvent(p);
-}
-
-
-}
 }

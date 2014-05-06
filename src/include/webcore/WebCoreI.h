@@ -94,13 +94,13 @@ namespace WebCore
 		PlayJavaScript
 	};
 
-	class CookieCallbackI
+	class CookieCallbackI : gcRefBase
 	{
 	public:
 		virtual void operator()(const char* szRootUrl, const char* szName, const char* szValue)=0;
 	};
 
-	class WebCoreI
+	class WebCoreI : public gcRefBase
 	{
 	public:
 		//! Init webcore
@@ -161,7 +161,7 @@ namespace WebCore
 		//!
 		//! @return CookieUpdate event
 		//!
-		virtual EventV* getCookieUpdateEvent()=0;
+		virtual EventV& getCookieUpdateEvent()=0;
 
 
 		//! Calls the update poll with the post data
@@ -354,7 +354,7 @@ namespace WebCore
 		MOCK_METHOD4(getItemInfo, void(DesuraId id, XML::gcXMLDocument &xmlDocument, MCFBranch mcfBranch, MCFBuild mcfBuild));
 		MOCK_METHOD1(getInstalledItemList, void(XML::gcXMLDocument &xmlDocument));
 		MOCK_METHOD2(getCDKey, gcString(DesuraId id, MCFBranch branch));
-		MOCK_METHOD0(getCookieUpdateEvent, EventV*());
+		MOCK_METHOD0(getCookieUpdateEvent, EventV&());
 		MOCK_METHOD2(getUpdatePoll, void(XML::gcXMLDocument &xmlDocument, const std::map<std::string, std::string> &post));
 		MOCK_METHOD1(getLoginItems, void(XML::gcXMLDocument &xmlDocument));
 		MOCK_METHOD1(setCookie, void(const char* sess));

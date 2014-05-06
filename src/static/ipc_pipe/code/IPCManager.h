@@ -278,8 +278,6 @@ private:
 	std::shared_ptr<PendingPartRecvMessage> m_pPendingMessage;
 };
 
-
-
 template <class T>
 T* CreateIPCClass(IPC::IPCManagerI* mng, const char* name)
 {

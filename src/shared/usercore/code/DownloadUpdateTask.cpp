@@ -39,7 +39,7 @@ $/LicenseInfo$
 using namespace UserCore::Task;
 
 
-DownloadUpdateTask::DownloadUpdateTask(UserCore::User* user, uint32 appver, uint32 build, bool bForced) 
+DownloadUpdateTask::DownloadUpdateTask(gcRefPtr<UserCore::UserI> user, uint32 appver, uint32 build, bool bForced) 
 	: UserTask(user)
 	, m_uiAppVer(appver)
 	, m_uiAppBuild(build)

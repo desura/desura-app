@@ -33,7 +33,7 @@ $/LicenseInfo$
 
 using namespace UserCore::Thread;
 
-UploadThread::UploadThread(UploadThreadInfo* info) : MCFThread( "Upload Thread", info->itemId )
+UploadThread::UploadThread(gcRefPtr<UploadThreadInfo> info) : MCFThread("Upload Thread", info->itemId)
 {
 	m_pInfo = info;
 

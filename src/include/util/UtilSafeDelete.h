@@ -137,6 +137,13 @@ void safe_delete(std::shared_ptr<T> &pShared)
 	pShared.reset();
 }
 
+template <typename T>
+void safe_delete(gcRefPtr<T> &pShared)
+{
+	gcAssert(pShared.getRefCt() <= 1);
+	pShared = gcRefPtr<T>();
+}
+
 
 template <typename T>
 class AutoDelete

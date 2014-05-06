@@ -106,12 +106,10 @@ namespace
 }
 
 
-namespace UserCore
-{
-namespace Misc
-{
+using namespace UserCore::Misc;
 
-GameExplorerInfo::GameExplorerInfo(DesuraId id, UserCore::UserI* user)
+
+GameExplorerInfo::GameExplorerInfo(DesuraId id, gcRefPtr<UserCore::UserI> &user)
 {
 	m_Id = id;
 
@@ -127,7 +125,7 @@ GameExplorerInfo::GameExplorerInfo(DesuraId id, UserCore::UserI* user)
 GameExplorerInfo::~GameExplorerInfo()
 {
 	if (m_pItemInfo)
-		*m_pItemInfo->getInfoChangeEvent() -= delegate(this, &GameExplorerInfo::onInfoChanged);
+		m_pItemInfo->getInfoChangeEvent() -= delegate(this, &GameExplorerInfo::onInfoChanged);
 }
 
 void GameExplorerInfo::regEvent()
@@ -140,8 +138,7 @@ void GameExplorerInfo::regEvent()
 	if (!m_pItemInfo)
 		return;
 
-	Event<UserCore::Item::ItemInfoI::ItemInfo_s> &e = *m_pItemInfo->getInfoChangeEvent();
-	e += delegate(this, &GameExplorerInfo::onInfoChanged);
+	m_pItemInfo->getInfoChangeEvent() += delegate(this, &GameExplorerInfo::onInfoChanged);
 }
 
 void GameExplorerInfo::onInfoChanged(UserCore::Item::ItemInfoI::ItemInfo_s &info)
@@ -417,7 +414,7 @@ gcWString GameExplorerInfo::generateXml()
 
 	gcString szGenere(m_pItemInfo->getGenre());
 	
-	std::vector<UserCore::Item::Misc::ExeInfoI*> vExeList;
+	std::vector<gcRefPtr<UserCore::Item::Misc::ExeInfoI>> vExeList;
 	m_pItemInfo->getExeList(vExeList);
 
 
@@ -554,8 +551,4 @@ gcWString GameExplorerInfo::generateXml()
 	res += doc.ToWString(false);
 
 	return res;
-}
-
-
-}
 }

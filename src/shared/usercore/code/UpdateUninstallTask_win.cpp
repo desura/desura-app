@@ -40,7 +40,7 @@ void UpdateUninstallTask::doTask()
 
 	gcAssert(service && itemManager);
 
-	std::vector<UserCore::Item::ItemInfoI*> aList;
+	std::vector<gcRefPtr<UserCore::Item::ItemInfoI>> aList;
 	itemManager->getAllItems(aList);
 
 	std::vector<int64> vUninstallIds;

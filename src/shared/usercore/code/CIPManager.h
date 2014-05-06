@@ -35,44 +35,46 @@ $/LicenseInfo$
 namespace UserCore
 {
 
-class User;
+	class User;
 
-namespace Thread
-{
-	class MCFThreadI;
-}
+	namespace Thread
+	{
+		class MCFThreadI;
+	}
 
-class CIPManager : public UserCore::CIPManagerI
-{
-public:
-	CIPManager(UserCore::User* user);
-	~CIPManager();
+	class CIPManager : public UserCore::CIPManagerI
+	{
+	public:
+		CIPManager(gcRefPtr<UserCore::User> user);
+		~CIPManager();
 
-	virtual void getCIPList(std::vector<UserCore::Misc::CIPItem> &list);
-	virtual void getItemList(std::vector<UserCore::Misc::CIPItem> &list);
+		virtual void getCIPList(std::vector<UserCore::Misc::CIPItem> &list);
+		virtual void getItemList(std::vector<UserCore::Misc::CIPItem> &list);
 
-	virtual void updateItem(DesuraId id, gcString path);
-	virtual void deleteItem(DesuraId id);
+		virtual void updateItem(DesuraId id, gcString path);
+		virtual void deleteItem(DesuraId id);
 
-	virtual void refreshList();
-	virtual bool getCIP(UserCore::Misc::CIPItem& info);
+		virtual void refreshList();
+		virtual bool getCIP(UserCore::Misc::CIPItem& info);
 
-	virtual EventV& getItemsUpdatedEvent();
+		virtual EventV& getItemsUpdatedEvent();
 
-protected:
-	void onRefreshComplete(uint32&);
-	void onRefreshError(gcException& e);
 
-	EventV onItemsUpdatedEvent;
+		gc_IMPLEMENT_REFCOUNTING(CIPManager);
 
-private:
-	gcString m_szDBName;
-	User* m_pUser;
+	protected:
+		void onRefreshComplete(uint32&);
+		void onRefreshError(gcException& e);
 
-	bool m_bRefreshComplete;
-	UserCore::Thread::MCFThreadI* m_pThread;
-};
+		EventV onItemsUpdatedEvent;
 
+	private:
+		gcString m_szDBName;
+		gcRefPtr<User> m_pUser;
+
+		bool m_bRefreshComplete = false;;
+		gcRefPtr<UserCore::Thread::MCFThreadI> m_pThread;
+	};
 }
 
 #endif //DESURA_CIPMANAGER_H

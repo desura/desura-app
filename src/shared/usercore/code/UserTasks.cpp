@@ -46,7 +46,7 @@ namespace Task
 {
 
 
-DeleteThread::DeleteThread(UserCore::UserI* user, ::Thread::BaseThread *thread) 
+DeleteThread::DeleteThread(gcRefPtr<UserCore::UserI> user, ::Thread::BaseThread *thread) 
 	: UserTask(user)
 {
 	m_pThread = thread;
@@ -69,7 +69,7 @@ void DeleteThread::doTask()
 ////////////////////////////////////////////////////////////////////////////
 
 
-DownloadImgTask::DownloadImgTask(UserCore::UserI* user, UserCore::Item::ItemInfo* itemInfo, uint8 image) 
+DownloadImgTask::DownloadImgTask(gcRefPtr<UserCore::UserI> user, gcRefPtr<UserCore::Item::ItemInfo> itemInfo, uint8 image) 
 	: UserTask(user)
 {
 	m_Image = image;
@@ -113,7 +113,7 @@ void DownloadImgTask::doTask()
 ////////////////////////////////////////////////////////////////////////////
 
 
-ChangeAccountTask::ChangeAccountTask(UserCore::UserI* user, DesuraId id, uint8 action ) : UserTask(user, id)
+ChangeAccountTask::ChangeAccountTask(gcRefPtr<UserCore::UserI> user, DesuraId id, uint8 action ) : UserTask(user, id)
 {
 	m_Action = action;
 }
@@ -159,7 +159,7 @@ void ChangeAccountTask::doTask()
 ////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////
 
-DownloadBannerTask::DownloadBannerTask(UserCore::UserI* user, const MCFCore::Misc::DownloadProvider& dp) 
+DownloadBannerTask::DownloadBannerTask(gcRefPtr<UserCore::UserI> user, const MCFCore::Misc::DownloadProvider& dp) 
 	: UserTask(user)
 	, m_DPInfo(this, dp)
 {
@@ -191,7 +191,7 @@ void DownloadBannerTask::doTask()
 ////////////////////////////////////////////////////////////////////////////
 
 
-DownloadAvatarTask::DownloadAvatarTask(UserCore::UserI* user,  const char* url, uint32 userId) : UserTask(user)
+DownloadAvatarTask::DownloadAvatarTask(gcRefPtr<UserCore::UserI> user,  const char* url, uint32 userId) : UserTask(user)
 {
 	m_szUrl = gcString(url);
 	m_uiUserId = userId;
@@ -246,7 +246,7 @@ void DownloadAvatarTask::doTask()
 ////////////////////////////////////////////////////////////////////////////
 
 
-GatherInfoTask::GatherInfoTask(UserCore::UserI* user,  DesuraId id, bool addToAccount) : UserTask(user, id)
+GatherInfoTask::GatherInfoTask(gcRefPtr<UserCore::UserI> user,  DesuraId id, bool addToAccount) : UserTask(user, id)
 {
 	m_bAddToAccount = addToAccount;
 }
@@ -289,7 +289,8 @@ void GatherInfoTask::doTask()
 ////////////////////////////////////////////////////////////////////////////
 
 
-CDKeyTask::CDKeyTask(UserCore::UserI* user, DesuraId id) : UserTask(user, id)
+CDKeyTask::CDKeyTask(gcRefPtr<UserCore::UserI> user, DesuraId id) 
+	: UserTask(user, id)
 {
 }
 
@@ -352,7 +353,8 @@ public:
 };
 
 
-MigrateStandaloneTask::MigrateStandaloneTask(UserCore::UserI* user, const std::vector<UTIL::FS::Path> &fileList) : UserTask(user, DesuraId())
+MigrateStandaloneTask::MigrateStandaloneTask(gcRefPtr<UserCore::UserI> user, const std::vector<UTIL::FS::Path> &fileList) 
+	: UserTask(user, DesuraId())
 {
 	m_vFileList = fileList;
 }
@@ -360,7 +362,7 @@ MigrateStandaloneTask::MigrateStandaloneTask(UserCore::UserI* user, const std::v
 void MigrateStandaloneTask::doTask()
 {
 	WildcardManager wildc = WildcardManager();
-	wildc.onNeedSpecialEvent += delegate(getUserCore()->getNeedWildCardEvent());
+	wildc.onNeedSpecialEvent += delegate(&getUserCore()->getNeedWildCardEvent());
 
 	for (size_t x=0; x<m_vFileList.size(); x++)
 	{
@@ -421,7 +423,8 @@ void MigrateStandaloneTask::doTask()
 ////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////
 
-RegenLaunchScriptsTask::RegenLaunchScriptsTask(UserCore::UserI* user) : UserTask(user, DesuraId())
+RegenLaunchScriptsTask::RegenLaunchScriptsTask(gcRefPtr<UserCore::UserI> user) 
+	: UserTask(user, DesuraId())
 {
 }
 

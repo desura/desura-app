@@ -959,11 +959,11 @@ bool ItemForm::stopStagePrompt()
 	return gcMessageBox(this, prompt, title, wxICON_QUESTION|wxYES_NO) == wxYES;
 }
 
-void ItemForm::getGatherInfoHelper(UserCore::Item::Helper::GatherInfoHandlerHelperI** helper)
+void ItemForm::getGatherInfoHelper(gcRefPtr<UserCore::Item::Helper::GatherInfoHandlerHelperI> &helper)
 {
-	GatherInfoHandlerHelper *gihh = new GatherInfoHandlerHelper();
+	auto gihh = gcRefPtr<GatherInfoHandlerHelper>::create();
 
-	*helper = gihh;
+	helper = gihh;
 
 	gihh->onSelectBranchEvent += guiDelegate(this, &ItemForm::onSelectBranch, MODE_PENDING_WAIT);
 	gihh->onShowComplexPromptEvent += guiDelegate(this, &ItemForm::onShowComplexPrompt, MODE_PENDING_WAIT);

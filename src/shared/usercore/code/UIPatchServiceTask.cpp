@@ -29,13 +29,11 @@ $/LicenseInfo$
 #include "IPCServiceMain.h"
 #include "IPCUninstallBranch.h"
 
-namespace UserCore
-{
-namespace ItemTask
-{
+using namespace UserCore::ItemTask;
 
 
-UIPatchServiceTask::UIPatchServiceTask(UserCore::Item::ItemHandle* handle, MCFBranch installBranch, MCFBuild installBuild) : UIBaseServiceTask(UserCore::Item::ITEM_STAGE::STAGE_UNINSTALL_PATCH, "UnInstallPatch", handle, installBranch, installBuild)
+UIPatchServiceTask::UIPatchServiceTask(gcRefPtr<UserCore::Item::ItemHandleI> handle, MCFBranch installBranch, MCFBuild installBuild) 
+	: UIBaseServiceTask(UserCore::Item::ITEM_STAGE::STAGE_UNINSTALL_PATCH, "UnInstallPatch", handle, installBranch, installBuild)
 {
 	m_pIPCIM = nullptr;
 }
@@ -100,8 +98,3 @@ void UIPatchServiceTask::onComplete()
 	getItemHandle()->getInternal()->goToStageDownload(getMcfBranch(), getMcfBuild());
 	UIBaseServiceTask::onComplete();
 }
-
-
-}
-}
-

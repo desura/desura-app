@@ -46,30 +46,34 @@ namespace UserCore
 		class UserTask : public ::Thread::BaseTask
 		{
 		public:
-			//! Constuctor
+			//! Constructor
 			//!
 			//! @param user Usercore handle
 			//! @param itemId Item id
 			//!
-			UserTask(UserCore::UserI *user, DesuraId itemId = DesuraId());
+			UserTask(gcRefPtr<UserCore::UserI> &user, DesuraId itemId = DesuraId());
 			virtual ~UserTask();
 
-			UserCore::UserI* getUserCore();
-			WebCore::WebCoreI* getWebCore();
+			gcRefPtr<UserCore::UserI> getUserCore();
+			gcRefPtr<WebCore::WebCoreI> getWebCore();
+
+
+			gc_IMPLEMENT_REFCOUNTING(UserTask);
 
 		protected:
 			DesuraId getItemId();
-			UserCore::Item::ItemInfo* getItemInfo();
+			gcRefPtr<UserCore::Item::ItemInfo> getItemInfo();
 
 			virtual void onStop();
 			volatile bool isStopped();
 
 			std::atomic<bool> m_bStopped;
+
 		private:
 			DesuraId m_iId;
 
-			WebCore::WebCoreI* m_pWebCore;
-			UserCore::UserI* m_pUserCore;
+			gcRefPtr<WebCore::WebCoreI> m_pWebCore;
+			gcRefPtr<UserCore::UserI> m_pUserCore;
 		};
 
 
@@ -78,13 +82,15 @@ namespace UserCore
 			return m_iId;
 		}
 
-		inline WebCore::WebCoreI* UserTask::getWebCore()
+		inline gcRefPtr<WebCore::WebCoreI> UserTask::getWebCore()
 		{
+			gcAssert(m_pWebCore);
 			return m_pWebCore;
 		}
 
-		inline UserCore::UserI* UserTask::getUserCore()
+		inline gcRefPtr<UserCore::UserI> UserTask::getUserCore()
 		{
+			gcAssert(m_pUserCore);
 			return m_pUserCore;
 		}
 	}

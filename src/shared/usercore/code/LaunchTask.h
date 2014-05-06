@@ -39,26 +39,27 @@ $/LicenseInfo$
 
 namespace UserCore
 {
-namespace ItemTask
-{
-
-//! Install check thread sees if an item is installed on the local computer
-//!
-class LaunchTask : public BaseItemTask
-{
-public:
-	LaunchTask(UserCore::Item::ItemHandle *handle)  : BaseItemTask(UserCore::Item::ITEM_STAGE::STAGE_LAUNCH, "Launch", handle)
+	namespace ItemTask
 	{
-	}
 
-protected:
-	void doRun()
-	{
-		getItemHandle()->getInternal()->completeStage(true);
-	}
-};
+		//! Install check thread sees if an item is installed on the local computer
+		//!
+		class LaunchTask : public BaseItemTask
+		{
+		public:
+			LaunchTask(gcRefPtr<UserCore::Item::ItemHandleI> handle) 
+				: BaseItemTask(UserCore::Item::ITEM_STAGE::STAGE_LAUNCH, "Launch", handle)
+			{
+			}
 
-}
+		protected:
+			void doRun()
+			{
+				getItemHandle()->getInternal()->completeStage(true);
+			}
+		};
+
+	}
 }
 
 #endif //DESURA_LAUNCHTASK_H

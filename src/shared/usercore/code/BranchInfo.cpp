@@ -37,7 +37,7 @@ $/LicenseInfo$
 
 using namespace UserCore::Item;
 
-BranchInfo::BranchInfo(MCFBranch branchId, DesuraId itemId, BranchInstallInfo* bii, uint32 platformId, uint32 userid)
+BranchInfo::BranchInfo(MCFBranch branchId, DesuraId itemId, gcRefPtr<BranchInstallInfo> bii, uint32 platformId, uint32 userid)
 	: m_InstallInfo(bii)
 	, m_ItemId(itemId)
 	, m_uiBranchId(branchId)
@@ -527,7 +527,7 @@ void BranchInfo::setLinkInfo(const char* name)
 #endif
 }
 
-BranchInstallInfo* BranchInfo::getInstallInfo()
+gcRefPtr<BranchInstallInfo> BranchInfo::getInstallInfo()
 {
 	return m_InstallInfo;
 }
@@ -561,6 +561,8 @@ namespace UnitTest
 		}
 
 		uint32 m_nStatus = 0;
+
+		gc_MOCK_REFCOUNTING(StubBranchItemInfo2);
 	};
 
 	TEST(BranchInfo, CDKeyPerUser)

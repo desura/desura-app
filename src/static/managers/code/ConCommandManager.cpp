@@ -50,9 +50,9 @@ ConsoleCommandManager::~ConsoleCommandManager()
 {
 }
 
-bool ConsoleCommandManager::RegCCom(ConCommand* var)
+bool ConsoleCommandManager::RegCCom(gcRefPtr<ConCommand> &var)
 {
-	ConCommand* temp = findItem(var->getName());
+	auto temp = findItem(var->getName());
 	
 	if (temp)
 		return false;
@@ -62,17 +62,17 @@ bool ConsoleCommandManager::RegCCom(ConCommand* var)
 }
 
 //if this screws up its too late any way
-void  ConsoleCommandManager::UnRegCCom(ConCommand* var)
+void  ConsoleCommandManager::UnRegCCom(gcRefPtr<ConCommand> &var)
 {
 	removeItem(var->getName());
 }
 
-ConCommand* ConsoleCommandManager::findCCommand(const char* name)
+gcRefPtr<ConCommand> ConsoleCommandManager::findCCommand(const char* name)
 {
 	return findItem(name);
 }
 
-void ConsoleCommandManager::getConCommandList(std::vector<ConCommand*> &vList)
+void ConsoleCommandManager::getConCommandList(std::vector<gcRefPtr<ConCommand>> &vList)
 {
 	for (uint32 x=0; x<getCount(); x++)
 		vList.push_back(getItem(x));

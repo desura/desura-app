@@ -84,7 +84,7 @@ void CVar::reg(const char* name)
 	if (!m_pCVarManager)
 		return;
 
-	m_bReg = m_pCVarManager->RegCVar(this);
+	m_bReg = m_pCVarManager->RegCVar(gcRefPtr<CVar>(this));
 
 	if (!m_bReg)
 		Warning("Failed to register cvar [{0}] (maybe duplicate)\n", name);		
@@ -93,7 +93,7 @@ void CVar::reg(const char* name)
 void CVar::deregister()
 {
 	if (m_pCVarManager && m_bReg)
-		m_pCVarManager->UnRegCVar(this);
+		m_pCVarManager->UnRegCVar(gcRefPtr<CVar>(this));
 
 	m_bReg = false;
 	m_pCVarManager = nullptr;

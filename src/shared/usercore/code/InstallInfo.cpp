@@ -28,10 +28,8 @@ $/LicenseInfo$
 
 #include "XMLMacros.h"
 
-namespace UserCore
-{
-namespace Misc
-{
+using namespace UserCore::Misc;
+
 
 InstallInfo::InstallInfo(DesuraId id, DesuraId pid)
 {
@@ -44,7 +42,7 @@ InstallInfo::~InstallInfo()
 {
 }
 
-void InstallInfo::loadXmlData(const XML::gcXMLElement &xmlNode, WildcardManager* pWildCard)
+void InstallInfo::loadXmlData(const XML::gcXMLElement &xmlNode, gcRefPtr<WildcardManager> &pWildCard)
 {
 	WildcardManager lwc(pWildCard);
 
@@ -97,7 +95,4 @@ void InstallInfo::loadXmlData(const XML::gcXMLElement &xmlNode, WildcardManager*
 		safe_delete(CheckRes);
 		safe_delete(PathRes);
 	});
-}
-
-}
 }

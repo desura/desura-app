@@ -42,13 +42,15 @@ void LoadTheme(wxWindow* win, const char* name)
 }
 
 
-WindowItem::WindowItem(wxFrame* frame) : BaseItem()
+WindowItem::WindowItem(wxFrame* frame) 
+	: BaseItem()
 {
 	m_uiHash = frame->GetId();
 	m_pFrame = frame;
 }
 
-WindowManager::WindowManager() : BaseManager(true)
+WindowManager::WindowManager() 
+	: BaseManager()
 {
 
 }
@@ -56,13 +58,13 @@ WindowManager::WindowManager() : BaseManager(true)
 void WindowManager::registerWindow(wxFrame* win)
 {
 	if (win)
-		addItem(new WindowItem(win));
+		addItem(gcRefPtr<WindowItem>::create(win));
 }
 
 void WindowManager::unRegisterWindow(wxFrame* win)
 {
 	if (win)
-		removeItem(win->GetId(), true);
+		removeItem(win->GetId());
 }
 
 void WindowManager::getWindowList(std::vector<wxFrame*> &vList)

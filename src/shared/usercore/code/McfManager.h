@@ -72,7 +72,7 @@ namespace UserCore
 
 	class MigrateInfo;
 
-	class MCFManagerI
+	class MCFManagerI : public gcRefBase
 	{
 	public:
 		virtual gcString getMcfPath(UserCore::Item::ItemInfoI* item, bool isUnAuthed =false)=0;
@@ -107,6 +107,8 @@ namespace UserCore
 		MOCK_METHOD1(delAllMcfPath, void(DesuraId));
 
 		MOCK_METHOD0(getMcfSavePath, gcString());
+
+		gc_MOCK_REFCOUNTING(MCFManagerMock);
 	};
 #endif
 
@@ -130,6 +132,8 @@ namespace UserCore
 		gcString getMcfSavePath() override;
 
 		void init();
+
+		gc_IMPLEMENT_REFCOUNTING(MCFManager);
 
 	protected:
 		friend class UnitTest::MCFManagerFixture;

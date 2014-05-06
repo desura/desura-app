@@ -56,7 +56,7 @@ namespace UserCore
 			uint32 done;
 		};
 
-		class ToolTransaction
+		class ToolTransaction : public gcRefCount
 		{
 		public:
 			ToolTransaction()
@@ -115,7 +115,7 @@ namespace UserCore
 		class ItemInfo;
 	}
 
-	class ToolManagerI
+	class ToolManagerI : public gcRefBase
 	{
 	public:
 		//! Removes an install or download transaction
@@ -128,21 +128,21 @@ namespace UserCore
 		//! @param downloadSize download size
 		//! @return transaction id
 		//!
-		virtual ToolTransactionId downloadTools(Misc::ToolTransaction* transaction)=0;
+		virtual ToolTransactionId downloadTools(gcRefPtr<Misc::ToolTransaction> transaction) = 0;
 
 		//! Installs all required tools
 		//!
 		//! @param transaction Transaction information (tool manager will own it)
 		//! @return transaction id
 		//!
-		virtual ToolTransactionId installTools(Misc::ToolTransaction* transaction)=0;
+		virtual ToolTransactionId installTools(gcRefPtr<Misc::ToolTransaction> transaction) = 0;
 
 		//! Updates the event callbacks of a transaction (i.e. will be the same as the new events). Will ignore tool list
 		//!
 		//! @param ttid TOol Transaction id
 		//! @param transaction Transaction information (tool manager will own it)
 		//!
-		virtual bool updateTransaction(ToolTransactionId ttid, Misc::ToolTransaction* transaction)=0;
+		virtual bool updateTransaction(ToolTransactionId ttid, gcRefPtr<Misc::ToolTransaction> transaction) = 0;
 
 		//! Parse xml from an item
 		//!
@@ -169,7 +169,7 @@ namespace UserCore
 
 		//! checks the item install script and finds the tools that the item will use
 		//!
-		virtual void findJSTools(UserCore::Item::ItemInfo* item)=0;
+		virtual void findJSTools(gcRefPtr<UserCore::Item::ItemInfo> item) = 0;
 
 		//! init the script engine. Must be called before findJSTools is called. Can be called on different threads
 		//!
@@ -207,16 +207,16 @@ namespace UserCore
 	{
 	public:
 		MOCK_METHOD2(removeTransaction, void(ToolTransactionId ttid, bool forced));
-		MOCK_METHOD1(downloadTools, ToolTransactionId(Misc::ToolTransaction* transaction));
-		MOCK_METHOD1(installTools, ToolTransactionId(Misc::ToolTransaction* transaction));
-		MOCK_METHOD2(updateTransaction, bool(ToolTransactionId ttid, Misc::ToolTransaction* transaction));
+		MOCK_METHOD1(downloadTools, ToolTransactionId(gcRefPtr<Misc::ToolTransaction> transaction));
+		MOCK_METHOD1(installTools, ToolTransactionId(gcRefPtr<Misc::ToolTransaction> transaction));
+		MOCK_METHOD2(updateTransaction, bool(ToolTransactionId ttid, gcRefPtr<Misc::ToolTransaction> transaction));
 		MOCK_METHOD1(parseXml, void(const XML::gcXMLElement &toolinfoNode));
 		MOCK_METHOD1(areAllToolsValid, bool(const std::vector<DesuraId> &list));
 		MOCK_METHOD1(areAllToolsDownloaded, bool(const std::vector<DesuraId> &list));
 		MOCK_METHOD1(areAllToolsInstalled, bool(const std::vector<DesuraId> &list));
 		MOCK_METHOD0(saveItems, void());
 		MOCK_METHOD1(getToolName, std::string(DesuraId toolId));
-		MOCK_METHOD1(findJSTools, void(UserCore::Item::ItemInfo* item));
+		MOCK_METHOD1(findJSTools, void(gcRefPtr<UserCore::Item::ItemInfo> item));
 		MOCK_METHOD0(initJSEngine, bool());
 		MOCK_METHOD0(destroyJSEngine, void());
 		MOCK_METHOD1(invalidateTools, void(std::vector<DesuraId> &list));

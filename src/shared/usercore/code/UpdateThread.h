@@ -41,10 +41,10 @@ namespace XML
 class UpdateThreadI
 {
 public:
-	virtual void setInfo(UserCore::UserI* user, WebCore::WebCoreI* webcore)=0;
-	virtual void doRun()=0;
-	virtual void onStop()=0;
-	virtual bool onMessageReceived(const char* resource, const XML::gcXMLElement &root)=0;
+	virtual void setInfo(gcRefPtr<UserCore::UserI> &user, gcRefPtr<WebCore::WebCoreI> &webcore) = 0;
+	virtual void doRun() = 0;
+	virtual void onStop() = 0;
+	virtual bool onMessageReceived(const char* resource, const XML::gcXMLElement &root) = 0;
 	virtual ~UpdateThreadI(){}
 
 	Event<bool> isStoppedEvent;
@@ -62,31 +62,29 @@ protected:
 
 namespace UserCore
 {
-namespace Thread
-{
+	namespace Thread
+	{
+		//! Polls for Desura updates
+		//!
+		class UpdateThread : public BaseUserThread<UserThreadI, ::Thread::BaseThread>
+		{
+		public:
+			UpdateThread(Event<std::tuple<gcOptional<bool>, gcOptional<bool>, gcOptional<bool>>> *onForcePollEvent, bool loadLoginItems);
+			~UpdateThread();
 
+		protected:
+			void doRun() override;
+			void onStop() override;
 
-//! Polls for Desura updates
-//!
-class UpdateThread : public BaseUserThread<UserThreadI, ::Thread::BaseThread>
-{
-public:
-	UpdateThread(Event<std::tuple<gcOptional<bool>, gcOptional<bool>, gcOptional<bool>>> *onForcePollEvent, bool loadLoginItems);
-	~UpdateThread();
+			virtual bool onMessageReceived(const char* resource, const XML::gcXMLElement &root);
 
-protected:
-	void doRun() override;
-	void onStop() override;
+			void isThreadStopped(bool &stopped);
 
-	virtual bool onMessageReceived(const char* resource, const XML::gcXMLElement &root);
+		private:
+			UpdateThreadI *m_pBaseTask;
+		};
 
-	void isThreadStopped(bool &stopped);
-
-private:
-	UpdateThreadI *m_pBaseTask;
-};
-
-}
+	}
 }
 
 #endif //DESURA_UPDATETHREAD_H

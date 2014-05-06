@@ -27,86 +27,60 @@ $/LicenseInfo$
 #include "BDManager.h"
 #include "User.h"
 
-namespace UserCore
-{
+using namespace UserCore;
 
-BDManager::BDManager(UserCore::User* user)
+
+BDManager::BDManager(gcRefPtr<UserCore::User> user)
+	: m_pUser(user)
 {
-	m_pUser = user;
 }
 
 BDManager::~BDManager()
 {
-	m_BannerLock.lock();
+	std::lock_guard<std::mutex> guard(m_BannerLock);
 
-	std::map<UserCore::Task::DownloadBannerTask*, UserCore::Misc::BannerNotifierI*>::iterator it;
-
-	for (it=m_mDownloadBannerTask.begin(); it != m_mDownloadBannerTask.end(); it++)
+	for (auto it : m_mDownloadBannerTask)
 	{
-		it->first->onDLCompleteEvent -= delegate(this, &BDManager::onBannerComplete);
+		it.first->onDLCompleteEvent -= delegate(this, &BDManager::onBannerComplete);
 	}
-
-	m_BannerLock.unlock();
 }
 
 void BDManager::onBannerComplete(UserCore::Task::BannerCompleteInfo& bci)
 {
-	m_BannerLock.lock();
+	std::lock_guard<std::mutex> guard(m_BannerLock);
 
-	std::map<UserCore::Task::DownloadBannerTask*, UserCore::Misc::BannerNotifierI*>::iterator it;
+	auto it = std::find_if(begin(m_mDownloadBannerTask), end(m_mDownloadBannerTask), [&bci](std::pair<const gcRefPtr<UserCore::Task::DownloadBannerTask>, gcRefPtr<UserCore::Misc::BannerNotifierI>> p){
+		return p.first == bci.task;
+	});
 
-	for (it=m_mDownloadBannerTask.begin(); it != m_mDownloadBannerTask.end(); it++)
-	{
-		if (it->first == bci.task)
-		{
-			if (bci.complete)
-				it->second->onBannerComplete(bci.info);
+	if (it == end(m_mDownloadBannerTask))
+		return;
 
-			m_mDownloadBannerTask.erase(it);
+	if (bci.complete)
+		it->second->onBannerComplete(bci.info);
 
-			break;
-		}
-	}
-
-	m_BannerLock.unlock();
+	m_mDownloadBannerTask.erase(it);
 }
 
-void BDManager::downloadBanner(UserCore::Misc::BannerNotifierI* obj, const MCFCore::Misc::DownloadProvider& provider)
+void BDManager::downloadBanner(gcRefPtr<UserCore::Misc::BannerNotifierI> obj, const MCFCore::Misc::DownloadProvider& provider)
 {
-	m_BannerLock.lock();
+	std::lock_guard<std::mutex> guard(m_BannerLock);
 
-	UserCore::Task::DownloadBannerTask *task = new UserCore::Task::DownloadBannerTask(m_pUser, provider);
+	auto task = gcRefPtr<UserCore::Task::DownloadBannerTask>::create(m_pUser, provider);
 	task->onDLCompleteEvent += delegate(this, &BDManager::onBannerComplete);
 
 	m_mDownloadBannerTask[task] = obj;
 	m_pUser->getThreadPool()->queueTask(task);
-
-	m_BannerLock.unlock();
 }
 
-void BDManager::cancelDownloadBannerHooks(UserCore::Misc::BannerNotifierI* obj)
+void BDManager::cancelDownloadBannerHooks(gcRefPtr<UserCore::Misc::BannerNotifierI> obj)
 {
-	m_BannerLock.lock();
+	std::lock_guard<std::mutex> guard(m_BannerLock);
 
-	std::map<UserCore::Task::DownloadBannerTask*, UserCore::Misc::BannerNotifierI*>::iterator it=m_mDownloadBannerTask.begin();
+	auto it = std::find_if(begin(m_mDownloadBannerTask), end(m_mDownloadBannerTask), [obj](std::pair<const gcRefPtr<UserCore::Task::DownloadBannerTask>, gcRefPtr<UserCore::Misc::BannerNotifierI>> p){
+		return p.second = obj;
+	});
 
-	while (it != m_mDownloadBannerTask.end())
-	{
-		if (it->second == obj)
-		{
-			std::map<UserCore::Task::DownloadBannerTask*, UserCore::Misc::BannerNotifierI*>::iterator temp = it;
-			it++;
-
-			m_mDownloadBannerTask.erase(temp);
-		}
-		else
-		{
-			it++;
-		}
-	}
-
-	m_BannerLock.unlock();
-}
-
-
+	if (it != end(m_mDownloadBannerTask))
+		m_mDownloadBannerTask.erase(it);
 }

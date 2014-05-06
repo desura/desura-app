@@ -43,7 +43,7 @@ namespace UserCore
 		class ValidateTask : public UserCore::ItemTask::BaseItemTask
 		{
 		public:
-			ValidateTask(UserCore::Item::ItemHandle* handle, MCFBranch branch, MCFBuild build = MCFBuild());
+			ValidateTask(gcRefPtr<UserCore::Item::ItemHandleI> handle, MCFBranch branch, MCFBuild build = MCFBuild());
 			virtual ~ValidateTask();
 
 		protected:

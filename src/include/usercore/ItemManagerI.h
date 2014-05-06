@@ -46,7 +46,7 @@ namespace UserCore
 		class ItemInfoI;
 	}
 
-	class ItemManagerI
+	class ItemManagerI : public gcRefBase
 	{
 	public:
 		virtual ~ItemManagerI(){}
@@ -79,7 +79,7 @@ namespace UserCore
 		//! @param pWildCard Wildcard manager
 		//! @param reset used for installs. Tells it to only look at the first install path
 		//!
-		virtual void retrieveItemInfo(DesuraId id, uint32 statusOveride = 0, WildcardManager* pWildCard = nullptr, MCFBranch mcfBranch = MCFBranch(), MCFBuild mcfBuild = MCFBuild(), bool reset = false)=0;
+		virtual void retrieveItemInfo(DesuraId id, uint32 statusOveride = 0, gcRefPtr<WildcardManager> pWildCard = gcRefPtr<WildcardManager>(), MCFBranch mcfBranch = MCFBranch(), MCFBuild mcfBuild = MCFBuild(), bool reset = false) = 0;
 
 		//! Gets item info from the web and saves it into the user using a new thread
 		//!
@@ -99,7 +99,7 @@ namespace UserCore
 		//! @param id Item id
 		//! @return ItemInfo
 		//!
-		virtual UserCore::Item::ItemInfoI* findItemInfo(DesuraId id)=0;
+		virtual gcRefPtr<UserCore::Item::ItemInfoI> findItemInfo(DesuraId id) = 0;
 
 
 		//! Gets a ItemHandle from the list
@@ -107,7 +107,7 @@ namespace UserCore
 		//! @param id Item id
 		//! @return ItemHandle
 		//!
-		virtual UserCore::Item::ItemHandleI* findItemHandle(DesuraId ide)=0;
+		virtual gcRefPtr<UserCore::Item::ItemHandleI> findItemHandle(DesuraId ide) = 0;
 
 		//! Gets the item count
 		//!
@@ -120,8 +120,8 @@ namespace UserCore
 		//! @param index Index of item to get
 		//! @return Item
 		//!
-		virtual UserCore::Item::ItemInfoI* getItemInfo(uint32 index)=0;
-		virtual UserCore::Item::ItemHandleI* getItemHandle(uint32 index)=0;
+		virtual gcRefPtr<UserCore::Item::ItemInfoI> getItemInfo(uint32 index) = 0;
+		virtual gcRefPtr<UserCore::Item::ItemHandleI> getItemHandle(uint32 index) = 0;
 
 		//! Get custom install path for an item
 		//!
@@ -135,51 +135,51 @@ namespace UserCore
 		//!
 		//! @param aList Item vector. Do not delete the items on the list
 		//!
-		virtual void getAllItems(std::vector<UserCore::Item::ItemInfoI*> &aList)=0;
+		virtual void getAllItems(std::vector<gcRefPtr<UserCore::Item::ItemInfoI>> &aList) = 0;
 
 		//! Gets a list of games
 		//!
 		//! @param gList Game vector. Do not delete the items on the list
 		//!
-		virtual void getGameList(std::vector<UserCore::Item::ItemInfoI*> &gList, bool includeDeleted = false)=0;
+		virtual void getGameList(std::vector<gcRefPtr<UserCore::Item::ItemInfoI>> &gList, bool includeDeleted = false) = 0;
 
 		//! Gets a list of mods for a game
 		//!
 		//! @param gameId Id of the game
 		//! @param mList Mod vector. Do not delete the items on the list
 		//!
-		virtual void getModList(DesuraId gameId, std::vector<UserCore::Item::ItemInfoI*> &mList, bool includeDeleted = false)=0;
+		virtual void getModList(DesuraId gameId, std::vector<gcRefPtr<UserCore::Item::ItemInfoI>> &mList, bool includeDeleted = false) = 0;
 
 		//! Gets a list of developer items
 		//!
 		//! @param dList Developer vector. Do not delete the items on the list
 		//!
-		virtual void getDevList(std::vector<UserCore::Item::ItemInfoI*> &dList)=0;
+		virtual void getDevList(std::vector<gcRefPtr<UserCore::Item::ItemInfoI>> &dList) = 0;
 
 		//! Gets a list of favorite items
 		//!
 		//! @param fList Favorite vector. Do not delete the items on the list
 		//!
-		virtual void getFavList(std::vector<UserCore::Item::ItemInfoI*> &fList)=0;
+		virtual void getFavList(std::vector<gcRefPtr<UserCore::Item::ItemInfoI>> &fList) = 0;
 
 		//! Gets a list of recent items
 		//!
 		//! @param rList Recent vector. Do not delete the items on the list
 		//!
-		virtual void getRecentList(std::vector<UserCore::Item::ItemInfoI*> &rList)=0;
+		virtual void getRecentList(std::vector<gcRefPtr<UserCore::Item::ItemInfoI>> &rList) = 0;
 
 		//! Gets a list of link items
 		//!
 		//! @param lList Link vector. Do not delete the items on the list
 		//!
-		virtual void getLinkList(std::vector<UserCore::Item::ItemInfoI*> &lList)=0;
+		virtual void getLinkList(std::vector<gcRefPtr<UserCore::Item::ItemInfoI>> &lList) = 0;
 
 
 		//! Gets a list of new items
 		//!
 		//! @param tList Item vector. Do not delete the items on the list
 		//!
-		virtual void getNewItems(std::vector<UserCore::Item::ItemInfoI*> &tList)=0;
+		virtual void getNewItems(std::vector<gcRefPtr<UserCore::Item::ItemInfoI>> &tList) = 0;
 	
 
 		//! Call this when an item (i.e. mod) needs to update
@@ -198,10 +198,10 @@ namespace UserCore
 
 		virtual void checkItems()=0;
 
-		virtual EventV* getOnUpdateEvent()=0;
-		virtual Event<DesuraId>* getOnRecentUpdateEvent()=0;
-		virtual Event<DesuraId>* getOnFavoriteUpdateEvent()=0;
-		virtual Event<DesuraId>* getOnNewItemEvent()=0;
+		virtual EventV& getOnUpdateEvent()=0;
+		virtual Event<DesuraId>& getOnRecentUpdateEvent()=0;
+		virtual Event<DesuraId>& getOnFavoriteUpdateEvent()=0;
+		virtual Event<DesuraId>& getOnNewItemEvent()=0;
 
 
 		virtual DesuraId addLink(const char* name, const char* exe, const char* args)=0;
@@ -222,7 +222,7 @@ namespace UserCore
 		virtual void regenLaunchScripts()=0;
 
 		//! Save item to the db
-		virtual void saveItem(UserCore::Item::ItemInfoI* pItem)=0;
+		virtual void saveItem(gcRefPtr<UserCore::Item::ItemInfoI> pItem) = 0;
 	};
 
 #ifdef LINK_WITH_GMOCK
@@ -233,39 +233,41 @@ namespace UserCore
 		MOCK_METHOD0(saveItems, void());
 		MOCK_METHOD1(isInstalled, bool(DesuraId id));
 		MOCK_METHOD1(removeItem, void(DesuraId id));
-		MOCK_METHOD6(retrieveItemInfo, void(DesuraId, uint32, WildcardManager*, MCFBranch, MCFBuild, bool));
+		MOCK_METHOD6(retrieveItemInfo, void(DesuraId, uint32, gcRefPtr<WildcardManager>, MCFBranch, MCFBuild, bool));
 		MOCK_METHOD2(retrieveItemInfoAsync, void(DesuraId id, bool addToAccount));
 		MOCK_METHOD0(getDevItemCount, uint32());
-		MOCK_METHOD1(findItemInfo, UserCore::Item::ItemInfoI*(DesuraId id));
-		MOCK_METHOD1(findItemHandle, UserCore::Item::ItemHandleI*(DesuraId ide));
+		MOCK_METHOD1(findItemInfo, gcRefPtr<UserCore::Item::ItemInfoI>(DesuraId id));
+		MOCK_METHOD1(findItemHandle, gcRefPtr<UserCore::Item::ItemHandleI>(DesuraId ide));
 		MOCK_METHOD0(getCount, uint32());
-		MOCK_METHOD1(getItemInfo, UserCore::Item::ItemInfoI*(uint32 index));
-		MOCK_METHOD1(getItemHandle, UserCore::Item::ItemHandleI*(uint32 index));
+		MOCK_METHOD1(getItemInfo, gcRefPtr<UserCore::Item::ItemInfoI>(uint32 index));
+		MOCK_METHOD1(getItemHandle, gcRefPtr<UserCore::Item::ItemHandleI>(uint32 index));
 		MOCK_METHOD2(getCIP, void(DesuraId id, char** buff));
-		MOCK_METHOD1(getAllItems, void(std::vector<UserCore::Item::ItemInfoI*> &aList));
-		MOCK_METHOD2(getGameList, void(std::vector<UserCore::Item::ItemInfoI*> &gList, bool includeDeleted));
-		MOCK_METHOD3(getModList, void(DesuraId gameId, std::vector<UserCore::Item::ItemInfoI*> &mList, bool includeDeleted));
-		MOCK_METHOD1(getDevList, void(std::vector<UserCore::Item::ItemInfoI*> &dList));
-		MOCK_METHOD1(getFavList, void(std::vector<UserCore::Item::ItemInfoI*> &fList));
-		MOCK_METHOD1(getRecentList, void(std::vector<UserCore::Item::ItemInfoI*> &rList));
-		MOCK_METHOD1(getLinkList, void(std::vector<UserCore::Item::ItemInfoI*> &lList));
-		MOCK_METHOD1(getNewItems, void(std::vector<UserCore::Item::ItemInfoI*> &tList));
+		MOCK_METHOD1(getAllItems, void(std::vector<gcRefPtr<UserCore::Item::ItemInfoI>> &aList));
+		MOCK_METHOD2(getGameList, void(std::vector<gcRefPtr<UserCore::Item::ItemInfoI>> &gList, bool includeDeleted));
+		MOCK_METHOD3(getModList, void(DesuraId gameId, std::vector<gcRefPtr<UserCore::Item::ItemInfoI>> &mList, bool includeDeleted));
+		MOCK_METHOD1(getDevList, void(std::vector<gcRefPtr<UserCore::Item::ItemInfoI>> &dList));
+		MOCK_METHOD1(getFavList, void(std::vector<gcRefPtr<UserCore::Item::ItemInfoI>> &fList));
+		MOCK_METHOD1(getRecentList, void(std::vector<gcRefPtr<UserCore::Item::ItemInfoI>> &rList));
+		MOCK_METHOD1(getLinkList, void(std::vector<gcRefPtr<UserCore::Item::ItemInfoI>> &lList));
+		MOCK_METHOD1(getNewItems, void(std::vector<gcRefPtr<UserCore::Item::ItemInfoI>> &tList));
 		MOCK_METHOD1(itemsNeedUpdate, void(const XML::gcXMLElement &itemsNode));
 		MOCK_METHOD1(itemsNeedUpdate2, void(const XML::gcXMLElement &platformsNode));
 		MOCK_METHOD2(setFavorite, void(DesuraId id, bool fav));
 		MOCK_METHOD1(setRecent, void(DesuraId id));
 		MOCK_METHOD2(setInstalledMod, void(DesuraId parentId, DesuraId modId));
 		MOCK_METHOD0(checkItems, void());
-		MOCK_METHOD0(getOnUpdateEvent, EventV*());
-		MOCK_METHOD0(getOnRecentUpdateEvent, Event<DesuraId>*());
-		MOCK_METHOD0(getOnFavoriteUpdateEvent, Event<DesuraId>*());
-		MOCK_METHOD0(getOnNewItemEvent, Event<DesuraId>*());
+		MOCK_METHOD0(getOnUpdateEvent, EventV&());
+		MOCK_METHOD0(getOnRecentUpdateEvent, Event<DesuraId>&());
+		MOCK_METHOD0(getOnFavoriteUpdateEvent, Event<DesuraId>&());
+		MOCK_METHOD0(getOnNewItemEvent, Event<DesuraId>&());
 		MOCK_METHOD3(addLink, DesuraId(const char* name, const char* exe, const char* args));
 		MOCK_METHOD2(updateLink, void(DesuraId id, const char* args));
 		MOCK_METHOD2(isKnownBranch, bool(MCFBranch branch, DesuraId id));
 		MOCK_METHOD1(isItemFavorite, bool(DesuraId id));
 		MOCK_METHOD0(regenLaunchScripts, void());
-		MOCK_METHOD1(saveItem, void(UserCore::Item::ItemInfoI* pItem));
+		MOCK_METHOD1(saveItem, void(gcRefPtr<UserCore::Item::ItemInfoI> pItem));
+
+		gc_MOCK_REFCOUNTING(ItemManagerMock);
 	};
 
 #endif

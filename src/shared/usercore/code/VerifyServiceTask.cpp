@@ -57,12 +57,10 @@ enum TIER
 	INSTALLMISSINGFILES,
 };
 
-namespace UserCore
-{
-namespace ItemTask
-{
+using namespace UserCore::ItemTask;
 
-VerifyServiceTask::VerifyServiceTask(UserCore::Item::ItemHandle* handle, MCFBranch branch, MCFBuild build, bool files, bool tools, bool hooks) 
+
+VerifyServiceTask::VerifyServiceTask(gcRefPtr<UserCore::Item::ItemHandleI> handle, MCFBranch branch, MCFBuild build, bool files, bool tools, bool hooks) 
 	: BaseItemTask(UserCore::Item::ITEM_STAGE::STAGE_VERIFY, "Verify", handle, branch, build)
 {
 	m_iTier = START;
@@ -611,8 +609,4 @@ void VerifyServiceTask::onError(gcException& e)
 		pItem->setPaused(true, true);
 
 	onErrorEvent(e);
-}
-
-
-}
 }

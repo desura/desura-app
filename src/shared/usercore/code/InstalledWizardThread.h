@@ -68,11 +68,11 @@ namespace UserCore
 
 			void parseItemsQuick(const XML::gcXMLElement &fNode);
 
-			void parseItems1(const XML::gcXMLElement &fNode, WildcardManager *pWildCard, std::map<uint64, XML::gcXMLElement> *vMap = nullptr);
-			void parseItems2(const XML::gcXMLElement &fNode, WildcardManager *pWildCard);
+			void parseItems1(const XML::gcXMLElement &fNode, gcRefPtr<WildcardManager> &pWildCard, std::map<uint64, XML::gcXMLElement> *vMap = nullptr);
+			void parseItems2(const XML::gcXMLElement &fNode, gcRefPtr<WildcardManager> &pWildCard);
 
-			bool selectBranch(UserCore::Item::ItemInfoI *item);
-			void onItemFound(UserCore::Item::ItemInfoI *item);
+			bool selectBranch(gcRefPtr<UserCore::Item::ItemInfoI> &item);
+			void onItemFound(gcRefPtr<UserCore::Item::ItemInfoI> &item);
 
 			void onGameFound(UserCore::Misc::InstallInfo &game);
 			void onModFound(UserCore::Misc::InstallInfo &mod);
@@ -86,11 +86,11 @@ namespace UserCore
 
 			void parseGameQuick(const XML::gcXMLElement &game);
 
-			void parseGame(DesuraId id, const XML::gcXMLElement &game, WildcardManager *pWildCard, const XML::gcXMLElement &info);
-			void parseMod(DesuraId parId, DesuraId id, const XML::gcXMLElement &mod, WildcardManager *pWildCard, const XML::gcXMLElement &info);
+			void parseGame(DesuraId id, const XML::gcXMLElement &game, gcRefPtr<WildcardManager> &pWildCard, const XML::gcXMLElement &info);
+			void parseMod(DesuraId parId, DesuraId id, const XML::gcXMLElement &mod, gcRefPtr<WildcardManager> &pWildCard, const XML::gcXMLElement &info);
 
 		private:
-			UserCore::Item::ItemTaskGroup *m_pTaskGroup;
+			gcRefPtr<UserCore::Item::ItemTaskGroup> m_pTaskGroup;
 
 			uint32 m_uiDone;
 			uint32 m_uiTotal;

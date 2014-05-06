@@ -38,40 +38,37 @@ class IPCComplexLaunch;
 
 namespace UserCore
 {
-namespace ItemTask
-{
+	namespace ItemTask
+	{
+		class UIComplexModServiceTask : public UIBaseServiceTask
+		{
+		public:
+			UIComplexModServiceTask(gcRefPtr<UserCore::Item::ItemHandleI> handle, MCFBranch installBranch, MCFBuild installBuild);
+			~UIComplexModServiceTask();
 
+			void setCALaunch();
+			void setCAUIPatch();
+			void setCAInstall();
+			void setCAUninstallBranch();
+			void setCAUninstall(bool removeAll, bool removeAccount);
 
-class UIComplexModServiceTask : public UIBaseServiceTask
-{
-public:
-	UIComplexModServiceTask(UserCore::Item::ItemHandle* handle, MCFBranch installBranch, MCFBuild installBuild);
-	~UIComplexModServiceTask();
+			void setEndStage();
 
-	void setCALaunch();
-	void setCAUIPatch();
-	void setCAInstall();
-	void setCAUninstallBranch();
-	void setCAUninstall(bool removeAll, bool removeAccount);
+		protected:
+			virtual bool initService();
+			virtual void onComplete();
 
-	void setEndStage();
+			void onProgress(MCFCore::Misc::ProgressInfo& p);
 
-protected:
-	virtual bool initService();
-	virtual void onComplete();
+		private:
+			bool m_bRemoveAll;
+			bool m_bRemoveAcc;
+			bool m_bEndStage;
 
-	void onProgress(MCFCore::Misc::ProgressInfo& p);
-
-private:
-	bool m_bRemoveAll;
-	bool m_bRemoveAcc;
-	bool m_bEndStage;
-
-	uint8 m_uiCompleteAction;
-	IPCComplexLaunch* m_pIPCCL;
-};
-
-}
+			uint8 m_uiCompleteAction;
+			gcRefPtr<IPCComplexLaunch> m_pIPCCL;
+		};
+	}
 }
 
 

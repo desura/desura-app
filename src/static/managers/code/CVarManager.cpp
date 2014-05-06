@@ -96,14 +96,14 @@ CVarManager::CVarManager()
 
 CVarManager::~CVarManager()
 {
-	std::vector<CVar*> vList;
+	std::vector<gcRefPtr<CVar>> vList;
 	getCVarList(vList);
 
 	for (auto pVar : vList)
 		pVar->deregister();
 }
 
-bool CVarManager::RegCVar(CVar* var)
+bool CVarManager::RegCVar(gcRefPtr<CVar> &var)
 {
 	CVar* temp = findItem(var->getName());
 	
@@ -123,7 +123,7 @@ bool CVarManager::RegCVar(CVar* var)
 }
 
 //if this screws up its too late any way
-void  CVarManager::UnRegCVar(CVar* var)
+void  CVarManager::UnRegCVar(gcRefPtr<CVar> &var)
 {
 	removeItem(var->getName());
 }
@@ -373,12 +373,12 @@ void CVarManager::saveToDb(sqlite3x::sqlite3_command &cmd, uint8 flags)
 	}
 }
 
-CVar* CVarManager::findCVar(const char* name)
+gcRefPtr<CVar> CVarManager::findCVar(const char* name)
 {
 	return findItem(name);
 }
 
-void CVarManager::getCVarList(std::vector<CVar*> &vList)
+void CVarManager::getCVarList(std::vector<gcRefPtr<CVar>> &vList)
 {
 	for (uint32 x=0; x<getCount(); x++)
 		vList.push_back(getItem(x));

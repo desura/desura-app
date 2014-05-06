@@ -28,12 +28,12 @@ $/LicenseInfo$
 #include "XMLMacros.h"
 
 Theme::Theme(const char* name) 
-	: ControlList(true)
-	, ImageList(true)
-	, SpriteList(true)
-	, WebList(true)
+	: ControlList()
+	, ImageList()
+	, SpriteList()
+	, WebList()
+	, m_szName(name)
 {
-	m_szName = gcString(name);
 }
 
 const char* Theme::getImage(const char* id)
@@ -74,9 +74,9 @@ Color Theme::getColor(const char* name, const char* id)
 }
 
 
-SpriteRect* Theme::getSpriteRect(const char* id, const char* rectId)
+gcRefPtr<SpriteRect> Theme::getSpriteRect(const char* id, const char* rectId)
 {
-	ThemeSpriteInfo* sprite = SpriteList::findItem(id);
+	auto sprite = SpriteList::findItem(id);
 
 	if (!sprite)
 		return nullptr;
@@ -95,11 +95,11 @@ void Theme::LoadImages(const UTIL::FS::Path& path, const XML::gcXMLElement &xmlE
 			return;
 
 		std::string outVal = UTIL::STRING::sanitizeFileName(val);
-		ThemeImageInfo* img = ImageList::findItem(name.c_str());
+		auto img = ImageList::findItem(name.c_str());
 
 		if (!img)
 		{
-			img = new ThemeImageInfo(name.c_str());
+			img = gcRefPtr<ThemeImageInfo>::create(name.c_str());
 			addItem(img);
 		}
 
@@ -134,11 +134,11 @@ void Theme::LoadWeb(const UTIL::FS::Path& path, const XML::gcXMLElement &xmlEl)
 		gcString fullPath("file://{0}/html/{1}", urlPath, outVal);
 #endif
 
-		ThemeWebInfo* web = WebList::findItem(name.c_str());
+		auto web = WebList::findItem(name.c_str());
 
 		if (!web)
 		{
-			web = new ThemeWebInfo(name.c_str());
+			web = gcRefPtr<ThemeWebInfo>::create(name.c_str());
 			addItem(web);
 		}
 
@@ -155,11 +155,11 @@ void Theme::LoadSprites(const XML::gcXMLElement &xmlEl)
 		if (name.empty())
 			return;
 
-		ThemeSpriteInfo* sprite = SpriteList::findItem(name.c_str());
+		auto sprite = SpriteList::findItem(name.c_str());
 
 		if (!sprite)
 		{
-			sprite = new ThemeSpriteInfo(name.c_str());
+			sprite = gcRefPtr<ThemeSpriteInfo>::create(name.c_str());
 			addItem(sprite);
 		}
 
@@ -182,11 +182,11 @@ void Theme::LoadSprites(const XML::gcXMLElement &xmlEl)
 			if (x.empty() || y.empty() || w.empty() || h.empty())
 				return;
 
-			SpriteRect* rect = sprite->findItem(rName.c_str());
+			auto rect = sprite->findItem(rName.c_str());
 		
 			if (!rect)
 			{
-				rect = new SpriteRect(rName.c_str());
+				rect = gcRefPtr<SpriteRect>::create(rName.c_str());
 				sprite->addItem(rect);
 			}
 
@@ -207,11 +207,11 @@ void Theme::LoadControls(const XML::gcXMLElement &xmlEl)
 		if (name.empty())
 			return;
 		
-		ThemeControlInfo* control = ControlList::findItem(name.c_str());
+		auto control = ControlList::findItem(name.c_str());
 
 		if (!control)
 		{
-			control = new ThemeControlInfo(name.c_str());
+			control = gcRefPtr<ThemeControlInfo>::create(name.c_str());
 			addItem(control);
 		}
 
@@ -223,11 +223,11 @@ void Theme::LoadControls(const XML::gcXMLElement &xmlEl)
 			if (id.empty() || val.empty())
 				return;
 
-			ThemeColorInfo* col = control->findItem(id.c_str());
+			auto col = control->findItem(id.c_str());
 
 			if (!col)
 			{
-				col = new ThemeColorInfo(id.c_str());
+				col = gcRefPtr<ThemeColorInfo>::create(id.c_str());
 				control->add(col);
 			}
 
@@ -273,14 +273,14 @@ void Theme::parseFile(const char* file)
 	if (cNode.IsValid())
 		LoadControls(cNode);
 
-	ThemeControlInfo* control = ControlList::findItem("default");
+	auto control = ControlList::findItem("default");
 
 	if (!control)
 	{
-		control = new ThemeControlInfo("default");
+		control = gcRefPtr<ThemeControlInfo>::create("default");
 
-		ThemeColorInfo* col1 = new ThemeColorInfo("bg");
-		ThemeColorInfo* col2 = new ThemeColorInfo("fg");
+		auto col1 = gcRefPtr<ThemeColorInfo>::create("bg");
+		auto col2 = gcRefPtr<ThemeColorInfo>::create("fg");
 
 		col1->color = Color(0);
 		col2->color = Color(0xFFFFFF);

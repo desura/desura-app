@@ -43,13 +43,12 @@ enum
 
 
 
-namespace UserCore
-{
-namespace ItemTask
-{
+using namespace UserCore::ItemTask;
 
 
-UIComplexModServiceTask::UIComplexModServiceTask(UserCore::Item::ItemHandle* handle, MCFBranch installBranch, MCFBuild installBuild) : UIBaseServiceTask(UserCore::Item::ITEM_STAGE::STAGE_UNINSTALL_COMPLEX, "UnInstallComplex", handle, installBranch, installBuild)
+
+UIComplexModServiceTask::UIComplexModServiceTask(gcRefPtr<UserCore::Item::ItemHandleI> handle, MCFBranch installBranch, MCFBuild installBuild) 
+	: UIBaseServiceTask(UserCore::Item::ITEM_STAGE::STAGE_UNINSTALL_COMPLEX, "UnInstallComplex", handle, installBranch, installBuild)
 {
 	m_pIPCCL = nullptr;
 
@@ -101,7 +100,7 @@ bool UIComplexModServiceTask::initService()
 		return false;
 	}
 
-	UserCore::Item::ItemInfo* modInfo = dynamic_cast<UserCore::Item::ItemInfo*>(getUserCore()->getItemManager()->findItemInfo(m_idLastInstalledMod));
+	auto modInfo = gcRefPtr<UserCore::Item::ItemInfo>::dyn_cast(getUserCore()->getItemManager()->findItemInfo(m_idLastInstalledMod));
 
 	if (!modInfo)
 	{
@@ -227,8 +226,4 @@ void UIComplexModServiceTask::setEndStage()
 void UIComplexModServiceTask::setCALaunch()
 {
 	m_uiCompleteAction = CA_LAUNCH;
-}
-
-
-}
 }

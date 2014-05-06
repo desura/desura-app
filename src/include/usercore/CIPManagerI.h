@@ -32,35 +32,32 @@ $/LicenseInfo$
 
 namespace UserCore
 {
+	namespace Misc
+	{
+		class CIPItem
+		{
+		public:
+			DesuraId id;
+			gcString name;
+			gcString path;
+		};
+	}
 
-namespace Misc
-{
-	class CIPItem
+	class CIPManagerI : public gcRefBase
 	{
 	public:
-		DesuraId id;
-		gcString name;
-		gcString path;
+
+		virtual void getCIPList(std::vector<Misc::CIPItem> &list) = 0;
+		virtual void getItemList(std::vector<Misc::CIPItem> &list) = 0;
+
+		virtual void updateItem(DesuraId id, gcString path) = 0;
+		virtual void deleteItem(DesuraId id) = 0;
+
+		virtual void refreshList() = 0;
+		virtual bool getCIP(UserCore::Misc::CIPItem& info) = 0;
+
+		virtual EventV& getItemsUpdatedEvent() = 0;
 	};
-}
-
-
-class CIPManagerI
-{
-public:
-
-	virtual void getCIPList(std::vector<Misc::CIPItem> &list)=0;
-	virtual void getItemList(std::vector<Misc::CIPItem> &list)=0;
-
-	virtual void updateItem(DesuraId id, gcString path)=0;
-	virtual void deleteItem(DesuraId id)=0;
-
-	virtual void refreshList()=0;
-	virtual bool getCIP(UserCore::Misc::CIPItem& info)=0;
-
-	virtual EventV& getItemsUpdatedEvent()=0;
-};
-
 }
 
 #endif //DESURA_CIPMANAGERI_H

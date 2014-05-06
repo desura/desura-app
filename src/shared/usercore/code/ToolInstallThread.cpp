@@ -33,10 +33,7 @@ $/LicenseInfo$
 
 #include "ToolTransaction.h"
 
-namespace UserCore
-{
-namespace Misc
-{
+using namespace UserCore::Misc;
 
 
 void ToolInstallThread::run()
@@ -106,7 +103,7 @@ void ToolInstallThread::doFirstInstall()
 	bool startRes = false;
 
 	m_MapLock.lock();
-	std::map<ToolTransactionId, ToolTransInfo*>::iterator it = m_mTransactions.find(m_CurrentInstall);
+	auto it = m_mTransactions.find(m_CurrentInstall);
 	
 	if (it != m_mTransactions.end())
 		startRes = it->second->startNextInstall(getToolMain(), m_CurrentInstallId);
@@ -140,7 +137,7 @@ void ToolInstallThread::doNextInstall()
 		return;
 
 	m_MapLock.lock();
-	std::map<ToolTransactionId, ToolTransInfo*>::iterator it = m_mTransactions.find(m_CurrentInstall);
+	auto it = m_mTransactions.find(m_CurrentInstall);
 	
 	if (it != m_mTransactions.end() && hasToolMain())
 	{
@@ -164,7 +161,7 @@ void ToolInstallThread::onINComplete(int32 &result)
 
 	m_bStillInstalling = false;
 
-	ToolInfo* tool = m_pToolManager->findItem(m_CurrentInstallId.toInt64());
+	auto tool = m_pToolManager->findItem(m_CurrentInstallId.toInt64());
 
 	bool installError = false;
 
@@ -179,7 +176,7 @@ void ToolInstallThread::onINComplete(int32 &result)
 	if (installError)
 	{
 		m_MapLock.lock();
-		std::map<ToolTransactionId, ToolTransInfo*>::iterator it = m_mTransactions.find(m_CurrentInstall);
+		auto it = m_mTransactions.find(m_CurrentInstall);
 
 
 
@@ -205,7 +202,7 @@ void ToolInstallThread::onINError(gcException &error)
 	m_bStillInstalling = false;
 
 	m_MapLock.lock();
-	std::map<ToolTransactionId, ToolTransInfo*>::iterator it = m_mTransactions.find(m_CurrentInstall);
+	auto it = m_mTransactions.find(m_CurrentInstall);
 	
 	if (it != m_mTransactions.end())
 		it->second->onINError(error);
@@ -246,7 +243,4 @@ void ToolInstallThread::cancelInstall(ToolTransactionId ttid)
 	}
 
 	m_InstallLock.unlock();
-}
-
-}
 }

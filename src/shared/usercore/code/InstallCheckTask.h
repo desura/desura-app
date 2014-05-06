@@ -38,21 +38,21 @@ $/LicenseInfo$
 
 namespace UserCore
 {
-namespace ItemTask
-{
+	namespace ItemTask
+	{
 
-//! Install check thread sees if an item is installed on the local computer
-//!
-class InstallCheckTask : public BaseItemTask
-{
-public:
-	InstallCheckTask(UserCore::Item::ItemHandle *handle);
+		//! Install check thread sees if an item is installed on the local computer
+		//!
+		class InstallCheckTask : public BaseItemTask
+		{
+		public:
+			InstallCheckTask(gcRefPtr<UserCore::Item::ItemHandleI> handle);
 
-protected:
-	void doRun();
-};
+		protected:
+			void doRun();
+		};
 
-}
+	}
 }
 
 #endif //DESURA_INSTALLCHECKTHREAD_H

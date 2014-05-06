@@ -37,34 +37,34 @@ namespace UserCore
 {
 	class UserThreadManagerI;
 
-namespace Thread
-{
+	namespace Thread
+	{
 
-class UserThreadI
-{
-public:
-	virtual ~UserThreadI(){;}
+		class UserThreadI : virtual public gcRefBase
+		{
+		public:
+			virtual ~UserThreadI(){}
 
-	virtual void setThreadManager(UserCore::UserThreadManagerI* tm)=0;
-	virtual void setWebCore(WebCore::WebCoreI *wc)=0;
-	virtual void setUserCore(UserCore::UserI *uc)=0;
+			virtual void setThreadManager(gcRefPtr<UserCore::UserThreadManagerI> tm) = 0;
+			virtual void setWebCore(gcRefPtr<WebCore::WebCoreI> wc) = 0;
+			virtual void setUserCore(gcRefPtr<UserCore::UserI> uc) = 0;
 
-	//events
-	virtual Event<uint32>* getCompleteEvent()=0;
-	virtual Event<gcException>* getErrorEvent()=0;
-	virtual Event<WCSpecialInfo>* getNeedWCEvent()=0;
+			//events
+			virtual Event<uint32>& getCompleteEvent() = 0;
+			virtual Event<gcException>& getErrorEvent() = 0;
+			virtual Event<WCSpecialInfo>& getNeedWCEvent() = 0;
 
-	//BaseThread
-	virtual void start()=0;
-	virtual void stop()=0;
+			//BaseThread
+			virtual void start() = 0;
+			virtual void stop() = 0;
 
-	virtual void nonBlockStop()=0;
+			virtual void nonBlockStop() = 0;
 
-	virtual void unpause()=0;
-	virtual void pause()=0;
-};
+			virtual void unpause() = 0;
+			virtual void pause() = 0;
+		};
 
-}
+	}
 }
 
 #endif //DESURA_USERTHREADI_H

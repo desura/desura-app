@@ -40,7 +40,7 @@ $/LicenseInfo$
 
 using namespace UserCore::ItemTask;
 
-ValidateTask::ValidateTask(UserCore::Item::ItemHandle* handle, MCFBranch branch, MCFBuild build) 
+ValidateTask::ValidateTask(gcRefPtr<UserCore::Item::ItemHandleI> handle, MCFBranch branch, MCFBuild build)
 	: BaseItemTask(UserCore::Item::ITEM_STAGE::STAGE_VALIDATE, "Validate", handle, branch, build)
 {
 	onErrorEvent += delegate(this, &ValidateTask::onError);
@@ -194,7 +194,7 @@ void ValidateTask::updateStatusFlags()
 	pItem->delSFlag(flags);
 
 	uint32 num = 0;
-	getUserCore()->getItemsAddedEvent()->operator()(num);
+	getUserCore()->getItemsAddedEvent()(num);
 
 	MCFBuild build  = getMcfBuild();
 	MCFBranch branch = getMcfBranch();

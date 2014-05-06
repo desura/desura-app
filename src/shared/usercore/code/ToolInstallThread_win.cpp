@@ -30,13 +30,11 @@ $/LicenseInfo$
 #include "ToolIPCPipeClient.h"
 #include "ToolTransaction.h"
 
-namespace UserCore
-{
-namespace Misc
-{
+using namespace UserCore;
+using namespace UserCore::Misc;
 
 
-ToolInstallThread::ToolInstallThread(ToolManager* toolManager, std::mutex &mapLock, std::map<ToolTransactionId, ToolTransInfo*> &transactions, const char* userName, HWND handle) 
+ToolInstallThread::ToolInstallThread(gcRefPtr<ToolManager> toolManager, std::mutex &mapLock, std::map<ToolTransactionId, gcRefPtr<ToolTransInfo>> &transactions, const char* userName, HWND handle)
 	: ::Thread::BaseThread("Tool Install Thread")
 	, m_mTransactions(transactions)
 	, m_MapLock(mapLock)
@@ -110,7 +108,7 @@ void ToolInstallThread::startIPC()
 	m_pIPCClient->onDisconnectEvent += delegate(&onPipeDisconnectEvent);
 
 	m_MapLock.lock();
-	std::map<ToolTransactionId, ToolTransInfo*>::iterator it = m_mTransactions.find(m_CurrentInstall);
+	auto it = m_mTransactions.find(m_CurrentInstall);
 	
 	if (it != m_mTransactions.end())
 		it->second->startingIPC();
@@ -125,7 +123,4 @@ void ToolInstallThread::startIPC()
 IPCToolMain* ToolInstallThread::getToolMain()
 {
 	return m_pIPCClient->getToolMain();
-}
-
-}
 }

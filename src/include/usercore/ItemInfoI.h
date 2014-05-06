@@ -41,7 +41,7 @@ namespace UserCore
 
 		namespace Misc
 		{
-			class ExeInfoI
+			class ExeInfoI : public gcRefBase
 			{
 			public:
 				virtual const char* getName()=0;
@@ -58,7 +58,7 @@ namespace UserCore
 
 		//! Desura item interface
 		//!
-		class ItemInfoI
+		class ItemInfoI : public gcRefBase
 		{
 		public:
 			virtual ~ItemInfoI(){;}
@@ -412,7 +412,7 @@ namespace UserCore
 			//!
 			//! @return Info change event
 			//!
-			virtual Event<ItemInfo_s>* getInfoChangeEvent()=0;
+			virtual Event<ItemInfo_s>& getInfoChangeEvent()=0;
 	
 			//! Get the total number of branches for this item
 			//!
@@ -425,20 +425,20 @@ namespace UserCore
 			//! @param index Branch index
 			//! @return Branch info or nullptr if bad index
 			//!
-			virtual BranchInfoI* getBranch(uint32 index)=0;
+			virtual gcRefPtr<BranchInfoI> getBranch(uint32 index)=0;
 
 			//! Get the current active branch
 			//!
 			//! @return Current branch
 			//!
-			virtual BranchInfoI* getCurrentBranch()=0;
+			virtual gcRefPtr<BranchInfoI> getCurrentBranch() = 0;
 
 			//! Gets a branch based on Desura branch id
 			//!
 			//! @param id Branch id
 			//! @return Branch info or Null if invalid id
 			//!
-			virtual BranchInfoI* getBranchById(uint32 id)=0;
+			virtual gcRefPtr<BranchInfoI> getBranchById(uint32 id) = 0;
 
 			//! Gets the install size
 			//!
@@ -524,14 +524,14 @@ namespace UserCore
 			//!
 			//! @param list List to store results in
 			//!
-			virtual void getExeList(std::vector<UserCore::Item::Misc::ExeInfoI*> &list, MCFBranch branch = MCFBranch())=0;
+			virtual void getExeList(std::vector<gcRefPtr<UserCore::Item::Misc::ExeInfoI>> &list, MCFBranch branch = MCFBranch())=0;
 
 
 			//! gets the active exe info
 			//!
 			//! @return active exe info
 			//!
-			virtual UserCore::Item::Misc::ExeInfoI* getActiveExe(MCFBranch branch = MCFBranch())=0;
+			virtual gcRefPtr<UserCore::Item::Misc::ExeInfoI> getActiveExe(MCFBranch branch = MCFBranch()) = 0;
 
 			//! Sets the active exe used for launching
 			//!
@@ -540,7 +540,7 @@ namespace UserCore
 			virtual void setActiveExe(const char* name, MCFBranch branch = MCFBranch())=0;
 
 
-			virtual ItemInfoInternalI* getInternal()=0;
+			virtual gcRefPtr<ItemInfoInternalI> getInternal() = 0;
 		};
 
 
@@ -564,7 +564,7 @@ namespace UserCore
 
 			DesuraId id;
 			MCFBuild build;
-			ItemInfoI* info;
+			gcRefPtr<ItemInfoI> info;
 		};
 	}
 }

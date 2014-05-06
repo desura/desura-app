@@ -154,19 +154,19 @@ void UploadInfoThread::setStart(uint32 start)
 	m_pUploadThreadInfo->uiStart = start; 
 }
 
-Event<uint32>* UploadInfoThread::getCompleteEvent() 
+Event<uint32>& UploadInfoThread::getCompleteEvent() 
 {
-	return &onCompleteEvent;
+	return onCompleteEvent;
 }
 
-Event<gcException>* UploadInfoThread::getErrorEvent()
+Event<gcException>& UploadInfoThread::getErrorEvent()
 {
-	return &onErrorEvent; 
+	return onErrorEvent; 
 }
 
-Event<UserCore::Misc::UploadInfo>* UploadInfoThread::getUploadProgressEvent()
+Event<UserCore::Misc::UploadInfo>& UploadInfoThread::getUploadProgressEvent()
 {
-	return &onUploadProgressEvent;
+	return onUploadProgressEvent;
 }
 
 //BaseThread
@@ -215,17 +215,17 @@ const char* UploadInfoThread::getKey()
 
 
 
-void UploadInfoThread::setWebCore(WebCore::WebCoreI *wc)
+void UploadInfoThread::setWebCore(gcRefPtr<WebCore::WebCoreI> wc)
 {
 	m_pWebCore = wc;
 }
 
-void UploadInfoThread::setUserCore(UserCore::UserI *uc)
+void UploadInfoThread::setUserCore(gcRefPtr<UserCore::UserI> uc)
 {
 	m_pUser = uc;
 }
 
-void UploadInfoThread::setUpLoadManager(UserCore::UploadManagerI *um)
+void UploadInfoThread::setUpLoadManager(gcRefPtr<UserCore::UploadManagerI> um)
 {
 	m_pUploadManager = um;
 }

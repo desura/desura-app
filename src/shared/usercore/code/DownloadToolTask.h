@@ -33,53 +33,50 @@ $/LicenseInfo$
 
 namespace UserCore
 {
-class ToolInfo;
-class User;
+	class ToolInfo;
+	class User;
 
-namespace Task
-{
+	namespace Task
+	{
+		class DownloadToolTask : public UserTask
+		{
+		public:
+			DownloadToolTask(gcRefPtr<UserCore::UserI> user, gcRefPtr<UserCore::ToolInfo> &tool);
+			~DownloadToolTask();
 
-class DownloadToolTask : public UserTask
-{
-public:
-	DownloadToolTask(UserCore::User* user, UserCore::ToolInfo* tool);
-	~DownloadToolTask();
+			void doTask();
 
-	void doTask();
+			Event<gcException> onErrorEvent;
+			Event<UserCore::Misc::ToolProgress> onProgressEvent;
+			EventV onCompleteEvent;
 
-	Event<gcException> onErrorEvent;
-	Event<UserCore::Misc::ToolProgress> onProgressEvent;
-	EventV onCompleteEvent;
+			uint32 getRefCount();
+			void increseRefCount();
+			void decreaseRefCount(bool forced);
 
-	uint32 getRefCount();
-	void increseRefCount();
-	void decreaseRefCount(bool forced);
+			const char* getName(){ return "DownloadToolTask"; }
 
-	const char* getName(){return "DownloadToolTask";}
+		protected:
+			void onStop();
+			void downloadTool();
 
-protected:
-	void onStop();
-	void downloadTool();
+			void onProgress(Prog_s& prog);
+			void onWrite(WriteMem_s& mem);
+			void finish();
 
-	void onProgress(Prog_s& prog);
-	void onWrite(WriteMem_s& mem);
-	void finish();
+		private:
+			volatile bool m_bStopped = false;
 
-private:
-	volatile bool m_bStopped;
+			gcRefPtr<ToolInfo> m_pTool;
+			gcRefPtr<HttpHandleI> m_pHttpHandle;
 
-	ToolInfo* m_pTool;
-	HttpHandleI* m_pHttpHandle;
+			UTIL::FS::Path m_Path;
+			UTIL::FS::FileHandle m_fhFile;
 
-	UTIL::FS::Path m_Path;
-	UTIL::FS::FileHandle m_fhFile;
-
-	uint32 m_uiRefCount;
-	uint32 m_uiPercent;
-};
-
-
-}
+			uint32 m_uiRefCount = 1;
+			uint32 m_uiPercent = 0;
+		};
+	}
 }
 
 #endif //DESURA_DOWNLOADTOOLTASK_H

@@ -34,26 +34,26 @@ $/LicenseInfo$
 
 namespace UserCore
 {
-namespace Thread
-{
+	namespace Thread
+	{
 
-class UploadResumeThread : public MCFThread
-{
-public:
-	UploadResumeThread(DesuraId id, const char* key, WebCore::Misc::ResumeUploadInfo *info);
+		class UploadResumeThread : public MCFThread
+		{
+		public:
+			UploadResumeThread(DesuraId id, const char* key, gcRefPtr<WebCore::Misc::ResumeUploadInfo> info);
 
 
-protected:
-	void doRun();
-	bool validFile(const char* path);
-	bool doSearch(const char* path);
+		protected:
+			void doRun();
+			bool validFile(const char* path);
+			bool doSearch(const char* path);
 
-private:
-	WebCore::Misc::ResumeUploadInfo *m_pUpInfo;
-	gcString m_szKey;
-};
+		private:
+			gcRefPtr<WebCore::Misc::ResumeUploadInfo> m_pUpInfo;
+			gcString m_szKey;
+		};
 
-}
+	}
 }
 
 #endif //DESURA_UPLOADRESUMETHREAD_H

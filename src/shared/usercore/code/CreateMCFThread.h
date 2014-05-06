@@ -39,51 +39,48 @@ namespace XML
 
 namespace UserCore
 {
-namespace Thread
-{
-
-class CreateMCFThread : public MCFThread
-{
-public:
-	CreateMCFThread(DesuraId id, const char* path);
-
-	//need this here otherwise stop gets called to late
-	~CreateMCFThread()
+	namespace Thread
 	{
-		stop();
+		class CreateMCFThread : public MCFThread
+		{
+		public:
+			CreateMCFThread(DesuraId id, const char* path);
+
+			//need this here otherwise stop gets called to late
+			~CreateMCFThread()
+			{
+				stop();
+			}
+
+			void pauseThread(bool state = true);
+
+		protected:
+			void doRun();
+
+			void onPause();
+			void onUnpause();
+			void onStop();
+
+			void compareBranches(std::vector<gcRefPtr<UserCore::Item::BranchInfo>> &vBranchList);
+			void createMcf();
+
+			void waitForItemInfo();
+
+			void retrieveBranchList(std::vector<gcRefPtr<UserCore::Item::BranchInfo>> &outList);
+
+			void processGames(std::vector<gcRefPtr<UserCore::Item::BranchInfo>> &outList, const XML::gcXMLElement &platform);
+			void processMods(std::vector<gcRefPtr<UserCore::Item::BranchInfo>> &outList, const XML::gcXMLElement &game);
+			void processBranches(std::vector<gcRefPtr<UserCore::Item::BranchInfo>> &outList, const XML::gcXMLElement &item);
+
+
+		private:
+			gcString m_szPath;
+			gcString m_szFilePath;
+
+			bool m_bComplete;
+			uint32 m_iInternId;
+		};
 	}
-
-	void pauseThread(bool state = true);
-
-protected:
-	void doRun();
-
-	void onPause();
-	void onUnpause();
-	void onStop();
-
-	void compareBranches(std::vector<UserCore::Item::BranchInfo*> &vBranchList);
-	void createMcf();
-
-	void waitForItemInfo();
-
-	void retrieveBranchList(std::vector<UserCore::Item::BranchInfo*> &outList);
-	
-	void processGames(std::vector<UserCore::Item::BranchInfo*> &outList, const XML::gcXMLElement &platform);
-	void processMods(std::vector<UserCore::Item::BranchInfo*> &outList, const XML::gcXMLElement &game);
-	void processBranches(std::vector<UserCore::Item::BranchInfo*> &outList, const XML::gcXMLElement &item);
-
-
-
-private:
-	gcString m_szPath;
-	gcString m_szFilePath;
-
-	bool m_bComplete;
-	uint32 m_iInternId;
-};
-
-}
 }
 
 #endif //DESURA_MCF_CREATE_H

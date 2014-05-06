@@ -26,132 +26,142 @@ $/LicenseInfo$
 #include "Common.h"
 #include "ItemHandleEvents.h"
 
-
-
 namespace UserCore
 {
-namespace Item
-{
-
-typedef void (ItemHandleEvents::*onCompleteIntFn)(uint32&);
-typedef void (ItemHandleEvents::*onCompleteStrFn)(gcString&);
-
-class EventItemI
-{
-public:
-	virtual void post(Helper::ItemHandleHelperI* helper)=0;
-	virtual ~EventItemI(){}
-};
-
-class VoidEventItem : public EventItemI
-{
-public:
-	typedef void (Helper::ItemHandleHelperI::*EventVoidFn)();
-
-	VoidEventItem(EventVoidFn fn)
+	namespace Item
 	{
-		m_EVFn = fn;
-	}
-
-	virtual void post(Helper::ItemHandleHelperI* helper)
-	{
-		if (m_EVFn)
-			(*helper.*m_EVFn)();
-	}
-
-	EventVoidFn m_EVFn;
-};
-
-template <typename T>
-class GenericEventItem : public EventItemI
-{
-public:
-	typedef void (Helper::ItemHandleHelperI::*EventRefFn)(T&);
-	typedef void (Helper::ItemHandleHelperI::*EventFn)(T);
-
-	GenericEventItem(EventRefFn fn, T& t)
-	{
-		m_bIsRef = true;
-
-		m_ERFn = fn;
-		m_t = t;
-	}
-
-	GenericEventItem(EventFn fn, T t)
-	{
-		m_bIsRef = false;
-
-		m_EFn = fn;
-		m_t = t;
-	}
-
-	virtual void post(Helper::ItemHandleHelperI* helper)
-	{
-		if (m_bIsRef)
-			(*helper.*m_ERFn)(m_t);
-		else
-			(*helper.*m_EFn)(m_t);
-	}
-
-	bool m_bIsRef;
-
-	EventRefFn m_ERFn;
-	EventFn m_EFn;
-
-	T m_t;
-};
-
-void CallEvent(std::vector<Helper::ItemHandleHelperI*> &vList, VoidEventItem::EventVoidFn Fn)
-{
-	for (size_t x=0; x<vList.size(); x++)
-	{
-		if (vList[x])
-			(*vList[x].*Fn)();
+		class EventItemI : public gcRefCount
+		{
+		public:
+			virtual void post(gcRefPtr<Helper::ItemHandleHelperI> &helper) = 0;
+			virtual ~EventItemI(){}
+		};
 	}
 }
 
-template <typename T>
-void CallEvent(std::vector<Helper::ItemHandleHelperI*> &vList, void (Helper::ItemHandleHelperI::*Fn)(T&), T& t)
+using namespace UserCore::Item;
+
+
+namespace
 {
-	for (size_t x=0; x<vList.size(); x++)
+
+	typedef void (ItemHandleEvents::*onCompleteIntFn)(uint32&);
+	typedef void (ItemHandleEvents::*onCompleteStrFn)(gcString&);
+
+
+	class VoidEventItem : public EventItemI
 	{
-		if (vList[x])
-			(*vList[x].*Fn)(t);
+	public:
+		typedef void (Helper::ItemHandleHelperI::*EventVoidFn)();
+
+		VoidEventItem(EventVoidFn fn)
+		{
+			m_EVFn = fn;
+		}
+
+		virtual void post(gcRefPtr<Helper::ItemHandleHelperI> &helper)
+		{
+			if (m_EVFn)
+				(*helper.*m_EVFn)();
+		}
+
+		EventVoidFn m_EVFn;
+	};
+
+	template <typename T>
+	class GenericEventItem : public EventItemI
+	{
+	public:
+		typedef void (Helper::ItemHandleHelperI::*EventRefFn)(T&);
+		typedef void (Helper::ItemHandleHelperI::*EventFn)(T);
+
+		GenericEventItem(EventRefFn fn, T& t)
+		{
+			m_bIsRef = true;
+
+			m_ERFn = fn;
+			m_t = t;
+		}
+
+		GenericEventItem(EventFn fn, T t)
+		{
+			m_bIsRef = false;
+
+			m_EFn = fn;
+			m_t = t;
+		}
+
+		virtual void post(gcRefPtr<Helper::ItemHandleHelperI> &helper)
+		{
+			if (m_bIsRef)
+				(*helper.*m_ERFn)(m_t);
+			else
+				(*helper.*m_EFn)(m_t);
+		}
+
+		bool m_bIsRef;
+
+		EventRefFn m_ERFn;
+		EventFn m_EFn;
+
+		T m_t;
+	};
+
+	void CallEvent(std::vector<gcRefPtr<Helper::ItemHandleHelperI>> &vList, VoidEventItem::EventVoidFn Fn)
+	{
+		for (size_t x = 0; x < vList.size(); x++)
+		{
+			if (vList[x])
+				(*vList[x].*Fn)();
+		}
+	}
+
+	template <typename T>
+	void CallEvent(std::vector<gcRefPtr<Helper::ItemHandleHelperI>> &vList, void (Helper::ItemHandleHelperI::*Fn)(T&), T& t)
+	{
+		for (size_t x = 0; x < vList.size(); x++)
+		{
+			if (vList[x])
+				(*vList[x].*Fn)(t);
+		}
+	}
+
+	template <typename T>
+	void CallEvent(std::vector<gcRefPtr<Helper::ItemHandleHelperI>> &vList, void (Helper::ItemHandleHelperI::*Fn)(T), T t)
+	{
+		for (size_t x = 0; x < vList.size(); x++)
+		{
+			if (vList[x])
+				(*vList[x].*Fn)(t);
+		}
+	}
+
+
+	void CallEvent(std::vector<gcRefPtr<EventItemI>> &eventHistory, std::vector<gcRefPtr<Helper::ItemHandleHelperI>> &vList, VoidEventItem::EventVoidFn Fn)
+	{
+		eventHistory.push_back(new VoidEventItem(Fn));
+		CallEvent(vList, Fn);
+	}
+
+	template <typename T>
+	void CallEvent(std::vector<gcRefPtr<EventItemI>> &eventHistory, std::vector<gcRefPtr<Helper::ItemHandleHelperI>> &vList, void (Helper::ItemHandleHelperI::*Fn)(T&), T& t)
+	{
+		eventHistory.push_back(new GenericEventItem<T>(Fn, t));
+		CallEvent(vList, Fn, t);
+	}
+
+	template <typename T>
+	void CallEvent(std::vector<gcRefPtr<EventItemI>> &eventHistory, std::vector<gcRefPtr<Helper::ItemHandleHelperI>> &vList, void (Helper::ItemHandleHelperI::*Fn)(T), T t)
+	{
+		eventHistory.push_back(new GenericEventItem<T>(Fn, t));
+		CallEvent(vList, Fn, t);
 	}
 }
 
-template <typename T>
-void CallEvent(std::vector<Helper::ItemHandleHelperI*> &vList, void (Helper::ItemHandleHelperI::*Fn)(T), T t)
-{
-	for (size_t x=0; x<vList.size(); x++)
-	{
-		if (vList[x])
-			(*vList[x].*Fn)(t);
-	}
-}
 
-
-void CallEvent(std::vector<EventItemI*> &eventHistory, std::vector<Helper::ItemHandleHelperI*> &vList, VoidEventItem::EventVoidFn Fn)
-{
-	eventHistory.push_back(new VoidEventItem(Fn));
-	CallEvent(vList, Fn);
-}
-
-template <typename T>
-void CallEvent(std::vector<EventItemI*> &eventHistory, std::vector<Helper::ItemHandleHelperI*> &vList, void (Helper::ItemHandleHelperI::*Fn)(T&), T& t)
-{
-	eventHistory.push_back(new GenericEventItem<T>(Fn, t));
-	CallEvent(vList, Fn, t);
-}
-
-template <typename T>
-void CallEvent(std::vector<EventItemI*> &eventHistory, std::vector<Helper::ItemHandleHelperI*> &vList, void (Helper::ItemHandleHelperI::*Fn)(T), T t)
-{
-	eventHistory.push_back(new GenericEventItem<T>(Fn, t));
-	CallEvent(vList, Fn, t);
-}
-
-ItemHandleEvents::ItemHandleEvents(std::vector<Helper::ItemHandleHelperI*> &vHelperList) : m_vHelperList(vHelperList)
+ItemHandleEvents::ItemHandleEvents(std::mutex &helperLock, std::vector<gcRefPtr<Helper::ItemHandleHelperI>> &vHelperList)
+	: m_HelperLock(helperLock)
+	, m_vHelperList(vHelperList)
 {
 }
 
@@ -166,19 +176,19 @@ void ItemHandleEvents::reset()
 	m_LastProg.percent = -1;
 	m_LastProg.flag = -1;
 
-	safe_delete(m_EventHistory);
+	m_EventHistory.clear();
 }
 
-void ItemHandleEvents::postAll(Helper::ItemHandleHelperI* helper)
+void ItemHandleEvents::postAll(gcRefPtr<Helper::ItemHandleHelperI> &helper)
 {
-	for (size_t x=0; x<m_EventHistory.size(); x++)
+	for (auto h : m_EventHistory)
 	{
-		if (m_EventHistory[x])
-			m_EventHistory[x]->post(helper);
+		if (h)
+			h->post(helper);
 	}
 }
 
-void ItemHandleEvents::registerTask(UserCore::ItemTask::BaseItemTask* task)
+void ItemHandleEvents::registerTask(gcRefPtr<UserCore::ItemTask::BaseItemTask> &task)
 {
 	if (!task)
 		return;
@@ -195,7 +205,7 @@ void ItemHandleEvents::registerTask(UserCore::ItemTask::BaseItemTask* task)
 	task->onVerifyCompleteEvent += delegate(this, &ItemHandleEvents::onVerifyComplete);
 }
 
-void ItemHandleEvents::deregisterTask(UserCore::ItemTask::BaseItemTask* task)
+void ItemHandleEvents::deregisterTask(gcRefPtr<UserCore::ItemTask::BaseItemTask> &task)
 {
 	if (!task)
 		return;
@@ -214,26 +224,31 @@ void ItemHandleEvents::deregisterTask(UserCore::ItemTask::BaseItemTask* task)
 
 void ItemHandleEvents::onComplete(uint32& status)
 {
+	std::lock_guard<std::mutex> guard(m_HelperLock);
 	CallEvent<uint32>(m_EventHistory, m_vHelperList, &Helper::ItemHandleHelperI::onComplete, status);
 }
 
 void ItemHandleEvents::onProgressUpdate(uint32& progress)
 {
+	std::lock_guard<std::mutex> guard(m_HelperLock);
 	CallEvent(m_EventHistory, m_vHelperList, &Helper::ItemHandleHelperI::onProgressUpdate, progress);
 }
 
 void ItemHandleEvents::onError(gcException& e)
 {
+	std::lock_guard<std::mutex> guard(m_HelperLock);
 	CallEvent(m_EventHistory, m_vHelperList, &Helper::ItemHandleHelperI::onError, e);
 }
 
 void ItemHandleEvents::onNeedWildCard(WCSpecialInfo& info)
 {
+	std::lock_guard<std::mutex> guard(m_HelperLock);
 	CallEvent(m_vHelperList, &Helper::ItemHandleHelperI::onNeedWildCard, info);
 }
 
 void ItemHandleEvents::onMcfProgress(MCFCore::Misc::ProgressInfo& info)
 {
+	std::lock_guard<std::mutex> guard(m_HelperLock);
 	if (info.percent != m_LastProg.percent || info.flag != m_LastProg.flag)
 	{
 		m_LastProg = info;
@@ -247,24 +262,24 @@ void ItemHandleEvents::onMcfProgress(MCFCore::Misc::ProgressInfo& info)
 
 void ItemHandleEvents::onComplete(gcString& str)
 {
+	std::lock_guard<std::mutex> guard(m_HelperLock);
 	CallEvent(m_EventHistory, m_vHelperList, &Helper::ItemHandleHelperI::onComplete, str);
 }
 
 void ItemHandleEvents::onDownloadProvider(UserCore::Misc::GuiDownloadProvider& provider)
 {
+	std::lock_guard<std::mutex> guard(m_HelperLock);
 	CallEvent(m_EventHistory, m_vHelperList, &Helper::ItemHandleHelperI::onDownloadProvider, provider);
 }
 
 void ItemHandleEvents::onVerifyComplete(UserCore::Misc::VerifyComplete& info)
 {
+	std::lock_guard<std::mutex> guard(m_HelperLock);
 	CallEvent(m_EventHistory, m_vHelperList, &Helper::ItemHandleHelperI::onVerifyComplete, info);
 }
 
 void ItemHandleEvents::onPause(bool state)
 {
+	std::lock_guard<std::mutex> guard(m_HelperLock);
 	CallEvent(m_EventHistory, m_vHelperList, &Helper::ItemHandleHelperI::onPause, state);
-}
-
-
-}
 }

@@ -85,7 +85,7 @@ void User::initPipe()
 	if (m_pPipeClient)
 		return;
 
-	m_pPipeClient = std::make_shared<UserIPCPipeClient>(getUserName(), getAppDataPath(), true);
+	m_pPipeClient = gcRefPtr<UserIPCPipeClient>::create(getUserName(), getAppDataPath(), true);
 	m_pPipeClient->onDisconnectEvent += delegate(&onPipeDisconnect);
 
 	size_t x=0;
@@ -241,7 +241,7 @@ void User::doLogIn(const char* user, const char* pass, bool bTestOnly)
 	memNode.GetChild("avatar", szAvatar);
 
 	m_szAvatarUrl = szAvatar;
-	m_pThreadPool->queueTask(new UserCore::Task::DownloadAvatarTask(this, szAvatar.c_str(), m_iUserId) );
+	m_pThreadPool->queueTask(gcRefPtr<UserCore::Task::DownloadAvatarTask>::create(this, szAvatar.c_str(), m_iUserId) );
 
 
 	auto msgNode = memNode.FirstChildElement("messages");
@@ -291,7 +291,7 @@ void User::doLogIn(const char* user, const char* pass, bool bTestOnly)
 	{
 		m_pItemManager->enableSave();
 #ifdef WIN32
-		getThreadPool()->queueTask(new UpdateUninstallTask(this));
+		getThreadPool()->queueTask(gcRefPtr<UpdateUninstallTask>::create(this));
 #endif
 	}
 

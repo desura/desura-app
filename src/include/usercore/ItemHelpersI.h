@@ -75,7 +75,7 @@ namespace UserCore
 				C_VERIFY,
 			};
 
-			class GatherInfoHandlerHelperI
+			class GatherInfoHandlerHelperI : public gcRefBase
 			{
 			public:
 				virtual void gatherInfoComplete() = 0;
@@ -114,21 +114,21 @@ namespace UserCore
 
 			};
 
-			class InstallerHandleHelperI
+			class InstallerHandleHelperI : public gcRefBase
 			{
 			public:
 				virtual bool verifyAfterHashFail() = 0;
 				virtual void destroy() = 0;
 			};
 
-			class ItemHandleFactoryI
+			class ItemHandleFactoryI : public gcRefBase
 			{
 			public:
-				virtual void getGatherInfoHelper(Helper::GatherInfoHandlerHelperI** helper) = 0;
-				virtual void getInstallHelper(Helper::InstallerHandleHelperI** helper) = 0;
+				virtual gcRefPtr<Helper::GatherInfoHandlerHelperI> getGatherInfoHelper() = 0;
+				virtual gcRefPtr<Helper::InstallerHandleHelperI> getInstallHelper() = 0;
 			};
 
-			class ItemHandleHelperI
+			class ItemHandleHelperI : public gcRefBase
 			{
 			public:
 				virtual void onComplete(uint32 status) = 0;
@@ -153,7 +153,7 @@ namespace UserCore
 			};
 
 
-			class ItemLaunchHelperI
+			class ItemLaunchHelperI : public gcRefBase
 			{
 			public:
 				virtual void showUpdatePrompt() = 0;
@@ -166,7 +166,7 @@ namespace UserCore
 #endif
 			};
 
-			class ItemUninstallHelperI
+			class ItemUninstallHelperI : public gcRefBase
 			{
 			public:
 				//! Should we stop other stages to uninstall this item?
@@ -190,6 +190,8 @@ namespace UserCore
 				MOCK_METHOD0(getId, uint32 ());
 				MOCK_METHOD1(setId, void (uint32));
 				MOCK_METHOD1(onPause, void (bool));
+
+				gc_MOCK_REFCOUNTING(ItemHandleHelperMock);
 			};
 
 			class ItemLaunchHelperMock : public ItemLaunchHelperI
@@ -203,6 +205,7 @@ namespace UserCore
 #ifdef NIX
 				MOCK_METHOD0(showWinLaunchDialog, void());
 #endif
+				gc_MOCK_REFCOUNTING(ItemHandleHelperMock);
 			};
 #endif
 		}

@@ -40,34 +40,32 @@ namespace XML
 
 namespace UserCore
 {
-namespace Misc
-{
+	namespace Misc
+	{
+		class InstallInfo : public InstallInfoI
+		{
+		public:
+			InstallInfo(DesuraId id, DesuraId pid = 0);
+			~InstallInfo();
 
-class InstallInfo : public InstallInfoI
-{
-public:
-	InstallInfo(DesuraId id, DesuraId pid = 0);
-	~InstallInfo();
+			void loadXmlData(const XML::gcXMLElement &xmlNode, gcRefPtr<WildcardManager> &pWildCard);
 
-	void loadXmlData(const XML::gcXMLElement &xmlNode, WildcardManager* pWildCard);
+			const char* getName(){ return m_szName.c_str(); }
+			const char* getPath(){ return m_szPath.c_str(); }
+			bool isInstalled(){ return m_bInstalled; }
+			DesuraId getId(){ return m_iID; }
+			DesuraId getParentId(){ return m_iParentID; }
 
-	const char* getName(){return m_szName.c_str();}
-	const char* getPath(){return m_szPath.c_str();}
-	bool isInstalled(){return m_bInstalled;}
-	DesuraId getId(){return m_iID;}
-	DesuraId getParentId(){return m_iParentID;}
+		private:
+			gcString m_szName;
+			gcString m_szPath;
 
-private:
-	gcString m_szName;
-	gcString m_szPath;
+			bool m_bInstalled;
 
-	bool m_bInstalled;
-
-	DesuraId m_iID;
-	DesuraId m_iParentID;
-};
-
-}
+			DesuraId m_iID;
+			DesuraId m_iParentID;
+		};
+	}
 }
 
 #endif //DESURA_INSTALLINFO_H

@@ -32,16 +32,12 @@ $/LicenseInfo$
 #include "User.h"
 #include "GetItemListThread.h"
 
-namespace UserCore
+using namespace UserCore;
+
+
+CIPManager::CIPManager(gcRefPtr<User> user)
+	: m_pUser(user)
 {
-
-
-CIPManager::CIPManager(User* user)
-{
-	m_pUser = user;
-	m_pThread = nullptr;
-	m_bRefreshComplete = false;
-
 	createCIPDbTables(user->getAppDataPath());
 	m_szDBName = getCIBDb(user->getAppDataPath());
 }
@@ -102,16 +98,16 @@ void CIPManager::getItemList(std::vector<UserCore::Misc::CIPItem> &list)
 		Warning("Failed to update cip (loadItems) {0}\n", ex.what());
 	}
 
-	std::vector<UserCore::Item::ItemInfoI*> items;
+	std::vector<gcRefPtr<UserCore::Item::ItemInfoI>> items;
 	m_pUser->getItemManager()->getGameList(items);
 
-	for (size_t x=0; x<items.size(); x++)
+	for (auto i : items)
 	{
 		bool found = false;
 
-		for (size_t y=0; y<list.size(); y++)
+		for (auto t : list)
 		{
-			if (list[y].id == items[x]->getId())
+			if (t.id == i->getId())
 			{
 				found = true;
 				break;
@@ -122,8 +118,8 @@ void CIPManager::getItemList(std::vector<UserCore::Misc::CIPItem> &list)
 		{
 			UserCore::Misc::CIPItem cip;
 
-			cip.id = items[x]->getId();
-			cip.name = items[x]->getName();
+			cip.id = i->getId();
+			cip.name = i->getName();
 
 			list.push_back(cip);
 		}
@@ -179,8 +175,8 @@ void CIPManager::refreshList()
 
 	m_pThread = m_pUser->getThreadManager()->newGetItemListThread();
 
-	*m_pThread->getErrorEvent() += delegate(this, &CIPManager::onRefreshError);
-	*m_pThread->getCompleteEvent() += delegate(this, &CIPManager::onRefreshComplete);
+	m_pThread->getErrorEvent() += delegate(this, &CIPManager::onRefreshError);
+	m_pThread->getCompleteEvent() += delegate(this, &CIPManager::onRefreshComplete);
 
 	m_pThread->start();
 }
@@ -223,7 +219,4 @@ bool CIPManager::getCIP(UserCore::Misc::CIPItem& info)
 	}
 
 	return false;
-}
-
-
 }

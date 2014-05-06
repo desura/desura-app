@@ -29,13 +29,11 @@ $/LicenseInfo$
 #include "IPCServiceMain.h"
 #include "IPCUninstallMcf.h"
 
-namespace UserCore
-{
-namespace ItemTask
-{
+using namespace UserCore::ItemTask;
 
 
-UIServiceTask::UIServiceTask(UserCore::Item::ItemHandle* handle, bool removeAll, bool removeAcc) : UIBaseServiceTask(UserCore::Item::ITEM_STAGE::STAGE_UNINSTALL, "UnInstall", handle)
+UIServiceTask::UIServiceTask(gcRefPtr<UserCore::Item::ItemHandleI> handle, bool removeAll, bool removeAcc)
+	: UIBaseServiceTask(UserCore::Item::ITEM_STAGE::STAGE_UNINSTALL, "UnInstall", handle)
 {
 	m_bRemoveAll = removeAll;
 	m_bRemoveAcc = removeAcc;
@@ -114,8 +112,3 @@ void UIServiceTask::onComplete()
 
 	UIBaseServiceTask::onComplete();
 }
-
-
-}
-}
-

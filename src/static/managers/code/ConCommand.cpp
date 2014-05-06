@@ -36,7 +36,7 @@ ConCommand::ConCommand(const char* printname, ConCommandCallBackFn callback) : B
 		InitConComManger();
 	}
 
-	m_bReg = g_pConComMang->RegCCom(this);
+	m_bReg = g_pConComMang->RegCCom(gcRefPtr<ConCommand>(this));
 
 	if (!m_bReg)
 	{

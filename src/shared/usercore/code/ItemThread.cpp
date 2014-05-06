@@ -35,17 +35,12 @@ $/LicenseInfo$
 
 using namespace UserCore::Item;
 
-ItemThread::ItemThread(UserCore::Item::ItemHandle *handle) : ::Thread::BaseThread(gcString("{0} Thread", handle->getItemInfo()->getShortName()).c_str())
+ItemThread::ItemThread(gcRefPtr<UserCore::Item::ItemHandle> handle) 
+	: ::Thread::BaseThread(gcString("{0} Thread", handle->getItemInfo()->getShortName()).c_str())
 {
 	m_szBaseName = gcString("{0}", handle->getItemInfo()->getShortName());
 	m_bRunningTask = false;
 	start();
-
-	m_pThreadManager = nullptr;	
-	m_pWebCore = nullptr;
-	m_pUserCore = nullptr;
-
-	m_pCurrentTask = nullptr;
 	m_bDeleteCurrentTask = false;
 }
 
@@ -83,7 +78,7 @@ void ItemThread::purge()
 	}
 }
 
-void ItemThread::setThreadManager(UserCore::UserThreadManagerI* tm)
+void ItemThread::setThreadManager(gcRefPtr<UserCore::UserThreadManagerI> tm)
 {
 	gcAssert(tm);
 	m_pThreadManager = tm;
@@ -92,17 +87,17 @@ void ItemThread::setThreadManager(UserCore::UserThreadManagerI* tm)
 		m_pThreadManager->enlist(this);
 }
 
-void ItemThread::setWebCore(WebCore::WebCoreI *wc)
+void ItemThread::setWebCore(gcRefPtr<WebCore::WebCoreI> wc)
 {
 	m_pWebCore = wc;
 }
 
-void ItemThread::setUserCore(UserCore::UserI *uc)
+void ItemThread::setUserCore(gcRefPtr<UserCore::UserI> uc)
 {
 	m_pUserCore = uc;
 }
 
-void ItemThread::queueTask(UserCore::ItemTask::BaseItemTask *task)
+void ItemThread::queueTask(gcRefPtr<UserCore::ItemTask::BaseItemTask> task)
 {
 	if (isStopped())
 	{
@@ -141,7 +136,7 @@ bool ItemThread::performTask()
 	if (isStopped())
 		return true;
 
-	UserCore::ItemTask::BaseItemTask* task = getNewTask();
+	auto task = getNewTask();
 
 	if (!task)
 		return false;
@@ -178,12 +173,12 @@ bool ItemThread::performTask()
 	return true;
 }
 
-UserCore::ItemTask::BaseItemTask* ItemThread::getNewTask()
+gcRefPtr<UserCore::ItemTask::BaseItemTask> ItemThread::getNewTask()
 {
 	if (isPaused())
 		return nullptr;
 
-	UserCore::ItemTask::BaseItemTask* task = nullptr;
+	gcRefPtr<UserCore::ItemTask::BaseItemTask> task;
 
 	std::lock_guard<std::mutex> guard(m_TaskMutex);
 	

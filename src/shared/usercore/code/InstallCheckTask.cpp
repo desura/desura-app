@@ -27,12 +27,10 @@ $/LicenseInfo$
 #include "InstallCheckTask.h"
 #include "managers/WildcardManager.h"
 
-namespace UserCore
-{
-namespace ItemTask
-{
+using namespace UserCore::ItemTask;
 
-InstallCheckTask::InstallCheckTask(UserCore::Item::ItemHandle *handle) : BaseItemTask(UserCore::Item::ITEM_STAGE::STAGE_INSTALL_CHECK, "InstallCheck", handle)
+InstallCheckTask::InstallCheckTask(gcRefPtr<UserCore::Item::ItemHandleI> handle)
+	: BaseItemTask(UserCore::Item::ITEM_STAGE::STAGE_INSTALL_CHECK, "InstallCheck", handle)
 {
 }
 
@@ -40,7 +38,7 @@ void InstallCheckTask::doRun()
 {
 	WildcardManager wildc = WildcardManager();
 	wildc.onNeedSpecialEvent += delegate(&onNeedWCEvent);
-	wildc.onNeedSpecialEvent += delegate(getUserCore()->getNeedWildCardEvent());
+	wildc.onNeedSpecialEvent += delegate(&getUserCore()->getNeedWildCardEvent());
 
 	getUserCore()->getItemManager()->retrieveItemInfo(getItemId(), 0, &wildc);
 
@@ -48,7 +46,4 @@ void InstallCheckTask::doRun()
 	onCompleteEvent(prog);
 
 	getItemHandle()->getInternal()->completeStage(false);
-}
-
-}
 }

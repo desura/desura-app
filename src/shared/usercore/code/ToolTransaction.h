@@ -37,7 +37,7 @@ namespace UserCore
 {
 	namespace Misc
 	{
-		class ToolTransInfo
+		class ToolTransInfo : public gcRefCount
 		{
 		public:
 			ToolTransInfo(bool download, ToolTransaction* transaction, ToolManager* pToolManager);

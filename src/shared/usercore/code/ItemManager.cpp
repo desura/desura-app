@@ -92,9 +92,10 @@ public:
 	bool reset;
 };
 
-ItemManager::ItemManager(User* user) : BaseManager(true)
+ItemManager::ItemManager(gcRefPtr<User> user) 
+	: BaseManager()
+	, m_pUser(user)
 {
-	m_pUser = user;
 	m_bEnableSave = false;
 	m_bFirstLogin = false;
 
@@ -335,7 +336,7 @@ void ItemManager::updateItemIds()
 
 bool ItemManager::isInstalled(DesuraId id)
 {
-	UserCore::Item::ItemInfo* temp = findItemInfoNorm(id);
+	auto temp = findItemInfoNorm(id);
 	
 	if (temp)
 		return temp->isInstalled();
@@ -354,19 +355,19 @@ void ItemManager::getCIP(DesuraId id, char** buff)
 
 uint32 ItemManager::getDevItemCount()
 {
-	std::vector<UserCore::Item::ItemInfoI*> dList;
+	std::vector<gcRefPtr<UserCore::Item::ItemInfoI>> dList;
 	getDevList(dList);
 	return dList.size();
 }
 
-void ItemManager::getAllItems(std::vector<UserCore::Item::ItemInfoI*> &aList)
+void ItemManager::getAllItems(std::vector<gcRefPtr<UserCore::Item::ItemInfoI>> &aList)
 {
 	itemIterator it;
 	itemIterator endit = m_mItemMap.end();
 
 	for (it = m_mItemMap.begin(); it != endit; ++it)
 	{
-		UserCore::Item::ItemInfo* info = it->second->getItemInfoNorm();
+		auto info = it->second->getItemInfoNorm();
 		
 		if (!info)
 			continue;
@@ -375,14 +376,14 @@ void ItemManager::getAllItems(std::vector<UserCore::Item::ItemInfoI*> &aList)
 	}
 }
 
-void ItemManager::getGameList(std::vector<UserCore::Item::ItemInfoI*> &gList, bool includeDeleted)
+void ItemManager::getGameList(std::vector<gcRefPtr<UserCore::Item::ItemInfoI>> &gList, bool includeDeleted)
 {
 	itemIterator it;
 	itemIterator endit = m_mItemMap.end();
 
 	for (it = m_mItemMap.begin(); it != endit; ++it)
 	{
-		UserCore::Item::ItemInfo* info = it->second->getItemInfoNorm();
+		auto info = it->second->getItemInfoNorm();
 
 		if (!info)
 			continue;
@@ -405,11 +406,11 @@ void ItemManager::getGameList(std::vector<UserCore::Item::ItemInfoI*> &gList, bo
 
 }
 
-void ItemManager::getModList(DesuraId gameId, std::vector<UserCore::Item::ItemInfoI*> &mList, bool includeDeleted)
+void ItemManager::getModList(DesuraId gameId, std::vector<gcRefPtr<UserCore::Item::ItemInfoI>> &mList, bool includeDeleted)
 {
-	for_each([&mList, includeDeleted, gameId](UserCore::Item::ItemHandleI* handle)
+	for_each([&mList, includeDeleted, gameId](gcRefPtr<UserCore::Item::ItemHandleI> handle)
 	{
-		UserCore::Item::ItemInfoI* info = handle->getItemInfo();
+		auto info = handle->getItemInfo();
 
 		if (info->getId().getType() != DesuraId::TYPE_MOD || info->getParentId() != gameId)
 			return;		
@@ -428,14 +429,14 @@ void ItemManager::getModList(DesuraId gameId, std::vector<UserCore::Item::ItemIn
 		getModList(DesuraId("50", "games"), mList, includeDeleted);
 }
 
-void ItemManager::getDevList(std::vector<UserCore::Item::ItemInfoI*> &dList)
+void ItemManager::getDevList(std::vector<gcRefPtr<UserCore::Item::ItemInfoI>> &dList)
 {
 	itemIterator it;
 	itemIterator endit = m_mItemMap.end();
 
 	for (it = m_mItemMap.begin(); it != endit; ++it)
 	{
-		UserCore::Item::ItemInfo* info = it->second->getItemInfoNorm();
+		auto info = it->second->getItemInfoNorm();
 
 		if (!info)
 			continue;
@@ -449,14 +450,14 @@ void ItemManager::getDevList(std::vector<UserCore::Item::ItemInfoI*> &dList)
 }
 
 
-void ItemManager::getLinkList(std::vector<UserCore::Item::ItemInfoI*> &lList)
+void ItemManager::getLinkList(std::vector<gcRefPtr<UserCore::Item::ItemInfoI>> &lList)
 {
 	itemIterator it;
 	itemIterator endit = m_mItemMap.end();
 
 	for (it = m_mItemMap.begin(); it != endit; ++it)
 	{
-		UserCore::Item::ItemInfo* info = it->second->getItemInfoNorm();
+		auto info = it->second->getItemInfoNorm();
 
 		if (!info)
 			continue;
@@ -492,12 +493,12 @@ bool ItemManager::isItemFavorite(DesuraId id)
 	return res;
 }
 
-void ItemManager::getFavList(std::vector<UserCore::Item::ItemInfoI*> &fList)
+void ItemManager::getFavList(std::vector<gcRefPtr<UserCore::Item::ItemInfoI>> &fList)
 {
 	m_FavLock.lock();
 	for (size_t x=0; x<m_vFavList.size(); x++)
 	{
-		UserCore::Item::ItemInfoI* item = findItemInfo(m_vFavList[x]);
+		auto item = findItemInfo(m_vFavList[x]);
 
 		if (item)
 			fList.push_back(item);
@@ -529,7 +530,7 @@ void ItemManager::loadFavList()
 	m_FavLock.unlock();
 }
 
-void ItemManager::getRecentList(std::vector<UserCore::Item::ItemInfoI*> &rList)
+void ItemManager::getRecentList(std::vector<gcRefPtr<UserCore::Item::ItemInfoI>> &rList)
 {
 	sqlite3x::sqlite3_connection db(getItemInfoDb(m_szAppPath.c_str()).c_str());
 
@@ -544,7 +545,7 @@ void ItemManager::getRecentList(std::vector<UserCore::Item::ItemInfoI*> &rList)
 		{
 			DesuraId id(reader.getint64(0));
 
-			UserCore::Item::ItemInfoI* item = findItemInfo(id);
+			auto item = findItemInfo(id);
 			if (item)
 				rList.push_back(item);
 		}
@@ -554,7 +555,7 @@ void ItemManager::getRecentList(std::vector<UserCore::Item::ItemInfoI*> &rList)
 	}
 }
 
-void ItemManager::getNewItems(std::vector<UserCore::Item::ItemInfoI*> &rList)
+void ItemManager::getNewItems(std::vector<gcRefPtr<UserCore::Item::ItemInfoI>> &rList)
 {
 	sqlite3x::sqlite3_connection db(getItemInfoDb(m_szAppPath.c_str()).c_str());
 
@@ -569,7 +570,7 @@ void ItemManager::getNewItems(std::vector<UserCore::Item::ItemInfoI*> &rList)
 		{
 			DesuraId id(reader.getint64(0));
 
-			UserCore::Item::ItemInfoI* item = findItemInfo(id);
+			auto item = findItemInfo(id);
 			if (item)
 				rList.push_back(item);
 		}
@@ -583,7 +584,7 @@ void ItemManager::getNewItems(std::vector<UserCore::Item::ItemInfoI*> &rList)
 void ItemManager::removeItem(DesuraId id)
 {
 	gcTrace("ItemId {0}", id);
-	UserCore::Item::ItemInfo* item = findItemInfoNorm(id);
+	auto item = findItemInfoNorm(id);
 
 	if (!item)
 		return;
@@ -591,7 +592,7 @@ void ItemManager::removeItem(DesuraId id)
 	if (item->getStatus() & (UM::ItemInfoI::STATUS_INSTALLED|UM::ItemInfoI::STATUS_ONACCOUNT))
 		return;
 
-	std::vector<UserCore::Item::ItemInfoI*> mList;
+	std::vector<gcRefPtr<UserCore::Item::ItemInfoI>> mList;
 	getModList(id, mList);
 
 	//make sure we have no children
@@ -619,7 +620,7 @@ void ItemManager::retrieveItemInfoAsync(DesuraId id, bool addToAccount)
 	m_pUser->m_pThreadPool->queueTask(new UserCore::Task::GatherInfoTask(m_pUser, id, addToAccount));
 }
 
-void ItemManager::retrieveItemInfo(DesuraId id, uint32 statusOveride, WildcardManager* pWildCard, MCFBranch mcfBranch, MCFBuild mcfBuild, bool reset)
+void ItemManager::retrieveItemInfo(DesuraId id, uint32 statusOveride, gcRefPtr<WildcardManager> pWildCard, MCFBranch mcfBranch, MCFBuild mcfBuild, bool reset)
 {
 	gcTrace("ItemId {0}", id);
 
@@ -722,7 +723,7 @@ void ItemManager::processLeftOvers(InfoMaps &maps, bool addMissing)
 
 		auto infoNode = p.second.first;
 
-		UserCore::Item::ItemInfo* info = this->findItemInfoNorm(id);
+		auto info = this->findItemInfoNorm(id);
 		ParseInfo pi(UM::ItemInfo::STATUS_STUB);
 
 		if (info)
@@ -744,7 +745,7 @@ void ItemManager::processLeftOvers(InfoMaps &maps, bool addMissing)
 
 		bool isDevOfMod = false;
 		bool addMissingChild = addMissing;
-		ItemManager* im = this;
+		gcRefPtr<ItemManager> im = this;
 
 		for(auto p : maps.modMap)
 		{
@@ -755,7 +756,7 @@ void ItemManager::processLeftOvers(InfoMaps &maps, bool addMissing)
 				return;
 
 			DesuraId mid = p.first;
-			UserCore::Item::ItemInfo* info = im->findItemInfoNorm(mid);
+			auto info = im->findItemInfoNorm(mid);
 
 			if (info)
 				return;
@@ -820,10 +821,10 @@ void ItemManager::loadDbItems()
 				DesuraId id(reader.getint64(0));
 				DesuraId pid(reader.getint64(1));
 
-				UserCore::Item::ItemInfo* temp = new UserCore::Item::ItemInfo(m_pUser, id, pid);
+				auto temp = gcRefPtr<UserCore::Item::ItemInfo>::create(m_pUser, id, pid);
 				temp->loadDb(&db); //UM::ItemInfoI::STATUS_ONCOMPUTER
 
-				UserCore::Item::ItemHandle* handle = new UserCore::Item::ItemHandle(temp, m_pUser);
+				auto handle = gcRefPtr<UserCore::Item::ItemHandle>::create(temp, m_pUser);
 
 				addItem(id.toInt64(), handle);
 				count++;
@@ -859,7 +860,7 @@ void ItemManager::saveDbItems(bool fullSave)
 		sqlite3x::sqlite3_connection db(szItemDb.c_str());
 		sqlite3x::sqlite3_transaction trans(db);
 	
-		for_each([&db](UserCore::Item::ItemHandle* handle){
+		for_each([&db](gcRefPtr<UserCore::Item::ItemHandle> handle){
 
 			if (handle && handle->getItemInfoNorm())
 				handle->getItemInfoNorm()->saveDbFull(&db);
@@ -927,7 +928,7 @@ void ItemManager::parseItemUpdateXml(const char* area, const XML::gcXMLElement &
 		if (!id.isOk())
 			return;
 
-		UserCore::Item::ItemInfo* item = findItemInfoNorm(id);
+		auto item = findItemInfoNorm(id);
 				
 		if (!item)
 		{
@@ -951,9 +952,9 @@ void ItemManager::parseItemUpdateXml(const char* area, const XML::gcXMLElement &
 
 void ItemManager::postParseLoginXml()
 {
-	for_each([this](UserCore::Item::ItemHandle* handle){
+	for_each([this](gcRefPtr<UserCore::Item::ItemHandle> handle){
 
-		UserCore::Item::ItemInfo* info = dynamic_cast<UserCore::Item::ItemInfo*>(handle->getItemInfo());
+		auto info = gcRefPtr<UserCore::Item::ItemInfo>::dyn_cast(handle->getItemInfo());
 
 		if (info->wasOnAccount())
 			removeItem(info->getId());
@@ -993,11 +994,11 @@ void ItemManager::generateInfoMaps(const XML::gcXMLElement &gamesNode, InfoMaps*
 	});
 }
 
-UserCore::Item::ItemInfo* ItemManager::createNewItem(DesuraId pid, DesuraId id, ParseInfo& pi)
+gcRefPtr<UserCore::Item::ItemInfo> ItemManager::createNewItem(DesuraId pid, DesuraId id, ParseInfo& pi)
 {
 	gcTrace("ItemId {0}", id);
-	UserCore::Item::ItemInfo* temp = new UserCore::Item::ItemInfo(m_pUser, id, pid);
-	UserCore::Item::ItemHandle* handle = new UserCore::Item::ItemHandle(temp, m_pUser);
+	auto temp = gcRefPtr<UserCore::Item::ItemInfo>::create(m_pUser, id, pid);
+	auto handle = gcRefPtr<UserCore::Item::ItemHandle>::create(temp, m_pUser);
 
 	try
 	{
@@ -1021,7 +1022,7 @@ UserCore::Item::ItemInfo* ItemManager::createNewItem(DesuraId pid, DesuraId id, 
 	return temp;
 }
 
-void ItemManager::updateItem(UserCore::Item::ItemInfo* itemInfo, ParseInfo& pi)
+void ItemManager::updateItem(gcRefPtr<UserCore::Item::ItemInfo> itemInfo, ParseInfo& pi)
 {
 	uint32 newSO = pi.statusOverride&~(UM::ItemInfoI::STATUS_DELETED);
 
@@ -1169,12 +1170,12 @@ void ItemManager::parseGameXml(DesuraId id, ParseInfo &pi)
 
 	if (pid.isOk() && pi.pWildCard)
 	{
-		UserCore::Item::ItemInfo *par = findItemInfoNorm(pid);
+		auto par = findItemInfoNorm(pid);
 		if (par)
 			pi.pWildCard->updateInstallWildcard("PARENT_INSTALL_PATH", par->getPath());
 	}
 
-	UserCore::Item::ItemInfo* temp = findItemInfoNorm(id);
+	auto temp = findItemInfoNorm(id);
 			
 	if (temp)
 	{
@@ -1199,7 +1200,7 @@ void ItemManager::parseGameXml(DesuraId id, ParseInfo &pi)
 	parseModsXml(temp, gamePi);
 }
 
-void ItemManager::parseModsXml(UserCore::Item::ItemInfo* parent, ParseInfo &pi)
+void ItemManager::parseModsXml(gcRefPtr<UserCore::Item::ItemInfo> parent, ParseInfo &pi)
 {
 	if (!pi.rootNode.IsValid() || !parent)
 		return;
@@ -1234,7 +1235,7 @@ void ItemManager::parseModsXml(UserCore::Item::ItemInfo* parent, ParseInfo &pi)
 	});
 }
 
-void ItemManager::parseModXml(UserCore::Item::ItemInfo* parent, DesuraId id, ParseInfo &pi)
+void ItemManager::parseModXml(gcRefPtr<UserCore::Item::ItemInfo> parent, DesuraId id, ParseInfo &pi)
 {
 	if (pi.pWildCard)
 	{
@@ -1244,7 +1245,7 @@ void ItemManager::parseModXml(UserCore::Item::ItemInfo* parent, DesuraId id, Par
 	}
 
 	//check to see if it all ready exists.
-	UserCore::Item::ItemInfo * temp = findItemInfoNorm(id);
+	auto temp = findItemInfoNorm(id);
 
 	if (temp)
 		updateItem(temp, pi);
@@ -1381,9 +1382,9 @@ void ItemManager::setRecent(DesuraId id)
 
 
 
-UserCore::Item::ItemInfo* ItemManager::findItemInfoNorm(DesuraId id)
+gcRefPtr<UserCore::Item::ItemInfo> ItemManager::findItemInfoNorm(DesuraId id)
 {
-	UserCore::Item::ItemHandle* handle = findItemHandleNorm(id);
+	auto handle = findItemHandleNorm(id);
 
 	if (handle)
 		return handle->getItemInfoNorm();
@@ -1391,17 +1392,17 @@ UserCore::Item::ItemInfo* ItemManager::findItemInfoNorm(DesuraId id)
 	return nullptr;
 }
 
-UserCore::Item::ItemInfoI* ItemManager::findItemInfo(DesuraId id)
+gcRefPtr<UserCore::Item::ItemInfoI> ItemManager::findItemInfo(DesuraId id)
 {
 	return findItemInfoNorm(id);
 }
 
-UserCore::Item::ItemHandle* ItemManager::findItemHandleNorm(DesuraId id)
+gcRefPtr<UserCore::Item::ItemHandle> ItemManager::findItemHandleNorm(DesuraId id)
 {
 	return BaseManager::findItem(id.toInt64());
 }
 
-UserCore::Item::ItemHandleI* ItemManager::findItemHandle(DesuraId id)
+gcRefPtr<UserCore::Item::ItemHandleI> ItemManager::findItemHandle(DesuraId id)
 {
 	return findItemHandleNorm(id);
 }
@@ -1410,7 +1411,7 @@ UserCore::Item::ItemHandleI* ItemManager::findItemHandle(DesuraId id)
 
 void ItemManager::setInstalledMod(DesuraId parentId, DesuraId modId)
 {
-	UserCore::Item::ItemInfo* parent = findItemInfoNorm(parentId);
+	auto parent = findItemInfoNorm(parentId);
 
 	if (!parent)
 		return;
@@ -1421,8 +1422,8 @@ void ItemManager::setInstalledMod(DesuraId parentId, DesuraId modId)
 
 	if (parentId == d2Id || parentId == lodId)
 	{
-		UserCore::Item::ItemInfo* d2 = findItemInfoNorm(d2Id);
-		UserCore::Item::ItemInfo* lod = findItemInfoNorm(lodId);
+		auto d2 = findItemInfoNorm(d2Id);
+		auto lod = findItemInfoNorm(lodId);
 
 		if (d2)
 			d2->setInstalledModId(modId);
@@ -1438,22 +1439,21 @@ void ItemManager::setInstalledMod(DesuraId parentId, DesuraId modId)
 }
 
 
-UserCore::Item::ItemTaskGroup* ItemManager::newTaskGroup(uint32 type)
+gcRefPtr<UserCore::Item::ItemTaskGroup> ItemManager::newTaskGroup(uint32 type)
 {
-	UserCore::Item::ItemTaskGroup* g = new UserCore::Item::ItemTaskGroup(this, (UserCore::Item::ItemTaskGroupI::ACTION)type, 1);
-	return g;
+	return gcRefPtr<UserCore::Item::ItemTaskGroup>::create(this, (UserCore::Item::ItemTaskGroupI::ACTION)type, 1);
 }
 
 void ItemManager::checkItems()
 {
-	UserCore::Item::ItemTaskGroup* group = nullptr;
+	gcRefPtr<UserCore::Item::ItemTaskGroup> group;
 
 
 	uint32 count = getCount();
 
 	for (uint32 x=0; x<count; x++)
 	{
-		UserCore::Item::ItemHandleI* item = getItemHandle(x);
+		auto item = getItemHandle(x);
 
 		if (!item || item->startUpCheck() == false)
 			continue;
@@ -1467,7 +1467,7 @@ void ItemManager::checkItems()
 	if (!group)
 		return;
 
-	group->sort([](UserCore::Item::ItemHandleI* a, UserCore::Item::ItemHandleI* b) -> bool {
+	group->sort([](gcRefPtr<UserCore::Item::ItemHandleI> a, gcRefPtr<UserCore::Item::ItemHandleI> b) -> bool {
 
 		bool ap = HasAnyFlags(a->getItemInfo()->getStatus(), (UserCore::Item::ItemInfoI::STATUS_DOWNLOADING|UserCore::Item::ItemInfoI::STATUS_INSTALLING));
 		bool bp = HasAnyFlags(b->getItemInfo()->getStatus(), (UserCore::Item::ItemInfoI::STATUS_DOWNLOADING|UserCore::Item::ItemInfoI::STATUS_INSTALLING));
@@ -1489,13 +1489,13 @@ DesuraId ItemManager::addLink(const char* name, const char* exe, const char* arg
 		return DesuraId();
 
 	DesuraId id(UTIL::MISC::RSHash_CSTR(name), DesuraId::TYPE_LINK);
-	UserCore::Item::ItemInfo* info = findItemInfoNorm(id);
+	auto info = findItemInfoNorm(id);
 
 	if (info)
 		return DesuraId();
 
-	info = new UserCore::Item::ItemInfo(m_pUser, id);
-	UserCore::Item::ItemHandle* handle = new UserCore::Item::ItemHandle(info, m_pUser);
+	info = gcRefPtr<UserCore::Item::ItemInfo>::create(m_pUser, id);
+	auto handle = gcRefPtr<UserCore::Item::ItemHandle>::create(info, m_pUser);
 
 	info->setName(name);
 	info->setLinkInfo(exe, args);
@@ -1512,12 +1512,12 @@ DesuraId ItemManager::addLink(const char* name, const char* exe, const char* arg
 
 void ItemManager::updateLink(DesuraId id, const char* args)
 {
-	UserCore::Item::ItemInfo* info = findItemInfoNorm(id);
+	auto info = findItemInfoNorm(id);
 
 	if (!info)
 		return;
 
-	std::vector<UserCore::Item::Misc::ExeInfoI*> list;
+	std::vector<gcRefPtr<UserCore::Item::Misc::ExeInfoI>> list;
 	info->getExeList(list);
 
 	if (list.size() == 1)
@@ -1635,12 +1635,12 @@ void ItemManager::regenLaunchScripts()
 #endif
 }
 
-void ItemManager::saveItem(UserCore::Item::ItemInfoI* pItem)
+void ItemManager::saveItem(gcRefPtr<UserCore::Item::ItemInfoI> pItem)
 {
 	if (!m_bEnableSave)
 		return;
 
-	auto pItemNorm = dynamic_cast<UserCore::Item::ItemInfo*>(pItem);
+	auto pItemNorm = gcRefPtr<UserCore::Item::ItemInfo>::dyn_cast(pItem);
 
 	VERIFY_OR_RETURN(pItemNorm, );
 

@@ -435,6 +435,7 @@ inline void DoAssert(const char* szExp, const char* szFile, int nLine)
 
 	#include "gcError.h"
 	#include "Event.h"
+	#include "util/UtilPtr.h"
 	#include "util/UtilSafeDelete.h"
 	#include "util/UtilSafeString.h"
 	#include "util/UtilMisc.h"
@@ -567,7 +568,6 @@ inline void DoAssert(const char* szExp, const char* szFile, int nLine)
 	#endif
 
 #endif
-
 
 #ifdef LINK_WITH_GTEST
 #include <gtest/gtest.h>

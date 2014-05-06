@@ -74,11 +74,11 @@ namespace XML
 }
 
 //! Stores wild cards (path and special locations) and allows them to be resolved into full paths on the file system
-class WildcardManager : public BaseManager<WildcardInfo>
+class WildcardManager : public BaseManager<WildcardInfo>, public gcRefCount
 {
 public:
 	WildcardManager();
-	WildcardManager(WildcardManager* mng);
+	WildcardManager(gcRefPtr<WildcardManager> &mng);
 	virtual ~WildcardManager();
 
 	void load();

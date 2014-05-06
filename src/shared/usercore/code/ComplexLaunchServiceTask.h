@@ -53,7 +53,7 @@ namespace UserCore
 		class ComplexLaunchServiceTask : public BaseItemServiceTask
 		{
 		public:
-			ComplexLaunchServiceTask(UserCore::Item::ItemHandle *handle, bool clean, MCFBranch branch, MCFBuild build, UserCore::Item::Helper::InstallerHandleHelperI* ihh);
+			ComplexLaunchServiceTask(gcRefPtr<UserCore::Item::ItemHandleI> handle, bool clean, MCFBranch branch, MCFBuild build, gcRefPtr<UserCore::Item::Helper::InstallerHandleHelperI> &ihh);
 			~ComplexLaunchServiceTask();
 
 			void completeStage()
@@ -91,19 +91,17 @@ namespace UserCore
 
 		private:
 			bool m_bClean;
-			bool m_bHashMissMatch;
+			bool m_bHashMissMatch = false;
+			bool m_bCompleteStage = false;
+			bool m_bLaunch = false;
 
-			uint8 m_iTier;
-			uint8 m_iMode;
+			uint8 m_iTier = 0;
+			uint8 m_iMode = 0;
 
 			DesuraId m_iRemoveId;
 
-			IPCComplexLaunch* m_pIPCIM;
-
-			bool m_bCompleteStage;
-			bool m_bLaunch;
-
-			UserCore::Item::Helper::InstallerHandleHelperI* m_pIHH;
+			gcRefPtr<IPCComplexLaunch> m_pIPCIM;
+			gcRefPtr<UserCore::Item::Helper::InstallerHandleHelperI> m_pIHH;
 		};
 	}
 }

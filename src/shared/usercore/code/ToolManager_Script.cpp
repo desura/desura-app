@@ -197,7 +197,7 @@ ItemExtender g_ItemExtender;
 
 
 
-void ToolManager::addJSTool(UserCore::Item::ItemInfo* item, uint32 branchId, gcString name, gcString exe, gcString args, gcString res)
+void ToolManager::addJSTool(gcRefPtr<UserCore::Item::ItemInfo> item, uint32 branchId, gcString name, gcString exe, gcString args, gcString res)
 {
 	if (!item)
 		return;
@@ -243,12 +243,12 @@ void ToolManager::addJSTool(UserCore::Item::ItemInfo* item, uint32 branchId, gcS
 	DesuraId toolId(m_iLastCustomToolId, DesuraId::TYPE_TOOL);
 	m_iLastCustomToolId--;
 
-	JSToolInfo* tool = new JSToolInfo(item->getId(), realBranch->getBranchId(), toolId, name, exe, args, res);
+	auto tool = gcRefPtr<JSToolInfo>::create(item->getId(), realBranch->getBranchId(), toolId, name, exe, args, res);
 	realBranch->addJSTool(toolId);
 	addItem(tool);
 }
 
-void ToolManager::findJSTools(UserCore::Item::ItemInfo* item)
+void ToolManager::findJSTools(gcRefPtr<UserCore::Item::ItemInfo> item)
 {
 	bool validPath = false;
 

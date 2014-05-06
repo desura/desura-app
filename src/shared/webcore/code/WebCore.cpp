@@ -42,6 +42,8 @@ $/LicenseInfo$
 static gcString g_szRootDomain = "desura.com";
 
 
+gc_REFPTR_DESTRUCTOR(WebCore::WebCoreClass);
+
 
 namespace WebCore
 {

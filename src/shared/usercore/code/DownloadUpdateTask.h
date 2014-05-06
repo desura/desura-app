@@ -40,44 +40,43 @@ $/LicenseInfo$
 
 namespace UserCore
 {
-namespace Task
-{
+	namespace Task
+	{
 
-class DownloadUpdateTask : public UserTask
-{
-public:
-	DownloadUpdateTask(UserCore::User* user, uint32 appver, uint32 build, bool bForced);
+		class DownloadUpdateTask : public UserTask
+		{
+		public:
+			DownloadUpdateTask(gcRefPtr<UserCore::UserI> user, uint32 appver, uint32 build, bool bForced);
 
-	void doTask();
+			void doTask();
 
-	//i overload the ptr as a boolean value to test if we need to display the update window
-	Event<uint32> onDownloadProgressEvent;
-	Event<UserCore::Misc::update_s> onDownloadCompleteEvent;
-	Event<UserCore::Misc::update_s> onDownloadStartEvent;
+			//i overload the ptr as a boolean value to test if we need to display the update window
+			Event<uint32> onDownloadProgressEvent;
+			Event<UserCore::Misc::update_s> onDownloadCompleteEvent;
+			Event<UserCore::Misc::update_s> onDownloadStartEvent;
 
-	const char* getName(){return "DownloadUpdateTask";}
+			const char* getName(){ return "DownloadUpdateTask"; }
 
-protected:
-	void onStop();
-	void downloadUpdate();
+		protected:
+			void onStop();
+			void downloadUpdate();
 
-	void onDownloadProgress(MCFCore::Misc::ProgressInfo& p);
+			void onDownloadProgress(MCFCore::Misc::ProgressInfo& p);
 
-private:
-	McfHandle m_hMcfHandle;
+		private:
+			McfHandle m_hMcfHandle;
 
-	volatile bool m_bCompleted = false;
-	volatile bool m_bStopped = false;
-	gcString m_szPath;
+			volatile bool m_bCompleted = false;
+			volatile bool m_bStopped = false;
+			gcString m_szPath;
 
-	const bool m_bForced;
-	const uint32 m_uiAppVer;
-	const uint32 m_uiAppBuild;
-	
-	uint32 m_uiLastPercent = -1;
-};
+			const bool m_bForced;
+			const uint32 m_uiAppVer;
+			const uint32 m_uiAppBuild;
 
-}
+			uint32 m_uiLastPercent = -1;
+		};
+	}
 }
 
 #endif //DESURA_USERHELPERTHREAD_H

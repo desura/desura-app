@@ -37,7 +37,7 @@ $/LicenseInfo$
 using namespace UserCore::ItemTask;
 
 
-BaseItemTask::BaseItemTask(UserCore::Item::ITEM_STAGE type, const char* name, UserCore::Item::ItemHandleI* handle, MCFBranch branch, MCFBuild build)
+BaseItemTask::BaseItemTask(UserCore::Item::ITEM_STAGE type, const char* name, gcRefPtr<UserCore::Item::ItemHandleI> &handle, MCFBranch branch, MCFBuild build)
 	: m_pHandle(handle)
 	, m_uiType(type)
 	, m_uiMcfBranch(branch)
@@ -61,12 +61,12 @@ UserCore::Item::ITEM_STAGE BaseItemTask::getTaskType()
 	return m_uiType;
 }
 
-void BaseItemTask::setWebCore(WebCore::WebCoreI *wc)
+void BaseItemTask::setWebCore(gcRefPtr<WebCore::WebCoreI> &wc)
 {
 	m_pWebCore = wc;
 }
 
-void BaseItemTask::setUserCore(UserCore::UserI *uc)
+void BaseItemTask::setUserCore(gcRefPtr<UserCore::UserI> &uc)
 {
 	m_pUserCore = uc;
 }
@@ -113,12 +113,12 @@ void BaseItemTask::cancel()
 
 }
 
-UserCore::Item::ItemHandleI* BaseItemTask::getItemHandle()
+gcRefPtr<UserCore::Item::ItemHandleI> BaseItemTask::getItemHandle()
 {
 	return m_pHandle;
 }
 
-UserCore::Item::ItemInfoI* BaseItemTask::getItemInfo()
+gcRefPtr<UserCore::Item::ItemInfoI> BaseItemTask::getItemInfo()
 {
 	if (!m_pHandle)
 		return nullptr;
@@ -126,9 +126,9 @@ UserCore::Item::ItemInfoI* BaseItemTask::getItemInfo()
 	return m_pHandle->getItemInfo();
 }
 
-UserCore::Item::ItemInfoI* BaseItemTask::getParentItemInfo()
+gcRefPtr<UserCore::Item::ItemInfoI> BaseItemTask::getParentItemInfo()
 {
-	UserCore::Item::ItemInfoI* item = getItemInfo();
+	auto item = getItemInfo();
 
 	if (!m_pUserCore || !item)
 		return nullptr;
@@ -141,12 +141,12 @@ DesuraId BaseItemTask::getItemId()
 	return getItemInfo()->getId();
 }
 
-WebCore::WebCoreI* BaseItemTask::getWebCore()
+gcRefPtr<WebCore::WebCoreI> BaseItemTask::getWebCore()
 {
 	return m_pWebCore;
 }
 
-UserCore::UserI* BaseItemTask::getUserCore()
+gcRefPtr<UserCore::UserI> BaseItemTask::getUserCore()
 {
 	return m_pUserCore;
 }

@@ -43,7 +43,7 @@ $/LicenseInfo$
 using namespace UserCore::ItemTask;
 
 
-InstallServiceTask::InstallServiceTask(UserCore::Item::ItemHandle* handle, const char* path, MCFBranch branch, UserCore::Item::Helper::InstallerHandleHelperI* ihh) 
+InstallServiceTask::InstallServiceTask(gcRefPtr<UserCore::Item::ItemHandleI> handle, const char* path, MCFBranch branch, gcRefPtr<UserCore::Item::Helper::InstallerHandleHelperI> &ihh)
 	: BaseItemServiceTask(UserCore::Item::ITEM_STAGE::STAGE_INSTALL, "Install", handle, branch)
 {
 	m_szPath = gcString(path);

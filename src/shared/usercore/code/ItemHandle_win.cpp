@@ -34,16 +34,10 @@ DesuraId g_ElevatedGames [] =
 	DesuraId(),
 };
 
+using namespace UserCore::Item;
 
 
-
-namespace UserCore
-{
-namespace Item
-{
-
-
-void ItemHandle::doLaunch(Helper::ItemLaunchHelperI* helper)
+void ItemHandle::doLaunch(gcRefPtr<Helper::ItemLaunchHelperI> helper)
 {
 	preLaunchCheck();
 	
@@ -122,7 +116,4 @@ bool ItemHandle::createDesktopShortcut()
 bool ItemHandle::createMenuEntry()
 {
 	return false;
-}
-
-}
 }

@@ -34,7 +34,7 @@ $/LicenseInfo$
 
 class ComplexLaunchProcess;
 
-class IPCComplexLaunch : public IPC::IPCClass
+class IPCComplexLaunch : public IPC::IPCClass, public gcRefCount
 {
 public:
 	IPCComplexLaunch(IPC::IPCManager* mang, uint32 id, DesuraId itemId);

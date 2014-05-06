@@ -31,12 +31,9 @@ $/LicenseInfo$
 #include "ItemInfo.h"
 #include "ItemHandle.h"
 
-namespace UserCore
-{
-namespace ItemTask
-{
+using namespace UserCore::ItemTask;
 
-GatherInfoTask::GatherInfoTask(UserCore::Item::ItemHandle* handle, MCFBranch branch, MCFBuild build, UserCore::Item::Helper::GatherInfoHandlerHelperI *helper, uint32 flags) 
+GatherInfoTask::GatherInfoTask(gcRefPtr<UserCore::Item::ItemHandleI> handle, MCFBranch branch, MCFBuild build, gcRefPtr<UserCore::Item::Helper::GatherInfoHandlerHelperI> &helper, uint32 flags) 
 	: BaseItemTask(UserCore::Item::ITEM_STAGE::STAGE_GATHERINFO, "GatherInfo", handle, branch, build)
 {
 	m_pGIHH = helper;
@@ -167,7 +164,7 @@ void GatherInfoTask::onComplete()
 }
 
 
-bool GatherInfoTask::checkNullBranch(UserCore::Item::BranchInfoI* branchInfo)
+bool GatherInfoTask::checkNullBranch(gcRefPtr<UserCore::Item::BranchInfoI> &branchInfo)
 {
 	if (branchInfo)
 		return true;
@@ -218,7 +215,7 @@ bool GatherInfoTask::handleInvalidBranch()
 		if (branch.isGlobal())
 			branch = getItemInfo()->getInternal()->getBestBranch(branch);
 
-		UserCore::Item::BranchInfoI* branchInfo = getItemInfo()->getBranchById(branch);
+		auto branchInfo = getItemInfo()->getBranchById(branch);
 		checkNullBranch(branchInfo);
 	}
 
@@ -233,7 +230,7 @@ void GatherInfoTask::checkRequirements()
 
 	MCFBranch branch = getMcfBranch();
 
-	UserCore::Item::BranchInfoI* branchInfo = getItemHandle()->getItemInfo()->getBranchById(branch);
+	auto branchInfo = getItemHandle()->getItemInfo()->getBranchById(branch);
 	
 	if (!checkNullBranch(branchInfo))
 		return;
@@ -436,9 +433,4 @@ uint32 GatherInfoTask::validate()
 void GatherInfoTask::cancel()
 {
 	m_bCanceled = true;
-}
-
-
-
-}
 }

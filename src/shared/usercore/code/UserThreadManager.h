@@ -40,57 +40,57 @@ $/LicenseInfo$
 namespace UserCore
 {
 
-class UserThreadManager : public UserThreadManagerI
-{
-public:
-	UserThreadManager();
-	~UserThreadManager();
+	class UserThreadManager : public UserThreadManagerI
+	{
+	public:
+		UserThreadManager();
+		~UserThreadManager();
 
 
-	virtual void enlist(::Thread::BaseThread* pThread);
-	virtual void delist(::Thread::BaseThread* pThread);
+		void enlist(gcRefPtr<UserThreadProxyI> pThread) override;
+		void delist(gcRefPtr<UserThreadProxyI> pThread) override;
 
-	//inherited functions
-	void setUserCore(UserCore::UserI *uc);
+		//inherited functions
+		void setUserCore(gcRefPtr<UserCore::UserI> uc);
 
-	virtual void printThreadList();
+		void printThreadList() override;
 
-	/////////////////////////////////////////////////////////////////////////////////////////////////////
-	// Application Threads
-	/////////////////////////////////////////////////////////////////////////////////////////////////////
+		/////////////////////////////////////////////////////////////////////////////////////////////////////
+		// Application Threads
+		/////////////////////////////////////////////////////////////////////////////////////////////////////
 
-	Thread::UserThreadI* newUpdateThread(Event<std::tuple<gcOptional<bool>, gcOptional<bool>, gcOptional<bool>>> *onForcePollEvent, bool loadLoginItems);
+		gcRefPtr<Thread::UserThreadI> newUpdateThread(Event<std::tuple<gcOptional<bool>, gcOptional<bool>, gcOptional<bool>>> *onForcePollEvent, bool loadLoginItems) override;
 
-	/////////////////////////////////////////////////////////////////////////////////////////////////////
-	// Mcf Threads
-	/////////////////////////////////////////////////////////////////////////////////////////////////////
+		/////////////////////////////////////////////////////////////////////////////////////////////////////
+		// Mcf Threads
+		/////////////////////////////////////////////////////////////////////////////////////////////////////
 
-	Thread::MCFThreadI* newGetItemListThread();
-	Thread::MCFThreadI* newInstalledWizardThread();
-	Thread::MCFThreadI* newGatherInfoThread(DesuraId id, MCFBranch branch, MCFBuild build);
+		gcRefPtr<Thread::MCFThreadI> newGetItemListThread() override;
+		gcRefPtr<Thread::MCFThreadI> newInstalledWizardThread() override;
+		gcRefPtr<Thread::MCFThreadI> newGatherInfoThread(DesuraId id, MCFBranch branch, MCFBuild build) override;
 
-	Thread::MCFThreadI* newCreateMCFThread(DesuraId id, const char* path);
-	Thread::MCFThreadI* newUploadPrepThread(DesuraId id, const char* file);
-	Thread::MCFThreadI* newUploadResumeThread(DesuraId id, const char* key, WebCore::Misc::ResumeUploadInfo *info);
+		gcRefPtr<Thread::MCFThreadI> newCreateMCFThread(DesuraId id, const char* path) override;
+		gcRefPtr<Thread::MCFThreadI> newUploadPrepThread(DesuraId id, const char* file) override;
+		gcRefPtr<Thread::MCFThreadI> newUploadResumeThread(DesuraId id, const char* key, gcRefPtr<WebCore::Misc::ResumeUploadInfo> &info) override;
 
-protected:
-	void setUpThread(Thread::UserThreadI* thread);
-	void setUpThread(Thread::MCFThreadI* thread);
+		gc_IMPLEMENT_REFCOUNTING(UserThreadManager);
 
-private:
-	std::vector< ::Thread::BaseThread*> m_vThreadList;
-	UserCore::UserI* m_pUserCore;
+	protected:
+		void setUpThread(gcRefPtr<Thread::UserThreadI> thread);
+		void setUpThread(gcRefPtr<Thread::MCFThreadI> thread);
 
-	bool m_bDestructor;
-};
+	private:
+		std::vector<gcRefPtr<UserThreadProxyI>> m_vThreadList;
+		gcRefPtr<UserCore::UserI> m_pUserCore;
 
+		std::atomic<bool> m_bDestructor;
+		std::mutex m_ThreadLock;
+	};
 
-inline void UserThreadManager::setUserCore(UserCore::UserI *uc)
-{
-	m_pUserCore = uc;
-}
-
-
+	inline void UserThreadManager::setUserCore(gcRefPtr<UserCore::UserI> uc)
+	{
+		m_pUserCore = uc;
+	}
 }
 
 

@@ -57,7 +57,7 @@ namespace
 	class BlankTask : public UserCore::ItemTask::BaseItemTask
 	{
 	public:
-		BlankTask(UserCore::Item::ItemHandle* handle, UserCore::Item::ITEM_STAGE type) 
+		BlankTask(gcRefPtr<UserCore::Item::ItemHandleI> handle, UserCore::Item::ITEM_STAGE type)
 			: BaseItemTask(type, "", handle)
 		{
 		}
@@ -77,48 +77,39 @@ std::string TraceClassInfo(ItemInfo *pClass);
 template <>
 std::string TraceClassInfo(ItemHandle *pClass)
 {
-    return gcString("[{0}] stage: {1}, {2}", (uint64)pClass, (uint32)pClass->getStage(), TraceClassInfo(pClass->getItemInfoNorm()));
+    return gcString("[{0}] stage: {1}, {2}", (uint64)pClass, (uint32)pClass->getStage(), TraceClassInfo(pClass->getItemInfoNorm().get()));
 }
 
 
-ItemHandle::ItemHandle(ItemInfo* itemInfo, UserCore::UserI* user)
-	: m_pItemInfo(std::shared_ptr<ItemInfo>(itemInfo))
+ItemHandle::ItemHandle(gcRefPtr<ItemInfo> &itemInfo, gcRefPtr<UserCore::UserI> user)
+	: m_pItemInfo(itemInfo)
 	, m_pUserCore(user)
-	, m_pEventHandler(new ItemHandleEvents(m_vHelperList))
-{
-}
-
-ItemHandle::ItemHandle(std::shared_ptr<ItemInfo> &itemInfo, UserCore::UserI* user)
-: m_pItemInfo(itemInfo)
-, m_pUserCore(user)
-, m_pEventHandler(new ItemHandleEvents(m_vHelperList))
+	, m_pEventHandler(gcRefPtr<ItemHandleEvents>::create(m_HelperLock, m_vHelperList))
 {
 }
 
 ItemHandle::~ItemHandle()
 {
-	safe_delete(m_pItemInfo);
-	safe_delete(m_pEventHandler);
 }
 
-void ItemHandle::setFactory(Helper::ItemHandleFactoryI* factory)
+void ItemHandle::setFactory(gcRefPtr<Helper::ItemHandleFactoryI> factory)
 {
 	m_pFactory = factory;
 }
 
-UserCore::UserI* ItemHandle::getUserCore()
+gcRefPtr<UserCore::UserI> ItemHandle::getUserCore()
 {
 	return m_pUserCore;
 }
 
-UserCore::Item::ItemInfoI* ItemHandle::getItemInfo()
+gcRefPtr<UserCore::Item::ItemInfoI> ItemHandle::getItemInfo()
 {
-	return m_pItemInfo.get();
+	return m_pItemInfo;
 }
 
-UserCore::Item::ItemInfo* ItemHandle::getItemInfoNorm()
+gcRefPtr<UserCore::Item::ItemInfo> ItemHandle::getItemInfoNorm()
 {
-	return m_pItemInfo.get();
+	return m_pItemInfo;
 }
 
 bool ItemHandle::getLock(void* obj)
@@ -129,7 +120,7 @@ bool ItemHandle::getLock(void* obj)
 
 	if (m_pItemInfo->getId() == lodId)
 	{
-		UserCore::Item::ItemHandle* handle = dynamic_cast<UserCore::Item::ItemHandle*>(m_pUserCore->getItemManager()->findItemHandle(d2Id));
+		auto handle = gcRefPtr<UserCore::Item::ItemHandle>::dyn_cast(m_pUserCore->getItemManager()->findItemHandle(d2Id));
 
 		if (handle)
 			return handle->getLock(obj);
@@ -156,7 +147,7 @@ bool ItemHandle::isLocked()
 
 	if (m_pItemInfo->getId() == lodId)
 	{
-		UserCore::Item::ItemHandle* handle = dynamic_cast<UserCore::Item::ItemHandle*>(m_pUserCore->getItemManager()->findItemHandle(d2Id));
+		auto handle = gcRefPtr<UserCore::Item::ItemHandle>::dyn_cast(m_pUserCore->getItemManager()->findItemHandle(d2Id));
 
 		if (handle)
 			return handle->isLocked();
@@ -175,7 +166,7 @@ bool ItemHandle::hasLock(void* obj)
 
 	if (m_pItemInfo->getId() == lodId)
 	{
-		UserCore::Item::ItemHandle* handle = dynamic_cast<UserCore::Item::ItemHandle*>(m_pUserCore->getItemManager()->findItemHandle(d2Id));
+		auto handle = gcRefPtr<UserCore::Item::ItemHandle>::dyn_cast(m_pUserCore->getItemManager()->findItemHandle(d2Id));
 
 		if (handle)
 			return handle->hasLock(obj);
@@ -197,7 +188,7 @@ void ItemHandle::releaseLock(void* obj)
 
 	if (m_pItemInfo->getId() == lodId)
 	{
-		UserCore::Item::ItemHandle* handle = dynamic_cast<UserCore::Item::ItemHandle*>(m_pUserCore->getItemManager()->findItemHandle(d2Id));
+		auto handle = gcRefPtr<UserCore::Item::ItemHandle>::dyn_cast(m_pUserCore->getItemManager()->findItemHandle(d2Id));
 
 		if (handle)
 		{
@@ -216,10 +207,12 @@ void ItemHandle::releaseLock(void* obj)
 
 
 
-void ItemHandle::delHelper(Helper::ItemHandleHelperI* helper)
+void ItemHandle::delHelper(gcRefPtr<Helper::ItemHandleHelperI> helper)
 {
 	if (!helper)
 		return;
+
+	std::lock_guard<std::mutex> guard(m_HelperLock);
 
 	for (size_t x=0; x<m_vHelperList.size(); x++)
 	{
@@ -231,14 +224,14 @@ void ItemHandle::delHelper(Helper::ItemHandleHelperI* helper)
 	}
 }
 
-Event<ITEM_STAGE>* ItemHandle::getChangeStageEvent()
+Event<ITEM_STAGE>& ItemHandle::getChangeStageEvent()
 {
-	return &onChangeStageEvent;
+	return onChangeStageEvent;
 }
 
-Event<gcException>* ItemHandle::getErrorEvent()
+Event<gcException>& ItemHandle::getErrorEvent()
 {
-	return &onErrorEvent;
+	return onErrorEvent;
 }
 
 bool ItemHandle::isInStage()
@@ -340,7 +333,7 @@ void ItemHandle::setStage(ITEM_STAGE stage)
 	info.id = m_pItemInfo->getId();
 	info.changeFlags = UserCore::Item::ItemInfoI::CHANGED_STATUS;
 
-	m_pItemInfo->getInfoChangeEvent()->operator()(info);
+	m_pItemInfo->getInfoChangeEvent()(info);
 }
 
 void ItemHandle::onTaskStart(ITEM_STAGE &stage)
@@ -396,35 +389,35 @@ void ItemHandle::completeStage(bool close)
 	gcTrace("Close {0}", close);
 
 	if (close)
-		registerTask(new BlankTask(this, ITEM_STAGE::STAGE_CLOSE));
+		registerTask(gcRefPtr<BlankTask>::create(this, ITEM_STAGE::STAGE_CLOSE));
 
-	registerTask(new BlankTask(this, ITEM_STAGE::STAGE_NONE));
+	registerTask(gcRefPtr<BlankTask>::create(this, ITEM_STAGE::STAGE_NONE));
 }
 
 
 void ItemHandle::goToStageDownloadTools(ToolTransactionId ttid, const char* downloadPath, MCFBranch branch, MCFBuild build)
 {
-	registerTask(new UserCore::ItemTask::DownloadToolTask(this, ttid, downloadPath, branch, build));
+	registerTask(gcRefPtr<UserCore::ItemTask::DownloadToolTask>::create(this, ttid, downloadPath, branch, build));
 }
 
 void ItemHandle::goToStageDownloadTools(bool launch, ToolTransactionId ttid)
 {
-	registerTask(new UserCore::ItemTask::DownloadToolTask(this, launch, ttid));
+	registerTask(gcRefPtr<UserCore::ItemTask::DownloadToolTask>::create(this, launch, ttid));
 }
 
 void ItemHandle::goToStageInstallTools(bool launch)
 {
-	registerTask(new UserCore::ItemTask::InstallToolTask(this, launch));
+	registerTask(gcRefPtr<UserCore::ItemTask::InstallToolTask>::create(this, launch));
 }
 
 void ItemHandle::goToStageGatherInfo(MCFBranch branch, MCFBuild build, UserCore::ItemTask::GI_FLAGS flags)
 {
-	Helper::GatherInfoHandlerHelperI* helper = nullptr;
+	gcRefPtr<Helper::GatherInfoHandlerHelperI> helper;
 	
 	if (m_pFactory)
-		m_pFactory->getGatherInfoHelper(&helper);
+		helper = m_pFactory->getGatherInfoHelper();
 
-	registerTask(new UserCore::ItemTask::GatherInfoTask(this, branch, build, helper, flags));
+	registerTask(gcRefPtr<UserCore::ItemTask::GatherInfoTask>::create(this, branch, build, helper, flags));
 }
 
 void ItemHandle::goToStageDownload(MCFBranch branch, MCFBuild build, bool test)
@@ -442,27 +435,27 @@ void ItemHandle::goToStageDownload(MCFBranch branch, MCFBuild build, bool test)
 		return;
 	}
 
-	registerTask(new UserCore::ItemTask::ValidateTask(this, branch, build));
+	registerTask(gcRefPtr<UserCore::ItemTask::ValidateTask>::create(this, branch, build));
 }
 
 void ItemHandle::goToStageDownload(const char* path)
 {
-	registerTask(new UserCore::ItemTask::DownloadTask(this, path));
+	registerTask(gcRefPtr<UserCore::ItemTask::DownloadTask>::create(this, path));
 }
 
 void ItemHandle::goToStageVerify(MCFBranch branch, MCFBuild build, bool files, bool tools, bool hooks)
 {
-	registerTask(new UserCore::ItemTask::VerifyServiceTask(this, branch, build, files, tools, hooks));
+	registerTask(gcRefPtr<UserCore::ItemTask::VerifyServiceTask>::create(this, branch, build, files, tools, hooks));
 }
 
 void ItemHandle::goToStageInstallCheck()
 {
-	registerTask(new UserCore::ItemTask::InstallCheckTask(this));
+	registerTask(gcRefPtr<UserCore::ItemTask::InstallCheckTask>::create(this));
 }
 
 void ItemHandle::goToStageLaunch()
 {
-	registerTask(new UserCore::ItemTask::LaunchTask(this));
+	registerTask(gcRefPtr<UserCore::ItemTask::LaunchTask>::create(this));
 }
 
 void ItemHandle::goToStageUninstall(bool complete, bool account)
@@ -479,7 +472,7 @@ void ItemHandle::goToStageUninstall(bool complete, bool account)
 
 	if (HasAllFlags(getItemInfo()->getStatus(), UserCore::Item::ItemInfoI::STATUS_INSTALLCOMPLEX))
 	{
-		UserCore::ItemTask::UIComplexModServiceTask* uibst = new UserCore::ItemTask::UIComplexModServiceTask(this, getItemInfo()->getInstalledBranch(), getItemInfo()->getInstalledBuild());
+		auto uibst = gcRefPtr<UserCore::ItemTask::UIComplexModServiceTask>::create(this, getItemInfo()->getInstalledBranch(), getItemInfo()->getInstalledBuild());
 		uibst->setCAUninstall(complete, account);
 		uibst->setEndStage();
 
@@ -487,13 +480,13 @@ void ItemHandle::goToStageUninstall(bool complete, bool account)
 	}
 	else
 	{
-		registerTask(new UserCore::ItemTask::UIServiceTask(this, complete, account));
+		registerTask(gcRefPtr<UserCore::ItemTask::UIServiceTask>::create(this, complete, account));
 	}
 }
 
 void ItemHandle::goToStageUninstallBranch(MCFBranch branch, MCFBuild build, bool test)
 {
-	registerTask(new UserCore::ItemTask::UIBranchServiceTask(this, branch, build, test));
+	registerTask(gcRefPtr<UserCore::ItemTask::UIBranchServiceTask>::create(this, branch, build, test));
 }
 
 
@@ -506,7 +499,7 @@ void ItemHandle::releaseComplexLock()
 
 	if (isComplex)
 	{
-		UserCore::Item::ItemHandle* parentHandle = dynamic_cast<UserCore::Item::ItemHandle*>(m_pUserCore->getItemManager()->findItemHandle(getItemInfo()->getParentId()));
+		auto parentHandle = gcRefPtr<UserCore::Item::ItemHandle>::dyn_cast(m_pUserCore->getItemManager()->findItemHandle(getItemInfo()->getParentId()));
 
 		if (parentHandle)
 			obj = parentHandle;
@@ -532,7 +525,7 @@ bool ItemHandle::getComplexLock()
 
 	if (isComplex)
 	{
-		UserCore::Item::ItemHandle* parentHandle = dynamic_cast<UserCore::Item::ItemHandle*>(m_pUserCore->getItemManager()->findItemHandle(getItemInfo()->getParentId()));
+		auto parentHandle = gcRefPtr<UserCore::Item::ItemHandle>::dyn_cast(m_pUserCore->getItemManager()->findItemHandle(getItemInfo()->getParentId()));
 
 		if (parentHandle)
 			obj = parentHandle;
@@ -559,7 +552,7 @@ bool ItemHandle::getComplexLock()
 
 void ItemHandle::goToStageUninstallUpdate(const char* path, MCFBuild lastBuild)
 {
-	registerTask(new UserCore::ItemTask::UIUpdateServiceTask(this, path, lastBuild));
+	registerTask(gcRefPtr<UserCore::ItemTask::UIUpdateServiceTask>::create(this, path, lastBuild));
 }
 
 void ItemHandle::goToStageUninstallPatch(MCFBranch branch, MCFBuild build)
@@ -580,7 +573,7 @@ void ItemHandle::goToStageUninstallPatch(MCFBranch branch, MCFBuild build)
 		//need to uninstall complex mods otherwise the backup file will be wrong
 		if (parentItem->getInstalledModId().isOk())
 		{
-			UserCore::ItemTask::UIComplexModServiceTask* uibst = new UserCore::ItemTask::UIComplexModServiceTask(this, branch, build);
+			auto uibst = gcRefPtr<UserCore::ItemTask::UIComplexModServiceTask>::create(this, branch, build);
 
 			if (isParentComplex)
 				uibst->setCAUIPatch();
@@ -592,7 +585,7 @@ void ItemHandle::goToStageUninstallPatch(MCFBranch branch, MCFBuild build)
 		}
 	}
 
-	registerTask(new UserCore::ItemTask::UIPatchServiceTask(this, branch, build));
+	registerTask(gcRefPtr<UserCore::ItemTask::UIPatchServiceTask>::create(this, branch, build));
 }
 
 void ItemHandle::goToStageUninstallComplexBranch(MCFBranch branch, MCFBuild build, bool launch)
@@ -600,7 +593,7 @@ void ItemHandle::goToStageUninstallComplexBranch(MCFBranch branch, MCFBuild buil
 	if (!getComplexLock())
 		return;
 
-	UserCore::ItemTask::UIComplexModServiceTask* uibst = new UserCore::ItemTask::UIComplexModServiceTask(this, branch, build);
+	auto uibst = gcRefPtr<UserCore::ItemTask::UIComplexModServiceTask>::create(this, branch, build);
 
 	//if we are the game and need our child branch removed
 	if (getItemInfo()->getInstalledModId().isOk())
@@ -632,12 +625,12 @@ void ItemHandle::goToStageInstallComplex(MCFBranch branch, MCFBuild build, bool 
 
 	if (getItemInfo()->isComplex())
 	{
-		Helper::InstallerHandleHelperI* helper = nullptr;
+		gcRefPtr<Helper::InstallerHandleHelperI> helper;
 
 		if (m_pFactory)
-			m_pFactory->getInstallHelper(&helper);
+			helper = m_pFactory->getInstallHelper();
 
-		UserCore::ItemTask::ComplexLaunchServiceTask *clst = new UserCore::ItemTask::ComplexLaunchServiceTask(this, false, branch, build, helper);
+		auto clst = gcRefPtr<UserCore::ItemTask::ComplexLaunchServiceTask>::create(this, false, branch, build, helper);
 
 		if (launch)
 			clst->launch();
@@ -652,12 +645,12 @@ void ItemHandle::goToStageInstall(const char* path, MCFBranch branch)
 {
 	if (!getItemInfo()->isComplex())
 	{
-		Helper::InstallerHandleHelperI* helper = nullptr;
+		gcRefPtr<Helper::InstallerHandleHelperI> helper;
 
 		if (m_pFactory)
-			m_pFactory->getInstallHelper(&helper);
+			helper = m_pFactory->getInstallHelper();
 
-		registerTask(new UserCore::ItemTask::InstallServiceTask(this, path, branch, helper));
+		registerTask(gcRefPtr<UserCore::ItemTask::InstallServiceTask>::create(this, path, branch, helper));
 	}
 }
 
@@ -667,7 +660,7 @@ void ItemHandle::stopThread()
 
 	std::lock_guard<std::recursive_mutex> guard(m_ThreadMutex);
 
-	m_pUserCore->getThreadPool()->queueTask(new UserCore::Task::DeleteThread(m_pUserCore, m_pThread));
+	m_pUserCore->getThreadPool()->queueTask(gcRefPtr<UserCore::Task::DeleteThread>::create(m_pUserCore, m_pThread));
 
 	m_pThread = nullptr;
 	m_bStopped = true;
@@ -681,7 +674,7 @@ void ItemHandle::stopThread()
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
-void ItemHandle::registerTask(UserCore::ItemTask::BaseItemTask* task)
+void ItemHandle::registerTask(gcRefPtr<UserCore::ItemTask::BaseItemTask> task)
 {
 	if (!task)
 		return;
@@ -695,7 +688,7 @@ void ItemHandle::registerTask(UserCore::ItemTask::BaseItemTask* task)
 	{
 		if (!m_pThread)
 		{
-			m_pThread = new ItemThread(this);
+			m_pThread = gcRefPtr<ItemThread>::create(this);
 
 			m_pThread->setThreadManager(m_pUserCore->getThreadManager());
 			m_pThread->setUserCore(m_pUserCore);
@@ -711,8 +704,13 @@ void ItemHandle::registerTask(UserCore::ItemTask::BaseItemTask* task)
 	m_pThread->queueTask(task);
 }
 
-void ItemHandle::addHelper(Helper::ItemHandleHelperI* helper)
+void ItemHandle::addHelper(gcRefPtr<Helper::ItemHandleHelperI> helper)
 {
+	if (!helper)
+		return;
+
+	std::lock_guard<std::mutex> guard(m_HelperLock);
+
 	m_vHelperList.push_back(helper);
 	helper->setId(m_uiHelperId);
 	m_uiHelperId++;
@@ -828,7 +826,7 @@ bool ItemHandle::update()
 	return false;
 }
 
-bool ItemHandle::install(Helper::ItemLaunchHelperI* helper, MCFBranch branch)
+bool ItemHandle::install(gcRefPtr<Helper::ItemLaunchHelperI> helper, MCFBranch branch)
 {
 	if (isInStage())
 		return true;
@@ -927,7 +925,7 @@ bool ItemHandle::cleanComplexMods()
 			if (!getComplexLock())
 				return false;
 
-			UserCore::ItemTask::UIComplexModServiceTask* uibst = new UserCore::ItemTask::UIComplexModServiceTask(this, getItemInfo()->getInstalledBranch(), getItemInfo()->getInstalledBuild());
+			auto uibst = gcRefPtr<UserCore::ItemTask::UIComplexModServiceTask>::create(this, getItemInfo()->getInstalledBranch(), getItemInfo()->getInstalledBuild());
 			uibst->setEndStage();
 			registerTask(uibst);
 			return true;				
@@ -958,11 +956,11 @@ void ItemHandle::preLaunchCheck()
 
 
 
-bool ItemHandle::launchForReal(Helper::ItemLaunchHelperI* helper, bool offline)
+bool ItemHandle::launchForReal(gcRefPtr<Helper::ItemLaunchHelperI> helper, bool offline)
 {
 	gcTrace("");
 
-	UserCore::Item::BranchInfoI* bi = this->getItemInfo()->getCurrentBranch();
+	auto bi = this->getItemInfo()->getCurrentBranch();
 
 	if (bi && bi->isPreOrder())
 	{
@@ -1022,7 +1020,7 @@ bool ItemHandle::checkPaused()
 	return false;
 }
 
-bool ItemHandle::launch(Helper::ItemLaunchHelperI* helper, bool offline, bool ignoreUpdate)
+bool ItemHandle::launch(gcRefPtr<Helper::ItemLaunchHelperI> helper, bool offline, bool ignoreUpdate)
 {
 	if (isInStage())
 		return true;
@@ -1222,7 +1220,7 @@ bool ItemHandle::startUpCheck()
 	return (HasAnyFlags(getItemInfo()->getStatus(), UserCore::Item::ItemInfoI::STATUS_DOWNLOADING|UserCore::Item::ItemInfoI::STATUS_VERIFING|UserCore::Item::ItemInfoI::STATUS_INSTALLING));
 }
 
-bool ItemHandle::uninstall(Helper::ItemUninstallHelperI* helper, bool complete, bool account)
+bool ItemHandle::uninstall(gcRefPtr<Helper::ItemUninstallHelperI> helper, bool complete, bool account)
 {
 	gcTrace("");
 
@@ -1264,11 +1262,11 @@ void ItemHandle::cancelCurrentStage()
 
 void ItemHandle::getStatusStr(LanguageManagerI & pLangMng, char* buffer, uint32 buffsize)
 {
-	getStatusStr_s(this, m_pItemInfo.get(), m_uiStage, m_pGroup, pLangMng, buffer, buffsize);
+	getStatusStr_s(this, m_pItemInfo, m_uiStage, m_pGroup, pLangMng, buffer, buffsize);
 }
 
-void ItemHandle::getStatusStr_s(UserCore::Item::ItemHandleI* pItemHandle, UserCore::Item::ItemInfoI *pItemInfo, UserCore::Item::ITEM_STAGE nStage
-																, UserCore::Item::ItemTaskGroupI* pTaskGroup, LanguageManagerI & pLangMng, char* buffer, uint32 buffsize)
+void ItemHandle::getStatusStr_s(gcRefPtr<UserCore::Item::ItemHandleI> pItemHandle, gcRefPtr<UserCore::Item::ItemInfoI> pItemInfo, UserCore::Item::ITEM_STAGE nStage
+	, gcRefPtr<UserCore::Item::ItemTaskGroupI> pTaskGroup, LanguageManagerI &pLangMng, char* buffer, uint32 buffsize)
 {
 	gcString temp;
 
@@ -1375,12 +1373,12 @@ void ItemHandle::getStatusStr_s(UserCore::Item::ItemHandleI* pItemHandle, UserCo
 }
 
 
-ItemHandleEvents* ItemHandle::getEventHandler()
+gcRefPtr<ItemHandleEvents> ItemHandle::getEventHandler()
 {
 	return m_pEventHandler;
 }
 
-bool ItemHandle::setTaskGroup(ItemTaskGroup* group, bool force)
+bool ItemHandle::setTaskGroup(gcRefPtr<ItemTaskGroup> group, bool force)
 {
 	if (group && isInStage() && !force)
 		return false;
@@ -1410,7 +1408,7 @@ bool ItemHandle::setTaskGroup(ItemTaskGroup* group, bool force)
 	return true;
 }
 
-ItemTaskGroupI* ItemHandle::getTaskGroup()
+gcRefPtr<ItemTaskGroupI> ItemHandle::getTaskGroup()
 {
 	return m_pGroup;
 }
@@ -1447,12 +1445,7 @@ namespace UnitTest
 	class ItemHandleMock : public ItemHandle
 	{
 	public:
-		ItemHandleMock(ItemInfo* itemInfo, UserCore::UserI* user)
-			: ItemHandle(itemInfo, user)
-		{
-		}
-
-		ItemHandleMock(std::shared_ptr<ItemInfo> &itemInfo, UserCore::UserI* user)
+		ItemHandleMock(gcRefPtr<ItemInfo> itemInfo, gcRefPtr<UserCore::UserI> user)
 			: ItemHandle(itemInfo, user)
 		{
 		}
@@ -1476,7 +1469,7 @@ namespace UnitTest
 		MOCK_METHOD2(goToStageDownloadTools, void(bool launch, ToolTransactionId ttid));
 		MOCK_METHOD1(goToStageInstallTools, void(bool launch));
 
-		MOCK_METHOD2(launchForReal, bool(Helper::ItemLaunchHelperI* helper, bool offline));
+		MOCK_METHOD2(launchForReal, bool(gcRefPtr<Helper::ItemLaunchHelperI> helper, bool offline));
 	};
 
 	class ItemHandleLaunchMod : public ::testing::Test
@@ -1489,7 +1482,7 @@ namespace UnitTest
 			, mod(new ItemInfo(&user, mid, gid, &fs))
 		{
 
-			ON_CALL(user, getItemsAddedEvent()).WillByDefault(Return(&itemAddedEvent));
+			ON_CALL(user, getItemsAddedEvent()).WillByDefault(ReturnRef(itemAddedEvent));
 			ON_CALL(user, getItemManager()).WillByDefault(Return(&itemManager));
 			ON_CALL(itemManager, findItemInfo(_)).WillByDefault(Invoke([&](DesuraId id) -> ItemInfoI*
 			{
@@ -1618,7 +1611,7 @@ namespace UnitTest
 
 
 		ItemHandleMock modHandle(mod, &user);
-		*modHandle.getChangeStageEvent() += delegate(stageChange, 1);
+		modHandle.getChangeStageEvent() += delegate(stageChange, 1);
 
 		EXPECT_CALL(modHandle, goToStageGatherInfo(_, _, _)).Times(1);
 
@@ -1677,12 +1670,12 @@ namespace UnitTest
 			: gid("1", "games")
 			, midA("2", "mods")
 			, midB("3", "mods")
-			, game(std::make_shared<ItemInfo>(&user, gid, &fs))
-			, modA(std::make_shared<ItemInfo>(&user, midA, gid, &fs))
-			, modB(std::make_shared<ItemInfo>(&user, midB, gid, &fs))
+			, game(gcRefPtr<ItemInfo>::create(&user, gid, &fs))
+			, modA(gcRefPtr<ItemInfo>::create(&user, midA, gid, &fs))
+			, modB(gcRefPtr<ItemInfo>::create(&user, midB, gid, &fs))
 		{
 
-			ON_CALL(user, getItemsAddedEvent()).WillByDefault(Return(&itemAddedEvent));
+			ON_CALL(user, getItemsAddedEvent()).WillByDefault(ReturnRef(itemAddedEvent));
 			ON_CALL(user, getItemManager()).WillByDefault(Return(&itemManager));
 			ON_CALL(user, getInternal()).WillByDefault(Return(&userInternalMock));
 
@@ -1734,9 +1727,9 @@ namespace UnitTest
 		DesuraId midA;
 		DesuraId midB;
 
-		std::shared_ptr<UserCore::Item::ItemInfo> game;
-		std::shared_ptr<UserCore::Item::ItemInfo> modA;
-		std::shared_ptr<UserCore::Item::ItemInfo> modB;	
+		gcRefPtr<UserCore::Item::ItemInfo> game;
+		gcRefPtr<UserCore::Item::ItemInfo> modA;
+		gcRefPtr<UserCore::Item::ItemInfo> modB;
 	};
 
 	TEST_F(ItemHandleComplexMods, LaunchParent_ModNotInstalled)

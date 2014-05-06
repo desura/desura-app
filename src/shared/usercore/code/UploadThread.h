@@ -36,74 +36,72 @@ $/LicenseInfo$
 
 namespace UserCore
 {
-namespace Thread
-{
-
-	enum class MCFUploadStatus : int
+	namespace Thread
 	{
-		Ok = 0,
-		GenericError = 100,
-		ValidationError = 107,
-		PermissionError = 108,
-		ItemNotFound = 110,
-		Started = 121,
-		Failed = 122,
-		Finished = 999,
-	};
 
-class UploadThreadInfo
-{
-public:
-	UploadThreadInfo(DesuraId id, const char* file, const char* key, uint64 start = 0)
-	{
-		itemId = id;
-		szKey = key;
-		szFile = file;
-		uiStart = start;
+		enum class MCFUploadStatus : int
+		{
+			Ok = 0,
+			GenericError = 100,
+			ValidationError = 107,
+			PermissionError = 108,
+			ItemNotFound = 110,
+			Started = 121,
+			Failed = 122,
+			Finished = 999,
+		};
+
+		class UploadThreadInfo : public gcRefCount
+		{
+		public:
+			UploadThreadInfo(DesuraId id, const char* file, const char* key, uint64 start = 0)
+			{
+				itemId = id;
+				szKey = key;
+				szFile = file;
+				uiStart = start;
+			}
+
+			gcString szKey;
+			gcString szFile;
+			DesuraId itemId;
+			uint64 uiStart;
+		};
+
+		class UploadThread : public MCFThread
+		{
+		public:
+			UploadThread(gcRefPtr<UploadThreadInfo> info);
+			virtual ~UploadThread();
+
+		protected:
+			void doRun();
+			void onProgress(Prog_s& p);
+
+			virtual void onPause();
+			virtual void onUnpause();
+			virtual void onStop();
+
+			friend class UploadInfoThread;
+
+			EventV onPauseEvent;
+			EventV onUnpauseEvent;
+
+		private:
+			gcRefPtr<UploadThreadInfo> m_pInfo;
+			HttpHandle m_hHttpHandle;
+
+			uint32 m_uiChunkSize;
+			uint32 m_uiContinueCount;
+
+			uint64 m_uiFileSize;
+			uint64 m_uiAmountRead;
+
+			gcTime m_tLastProgUpdate;
+
+			bool m_bCancel;
+		};
 	}
-
-	gcString szKey;
-	gcString szFile;
-	DesuraId itemId;
-	uint64 uiStart;
-};
-
-class UploadThread : public MCFThread
-{
-public:
-	UploadThread(UploadThreadInfo* info);
-	virtual ~UploadThread();
-
-protected:
-	void doRun();
-	void onProgress(Prog_s& p);
-
-	virtual void onPause();
-	virtual void onUnpause();
-	virtual void onStop();
-
-	friend class UploadInfoThread;
-
-	EventV onPauseEvent;
-	EventV onUnpauseEvent;
-
-private:
-	UploadThreadInfo* m_pInfo;
-	HttpHandle m_hHttpHandle;
-
-	uint32 m_uiChunkSize;
-	uint32 m_uiContinueCount;
-
-	uint64 m_uiFileSize;
-	uint64 m_uiAmountRead;
-
-	gcTime m_tLastProgUpdate;
-
-	bool m_bCancel;
-};
-
-
-}
 }
 
 #endif //DESURA_UploadThread_H

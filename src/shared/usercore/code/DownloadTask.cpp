@@ -39,7 +39,7 @@ $/LicenseInfo$
 using namespace UserCore::ItemTask;
 
 
-DownloadTask::DownloadTask(UserCore::Item::ItemHandle* handle, const char* mcfPath) 
+DownloadTask::DownloadTask(gcRefPtr<UserCore::Item::ItemHandleI> handle, const char* mcfPath) 
 	: BaseItemTask(UserCore::Item::ITEM_STAGE::STAGE_DOWNLOAD, "Download", handle)
 	, m_szMcfPath(mcfPath)
 {
@@ -173,10 +173,10 @@ void DownloadTask::onUnpause()
 
 void DownloadTask::clearEvents()
 {
-	UserCore::User* pUser = dynamic_cast<UserCore::User*>(getUserCore());
+	auto pUser = gcRefPtr<UserCore::User>::dyn_cast(getUserCore());
 
 	if (pUser)
-		pUser->getBDManager()->cancelDownloadBannerHooks(this);
+		pUser->getBDManager()->cancelDownloadBannerHooks(gcRefPtr<UserCore::Misc::BannerNotifierI>(this));
 }
 
 void DownloadTask::onStop()
@@ -233,10 +233,10 @@ void DownloadTask::onNewProvider(MCFCore::Misc::DP_s& dp)
 
 	if (dp.action == MCFCore::Misc::DownloadProvider::ADD)
 	{
-		UserCore::User* pUser = dynamic_cast<UserCore::User*>(getUserCore());
+		auto pUser = gcRefPtr<UserCore::User>::dyn_cast(getUserCore());
 
 		if (pUser)
-			pUser->getBDManager()->downloadBanner(this, *dp.provider);
+			pUser->getBDManager()->downloadBanner(gcRefPtr<UserCore::Misc::BannerNotifierI>(this), *dp.provider);
 	}
 	else if (dp.action == MCFCore::Misc::DownloadProvider::REMOVE)
 	{

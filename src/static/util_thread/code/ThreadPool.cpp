@@ -30,29 +30,24 @@ $/LicenseInfo$
 class ThreadPoolTaskSource : public Thread::ThreadPoolTaskSourceI
 {
 public:
-	ThreadPoolTaskSource(Thread::BaseTask* task)
+	ThreadPoolTaskSource(gcRefPtr<Thread::BaseTask> &pTask)
+		: m_pTask(pTask)
 	{
-		m_pTask = task;
 	}
 
-	virtual Thread::BaseTask* getTask()
+	virtual gcRefPtr<Thread::BaseTask> getTask()
 	{
-		Thread::BaseTask* task = m_pTask;
+		auto task = m_pTask;
 		delete this;
 		return task;
 	}
 
-	Thread::BaseTask* m_pTask;
+	gcRefPtr<Thread::BaseTask> m_pTask;
+	gc_IMPLEMENT_REFCOUNTING(ThreadPoolTaskSource);
 };
 
 using namespace Thread;
 
-
-
-BaseTask::~BaseTask()
-{
-
-}
 
 ThreadPool::ThreadPool(uint8 num) 
 	: BaseThread( "Thread Pool" )
@@ -73,9 +68,10 @@ ThreadPool::~ThreadPool()
 
 	join();
 
-	m_TaskMutex.lock();
-	safe_delete(m_vTaskList);
-	m_TaskMutex.unlock();
+	{
+		std::lock_guard<std::mutex> guard(m_TaskMutex);
+		m_vTaskList.clear();
+	}
 
 	{
 		std::lock_guard<std::mutex> guardThread(m_ThreadMutex);
@@ -86,7 +82,7 @@ ThreadPool::~ThreadPool()
 			thread->stop();
 		}
 
-		safe_delete(m_vThreadList);
+		m_vThreadList.clear();
 	}
 
 	{
@@ -98,7 +94,7 @@ ThreadPool::~ThreadPool()
 			forced->stop();
 		}
 
-		safe_delete(m_vForcedList);	
+		m_vForcedList.clear();
 	}
 }
 
@@ -132,31 +128,30 @@ void ThreadPool::purgeTasks()
 				forced->onCompleteEvent -= delegate(this, &ThreadPool::onThreadComplete);
 			}
 
-			safe_delete(m_vForcedList);
+			m_vForcedList.clear();
 		}
 
-		safe_delete(m_vTaskList);
+		m_vTaskList.clear();
 	}
 
 	while (activeThreads() > 0)
 		gcSleep(50);
 }
 
-void ThreadPool::queueTask(BaseTask *task)
+void ThreadPool::queueTask(gcRefPtr<BaseTask> pTask)
 {
-	if (!task)
+	if (!pTask)
 		return;
 
 	if (m_bIsTaskBlocked)
 	{
 		Warning("Thread pool task blocking active and new task was added.\n");
-		safe_delete(task);
 		return;
 	}
 
 	{
 		std::lock_guard<std::mutex> guardTask(m_TaskMutex);
-		m_vTaskList.push_back(task);
+		m_vTaskList.push_back(pTask);
 	}
 
 	//get thread running again.
@@ -164,14 +159,16 @@ void ThreadPool::queueTask(BaseTask *task)
 }
 
 
-void ThreadPool::forceTask(BaseTask *task)
+void ThreadPool::forceTask(gcRefPtr<BaseTask> pTask)
 {
-	if (!task)
+	if (!pTask)
 		return;
 
 	std::lock_guard<std::mutex> guardForced(m_ForcedMutex);
 
-	ThreadPoolThread *thread = new ThreadPoolThread(new ThreadPoolTaskSource(task), true);
+
+	gcRefPtr<ThreadPoolTaskSourceI> pTPTS(new ThreadPoolTaskSource(pTask));
+	auto thread = gcRefPtr<ThreadPoolThread>::create(pTPTS, true);
 	thread->onCompleteEvent += delegate(this, &ThreadPool::onThreadComplete);
 
 	m_vForcedList.push_back( thread );
@@ -183,7 +180,7 @@ void ThreadPool::run()
 {
 	for (uint8 x=0; x<m_uiCount; x++)
 	{
-		ThreadPoolThread *thread = new ThreadPoolThread(this, false);
+		auto thread = gcRefPtr<ThreadPoolThread>::create(gcRefPtr<ThreadPoolTaskSourceI>(this), false);
 		thread->onCompleteEvent += delegate(this, &ThreadPool::onThreadComplete);
 		m_vThreadList.push_back( thread );
 
@@ -304,7 +301,6 @@ void ThreadPool::removedForced()
 			if (m_vForcedList[x]->hasCompletedTask())
 			{
 				m_vForcedList[x]->onCompleteEvent -= delegate(this, &ThreadPool::onThreadComplete);
-				safe_delete(m_vForcedList[x]);
 				delVect.push_back(x);
 			}
 		}
@@ -327,9 +323,9 @@ void ThreadPool::onThreadComplete()
 	m_WaitCondition.notify();
 }
 
-BaseTask* ThreadPool::getTask()
+gcRefPtr<BaseTask> ThreadPool::getTask()
 {
-	BaseTask* task = nullptr;
+	gcRefPtr<BaseTask> task;
 	std::lock_guard<std::mutex> guardTask(m_TaskMutex);
 
 	if (m_vTaskList.size() > 0)

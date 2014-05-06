@@ -105,42 +105,42 @@ namespace UserCore
 		} update_s;
 	}
 
-	class UserInternalI
+	class UserInternalI : public gcRefCount
 	{
 	public:
-	#ifdef WIN32
-		virtual HWND getMainWindowHandle()=0;
-	#endif
+#ifdef WIN32
+		virtual HWND getMainWindowHandle() = 0;
+#endif
 
 		//! Downloads an image for an item
 		//!
 		//! @param itemInfo Item for which the image belongs
 		//! @param image Which image to download
 		//!
-		virtual void downloadImage(UserCore::Item::ItemInfo* itemInfo, uint8 image)=0;
+		virtual void downloadImage(gcRefPtr<UserCore::Item::ItemInfo> itemInfo, uint8 image) = 0;
 
 		//! Removes or adds an item to a desura account
 		//!
 		//! @param item Item for which to act appon
 		//! @param action Add or remove it
 		//!
-		virtual void changeAccount(DesuraId id, uint8 action)=0;
+		virtual void changeAccount(DesuraId id, uint8 action) = 0;
 
 
-		virtual MCFManagerI* getMCFManager()=0;
+		virtual gcRefPtr<MCFManagerI> getMCFManager() = 0;
 	};
 
 #ifdef LINK_WITH_GMOCK
 	class UserInternalMock : public UserInternalI
 	{
 	public:
-	#ifdef WIN32
+#ifdef WIN32
 		MOCK_METHOD0(getMainWindowHandle, HWND());
-	#endif
+#endif
 
-		MOCK_METHOD2(downloadImage, void(UserCore::Item::ItemInfo*, uint8));
+		MOCK_METHOD2(downloadImage, void(gcRefPtr<UserCore::Item::ItemInfo>, uint8));
 		MOCK_METHOD2(changeAccount, void(DesuraId, uint8));
-		MOCK_METHOD0(getMCFManager, MCFManagerI*());
+		MOCK_METHOD0(getMCFManager, gcRefPtr<MCFManagerI>());
 	};
 #endif
 
@@ -150,7 +150,7 @@ namespace UserCore
 		User();
 		~User();
 
-		UserInternalI* getInternal() override
+		gcRefPtr<UserInternalI> getInternal() override
 		{
 			return this;
 		}
@@ -203,41 +203,41 @@ namespace UserCore
 		uint32 getThreadCount() override;
 
 		const char* getCVarValue(const char* cvarName) override;
-		::Thread::ThreadPool* getThreadPool() override;
-		IPC::ServiceMainI* getServiceMain() override;
-		WebCore::WebCoreI* getWebCore() override;
-		UserCore::UserThreadManagerI* getThreadManager() override;
-		UserCore::UploadManagerI* getUploadManager() override;
-		UserCore::ItemManagerI* getItemManager() override;
-		UserCore::ToolManagerI* getToolManager() override;
-		UserCore::GameExplorerManagerI* getGameExplorerManager() override;
-		UserCore::CDKeyManagerI* getCDKeyManager() override;
-		UserCore::CIPManagerI* getCIPManager() override;
+		gcRefPtr<::Thread::ThreadPoolI> getThreadPool() override;
+		gcRefPtr<IPC::ServiceMainI> getServiceMain() override;
+		gcRefPtr<WebCore::WebCoreI> getWebCore() override;
+		gcRefPtr<UserCore::UserThreadManagerI> getThreadManager() override;
+		gcRefPtr<UserCore::UploadManagerI> getUploadManager() override;
+		gcRefPtr<UserCore::ItemManagerI> getItemManager() override;
+		gcRefPtr<UserCore::ToolManagerI> getToolManager() override;
+		gcRefPtr<UserCore::GameExplorerManagerI> getGameExplorerManager() override;
+		gcRefPtr<UserCore::CDKeyManagerI> getCDKeyManager() override;
+		gcRefPtr<UserCore::CIPManagerI> getCIPManager() override;
 
 		///////////////////////////////////////////////////////////////////////////////
 		// Events
 		///////////////////////////////////////////////////////////////////////////////
 
-		Event<uint32>* getItemsAddedEvent() override;
-		Event<UserCore::Misc::UpdateInfo>* getAppUpdateEvent() override;
-		Event<UserCore::Misc::UpdateInfo>* getAppUpdateCompleteEvent() override;
-		Event<uint32>* getAppUpdateProgEvent() override;
-		Event<UserCore::Misc::CVar_s>* getNeedCvarEvent() override;
-		EventC<gcString>* getNewAvatarEvent() override;
-		Event<WCSpecialInfo>* getNeedWildCardEvent() override;
-		Event<std::vector<UserCore::Misc::NewsItem*> >* getNewsUpdateEvent() override;
-		Event<std::vector<UserCore::Misc::NewsItem*> >* getGiftUpdateEvent() override;
-		Event<std::vector<UserCore::Item::ItemUpdateInfo*> >* getItemUpdateEvent() override;
-		EventV* getUserUpdateEvent() override;
-		EventV* getPipeDisconnectEvent() override;
-		Event<std::tuple<gcOptional<bool>, gcOptional<bool>, gcOptional<bool>>>* getForcedUpdatePollEvent() override;
-		EventV* getLoginItemsLoadedEvent() override;
-		Event<std::pair<bool, char> >* getLowSpaceEvent() override;
+		Event<uint32>& getItemsAddedEvent() override;
+		Event<UserCore::Misc::UpdateInfo>& getAppUpdateEvent() override;
+		Event<UserCore::Misc::UpdateInfo>& getAppUpdateCompleteEvent() override;
+		Event<uint32>& getAppUpdateProgEvent() override;
+		Event<UserCore::Misc::CVar_s>& getNeedCvarEvent() override;
+		EventC<gcString>& getNewAvatarEvent() override;
+		Event<WCSpecialInfo>& getNeedWildCardEvent() override;
+		Event<std::vector<gcRefPtr<UserCore::Misc::NewsItem>> >& getNewsUpdateEvent() override;
+		Event<std::vector<gcRefPtr<UserCore::Misc::NewsItem>> >& getGiftUpdateEvent() override;
+		Event<std::vector<gcRefPtr<UserCore::Item::ItemUpdateInfo>> >& getItemUpdateEvent() override;
+		EventV& getUserUpdateEvent() override;
+		EventV& getPipeDisconnectEvent() override;
+		Event<std::tuple<gcOptional<bool>, gcOptional<bool>, gcOptional<bool>>>& getForcedUpdatePollEvent() override;
+		EventV& getLoginItemsLoadedEvent() override;
+		Event<std::pair<bool, char> >& getLowSpaceEvent() override;
 
 		void setCounts(uint32 msgs, uint32 updates, uint32 threads, uint32 cart) override;
-	#ifdef WIN32
+#ifdef WIN32
 		void setMainWindowHandle(HWND handle) override;
-	#endif
+#endif
 
 		void updateUninstallInfo() override;
 		void updateUninstallInfo(DesuraId id, uint64 installSize) override;
@@ -269,13 +269,13 @@ namespace UserCore
 		//!
 		void setAvatarPath(const char* path);
 
-	
+
 		//! Downloads an image for an item
 		//!
 		//! @param itemInfo Item for which the image belongs
 		//! @param image Which image to download
 		//!
-		void downloadImage(UserCore::Item::ItemInfo* itemInfo, uint8 image) override;
+		void downloadImage(gcRefPtr<UserCore::Item::ItemInfo> itemInfo, uint8 image) override;
 
 		//! Removes or adds an item to a desura account
 		//!
@@ -291,11 +291,11 @@ namespace UserCore
 		//!
 		static void getLoginInfo(char** userhash, char** passhash);
 
-	#ifdef WIN32
+#ifdef WIN32
 		HWND getMainWindowHandle() override;
-	#endif
+#endif
 
-		MCFManagerI* getMCFManager() override;
+		gcRefPtr<MCFManagerI> getMCFManager() override;
 
 		//! Start the pipe to the desura service
 		//!
@@ -310,10 +310,10 @@ namespace UserCore
 		//!
 		bool platformFilter(const XML::gcXMLElement &platform, PlatformType type);
 
-		BDManager* getBDManager();
+		gcRefPtr<BDManager> getBDManager();
 
-	
 
+		gc_IMPLEMENT_REFCOUNTING(UserCore);
 	protected:
 		Event<uint32> onItemsAddedEvent;
 		Event<UserCore::Misc::UpdateInfo> onAppUpdateEvent;
@@ -323,9 +323,9 @@ namespace UserCore
 		Event<UserCore::Misc::CVar_s> onNeedCvarEvent;
 		EventC<gcString> onNewAvatarEvent;
 		Event<WCSpecialInfo> onNeedWildCardEvent;
-		Event<std::vector<UserCore::Misc::NewsItem*> > onNewsUpdateEvent;
-		Event<std::vector<UserCore::Misc::NewsItem*> > onGiftUpdateEvent;
-		Event<std::vector<UserCore::Item::ItemUpdateInfo*> > onItemUpdateEvent;
+		Event<std::vector<gcRefPtr<UserCore::Misc::NewsItem>> > onNewsUpdateEvent;
+		Event<std::vector<gcRefPtr<UserCore::Misc::NewsItem>> > onGiftUpdateEvent;
+		Event<std::vector<gcRefPtr<UserCore::Item::ItemUpdateInfo>> > onItemUpdateEvent;
 		EventV onPipeDisconnect;
 		Event<std::tuple<gcOptional<bool>, gcOptional<bool>, gcOptional<bool>>> onForcePollEvent;
 		EventV onLoginItemsLoadedEvent;
@@ -349,7 +349,7 @@ namespace UserCore
 		//!
 		void onNeedWildCardCB(WCSpecialInfo& info);
 
-		void parseNewsAndGifts(const XML::gcXMLElement &xmlNode, const char* szChildName, Event<std::vector<UserCore::Misc::NewsItem*> > &onEvent);
+		void parseNewsAndGifts(const XML::gcXMLElement &xmlNode, const char* szChildName, Event<std::vector<gcRefPtr<UserCore::Misc::NewsItem>>> &onEvent);
 
 		void testMcfCache();
 
@@ -359,7 +359,7 @@ namespace UserCore
 		void init();
 		void cleanUp();
 		void onLoginItemsLoaded();
-	
+
 		gcFixedString<255> m_szMcfCachePath;
 		gcFixedString<255> m_szAppDataPath;
 
@@ -387,29 +387,27 @@ namespace UserCore
 		uint32 m_uiLastUpdateBuild = 0;
 		uint32 m_uiLastUpdateVer = 0;
 
-		//Comes from thread pool, cant make shared
-		UserCore::Thread::UserThreadI* m_pUThread = nullptr;
+		gcRefPtr<UserCore::Thread::UserThreadI> m_pUThread;
+		gcRefPtr<UserIPCPipeClient> m_pPipeClient;
+		gcRefPtr<::Thread::ThreadPool> m_pThreadPool;
+		gcRefPtr<WebCore::WebCoreI> m_pWebCore;
+		gcRefPtr<UserCore::UserThreadManager> m_pThreadManager;
+		gcRefPtr<UserCore::UploadManager> m_pUploadManager;
+		gcRefPtr<UserCore::ItemManager> m_pItemManager;
+		gcRefPtr<UserCore::ToolManager> m_pToolManager;
+		gcRefPtr<UserCore::GameExplorerManagerI> m_pGameExplorerManager;
 
-		std::shared_ptr<UserIPCPipeClient> m_pPipeClient;
-		std::shared_ptr<::Thread::ThreadPool> m_pThreadPool;
-		std::shared_ptr<WebCore::WebCoreI> m_pWebCore;
-		std::shared_ptr<UserCore::UserThreadManager> m_pThreadManager;
-		std::shared_ptr<UserCore::UploadManager> m_pUploadManager;
-		std::shared_ptr<UserCore::ItemManager> m_pItemManager;
-		std::shared_ptr<UserCore::ToolManager> m_pToolManager;
-		std::shared_ptr<UserCore::GameExplorerManagerI> m_pGameExplorerManager;
-
-		std::shared_ptr<UserCore::CDKeyManager> m_pCDKeyManager;
-		std::shared_ptr<UserCore::BDManager> m_pBannerDownloadManager;
-		std::shared_ptr<UserCore::CIPManager> m_pCIPManager;
-		std::shared_ptr<UserCore::MCFManager> m_pMcfManager;
+		gcRefPtr<UserCore::CDKeyManager> m_pCDKeyManager;
+		gcRefPtr<UserCore::BDManager> m_pBannerDownloadManager;
+		gcRefPtr<UserCore::CIPManager> m_pCIPManager;
+		gcRefPtr<UserCore::MCFManager> m_pMcfManager;
 
 		volatile bool m_bLocked = false;
 		::Thread::WaitCondition m_WaitCond;
 
-	#ifdef WIN32
+#ifdef WIN32
 		HWND m_WinHandle;
-	#endif
+#endif
 
 		friend class ItemManager;
 	};
@@ -476,12 +474,12 @@ namespace UserCore
 		return m_iThreads;
 	}
 
-	inline ::Thread::ThreadPool* User::getThreadPool()
+	inline gcRefPtr<::Thread::ThreadPoolI> User::getThreadPool()
 	{
-		return m_pThreadPool.get();
+		return m_pThreadPool;
 	}
 
-	inline IPC::ServiceMainI* User::getServiceMain()
+	inline gcRefPtr<IPC::ServiceMainI> User::getServiceMain()
 	{
 		if (!m_pPipeClient)
 			return nullptr;
@@ -489,124 +487,124 @@ namespace UserCore
 		return m_pPipeClient->getServiceMain();
 	}
 
-	inline WebCore::WebCoreI* User::getWebCore()
+	inline gcRefPtr<WebCore::WebCoreI> User::getWebCore()
 	{
-		return m_pWebCore.get();
+		return m_pWebCore;
 	}
 
-	inline UserCore::UserThreadManagerI* User::getThreadManager()
+	inline gcRefPtr<UserCore::UserThreadManagerI> User::getThreadManager()
 	{
-		return m_pThreadManager.get();
+		return m_pThreadManager;
 	}
 
-	inline UserCore::UploadManagerI* User::getUploadManager()
+	inline gcRefPtr<UserCore::UploadManagerI> User::getUploadManager()
 	{
-		return m_pUploadManager.get();
+		return m_pUploadManager;
 	}
 
-	inline UserCore::ItemManagerI* User::getItemManager()
+	inline gcRefPtr<UserCore::ItemManagerI> User::getItemManager()
 	{
-		return m_pItemManager.get();
+		return m_pItemManager;
 	}
 
-	inline UserCore::ToolManagerI* User::getToolManager()
+	inline gcRefPtr<UserCore::ToolManagerI> User::getToolManager()
 	{
-		return m_pToolManager.get();
+		return m_pToolManager;
 	}
 
-	inline UserCore::GameExplorerManagerI* User::getGameExplorerManager()
+	inline gcRefPtr<UserCore::GameExplorerManagerI> User::getGameExplorerManager()
 	{
-		return m_pGameExplorerManager.get();
+		return m_pGameExplorerManager;
 	}
 
-	inline UserCore::CDKeyManagerI* User::getCDKeyManager()
+	inline gcRefPtr<UserCore::CDKeyManagerI> User::getCDKeyManager()
 	{
-		return m_pCDKeyManager.get();
+		return m_pCDKeyManager;
 	}
 
-	inline UserCore::CIPManagerI* User::getCIPManager()
+	inline gcRefPtr<UserCore::CIPManagerI> User::getCIPManager()
 	{
-		return m_pCIPManager.get();
+		return m_pCIPManager;
 	}
 
-	inline Event<uint32>* User::getItemsAddedEvent()
+	inline Event<uint32>& User::getItemsAddedEvent()
 	{
-		return &onItemsAddedEvent;
+		return onItemsAddedEvent;
 	}
 
-	inline Event<UserCore::Misc::UpdateInfo>* User::getAppUpdateEvent()
+	inline Event<UserCore::Misc::UpdateInfo>& User::getAppUpdateEvent()
 	{
-		return &onAppUpdateEvent;
+		return onAppUpdateEvent;
 	}
 
-	inline Event<UserCore::Misc::UpdateInfo>* User::getAppUpdateCompleteEvent()
+	inline Event<UserCore::Misc::UpdateInfo>& User::getAppUpdateCompleteEvent()
 	{
-		return &onAppUpdateCompleteEvent;
+		return onAppUpdateCompleteEvent;
 	}
 
-	inline Event<uint32>* User::getAppUpdateProgEvent()
+	inline Event<uint32>& User::getAppUpdateProgEvent()
 	{
-		return &onAppUpdateProgEvent;
+		return onAppUpdateProgEvent;
 	}
 
-	inline Event<UserCore::Misc::CVar_s>* User::getNeedCvarEvent()
+	inline Event<UserCore::Misc::CVar_s>& User::getNeedCvarEvent()
 	{
-		return &onNeedCvarEvent;
+		return onNeedCvarEvent;
 	}
 
-	inline EventC<gcString>* User::getNewAvatarEvent()
+	inline EventC<gcString>& User::getNewAvatarEvent()
 	{
-		return &onNewAvatarEvent;
+		return onNewAvatarEvent;
 	}
 
-	inline Event<WCSpecialInfo>* User::getNeedWildCardEvent()
+	inline Event<WCSpecialInfo>& User::getNeedWildCardEvent()
 	{
-		return &onNeedWildCardEvent;
+		return onNeedWildCardEvent;
 	}
 
-	inline Event<std::vector<UserCore::Misc::NewsItem*> >* User::getNewsUpdateEvent()
+	inline Event<std::vector<gcRefPtr<UserCore::Misc::NewsItem>> >& User::getNewsUpdateEvent()
 	{
-		return &onNewsUpdateEvent;
+		return onNewsUpdateEvent;
 	}
 
-	inline Event<std::vector<UserCore::Misc::NewsItem*> >* User::getGiftUpdateEvent()
+	inline Event<std::vector<gcRefPtr<UserCore::Misc::NewsItem>> >& User::getGiftUpdateEvent()
 	{
-		return &onGiftUpdateEvent;
+		return onGiftUpdateEvent;
 	}
 
-	inline Event<std::vector<UserCore::Item::ItemUpdateInfo*> >* User::getItemUpdateEvent()
+	inline Event<std::vector<gcRefPtr<UserCore::Item::ItemUpdateInfo>> >& User::getItemUpdateEvent()
 	{
-		return &onItemUpdateEvent;
+		return onItemUpdateEvent;
 	}
 
-	inline EventV* User::getUserUpdateEvent()
+	inline EventV& User::getUserUpdateEvent()
 	{
-		return &onUserUpdateEvent;
+		return onUserUpdateEvent;
 	}
 
-	inline EventV* User::getPipeDisconnectEvent()
+	inline EventV& User::getPipeDisconnectEvent()
 	{
-		return &onPipeDisconnect;
+		return onPipeDisconnect;
 	}
 
-	inline Event<std::tuple<gcOptional<bool>, gcOptional<bool>, gcOptional<bool>>>* User::getForcedUpdatePollEvent()
+	inline Event<std::tuple<gcOptional<bool>, gcOptional<bool>, gcOptional<bool>>>& User::getForcedUpdatePollEvent()
 	{
-		return &onForcePollEvent;
+		return onForcePollEvent;
 	}
 
-	inline EventV* User::getLoginItemsLoadedEvent()
+	inline EventV& User::getLoginItemsLoadedEvent()
 	{
-		return &onLoginItemsLoadedEvent;
+		return onLoginItemsLoadedEvent;
 	}
 
-	inline Event<std::pair<bool, char> >* User::getLowSpaceEvent()
+	inline Event<std::pair<bool, char> >& User::getLowSpaceEvent()
 	{
-		return &onLowSpaceEvent;
+		return onLowSpaceEvent;
 	}
 
 	//other
 
-	#ifdef WIN32
+#ifdef WIN32
 	inline void User::setMainWindowHandle(HWND handle)
 	{
 		m_WinHandle = handle;
@@ -616,18 +614,17 @@ namespace UserCore
 	{
 		return m_WinHandle;
 	}
-	#endif
+#endif
 
-	inline BDManager* User::getBDManager()
+	inline gcRefPtr<BDManager> User::getBDManager()
 	{
-		return m_pBannerDownloadManager.get();
+		return m_pBannerDownloadManager;
 	}
 
 	inline bool User::isAltProvider()
 	{
 		return m_bAltProvider;
 	}
-
 }
 
 #endif //DESURA_UserCore::User_H
