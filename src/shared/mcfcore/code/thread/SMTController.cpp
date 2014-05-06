@@ -100,6 +100,7 @@ SMTController::SMTController(uint16 num, MCFCore::MCF* caller)
 
 SMTController::~SMTController()
 {
+	stop();
 	safe_delete(m_vWorkerList);
 }
 
