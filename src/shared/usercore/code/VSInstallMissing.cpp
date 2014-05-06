@@ -51,15 +51,9 @@ VSInstallMissing::~VSInstallMissing()
 		m_WaitCond.wait();
 
 	if (m_pIPCIM)
-	{
-		m_pIPCIM->onCompleteEvent -= delegate(this, &VSInstallMissing::onComplete);
-		m_pIPCIM->onProgressEvent -= delegate(&onProgressEvent);
-		m_pIPCIM->onErrorEvent -= delegate(&onErrorEvent);
-
 		m_pIPCIM->destroy();
-		m_pIPCIM = nullptr;
-	}
 
+	m_pIPCIM = nullptr;
 }
 
 bool VSInstallMissing::doTask()

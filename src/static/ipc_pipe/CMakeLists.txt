@@ -8,6 +8,7 @@ set(IPC_PIPE_INCLUDE_DIRS ${CMAKE_CURRENT_SOURCE_DIR}/code PARENT_SCOPE)
 file(GLOB Sources code/IPCClass.cpp
                   code/IPCManager.cpp
                   code/IPCParameter.cpp
+				  code/IPCLockable.cpp
 )
 
 if(WIN32)

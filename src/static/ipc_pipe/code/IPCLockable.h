@@ -32,195 +32,91 @@ $/LicenseInfo$
 #include "util_thread/BaseThread.h"
 #include "IPCParameter.h"
 
+#include <atomic>
+
 namespace IPC
 {
 
-//! Reperesnts a basic lock for function calls across IPC
-//!
-class IPCLock
-{
-public:
-	IPCLock()
+	//! Represents a basic lock for function calls across IPC
+	//!
+	class IPCLock
 	{
-		id = 0;
-		result = nullptr;
-		m_bTriggered = false;
-	}
+	public:
+		IPCLock(uint32 i);
+		~IPCLock();
 
-	~IPCLock()
-	{
-		delMutex.lock();
-		waitCond.notify();
-		delMutex.unlock();
-	}
+		void wait();
+		bool wait(int sec, int milli);
 
-	void wait()
-	{
-		if (!m_bTriggered)
-			waitCond.wait();
-	}
-
-	void timedWait()
-	{
-		if (!m_bTriggered)
-			waitCond.wait(30); //wait on mutex
-	}
-
-	bool wait(int sec, int milli)
-	{
-		if (!m_bTriggered)
-			return waitCond.wait(sec, milli); //wait on mutex
-
-		return false;
-	}
-
-	void trigger()
-	{
-		m_bTriggered = true;
-		alert();
-	}
-
-	void alert()
-	{
-		delMutex.lock();
-		waitCond.notify();
-		delMutex.unlock();
-	}
-
-	volatile bool isTriggered()
-	{
-		return m_bTriggered;
-	}
-
-	uint32 id;
-	IPCParameterI* result;
-
-private:
-	volatile bool m_bTriggered;
-
-	Thread::WaitCondition waitCond;
-	std::mutex delMutex;
-};
-
-
-template <typename T>
-class IPCScopedLock
-{
-public:
-	IPCScopedLock(T* pParent, IPCLock* pLock)
-	{
-		m_pLock = pLock;
-		m_pParent = pParent;
-	}
-
-	~IPCScopedLock()
-	{
-		if (m_pParent && m_pLock)
-			m_pParent->delLock(m_pLock->id);
-	}
-
-	IPCLock* operator ->()
-	{
-		return m_pLock;
-	}
-
-	IPCLock* m_pLock;
-	T* m_pParent;
-};
-
-//! Class holds locks for function calls
-//!
-class IPCLockable
-{
-public:
-	IPCLockable()
-	{
-		m_uiIdCount = 0;
-	}
-
-	virtual ~IPCLockable()
-	{
-
-	}
-
-	void cancelLocks(gcException &reason)
-	{
-		m_lockMutex.lock();
-
-		for (size_t x=0; x<m_vLockList.size(); x++)
-		{
-			m_vLockList[x]->result = newParameterS(reason);
-			m_vLockList[x]->trigger();
-		}
-
-		m_lockMutex.unlock();
-	}
-
-protected:
-	IPCLock* newLock()
-	{
-		IPCLock* lock = new IPCLock();
-
-		m_lockMutex.lock();
-
-		lock->id = m_uiIdCount;
-		m_uiIdCount++;
-		m_vLockList.push_back(lock);
-
-		m_lockMutex.unlock();
-
-		//printf("Creating lock with id %d\n", lock->id);
-
-		return lock;
-	}
-
-	void delLock(uint32 id)
-	{
-		//printf("Deleting lock with id %d\n", id);
-
-		m_lockMutex.lock();
-
-		for (size_t x=0; x<m_vLockList.size(); x++)
-		{
-			if (m_vLockList[x]->id == id)
-			{
-				delete m_vLockList[x];
-				m_vLockList.erase(m_vLockList.begin()+x);
-				break;
-			}
-		}
-
-		m_lockMutex.unlock();
-	}
-
-	IPCLock* findLock(uint32 id)
-	{
-		//printf("Finding lock with id %d\n", id);
-
-		m_lockMutex.lock();
+		void timedWait();
 		
-		for (size_t x=0; x<m_vLockList.size(); x++)
+		void trigger(IPCParameterI* pParameter);
+		IPCParameterI* popResult();
+
+		const uint32 id;
+
+	private:
+		IPCParameterI* m_pResult = nullptr;
+
+		std::atomic<bool> m_bTriggered;
+		Thread::WaitCondition m_WaitCond;
+		std::mutex m_InternalLock;
+	};
+
+
+	template <typename T>
+	class IPCScopedLock
+	{
+	public:
+		IPCScopedLock(T* pParent, std::shared_ptr<IPCLock> pLock)
+			: m_pLock(pLock)
+			, m_pParent(pParent)
 		{
-			if (m_vLockList[x]->id == id)
+		}
+
+		~IPCScopedLock()
+		{
+			if (m_pParent && m_pLock)
 			{
-				m_lockMutex.unlock();
-				return m_vLockList[x];
+				//avoid assert
+				auto id = m_pLock->id;
+				m_pLock.reset();
+				m_pParent->delLock(id);
 			}
 		}
 
-		m_lockMutex.unlock();
+		std::shared_ptr<IPCLock> operator ->()
+		{
+			return m_pLock;
+		}
 
-		return nullptr;
-	}
+	private:
+		std::shared_ptr<IPCLock> m_pLock;
+		T* m_pParent;
+	};
 
-private:
-	template <class T> friend class IPCScopedLock;
+	//! Class holds locks for function calls
+	//!
+	class IPCLockable
+	{
+	public:
+		IPCLockable();
+		virtual ~IPCLockable();
 
-	uint32 m_uiIdCount;
-	std::vector<IPCLock*> m_vLockList;
-	std::mutex m_lockMutex;
-};
+		void cancelLocks(gcException &reason);
 
+	protected:
+		void delLock(uint32 id);
+		std::shared_ptr<IPCLock> newLock();
+		std::shared_ptr<IPCLock> findLock(uint32 id);
+
+	private:
+		template <class T> friend class IPCScopedLock;
+
+		std::atomic<uint32> m_uiIdCount;
+		std::vector<std::shared_ptr<IPCLock>> m_vLockList;
+		std::mutex m_lockMutex;
+	};
 }
 
 #endif //DESURA_IPCLOCKABLE_H

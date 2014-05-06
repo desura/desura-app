@@ -50,14 +50,9 @@ UIServiceTask::~UIServiceTask()
 		waitForFinish();
 
 	if (m_pIPCUI)
-	{
-		m_pIPCUI->onCompleteEvent -= delegate(this, &UIServiceTask::onComplete);
-		m_pIPCUI->onProgressEvent -= delegate(&onMcfProgressEvent);
-		m_pIPCUI->onErrorEvent -= delegate(this, &UIServiceTask::onServiceError);
-
 		m_pIPCUI->destroy();
-		m_pIPCUI = nullptr;
-	}
+
+	m_pIPCUI = nullptr;
 }
 
 bool UIServiceTask::initService()

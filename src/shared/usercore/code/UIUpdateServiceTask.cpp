@@ -47,14 +47,9 @@ UIUpdateServiceTask::~UIUpdateServiceTask()
 	waitForFinish();
 
 	if (m_pIPCIM)
-	{
-		m_pIPCIM->onCompleteEvent -= delegate(this, &UIUpdateServiceTask::onComplete);
-		m_pIPCIM->onProgressEvent -= delegate(&onMcfProgressEvent);
-		m_pIPCIM->onErrorEvent -= delegate((UIBaseServiceTask*)this, &UIBaseServiceTask::onServiceError);
-
 		m_pIPCIM->destroy();
-		m_pIPCIM = nullptr;
-	}
+
+	m_pIPCIM = nullptr;
 }
 
 bool UIUpdateServiceTask::initService()

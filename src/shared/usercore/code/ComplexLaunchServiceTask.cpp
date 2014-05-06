@@ -73,14 +73,9 @@ ComplexLaunchServiceTask::~ComplexLaunchServiceTask()
 	waitForFinish();
 
 	if (m_pIPCIM)
-	{
-		m_pIPCIM->onCompleteEvent -= delegate(this, &ComplexLaunchServiceTask::onComplete);
-		m_pIPCIM->onProgressEvent -= delegate(this, &ComplexLaunchServiceTask::onProgress);
-		m_pIPCIM->onErrorEvent -= delegate(this, &ComplexLaunchServiceTask::onError);
-		
 		m_pIPCIM->destroy();
-		m_pIPCIM = nullptr;
-	}
+
+	m_pIPCIM = nullptr;
 }
 
 void ComplexLaunchServiceTask::onFinish()

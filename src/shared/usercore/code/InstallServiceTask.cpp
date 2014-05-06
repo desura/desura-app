@@ -65,13 +65,7 @@ InstallServiceTask::~InstallServiceTask()
 		waitForFinish();
 
 	if (m_pIPCIM)
-	{
-		m_pIPCIM->onCompleteEvent -= delegate(this, &InstallServiceTask::onComplete);
-		m_pIPCIM->onProgressEvent -= delegate(this, &InstallServiceTask::onProgUpdate);
-		m_pIPCIM->onErrorEvent -= delegate(this, &InstallServiceTask::onError);
-		m_pIPCIM->onFinishEvent -= delegate(this, &InstallServiceTask::onFinish);
 		m_pIPCIM->destroy();
-	}
 
 	if (m_pIHH)
 		m_pIHH->destroy();
