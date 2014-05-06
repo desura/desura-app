@@ -59,7 +59,7 @@ void ToolInstallThread::run()
 			continue;
 
 		m_InstallLock.lock();
-		uint32 size = m_dvInstallQue.size();
+		uint32 size = m_mTransactions.size();
 		m_InstallLock.unlock();
 
 		if (size == 0)

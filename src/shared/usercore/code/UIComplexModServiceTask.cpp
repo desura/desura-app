@@ -65,14 +65,9 @@ UIComplexModServiceTask::~UIComplexModServiceTask()
 	waitForFinish();
 
 	if (m_pIPCCL)
-	{
-		m_pIPCCL->onCompleteEvent -= delegate(this, &UIComplexModServiceTask::onComplete);
-		m_pIPCCL->onProgressEvent -= delegate(this, &UIComplexModServiceTask::onProgress);
-		m_pIPCCL->onErrorEvent -= delegate((UIBaseServiceTask*)this, &UIBaseServiceTask::onServiceError);
-
 		m_pIPCCL->destroy();
-		m_pIPCCL = nullptr;
-	}
+
+	m_pIPCCL = nullptr;
 }
 
 

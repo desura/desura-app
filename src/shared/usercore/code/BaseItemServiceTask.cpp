@@ -56,7 +56,7 @@ void BaseItemServiceTask::resetFinish()
 
 void BaseItemServiceTask::waitForFinish()
 {
-	if (!m_bFinished)
+	if (hasStarted() && !m_bFinished)
 		m_WaitCond.wait();
 
 	m_bFinished = true;
