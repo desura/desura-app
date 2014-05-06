@@ -40,10 +40,8 @@ $/LicenseInfo$
 #include "util/UtilLinux.h"
 #endif
 
-namespace UserCore
-{
-namespace ItemTask
-{
+using namespace UserCore::ItemTask;
+
 
 InstallServiceTask::InstallServiceTask(UserCore::Item::ItemHandle* handle, const char* path, MCFBranch branch, UserCore::Item::Helper::InstallerHandleHelperI* ihh) 
 	: BaseItemServiceTask(UserCore::Item::ITEM_STAGE::STAGE_INSTALL, "Install", handle, branch)
@@ -59,6 +57,8 @@ InstallServiceTask::InstallServiceTask(UserCore::Item::ItemHandle* handle, const
 
 InstallServiceTask::~InstallServiceTask()
 {
+	gcTrace("");
+
 	gcException eFailCreateHandle(ERR_NULLHANDLE, "Failed to create install mcf service!\n");
 
 	if (hasStarted())
@@ -79,6 +79,8 @@ InstallServiceTask::~InstallServiceTask()
 
 bool InstallServiceTask::initService()
 {
+	gcTrace("");
+
 	gcException eBadItem(ERR_BADITEM);
 
 	auto pItem = getItemInfo();
@@ -130,6 +132,8 @@ bool InstallServiceTask::initService()
 
 void InstallServiceTask::onComplete()
 {
+	gcTrace("");
+
 	if (m_bHasError)
 	{
 		onFinish();
@@ -174,6 +178,8 @@ void InstallServiceTask::onComplete()
 		getItemHandle()->getInternal()->completeStage(false);
 
 	onFinish();
+
+	gcTrace("End");
 }
 
 
@@ -247,14 +253,6 @@ void InstallServiceTask::onError(gcException &e)
 
 void InstallServiceTask::onFinish()
 {
+	gcTrace("");
 	BaseItemServiceTask::onFinish();
-}
-
-
-#ifdef NIX
-
-#endif
-
-
-}
 }

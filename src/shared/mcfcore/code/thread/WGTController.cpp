@@ -280,7 +280,7 @@ WGTController::WGTController(std::shared_ptr<MCFCore::Misc::DownloadProvidersI> 
 
 WGTController::~WGTController()
 {
-	join();
+	stop();
 
 	if (m_bDoingStop)
 		gcSleep(500);
@@ -537,7 +537,18 @@ bool WGTController::fillBlockList()
 
 	try
 	{
+		{
+			std::lock_guard<std::mutex> guard(m_McfLock);
+			m_pCurMcf = &webMcf;
+		}
+
 		webMcf.dlHeaderFromWeb();
+
+		{
+			std::lock_guard<std::mutex> guard(m_McfLock);
+			m_pCurMcf = nullptr;
+		}
+
 	}
 	catch (gcException &e)
 	{
@@ -965,6 +976,12 @@ WGTWorkerInfo* WGTController::findWorker(uint32 id)
 void WGTController::onStop()
 {
 	m_bDoingStop = true;
+
+	{
+		std::lock_guard<std::mutex> guard(m_McfLock);
+		if (m_pCurMcf)
+			m_pCurMcf->stop();
+	}
 
 	BaseMCFThread::onStop();
 

@@ -176,8 +176,10 @@ BaseThread::BaseThread(const char* name)
 
 BaseThread::~BaseThread()
 {
+	//Should of called stop in child class first. Can cause problems with part delete calling stop here.
+	gcAssert(m_pPrivates->m_bStop || !m_pPrivates->m_bIsRunning);
+
 	stop();
-	join();
 	safe_delete(m_pPrivates);
 }
 
@@ -260,11 +262,8 @@ void BaseThread::pause()
 		return;
 
 	gcTrace("Pausing thread {0}", m_pPrivates->m_szName);
-
-	if (m_pPrivates->m_bPause)
-		return;
-
 	m_pPrivates->m_bPause = true;
+
 	onPause();
 }
 
@@ -273,35 +272,34 @@ void BaseThread::unpause()
 	std::lock_guard<std::recursive_mutex> guard(m_pPrivates->m_PauseInitMutex);
 
 	if (!m_pPrivates->m_bPause)
+	{
+		m_pPrivates->m_PauseCond.notify_all();
 		return;
+	}
 
 	gcTrace("Unpausing thread {0}", m_pPrivates->m_szName);
-
-	if (!m_pPrivates->m_bPause)
-		return;
-
 	m_pPrivates->m_bPause = false;
+
 	onUnpause();
 	m_pPrivates->m_PauseCond.notify_all();
 }
 
 void BaseThread::stop()
 {
-	if (m_pPrivates->m_bStop)
-		return;
+	if (!m_pPrivates->m_bStop)
+		nonBlockStop();
 
-	gcTrace("Stopping thread {0}", m_pPrivates->m_szName);
-
-	unpause();
-	nonBlockStop();
 	join();
 }
 
 void BaseThread::nonBlockStop()
 {
-	if (!m_pPrivates->m_pThread)
+	if (!m_pPrivates->m_pThread || m_pPrivates->m_bStop)
 		return;
 
+	gcTrace("Stopping thread {0}", m_pPrivates->m_szName);
+
+	unpause();
 	m_pPrivates->m_bStop = true;
 	onStop();
 }

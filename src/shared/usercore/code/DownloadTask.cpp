@@ -36,10 +36,8 @@ $/LicenseInfo$
 #include "GameExplorerManager.h"
 #endif
 
-namespace UserCore
-{
-namespace ItemTask
-{
+using namespace UserCore::ItemTask;
+
 
 DownloadTask::DownloadTask(UserCore::Item::ItemHandle* handle, const char* mcfPath) 
 	: BaseItemTask(UserCore::Item::ITEM_STAGE::STAGE_DOWNLOAD, "Download", handle)
@@ -59,6 +57,9 @@ void DownloadTask::doRun()
 
 	if (!pItem)
 		throw gcException(ERR_BADID);
+
+	if (!pItem->getCurrentBranch())
+		throw gcException(ERR_INVALID, "Current Branch Is NULL");
 
 	m_hMCFile->setFile(m_szMcfPath.c_str());
 	m_hMCFile->parseMCF();
@@ -265,10 +266,4 @@ void DownloadTask::cancel()
 	getItemHandle()->getInternal()->setPausable(false);
 	onStop();
 	getItemHandle()->getInternal()->resetStage(true);
-}
-
-
-
-
-}
 }

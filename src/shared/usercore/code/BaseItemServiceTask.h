@@ -32,6 +32,8 @@ $/LicenseInfo$
 #include "BaseItemTask.h"
 #include "util_thread/BaseThread.h"
 
+#include <atomic>
+
 namespace IPC
 {
 	class ServiceMainI;
@@ -39,44 +41,38 @@ namespace IPC
 
 namespace UserCore
 {
-namespace ItemTask
-{
+	namespace ItemTask
+	{
 
-class BaseItemServiceTask : public BaseItemTask
-{
-public:
-	BaseItemServiceTask(UserCore::Item::ITEM_STAGE type, const char* name, UserCore::Item::ItemHandle* handle, MCFBranch branch = MCFBranch(), MCFBuild = MCFBuild());
-	~BaseItemServiceTask();
+		class BaseItemServiceTask : public BaseItemTask
+		{
+		public:
+			BaseItemServiceTask(UserCore::Item::ITEM_STAGE type, const char* name, UserCore::Item::ItemHandle* handle, MCFBranch branch = MCFBranch(), MCFBuild = MCFBuild());
+			~BaseItemServiceTask();
 
-	bool hasStarted();
+			bool hasStarted();
 
-protected:
-	virtual bool initService()=0;
+		protected:
+			virtual bool initService() = 0;
 
-	virtual void onStop();
-	virtual void doRun();
-	virtual void onFinish();
-
-
-
-	IPC::ServiceMainI* getServiceMain();
-
-	void waitForFinish();
-	void resetFinish();
-	void setFinished();
-
-private:
-	::Thread::WaitCondition m_WaitCond;
-	volatile bool m_bFinished;
-	volatile bool m_bStarted;
-};
+			virtual void onStop();
+			virtual void doRun();
+			virtual void onFinish();
 
 
 
+			IPC::ServiceMainI* getServiceMain();
+
+			void waitForFinish();
+			void resetFinish();
+			void setFinished();
+
+		private:
+			::Thread::WaitCondition m_WaitCond;
+			std::atomic<bool> m_bFinished;
+			std::atomic<bool> m_bStarted;
+		};
+	}
 }
-}
-
-
-
 
 #endif //DESURA_BASEITEMSERVICETASK_H
