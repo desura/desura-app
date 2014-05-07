@@ -265,21 +265,13 @@ uint8 MCFFile::isEquals( MCFFile * file)
 	{
 		return CMP_SAME;
 	}
-	else if (file->getTimeStamp() == this->getTimeStamp())
-	{
-		return CMP_SAME;
-	}
-	else if (file->getTimeStamp() > this->getTimeStamp())
-	{
-		return CMP_NEWER;
-	}
 	else if (file->getTimeStamp() < this->getTimeStamp())
 	{
 		return CMP_OLDER;
 	}
 	else
 	{
-		return CMP_NOTEQUAL;
+		return CMP_NEWER;
 	}
 }
 

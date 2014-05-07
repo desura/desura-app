@@ -122,6 +122,7 @@ void MCF::copyFile(std::shared_ptr<MCFCore::MCFFile> file, uint64 &lastOffset, U
 		hFileDest.seek(lastOffset);
 		hFileSrc.seek(file->getOffSet());
 
+		//uncompress file if its compressed size is bigger than its non compressed size
 		if (file->isCompressed() && file->getCSize() > file->getSize())
 		{
 			UTIL::MISC::BZ2Worker bz(UTIL::MISC::BZ2_DECOMPRESS);
@@ -321,35 +322,42 @@ void MCF::makeFullFile(MCFI* patchFile, const char* path)
 		throw gcException(ERR_INVALIDFILE, gcString("The patch MCF parent version doesnt match the parent MCF version ({0} != {1})", par, ver));
 
 	std::vector<mcfDif_s> vSame;
-	std::vector<size_t> vOther;
-	findSameHashFile(temp, vSame, vOther);
+	std::vector<mcfDif_s> vDiff;
+	std::vector<mcfDif_s> vDel;
+	std::vector<mcfDif_s> vNew;
+	findChanges(temp, &vSame, &vDiff, &vDel, &vNew);
 
-	// remove all the deleted files from this MCF
-	for (size_t x=0; x<vOther.size(); x++)
-	{
-		m_pFileList[vOther[x]]->delFlag( MCFCore::MCFFileI::FLAG_SAVE );
-	}
+	for (auto d : vDel)
+		m_pFileList[d.thisMcf]->delFlag(MCFCore::MCFFileI::FLAG_SAVE);
+
+	for (auto d : vDiff)
+		m_pFileList[d.thisMcf]->delFlag(MCFCore::MCFFileI::FLAG_SAVE);
 
 	// remove all the same files that are in the patch from the patch as to group the new files together
-	for (size_t x=0; x<vSame.size(); x++)
+	for (auto s : vSame)
 	{
-		auto tempFile = temp->getFile(vSame[x].otherMcf);
-		auto thisFile = m_pFileList[vSame[x].thisMcf];
+		auto thisFile = getFile(s.thisMcf);
+		auto patchFile = temp->getFile(s.otherMcf);
 
 		if (thisFile->isSaved())
 		{
-			tempFile->delFlag(MCFCore::MCFFileI::FLAG_SAVE);
+			patchFile->delFlag(MCFCore::MCFFileI::FLAG_SAVE);
+
+			//copy executable flag
+			thisFile->addFlag(patchFile->getFlags() & MCFCore::MCFFileI::FLAG_XECUTABLE);
+
+			//Make sure we copy the case as linux might change it for patches
+			thisFile->setPath(patchFile->getPath());
+			thisFile->setName(patchFile->getName());
+		}
+		else if (patchFile->isSaved())
+		{
+			thisFile->delFlag(MCFCore::MCFFileI::FLAG_SAVE);
 		}
 		else
 		{
-			thisFile->delFlag( MCFCore::MCFFileI::FLAG_SAVE );
-
-			//copy executable flag
-			thisFile->addFlag( tempFile->getFlags() & MCFCore::MCFFileI::FLAG_XECUTABLE );
-
-			//Make sure we copy the case as linux might change it for patches
-			thisFile->setPath(tempFile->getPath());
-			thisFile->setName(tempFile->getName());
+			Warning("Missing file from merge: {0}\\{1}", patchFile->getPath(), patchFile->getName());
+			gcAssert(false);
 		}
 	}
 
@@ -358,7 +366,7 @@ void MCF::makeFullFile(MCFI* patchFile, const char* path)
 	fullMcf.setHeader(temp->getHeader());
 	fullMcf.getHeader()->updateFileVersion();
 
-	//allways start after the header.
+	//always start after the header.
 	uint64 lastOffset = fullMcf.getHeader()->getSize();
 
 	UTIL::FS::FileHandle hFileSrc(temp->getFile(), UTIL::FS::FILE_READ);
