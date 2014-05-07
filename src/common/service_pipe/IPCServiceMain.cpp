@@ -45,7 +45,7 @@ $/LicenseInfo$
 typedef BOOL (WINAPI* SetDllDirectoryFunc)(LPCTSTR);
 #endif
 
-IPCServiceMain* servicemain = nullptr;
+IPCServiceMain* g_pServicemain = nullptr;
 
 #ifndef DESURA_CLIENT
 
@@ -60,9 +60,9 @@ void StopLogging()
 
 gcString GetSpecialPath(int32 key)
 {
-	if (servicemain)
+	if (g_pServicemain)
 	{
-		IPC::PBlob str = servicemain->getSpecialPath(key);
+		IPC::PBlob str = g_pServicemain->getSpecialPath(key);
 		return std::string(str.getData(), str.getSize());
 	}
 
@@ -78,7 +78,7 @@ void SetTracer(TracerI *pTracer)
 
 void LogMsg(MSG_TYPE type, std::string msg, Color* col, std::map<std::string, std::string> *mpArgs)
 {
-	if (!servicemain || !g_bLogEnabled)
+	if (!g_pServicemain || !g_bLogEnabled)
 		return;
 
 #ifndef DEBUG
@@ -93,12 +93,12 @@ void LogMsg(MSG_TYPE type, std::string msg, Color* col, std::map<std::string, st
 
 	if (mpArgs)
 	{
-		servicemain->message((int)type, msg.c_str(), nCol, *mpArgs);
+		g_pServicemain->message((int)type, msg.c_str(), nCol, *mpArgs);
 	}
 	else
 	{
 		std::map<std::string, std::string> mEmpty;
-		servicemain->message((int)type, msg.c_str(), nCol, mEmpty);
+		g_pServicemain->message((int)type, msg.c_str(), nCol, mEmpty);
 	}
 
 	if (g_pTracer && type == MT_TRACE)
@@ -114,7 +114,7 @@ REG_IPC_CLASS( IPCServiceMain );
 IPCServiceMain::IPCServiceMain(IPC::IPCManager* mang, uint32 id, DesuraId itemId) : IPC::IPCClass(mang, id, itemId)
 {
 	registerFunctions();
-	servicemain = this;
+	g_pServicemain = this;
 
 #ifndef DESURA_CLIENT
 	m_pServiceThread = nullptr;
@@ -123,6 +123,8 @@ IPCServiceMain::IPCServiceMain(IPC::IPCManager* mang, uint32 id, DesuraId itemId
 
 IPCServiceMain::~IPCServiceMain()
 {
+	g_pServicemain = nullptr;
+
 #ifndef DESURA_CLIENT
 	if (m_pServiceThread)
 		m_pServiceThread->stop();
