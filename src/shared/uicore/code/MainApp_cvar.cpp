@@ -261,6 +261,8 @@ CVar gc_linux_launch_globalbin("gc_linux_launch_globalbin", "", CVAR_LINUX_ONLY,
 CVar gc_linux_launch_globalargs("gc_linux_launch_globalargs", "", CVAR_LINUX_ONLY, (CVarCallBackFn)&OnLinuxArgsChange);
 CVar gc_safe_uploads("gc_safe_uploads", "0", CFLAG_USER);
 
+CVar gc_mcfcreate_nopatch("gc_mcfcreate_nopatch", "0", CFLAG_USER);
+
 #ifdef DESURA_OFFICIAL_BUILD
 
 bool OnQaTestingChange(CVar* var, const char* val)
