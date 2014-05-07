@@ -101,7 +101,7 @@ namespace MCFCore
 			std::mutex m_pFileMutex;
 
 			std::vector<std::shared_ptr<MCFCore::MCFFile>> &m_rvFileList;
-			std::vector<int32> m_vFileList;
+			std::vector<size_t> m_vFileList;
 
 			uint64 m_uiFileOffset;
 		};
