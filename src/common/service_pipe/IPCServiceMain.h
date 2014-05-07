@@ -71,11 +71,11 @@ public:
 	IPC::PBlob getSpecialPath(int32 key);
 
 #ifdef DESURA_CLIENT
-	IPCUpdateApp* newUpdateApp() override;
-	IPCUninstallMcf* newUninstallMcf() override;
-	IPCInstallMcf* newInstallMcf() override;
-	IPCComplexLaunch* newComplexLaunch() override;
-	IPCUninstallBranch* newUninstallBranch() override;
+	std::shared_ptr<IPCUpdateApp> newUpdateApp() override;
+	std::shared_ptr<IPCUninstallMcf> newUninstallMcf() override;
+	std::shared_ptr<IPCInstallMcf> newInstallMcf() override;
+	std::shared_ptr<IPCComplexLaunch> newComplexLaunch() override;
+	std::shared_ptr<IPCUninstallBranch> newUninstallBranch() override;
 #endif
 
 	void setAppDataPath(const char* path);

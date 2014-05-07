@@ -70,7 +70,7 @@ protected:
 	gcString downloadMcfHeader();
 
 private:
-	IPCInstallMcf* m_pIPCIM;
+	std::shared_ptr<IPCInstallMcf> m_pIPCIM;
 
 	bool m_bHasError;
 	bool m_bInstalling;

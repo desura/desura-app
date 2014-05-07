@@ -88,7 +88,7 @@ namespace UserCore
 
 			bool hasToolMain();
 
-			IPCToolMain* getToolMain();
+			std::shared_ptr<IPCToolMain> getToolMain();
 			bool preInstallStart();
 
 		private:

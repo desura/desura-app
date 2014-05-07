@@ -278,9 +278,9 @@ public:
 		return false;
 	}
 
-	WeakPtr<IPCClass> createClass(const char* name) override
+	std::shared_ptr<IPCClass> createClass(const char* name) override
 	{
-		return WeakPtr<IPCClass>();
+		return std::shared_ptr<IPCClass>();
 	}
 };
 
@@ -490,9 +490,9 @@ public:
 		return false;
 	}
 
-	WeakPtr<IPCClass> createClass(const char* name) override
+	std::shared_ptr<IPCClass> createClass(const char* name) override
 	{
-		return WeakPtr<IPCClass>();
+		return std::shared_ptr<IPCClass>();
 	}
 
 private:

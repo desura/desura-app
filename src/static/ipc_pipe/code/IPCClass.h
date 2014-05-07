@@ -484,7 +484,7 @@ namespace IPC
 		IPCParameterI* doHandleFunctionCall(const char* buff, uint32 size, uint32 &nFunctionId, uint32 &nFunctionHash);
 
 	private:
-		uint32 m_uiId;
+		const uint32 m_uiId;
 		DesuraId m_uiItemId;
 
 		std::atomic<int> m_nKillCount;				

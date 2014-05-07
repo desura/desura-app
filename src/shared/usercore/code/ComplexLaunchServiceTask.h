@@ -98,7 +98,7 @@ namespace UserCore
 
 			DesuraId m_iRemoveId;
 
-			IPCComplexLaunch* m_pIPCIM;
+			std::shared_ptr<IPCComplexLaunch> m_pIPCIM;
 
 			bool m_bCompleteStage;
 			bool m_bLaunch;

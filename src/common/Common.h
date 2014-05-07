@@ -494,9 +494,6 @@ inline void DoAssert(const char* szExp, const char* szFile, int nLine)
 
 	#include <memory>
 
-	#define WeakPtr std::weak_ptr
-	#define SmartPtr std::shared_ptr
-
 	template <typename T>
 	T Clamp(T val, T minVal, T maxVal)
 	{

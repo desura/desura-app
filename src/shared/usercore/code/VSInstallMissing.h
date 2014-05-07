@@ -52,7 +52,7 @@ protected:
 	void onComplete();
 
 private:
-	IPCInstallMcf *m_pIPCIM;
+	std::shared_ptr<IPCInstallMcf> m_pIPCIM;
 
 	::Thread::WaitCondition m_WaitCond;
 	volatile bool m_bFinished;

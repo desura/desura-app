@@ -225,27 +225,27 @@ void IPCServiceMain::updateBinaryRegKey(const char* key, const char* value, size
 	IPC::functionCallV(this, "updateBinaryRegKeyBlob", key, blob);
 }
 
-IPCUpdateApp* IPCServiceMain::newUpdateApp()
+std::shared_ptr<IPCUpdateApp> IPCServiceMain::newUpdateApp()
 {
 	return IPC::CreateIPCClass< IPCUpdateApp >(m_pManager, "IPCUpdateApp");
 }
 
-IPCUninstallMcf* IPCServiceMain::newUninstallMcf()
+std::shared_ptr<IPCUninstallMcf> IPCServiceMain::newUninstallMcf()
 {
 	return IPC::CreateIPCClass< IPCUninstallMcf >(m_pManager, "IPCUninstallMcf");
 }
 
-IPCInstallMcf* IPCServiceMain::newInstallMcf()
+std::shared_ptr<IPCInstallMcf> IPCServiceMain::newInstallMcf()
 {
 	return IPC::CreateIPCClass< IPCInstallMcf >(m_pManager, "IPCInstallMcf");
 }
 
-IPCComplexLaunch* IPCServiceMain::newComplexLaunch()
+std::shared_ptr<IPCComplexLaunch> IPCServiceMain::newComplexLaunch()
 {
 	return IPC::CreateIPCClass< IPCComplexLaunch >(m_pManager, "IPCComplexLaunch");
 }
 
-IPCUninstallBranch* IPCServiceMain::newUninstallBranch()
+std::shared_ptr<IPCUninstallBranch> IPCServiceMain::newUninstallBranch()
 {
 	return IPC::CreateIPCClass< IPCUninstallBranch >(m_pManager, "IPCUninstallBranch");
 }

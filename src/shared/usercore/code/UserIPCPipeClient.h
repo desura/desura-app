@@ -33,53 +33,54 @@ $/LicenseInfo$
 #include "SharedObjectLoader.h"
 #endif
 
-class IPCServiceMain;
-
 #include "IPCPipeClient.h"
+
+class IPCServiceMain;
 class IPCServerI;
 
 namespace UserCore
 {
-
-class UserIPCPipeClient : public IPC::PipeClient
-{
-public:
-	UserIPCPipeClient(const char* user, const char* appDataPath, bool uploadDumps);
-	~UserIPCPipeClient();
+	class UserIPCPipeClient : public IPC::PipeClient
+	{
+	public:
+		UserIPCPipeClient(const char* user, const char* appDataPath, bool uploadDumps);
+		~UserIPCPipeClient();
 #ifdef WIN32
-	void restart();
+		void restart();
 #endif
-	void start();
+		void start();
 
-	IPCServiceMain* getServiceMain(){return m_pServiceMain;}
+		std::shared_ptr<IPCServiceMain> getServiceMain()
+		{
+			return m_pServiceMain;
+		}
 
-protected:
+	protected:
 #ifdef WIN32
-	void stopService();
-	void startService();
+		void stopService();
+		void startService();
 
-	void onDisconnect();
+		void onDisconnect();
 #else
-	static void recvMessage(void* obj, const char* buffer, size_t size);
-	void recvMessage(const char* buffer, size_t size);
-	static void sendMessage(void* obj, const char* buffer, size_t size);
-	void sendMessage(const char* buffer, size_t size);
-	virtual void setUpPipes();
+		static void recvMessage(void* obj, const char* buffer, size_t size);
+		void recvMessage(const char* buffer, size_t size);
+		static void sendMessage(void* obj, const char* buffer, size_t size);
+		void sendMessage(const char* buffer, size_t size);
+		virtual void setUpPipes();
 #endif
 
-private:
-	bool m_bUploadDumps;
-	gcString m_szUser;
-	gcString m_szAppDataPath;
+	private:
+		bool m_bUploadDumps;
+		gcString m_szUser;
+		gcString m_szAppDataPath;
 
-	IPCServiceMain *m_pServiceMain;
+		std::shared_ptr<IPCServiceMain> m_pServiceMain;
+
 #ifdef NIX
-	SharedObjectLoader m_hServiceDll;
-	IPCServerI *m_pServer;
+		SharedObjectLoader m_hServiceDll;
+		IPCServerI *m_pServer;
 #endif
-};
-
-
+	};
 }
 
 #endif //DESURA_USERIPCPIPECLIENT_H

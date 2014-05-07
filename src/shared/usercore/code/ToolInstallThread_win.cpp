@@ -118,7 +118,7 @@ void ToolInstallThread::startIPC()
 	m_pIPCClient->getToolMain()->onErrorEvent += delegate(this, &ToolInstallThread::onINError);
 }
 
-IPCToolMain* ToolInstallThread::getToolMain()
+std::shared_ptr<IPCToolMain> ToolInstallThread::getToolMain()
 {
 	return m_pIPCClient->getToolMain();
 }

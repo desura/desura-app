@@ -68,7 +68,7 @@ private:
 	bool m_bEndStage;
 
 	uint8 m_uiCompleteAction;
-	IPCComplexLaunch* m_pIPCCL;
+	std::shared_ptr<IPCComplexLaunch> m_pIPCCL;
 };
 
 }

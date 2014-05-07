@@ -112,25 +112,27 @@ public:
 		stop();
 	}
 
-	void newMessage(WeakPtr<IPCClass> ipcClass, uint32 type, const char* buffer, uint32 size)
+	void newMessage(std::shared_ptr<IPCClass> ipcClass, uint32 type, const char* buffer, uint32 size)
 	{
+		gcAssert(ipcClass);
+
 		std::lock_guard<std::mutex> guard(m_mVectorMutex);
 		m_vItemList.emplace_back(ipcClass, type, buffer, size);
 		m_WaitCond.notify();
 	}
 
-	void purgeEvents(IPCClass* c)
+	void purgeEvents(uint32 uId)
 	{
 		std::lock_guard<std::mutex> guard(m_mVectorMutex);
 		std::vector<uint32> vDelList;
 
-		auto it = std::remove_if(begin(m_vItemList), end(m_vItemList), [c](ProcessData &e){
-			SmartPtr<IPCClass> classObj = e.pClass.lock();
+		auto it = std::remove_if(begin(m_vItemList), end(m_vItemList), [uId](ProcessData &e){
+			std::shared_ptr<IPCClass> classObj = e.pClass.lock();
 
 			if (!classObj)
 				return true;
 
-			if (classObj->getId() == c->getId())
+			if (classObj->getId() == uId)
 			{
 				classObj->messageRecived(e.type, e.buff.get(), e.buffsize);
 				return true;
@@ -150,14 +152,14 @@ protected:
 		{
 		}
 
-		ProcessData(WeakPtr<IPCClass> c, uint32 t, const char* b, uint32 s)
+		ProcessData(std::weak_ptr<IPCClass> c, uint32 t, const char* b, uint32 s)
 			: pClass(c)
 			, buffsize(s)
 			, type(t)
 		{
 			if (s > 0)
 			{
-				buff = SmartPtr<char>(new char[s], [](char* b){
+				buff = std::shared_ptr<char>(new char[s], [](char* b){
 					safe_delete(b);
 				});
 
@@ -165,8 +167,8 @@ protected:
 			}
 		}
 
-		WeakPtr<IPCClass> pClass;
-		SmartPtr<char> buff;
+		std::weak_ptr<IPCClass> pClass;
+		std::shared_ptr<char> buff;
 		uint32 buffsize = 0;
 		uint32 type = -1;
 	};
@@ -192,7 +194,7 @@ protected:
 				}
 			}
 
-			SmartPtr<IPCClass> classObj = e.pClass.lock();
+			std::shared_ptr<IPCClass> classObj = e.pClass.lock();
 
 			if (classObj)
 				classObj->messageRecived(e.type, e.buff.get(), e.buffsize);
@@ -257,10 +259,19 @@ IPCManager::~IPCManager()
 {
 	safe_delete(m_pEventThread);
 	safe_delete(m_pCallThread);
-	m_vClassList.clear();
+
+	for (auto &c : m_vClassList)
+	{
+		gcAssert(c.unique());
+	}
+
+	for (auto &c : m_vClassDelList)
+	{
+		gcAssert(c.unique());
+	}
 }
 
-WeakPtr<IPCClass> IPCManager::createClass(const char* name)
+std::shared_ptr<IPCClass> IPCManager::createClass(const char* name)
 {
 	if (!g_pmIPCClassList)
 		throw gcException(ERR_IPC, "Class list is nullptr");
@@ -272,7 +283,7 @@ WeakPtr<IPCClass> IPCManager::createClass(const char* name)
 		throw gcException(ERR_IPC, "Cant find class to create");
 
 	uint32 id = 0;
-	SmartPtr<IPCClass> ipcc;
+	std::shared_ptr<IPCClass> ipcc;
 	{
 		std::lock_guard<std::mutex> al(m_ClassMutex);
 
@@ -283,7 +294,7 @@ WeakPtr<IPCClass> IPCManager::createClass(const char* name)
 		else
 			m_mClassId--;
 
-		ipcc = SmartPtr<IPCClass>(it->second(this, id, m_uiItemId));
+		ipcc = std::shared_ptr<IPCClass>(it->second(this, id, m_uiItemId));
 	}
 
 	IPCScopedLock<IPCManager> lock(this, newLock());
@@ -296,7 +307,7 @@ WeakPtr<IPCClass> IPCManager::createClass(const char* name)
 
 	lock->timedWait();
 
-	SmartPtr<IPCParameterI> ret(lock->popResult());
+	std::shared_ptr<IPCParameterI> ret(lock->popResult());
 
 	if (ret.get() == nullptr)
 	{
@@ -335,7 +346,7 @@ IPCParameterI* IPCManager::createClass(uint32 hash, uint32 id)
 	}
 
 	std::lock_guard<std::mutex> al(m_ClassMutex);
-	m_vClassList.push_back(SmartPtr<IPCClass>(it->second(this, id, m_uiItemId)));
+	m_vClassList.push_back(std::shared_ptr<IPCClass>(it->second(this, id, m_uiItemId)));
 
 	return new PBool((void*)true);
 }
@@ -349,15 +360,25 @@ void IPCManager::destroyClass(uint32 id)
 {
 	std::lock_guard<std::mutex> al(m_ClassMutex);
 
-	auto it = std::find_if(begin(m_vClassList), end(m_vClassList), [id](SmartPtr<IPCClass> &pObj){
+	auto it = std::find_if(begin(m_vClassList), end(m_vClassList), [id](std::shared_ptr<IPCClass> &pObj){
 		return pObj->getId() == id;
 	});
 
 	if (it == end(m_vClassList))
+	{
+		gcAssert(false);
 		return;
+	}
 
-	gcAssert(it->unique());
+	auto pClass = *it;
 	m_vClassList.erase(it);
+
+	//there is one ref above and one ref in the class calling destroyClass, should be no more than that
+	if (pClass.use_count() > 2)
+	{
+		Warning("IPC destroyed class {0} but {1} instances remain", typeid(*pClass).name(), pClass.use_count() - 2);
+		m_vClassDelList.push_back(pClass);
+	}
 }
 
 
@@ -458,12 +479,19 @@ void IPCManager::joinPartMessages(std::vector<PipeMessage*> &vMessages)
 	safe_delete(vMessages);
 }
 
+bool IPCManager::isVaildClass(uint32 id)
+{
+	if (id == 0)
+		return true;
 
-SmartPtr<IPCClass> IPCManager::findClass(uint32 id)
+	return !!findClass(id);
+}
+
+std::shared_ptr<IPCClass> IPCManager::findClass(uint32 id)
 {
 	std::lock_guard<std::mutex> al(m_ClassMutex);
 
-	auto it = std::find_if(begin(m_vClassList), end(m_vClassList), [id](SmartPtr<IPCClass> &pClass) {
+	auto it = std::find_if(begin(m_vClassList), end(m_vClassList), [id](std::shared_ptr<IPCClass> &pClass) {
 		return pClass->getId() == id;
 	});
 
@@ -492,19 +520,23 @@ void IPCManager::recvMessage(IPCMessage* msg)
 		return;
 	}
 
+	{
+		std::lock_guard<std::mutex> guard(m_ClassMutex);
+
+		auto it = std::remove_if(begin(m_vClassDelList), end(m_vClassDelList), [](std::shared_ptr<IPCClass> &pClass){
+			return pClass.unique();
+		});
+
+		m_vClassDelList.erase(it, end(m_vClassDelList));
+	}
+
 	if (msg->id == 0)
 	{
 		processInternalMessage(msg->type, &msg->data, msg->size);
 	}
 	else
 	{
-		if (msg->type == MT_KILL)
-		{
-			gcTrace("MT_KILL ({0})", msg->id);
-			destroyClass(msg->id);
-			sendMessage(nullptr, 0, msg->id, MT_KILL_COMPLETE);
-		}
-		else if (msg->type == MT_FUNCTIONRETURN)
+		if (msg->type == MT_FUNCTIONRETURN)
 		{
 			auto pClass = findClass(msg->id);
 			pClass->messageRecived(msg->type, &msg->data, msg->size);
@@ -517,11 +549,12 @@ void IPCManager::recvMessage(IPCMessage* msg)
 			if (!pClass)
 				return;
 
-			if (msg->type == MT_EVENTTRIGGER || msg->type == MT_KILL_COMPLETE)
+			if (msg->type == MT_EVENTTRIGGER || msg->type == MT_KILL_COMPLETE || msg->type == MT_KILL)
 			{
 				if (!m_pEventThread)
 				{
-					m_pEventThread = new ProcessThread(m_szThreadName.c_str());
+					auto strName = m_szThreadName + " event";
+					m_pEventThread = new ProcessThread(strName.c_str());
 					m_pEventThread->start();
 				}
 
@@ -532,7 +565,8 @@ void IPCManager::recvMessage(IPCMessage* msg)
 			{
 				if (!m_pCallThread)
 				{
-					m_pCallThread = new ProcessThread(m_szThreadName.c_str());
+					auto strName = m_szThreadName + " call";
+					m_pCallThread = new ProcessThread(strName.c_str());
 					m_pCallThread->start();
 				}
 
@@ -631,6 +665,8 @@ void IPCManager::sendMessage(const char* buff, uint32 size, uint32 id, uint8 typ
 	if (m_bDisconnected)
 		throw gcException(ERR_IPC, "Pipe is disconnected!");
 
+	gcAssert(isVaildClass(id));
+
 	uint64 serial = ++m_nMsgSerial;
 
 	auto createMessage = [id, type, serial](const char* buff, uint32 size, uint8 part, uint8 totparts)
@@ -693,6 +729,8 @@ void IPCManager::sendLoopbackMessage(const char* buff, uint32 size, uint32 id, u
 {
 	if (m_bDisconnected)
 		throw gcException(ERR_IPC, "Pipe is disconnected!");
+
+	gcAssert(isVaildClass(id));
 
 	uint32 tsize = size + IPCMessageSIZE;
 	char* buffer = new char[tsize];
@@ -796,8 +834,8 @@ void IPCManager::informClassesOfDisconnect()
 
 	gcException e(ERR_PIPE, "Pipe Disconnected. IPC Failed.");
 
-	for (size_t x=0; x<m_vClassList.size(); x++)
-		m_vClassList[x]->cancelLocks(e);
+	for (auto c : m_vClassList)
+		c->cancelLocks(e);
 }
 
 

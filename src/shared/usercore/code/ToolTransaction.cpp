@@ -149,7 +149,7 @@ void ToolTransInfo::getIds(std::vector<DesuraId> &idList)
 	idList = m_pTransaction->getList();
 }
 
-ToolStartRes ToolTransInfo::startNextInstall(IPCToolMain* pToolMain, DesuraId &toolId)
+ToolStartRes ToolTransInfo::startNextInstall(std::shared_ptr<IPCToolMain> pToolMain, DesuraId &toolId)
 {
 	gcTrace("ToolId {0}", toolId);
 

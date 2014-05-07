@@ -60,11 +60,11 @@ namespace IPC
 		virtual void fixFolderPermissions(const char* dir)=0;
 
 #ifdef DESURA_CLIENT
-		virtual IPCUpdateApp* newUpdateApp()=0;
-		virtual IPCUninstallMcf* newUninstallMcf()=0;
-		virtual IPCInstallMcf* newInstallMcf()=0;
-		virtual IPCComplexLaunch* newComplexLaunch()=0;
-		virtual IPCUninstallBranch* newUninstallBranch()=0;
+		virtual std::shared_ptr<IPCUpdateApp> newUpdateApp()=0;
+		virtual std::shared_ptr<IPCUninstallMcf> newUninstallMcf()=0;
+		virtual std::shared_ptr<IPCInstallMcf> newInstallMcf()=0;
+		virtual std::shared_ptr<IPCComplexLaunch> newComplexLaunch()=0;
+		virtual std::shared_ptr<IPCUninstallBranch> newUninstallBranch()=0;
 #endif
 
 #ifdef WIN32
@@ -98,11 +98,11 @@ namespace IPC
 		MOCK_METHOD1(fixFolderPermissions, void(const char*));
 
 #ifdef DESURA_CLIENT
-		MOCK_METHOD0(newUpdateApp, IPCUpdateApp*());
-		MOCK_METHOD0(newUninstallMcf, IPCUninstallMcf*());
-		MOCK_METHOD0(newInstallMcf, IPCInstallMcf*());
-		MOCK_METHOD0(newComplexLaunch, IPCComplexLaunch*());
-		MOCK_METHOD0(newUninstallBranch, IPCUninstallBranch*());
+		MOCK_METHOD0(newUpdateApp, std::shared_ptr<IPCUpdateApp>());
+		MOCK_METHOD0(newUninstallMcf, std::shared_ptr<IPCUninstallMcf>());
+		MOCK_METHOD0(newInstallMcf, std::shared_ptr<IPCInstallMcf>());
+		MOCK_METHOD0(newComplexLaunch, std::shared_ptr<IPCComplexLaunch>());
+		MOCK_METHOD0(newUninstallBranch, std::shared_ptr<IPCUninstallBranch>());
 #endif
 
 #ifdef WIN32
