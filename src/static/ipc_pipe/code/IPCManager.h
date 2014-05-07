@@ -87,8 +87,9 @@ namespace IPC
 
 		virtual bool isDisconnected() = 0;
 
-		virtual WeakPtr<IPCClass> createClass(const char* name) = 0;
+		virtual std::shared_ptr<IPCClass> createClass(const char* name) = 0;
 	};
+
 
 	class PendingPartRecvMessage;
 
@@ -147,7 +148,7 @@ namespace IPC
 		//! @param name Class name
 		//! @return New class or Null if cant create it
 		//!
-		WeakPtr<IPCClass> createClass(const char* name) override;
+		std::shared_ptr<IPCClass> createClass(const char* name) override;
 
 		//! Destroy a class created with createClass
 		//!
@@ -243,7 +244,8 @@ namespace IPC
 
 		void joinPartMessages(std::vector<PipeMessage*> &vMessages);
 
-		SmartPtr<IPCClass> findClass(uint32 id);
+		std::shared_ptr<IPCClass> findClass(uint32 id);
+		bool isVaildClass(uint32 id);
 
 	private:
 		int32 m_mClassId;
@@ -251,7 +253,9 @@ namespace IPC
 		std::mutex m_ClassMutex;
 		std::mutex m_mVectorMutex;
 
-		std::vector<SmartPtr<IPCClass> > m_vClassList;
+		std::vector<std::shared_ptr<IPCClass> > m_vClassList;
+		std::vector<std::shared_ptr<IPCClass> > m_vClassDelList;
+
 		std::vector<PipeMessage*> m_vPipeMsgs;
 
 #ifdef WIN32
@@ -282,18 +286,12 @@ namespace IPC
 
 
 	template <class T>
-	T* CreateIPCClass(IPC::IPCManagerI* mng, const char* name)
+	std::shared_ptr<T> CreateIPCClass(IPC::IPCManagerI* mng, const char* name)
 	{
 		if (!mng || !name)
 			return nullptr;
 
-		WeakPtr<IPCClass> wClass = mng->createClass(name);
-
-		if (wClass.expired())
-			return nullptr;
-
-		SmartPtr<IPCClass> sClass = wClass.lock();
-		return dynamic_cast<T*>(sClass.get());
+		return std::dynamic_pointer_cast<T>(mng->createClass(name));
 	}
 }
 

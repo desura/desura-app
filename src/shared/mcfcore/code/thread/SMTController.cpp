@@ -67,30 +67,6 @@ namespace MCFCore
 	}
 }
 
-namespace
-{
-	class tFile
-	{
-	public:
-		tFile(uint64 s, uint32 p)
-		{
-			size = s;
-			pos = p;
-		}
-
-		uint64 size;
-		uint32 pos;
-	};
-
-	struct file_sortkey
-	{
-		bool operator()(tFile *lhs, tFile *rhs)
-		{
-			return (lhs->size < rhs->size);
-		}
-	};
-}
-
 
 SMTController::SMTController(uint16 num, MCFCore::MCF* caller)
 	: MCFCore::Thread::BaseMCFThread(std::min<uint32>(num, 4), caller, "SaveMCF Thread")
@@ -282,9 +258,22 @@ void SMTController::fillFileList()
 {
 	gcTrace("");
 
-	uint64 sumSize = 0;
+	class tFile
+	{
+	public:
+		tFile(uint64 s, uint32 p)
+		{
+			size = s;
+			pos = p;
+		}
 
-	std::vector<tFile*> vList;
+		uint64 size;
+		uint32 pos;
+	};
+
+	uint64 sumSize = 0;
+	std::vector<tFile> vList;
+	vList.reserve(m_rvFileList.size());
 
 	for (size_t x = 0; x<m_rvFileList.size(); x++)
 	{
@@ -299,24 +288,20 @@ void SMTController::fillFileList()
 
 		sumSize += m_rvFileList[x]->getSize();
 
-
 		if (m_bCompress && m_rvFileList[x]->shouldCompress())
 			m_rvFileList[x]->addFlag(MCFCore::MCFFileI::FLAG_COMPRESSED);
 		else
 			m_rvFileList[x]->delFlag(MCFCore::MCFFileI::FLAG_COMPRESSED);
 
-		vList.push_back(new tFile(m_rvFileList[x]->getSize(), (uint32)x));
+		vList.emplace_back(m_rvFileList[x]->getSize(), (uint32)x);
 	}
 
+	std::sort(vList.begin(), vList.end(), [](tFile &a, tFile &b){
+		return (a.size < b.size);
+	});
 
-	std::sort(vList.begin(), vList.end(), file_sortkey());
-
-	for (size_t x = 0; x<vList.size(); x++)
-	{
-		m_vFileList.push_back(vList[x]->pos);
-	}
-
-	safe_delete(vList);
+	for (auto & i : vList)
+		m_vFileList.push_back(i.pos);
 
 	m_pUPThread->setTotal(sumSize);
 }
@@ -345,11 +330,18 @@ std::shared_ptr<MCFCore::MCFFile> SMTController::newTask(uint32 id)
 	if (worker->status != MCFThreadStatus::SF_STATUS_NULL)
 		return nullptr;
 
-	m_pFileMutex.lock();
-	size_t listSize = m_vFileList.size();
-	m_pFileMutex.unlock();
+	size_t index = -1;
 
-	if (listSize == 0)
+	{
+		std::lock_guard<std::mutex> guard(m_pFileMutex);
+		if (!m_vFileList.empty())
+		{
+			index = m_vFileList.back();
+			m_vFileList.pop_back();
+		}
+	}
+
+	if (index == -1)
 	{
 		m_pUPThread->stopThread(id);
 		worker->status = MCFThreadStatus::SF_STATUS_STOP;
@@ -359,11 +351,6 @@ std::shared_ptr<MCFCore::MCFFile> SMTController::newTask(uint32 id)
 		m_WaitCond.notify();
 		return nullptr;
 	}
-
-	m_pFileMutex.lock();
-	int index = m_vFileList.back();
-	m_vFileList.pop_back();
-	m_pFileMutex.unlock();
 
 	auto temp = m_rvFileList[index];
 

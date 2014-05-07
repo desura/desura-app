@@ -50,74 +50,73 @@ public:
 
 namespace UserCore
 {
-namespace Misc
-{
+	namespace Misc
+	{
 
-class ToolInstallThread : public ::Thread::BaseThread
-{
-public:
+		class ToolInstallThread : public ::Thread::BaseThread
+		{
+		public:
 #ifdef WIN32
-	ToolInstallThread(ToolManager* toolManager, std::mutex &mapLock, std::map<ToolTransactionId, ToolTransInfo*> &transactions, const char* userName, HWND handle);
+			ToolInstallThread(ToolManager* toolManager, std::mutex &mapLock, std::map<ToolTransactionId, ToolTransInfo*> &transactions, const char* userName, HWND handle);
 #else
-	ToolInstallThread(ToolManager* toolManager, std::mutex &mapLock, std::map<ToolTransactionId, ToolTransInfo*> &transactions);
+			ToolInstallThread(ToolManager* toolManager, std::mutex &mapLock, std::map<ToolTransactionId, ToolTransInfo*> &transactions);
 #endif
 
-	~ToolInstallThread();
+			~ToolInstallThread();
 
-	void startInstall(ToolTransactionId ttid);
-	void cancelInstall(ToolTransactionId ttid);
+			void startInstall(ToolTransactionId ttid);
+			void cancelInstall(ToolTransactionId ttid);
 
-	EventV onPipeDisconnectEvent;
-	EventV onFailedToRunEvent;
+			EventV onPipeDisconnectEvent;
+			EventV onFailedToRunEvent;
 
-protected:
-	void run();
-	void onStop();
-	void startIPC();
+		protected:
+			void run();
+			void onStop();
+			void startIPC();
 
-	void onINComplete(int32 &result);
-	void onINError(gcException &error);
+			void onINComplete(int32 &result);
+			void onINError(gcException &error);
 
-	void startInstallItem(uint32 index);
+			void startInstallItem(uint32 index);
 
-	void onPipeDisconnect();
+			void onPipeDisconnect();
 
-	void doNextInstall();
-	void doFirstInstall();
-	void hideForm();
+			void doNextInstall();
+			void doFirstInstall();
+			void hideForm();
 
-	bool hasToolMain();
+			bool hasToolMain();
 
-	IPCToolMain* getToolMain();
-	bool preInstallStart();
+			std::shared_ptr<IPCToolMain> getToolMain();
+			bool preInstallStart();
 
-private:
-	std::mutex &m_MapLock;
-	std::map<ToolTransactionId, Misc::ToolTransInfo*> &m_mTransactions;
+		private:
+			std::mutex &m_MapLock;
+			std::map<ToolTransactionId, Misc::ToolTransInfo*> &m_mTransactions;
 
-	::Thread::WaitCondition m_InstallWait;
-	std::mutex m_InstallLock;
-	
-	std::deque<ToolTransactionId> m_dvInstallQue;
+			::Thread::WaitCondition m_InstallWait;
+			std::mutex m_InstallLock;
 
-	DesuraId m_CurrentInstallId;
-	ToolTransactionId m_CurrentInstall;
+			std::deque<ToolTransactionId> m_dvInstallQue;
 
-	ToolManager* m_pToolManager;
-	
-	
+			DesuraId m_CurrentInstallId;
+			ToolTransactionId m_CurrentInstall;
+
+			ToolManager* m_pToolManager;
+
+
 #ifdef WIN32
-	ToolIPCPipeClient* m_pIPCClient;
-	HWND m_WinHandle;
-	gcString m_szUserName;
+			ToolIPCPipeClient* m_pIPCClient;
+			HWND m_WinHandle;
+			gcString m_szUserName;
 #else
-	IPCToolMain* m_pToolMain;
+			IPCToolMain* m_pToolMain;
 #endif
 
-	bool m_bStillInstalling;
-};
-
-}
+			bool m_bStillInstalling;
+		};
+	}
 }
 
 #endif //DESURA_TOOLINSTALLTHREAD_H

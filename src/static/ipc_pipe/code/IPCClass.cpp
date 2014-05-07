@@ -302,14 +302,22 @@ void IPCClass::messageRecived(uint8 type, const char* buff, uint32 size)
 	{
 		handleEventTrigger(buff,size);
 	}
+	else if (type == MT_KILL)
+	{
+		gcTrace("MT_KILL {0}", m_uiId);
+
+		if (++m_nKillCount == 2)
+		{
+			sendMessage(MT_KILL_COMPLETE, nullptr, 0);
+			m_pManager->destroyClass(this);
+		}		
+	}
 	else if (type == MT_KILL_COMPLETE)
 	{
 		gcTrace("MT_KILL_COMPLETE {0}", m_uiId);
 
-		++m_nKillCount;
-
 		//need to wait till both event thread and callback thread are purged
-		if (m_nKillCount == 2)
+		if (++m_nKillCount == 2)
 			m_KillCondition.notify();
 	}
 }

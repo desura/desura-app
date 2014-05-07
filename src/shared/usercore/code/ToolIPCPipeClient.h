@@ -45,7 +45,7 @@ public:
 
 	void start();
 
-	IPCToolMain* getToolMain();
+	std::shared_ptr<IPCToolMain> getToolMain();
 
 protected:
 	void stopHelper();
@@ -61,7 +61,7 @@ private:
 	gcString m_szUser;
 	gcString m_szKey;
 
-	IPCToolMain *m_pServiceMain;
+	std::shared_ptr<IPCToolMain> m_pServiceMain;
 
 	HWND m_WinHandle;
 };

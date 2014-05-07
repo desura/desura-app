@@ -496,6 +496,9 @@ void User::updateUninstallInfo()
 void User::updateUninstallInfo(DesuraId id, uint64 installSize)
 {
 #ifdef WIN32
+	if (getItemManager())
+		getItemManager()->saveItem(getItemManager()->findItemInfo(id));
+
 	if (getServiceMain())
 		getServiceMain()->setUninstallRegKey(id.toInt64(), installSize);
 #endif

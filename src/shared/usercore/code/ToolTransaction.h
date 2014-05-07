@@ -37,6 +37,13 @@ namespace UserCore
 {
 	namespace Misc
 	{
+		enum class ToolStartRes
+		{
+			Success,
+			Failed,
+			NoToolsLeft
+		};
+
 		class ToolTransInfo
 		{
 		public:
@@ -53,7 +60,7 @@ namespace UserCore
 			void onINError(gcException &e);
 
 			bool isDownload();
-			bool startNextInstall(IPCToolMain* pToolMain, DesuraId &toolId);
+			ToolStartRes startNextInstall(std::shared_ptr<IPCToolMain> pToolMain, DesuraId &toolId);
 
 
 			void getIds(std::vector<DesuraId> &idList);

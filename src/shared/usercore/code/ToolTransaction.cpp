@@ -149,22 +149,26 @@ void ToolTransInfo::getIds(std::vector<DesuraId> &idList)
 	idList = m_pTransaction->getList();
 }
 
-bool ToolTransInfo::startNextInstall(IPCToolMain* pToolMain, DesuraId &toolId)
+ToolStartRes ToolTransInfo::startNextInstall(std::shared_ptr<IPCToolMain> pToolMain, DesuraId &toolId)
 {
 	gcTrace("ToolId {0}", toolId);
 
 	if (m_uiCompleteCount == m_pTransaction->size())
-		return false;
+		return ToolStartRes::NoToolsLeft;
 
 	toolId = m_pTransaction->get(m_uiCompleteCount);
 	ToolInfo* info = m_pToolManager->findItem(toolId.toInt64());
 
 	if (!info)
-		return true;
-
+	{
+		Warning("Failed to find tool for tool install with id {0}", toolId.toInt64());
+		m_uiCompleteCount++;
+		return startNextInstall(pToolMain, toolId);
+	}
+		
 	if (info->isInstalled())
 	{
-		m_uiCompleteCount++;
+		onINComplete();
 		return startNextInstall(pToolMain, toolId);
 	}
 
@@ -184,7 +188,7 @@ bool ToolTransInfo::startNextInstall(IPCToolMain* pToolMain, DesuraId &toolId)
 	if (e.getErrId() != WARN_OK && e.getErrId() != ERR_UNKNOWNERROR)
 	{
 		onINError(e);
-		return false;
+		return ToolStartRes::Failed;
 	}
 	else
 	{
@@ -197,7 +201,7 @@ bool ToolTransInfo::startNextInstall(IPCToolMain* pToolMain, DesuraId &toolId)
 		m_pTransaction->onProgressEvent(prog);
 	}
 	
-	return true;
+	return ToolStartRes::Success;
 }
 
 void ToolTransInfo::startingIPC()

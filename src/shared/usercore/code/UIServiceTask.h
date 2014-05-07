@@ -52,7 +52,7 @@ protected:
 	virtual void onServiceError(gcException& e);
 
 private:
-	IPCUninstallMcf* m_pIPCUI;
+	std::shared_ptr<IPCUninstallMcf> m_pIPCUI;
 
 	bool m_bRemoveAll;
 	bool m_bRemoveAcc;

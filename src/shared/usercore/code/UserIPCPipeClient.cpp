@@ -32,24 +32,26 @@ $/LicenseInfo$
 typedef void* (*FactoryFn)(const char*);
 #endif
 
-namespace UserCore
-{
+using namespace UserCore;
 
-UserIPCPipeClient::UserIPCPipeClient(const char* user, const char* appDataPath, bool uploadDumps) : IPC::PipeClient("DesuraIS")
+
+UserIPCPipeClient::UserIPCPipeClient(const char* user, const char* appDataPath, bool uploadDumps)
+	: IPC::PipeClient("DesuraIS")
+	, m_szUser(user)
+	, m_szAppDataPath(appDataPath)
+	, m_bUploadDumps(uploadDumps)
 {
 #ifdef WIN32
 	onDisconnectEvent += delegate(this, &UserIPCPipeClient::onDisconnect);
 #else
 	m_pServer = nullptr;
 #endif
-	m_szUser = user;
-	m_szAppDataPath = appDataPath;
-	m_bUploadDumps = uploadDumps;
-	m_pServiceMain = nullptr;
 }
 
 UserIPCPipeClient::~UserIPCPipeClient()
 {
+	m_pServiceMain.reset();
+
 #ifdef WIN32
 	try
 	{
@@ -69,28 +71,112 @@ UserIPCPipeClient::~UserIPCPipeClient()
 }
 
 #ifdef WIN32
-void UserIPCPipeClient::restart()
-{
-	m_pServiceMain = nullptr;
-	IPC::PipeClient::restart();
-	start();
-}
-
-void UserIPCPipeClient::onDisconnect()
-{
-	Warning("Desura Service Disconnected unexpectedly! Attempting restart.\n");
-}
-
-void UserIPCPipeClient::start()
-{
-	try
+	void UserIPCPipeClient::restart()
 	{
-		startService();
+		m_pServiceMain.reset();
+		IPC::PipeClient::restart();
+		start();
+	}
 
-		setUpPipes();
+	void UserIPCPipeClient::onDisconnect()
+	{
+		Warning("Desura Service Disconnected unexpectedly! Attempting restart.\n");
+	}
+
+	void UserIPCPipeClient::start()
+	{
+		try
+		{
+			startService();
+
+			setUpPipes();
+			IPC::PipeClient::start();
+
+			m_pServiceMain = IPC::CreateIPCClass<IPCServiceMain>(this, "IPCServiceMain");
+
+			if (!m_pServiceMain)
+				throw gcException(ERR_IPC, "Failed to create service main");
+
+			m_pServiceMain->dispVersion();
+			m_pServiceMain->setCrashSettings(m_szUser.c_str(), m_bUploadDumps);
+			m_pServiceMain->setAppDataPath(m_szAppDataPath.c_str());
+		}
+		catch (gcException &e)
+		{
+			throw gcException((ERROR_ID)e.getErrId(), e.getSecErrId(), gcString("Failed to start desura service: {0}", e));
+		}
+	}
+
+
+	void UserIPCPipeClient::startService()
+	{
+	
+	#ifdef DEBUG
+	#if 0
+		//service started via debugger
+		return;
+	#endif
+	#endif
+
+		uint32 res = UTIL::WIN::queryService(SERVICE_NAME);
+
+		if (res != SERVICE_STATUS_STOPPED)
+		{
+			try
+			{
+				UTIL::WIN::stopService(SERVICE_NAME);
+				gcSleep(500);
+			}
+			catch (gcException &)
+			{
+			}
+		}
+
+		std::vector<std::string> args;
+
+		args.push_back("-wdir");
+		args.push_back(gcString(UTIL::OS::getCurrentDir()));
+
+		UTIL::WIN::startService(SERVICE_NAME, args);
+
+		uint32 count = 0;
+		while (UTIL::WIN::queryService(SERVICE_NAME) != SERVICE_STATUS_RUNNING)
+		{
+			//wait five seconds
+			if (count > 50)
+				throw gcException(ERR_SERVICE, "Failed to start desura Service (PipeManager).");
+
+			gcSleep(100);
+			count++;
+		}
+	}
+
+	void UserIPCPipeClient::stopService()
+	{
+		UTIL::WIN::stopService(SERVICE_NAME);
+	}
+#else
+	void UserIPCPipeClient::start()
+	{
+		if (!m_hServiceDll.load("libservicecore.so"))
+			throw gcException(ERR_INVALID, gcString("Failed to load service core: {0}", dlerror()));
+	
+		FactoryFn factory = m_hServiceDll.getFunction<FactoryFn>("FactoryBuilderSC");
+	
+		if (!factory)
+			throw gcException(ERR_INVALID, "Failed to get factory function");
+	
+		m_pServer = (IPCServerI*)factory(IPC_SERVER);
+	
+		if (!factory)
+			throw gcException(ERR_INVALID, "Failed to create server");
+	
+		m_pServer->setSendCallback((void*)this, &UserIPCPipeClient::recvMessage);
+		setSendCallback((void*)this, &UserIPCPipeClient::sendMessage);
+
 		IPC::PipeClient::start();
 
-		m_pServiceMain = IPC::CreateIPCClass< IPCServiceMain >(this, "IPCServiceMain");
+		m_pServiceMain = IPC::CreateIPCClass<IPCServiceMain>(this, "IPCServiceMain");
 
 		if (!m_pServiceMain)
 			throw gcException(ERR_IPC, "Failed to create service main");
@@ -99,119 +185,31 @@ void UserIPCPipeClient::start()
 		m_pServiceMain->setCrashSettings(m_szUser.c_str(), m_bUploadDumps);
 		m_pServiceMain->setAppDataPath(m_szAppDataPath.c_str());
 	}
-	catch (gcException &e)
+
+	void UserIPCPipeClient::setUpPipes()
 	{
-		throw gcException((ERROR_ID)e.getErrId(), e.getSecErrId(), gcString("Failed to start desura service: {0}", e));
-	}
-}
 
-
-void UserIPCPipeClient::startService()
-{
-	
-#ifdef DEBUG
-#if 0
-	//servcie started via debugger
-	return;
-#endif
-#endif
-
-	uint32 res = UTIL::WIN::queryService(SERVICE_NAME);
-
-	if (res != SERVICE_STATUS_STOPPED)
-	{
-		try
-		{
-			UTIL::WIN::stopService(SERVICE_NAME);
-			gcSleep(500);
-		}
-		catch (gcException &)
-		{
-		}
 	}
 
-	std::vector<std::string> args;
-
-	args.push_back("-wdir");
-	args.push_back(gcString(UTIL::OS::getCurrentDir()));
-
-	UTIL::WIN::startService(SERVICE_NAME, args);
-
-	uint32 count = 0;
-	while (UTIL::WIN::queryService(SERVICE_NAME) != SERVICE_STATUS_RUNNING)
+	void UserIPCPipeClient::recvMessage(void* obj, const char* buffer, size_t size)
 	{
-		//wait five seconds
-		if (count > 50)
-			throw gcException(ERR_SERVICE, "Failed to start desura Service (PipeManager).");
-
-		gcSleep(100);
-		count++;
+		UserIPCPipeClient* c = (UserIPCPipeClient*)obj;
+		c->recvMessage(buffer, size);
 	}
-}
 
-void UserIPCPipeClient::stopService()
-{
-	UTIL::WIN::stopService(SERVICE_NAME);
-}
-#else
-void UserIPCPipeClient::start()
-{
-	if (!m_hServiceDll.load("libservicecore.so"))
-		throw gcException(ERR_INVALID, gcString("Failed to load service core: {0}", dlerror()));
-	
-	
-	FactoryFn factory = m_hServiceDll.getFunction<FactoryFn>("FactoryBuilderSC");
-	
-	if (!factory)
-		throw gcException(ERR_INVALID, "Failed to get factory function");
-	
-	m_pServer = (IPCServerI*)factory(IPC_SERVER);
-	
-	if (!factory)
-		throw gcException(ERR_INVALID, "Failed to create server");
-	
-	m_pServer->setSendCallback((void*)this, &UserIPCPipeClient::recvMessage);
-	setSendCallback((void*)this, &UserIPCPipeClient::sendMessage);
+	void UserIPCPipeClient::recvMessage(const char* buffer, size_t size)
+	{
+		IPC::PipeBase::recvMessage(buffer, size);
+	}
 
-	IPC::PipeClient::start();
+	void UserIPCPipeClient::sendMessage(void* obj, const char* buffer, size_t size)
+	{
+		UserIPCPipeClient* c = (UserIPCPipeClient*)obj;
+		c->sendMessage(buffer, size);
+	}
 
-	m_pServiceMain = IPC::CreateIPCClass< IPCServiceMain >(this, "IPCServiceMain");
-
-	if (!m_pServiceMain)
-		throw gcException(ERR_IPC, "Failed to create service main");
-
-	m_pServiceMain->dispVersion();
-	m_pServiceMain->setCrashSettings(m_szUser.c_str(), m_bUploadDumps);
-	m_pServiceMain->setAppDataPath(m_szAppDataPath.c_str());
-}
-
-void UserIPCPipeClient::setUpPipes()
-{
-
-}
-
-void UserIPCPipeClient::recvMessage(void* obj, const char* buffer, size_t size)
-{
-	UserIPCPipeClient* c = (UserIPCPipeClient*)obj;
-	c->recvMessage(buffer, size);
-}
-
-void UserIPCPipeClient::recvMessage(const char* buffer, size_t size)
-{
-	IPC::PipeBase::recvMessage(buffer, size);
-}
-
-void UserIPCPipeClient::sendMessage(void* obj, const char* buffer, size_t size)
-{
-	UserIPCPipeClient* c = (UserIPCPipeClient*)obj;
-	c->sendMessage(buffer, size);
-}
-
-void UserIPCPipeClient::sendMessage(const char* buffer, size_t size)
-{
-	m_pServer->sendMessage(buffer, size);
-}
+	void UserIPCPipeClient::sendMessage(const char* buffer, size_t size)
+	{
+		m_pServer->sendMessage(buffer, size);
+	}
 #endif
-
-
-}

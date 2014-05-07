@@ -70,73 +70,94 @@ void CreateIco(DesuraId id, std::string &icon)
 		icon = path.getFullPath();
 }
 
+
+bool DoGetUninstallInfo(DesuraId id, UninstallInfo &info)
+{
+	sqlite3x::sqlite3_connection db(getItemInfoDb(g_szAppDataPath.c_str()).c_str());
+
+	{
+		sqlite3x::sqlite3_command cmd(db, "SELECT developer, name, profile, icon, ibranch FROM iteminfo WHERE internalid=?;");
+		cmd.bind(1, (long long int)id.toInt64());
+		sqlite3x::sqlite3_reader reader = cmd.executereader();
+
+		reader.read();
+
+		info.developer = gcString(reader.getstring(0));
+		info.displayName = gcString(reader.getstring(1));
+		info.profile = gcString(reader.getstring(2));
+		info.icon = gcString(reader.getstring(3));
+		info.branch = MCFBranch::BranchFromInt(reader.getint(4));
+	}
+
+	int biid = 0;
+
+	{
+		sqlite3x::sqlite3_command cmd(db, "SELECT biid FROM branchinfo WHERE branchid=?;");
+		cmd.bind(1, (int)info.branch);
+		biid = cmd.executeint();
+	}
+
+	{
+		sqlite3x::sqlite3_command cmd(db, "SELECT installpath, iprimpath, ibuild FROM installinfo WHERE itemid=? AND biid=?;");
+		cmd.bind(1, (long long int)id.toInt64());
+		cmd.bind(2, (int)biid);
+
+		sqlite3x::sqlite3_reader reader = cmd.executereader();
+		reader.read();
+
+		info.installDir = reader.getstring(0);
+		gcString primePath = reader.getstring(1);
+		info.build = MCFBuild::BuildFromInt(reader.getint(2));
+
+		if (primePath.size() > 0)
+			info.installDir = primePath;
+	}
+
+	if (info.branch == 0 || info.build == 0)
+		return false;
+
+	if (UTIL::FS::isValidFile(info.icon))
+		CreateIco(id, info.icon);
+
+	{
+		sqlite3x::sqlite3_command cmd(db, "SELECT name FROM branchinfo WHERE branchid=? AND internalid=?;");
+		cmd.bind(1, (int)info.branch);
+		cmd.bind(2, (long long int)id.toInt64());
+
+		sqlite3x::sqlite3_reader reader = cmd.executereader();
+
+		reader.read();
+		info.version = gcString(reader.getstring(0));
+	}
+}
+
 bool GetUninstallInfo(DesuraId id, UninstallInfo &info)
 {
 	info.id = id;
 
-	try
+	uint32 nTryCount = 0;
+
+	while (true)
 	{
-		sqlite3x::sqlite3_connection db(getItemInfoDb(g_szAppDataPath.c_str()).c_str());
-
+		try
 		{
-			sqlite3x::sqlite3_command cmd(db, "SELECT developer, name, profile, icon, ibranch FROM iteminfo WHERE internalid=?;");
-			cmd.bind(1, (long long int)id.toInt64());
-			sqlite3x::sqlite3_reader reader = cmd.executereader();
-	
-			reader.read();
-
-			info.developer	= gcString(reader.getstring(0));
-			info.displayName= gcString(reader.getstring(1));
-			info.profile	= gcString(reader.getstring(2));
-			info.icon		= gcString(reader.getstring(3));
-			info.branch		= MCFBranch::BranchFromInt(reader.getint(4));
+			DoGetUninstallInfo(id, info);
+			break;
 		}
-			
-		int biid = 0;
-
+		catch (std::exception &e)
 		{
-			sqlite3x::sqlite3_command cmd(db, "SELECT biid FROM branchinfo WHERE branchid=?;");
-			cmd.bind(1, (int)info.branch);
-			biid = cmd.executeint();
+			if (nTryCount < 3)
+			{
+				++nTryCount;
+				gcSleep(500);
+			}		
+			else
+			{
+				WarningS("Failed to get item {1} for uninstall update: {0}\n", e.what(), id.toInt64());
+				break;
+			}
 		}
-
-		{
-			sqlite3x::sqlite3_command cmd(db, "SELECT installpath, iprimpath, ibuild FROM installinfo WHERE itemid=? AND biid=?;");
-			cmd.bind(1, (long long int)id.toInt64());
-			cmd.bind(2, (int)biid);
-
-			sqlite3x::sqlite3_reader reader = cmd.executereader();
-			reader.read();
-
-			info.installDir	= reader.getstring(0);
-			gcString primePath = reader.getstring(1);
-			info.build		= MCFBuild::BuildFromInt(reader.getint(2));
-
-			if (primePath.size() > 0)
-				info.installDir = primePath;
-		}
-
-		if (info.branch == 0 || info.build == 0)
-			return false;
-
-		if (UTIL::FS::isValidFile(info.icon))
-			CreateIco(id, info.icon);
-
-		{
-			sqlite3x::sqlite3_command cmd(db, "SELECT name FROM branchinfo WHERE branchid=? AND internalid=?;");
-			cmd.bind(1, (int)info.branch);
-			cmd.bind(2, (long long int)id.toInt64());
-
-			sqlite3x::sqlite3_reader reader = cmd.executereader();
-	
-			reader.read();
-			info.version = gcString(reader.getstring(0));
-		}
-	}
-	catch (std::exception &e)
-	{
-		WarningS("Failed to get item {1} for uninstall update: {0}\n", e.what(), id.toInt64());
-	}
+	};
 
 	return true;
 }
