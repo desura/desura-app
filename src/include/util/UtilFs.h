@@ -414,8 +414,6 @@ namespace UTIL
 
 #ifdef LINK_WITH_GMOCK
 
-#include <gmock/gmock.h>
-
 namespace UTIL
 {
 	namespace FS

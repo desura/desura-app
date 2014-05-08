@@ -846,8 +846,6 @@ const char* MainApp::getProvider() const
 
 #ifdef WITH_GTEST
 
-#include <gtest/gtest.h>
-
 namespace UnitTest
 {
 	class StubMainAppProvider : public MainAppProviderI

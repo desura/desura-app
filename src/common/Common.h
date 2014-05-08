@@ -23,8 +23,32 @@ Linden Research, Inc., 945 Battery Street, San Francisco, CA  94111  USA
 $/LicenseInfo$
 */
 
+#ifdef DESURA_EXE
+#include "stdafx.h"
+#endif
+
 #ifndef COMMON_H
 	#define COMMON_H
+
+#ifdef WIN32
+#pragma warning( push ) 
+#pragma warning( disable : 4251)
+#pragma warning( disable : 4275)
+#endif
+
+#ifdef LINK_WITH_GTEST
+#include <gtest/gtest.h>
+#endif
+
+#ifdef LINK_WITH_GMOCK
+#include <gmock/gmock.h>
+#endif
+
+#ifdef WIN32
+#pragma warning( pop )
+#endif
+
+
 	#include <exception>
 
 	#ifdef DEBUG
@@ -563,13 +587,4 @@ inline void DoAssert(const char* szExp, const char* szFile, int nLine)
 	}
 	#endif
 
-#endif
-
-
-#ifdef LINK_WITH_GTEST
-#include <gtest/gtest.h>
-#endif
-
-#ifdef LINK_WITH_GMOCK
-#include <gmock/gmock.h>
 #endif

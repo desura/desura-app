@@ -1428,8 +1428,6 @@ void ItemHandle::force()
 
 #ifdef LINK_WITH_GMOCK
 
-#include <gmock/gmock.h>
-
 #include "sqlite3x.hpp"
 #include "sql/ItemInfoSql.h"
 #include "usercore/ItemManagerI.h"

@@ -881,8 +881,6 @@ bool MCF::fixMD5AndCRC()
 
 #ifdef WITH_GTEST
 
-#include <gtest/gtest.h>
-
 namespace UnitTest
 {
 	TEST(MCFSave, TimeConversion_NoT)

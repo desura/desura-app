@@ -312,8 +312,6 @@ bool SFTWorker::bzErrorCheck(int32 bzStatus)
 
 #ifdef WITH_GTEST
 
-#include <gtest/gtest.h>
-
 namespace UnitTest
 {
 	TEST(SFTWorker, ParseTimeStamp)

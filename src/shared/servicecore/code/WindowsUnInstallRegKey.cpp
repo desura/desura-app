@@ -129,6 +129,8 @@ bool DoGetUninstallInfo(DesuraId id, UninstallInfo &info)
 		reader.read();
 		info.version = gcString(reader.getstring(0));
 	}
+
+	return true;
 }
 
 bool GetUninstallInfo(DesuraId id, UninstallInfo &info)
@@ -141,8 +143,7 @@ bool GetUninstallInfo(DesuraId id, UninstallInfo &info)
 	{
 		try
 		{
-			DoGetUninstallInfo(id, info);
-			break;
+			return DoGetUninstallInfo(id, info);
 		}
 		catch (std::exception &e)
 		{
@@ -154,12 +155,10 @@ bool GetUninstallInfo(DesuraId id, UninstallInfo &info)
 			else
 			{
 				WarningS("Failed to get item {1} for uninstall update: {0}\n", e.what(), id.toInt64());
-				break;
+				return false;
 			}
 		}
 	};
-
-	return true;
 }
 
 void SetUninstallRegKey(UninstallInfo &info, uint64 installSize)

@@ -32,10 +32,6 @@ $/LicenseInfo$
 #include "BaseManager.h"
 #include "usercore/ItemInfoI.h"
 
-#ifdef LINK_WITH_GMOCK
-#include <gmock/gmock.h>
-#endif
-
 namespace sqlite3x
 {
 	class sqlite3_connection;

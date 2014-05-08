@@ -32,9 +32,6 @@ $/LicenseInfo$
 #include <wx/snglinst.h>
 #include <wx/evtloop.h>
 
-#ifdef WITH_GTEST
-  #include <gtest/gtest.h>
-#endif
 
 #include "Console.h"
 
