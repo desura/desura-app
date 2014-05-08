@@ -322,22 +322,23 @@ std::shared_ptr<MCFCore::MCFFile> SFTController::newTask(uint32 id)
 		return nullptr;
 
 	worker->status = MCFThreadStatus::SF_STATUS_WAITTASK;
+	size_t index = -1;
 
-	m_pFileMutex.lock();
-	size_t listSize = m_vFileList.size();
-	m_pFileMutex.unlock();
+	{
+		std::lock_guard<std::mutex> guard(m_pFileMutex);
+		if (!m_vFileList.empty())
+		{
+			index = m_vFileList.back();
+			m_vFileList.pop_back();
+		}
+	}
 
-	if (listSize == 0)
+	if (index == -1)
 	{
 		m_pUPThread->stopThread(id);
 		worker->status = MCFThreadStatus::SF_STATUS_STOP;
 		return nullptr;
 	}
-
-	m_pFileMutex.lock();
-	int index = m_vFileList.back();
-	m_vFileList.pop_back();
-	m_pFileMutex.unlock();
 
 	auto temp = m_rvFileList[index];
 

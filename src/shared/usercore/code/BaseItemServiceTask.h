@@ -59,7 +59,11 @@ namespace UserCore
 			virtual void doRun();
 			virtual void onFinish();
 
-
+			virtual void onError(gcException &e)
+			{
+				//should handle this
+				gcAssert(false);
+			}
 
 			IPC::ServiceMainI* getServiceMain();
 
