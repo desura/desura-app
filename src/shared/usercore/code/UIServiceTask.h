@@ -51,6 +51,11 @@ protected:
 
 	virtual void onServiceError(gcException& e);
 
+	void onError(gcException &e) override
+	{
+		onServiceError(e);
+	}
+
 private:
 	std::shared_ptr<IPCUninstallMcf> m_pIPCUI;
 
