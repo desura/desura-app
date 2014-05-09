@@ -40,10 +40,12 @@ public:
 
 	void createFile(const char* szFileName, const char* szData)
 	{
-		UTIL::FS::recMakeFolder(UTIL::FS::PathWithFile(szFileName));
+        auto path = UTIL::FS::PathWithFile(szFileName);
 
-		UTIL::FS::FileHandle fh(szFileName, UTIL::FS::FILE_WRITE);
-		fh.write(szData, sizeof(szData));
+        UTIL::FS::recMakeFolder(path);
+
+        UTIL::FS::FileHandle fh(path, UTIL::FS::FILE_WRITE);
+        fh.write(szData, strlen(szData));
 	}
 
 	void copyFile(const char* szSource, const char* szDest)

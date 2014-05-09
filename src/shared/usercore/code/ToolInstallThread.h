@@ -111,7 +111,7 @@ namespace UserCore
 			HWND m_WinHandle;
 			gcString m_szUserName;
 #else
-			IPCToolMain* m_pToolMain;
+            std::shared_ptr<IPCToolMain> m_pToolMain;
 #endif
 
 			bool m_bStillInstalling;

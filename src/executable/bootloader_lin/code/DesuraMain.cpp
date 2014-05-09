@@ -188,11 +188,13 @@ int MainApp::run()
 	}
 
 #ifdef DESURA_OFFICIAL_BUILD
+#ifdef WIN32
 	if (testInstall)
 		return InstallFilesForTest();
 
 	if (testDownload)
 		return DownloadFilesForTest();
+#endif
 #endif
 
 #ifndef DEBUG

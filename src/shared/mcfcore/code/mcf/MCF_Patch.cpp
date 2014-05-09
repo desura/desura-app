@@ -134,7 +134,6 @@ void MCF::copyFile(std::shared_ptr<MCFCore::MCFFile> file, uint64 &lastOffset, U
 			hFileSrc.read(file->getCurSize(), [&](const unsigned char* buff, uint32 size)  -> bool
 			{
 				UTIL::FS::FileHandle* dest = &hFileDest;
-
 				CRCInfo* pCi = &ci;
 
 				bz.write((const char*)buff, size, [&](const unsigned char* tbuff, uint32 tsize) -> bool
@@ -216,7 +215,7 @@ void MCF::copyMissingFiles(MCFI *sourceMcf)
 
 	size_t totalCount = vSame.size()*2;
 	size_t curCount = 0;
-	std::atomic<bool> placeholder;
+    std::atomic<bool> placeholder = {false};
 
 	for (size_t x=0; x<vSame.size(); x++)
 	{
@@ -303,7 +302,8 @@ void MCF::copyMissingFiles(MCFI *sourceMcf)
 
 void MCF::makeFullFile(MCFI* patchFile, const char* path)
 {
-	gcTrace("Path: {0}", path);
+    std::string strPath = UTIL::FS::PathWithFile(path).getFullPath();
+    gcTrace("Path: {0}", strPath);
 
 	if (m_bStopped)
 		return;
@@ -362,7 +362,7 @@ void MCF::makeFullFile(MCFI* patchFile, const char* path)
 	}
 
 	MCF fullMcf;
-	fullMcf.setFile(path);
+    fullMcf.setFile(strPath.c_str());
 	fullMcf.setHeader(temp->getHeader());
 	fullMcf.getHeader()->updateFileVersion();
 
@@ -370,7 +370,7 @@ void MCF::makeFullFile(MCFI* patchFile, const char* path)
 	uint64 lastOffset = fullMcf.getHeader()->getSize();
 
 	UTIL::FS::FileHandle hFileSrc(temp->getFile(), UTIL::FS::FILE_READ);
-	UTIL::FS::FileHandle hFileDest(path, UTIL::FS::FILE_WRITE);
+    UTIL::FS::FileHandle hFileDest(strPath, UTIL::FS::FILE_WRITE);
 
 	hFileDest.seek(lastOffset);
 
@@ -382,7 +382,7 @@ void MCF::makeFullFile(MCFI* patchFile, const char* path)
 		if (!tempFile || !tempFile->isSaved())
 			continue;
 
-		printf("Copying %s from patch MCF.\n", tempFile->getName());
+        printf("Copying %s from patch MCF (%d).\n", tempFile->getName(), lastOffset);
 		fullMcf.copyFile(tempFile, lastOffset, hFileSrc, hFileDest);
 	}
 
@@ -395,14 +395,14 @@ void MCF::makeFullFile(MCFI* patchFile, const char* path)
 		if (!m_pFileList[x]->isSaved())
 			continue;
 
-		printf("Copying %s from old MCF.\n", m_pFileList[x]->getName());
+        printf("Copying %s from old MCF. (%d)\n", m_pFileList[x]->getName(), lastOffset);
 		fullMcf.copyFile(m_pFileList[x], lastOffset, hFileSrc, hFileDest);
 	}
 
 	hFileSrc.close();
 	hFileDest.close();
 
-	hFileDest.open(path, UTIL::FS::FILE_READ);
+    hFileDest.open(strPath.c_str(), UTIL::FS::FILE_READ);
 
 	for (size_t x=0; x<fullMcf.getFileCount(); x++)
 	{
@@ -419,6 +419,8 @@ void MCF::makeFullFile(MCFI* patchFile, const char* path)
 
 void MCF::makeBackPatchMCF(MCFI* backFile, const char* path)
 {
+    std::string strPath = UTIL::FS::PathWithFile(path).getFullPath();
+
 	if (m_bStopped)
 		return;
 
@@ -433,7 +435,7 @@ void MCF::makeBackPatchMCF(MCFI* backFile, const char* path)
 	}
 
 	MCF FullFile;
-	FullFile.setFile(path);
+    FullFile.setFile(strPath.c_str());
 
 	FullFile.setHeader(temp->getHeader());
 
@@ -444,7 +446,7 @@ void MCF::makeBackPatchMCF(MCFI* backFile, const char* path)
 	UTIL::FS::FileHandle hFileDest;
 
 	hFileSrc.open(this->getFile(), UTIL::FS::FILE_READ);
-	hFileDest.open(path, UTIL::FS::FILE_WRITE);
+    hFileDest.open(strPath, UTIL::FS::FILE_WRITE);
 
 	for (uint32 x=0; x<this->getFileCount(); x++)
 	{
@@ -666,6 +668,8 @@ void MCF::findChanges(MCF* newFile,  std::vector<mcfDif_s> *vSame, std::vector<m
 
 void MCF::createCourgetteDiffs(MCFI* oldMcf, const char* outPath)
 {
+    std::string strPath = UTIL::FS::PathWithFile(outPath).getFullPath();
+
 	if (m_bStopped)
 		return;
 
@@ -682,7 +686,7 @@ void MCF::createCourgetteDiffs(MCFI* oldMcf, const char* outPath)
 
 	if (vDiff.size() == 0)
 	{
-		UTIL::FS::copyFile(getFile(), outPath);
+        UTIL::FS::copyFile(getFile(), strPath);
 		return;
 	}
 
@@ -690,7 +694,7 @@ void MCF::createCourgetteDiffs(MCFI* oldMcf, const char* outPath)
 	UTIL::FS::FileHandle hFileDest;
 
 	MCF FullFile;
-	FullFile.setFile(outPath);
+    FullFile.setFile(strPath.c_str());
 	FullFile.setHeader(temp->getHeader());
 	FullFile.getHeader()->updateFileVersion();
 
@@ -711,7 +715,7 @@ void MCF::createCourgetteDiffs(MCFI* oldMcf, const char* outPath)
 	};
 
 	hFileSrc.open(this->getFile(), UTIL::FS::FILE_READ);
-	hFileDest.open(outPath, UTIL::FS::FILE_WRITE);
+    hFileDest.open(strPath, UTIL::FS::FILE_WRITE);
 
 	for (size_t x=0; x<vSame.size(); x++)
 		copyFiles(vSame[x].thisMcf);
@@ -803,10 +807,12 @@ void MCF::createCourgetteDiff(CourgetteInstance* ci, UTIL::MISC::Buffer &oldBuff
 
 void MCF::extractFile(const char* mcfPath, std::shared_ptr<MCFFile>& file, UTIL::MISC::Buffer &outBuff)
 {
+    std::string strMcfPath = UTIL::FS::PathWithFile(mcfPath).getFullPath();
+
 	if (file->getSize() >> 32)
 		throw gcException(ERR_INVALID, "File is larger than 4gb");
 
-	UTIL::FS::FileHandle fh(mcfPath, UTIL::FS::FILE_READ);
+    UTIL::FS::FileHandle fh(strMcfPath, UTIL::FS::FILE_READ);
 	fh.seek(file->getOffSet());
 
 	outBuff.resize((size_t)file->getSize());
