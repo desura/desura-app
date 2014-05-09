@@ -36,12 +36,14 @@ $/LicenseInfo$
 class UninstallAllThread : public Thread::BaseThread, UserCore::Item::Helper::ItemUninstallHelperI, UserCore::Item::Helper::ItemHandleHelperI
 {
 public:
-	UninstallAllThread(uint32 flags, UserCore::UserI* user);
+	UninstallAllThread(uint32 flags, gcRefPtr<UserCore::UserI> user);
 
 	EventV onCompleteEvent;
 	Event<gcString> onLogEvent;
 	Event<std::pair<uint32, uint32> > onProgressEvent;
 	
+	gc_IMPLEMENT_REFCOUNTING(UninstallAllThread);
+
 protected:
 	virtual void run();
 	virtual void onStop();
@@ -76,7 +78,7 @@ protected:
 
 	bool hasPaidBranch(UserCore::Item::ItemInfoI* item);
 private:
-	UserCore::UserI* m_pUser;
+	gcRefPtr<UserCore::UserI> m_pUser;
 	uint32 m_uiId;
 	uint32 m_iFlags;
 

@@ -34,7 +34,7 @@ $/LicenseInfo$
 
 void SetExitCode(int32 code);
 
-UninstallForm::UninstallForm(wxWindow* parent, UserCore::UserI* user) : wxFrame(parent, wxID_ANY, PRODUCT_NAME_CATW(L" UnInstaller"), wxDefaultPosition, wxSize( 500,330 ), wxCAPTION|wxMINIMIZE_BOX|wxSYSTEM_MENU|wxTAB_TRAVERSAL )
+UninstallForm::UninstallForm(wxWindow* parent, gcRefPtr<UserCore::UserI> user) : wxFrame(parent, wxID_ANY, PRODUCT_NAME_CATW(L" UnInstaller"), wxDefaultPosition, wxSize(500, 330), wxCAPTION | wxMINIMIZE_BOX | wxSYSTEM_MENU | wxTAB_TRAVERSAL)
 {
 	m_pUser = user;
 

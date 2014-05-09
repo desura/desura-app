@@ -40,3 +40,35 @@ bool CheckVerify(bool bCon, const char* szFunction, const char* szCheck)
 
 	return false;
 }
+
+
+#if defined(DEBUG) && defined(WIN32)
+void gcRefCount::addStackTrace(void* pObj)
+{
+	std::lock_guard<std::mutex> guard(m_Lock);
+
+	auto it = m_mStackTraces.find(pObj);
+	gcAssert(it == end(m_mStackTraces));
+
+	m_mStackTraces[pObj] = UTIL::OS::getStackTraceString(2, 10);
+}
+
+void gcRefCount::delStackTrace(void* pObj)
+{
+	std::lock_guard<std::mutex> guard(m_Lock);
+
+	auto it = m_mStackTraces.find(pObj);
+	gcAssert(it != end(m_mStackTraces));
+	m_mStackTraces.erase(it);
+}
+
+void gcRefCount::dumpStackTraces()
+{
+	std::lock_guard<std::mutex> guard(m_Lock);
+
+	Debug("Dumping stacktraces for {0}\n", (size_t)this);
+
+	for (auto p : m_mStackTraces)
+		Debug(" -- 0x{0:x}: {1}\n", (size_t)p.first, p.second);
+}
+#endif

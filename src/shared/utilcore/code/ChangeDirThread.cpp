@@ -27,7 +27,7 @@ $/LicenseInfo$
 #include "ChangeDirThread.h"
 
 
-ChangeDirThread::ChangeDirThread(const char* dest, UserCore::UserI* user) : ::Thread::BaseThread("ChangeDir Thread")
+ChangeDirThread::ChangeDirThread(const char* dest, gcRefPtr<UserCore::UserI> user) : ::Thread::BaseThread("ChangeDir Thread")
 {
 	m_szDest = dest;
 	m_szCurDir = UTIL::OS::getMcfCachePath();

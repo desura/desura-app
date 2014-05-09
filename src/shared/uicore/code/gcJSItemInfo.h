@@ -36,6 +36,7 @@ namespace UserCore
 	namespace Item
 	{
 		class ItemInfoI;
+		class BranchInfoI;
 	}
 }
 
@@ -83,9 +84,9 @@ private:
 	gcString getItemInstalledVersion(gcRefPtr<UserCore::Item::ItemInfoI> item);
 
 	int32 getItemBranchCount(gcRefPtr<UserCore::Item::ItemInfoI> item);
-	void* getItemBranchByIndex(gcRefPtr<UserCore::Item::ItemInfoI> item, int32 index);
-	void* getItemBranchById(gcRefPtr<UserCore::Item::ItemInfoI> item, int32 id);
-	void* getItemCurrentBranch(gcRefPtr<UserCore::Item::ItemInfoI> item);
+	gcRefPtr<UserCore::Item::BranchInfoI> getItemBranchByIndex(gcRefPtr<UserCore::Item::ItemInfoI> item, int32 index);
+	gcRefPtr<UserCore::Item::BranchInfoI> getItemBranchById(gcRefPtr<UserCore::Item::ItemInfoI> item, int32 id);
+	gcRefPtr<UserCore::Item::BranchInfoI> getItemCurrentBranch(gcRefPtr<UserCore::Item::ItemInfoI> item);
 
 	int32 getItemInstallSize(gcRefPtr<UserCore::Item::ItemInfoI> item);
 	int32 getItemDownloadSize(gcRefPtr<UserCore::Item::ItemInfoI> item);

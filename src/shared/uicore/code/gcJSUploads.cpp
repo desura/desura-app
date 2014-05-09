@@ -41,7 +41,7 @@ $/LicenseInfo$
 #endif
 
 template <>
-void FromJSObject<UserCore::Misc::UploadInfoThreadI*>(UserCore::Misc::UploadInfoThreadI* &upload, JSObjHandle& arg)
+void FromJSObject<gcRefPtr<UserCore::Misc::UploadInfoThreadI>>(gcRefPtr<UserCore::Misc::UploadInfoThreadI> &upload, JSObjHandle& arg)
 {
 	if (arg->isObject())
 		upload = arg->getUserObject<UserCore::Misc::UploadInfoThreadI>();
@@ -91,80 +91,79 @@ bool DesuraJSUploadInfo::preExecuteValidation(const char* function, uint32 funct
 	if (m_uiIsValidHash == functionHash || m_uiGetUploadFromIdHash == functionHash)
 		return true;
 
-	UserCore::Misc::UploadInfoThreadI* upload;
+	gcRefPtr<UserCore::Misc::UploadInfoThreadI> upload;
 	FromJSObject(upload, argv[0]);
 	return isValid(upload);
 }
 
 
-bool DesuraJSUploadInfo::isValid(UserCore::Misc::UploadInfoThreadI* upload)
+bool DesuraJSUploadInfo::isValid(gcRefPtr<UserCore::Misc::UploadInfoThreadI> upload)
 {
 	return upload?true:false;
 }
 
-void* DesuraJSUploadInfo::getUploadFromId(int32 uid)
+gcRefPtr<UserCore::Misc::UploadInfoThreadI> DesuraJSUploadInfo::getUploadFromId(int32 uid)
 {
 	if (!GetUploadMng())
 		return nullptr;
 
-	void* ret = GetUploadMng()->findItem((uint32)uid);
-	return ret;
+	return GetUploadMng()->findItem((uint32)uid);
 }
 
-bool DesuraJSUploadInfo::isComplete(UserCore::Misc::UploadInfoThreadI* upload)
+bool DesuraJSUploadInfo::isComplete(gcRefPtr<UserCore::Misc::UploadInfoThreadI> upload)
 {
 	return upload->isCompleted();
 }
 
-bool DesuraJSUploadInfo::hasError(UserCore::Misc::UploadInfoThreadI* upload)
+bool DesuraJSUploadInfo::hasError(gcRefPtr<UserCore::Misc::UploadInfoThreadI> upload)
 {
 	return upload->hasError();
 }
 
-bool DesuraJSUploadInfo::hasStarted(UserCore::Misc::UploadInfoThreadI* upload)
+bool DesuraJSUploadInfo::hasStarted(gcRefPtr<UserCore::Misc::UploadInfoThreadI> upload)
 {
 	return upload->hasStarted();
 }
 
-bool DesuraJSUploadInfo::isPaused(UserCore::Misc::UploadInfoThreadI* upload)
+bool DesuraJSUploadInfo::isPaused(gcRefPtr<UserCore::Misc::UploadInfoThreadI> upload)
 {
 	return upload->isPaused();
 }
 
-bool DesuraJSUploadInfo::shouldDeleteMcf(UserCore::Misc::UploadInfoThreadI* upload)
+bool DesuraJSUploadInfo::shouldDeleteMcf(gcRefPtr<UserCore::Misc::UploadInfoThreadI> upload)
 {
 	return upload->shouldDelMcf();
 }
 
-void DesuraJSUploadInfo::setDeleteMcf(UserCore::Misc::UploadInfoThreadI* upload, bool del)
+void DesuraJSUploadInfo::setDeleteMcf(gcRefPtr<UserCore::Misc::UploadInfoThreadI> upload, bool del)
 {
 	upload->setDelMcf(del);
 }
 
 
 
-void DesuraJSUploadInfo::remove(UserCore::Misc::UploadInfoThreadI* upload)
+void DesuraJSUploadInfo::remove(gcRefPtr<UserCore::Misc::UploadInfoThreadI> upload)
 {
 	GetUploadMng()->removeUpload(upload->getKey(), true);
 }
 
-void DesuraJSUploadInfo::pause(UserCore::Misc::UploadInfoThreadI* upload)
+void DesuraJSUploadInfo::pause(gcRefPtr<UserCore::Misc::UploadInfoThreadI> upload)
 {
 	upload->pause();
 }
 
-void DesuraJSUploadInfo::unpause(UserCore::Misc::UploadInfoThreadI* upload)
+void DesuraJSUploadInfo::unpause(gcRefPtr<UserCore::Misc::UploadInfoThreadI> upload)
 {
 	upload->unpause();
 }
 
-void DesuraJSUploadInfo::cancel(UserCore::Misc::UploadInfoThreadI* upload)
+void DesuraJSUploadInfo::cancel(gcRefPtr<UserCore::Misc::UploadInfoThreadI> upload)
 {
 	upload->stop();
 	GetUploadMng()->removeUpload(upload->getKey());
 }
 
-void DesuraJSUploadInfo::exploreMcf(UserCore::Misc::UploadInfoThreadI* upload)
+void DesuraJSUploadInfo::exploreMcf(gcRefPtr<UserCore::Misc::UploadInfoThreadI> upload)
 {
 	const char* file = upload->getFile();
 
@@ -181,13 +180,13 @@ void DesuraJSUploadInfo::exploreMcf(UserCore::Misc::UploadInfoThreadI* upload)
 
 
 
-int32 DesuraJSUploadInfo::getProgress(UserCore::Misc::UploadInfoThreadI* upload)
+int32 DesuraJSUploadInfo::getProgress(gcRefPtr<UserCore::Misc::UploadInfoThreadI> upload)
 {
 	return upload->getProgress();
 }
 
 
-void* DesuraJSUploadInfo::getItem(UserCore::Misc::UploadInfoThreadI* upload)
+gcRefPtr<UserCore::Item::ItemInfoI> DesuraJSUploadInfo::getItem(gcRefPtr<UserCore::Misc::UploadInfoThreadI> upload)
 {
 	if (!GetUserCore() || !GetUserCore()->getItemManager())
 		return nullptr;
@@ -195,18 +194,18 @@ void* DesuraJSUploadInfo::getItem(UserCore::Misc::UploadInfoThreadI* upload)
 	return GetUserCore()->getItemManager()->findItemInfo(upload->getItemId());
 }
 
-gcString DesuraJSUploadInfo::getFileName(UserCore::Misc::UploadInfoThreadI* upload)
+gcString DesuraJSUploadInfo::getFileName(gcRefPtr<UserCore::Misc::UploadInfoThreadI> upload)
 {
 	UTIL::FS::Path path = UTIL::FS::PathWithFile(upload->getFile());
 	return path.getFile().getFile();
 }
 
-gcString DesuraJSUploadInfo::getUploadId(UserCore::Misc::UploadInfoThreadI* upload)
+gcString DesuraJSUploadInfo::getUploadId(gcRefPtr<UserCore::Misc::UploadInfoThreadI> upload)
 {
 	return gcString("{0}", upload->getHash());
 }
 
-gcString DesuraJSUploadInfo::getItemId(UserCore::Misc::UploadInfoThreadI* upload)
+gcString DesuraJSUploadInfo::getItemId(gcRefPtr<UserCore::Misc::UploadInfoThreadI> upload)
 {
 	return upload->getItemId().toString();
 }

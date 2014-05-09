@@ -36,6 +36,12 @@ public:
 	virtual int delRef() = 0;
 	virtual int getRefCt() = 0;
 
+#if defined(DEBUG) && defined(WIN32)
+	virtual void addStackTrace(void* pObj) = 0;
+	virtual void delStackTrace(void* pObj) = 0;
+	virtual void dumpStackTraces() = 0;
+#endif
+
 protected:
 	virtual ~gcRefBase() {}
 };
@@ -60,9 +66,29 @@ public:
 		return m_nRef;
 	}
 
+#if defined(DEBUG) && defined(WIN32)
+	void addStackTrace(void* pObj);
+	void delStackTrace(void* pObj);
+	void dumpStackTraces();
+#endif
+
 private:
-	std::atomic<int> m_nRef;
+	std::atomic<int> m_nRef = { 0 };
+
+#if defined(DEBUG) && defined(WIN32)
+	std::mutex m_Lock;
+	std::map<void*, std::string> m_mStackTraces;
+#endif
 };
+
+#if defined(DEBUG) && defined(WIN32)
+#define gc_IMPLEMENT_REFCOUNTING_DEBUG(ClassName)	\
+	void addStackTrace(void* pObj) { return m_RefCount.addStackTrace(pObj); } \
+	void delStackTrace(void* pObj) { return m_RefCount.delStackTrace(pObj); } \
+	void dumpStackTraces(){ m_RefCount.dumpStackTraces(); }
+#else
+#define gc_IMPLEMENT_REFCOUNTING_DEBUG(ClassName)
+#endif
 
 
 #define gc_IMPLEMENT_REFCOUNTING(ClassName)				\
@@ -75,6 +101,7 @@ private:
 	return retval;                              \
 }                                               \
 	int getRefCt() { return m_RefCount.getRefCt(); }\
+	gc_IMPLEMENT_REFCOUNTING_DEBUG(ClassName)		\
 	private:											\
 	gcRefCount m_RefCount;
 
@@ -84,7 +111,7 @@ template <class T>
 class gcRefPtr
 {
 public:
-	typedef void(*gcRefBaseFn)(T*, bool);
+	typedef void(*gcRefBaseFn)(void*, T*, bool);
 
 	gcRefPtr()
 	{
@@ -97,37 +124,27 @@ public:
 	gcRefPtr(T* p)
 		: m_pPtr(p)
 	{
-		m_pRefFn = [](T* pPtr, bool bAdd)
-		{
-			if (!pPtr)
-				return;
-
-			if (bAdd)
-				pPtr->addRef();
-			else
-				pPtr->delRef();
-		};
-
-		m_pRefFn(p, true);
+		m_pRefFn = generateCleanupFunct();
+		m_pRefFn(this, p, true);
 	}
 
 	gcRefPtr(T* p, gcRefBaseFn refBaseFn)
 		: m_pPtr(p)
 		, m_pRefFn(refBaseFn)
 	{
-		m_pRefFn(p, true);
+		m_pRefFn(this, p, true);
 	}
 
 	gcRefPtr(const gcRefPtr<T>& r)
 		: m_pPtr(r.m_pPtr)
 		, m_pRefFn(r.m_pRefFn)
 	{
-		m_pRefFn(m_pPtr, true);
+		m_pRefFn(this, m_pPtr, true);
 	}
 
 	~gcRefPtr()
 	{
-		m_pRefFn(m_pPtr, false);
+		m_pRefFn(this, m_pPtr, false);
 	}
 
 	T* get() const
@@ -149,8 +166,8 @@ public:
 
 	gcRefPtr<T>& operator=(T* p)
 	{
-		m_pRefFn(p, true);
-		m_pRefFn(m_pPtr, false);
+		m_pRefFn(this, p, true);
+		m_pRefFn(this, m_pPtr, false);
 		m_pPtr = p;
 		return *this;
 	}
@@ -204,7 +221,7 @@ public:
 
 	void reset()
 	{
-		m_pRefFn(m_pPtr, false);
+		m_pRefFn(this, m_pPtr, false);
 		m_pPtr = nullptr;
 		m_pRefFn = nullptr;
 	}
@@ -232,6 +249,30 @@ public:
 	}
 
 private:
+	static gcRefBaseFn generateCleanupFunct()
+	{
+		return [](void* pRefPtr, T* pPtr, bool bAdd)
+		{
+			if (!pPtr)
+				return;
+
+			if (bAdd)
+			{
+#if defined(DEBUG) && defined(WIN32)
+				pPtr->addStackTrace(pRefPtr);
+#endif
+				pPtr->addRef();
+			}
+			else
+			{
+#if defined(DEBUG) && defined(WIN32)
+				pPtr->delStackTrace(pRefPtr);
+#endif
+				pPtr->delRef();
+			}
+		};
+	}
+
 	template <typename U>
 	friend class gcRefPtr;
 
@@ -239,10 +280,20 @@ private:
 	gcRefBaseFn m_pRefFn = nullptr;
 };
 
+#if defined(DEBUG) && defined(WIN32)
+#define gc_MOCK_REFCOUNTING_DEBUG(ClassName)	\
+	void addStackTrace(void* pObj) { } \
+	void delStackTrace(void* pObj) { } \
+	void dumpStackTraces(){ }
+#else
+#define gc_MOCK_REFCOUNTING_DEBUG(ClassName)
+#endif
+
 #define gc_MOCK_REFCOUNTING(ClassName)		\
 	int addRef() { return 1; }				\
 	int delRef() { return 1; }				\
-	int getRefCt() { return 1; }
+	int getRefCt() { return 1; }			\
+	gc_MOCK_REFCOUNTING_DEBUG(ClassName)
 
 
 #endif

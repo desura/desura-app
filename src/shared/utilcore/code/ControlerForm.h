@@ -53,7 +53,7 @@ protected:
 
 
 private:
-	UserCore::UserI* m_pUser;
+	gcRefPtr<UserCore::UserI> m_pUser;
 	wxSingleInstanceChecker *m_pChecker;
 };
 

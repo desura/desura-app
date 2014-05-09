@@ -344,17 +344,17 @@ int32 DesuraJSItemInfo::getItemBranchCount(gcRefPtr<UserCore::Item::ItemInfoI> i
 	return item->getBranchCount();
 }
 
-void* DesuraJSItemInfo::getItemBranchByIndex(gcRefPtr<UserCore::Item::ItemInfoI> item, int32 index)
+gcRefPtr<UserCore::Item::BranchInfoI> DesuraJSItemInfo::getItemBranchByIndex(gcRefPtr<UserCore::Item::ItemInfoI> item, int32 index)
 {
 	return item->getBranch(index);
 }
 
-void* DesuraJSItemInfo::getItemBranchById(gcRefPtr<UserCore::Item::ItemInfoI> item, int32 id)
+gcRefPtr<UserCore::Item::BranchInfoI> DesuraJSItemInfo::getItemBranchById(gcRefPtr<UserCore::Item::ItemInfoI> item, int32 id)
 {
 	return item->getBranchById(id);
 }
 
-void* DesuraJSItemInfo::getItemCurrentBranch(gcRefPtr<UserCore::Item::ItemInfoI> item)
+gcRefPtr<UserCore::Item::BranchInfoI> DesuraJSItemInfo::getItemCurrentBranch(gcRefPtr<UserCore::Item::ItemInfoI> item)
 {
 	return item->getCurrentBranch();
 }
@@ -419,7 +419,7 @@ std::vector<MapElementI*> DesuraJSItemInfo::getItemExeInfo(gcRefPtr<UserCore::It
 {
 	std::vector<MapElementI*> ret;
 
-	std::vector<UserCore::Item::Misc::ExeInfoI*> vExeList;
+	std::vector<gcRefPtr<UserCore::Item::Misc::ExeInfoI>> vExeList;
 	item->getExeList(vExeList);
 
 	for (size_t x=0; x<vExeList.size(); x++)

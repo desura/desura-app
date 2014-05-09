@@ -1105,6 +1105,8 @@ gcRefPtr<UserCore::Item::Helper::GatherInfoHandlerHelperI> ItemForm::getGatherIn
 
 	m_GIHH->onGatherInfoCompleteEvent += guiDelegate(this, &ItemForm::onGatherInfoComplete);
 	m_GIHH->onShowErrorEvent += guiDelegate(this, &ItemForm::onShowError, MODE_PENDING_WAIT);
+
+	return m_GIHH;
 }
 
 gcRefPtr<UserCore::Item::Helper::InstallerHandleHelperI> ItemForm::getInstallHelper()

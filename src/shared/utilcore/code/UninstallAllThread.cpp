@@ -39,7 +39,7 @@ $/LicenseInfo$
 
 #include "wx_controls/gcManagers.h"
 
-UninstallAllThread::UninstallAllThread(uint32 flags, UserCore::UserI* user) : Thread::BaseThread("UninstallAll Thread")
+UninstallAllThread::UninstallAllThread(uint32 flags, gcRefPtr<UserCore::UserI> user) : Thread::BaseThread("UninstallAll Thread")
 {
 	m_iFlags = flags;
 	m_pUser = user;
@@ -56,15 +56,15 @@ void UninstallAllThread::run()
 	bool removeCache	= HasAnyFlags(m_iFlags, REMOVE_CACHE);
 	bool removeSettings = HasAnyFlags(m_iFlags, REMOVE_SETTINGS);
 
-	std::vector<UserCore::Item::ItemHandleI*> uninstallList;
+	std::vector<gcRefPtr<UserCore::Item::ItemHandleI>> uninstallList;
 
-	std::vector<UserCore::Item::ItemInfoI*> gamesList;
+	std::vector<gcRefPtr<UserCore::Item::ItemInfoI>> gamesList;
 	m_pUser->getItemManager()->getGameList(gamesList);
 
 	for (size_t x=0; x<gamesList.size(); x++)
 	{
-		UserCore::Item::ItemInfoI* game = gamesList[x];
-		std::vector<UserCore::Item::ItemInfoI*> modList;
+		auto game = gamesList[x];
+		std::vector<gcRefPtr<UserCore::Item::ItemInfoI>> modList;
 
 		for (size_t y=0; y<modList.size(); y++)
 		{
@@ -91,7 +91,7 @@ void UninstallAllThread::run()
 		if (isStopped())
 			break;
 
-		UserCore::Item::ItemHandleI* itemHandle = uninstallList[x];
+		auto itemHandle = uninstallList[x];
 
 		if (!itemHandle)
 			continue;
@@ -338,7 +338,7 @@ bool UninstallAllThread::hasPaidBranch(UserCore::Item::ItemInfoI* item)
 {
 	for (size_t z=0; z<item->getBranchCount(); z++)
 	{
-		UserCore::Item::BranchInfoI* bi = item->getBranch(z);
+		auto bi = item->getBranch(z);
 
 		if (HasAllFlags(bi->getFlags(), UserCore::Item::BranchInfoI::BF_ONACCOUNT) && !HasAnyFlags(bi->getFlags(), UserCore::Item::BranchInfoI::BF_FREE|UserCore::Item::BranchInfoI::BF_DEMO|UserCore::Item::BranchInfoI::BF_TEST))
 			return true;

@@ -62,7 +62,7 @@ ChangeDirForm::~ChangeDirForm()
 	safe_delete(m_pThread);
 }
 
-void ChangeDirForm::start(const char* dest, UserCore::UserI* user)
+void ChangeDirForm::start(const char* dest, gcRefPtr<UserCore::UserI> user)
 {
 	m_pThread = new ChangeDirThread(dest, user);
 

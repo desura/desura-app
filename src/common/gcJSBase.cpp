@@ -33,6 +33,19 @@ $/LicenseInfo$
 #include "Common.h"
 #include "gcJSBase.h"
 
+
+bool FindJSObjectCleanup(const std::string &strKey)
+{
+	gcAssert(false);
+	return false;
+}
+
+void AddJSObjectCleanup(const std::string &strKey, std::function<void()> fnCleanup)
+{
+	gcAssert(false);
+}
+
+
 JSDelegateI::~JSDelegateI()
 {
 }

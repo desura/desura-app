@@ -31,6 +31,9 @@ $/LicenseInfo$
 
 #ifdef WIN32
 	#include <shlobj.h>
+#ifdef DEBUG
+	#include "DbgHelp.h"
+#endif
 #endif
 
 #ifdef WIN32
@@ -442,6 +445,68 @@ std::string UserDecodeString(const std::string& strKey, const std::string& strVa
 	return std::string(raw.c_ptr(), raw.size());
 #endif
 }
+
+
+#ifdef DEBUG
+
+std::string getStackTraceString(uint32 nStart, uint32 nStop)
+{
+#ifdef WIN32
+	//http://blog.aaronballman.com/2011/04/generating-a-stack-crawl/
+	static std::mutex s_StackLock;
+	static bool s_InitStackTrace = false;
+
+	std::lock_guard<std::mutex> guard(s_StackLock);
+
+	if (!s_InitStackTrace)
+	{
+		// Set up the symbol options so that we can gather information from the current
+		// executable's PDB files, as well as the Microsoft symbol servers.  We also want
+		// to undecorated the symbol names we're returned.  If you want, you can add other
+		// symbol servers or paths via a semi-colon separated list in SymInitialized.
+		::SymSetOptions(SYMOPT_DEFERRED_LOADS | SYMOPT_INCLUDE_32BIT_MODULES | SYMOPT_UNDNAME);
+
+		if (!::SymInitialize(::GetCurrentProcess(), "E:\\SymbolCache;http://msdl.microsoft.com/download/symbols", TRUE))
+			return "";
+
+		s_InitStackTrace = true;
+	}
+
+	if (nStop > 25)
+		nStop = 25;
+
+	PVOID addrs[25] = { 0 };
+	USHORT frames = CaptureStackBackTrace(nStart, nStop, addrs, NULL);
+
+	std::string outWalk;
+
+	for (USHORT i = 0; i < frames; i++) 
+	{
+		// Allocate a buffer large enough to hold the symbol information on the stack and get 
+		// a pointer to the buffer.  We also have to set the size of the symbol structure itself
+		// and the number of bytes reserved for the name.
+		ULONG64 buffer[(sizeof(SYMBOL_INFO)+1024 + sizeof(ULONG64)-1) / sizeof(ULONG64)] = { 0 };
+		SYMBOL_INFO *info = (SYMBOL_INFO *)buffer;
+		info->SizeOfStruct = sizeof(SYMBOL_INFO);
+		info->MaxNameLen = 1024;
+
+		// Attempt to get information about the symbol and add it to our output parameter.
+		DWORD64 displacement = 0;
+		if (::SymFromAddr(::GetCurrentProcess(), (DWORD64)addrs[i], &displacement, info)) 
+		{
+			outWalk.append(info->Name, info->NameLen);
+			outWalk.append("\n");
+		}
+	}
+
+	return outWalk;
+#else
+	gcAssert(false);
+	return "";
+#endif
+}
+
+#endif
 
 
 }

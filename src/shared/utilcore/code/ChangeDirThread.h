@@ -39,7 +39,7 @@ typedef std::vector<FilePair> FileList;
 class ChangeDirThread : public ::Thread::BaseThread
 {
 public:
-	ChangeDirThread(const char* dest, UserCore::UserI* user);
+	ChangeDirThread(const char* dest, gcRefPtr<UserCore::UserI> user);
 	~ChangeDirThread();
 
 	Event<gcException> onErrorEvent;
@@ -71,7 +71,7 @@ private:
 
 	bool m_bStopped;
 	bool m_bCompleted;
-	UserCore::UserI* m_pUser;
+	gcRefPtr<UserCore::UserI> m_pUser;
 };
 
 

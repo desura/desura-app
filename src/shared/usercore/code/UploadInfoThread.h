@@ -97,6 +97,38 @@ namespace UserCore
 			void setUpLoadManager(gcRefPtr<UserCore::UploadManagerI> um);
 
 
+			int addRef() override
+			{
+				return BaseItem::addRef();
+			}
+
+			int delRef() override
+			{
+				return BaseItem::delRef();
+			}
+
+			int getRefCt() override
+			{
+				return BaseItem::getRefCt();
+			}
+
+#if defined(DEBUG) && defined(WIN32)
+			void addStackTrace(void* pObj)
+			{
+				BaseItem::addStackTrace(pObj);
+			}
+
+			void delStackTrace(void* pObj)
+			{
+				BaseItem::delStackTrace(pObj);
+			}
+
+			void dumpStackTraces()
+			{
+				BaseItem::dumpStackTraces();
+			}
+#endif
+
 		protected:
 			void onComplete(uint32& status);
 			void onProgress(UserCore::Misc::UploadInfo& info);

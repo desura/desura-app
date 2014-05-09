@@ -36,7 +36,7 @@ namespace UserCore
 	{
 		class UploadInfo;
 
-		class UploadInfoThreadI
+		class UploadInfoThreadI : public gcRefBase
 		{
 		public:
 			virtual ~UploadInfoThreadI(){}

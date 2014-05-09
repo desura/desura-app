@@ -40,7 +40,7 @@ public:
 	ChangeDirForm(wxWindow* parent);
 	~ChangeDirForm();
 
-	void start(const char* dest, UserCore::UserI* user);
+	void start(const char* dest, gcRefPtr<UserCore::UserI> user);
 
 protected:
 	friend class LanguageTestDialog;

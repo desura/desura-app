@@ -11,7 +11,11 @@ include_directories(
 file(GLOB SourcesWEB code/UtilWeb.cpp)
 
 if(WIN32 AND NOT MINGW)
+if(DEBUG)
+  set(WINDOWS_LIBRARIES msi Winhttp wintrust Comctl32 crypt32 DbgHelp)
+else()
   set(WINDOWS_LIBRARIES msi Winhttp wintrust Comctl32 crypt32)
+endif()
   use_unicode_here()
 endif()
 

@@ -160,6 +160,20 @@ void FromJSObject(std::vector<U> &list, JSObjHandle& arg)
 	}
 }
 
+template <typename U>
+void FromJSObject(gcRefPtr<U> &pRef, JSObjHandle& arg)
+{
+	if (!arg || !arg->isObject())
+		return;
+
+	auto sub = arg->getValue(typeid(U).name());
+
+	if (!sub || !sub->isObject())
+		return;
+
+	pRef = gcRefPtr<U>(sub->getUserObject<U>());
+}
+
 template <>
 void FromJSObject<UserCore::Item::ItemInfoI*>(UserCore::Item::ItemInfoI* &item, JSObjHandle& arg);
 
@@ -191,7 +205,6 @@ inline void FromJSObject<JSObjHandle>(JSObjHandle& ret, JSObjHandle& arg)
 }
 
 JSObjHandle ToJSObject(ChromiumDLL::JavaScriptFactoryI* factory, const MapElementI* map);
-JSObjHandle ToJSObject(ChromiumDLL::JavaScriptFactoryI* factory, const void* object);
 JSObjHandle ToJSObject(ChromiumDLL::JavaScriptFactoryI* factory, const int32 intVal);
 JSObjHandle ToJSObject(ChromiumDLL::JavaScriptFactoryI* factory, const bool boolVal);
 JSObjHandle ToJSObject(ChromiumDLL::JavaScriptFactoryI* factory, const double doubleVal);
@@ -215,6 +228,35 @@ JSObjHandle ToJSObject(ChromiumDLL::JavaScriptFactoryI* factory, const std::vect
 	return arr;
 }
 
+
+
+bool FindJSObjectCleanup(const std::string &strKey);
+void AddJSObjectCleanup(const std::string &strKey, std::function<void()> fnCleanup);
+
+
+template <typename T>
+JSObjHandle ToJSObject(ChromiumDLL::JavaScriptFactoryI* factory, const gcRefPtr<T> &pRef)
+{
+	if (!pRef)
+		return factory->CreateNull();
+
+	gcString strKey("{0}-{1}", typeid(T).name(), pRef.get());
+	bool bFound = FindJSObjectCleanup(strKey);
+
+	if (!bFound)
+	{
+		T* pT = pRef.get();
+		pT->addRef();
+
+		AddJSObjectCleanup(strKey, [pT](){
+			pT->delRef();
+		});
+	}
+
+	JSObjHandle ret = factory->CreateObject();
+	ret->setValue(typeid(T).name(), factory->CreateObject(pRef.get()));
+	return ret;
+}
 
 #include <type_traits>
 

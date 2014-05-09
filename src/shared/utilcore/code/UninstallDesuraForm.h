@@ -54,7 +54,7 @@ namespace UserCore
 class UninstallForm : public wxFrame 
 {
 public:
-	UninstallForm(wxWindow* parent, UserCore::UserI* user);
+	UninstallForm(wxWindow* parent, gcRefPtr<UserCore::UserI> user);
 	~UninstallForm();
 
 	void completedUninstall();
@@ -79,7 +79,7 @@ protected:
 	void doClose();
 
 private:
-	UserCore::UserI* m_pUser;
+	gcRefPtr<UserCore::UserI> m_pUser;
 	bool m_bComplete = false;
 };
 
