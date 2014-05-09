@@ -72,9 +72,6 @@ InstallServiceTask::~InstallServiceTask()
 		m_pIPCIM->onFinishEvent -= delegate(this, &InstallServiceTask::onFinish);
 		m_pIPCIM->destroy();
 	}
-
-	if (m_pIHH)
-		m_pIHH->destroy();
 }
 
 bool InstallServiceTask::initService()
@@ -161,7 +158,7 @@ void InstallServiceTask::onComplete()
 
 	onMcfProgressEvent(temp);
 
-	UserCore::Item::ItemInfoI *item = getItemHandle()->getItemInfo();
+	auto item = getItemHandle()->getItemInfo();
 	item->delSFlag(UserCore::Item::ItemInfoI::STATUS_PAUSABLE);
 
 	bool verify = false;

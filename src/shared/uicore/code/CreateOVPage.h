@@ -41,7 +41,7 @@ public:
 	~CreateMCFOverview();
 
 	void dispose() override;
-	void setInfo(DesuraId itemId, UserCore::Item::ItemInfoI* pItemInfo, const char* path);
+	void setInfo(DesuraId itemId, gcRefPtr<UserCore::Item::ItemInfoI> pItemInfo, const char* path);
 
 	Event<ut> onUploadTriggerEvent;
 
@@ -64,7 +64,7 @@ protected:
 	void onButtonClick( wxCommandEvent& event );
 	void onMouseDown( wxMouseEvent& event );
 private:
-	UserCore::Item::ItemInfoI* m_pItem;
+	gcRefPtr<UserCore::Item::ItemInfoI> m_pItem;
 
 	gcString m_szPath;
 	gcString m_szFolderPath;

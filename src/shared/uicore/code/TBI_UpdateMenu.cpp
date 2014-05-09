@@ -93,7 +93,7 @@ const wchar_t* TBIUpdateMenu::getMenuName()
 
 void TBIUpdateMenu::calcUpdates()
 {
-	UserCore::UserI* user = GetUserCore();
+	auto user = GetUserCore();
 
 	if (!user)
 	{
@@ -116,7 +116,7 @@ void TBIUpdateMenu::calcUpdates()
 	if (!pItemManager)
 		return;
 
-	std::vector<UserCore::Item::ItemInfoI*> gList;
+	std::vector<gcRefPtr<UserCore::Item::ItemInfoI>> gList;
 	pItemManager->getGameList(gList);
 
 	for (size_t x=0; x<gList.size(); x++)
@@ -124,7 +124,7 @@ void TBIUpdateMenu::calcUpdates()
 		if (HasAnyFlags(gList[x]->getStatus(), UserCore::Item::ItemInfoI::STATUS_UPDATEAVAL))
 			gameUpdateCount++;
 
-		std::vector<UserCore::Item::ItemInfoI*> mList;
+		std::vector<gcRefPtr<UserCore::Item::ItemInfoI>> mList;
 		pItemManager->getModList(gList[x]->getId(), mList);
 
 		for (size_t y=0; y<mList.size(); y++)

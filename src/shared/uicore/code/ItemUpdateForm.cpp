@@ -101,7 +101,7 @@ void UpdateInfoForm::setInfo(DesuraId id, bool launch, const LinkArgs &args)
 
 	
 
-	UserCore::Item::ItemInfoI* item = GetUserCore()->getItemManager()->findItemInfo( id );
+	gcRefPtr<UserCore::Item::ItemInfoI> item = GetUserCore()->getItemManager()->findItemInfo( id );
 
 	if (!item)
 	{
@@ -123,7 +123,7 @@ void UpdateInfoForm::onButtonPressed(wxCommandEvent& event)
 {
 	Close();
 
-	UserCore::Item::ItemInfoI* item = GetUserCore()->getItemManager()->findItemInfo( m_uiInternId );
+	gcRefPtr<UserCore::Item::ItemInfoI> item = GetUserCore()->getItemManager()->findItemInfo( m_uiInternId );
 
 	if (!item)
 		return;

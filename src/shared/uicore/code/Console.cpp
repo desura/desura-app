@@ -33,37 +33,35 @@ $/LicenseInfo$
 
 CONCOMMAND(cmdlist, "cmdlist")
 {
-	std::vector<ConCommand*> vList;
+	std::vector<gcRefPtr<ConCommand>> vList;
 	GetCCommandManager()->getConCommandList(vList);
 	
-	for (size_t x=0; x<vList.size(); x++)
+	std::sort(begin(vList), end(vList), [](gcRefPtr<ConCommand> &pA, gcRefPtr<ConCommand> &pB)
 	{
-		ConCommand *temp = vList[x];
+		return std::string(pA->getName()) < std::string(pB->getName());
+	});
 
-		if (!temp)
-			continue;
-
+	for (auto temp : vList)
 		Msg(gcString("-{0}\n", temp->getName()));
-	}
 
 	Msg(gcString("{0} Commands in total.\n\n", vList.size()));
 }
 
 CONCOMMAND(cvarlist, "cvarlist")
 {
-	std::vector<CVar*> vList;
+	std::vector<gcRefPtr<CVar>> vList;
 	GetCVarManager()->getCVarList(vList);
 
 	uint32 skiped = 0;
 
-	std::sort(begin(vList), end(vList), [](CVar* pA, CVar* pB)
+	std::sort(begin(vList), end(vList), [](gcRefPtr<CVar> &pA, gcRefPtr<CVar> &pB)
 	{
 		return std::string(pA->getName()) < std::string(pB->getName()); 
 	});
 
 	for (size_t x=0; x<vList.size(); x++)
 	{
-		CVar *temp = vList[x];
+		auto temp = vList[x];
 
 		if (!temp)
 			continue;
@@ -196,10 +194,10 @@ void Console::ignoreThisThread()
 
 void Console::setupAutoComplete()
 {
-	std::vector<ConCommand*> vCCList;
+	std::vector<gcRefPtr<ConCommand>> vCCList;
 	GetCCommandManager()->getConCommandList(vCCList);
 
-	std::vector<CVar*> vCVList;
+	std::vector<gcRefPtr<CVar>> vCVList;
 	GetCVarManager()->getCVarList(vCVList);
 
 
@@ -210,7 +208,7 @@ void Console::setupAutoComplete()
 
 	for (uint32 x=0; x<cc; x++)
 	{
-		ConCommand *temp = vCCList[x];
+		auto temp = vCCList[x];
 
 		if (!temp)
 			continue;
@@ -220,7 +218,7 @@ void Console::setupAutoComplete()
 
 	for (uint32 x=0; x<cv; x++)
 	{
-		CVar *temp = vCVList[x];
+		auto temp = vCVList[x];
 
 		if (!temp || temp->getFlags() & CFLAG_ADMIN)
 			continue;
@@ -438,8 +436,8 @@ void Console::processCommand()
 	}
 	else
 	{
-		ConCommand * cc = GetCCommandManager()->findCCommand( vArgList[0].c_str() );
-		CVar * cv = GetCVarManager()->findCVar( vArgList[0].c_str() );
+		auto cc = GetCCommandManager()->findCCommand( vArgList[0].c_str() );
+		auto cv = GetCVarManager()->findCVar( vArgList[0].c_str() );
 
 		if (cc)
 			cc->Call(vArgList);

@@ -61,8 +61,8 @@ namespace UI
 				virtual void onVerifyComplete(UserCore::Misc::VerifyComplete& info);
 				virtual void onPause(bool &state);
 
-				void setInfo(DesuraId id, UserCore::Item::ItemInfoI* pItemInfo);
-				void setInfo(UserCore::Item::ItemHandleI* pItemHandle);
+				void setInfo(DesuraId id, gcRefPtr<UserCore::Item::ItemInfoI> pItemInfo);
+				void setInfo(gcRefPtr<UserCore::Item::ItemHandleI> pItemHandle);
 
 				void pause(bool state);
 				void nonBlockStop();
@@ -72,10 +72,10 @@ namespace UI
 				void deregisterHandle();
 
 			protected:
-				UserCore::Item::ItemHandleI* getItemHandle()
+				gcRefPtr<UserCore::Item::ItemHandleI> getItemHandle()
 				{
 					return m_pItemHandle;
-				};
+				}
 
 				void run() override
 				{
@@ -88,8 +88,8 @@ namespace UI
 				void onFormClose(wxCloseEvent& event);
 
 			private:
-				std::unique_ptr<ItemHandleHelper> m_pIHH;
-				UserCore::Item::ItemHandleI* m_pItemHandle = nullptr;
+				gcRefPtr<ItemHandleHelper> m_pIHH;
+				gcRefPtr<UserCore::Item::ItemHandleI> m_pItemHandle;
 			};
 
 		}

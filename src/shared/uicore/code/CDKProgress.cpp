@@ -32,7 +32,45 @@ $/LicenseInfo$
 
 #include "InternalLink.h"
 
-CDKProgress::CDKProgress(wxWindow* parent, bool launch) : BasePage(parent)
+
+
+class CDKProgressProxy : public UserCore::Misc::CDKeyCallBackI
+{
+public:
+	CDKProgressProxy(CDKProgress *pCDKeyProgress)
+		: m_pCDKProgress(pCDKeyProgress)
+	{
+	}
+
+	void nullProgress()
+	{
+		m_pCDKProgress = nullptr;
+	}
+
+	void onCDKeyComplete(DesuraId id, gcString &cdKey) override
+	{
+		if (!m_pCDKProgress)
+			return;
+
+		m_pCDKProgress->onCDKeyComplete(id, cdKey);
+	}
+
+
+	void onCDKeyError(DesuraId id, gcException& e) override
+	{
+		if (!m_pCDKProgress)
+			m_pCDKProgress->onCDKeyError(id, e);
+	}
+
+private:
+	CDKProgress *m_pCDKProgress;
+	gc_IMPLEMENT_REFCOUNTING(CDKProgressProxy);
+};
+
+
+
+CDKProgress::CDKProgress(wxWindow* parent, bool launch) 
+	: BasePage(parent)
 {
 	m_bLaunch = launch;
 
@@ -72,19 +110,30 @@ CDKProgress::CDKProgress(wxWindow* parent, bool launch) : BasePage(parent)
 
 CDKProgress::~CDKProgress()
 {
-	
+	if (m_ProgressProxy)
+		m_ProgressProxy->nullProgress();
 }
 
 void CDKProgress::run()
 {
-	GetUserCore()->getCDKeyManager()->getCDKeyForCurrentBranch(getItemId(), this);
+	if (!m_ProgressProxy)
+		m_ProgressProxy = gcRefPtr<CDKProgressProxy>::create(this);
+
+	auto userCore = GetUserCore();
+
+	if (!userCore)
+		return;
+
+	userCore->getCDKeyManager()->getCDKeyForCurrentBranch(getItemId(), m_ProgressProxy);
 	m_bOutstandingRequest = true;
 }
 
 void CDKProgress::dispose()
 {
-	if (m_bOutstandingRequest)
-		GetUserCore()->getCDKeyManager()->cancelRequest(getItemId(), this);
+	auto userCore = GetUserCore();
+
+	if (m_bOutstandingRequest && userCore)
+		userCore->getCDKeyManager()->cancelRequest(getItemId(), m_ProgressProxy);
 }
 
 void CDKProgress::onCDKeyComplete(DesuraId id, gcString &cdKey)

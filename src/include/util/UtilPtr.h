@@ -90,6 +90,10 @@ public:
 	{
 	}
 
+	gcRefPtr(std::nullptr_t)
+	{
+	}
+
 	gcRefPtr(T* p)
 		: m_pPtr(p)
 	{
@@ -131,12 +135,6 @@ public:
 		return m_pPtr;
 	}
 
-	operator T*() const
-	{
-		gcAssert(m_pPtr);
-		return m_pPtr;
-	}
-
 	template <typename U>
 	operator gcRefPtr<U>()
 	{
@@ -160,6 +158,11 @@ public:
 	gcRefPtr<T>& operator=(const gcRefPtr<T>& r)
 	{
 		return *this = r.m_pPtr;
+	}
+
+	operator bool() const
+	{
+		return !!m_pPtr;
 	}
 
 	void swap(T** pp)
@@ -197,6 +200,35 @@ public:
 			return m_pPtr->getRefCt();
 
 		return 0;
+	}
+
+	void reset()
+	{
+		m_pRefFn(m_pPtr, false);
+		m_pPtr = nullptr;
+		m_pRefFn = nullptr;
+	}
+
+	bool operator==(const gcRefPtr<T> &ptr) const
+	{
+		return m_pPtr == ptr.m_pPtr;
+	}
+
+	template <typename U>
+	bool operator==(const gcRefPtr<U> &ptr) const
+	{
+		return *this == gcRefPtr<T>(ptr.m_pPtr);
+	}
+
+	bool operator!=(const gcRefPtr<T> &ptr) const
+	{
+		return m_pPtr != ptr.m_pPtr;
+	}
+
+	template <typename U>
+	bool operator!=(const gcRefPtr<U> &ptr) const
+	{
+		return *this != gcRefPtr<T>(ptr.m_pPtr);
 	}
 
 private:

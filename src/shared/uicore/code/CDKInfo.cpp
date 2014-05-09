@@ -47,7 +47,7 @@ public:
 };
 
 
-CDKInfo::CDKInfo(wxWindow* parent, const char* exe, bool launch, UserCore::ItemManagerI* pItemManager) 
+CDKInfo::CDKInfo(wxWindow* parent, const char* exe, bool launch, gcRefPtr<UserCore::ItemManagerI> pItemManager) 
 	: BasePage(parent, pItemManager)
 {
 	m_butActivate = nullptr;
@@ -128,7 +128,7 @@ void CDKInfo::setInfo(DesuraId id, const char* key)
 {
 	BasePage::setInfo(id);
 
-	UserCore::Item::ItemInfoI *info = getItemInfo();
+	auto info = getItemInfo();
 
 	if (!info)
 	{
@@ -141,7 +141,7 @@ void CDKInfo::setInfo(DesuraId id, const char* key)
 	m_tbCdKey->ChangeValue(key);
 	tokenizeKey(key);
 
-	UserCore::Item::BranchInfoI* cb = info->getCurrentBranch();
+	auto cb = info->getCurrentBranch();
 
 	if (cb && cb->isSteamGame())
 	{
@@ -241,7 +241,7 @@ void CDKInfo::onButtonClicked(wxCommandEvent& event)
 	}
 	else if (m_butActivate && m_butActivate->GetId() == event.GetId())
 	{
-		UserCore::Item::ItemInfoI* info = getItemInfo();
+		gcRefPtr<UserCore::Item::ItemInfoI> info = getItemInfo();
 
 		if (info && info->isLaunchable())
 			info->addSFlag(UserCore::Item::ItemInfoI::STATUS_LAUNCHED);

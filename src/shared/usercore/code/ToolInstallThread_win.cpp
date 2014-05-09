@@ -79,7 +79,7 @@ void ToolInstallThread::onPipeDisconnect()
 	
 	gcException e(ERR_PIPE, "Pipe to Tool Install Helper Disconnected. Failed to install tools.");
 
-	std::for_each(m_mTransactions.begin(), m_mTransactions.end(), [&e](std::pair<ToolTransactionId, Misc::ToolTransInfo*> t){
+	std::for_each(m_mTransactions.begin(), m_mTransactions.end(), [&e](std::pair<ToolTransactionId, gcRefPtr<Misc::ToolTransInfo>> t){
 		t.second->onINError(e);
 	});
 

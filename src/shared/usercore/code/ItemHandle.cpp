@@ -495,7 +495,7 @@ void ItemHandle::releaseComplexLock()
 	gcTrace("");
 
 	bool isComplex = HasAllFlags(getItemInfo()->getStatus(), UserCore::Item::ItemInfoI::STATUS_INSTALLCOMPLEX);
-	UserCore::Item::ItemHandle* obj = this;
+	gcRefPtr<UserCore::Item::ItemHandle> obj = this;
 
 	if (isComplex)
 	{
@@ -521,19 +521,11 @@ bool ItemHandle::getComplexLock()
 		return true;
 
 
-	UserCore::Item::ItemHandle* obj = nullptr;
+	gcRefPtr<UserCore::Item::ItemHandle> obj = this;
+	auto parentHandle = gcRefPtr<UserCore::Item::ItemHandle>::dyn_cast(m_pUserCore->getItemManager()->findItemHandle(getItemInfo()->getParentId()));
 
-	if (isComplex)
-	{
-		auto parentHandle = gcRefPtr<UserCore::Item::ItemHandle>::dyn_cast(m_pUserCore->getItemManager()->findItemHandle(getItemInfo()->getParentId()));
-
-		if (parentHandle)
-			obj = parentHandle;
-	}
-	else
-	{
-		obj = this;
-	}
+	if (isComplex && parentHandle)
+		obj = parentHandle;
 
 	if (obj && obj->getLock(this))
 		return true;
@@ -541,7 +533,7 @@ bool ItemHandle::getComplexLock()
 	gcException eItem(ERR_INVALID, "Failed to get lock. Another task is using this item. Please stop that task and try again.");
 	gcException eGame(ERR_INVALID, "Failed to get lock. Another task is using the parent game. Please stop that task and try again.");
 	
-	if (obj == this)
+	if (obj != parentHandle)
 		onErrorEvent(eItem);
 	else
 		onErrorEvent(eGame);
@@ -560,7 +552,7 @@ void ItemHandle::goToStageUninstallPatch(MCFBranch branch, MCFBuild build)
 	bool isParentComplex = getItemInfo()->getInstalledModId().isOk();
 	bool isComplex = HasAllFlags(getItemInfo()->getStatus(), UserCore::Item::ItemInfoI::STATUS_INSTALLCOMPLEX);
 
-	UserCore::Item::ItemInfoI* parentItem = m_pUserCore->getItemManager()->findItemInfo(getItemInfo()->getParentId());
+	auto parentItem = m_pUserCore->getItemManager()->findItemInfo(getItemInfo()->getParentId());
 
 	if (isParentComplex || isComplex)
 	{
@@ -660,8 +652,9 @@ void ItemHandle::stopThread()
 
 	std::lock_guard<std::recursive_mutex> guard(m_ThreadMutex);
 
-	m_pUserCore->getThreadPool()->queueTask(gcRefPtr<UserCore::Task::DeleteThread>::create(m_pUserCore, m_pThread));
-
+	gcAssert(m_pThread.getRefCt() == 1);
+	m_pUserCore->getThreadPool()->queueTask(gcRefPtr<UserCore::Task::DeleteThread>::create(m_pUserCore, m_pThread.get()));
+	
 	m_pThread = nullptr;
 	m_bStopped = true;
 }
@@ -684,21 +677,18 @@ void ItemHandle::registerTask(gcRefPtr<UserCore::ItemTask::BaseItemTask> task)
 	m_pEventHandler->registerTask(task);
 	std::lock_guard<std::recursive_mutex> guard(m_ThreadMutex);
 
-	if (m_pThread == nullptr)
+	if (!m_pThread)
 	{
-		if (!m_pThread)
-		{
-			m_pThread = gcRefPtr<ItemThread>::create(this);
+		m_pThread = gcRefPtr<ItemThread>::create(this);
 
-			m_pThread->setThreadManager(m_pUserCore->getThreadManager());
-			m_pThread->setUserCore(m_pUserCore);
-			m_pThread->setWebCore(m_pUserCore->getWebCore());
+		m_pThread->setThreadManager(m_pUserCore->getThreadManager());
+		m_pThread->setUserCore(m_pUserCore);
+		m_pThread->setWebCore(m_pUserCore->getWebCore());
 
-			m_pThread->onTaskStartEvent += delegate(this, &ItemHandle::onTaskStart);
-			m_pThread->onTaskCompleteEvent += delegate(this, &ItemHandle::onTaskComplete);
+		m_pThread->onTaskStartEvent += delegate(this, &ItemHandle::onTaskStart);
+		m_pThread->onTaskCompleteEvent += delegate(this, &ItemHandle::onTaskComplete);
 
-			m_bStopped = false;
-		}
+		m_bStopped = false;
 	}
 	
 	m_pThread->queueTask(task);
@@ -729,8 +719,8 @@ void ItemHandle::addHelper(gcRefPtr<Helper::ItemHandleHelperI> helper)
 
 bool ItemHandle::preDownloadCheck(MCFBranch branch, bool test)
 {
-	UserCore::Item::BranchInfoI* branchInfo = getItemInfo()->getBranchById(branch);
-	UserCore::Item::ItemInfoI* parentInfo = m_pUserCore->getItemManager()->findItemInfo(getItemInfo()->getParentId());
+	auto branchInfo = getItemInfo()->getBranchById(branch);
+	auto parentInfo = m_pUserCore->getItemManager()->findItemInfo(getItemInfo()->getParentId());
 
 	gcException eExist(ERR_INVALID, "Branch does not exist.");
 	gcException eRelease(ERR_INVALID, "Branch has no releases available for download.");
@@ -799,7 +789,7 @@ bool ItemHandle::update()
 	if (isInStage())
 		return true;
 
-	UserCore::Item::BranchInfoI* branch = getItemInfo()->getCurrentBranch();
+	auto branch = getItemInfo()->getCurrentBranch();
 
 	uint32 status = getItemInfo()->getStatus();
 	uint32 flags = UserCore::Item::ItemInfoI::STATUS_READY|UserCore::Item::ItemInfoI::STATUS_INSTALLED|UserCore::Item::ItemInfoI::STATUS_UPDATEAVAL;
@@ -873,7 +863,7 @@ bool ItemHandle::installPrivate(MCFBranch branch, MCFBuild build, UserCore::Item
 		flags = (UserCore::ItemTask::GI_FLAGS)(flags & UserCore::ItemTask::GI_FLAG_TEST);
 
 	MCFBranch iBranch = getItemInfo()->getInstalledBranch();
-	BranchInfoI* bInfo = getItemInfo()->getBranchById(branch);
+	auto bInfo = getItemInfo()->getBranchById(branch);
 
 	bool isParentComplex	= getItemInfo()->isParentToComplex();
 	bool isComplex			= getItemInfo()->isComplex();
@@ -918,7 +908,7 @@ bool ItemHandle::cleanComplexMods()
 {
 	if (getItemInfo()->getInstalledModId().isOk())
 	{
-		UserCore::Item::ItemInfoI* mod = m_pUserCore->getItemManager()->findItemInfo(getItemInfo()->getInstalledModId());
+		auto mod = m_pUserCore->getItemManager()->findItemInfo(getItemInfo()->getInstalledModId());
 			
 		if (mod && HasAllFlags(mod->getStatus(), UserCore::Item::ItemInfoI::STATUS_INSTALLCOMPLEX))
 		{
@@ -941,7 +931,7 @@ void ItemHandle::preLaunchCheck()
 	if (!getItemInfo()->isLaunchable())
 		throw gcException(ERR_LAUNCH, gcString("Failed to launch item {0}, failed status check {1}.", getItemInfo()->getName(), getItemInfo()->getStatus()));
 
-	UserCore::Item::Misc::ExeInfoI* ei = getItemInfo()->getActiveExe();
+	auto ei = getItemInfo()->getActiveExe();
 
 	if (!ei)
 		throw gcException(ERR_LAUNCH, gcString("Failed to launch item {0}, No executable info available.", getItemInfo()->getName()));
@@ -1059,7 +1049,7 @@ bool ItemHandle::launch(gcRefPtr<Helper::ItemLaunchHelperI> helper, bool offline
 	{
 		if (getItemInfo()->getInstalledModId().isOk())
 		{
-			UserCore::Item::ItemInfoI* mod = m_pUserCore->getItemManager()->findItemInfo(getItemInfo()->getInstalledModId());
+			auto mod = m_pUserCore->getItemManager()->findItemInfo(getItemInfo()->getInstalledModId());
 
 			if (!mod || !HasAllFlags(mod->getStatus(), UserCore::Item::ItemInfoI::STATUS_INSTALLCOMPLEX))
 			{
@@ -1107,7 +1097,7 @@ bool ItemHandle::launch(gcRefPtr<Helper::ItemLaunchHelperI> helper, bool offline
 			}
 		}
 
-		if (getItemInfo()->getCurrentBranch() == nullptr && hasPreorder)
+		if (!getItemInfo()->getCurrentBranch() && hasPreorder)
 		{
 			helper->showPreOrderPrompt();
 			res = false;
@@ -1197,7 +1187,7 @@ bool ItemHandle::isCurrentlyInstalledGameOrMod()
 
 	if (getItemInfo()->getParentId().isOk())
 	{
-		UserCore::Item::ItemInfoI* par = m_pUserCore->getItemManager()->findItemInfo(getItemInfo()->getParentId());
+		auto par = m_pUserCore->getItemManager()->findItemInfo(getItemInfo()->getParentId());
 		return (par && par->getInstalledModId() == getItemInfo()->getId());
 	}
 
@@ -1339,11 +1329,11 @@ void ItemHandle::getStatusStr_s(gcRefPtr<UserCore::Item::ItemHandleI> pItemHandl
 			{
 				stateMsg = "#IS_READY";
 
-				UserCore::Item::BranchInfoI* bi = pItemInfo->getCurrentBranch();
+				auto bi = pItemInfo->getCurrentBranch();
 				if (bi && bi->isPreOrder())
 					stateMsg = "#IS_PRELOADED_STATUS";
 			}
-			else if (pItemInfo->getCurrentBranch() == nullptr && hasPreorder)
+			else if (!pItemInfo->getCurrentBranch() && hasPreorder)
 			{
 				stateMsg = "#IS_PREORDER_STATUS";
 			}
@@ -1418,10 +1408,8 @@ void ItemHandle::force()
 	if (!m_pGroup)
 		return;
 
-	ItemTaskGroup* group = m_pGroup;
-
-	group->removeItem(this);
-	group->startAction(this);
+	m_pGroup->removeItem(this);
+	m_pGroup->startAction(this);
 }
 
 #ifdef LINK_WITH_GMOCK
@@ -1735,7 +1723,7 @@ namespace UnitTest
 	TEST_F(ItemHandleComplexMods, LaunchParent_ModNotInstalled)
 	{
 		ON_CALL(mcfManager, getMcfPath(_, _)).WillByDefault(Return(gcString()));
-		ON_CALL(mcfManager, getMcfPath(Eq(game.get()), _)).WillByDefault(Return(gcString("existing.file")));
+		ON_CALL(mcfManager, getMcfPath(Eq(game), _)).WillByDefault(Return(gcString("existing.file")));
 
 		static const std::vector<std::string> vSqlCommands =
 		{

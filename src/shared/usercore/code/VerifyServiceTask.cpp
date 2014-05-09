@@ -479,7 +479,7 @@ bool VerifyServiceTask::checkItem()
 bool VerifyServiceTask::checkBranch()
 {
 	auto pItem = getItemInfo();
-	UserCore::Item::BranchInfoI* pBranch = pItem->getCurrentBranch();
+	auto pBranch = pItem->getCurrentBranch();
 	
 	if (!pBranch)
 		return false;

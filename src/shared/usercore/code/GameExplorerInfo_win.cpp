@@ -509,7 +509,7 @@ gcWString GameExplorerInfo::generateXml()
 	uint32 count = 0;
 	for (uint32 x=0; x<m_pItemInfo->getBranchCount(); x++)
 	{
-		UserCore::Item::BranchInfoI* bi = m_pItemInfo->getBranch(x);
+		auto bi = m_pItemInfo->getBranch(x);
 
 		if (!bi)
 			continue;

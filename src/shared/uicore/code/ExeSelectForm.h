@@ -34,12 +34,20 @@ $/LicenseInfo$
 namespace UserCore
 {
 	class ItemManagerI;
+
+	namespace Item
+	{
+		namespace Misc
+		{
+			class ExeInfoI;
+		}
+	}
 }
 
 class ExeSelectForm : public gcFrame 
 {
 public:
-	ExeSelectForm(wxWindow* parent, bool hasSeenCDKey, UserCore::ItemManagerI* pItemManager = nullptr);
+	ExeSelectForm(wxWindow* parent, bool hasSeenCDKey, gcRefPtr<UserCore::ItemManagerI> pItemManager = nullptr);
 	~ExeSelectForm();
 
 	DesuraId getItemId(){return m_Id;}
@@ -58,7 +66,8 @@ private:
 	std::vector<gcButton*> m_vButtonList;
 	DesuraId m_Id;
 
-	UserCore::ItemManagerI* m_pItemManager;
+	std::vector<gcRefPtr<UserCore::Item::Misc::ExeInfoI>> m_vExeList;
+	gcRefPtr<UserCore::ItemManagerI> m_pItemManager;
 };
 
 

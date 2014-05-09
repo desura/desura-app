@@ -83,7 +83,7 @@ InstallVerifyInfoPage::~InstallVerifyInfoPage()
 
 void InstallVerifyInfoPage::init()
 {
-	UserCore::Item::ItemInfoI *info = getItemInfo();
+	auto info = getItemInfo();
 
 	if (!info)
 	{

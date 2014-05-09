@@ -97,7 +97,7 @@ namespace UserCore
 
 
 
-		void findJSTools(gcRefPtr<UserCore::Item::ItemInfo> item) override;
+		void findJSTools(gcRefPtr<UserCore::Item::ItemInfoI> item) override;
 		bool initJSEngine() override;
 		void destroyJSEngine() override;
 

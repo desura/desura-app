@@ -191,7 +191,7 @@ bool UpdateThreadOld::pollUpdates()
 
 	for (uint32 x=0; x< m_pUser->getItemManager()->getCount(); x++)
 	{
-		UserCore::Item::ItemInfoI* item = m_pUser->getItemManager()->getItemInfo(x);
+		auto item = m_pUser->getItemManager()->getItemInfo(x);
 
 		if (!item)
 			continue;

@@ -64,6 +64,13 @@ CONCOMMAND(cc_languagetest, "languagetest")
 	ltd.ShowModal();
 }
 
+
+template <typename T>
+T& MakeFakeRef()
+{
+	return *((T*)nullptr);
+}
+
 class LanguageStubBranch : public UserCore::Item::BranchInfoI
 {
 public:
@@ -101,6 +108,8 @@ public:
 
 	bool m_bSteamGame = false;
 	bool m_bIsPreOrder = false;
+
+	gc_MOCK_REFCOUNTING(LanguageStubExeInfo);
 };
 
 class LanguageStubExeInfo : public UserCore::Item::Misc::ExeInfoI
@@ -115,6 +124,8 @@ public:
 	const char* getUserArgs() override { return ""; }
 
 	void setUserArgs(const char* args) override {}
+
+	gc_MOCK_REFCOUNTING(LanguageStubExeInfo);
 };
 
 class LanguageStubItem : public UserCore::Item::ItemInfoI
@@ -175,17 +186,17 @@ public:
 	const char* getEulaUrl() override { return nullptr; }
 	const char* getInstallScriptPath() override { return nullptr; }
 
-	Event<ItemInfo_s>* getInfoChangeEvent() override { return &m_ChangeEvent; }
+	Event<ItemInfo_s>& getInfoChangeEvent() override { return m_ChangeEvent; }
 	uint32 getBranchCount() override { return 1; }
-	UserCore::Item::BranchInfoI* getBranch(uint32 index) override { return &m_Branch; }
-	UserCore::Item::BranchInfoI* getCurrentBranch() override 
+	gcRefPtr<UserCore::Item::BranchInfoI> getBranch(uint32 index) override { return &m_Branch; }
+	gcRefPtr<UserCore::Item::BranchInfoI> getCurrentBranch() override
 	{ 
 		if (m_bNullCurBranch)
 			return nullptr;
 
 		return &m_Branch; 
 	}
-	UserCore::Item::BranchInfoI* getBranchById(uint32 id) override { return &m_Branch; }
+	gcRefPtr<UserCore::Item::BranchInfoI> getBranchById(uint32 id) override { return &m_Branch; }
 
 
 	uint64 getInstallSize(MCFBranch branch = MCFBranch()) override { return 0; }
@@ -204,16 +215,16 @@ public:
 	void acceptEula() override { }
 	uint32 getExeCount(bool setActive = false, MCFBranch branch = MCFBranch()) override { return 0; }
 
-	void getExeList(std::vector<UserCore::Item::Misc::ExeInfoI*> &list, MCFBranch branch = MCFBranch()) override 
+	void getExeList(std::vector<gcRefPtr<UserCore::Item::Misc::ExeInfoI>> &list, MCFBranch branch = MCFBranch()) override
 	{ 
 		list.push_back(&m_Exe1);
 		list.push_back(&m_Exe2);
 	}
 
-	UserCore::Item::Misc::ExeInfoI* getActiveExe(MCFBranch branch = MCFBranch()) override { return &m_Exe1; }
+	gcRefPtr<UserCore::Item::Misc::ExeInfoI> getActiveExe(MCFBranch branch = MCFBranch()) override { return &m_Exe1; }
 	void setActiveExe(const char* name, MCFBranch branch = MCFBranch()) override { }
 
-	ItemInfoInternalI* getInternal() override { return nullptr; }
+	gcRefPtr<ItemInfoInternalI> getInternal() override { return nullptr; }
 
 	LanguageStubExeInfo m_Exe1;
 	LanguageStubExeInfo m_Exe2;
@@ -238,6 +249,8 @@ public:
 	uint32 m_uiStatus = 0;
 
 	DesuraId m_Id;
+
+	gc_MOCK_REFCOUNTING(LanguageStubExeInfo);
 };
 
 class LanguageStubToolManager : public UserCore::ToolManagerI
@@ -246,16 +259,16 @@ public:
 	virtual ~LanguageStubToolManager(){}
 
 	void removeTransaction(ToolTransactionId ttid, bool forced) override { }
-	ToolTransactionId downloadTools(UserCore::Misc::ToolTransaction* transaction) override { return ToolTransactionId(); }
-	ToolTransactionId installTools(UserCore::Misc::ToolTransaction* transaction) override { return ToolTransactionId(); }
-	bool updateTransaction(ToolTransactionId ttid, UserCore::Misc::ToolTransaction* transaction) override { return false; }
+	ToolTransactionId downloadTools(gcRefPtr<UserCore::Misc::ToolTransaction> transaction) override { return ToolTransactionId(); }
+	ToolTransactionId installTools(gcRefPtr<UserCore::Misc::ToolTransaction> transaction) override { return ToolTransactionId(); }
+	bool updateTransaction(ToolTransactionId ttid, gcRefPtr<UserCore::Misc::ToolTransaction> transaction) override { return false; }
 	void parseXml(const XML::gcXMLElement &toolinfoNode) override { }
 	bool areAllToolsValid(const std::vector<DesuraId> &list) override { return false; }
 	bool areAllToolsDownloaded(const std::vector<DesuraId> &list) override { return false; }
 	bool areAllToolsInstalled(const std::vector<DesuraId> &list) override { return false; }
 	void saveItems() override { }
 	std::string getToolName(DesuraId toolId) override { return "[Test Tool]"; }
-	void findJSTools(UserCore::Item::ItemInfo* item) override { }
+	void findJSTools(gcRefPtr<UserCore::Item::ItemInfoI> item) override { }
 	bool initJSEngine() override { return true; }
 	void destroyJSEngine() override { }
 	void invalidateTools(std::vector<DesuraId> &list) override { }
@@ -266,6 +279,8 @@ public:
 #endif	
 
 	void reloadTools(DesuraId id) override {}
+
+	gc_MOCK_REFCOUNTING(LanguageStubExeInfo);
 };
 
 class LanguageStubItemHandle : public UserCore::Item::ItemHandleI, public UserCore::Item::ItemTaskGroupI
@@ -273,14 +288,14 @@ class LanguageStubItemHandle : public UserCore::Item::ItemHandleI, public UserCo
 public:
 	virtual ~LanguageStubItemHandle(){}
 
-	void setFactory(Helper::ItemHandleFactoryI* factory) override { }
-	void addHelper(Helper::ItemHandleHelperI* helper) override 
+	void setFactory(gcRefPtr<Helper::ItemHandleFactoryI> factory) override { }
+	void addHelper(gcRefPtr<Helper::ItemHandleHelperI> helper) override
 	{
 		gcAssert(m_pHelper == nullptr);
 		m_pHelper = helper;
 	}
 
-	void delHelper(Helper::ItemHandleHelperI* helper) override 
+	void delHelper(gcRefPtr<Helper::ItemHandleHelperI> helper) override
 	{
 		if (m_pHelper == helper)
 			m_pHelper = nullptr;
@@ -289,13 +304,13 @@ public:
 	bool cleanComplexMods() override { return true; }
 	bool verify(bool files, bool tools, bool hooks) override { return true; }
 	bool update() override { return true; }
-	bool install(Helper::ItemLaunchHelperI* helper, MCFBranch branch) override { return true; }
+	bool install(gcRefPtr<Helper::ItemLaunchHelperI> helper, MCFBranch branch) override { return true; }
 	bool install(MCFBranch branch, MCFBuild build, bool test = false) override { return true; }
 	bool installCheck() override { return true; }
-	bool launch(Helper::ItemLaunchHelperI* helper, bool offline = false, bool ignoreUpdate = false) override { return true; }
+	bool launch(gcRefPtr<Helper::ItemLaunchHelperI> helper, bool offline = false, bool ignoreUpdate = false) override { return true; }
 	bool switchBranch(MCFBranch branch) override { return true; }
 	bool startUpCheck() override { return true; }
-	bool uninstall(Helper::ItemUninstallHelperI* helper, bool complete, bool account) override { return true; }
+	bool uninstall(gcRefPtr<Helper::ItemUninstallHelperI> helper, bool complete, bool account) override { return true; }
 
 	void setPaused(bool paused = true) override { }
 	void setPauseOnError(bool pause = true) override { }
@@ -306,10 +321,10 @@ public:
 	ITEM_STAGE getStage() override { return ITEM_STAGE::STAGE_NONE; }
 	void cancelCurrentStage() override { }
 
-	UserCore::Item::ItemInfoI* getItemInfo() override { return m_pItemInfo; }
+	gcRefPtr<UserCore::Item::ItemInfoI> getItemInfo() override { return m_pItemInfo; }
 
-	Event<ITEM_STAGE>* getChangeStageEvent() override { return &m_ChangeStageEvent; }
-	Event<gcException>* getErrorEvent() override { return &m_ErrorEvent; }
+	Event<ITEM_STAGE>& getChangeStageEvent() override { return m_ChangeStageEvent; }
+	Event<gcException>& getErrorEvent() override { return m_ErrorEvent; }
 
 	void getStatusStr(LanguageManagerI & pLangMng, char* buffer, uint32 buffsize) override 
 	{ 
@@ -319,7 +334,7 @@ public:
 			s_GetStatusStr(this, m_pItemInfo, m_Stage, this, pLangMng, buffer, buffsize);
 	}
 
-	ItemTaskGroupI* getTaskGroup() override { return nullptr; }
+	gcRefPtr<ItemTaskGroupI> getTaskGroup() override { return nullptr; }
 
 	void force() override { }
 
@@ -331,14 +346,14 @@ public:
 #endif
 
 	
-	ItemHandleInternalI* getInternal() override { return nullptr; }
+	gcRefPtr<ItemHandleInternalI> getInternal() override { return nullptr; }
 
 	//Item Group
 	ItemTaskGroupI::ACTION getAction() override { return ItemTaskGroupI::A_VERIFY; }
-	void getItemList(std::vector<UserCore::Item::ItemHandleI*> &list) override { }
+	void getItemList(std::vector<gcRefPtr<UserCore::Item::ItemHandleI>> &list) override { }
 	void cancelAll() override { }
 
-	uint32 getPos(UserCore::Item::ItemHandleI* item) override { return 1; }
+	uint32 getPos(gcRefPtr<UserCore::Item::ItemHandleI> item) override { return 1; }
 	uint32 getCount() override { return 2; }
 
 
@@ -347,8 +362,11 @@ public:
 	Event<ITEM_STAGE> m_ChangeStageEvent;
 	Event<gcException> m_ErrorEvent;
 
-	UserCore::Item::ItemInfoI *m_pItemInfo = nullptr;
-	Helper::ItemHandleHelperI* m_pHelper = nullptr;
+	gcRefPtr<UserCore::Item::ItemInfoI> m_pItemInfo;
+	gcRefPtr<Helper::ItemHandleHelperI> m_pHelper;
+
+
+	gc_MOCK_REFCOUNTING(LanguageStubExeInfo);
 };
 
 class LangStubItemManager : public UserCore::ItemManagerI
@@ -367,28 +385,28 @@ public:
 	bool isInstalled(DesuraId id) override { return true; }
 	void removeItem(DesuraId id) override { }
 
-	void retrieveItemInfo(DesuraId id, uint32 statusOveride = 0, WildcardManager* pWildCard = nullptr, MCFBranch mcfBranch = MCFBranch(), MCFBuild mcfBuild = MCFBuild(), bool reset = false) override { }
+	void retrieveItemInfo(DesuraId id, uint32 statusOveride = 0, gcRefPtr<WildcardManager> pWildCard = nullptr, MCFBranch mcfBranch = MCFBranch(), MCFBuild mcfBuild = MCFBuild(), bool reset = false) override { }
 	void retrieveItemInfoAsync(DesuraId id, bool addToAccount = false) override { }
 
 	uint32 getDevItemCount() override { return 0; }
 
-	UserCore::Item::ItemInfoI* findItemInfo(DesuraId id) override { return &m_Item; }
-	UserCore::Item::ItemHandleI* findItemHandle(DesuraId ide) override { return &m_ItemHandle; }
+	gcRefPtr<UserCore::Item::ItemInfoI> findItemInfo(DesuraId id) override { return &m_Item; }
+	gcRefPtr<UserCore::Item::ItemHandleI> findItemHandle(DesuraId ide) override { return &m_ItemHandle; }
 
 	uint32 getCount() override { return 1; }
 
-	UserCore::Item::ItemInfoI* getItemInfo(uint32 index) override { return &m_Item; }
-	UserCore::Item::ItemHandleI* getItemHandle(uint32 index) override { return &m_ItemHandle; }
+	gcRefPtr<UserCore::Item::ItemInfoI> getItemInfo(uint32 index) override { return &m_Item; }
+	gcRefPtr<UserCore::Item::ItemHandleI> getItemHandle(uint32 index) override { return &m_ItemHandle; }
 
 	void getCIP(DesuraId id, char** buff) override { }
-	void getAllItems(std::vector<UserCore::Item::ItemInfoI*> &aList) override { }
-	void getGameList(std::vector<UserCore::Item::ItemInfoI*> &gList, bool includeDeleted = false) override { }
-	void getModList(DesuraId gameId, std::vector<UserCore::Item::ItemInfoI*> &mList, bool includeDeleted = false) override { }
-	void getDevList(std::vector<UserCore::Item::ItemInfoI*> &dList) override { }
-	void getFavList(std::vector<UserCore::Item::ItemInfoI*> &fList) override { }
-	void getRecentList(std::vector<UserCore::Item::ItemInfoI*> &rList) override { }
-	void getLinkList(std::vector<UserCore::Item::ItemInfoI*> &lList) override { }
-	void getNewItems(std::vector<UserCore::Item::ItemInfoI*> &tList) override { }
+	void getAllItems(std::vector<gcRefPtr<UserCore::Item::ItemInfoI>> &aList) override { }
+	void getGameList(std::vector<gcRefPtr<UserCore::Item::ItemInfoI>> &gList, bool includeDeleted = false) override { }
+	void getModList(DesuraId gameId, std::vector<gcRefPtr<UserCore::Item::ItemInfoI>> &mList, bool includeDeleted = false) override { }
+	void getDevList(std::vector<gcRefPtr<UserCore::Item::ItemInfoI>> &dList) override { }
+	void getFavList(std::vector<gcRefPtr<UserCore::Item::ItemInfoI>> &fList) override { }
+	void getRecentList(std::vector<gcRefPtr<UserCore::Item::ItemInfoI>> &rList) override { }
+	void getLinkList(std::vector<gcRefPtr<UserCore::Item::ItemInfoI>> &lList) override { }
+	void getNewItems(std::vector<gcRefPtr<UserCore::Item::ItemInfoI>> &tList) override { }
 
 	void itemsNeedUpdate(const XML::gcXMLElement &itemsNode) override { }
 	void itemsNeedUpdate2(const XML::gcXMLElement &platformsNode) override { }
@@ -398,10 +416,10 @@ public:
 	void setInstalledMod(DesuraId parentId, DesuraId modId) override { }
 	void checkItems() override { }
 
-	EventV* getOnUpdateEvent() override { return nullptr; }
-	Event<DesuraId>* getOnRecentUpdateEvent() override { return nullptr; }
-	Event<DesuraId>* getOnFavoriteUpdateEvent() override { return nullptr; }
-	Event<DesuraId>* getOnNewItemEvent() override { return nullptr; }
+	EventV& getOnUpdateEvent() override { return MakeFakeRef<EventV>(); }
+	Event<DesuraId>& getOnRecentUpdateEvent() override { return MakeFakeRef<Event<DesuraId>>(); }
+	Event<DesuraId>& getOnFavoriteUpdateEvent() override { return MakeFakeRef<Event<DesuraId>>(); }
+	Event<DesuraId>& getOnNewItemEvent() override { return MakeFakeRef<Event<DesuraId>>(); }
 
 
 	DesuraId addLink(const char* name, const char* exe, const char* args) override { return DesuraId(); }
@@ -411,10 +429,12 @@ public:
 	bool isItemFavorite(DesuraId id) override { return false; }
 	void regenLaunchScripts() override { }
 
-	void saveItem(UserCore::Item::ItemInfoI *) override { }
+	void saveItem(gcRefPtr<UserCore::Item::ItemInfoI> item) override { }
 
 	LanguageStubItem m_Item;
 	LanguageStubItemHandle m_ItemHandle;
+
+	gc_MOCK_REFCOUNTING(LanguageStubExeInfo);
 };
 
 //0. Not installed
@@ -493,12 +513,12 @@ public:
 	bool isInstalled(DesuraId id) override { return true; }
 	void removeItem(DesuraId id) override { }
 
-	void retrieveItemInfo(DesuraId id, uint32 statusOveride = 0, WildcardManager* pWildCard = nullptr, MCFBranch mcfBranch = MCFBranch(), MCFBuild mcfBuild = MCFBuild(), bool reset = false) override { }
+	void retrieveItemInfo(DesuraId id, uint32 statusOveride = 0, gcRefPtr<WildcardManager> pWildCard = nullptr, MCFBranch mcfBranch = MCFBranch(), MCFBuild mcfBuild = MCFBuild(), bool reset = false) override { }
 	void retrieveItemInfoAsync(DesuraId id, bool addToAccount = false) override { }
 
 	uint32 getDevItemCount() override { return 0; }
 
-	UserCore::Item::ItemInfoI* findItemInfo(DesuraId id) override 
+	gcRefPtr<UserCore::Item::ItemInfoI> findItemInfo(DesuraId id) override 
 	{ 
 		auto it = std::find_if(begin(m_vItems), end(m_vItems), [id](LanguageStubItem& item){
 			return item.getId() == id;
@@ -510,7 +530,7 @@ public:
 		return &*it;
 	}
 
-	UserCore::Item::ItemHandleI* findItemHandle(DesuraId id) override 
+	gcRefPtr<UserCore::Item::ItemHandleI> findItemHandle(DesuraId id) override
 	{ 
 		auto it = std::find_if(begin(m_vItemHandle), end(m_vItemHandle), [id](LanguageStubItemHandle& handle){
 			return handle.m_pItemInfo->getId() == id;
@@ -519,45 +539,45 @@ public:
 		if (it == end(m_vItemHandle))
 			return nullptr;
 
-		return &*it;
+		return &(*it);
 	}
 
 	uint32 getCount() override { return m_vItems.size(); }
 
-	UserCore::Item::ItemInfoI* getItemInfo(uint32 index) override { return &m_vItems[index]; }
-	UserCore::Item::ItemHandleI* getItemHandle(uint32 index) override { return &m_vItemHandle[index]; }
+	gcRefPtr<UserCore::Item::ItemInfoI> getItemInfo(uint32 index) override { return &m_vItems[index]; }
+	gcRefPtr<UserCore::Item::ItemHandleI> getItemHandle(uint32 index) override { return &m_vItemHandle[index]; }
 
 	void getCIP(DesuraId id, char** buff) override { }
 
-	void getAllItems(std::vector<UserCore::Item::ItemInfoI*> &aList) override 
+	void getAllItems(std::vector<gcRefPtr<UserCore::Item::ItemInfoI>> &aList) override 
 	{
 		for (auto& i : m_vItems)
 			aList.push_back(&i);
 	}
 
-	void getGameList(std::vector<UserCore::Item::ItemInfoI*> &gList, bool includeDeleted = false) override 
+	void getGameList(std::vector<gcRefPtr<UserCore::Item::ItemInfoI>> &gList, bool includeDeleted = false) override 
 	{
 		return getAllItems(gList);
 	}
 
-	void getModList(DesuraId gameId, std::vector<UserCore::Item::ItemInfoI*> &mList, bool includeDeleted = false) override { }
-	void getDevList(std::vector<UserCore::Item::ItemInfoI*> &dList) override 
+	void getModList(DesuraId gameId, std::vector<gcRefPtr<UserCore::Item::ItemInfoI>> &mList, bool includeDeleted = false) override { }
+	void getDevList(std::vector<gcRefPtr<UserCore::Item::ItemInfoI>> &dList) override 
 	{
 		return getAllItems(dList);
 	}
 
-	void getFavList(std::vector<UserCore::Item::ItemInfoI*> &fList) override 
+	void getFavList(std::vector<gcRefPtr<UserCore::Item::ItemInfoI>> &fList) override 
 	{
 		return getAllItems(fList);
 	}
 
-	void getRecentList(std::vector<UserCore::Item::ItemInfoI*> &rList) override 
+	void getRecentList(std::vector<gcRefPtr<UserCore::Item::ItemInfoI>> &rList) override 
 	{
 		return getAllItems(rList);
 	}
 
-	void getLinkList(std::vector<UserCore::Item::ItemInfoI*> &lList) override { }
-	void getNewItems(std::vector<UserCore::Item::ItemInfoI*> &tList) override 
+	void getLinkList(std::vector<gcRefPtr<UserCore::Item::ItemInfoI>> &lList) override { }
+	void getNewItems(std::vector<gcRefPtr<UserCore::Item::ItemInfoI>> &tList) override 
 	{
 		return getAllItems(tList);
 	}
@@ -571,10 +591,10 @@ public:
 	void setInstalledMod(DesuraId parentId, DesuraId modId) override { }
 	void checkItems() override { }
 
-	EventV* getOnUpdateEvent() override { return nullptr; }
-	Event<DesuraId>* getOnRecentUpdateEvent() override { return nullptr; }
-	Event<DesuraId>* getOnFavoriteUpdateEvent() override { return nullptr; }
-	Event<DesuraId>* getOnNewItemEvent() override { return nullptr; }
+	EventV& getOnUpdateEvent() override { return MakeFakeRef<EventV>(); }
+	Event<DesuraId>& getOnRecentUpdateEvent() override { return MakeFakeRef<Event<DesuraId>>(); }
+	Event<DesuraId>& getOnFavoriteUpdateEvent() override { return MakeFakeRef<Event<DesuraId>>(); }
+	Event<DesuraId>& getOnNewItemEvent() override { return MakeFakeRef<Event<DesuraId>>(); }
 
 
 	DesuraId addLink(const char* name, const char* exe, const char* args) override { return DesuraId(); }
@@ -584,10 +604,12 @@ public:
 	bool isItemFavorite(DesuraId id) override { return false; }
 	void regenLaunchScripts() override { }
 
-	void saveItem(UserCore::Item::ItemInfoI *) override { }
+	void saveItem(gcRefPtr<UserCore::Item::ItemInfoI>) override { }
 
 	std::vector<LanguageStubItem> m_vItems;
 	std::vector<LanguageStubItemHandle> m_vItemHandle;
+
+	gc_MOCK_REFCOUNTING(LanguageStubExeInfo);
 };
 
 
@@ -837,10 +859,10 @@ LanguageTestDialog::LanguageTestDialog()
 		return form;
 	});
 
-	std::vector<UserCore::Misc::NewsItem> vNews = 
+	std::vector<gcRefPtr<UserCore::Misc::NewsItem>> vNews = 
 	{
-		UserCore::Misc::NewsItem(0, 0, "Test News 1", "http://www.desura.com/games"),
-		UserCore::Misc::NewsItem(0, 0, "Test News 2", "http://www.desura.com/mods")
+		gcRefPtr<UserCore::Misc::NewsItem>::create(0, 0, "Test News 1", "http://www.desura.com/games"),
+		gcRefPtr<UserCore::Misc::NewsItem>::create(0, 0, "Test News 2", "http://www.desura.com/mods")
 	};
 
 
@@ -946,7 +968,7 @@ LanguageTestDialog::LanguageTestDialog()
 		return form;
 	};
 
-	auto setupActionWithStageAndHelper = [this](INSTALL_ACTION action, ITEM_STAGE stage, Helper::ItemHandleHelperI** helper)
+	auto setupActionWithStageAndHelper = [this](INSTALL_ACTION action, ITEM_STAGE stage, gcRefPtr<Helper::ItemHandleHelperI>* helper)
 	{
 		auto itemMang = new LangStubItemManager();
 		auto toolMang = new LanguageStubToolManager();
@@ -970,7 +992,7 @@ LanguageTestDialog::LanguageTestDialog()
 	});
 
 	addButton("Uninstall - Progress", [this, setupActionWithStageAndHelper](){
-		Helper::ItemHandleHelperI* pHelper = nullptr;
+		gcRefPtr<Helper::ItemHandleHelperI> pHelper;
 		auto ret = setupActionWithStageAndHelper(INSTALL_ACTION::IA_UNINSTALL, ITEM_STAGE::STAGE_UNINSTALL, &pHelper);
 
 		MCFCore::Misc::ProgressInfo info;
@@ -998,7 +1020,7 @@ LanguageTestDialog::LanguageTestDialog()
 
 
 	addButton("Uninstall - Complete", [this, setupActionWithStageAndHelper](){
-		Helper::ItemHandleHelperI* pHelper = nullptr;
+		gcRefPtr<Helper::ItemHandleHelperI> pHelper;
 		auto ret = setupActionWithStageAndHelper(INSTALL_ACTION::IA_UNINSTALL, ITEM_STAGE::STAGE_UNINSTALL, &pHelper);
 
 		uint32 e=0;
@@ -1009,7 +1031,7 @@ LanguageTestDialog::LanguageTestDialog()
 	
 
 	addButton("Uninstall - Error", [this, setupActionWithStageAndHelper](){
-		Helper::ItemHandleHelperI* pHelper = nullptr;
+		gcRefPtr<Helper::ItemHandleHelperI> pHelper;
 		auto ret = setupActionWithStageAndHelper(INSTALL_ACTION::IA_UNINSTALL, ITEM_STAGE::STAGE_UNINSTALL, &pHelper);
 
 		gcException e;
@@ -1030,7 +1052,7 @@ LanguageTestDialog::LanguageTestDialog()
 
 
 	addButton("Verify - Progress Stage 1", [this, setupActionWithStageAndHelper](){
-		Helper::ItemHandleHelperI* pHelper = nullptr;
+		gcRefPtr<Helper::ItemHandleHelperI> pHelper;
 		auto ret = setupActionWithStageAndHelper(INSTALL_ACTION::IA_VERIFY, ITEM_STAGE::STAGE_VERIFY, &pHelper);
 
 		MCFCore::Misc::ProgressInfo info;
@@ -1041,7 +1063,7 @@ LanguageTestDialog::LanguageTestDialog()
 	});
 
 	addButton("Verify - Progress Stage 2", [this, setupActionWithStageAndHelper](){
-		Helper::ItemHandleHelperI* pHelper = nullptr;
+		gcRefPtr<Helper::ItemHandleHelperI> pHelper;
 		auto ret = setupActionWithStageAndHelper(INSTALL_ACTION::IA_VERIFY, ITEM_STAGE::STAGE_VERIFY, &pHelper);
 
 		MCFCore::Misc::ProgressInfo info;
@@ -1052,7 +1074,7 @@ LanguageTestDialog::LanguageTestDialog()
 	});
 
 	addButton("Verify - Progress Stage 3", [this, setupActionWithStageAndHelper](){
-		Helper::ItemHandleHelperI* pHelper = nullptr;
+		gcRefPtr<Helper::ItemHandleHelperI> pHelper;
 		auto ret = setupActionWithStageAndHelper(INSTALL_ACTION::IA_VERIFY, ITEM_STAGE::STAGE_VERIFY, &pHelper);
 
 		MCFCore::Misc::ProgressInfo info;
@@ -1065,7 +1087,7 @@ LanguageTestDialog::LanguageTestDialog()
 	});
 
 	addButton("Verify - Progress Stage 4", [this, setupActionWithStageAndHelper](){
-		Helper::ItemHandleHelperI* pHelper = nullptr;
+		gcRefPtr<Helper::ItemHandleHelperI> pHelper;
 		auto ret = setupActionWithStageAndHelper(INSTALL_ACTION::IA_VERIFY, ITEM_STAGE::STAGE_VERIFY, &pHelper);
 
 		MCFCore::Misc::ProgressInfo info;
@@ -1076,7 +1098,7 @@ LanguageTestDialog::LanguageTestDialog()
 	});
 
 	addButton("Verify - Progress Stage 5", [this, setupActionWithStageAndHelper](){
-		Helper::ItemHandleHelperI* pHelper = nullptr;
+		gcRefPtr<Helper::ItemHandleHelperI> pHelper;
 		auto ret = setupActionWithStageAndHelper(INSTALL_ACTION::IA_VERIFY, ITEM_STAGE::STAGE_VERIFY, &pHelper);
 
 		MCFCore::Misc::ProgressInfo info;
@@ -1087,7 +1109,7 @@ LanguageTestDialog::LanguageTestDialog()
 	});
 
 	addButton("Verify - Complete", [this, setupActionWithStageAndHelper](){
-		Helper::ItemHandleHelperI* pHelper = nullptr;
+		gcRefPtr<Helper::ItemHandleHelperI> pHelper;
 		auto ret = setupActionWithStageAndHelper(INSTALL_ACTION::IA_VERIFY, ITEM_STAGE::STAGE_VERIFY, &pHelper);
 
 		UserCore::Misc::VerifyComplete info;
@@ -1097,7 +1119,7 @@ LanguageTestDialog::LanguageTestDialog()
 
 	addButton("Verify - Error", [this, setupActionWithStageAndHelper](){
 
-		Helper::ItemHandleHelperI* pHelper = nullptr;
+		gcRefPtr<Helper::ItemHandleHelperI> pHelper;
 		auto ret = setupActionWithStageAndHelper(INSTALL_ACTION::IA_VERIFY, ITEM_STAGE::STAGE_VERIFY, &pHelper);
 
 		gcException e;
@@ -1124,7 +1146,7 @@ LanguageTestDialog::LanguageTestDialog()
 
 
 	addButton("Install - GatherInfo - Prog Stage 2", [this, setupActionWithStageAndHelper](){
-		Helper::ItemHandleHelperI* pHelper = nullptr;
+		gcRefPtr<Helper::ItemHandleHelperI> pHelper;
 		auto res = setupActionWithStageAndHelper(INSTALL_ACTION::IA_INSTALL, ITEM_STAGE::STAGE_GATHERINFO, &pHelper);
 
 		uint32 prog = 45;
@@ -1134,7 +1156,7 @@ LanguageTestDialog::LanguageTestDialog()
 	});
 
 	addButton("Install - GatherInfo - Error", [this, setupActionWithStageAndHelper](){
-		Helper::ItemHandleHelperI* pHelper = nullptr;
+		gcRefPtr<Helper::ItemHandleHelperI> pHelper;
 		auto res = setupActionWithStageAndHelper(INSTALL_ACTION::IA_INSTALL, ITEM_STAGE::STAGE_GATHERINFO, &pHelper);
 
 		gcException e;
@@ -1144,7 +1166,7 @@ LanguageTestDialog::LanguageTestDialog()
 	});
 
 	addButton("Install - GatherInfo - Error Platform", [this, setupActionWithStageAndHelper](){
-		Helper::ItemHandleHelperI* pHelper = nullptr;
+		gcRefPtr<Helper::ItemHandleHelperI> pHelper;
 		auto res = setupActionWithStageAndHelper(INSTALL_ACTION::IA_INSTALL, ITEM_STAGE::STAGE_GATHERINFO, &pHelper);
 
 		gcException e(ERR_UNSUPPORTEDPLATFORM);
@@ -1154,7 +1176,7 @@ LanguageTestDialog::LanguageTestDialog()
 	});
 
 	addButton("Install - GatherInfo - Error Branch", [this, setupActionWithStageAndHelper](){
-		Helper::ItemHandleHelperI* pHelper = nullptr;
+		gcRefPtr<Helper::ItemHandleHelperI> pHelper;
 		auto res = setupActionWithStageAndHelper(INSTALL_ACTION::IA_INSTALL, ITEM_STAGE::STAGE_GATHERINFO, &pHelper);
 
 		gcException e(ERR_UNSUPPORTEDPLATFORM, 123);
@@ -1171,7 +1193,7 @@ LanguageTestDialog::LanguageTestDialog()
 	});
 
 	addButton("Install - Download Prog", [this, setupActionWithStageAndHelper](){
-		Helper::ItemHandleHelperI* pHelper = nullptr;
+		gcRefPtr<Helper::ItemHandleHelperI> pHelper;
 		auto res = setupActionWithStageAndHelper(INSTALL_ACTION::IA_INSTALL, ITEM_STAGE::STAGE_DOWNLOAD, &pHelper);
 
 		MCFCore::Misc::ProgressInfo info;
@@ -1191,7 +1213,7 @@ LanguageTestDialog::LanguageTestDialog()
 	});
 
 	addButton("Install - Download Finished", [this, setupActionWithStageAndHelper](){
-		Helper::ItemHandleHelperI* pHelper = nullptr;
+		gcRefPtr<Helper::ItemHandleHelperI> pHelper;
 		auto res = setupActionWithStageAndHelper(INSTALL_ACTION::IA_INSTALL, ITEM_STAGE::STAGE_DOWNLOAD, &pHelper);
 
 		MCFCore::Misc::ProgressInfo info;
@@ -1203,7 +1225,7 @@ LanguageTestDialog::LanguageTestDialog()
 	});
 
 	addButton("Install - Download Prog Paused", [this, setupActionWithStageAndHelper](){
-		Helper::ItemHandleHelperI* pHelper = nullptr;
+		gcRefPtr<Helper::ItemHandleHelperI> pHelper;
 		auto res = setupActionWithStageAndHelper(INSTALL_ACTION::IA_INSTALL, ITEM_STAGE::STAGE_DOWNLOAD, &pHelper);
 
 		pHelper->onPause(true);
@@ -1211,7 +1233,7 @@ LanguageTestDialog::LanguageTestDialog()
 	});
 
 	addButton("Install - Download Error", [this, setupActionWithStageAndHelper](){
-		Helper::ItemHandleHelperI* pHelper = nullptr;
+		gcRefPtr<Helper::ItemHandleHelperI> pHelper;
 		auto res = setupActionWithStageAndHelper(INSTALL_ACTION::IA_INSTALL, ITEM_STAGE::STAGE_DOWNLOAD, &pHelper);
 
 		gcException e;
@@ -1232,7 +1254,7 @@ LanguageTestDialog::LanguageTestDialog()
 	});
 
 	addButton("Install - Install Prog", [this, setupActionWithStageAndHelper](){
-		Helper::ItemHandleHelperI* pHelper = nullptr;
+		gcRefPtr<Helper::ItemHandleHelperI> pHelper;
 		auto res = setupActionWithStageAndHelper(INSTALL_ACTION::IA_INSTALL, ITEM_STAGE::STAGE_INSTALL, &pHelper);
 
 		MCFCore::Misc::ProgressInfo info;
@@ -1252,7 +1274,7 @@ LanguageTestDialog::LanguageTestDialog()
 	});
 
 	addButton("Install - Install Prog Paused", [this, setupActionWithStageAndHelper](){
-		Helper::ItemHandleHelperI* pHelper = nullptr;
+		gcRefPtr<Helper::ItemHandleHelperI> pHelper;
 		auto res = setupActionWithStageAndHelper(INSTALL_ACTION::IA_INSTALL, ITEM_STAGE::STAGE_INSTALL, &pHelper);
 
 		MCFCore::Misc::ProgressInfo info;
@@ -1273,7 +1295,7 @@ LanguageTestDialog::LanguageTestDialog()
 	});
 
 	addButton("Install - Install Complete", [this, setupActionWithStageAndHelper](){
-		Helper::ItemHandleHelperI* pHelper = nullptr;
+		gcRefPtr<Helper::ItemHandleHelperI> pHelper;
 		auto res = setupActionWithStageAndHelper(INSTALL_ACTION::IA_INSTALL, ITEM_STAGE::STAGE_INSTALL, &pHelper);
 
 		uint32 c = 0;
@@ -1293,7 +1315,7 @@ LanguageTestDialog::LanguageTestDialog()
 		
 		itemMang->m_Item.m_Branch.m_bIsPreOrder = true;
 
-		Helper::ItemHandleHelperI* pHelper = itemMang->m_ItemHandle.m_pHelper;
+		auto pHelper = itemMang->m_ItemHandle.m_pHelper;
 
 		uint32 c = 0;
 		pHelper->onComplete(c);
@@ -1303,7 +1325,7 @@ LanguageTestDialog::LanguageTestDialog()
 
 
 	addButton("Install - Install Error", [this, setupActionWithStageAndHelper](){
-		Helper::ItemHandleHelperI* pHelper = nullptr;
+		gcRefPtr<Helper::ItemHandleHelperI> pHelper;
 		auto res = setupActionWithStageAndHelper(INSTALL_ACTION::IA_INSTALL, ITEM_STAGE::STAGE_INSTALL, &pHelper);
 
 		gcException e;
@@ -1329,7 +1351,7 @@ LanguageTestDialog::LanguageTestDialog()
 	});
 
 	addButton("Install - Install Tool Helper", [this, setupActionWithStageAndHelper](){
-		Helper::ItemHandleHelperI* pHelper = nullptr;
+		gcRefPtr<Helper::ItemHandleHelperI> pHelper;
 		auto res = setupActionWithStageAndHelper(INSTALL_ACTION::IA_INSTALL, ITEM_STAGE::STAGE_INSTALLTOOL, &pHelper);
 
 		MCFCore::Misc::ProgressInfo info;
@@ -1340,7 +1362,7 @@ LanguageTestDialog::LanguageTestDialog()
 	});
 
 	addButton("Install - Install Tool Prog", [this, setupActionWithStageAndHelper](){
-		Helper::ItemHandleHelperI* pHelper = nullptr;
+		gcRefPtr<Helper::ItemHandleHelperI> pHelper;
 		auto res = setupActionWithStageAndHelper(INSTALL_ACTION::IA_INSTALL, ITEM_STAGE::STAGE_INSTALLTOOL, &pHelper);
 
 		MCFCore::Misc::ProgressInfo info;
@@ -1358,7 +1380,7 @@ LanguageTestDialog::LanguageTestDialog()
 	});
 
 	addButton("Install - Install Check Error", [this, setupActionWithStageAndHelper](){
-		Helper::ItemHandleHelperI* pHelper = nullptr;
+		gcRefPtr<Helper::ItemHandleHelperI> pHelper;
 		auto res = setupActionWithStageAndHelper(INSTALL_ACTION::IA_INSTALL, ITEM_STAGE::STAGE_INSTALL_CHECK, &pHelper);
 
 		gcException e;
@@ -1378,7 +1400,7 @@ LanguageTestDialog::LanguageTestDialog()
 		form->Show();
 		
 		itemMang->m_Item.m_bIsInstalled = true;
-		Helper::ItemHandleHelperI* pHelper = itemMang->m_ItemHandle.m_pHelper;
+		auto pHelper = itemMang->m_ItemHandle.m_pHelper;
 
 		uint32 c = 0;
 		pHelper->onComplete(c);
@@ -1388,7 +1410,7 @@ LanguageTestDialog::LanguageTestDialog()
 
 
 	addButton("Install - Install Check Finished - Not Found", [this, setupActionWithStageAndHelper](){
-		Helper::ItemHandleHelperI* pHelper = nullptr;
+		gcRefPtr<Helper::ItemHandleHelperI> pHelper;
 		auto res = setupActionWithStageAndHelper(INSTALL_ACTION::IA_INSTALL, ITEM_STAGE::STAGE_INSTALL_CHECK, &pHelper);
 
 		uint32 c = 0;
@@ -1402,7 +1424,7 @@ LanguageTestDialog::LanguageTestDialog()
 
 
 	addButton("Install - Install Complex Init", [this, setupActionWithStageAndHelper](){
-		Helper::ItemHandleHelperI* pHelper = nullptr;
+		gcRefPtr<Helper::ItemHandleHelperI> pHelper;
 		auto res = setupActionWithStageAndHelper(INSTALL_ACTION::IA_INSTALL, ITEM_STAGE::STAGE_INSTALL_COMPLEX, &pHelper);
 
 		MCFCore::Misc::ProgressInfo info;
@@ -1413,7 +1435,7 @@ LanguageTestDialog::LanguageTestDialog()
 	});
 
 	addButton("Install - Install Complex Install", [this, setupActionWithStageAndHelper](){
-		Helper::ItemHandleHelperI* pHelper = nullptr;
+		gcRefPtr<Helper::ItemHandleHelperI> pHelper;
 		auto res = setupActionWithStageAndHelper(INSTALL_ACTION::IA_INSTALL, ITEM_STAGE::STAGE_INSTALL_COMPLEX, &pHelper);
 
 		MCFCore::Misc::ProgressInfo info;
@@ -1425,7 +1447,7 @@ LanguageTestDialog::LanguageTestDialog()
 	});
 
 	addButton("Install - Install Complex Remove", [this, setupActionWithStageAndHelper](){
-		Helper::ItemHandleHelperI* pHelper = nullptr;
+		gcRefPtr<Helper::ItemHandleHelperI> pHelper;
 		auto res = setupActionWithStageAndHelper(INSTALL_ACTION::IA_INSTALL, ITEM_STAGE::STAGE_INSTALL_COMPLEX, &pHelper);
 
 		MCFCore::Misc::ProgressInfo info;
@@ -1437,7 +1459,7 @@ LanguageTestDialog::LanguageTestDialog()
 	});
 
 	addButton("Install - Install Complex Backup", [this, setupActionWithStageAndHelper](){
-		Helper::ItemHandleHelperI* pHelper = nullptr;
+		gcRefPtr<Helper::ItemHandleHelperI> pHelper;
 		auto res = setupActionWithStageAndHelper(INSTALL_ACTION::IA_INSTALL, ITEM_STAGE::STAGE_INSTALL_COMPLEX, &pHelper);
 
 		MCFCore::Misc::ProgressInfo info;
@@ -1456,7 +1478,7 @@ LanguageTestDialog::LanguageTestDialog()
 	});
 
 	addButton("Install - Validate Stage 1", [this, setupActionWithStageAndHelper](){
-		Helper::ItemHandleHelperI* pHelper = nullptr;
+		gcRefPtr<Helper::ItemHandleHelperI> pHelper;
 		auto res = setupActionWithStageAndHelper(INSTALL_ACTION::IA_INSTALL, ITEM_STAGE::STAGE_VALIDATE, &pHelper);
 
 		MCFCore::Misc::ProgressInfo info;
@@ -1473,7 +1495,7 @@ LanguageTestDialog::LanguageTestDialog()
 	});
 
 	addButton("Install - Validate Stage 2", [this, setupActionWithStageAndHelper](){
-		Helper::ItemHandleHelperI* pHelper = nullptr;
+		gcRefPtr<Helper::ItemHandleHelperI> pHelper;
 		auto res = setupActionWithStageAndHelper(INSTALL_ACTION::IA_INSTALL, ITEM_STAGE::STAGE_VALIDATE, &pHelper);
 
 		MCFCore::Misc::ProgressInfo info;
@@ -1490,7 +1512,7 @@ LanguageTestDialog::LanguageTestDialog()
 	});
 
 	addButton("Install - Validate Stage 3", [this, setupActionWithStageAndHelper](){
-		Helper::ItemHandleHelperI* pHelper = nullptr;
+		gcRefPtr<Helper::ItemHandleHelperI> pHelper;
 		auto res = setupActionWithStageAndHelper(INSTALL_ACTION::IA_INSTALL, ITEM_STAGE::STAGE_VALIDATE, &pHelper);
 
 		MCFCore::Misc::ProgressInfo info;
@@ -1507,7 +1529,7 @@ LanguageTestDialog::LanguageTestDialog()
 	});
 
 	addButton("Install - Validate Stage 4", [this, setupActionWithStageAndHelper](){
-		Helper::ItemHandleHelperI* pHelper = nullptr;
+		gcRefPtr<Helper::ItemHandleHelperI> pHelper;
 		auto res = setupActionWithStageAndHelper(INSTALL_ACTION::IA_INSTALL, ITEM_STAGE::STAGE_VALIDATE, &pHelper);
 
 		MCFCore::Misc::ProgressInfo info;
@@ -1525,7 +1547,7 @@ LanguageTestDialog::LanguageTestDialog()
 	});
 
 	addButton("Install - Validate Error", [this, setupActionWithStageAndHelper](){
-		Helper::ItemHandleHelperI* pHelper = nullptr;
+		gcRefPtr<Helper::ItemHandleHelperI> pHelper;
 		auto res = setupActionWithStageAndHelper(INSTALL_ACTION::IA_INSTALL, ITEM_STAGE::STAGE_VALIDATE, &pHelper);
 
 		gcException e;

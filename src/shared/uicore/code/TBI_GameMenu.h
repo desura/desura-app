@@ -35,7 +35,7 @@ $/LicenseInfo$
 class TBIGameMenu : public TBIBaseMenu
 {
 public:
-	TBIGameMenu(UserCore::ItemManagerI* pItemManager)
+	TBIGameMenu(gcRefPtr<UserCore::ItemManagerI> pItemManager)
 		: TBIBaseMenu(pItemManager)
 	{
 	}

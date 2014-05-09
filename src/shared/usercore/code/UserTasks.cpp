@@ -120,7 +120,7 @@ ChangeAccountTask::ChangeAccountTask(gcRefPtr<UserCore::UserI> user, DesuraId id
 
 void ChangeAccountTask::doTask()
 {
-	UserCore::Item::ItemInfo* pItem = getItemInfo();
+	auto pItem = getItemInfo();
 
 	if (!pItem || !getWebCore())
 		return;
@@ -270,7 +270,7 @@ void GatherInfoTask::doTask()
 		if (m_bAddToAccount)
 		{
 			//if we just removed this item from account it will be in a hidden deleted status
-			UserCore::Item::ItemInfoI* info = pUser->getItemManager()->findItemInfo(getItemId());
+			auto info = pUser->getItemManager()->findItemInfo(getItemId());
 
 			if (info)
 				info->delSFlag(UserCore::Item::ItemInfoI::STATUS_DELETED);
@@ -395,7 +395,7 @@ void MigrateStandaloneTask::doTask()
 
 		DesuraId itemId(id.c_str(), "games");
 
-		UserCore::Item::ItemInfoI* info = getUserCore()->getItemManager()->findItemInfo(itemId);
+		auto info = getUserCore()->getItemManager()->findItemInfo(itemId);
 
 		if (!info || info->isInstalled())
 			continue;
@@ -411,7 +411,7 @@ void MigrateStandaloneTask::doTask()
 		}
 
 		info = getUserCore()->getItemManager()->findItemInfo(itemId);
-		UserCore::Item::ItemInfo* realInfo = dynamic_cast<UserCore::Item::ItemInfo*>(info);
+		auto realInfo = gcRefPtr<UserCore::Item::ItemInfo>::dyn_cast(info);
 
 		if (!realInfo)
 			continue;
@@ -430,9 +430,9 @@ RegenLaunchScriptsTask::RegenLaunchScriptsTask(gcRefPtr<UserCore::UserI> user)
 
 void RegenLaunchScriptsTask::doTask()
 {
-	std::vector<UserCore::Item::ItemHandleI*> itemList;
+	std::vector<gcRefPtr<UserCore::Item::ItemHandleI>> itemList;
 	
-	ItemManagerI* im = getUserCore()->getItemManager();
+	auto im = getUserCore()->getItemManager();
 	
 	for (size_t x=0; x<im->getCount(); x++)
 	{

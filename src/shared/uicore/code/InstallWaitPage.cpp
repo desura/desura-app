@@ -30,7 +30,7 @@ $/LicenseInfo$
 class ItemPanel : public gcPanel
 {
 public:
-	ItemPanel(wxWindow* parent, UserCore::Item::ItemInfoI* item, bool last) : gcPanel(parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL)
+	ItemPanel(wxWindow* parent, gcRefPtr<UserCore::Item::ItemInfoI> item, bool last) : gcPanel(parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL)
 	{
 		m_Id = item->getId();
 
@@ -167,8 +167,8 @@ void InstallWaitPage::onMcfProgress(MCFCore::Misc::ProgressInfo& info)
 
 void InstallWaitPage::onProgressUpdate(uint32& progress)
 {
-	UserCore::Item::ItemHandleI* item = getItemHandle();
-	UserCore::Item::ItemTaskGroupI* group = item->getTaskGroup();
+	auto item = getItemHandle();
+	auto group = item->getTaskGroup();
 
 	if (!group)
 	{
@@ -178,7 +178,7 @@ void InstallWaitPage::onProgressUpdate(uint32& progress)
 		return;
 	}
 
-	std::vector<UserCore::Item::ItemHandleI*> list;
+	std::vector<gcRefPtr<UserCore::Item::ItemHandleI>> list;
 	group->getItemList(list);
 
 	std::vector<ItemPanel*> oldList = m_vPanelList;
@@ -225,8 +225,8 @@ void InstallWaitPage::onProgressUpdate(uint32& progress)
 
 void InstallWaitPage::init()
 {
-	UserCore::Item::ItemHandleI* item = getItemHandle();
-	UserCore::Item::ItemTaskGroupI* group = item->getTaskGroup();
+	auto item = getItemHandle();
+	auto group = item->getTaskGroup();
 
 	const wchar_t* action = L"#IF_WAIT_ACTION_UNINSTALL";
 
@@ -236,7 +236,7 @@ void InstallWaitPage::init()
 	m_labInfo->SetLabel(gcWString(Managers::GetString(L"#IF_WAIT_INFO"), item->getItemInfo()->getName(), Managers::GetString(action)));
 	m_labInfo->Wrap(350);
 
-	std::vector<UserCore::Item::ItemHandleI*> list;
+	std::vector<gcRefPtr<UserCore::Item::ItemHandleI>> list;
 	group->getItemList(list);
 
 	for (size_t x=0; x<list.size(); x++)
@@ -257,7 +257,7 @@ void InstallWaitPage::onButtonPressed(wxCommandEvent& event)
 {
 	if (m_butCancelAll->GetId() == event.GetId())
 	{
-		UserCore::Item::ItemTaskGroupI* group = getItemHandle()->getTaskGroup();
+		auto group = getItemHandle()->getTaskGroup();
 
 		if (group)
 			group->cancelAll();

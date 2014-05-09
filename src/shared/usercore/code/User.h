@@ -155,6 +155,8 @@ namespace UserCore
 			return this;
 		}
 
+		void destroy() override;
+
 		void init(const char* appDataPath, const char* szProviderUrl) override;
 		void init(const char* appDataPath) override;
 		const char* getAppDataPath() override;

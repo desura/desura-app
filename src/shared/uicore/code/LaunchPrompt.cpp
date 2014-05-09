@@ -79,7 +79,7 @@ void LaunchItemDialog::onFormClose( wxCloseEvent& event )
 	g_pMainApp->closeForm(this->GetId());
 }
 
-void LaunchItemDialog::setInfo(UserCore::Item::ItemInfoI* item)
+void LaunchItemDialog::setInfo(gcRefPtr<UserCore::Item::ItemInfoI> item)
 {
 	if (!item)
 	{

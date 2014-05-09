@@ -72,9 +72,9 @@ const char* GetUICoreVersion()
 }
 
 //this is the handle to webcore and related functions
-UserCore::UserI* g_pUserHandle = nullptr;
+static gcRefPtr<UserCore::UserI> g_pUserHandle;
 
-WebCore::WebCoreI* GetWebCore()
+gcRefPtr<WebCore::WebCoreI> GetWebCore()
 {
 	if (g_pUserHandle)
 		return g_pUserHandle->getWebCore();
@@ -82,7 +82,7 @@ WebCore::WebCoreI* GetWebCore()
 	return nullptr;
 }
 
-UserCore::UserI* GetUserCore()
+gcRefPtr<UserCore::UserI> GetUserCore()
 {
 	return g_pUserHandle;
 }
@@ -103,17 +103,17 @@ extern ConCommand cc_CheckCert;
 class DeleteUserThread : public ::Thread::BaseThread
 {
 public:
-	DeleteUserThread(UserCore::UserI* user) : ::Thread::BaseThread("Delete User Thread")
+	DeleteUserThread(gcRefPtr<UserCore::UserI> user) : ::Thread::BaseThread("Delete User Thread")
 	{
 		m_pUser = user;
 	}
 	
 	void run() override
 	{
-		safe_delete(m_pUser);	
+		m_pUser->destroy();
 	}
 	
-	UserCore::UserI* m_pUser;
+	gcRefPtr<UserCore::UserI> m_pUser;
 };
 
 DeleteUserThread* g_pDeleteThread = nullptr;
@@ -374,9 +374,9 @@ void MainApp::logIn(const char* user, const char* pass)
 	try
 	{
 		//need to do this here as news items will be passed onlogin
-		*g_pUserHandle->getNewsUpdateEvent() += delegate(this, &MainApp::onNewsUpdate);
-		*g_pUserHandle->getGiftUpdateEvent() += delegate((MainAppNoUI*)this, &MainAppNoUI::onGiftUpdate);
-		*g_pUserHandle->getNeedCvarEvent() += delegate(this, &MainApp::onNeedCvar);
+		g_pUserHandle->getNewsUpdateEvent() += delegate(this, &MainApp::onNewsUpdate);
+		g_pUserHandle->getGiftUpdateEvent() += delegate((MainAppNoUI*)this, &MainAppNoUI::onGiftUpdate);
+		g_pUserHandle->getNeedCvarEvent() += delegate(this, &MainApp::onNeedCvar);
 
 		g_pUserHandle->lockDelete();
 		g_pUserHandle->logIn(user, pass);
@@ -391,9 +391,9 @@ void MainApp::logIn(const char* user, const char* pass)
 	{
 		g_pUserHandle->logOut();
 
-		*g_pUserHandle->getNewsUpdateEvent() -= delegate(this, &MainApp::onNewsUpdate);
-		*g_pUserHandle->getGiftUpdateEvent() -= delegate((MainAppNoUI*)this, &MainAppNoUI::onGiftUpdate);
-		*g_pUserHandle->getNeedCvarEvent() -= delegate(this, &MainApp::onNeedCvar);
+		g_pUserHandle->getNewsUpdateEvent() -= delegate(this, &MainApp::onNewsUpdate);
+		g_pUserHandle->getGiftUpdateEvent() -= delegate((MainAppNoUI*)this, &MainAppNoUI::onGiftUpdate);
+		g_pUserHandle->getNeedCvarEvent() -= delegate(this, &MainApp::onNeedCvar);
 
 		g_pUserHandle->unlockDelete();
 		safe_delete(g_pUserHandle);
@@ -414,19 +414,19 @@ void MainApp::logOut(bool bShowLogin, bool autoLogin)
 		std::lock_guard<std::mutex> a(m_UserLock);
 		if (g_pUserHandle)
 		{
-			UserCore::UserI* user = g_pUserHandle;
+			auto user = g_pUserHandle;
 
 			g_pUserHandle = nullptr;
 			DesuraJSBinding::gs_pItemManager = nullptr;
 
-			*user->getPipeDisconnectEvent() -= guiDelegate(this, &MainApp::onPipeDisconnect);
+			user->getPipeDisconnectEvent() -= guiDelegate(this, &MainApp::onPipeDisconnect);
 			user->logOut(!autoLogin);
 
-			*user->getAppUpdateProgEvent()				-= guiDelegate(this, &MainApp::onAppUpdateProg);
-			*user->getAppUpdateCompleteEvent()			-= guiDelegate(this, &MainApp::onAppUpdate);
-			*user->getWebCore()->getCookieUpdateEvent() -= guiDelegate(this, &MainApp::onCookieUpdate);
+			user->getAppUpdateProgEvent()				-= guiDelegate(this, &MainApp::onAppUpdateProg);
+			user->getAppUpdateCompleteEvent()			-= guiDelegate(this, &MainApp::onAppUpdate);
+			user->getWebCore()->getCookieUpdateEvent() -= guiDelegate(this, &MainApp::onCookieUpdate);
 
-			safe_delete(user);
+			user->destroy();
 		}
 	}
 
@@ -488,20 +488,23 @@ void MainApp::offlineMode()
 		std::lock_guard<std::mutex> a(m_UserLock);
 
 		gcString path = UTIL::OS::getAppDataPath();
-		safe_delete(g_pUserHandle);
+		
+		if (g_pUserHandle)
+			g_pUserHandle->destroy();
+
 		g_pUserHandle = (UserCore::UserI*)UserCore::FactoryBuilderUC(USERCORE);
 		g_pUserHandle->init(path.c_str());
 
 		try
 		{
-			*g_pUserHandle->getNeedCvarEvent() += delegate(this, &MainApp::onNeedCvar);
+			g_pUserHandle->getNeedCvarEvent() += delegate(this, &MainApp::onNeedCvar);
 			g_pUserHandle->getItemManager()->loadItems();
 		}
 		catch (gcException &)
 		{
-			*g_pUserHandle->getNeedCvarEvent() -= delegate(this, &MainApp::onNeedCvar);
+			g_pUserHandle->getNeedCvarEvent() -= delegate(this, &MainApp::onNeedCvar);
 			g_pUserHandle->logOut();
-			safe_delete(g_pUserHandle);
+			g_pUserHandle->destroy();
 			throw;
 		}
 	}
@@ -593,10 +596,10 @@ void MainApp::onLoginAcceptedCB(std::pair<bool,bool> &loginInfo)
 	if (saveLoginInfo)
 		GetUserCore()->saveLoginInfo();
 
-	*GetUserCore()->getAppUpdateProgEvent() += guiDelegate(this, &MainApp::onAppUpdateProg);
-	*GetUserCore()->getAppUpdateCompleteEvent() += guiDelegate(this, &MainApp::onAppUpdate);
-	*GetWebCore()->getCookieUpdateEvent() += guiDelegate(this, &MainApp::onCookieUpdate);
-	*GetUserCore()->getPipeDisconnectEvent() += guiDelegate(this, &MainApp::onPipeDisconnect);
+	GetUserCore()->getAppUpdateProgEvent() += guiDelegate(this, &MainApp::onAppUpdateProg);
+	GetUserCore()->getAppUpdateCompleteEvent() += guiDelegate(this, &MainApp::onAppUpdate);
+	GetWebCore()->getCookieUpdateEvent() += guiDelegate(this, &MainApp::onCookieUpdate);
+	GetUserCore()->getPipeDisconnectEvent() += guiDelegate(this, &MainApp::onPipeDisconnect);
 	
 	//trigger this so it sets cookies first time around
 	onCookieUpdate();
@@ -729,19 +732,14 @@ void MainApp::onAppUpdate(UserCore::Misc::UpdateInfo& info)
 	m_pInternalLink->showAppUpdate(info.branch);
 }
 
-void MainApp::onNewsUpdate(std::vector<UserCore::Misc::NewsItem*>& itemList)
+void MainApp::onNewsUpdate(std::vector<gcRefPtr<UserCore::Misc::NewsItem>>& itemList)
 {
 	gcTrace("");
 
 	std::lock_guard<std::mutex> guard(m_NewsLock);
 
 	for (auto i : itemList)
-	{
-		if (!i)
-			continue;
-
-		m_vNewsItems.push_back(std::make_shared<UserCore::Misc::NewsItem>(i));
-	}
+		m_vNewsItems.push_back(i);
 }
 
 void MainApp::onNotifyGiftUpdate()
@@ -749,10 +747,10 @@ void MainApp::onNotifyGiftUpdate()
 	m_wxTBIcon->showGiftPopup(m_vGiftItems);
 }
 
-void MainAppNoUI::onGiftUpdate(std::vector<UserCore::Misc::NewsItem*>& itemList)
+void MainAppNoUI::onGiftUpdate(std::vector<gcRefPtr<UserCore::Misc::NewsItem>>& itemList)
 {
-	std::vector<std::shared_ptr<UserCore::Misc::NewsItem>> oldList;
-	std::vector<std::shared_ptr<UserCore::Misc::NewsItem>> output;
+	std::vector<gcRefPtr<UserCore::Misc::NewsItem>> oldList;
+	std::vector<gcRefPtr<UserCore::Misc::NewsItem>> output;
 
 	{
 		std::lock_guard<std::mutex> guard(m_NewsLock);
@@ -765,11 +763,11 @@ void MainAppNoUI::onGiftUpdate(std::vector<UserCore::Misc::NewsItem*>& itemList)
 			if (!i)
 				continue;
 
-			m_vGiftItems.push_back(std::make_shared<UserCore::Misc::NewsItem>(i));
+			m_vGiftItems.push_back(i);
 		}
 
 		auto it = std::set_intersection(begin(m_vGiftItems), end(m_vGiftItems), begin(oldList), end(oldList), std::back_inserter(output),
-			[](std::shared_ptr<UserCore::Misc::NewsItem> a, std::shared_ptr<UserCore::Misc::NewsItem> b){
+			[](gcRefPtr<UserCore::Misc::NewsItem> a, gcRefPtr<UserCore::Misc::NewsItem> b){
 			return a->id < b->id;
 		});
 
@@ -788,7 +786,7 @@ void MainApp::onNeedCvar(UserCore::Misc::CVar_s& info)
 {
 	if (info.name)
 	{
-		CVar* c = GetCVarManager()->findCVar(info.name);
+		auto c = GetCVarManager()->findCVar(info.name);
 
 		if (c)
 			info.value = c->getString();
@@ -908,12 +906,12 @@ namespace UnitTest
 			m_MainApp.onNotifyGiftUpdateEvent += delegate(this, &MainAppFixture::onGiftUpdateCallback);
 		}
 
-		void setExistingGift(UserCore::Misc::NewsItem* pItem)
+		void setExistingGift(gcRefPtr<UserCore::Misc::NewsItem> pItem)
 		{
-			m_MainApp.m_vGiftItems.push_back(std::shared_ptr<UserCore::Misc::NewsItem>(pItem));
+			m_MainApp.m_vGiftItems.push_back(pItem);
 		}
 
-		void onGiftUpdate(std::vector<UserCore::Misc::NewsItem*> &itemList)
+		void onGiftUpdate(std::vector<gcRefPtr<UserCore::Misc::NewsItem>> &itemList)
 		{
 			m_MainApp.onGiftUpdate(itemList);
 		}
@@ -929,8 +927,8 @@ namespace UnitTest
 
 	TEST_F(MainAppFixture, GiftUpdate_NoneExisting)
 	{
-		std::vector<UserCore::Misc::NewsItem*> itemList;
-		itemList.push_back(new UserCore::Misc::NewsItem(1, 1, "", ""));
+		std::vector<gcRefPtr<UserCore::Misc::NewsItem>> itemList;
+		itemList.push_back(gcRefPtr<UserCore::Misc::NewsItem>::create(1, 1, "", ""));
 
 		onGiftUpdate(itemList);
 		ASSERT_TRUE(m_bHitGiftUpdate);
@@ -938,32 +936,32 @@ namespace UnitTest
 
 	TEST_F(MainAppFixture, GiftUpdate_OneExisting_Diff)
 	{
-		std::vector<UserCore::Misc::NewsItem*> itemList;
-		itemList.push_back(new UserCore::Misc::NewsItem(2, 1, "", ""));
+		std::vector<gcRefPtr<UserCore::Misc::NewsItem>> itemList;
+		itemList.push_back(gcRefPtr<UserCore::Misc::NewsItem>::create(2, 1, "", ""));
 
-		setExistingGift(new UserCore::Misc::NewsItem(1, 1, "", ""));
+		setExistingGift(gcRefPtr<UserCore::Misc::NewsItem>::create(1, 1, "", ""));
 		onGiftUpdate(itemList);
 		ASSERT_TRUE(m_bHitGiftUpdate);
 	}
 
 	TEST_F(MainAppFixture, GiftUpdate_OneExisting_Same)
 	{
-		std::vector<UserCore::Misc::NewsItem*> itemList;
-		itemList.push_back(new UserCore::Misc::NewsItem(1, 1, "", ""));
+		std::vector<gcRefPtr<UserCore::Misc::NewsItem>> itemList;
+		itemList.push_back(gcRefPtr<UserCore::Misc::NewsItem>::create(1, 1, "", ""));
 
-		setExistingGift(new UserCore::Misc::NewsItem(1, 1, "", ""));
+		setExistingGift(gcRefPtr<UserCore::Misc::NewsItem>::create(1, 1, "", ""));
 		onGiftUpdate(itemList);
 		ASSERT_FALSE(m_bHitGiftUpdate);
 	}
 
 	TEST_F(MainAppFixture, GiftUpdate_ManyExisting_Same)
 	{
-		std::vector<UserCore::Misc::NewsItem*> itemList;
-		itemList.push_back(new UserCore::Misc::NewsItem(1, 1, "", ""));
-		itemList.push_back(new UserCore::Misc::NewsItem(2, 1, "", ""));
+		std::vector<gcRefPtr<UserCore::Misc::NewsItem>> itemList;
+		itemList.push_back(gcRefPtr<UserCore::Misc::NewsItem>::create(1, 1, "", ""));
+		itemList.push_back(gcRefPtr<UserCore::Misc::NewsItem>::create(2, 1, "", ""));
 
-		setExistingGift(new UserCore::Misc::NewsItem(1, 1, "", ""));
-		setExistingGift(new UserCore::Misc::NewsItem(2, 1, "", ""));
+		setExistingGift(gcRefPtr<UserCore::Misc::NewsItem>::create(1, 1, "", ""));
+		setExistingGift(gcRefPtr<UserCore::Misc::NewsItem>::create(2, 1, "", ""));
 
 		onGiftUpdate(itemList);
 		ASSERT_FALSE(m_bHitGiftUpdate);
@@ -971,12 +969,12 @@ namespace UnitTest
 
 	TEST_F(MainAppFixture, GiftUpdate_ManyExisting_Diff_NoOverlap)
 	{
-		std::vector<UserCore::Misc::NewsItem*> itemList;
-		itemList.push_back(new UserCore::Misc::NewsItem(1, 1, "", ""));
-		itemList.push_back(new UserCore::Misc::NewsItem(2, 1, "", ""));
+		std::vector<gcRefPtr<UserCore::Misc::NewsItem>> itemList;
+		itemList.push_back(gcRefPtr<UserCore::Misc::NewsItem>::create(1, 1, "", ""));
+		itemList.push_back(gcRefPtr<UserCore::Misc::NewsItem>::create(2, 1, "", ""));
 
-		setExistingGift(new UserCore::Misc::NewsItem(10, 1, "", ""));
-		setExistingGift(new UserCore::Misc::NewsItem(11, 1, "", ""));
+		setExistingGift(gcRefPtr<UserCore::Misc::NewsItem>::create(10, 1, "", ""));
+		setExistingGift(gcRefPtr<UserCore::Misc::NewsItem>::create(11, 1, "", ""));
 
 		onGiftUpdate(itemList);
 		ASSERT_TRUE(m_bHitGiftUpdate);
@@ -984,12 +982,12 @@ namespace UnitTest
 
 	TEST_F(MainAppFixture, GiftUpdate_ManyExisting_Diff_SomeOverlap)
 	{
-		std::vector<UserCore::Misc::NewsItem*> itemList;
-		itemList.push_back(new UserCore::Misc::NewsItem(1, 1, "", ""));
-		itemList.push_back(new UserCore::Misc::NewsItem(2, 1, "", ""));
+		std::vector<gcRefPtr<UserCore::Misc::NewsItem>> itemList;
+		itemList.push_back(gcRefPtr<UserCore::Misc::NewsItem>::create(1, 1, "", ""));
+		itemList.push_back(gcRefPtr<UserCore::Misc::NewsItem>::create(2, 1, "", ""));
 
-		setExistingGift(new UserCore::Misc::NewsItem(1, 1, "", ""));
-		setExistingGift(new UserCore::Misc::NewsItem(11, 1, "", ""));
+		setExistingGift(gcRefPtr<UserCore::Misc::NewsItem>::create(1, 1, "", ""));
+		setExistingGift(gcRefPtr<UserCore::Misc::NewsItem>::create(11, 1, "", ""));
 
 		onGiftUpdate(itemList);
 		ASSERT_TRUE(m_bHitGiftUpdate);

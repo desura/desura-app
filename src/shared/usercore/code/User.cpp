@@ -84,6 +84,11 @@ User::~User()
 	safe_delete(m_pMcfManager);
 }
 
+void User::destroy()
+{
+	
+}
+
 void User::onLoginItemsLoaded()
 {
 	m_bDelayLoading = false;

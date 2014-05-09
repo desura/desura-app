@@ -164,7 +164,7 @@ bool ComplexLaunchServiceTask::isFilesToRestore()
 	{
 		auto pItem = getItemInfo();
 
-		UserCore::MCFManagerI *mm = getUserCore()->getInternal()->getMCFManager();
+		auto mm = getUserCore()->getInternal()->getMCFManager();
 		gcString backup = mm->getMcfBackup(pItem->getId(), pItem->getInstalledModId());
 
 		McfHandle mcfH;
@@ -193,7 +193,7 @@ bool ComplexLaunchServiceTask::install()
 {
 	m_iMode = BACKUP;
 
-	UserCore::MCFManagerI *mm = getUserCore()->getInternal()->getMCFManager();
+	auto mm = getUserCore()->getInternal()->getMCFManager();
 
 	gcString path = getFullMcf();
 
@@ -256,7 +256,7 @@ bool ComplexLaunchServiceTask::install()
 
 gcString ComplexLaunchServiceTask::getFullMcf()
 {
-	UserCore::MCFManagerI *mm = getUserCore()->getInternal()->getMCFManager();
+	auto mm = getUserCore()->getInternal()->getMCFManager();
 	
 	gcString path = mm->getMcfPath(getItemInfo());
 
@@ -284,7 +284,7 @@ bool ComplexLaunchServiceTask::remove()
 	gcException eNoInstBrch(ERR_NULLHANDLE, "Item that is meant to be removed for complex install has no installed branches.");
 	gcException eBadPath(ERR_BADPATH, "Mcf path was null or invalid.");
 
-	UserCore::Item::ItemInfoI *item = getUserCore()->getItemManager()->findItemInfo(m_iRemoveId);
+	auto item = getUserCore()->getItemManager()->findItemInfo(m_iRemoveId);
 	
 	if (!item)
 	{
@@ -299,7 +299,7 @@ bool ComplexLaunchServiceTask::remove()
 	}
 
 	m_iMode = REMOVING;
-	UserCore::MCFManagerI *mm = getUserCore()->getInternal()->getMCFManager();
+	auto mm = getUserCore()->getInternal()->getMCFManager();
 
 	MCFBuild build = item->getInstalledBuild();
 	MCFBranch branch = item->getCurrentBranch()->getBranchId();
@@ -388,12 +388,12 @@ void ComplexLaunchServiceTask::onTrueComplete()
 
 void ComplexLaunchServiceTask::completeRemove()
 {
-	UserCore::Item::ItemInfoI *item = getUserCore()->getItemManager()->findItemInfo(m_iRemoveId);
+	auto item = getUserCore()->getItemManager()->findItemInfo(m_iRemoveId);
 
 	if (!item)
 		return;
 
-	UserCore::MCFManagerI *mm = getUserCore()->getInternal()->getMCFManager();
+	auto mm = getUserCore()->getInternal()->getMCFManager();
 	mm->delMcfBackup(item->getParentId(), m_iRemoveId);
 
 	getUserCore()->getItemManager()->setInstalledMod(item->getParentId(), DesuraId());

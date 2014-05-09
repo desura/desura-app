@@ -47,7 +47,7 @@ namespace ItemFormPage
 class InstallINToolPage : public BaseInstallPage 
 {
 public:
-	InstallINToolPage(wxWindow* parent, UserCore::ToolManagerI* pToolManager = nullptr);
+	InstallINToolPage(wxWindow* parent, gcRefPtr<UserCore::ToolManagerI> pToolManager = nullptr);
 	~InstallINToolPage();
 
 protected:
@@ -65,7 +65,7 @@ protected:
 
 private:
 	bool m_bCompleted;
-	UserCore::ToolManagerI* m_pToolManager = nullptr;
+	gcRefPtr<UserCore::ToolManagerI> m_pToolManager;
 };
 
 }

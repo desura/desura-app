@@ -43,7 +43,7 @@ $/LicenseInfo$
 class UploadMCFForm : public gcFrame 
 {
 public:
-	UploadMCFForm(wxWindow* parent, UserCore::ItemManagerI* pItemManager = nullptr);
+	UploadMCFForm(wxWindow* parent, gcRefPtr<UserCore::ItemManagerI> pItemManager = nullptr);
 	~UploadMCFForm();
 
 	//this is used for a new upload
@@ -86,8 +86,8 @@ private:
 	gcString m_szPath;
 
 	DesuraId m_uiInternId;
-	UserCore::Item::ItemInfoI* m_pItemInfo = nullptr;
-	UserCore::ItemManagerI* m_pItemManager = nullptr;
+	gcRefPtr<UserCore::Item::ItemInfoI> m_pItemInfo = nullptr;
+	gcRefPtr<UserCore::ItemManagerI> m_pItemManager = nullptr;
 
 	DECLARE_EVENT_TABLE();
 };

@@ -31,7 +31,7 @@ $/LicenseInfo$
 
 using namespace UserCore;
 
-MCFDownloadProviders::MCFDownloadProviders(WebCore::WebCoreI* pWebCore, int nUserId)
+MCFDownloadProviders::MCFDownloadProviders(gcRefPtr<WebCore::WebCoreI> pWebCore, int nUserId)
 	: m_pWebCore(pWebCore)
 	, m_nUserId(nUserId)
 {

@@ -511,7 +511,7 @@ void BranchInstallInfo::getExeList(std::vector<gcRefPtr<UserCore::Item::Misc::Ex
 uint32 BranchInstallInfo::getExeCount(bool setActive)
 {
 	uint32 count = 0;
-	ExeInfo *ei = nullptr;
+	gcRefPtr<ExeInfo> ei;
 
 	for (auto exe : m_vExeList)
 	{

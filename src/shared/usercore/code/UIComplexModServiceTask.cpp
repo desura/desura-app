@@ -118,7 +118,7 @@ bool UIComplexModServiceTask::initService()
 		return false;
 	}
 
-	UserCore::MCFManagerI *mm = getUserCore()->getInternal()->getMCFManager();
+	auto mm = getUserCore()->getInternal()->getMCFManager();
 
 	gcString installPath = modInfo->getPath();
 	gcString parPath = mm->getMcfBackup(parentInfo->getId(), m_idLastInstalledMod);
@@ -149,7 +149,7 @@ void UIComplexModServiceTask::onComplete()
 {
 	if (HasAllFlags(getItemInfo()->getStatus(), UserCore::Item::ItemInfoI::STATUS_INSTALLCOMPLEX))
 	{
-		UserCore::MCFManagerI *mm = getUserCore()->getInternal()->getMCFManager();
+		auto mm = getUserCore()->getInternal()->getMCFManager();
 		mm->delMcfBackup(getItemInfo()->getParentId(), m_idLastInstalledMod);
 	}
 

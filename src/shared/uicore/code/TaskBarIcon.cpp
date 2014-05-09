@@ -59,7 +59,7 @@ CONCOMMAND(testapppopup, "testapppopup")
 {
 	Msg("App update");
 	UserCore::Misc::UpdateInfo a(BUILDID_PUBLIC,2);
-	GetUserCore()->getAppUpdateEvent()->operator()(a);
+	GetUserCore()->getAppUpdateEvent()(a);
 		
 
 	gcSleep(2000);
@@ -67,21 +67,21 @@ CONCOMMAND(testapppopup, "testapppopup")
 	Msg("App prog update");
 
 	uint32 prog = 32;
-	GetUserCore()->getAppUpdateProgEvent()->operator()(prog);
+	GetUserCore()->getAppUpdateProgEvent()(prog);
 
 	gcSleep(2000);
 
 	prog = 0;
-	GetUserCore()->getAppUpdateProgEvent()->operator()(prog);
+	GetUserCore()->getAppUpdateProgEvent()(prog);
 
 
 	Msg("UserUpdated");
 
-	GetUserCore()->getUserUpdateEvent()->operator()();
+	GetUserCore()->getUserUpdateEvent()();
 
 
-	//*GetUserCore()->getItemManager()->getOnUpdateEvent();
-	//*GetUserCore()->getItemsAddedEvent();
+	//userCore->getItemManager()->getOnUpdateEvent();
+	//userCore->getItemsAddedEvent();
 }
 
 #ifdef DEBUG
@@ -93,7 +93,7 @@ CONCOMMAND(testappupdate, "testappupdate")
 
 #endif
 
-TaskBarIcon::TaskBarIcon(wxWindow *parent, UserCore::ItemManagerI* pItemManager) 
+TaskBarIcon::TaskBarIcon(wxWindow *parent, gcRefPtr<UserCore::ItemManagerI> pItemManager) 
 	: gcTaskBarIcon()
 {
 	Bind(wxEVT_TASKBAR_BALLOON_CLICK, &TaskBarIcon::onBallonClick, this);
@@ -152,30 +152,34 @@ TaskBarIcon::~TaskBarIcon()
 
 void TaskBarIcon::regEvents()
 {
+	auto userCore = GetUserCore();
+
 	//if we are offline user handle is null
-	if (GetUserCore())
+	if (userCore)
 	{
-		*GetUserCore()->getAppUpdateEvent() += guiDelegate(this, &TaskBarIcon::onAppUpdate);
-		*GetUserCore()->getAppUpdateProgEvent() += guiDelegate(this, &TaskBarIcon::onAppUpdateProg);
-		*GetUserCore()->getAppUpdateCompleteEvent() += guiDelegate(this, &TaskBarIcon::onAppUpdateComplete);
-		*GetUserCore()->getItemManager()->getOnUpdateEvent() += guiDelegate(this, &TaskBarIcon::onUpdate);
-		*GetUserCore()->getItemsAddedEvent() += guiDelegate(this, &TaskBarIcon::onItemsAdded);
-		*GetUserCore()->getUserUpdateEvent() += guiDelegate(this, &TaskBarIcon::onUserUpdate);
+		userCore->getAppUpdateEvent() += guiDelegate(this, &TaskBarIcon::onAppUpdate);
+		userCore->getAppUpdateProgEvent() += guiDelegate(this, &TaskBarIcon::onAppUpdateProg);
+		userCore->getAppUpdateCompleteEvent() += guiDelegate(this, &TaskBarIcon::onAppUpdateComplete);
+		userCore->getItemManager()->getOnUpdateEvent() += guiDelegate(this, &TaskBarIcon::onUpdate);
+		userCore->getItemsAddedEvent() += guiDelegate(this, &TaskBarIcon::onItemsAdded);
+		userCore->getUserUpdateEvent() += guiDelegate(this, &TaskBarIcon::onUserUpdate);
 	}
 	updateIcon();
 }
 
 void TaskBarIcon::deregEvents()
 {
+	auto userCore = GetUserCore();
+
 	//if we are offline user handle is null
-	if (GetUserCore())
+	if (userCore)
 	{
-		*GetUserCore()->getAppUpdateEvent() -= guiDelegate(this, &TaskBarIcon::onAppUpdate);
-		*GetUserCore()->getAppUpdateProgEvent() -= guiDelegate(this, &TaskBarIcon::onAppUpdateProg);
-		*GetUserCore()->getAppUpdateCompleteEvent() -= guiDelegate(this, &TaskBarIcon::onAppUpdateComplete);
-		*GetUserCore()->getItemManager()->getOnUpdateEvent() -= guiDelegate(this, &TaskBarIcon::onUpdate);
-		*GetUserCore()->getItemsAddedEvent() -= guiDelegate(this, &TaskBarIcon::onItemsAdded);
-		*GetUserCore()->getUserUpdateEvent() -= guiDelegate(this, &TaskBarIcon::onUserUpdate);
+		userCore->getAppUpdateEvent() -= guiDelegate(this, &TaskBarIcon::onAppUpdate);
+		userCore->getAppUpdateProgEvent() -= guiDelegate(this, &TaskBarIcon::onAppUpdateProg);
+		userCore->getAppUpdateCompleteEvent() -= guiDelegate(this, &TaskBarIcon::onAppUpdateComplete);
+		userCore->getItemManager()->getOnUpdateEvent() -= guiDelegate(this, &TaskBarIcon::onUpdate);
+		userCore->getItemsAddedEvent() -= guiDelegate(this, &TaskBarIcon::onItemsAdded);
+		userCore->getUserUpdateEvent() -= guiDelegate(this, &TaskBarIcon::onUserUpdate);
 	}
 }
 

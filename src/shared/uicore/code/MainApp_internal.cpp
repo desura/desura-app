@@ -171,7 +171,7 @@ void MainApp::loadUrl(const char* url, PAGE page)
 
 void MainApp::showProfile(DesuraId id, const LinkArgs &args)
 {
-	UserCore::Item::ItemInfoI* item = GetUserCore()->getItemManager()->findItemInfo( id );
+	gcRefPtr<UserCore::Item::ItemInfoI> item = GetUserCore()->getItemManager()->findItemInfo( id );
 
 	if (item && item->getProfile())
 	{
@@ -197,7 +197,7 @@ void MainApp::showProfile(DesuraId id, const LinkArgs &args)
 
 void MainApp::showDevProfile(DesuraId id)
 {
-	UserCore::Item::ItemInfoI* item = GetUserCore()->getItemManager()->findItemInfo( id );
+	gcRefPtr<UserCore::Item::ItemInfoI> item = GetUserCore()->getItemManager()->findItemInfo( id );
 
 	if (item && item->getDevProfile())
 	{
@@ -211,7 +211,7 @@ void MainApp::showDevProfile(DesuraId id)
 
 void MainApp::showDevPage(DesuraId id)
 {
-	UserCore::Item::ItemInfoI* item = GetUserCore()->getItemManager()->findItemInfo( id );
+	gcRefPtr<UserCore::Item::ItemInfoI> item = GetUserCore()->getItemManager()->findItemInfo( id );
 
 	if (!item)
 		return;
@@ -228,7 +228,7 @@ void MainApp::showNews()
 		return;
 	}
 
-	std::vector<std::shared_ptr<UserCore::Misc::NewsItem>> news_items_vec;
+	std::vector<gcRefPtr<UserCore::Misc::NewsItem>> news_items_vec;
 	std::lock_guard<std::mutex> guard(m_NewsLock);
 
 	if (gc_enable_news_popups.getBool())
@@ -242,7 +242,7 @@ void MainApp::showNews()
 
 void MainApp::changeAccountState(DesuraId id)
 {
-	UserCore::Item::ItemInfoI* item = GetUserCore()->getItemManager()->findItemInfo( id );
+	gcRefPtr<UserCore::Item::ItemInfoI> item = GetUserCore()->getItemManager()->findItemInfo( id );
 
 	if (!item)
 	{

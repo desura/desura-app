@@ -61,14 +61,14 @@ namespace UserCore
 		//! @param id Item id
 		//! @param callback Callback to use when complete
 		//!
-		virtual void getCDKeyForCurrentBranch(DesuraId id, gcRefPtr<UserCore::Misc::CDKeyCallBackI> &pCallback) = 0;
+		virtual void getCDKeyForCurrentBranch(DesuraId id, gcRefPtr<UserCore::Misc::CDKeyCallBackI> pCallback) = 0;
 
 		//! Cancels a request to get a cd key
 		//!
 		//! @param id Item id
 		//! @param callback Request callback used in original request
 		//!
-		virtual void cancelRequest(DesuraId id, gcRefPtr<UserCore::Misc::CDKeyCallBackI> &pCallback) = 0;
+		virtual void cancelRequest(DesuraId id, gcRefPtr<UserCore::Misc::CDKeyCallBackI> pCallback) = 0;
 
 		//! Does the current branch require a cd key
 		//!

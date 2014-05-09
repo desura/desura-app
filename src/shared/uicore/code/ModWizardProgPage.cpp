@@ -120,12 +120,12 @@ void MWProgressPage::run()
 
 	m_pThread = GetThreadManager()->newInstalledWizardThread();
 
-	*m_pThread->getMcfProgressEvent() += guiDelegate(this, &MWProgressPage::onProgress);
-	*m_pThread->getErrorEvent() += guiDelegate(this, &MWProgressPage::onError);
-	*m_pThread->getCompleteEvent() += guiDelegate(this, &MWProgressPage::onComplete);
-	*m_pThread->getNewItemEvent() += guiDelegate(this, &MWProgressPage::onNewItem);
-	*m_pThread->getItemFoundEvent() += guiDelegate(this, &MWProgressPage::onItemFound);
-	*m_pThread->getNeedWCEvent() += wcDelegate(this);
+	m_pThread->getMcfProgressEvent() += guiDelegate(this, &MWProgressPage::onProgress);
+	m_pThread->getErrorEvent() += guiDelegate(this, &MWProgressPage::onError);
+	m_pThread->getCompleteEvent() += guiDelegate(this, &MWProgressPage::onComplete);
+	m_pThread->getNewItemEvent() += guiDelegate(this, &MWProgressPage::onNewItem);
+	m_pThread->getItemFoundEvent() += guiDelegate(this, &MWProgressPage::onItemFound);
+	m_pThread->getNeedWCEvent() += wcDelegate(this);
 
 	m_pThread->start();
 }
@@ -179,7 +179,7 @@ void MWProgressPage::onNewItem(gcString& itemName)
 
 void MWProgressPage::onItemFound(DesuraId& id)
 {
-	UserCore::Item::ItemInfoI *item = GetUserCore()->getItemManager()->findItemInfo(id);
+	auto item = GetUserCore()->getItemManager()->findItemInfo(id);
 
 	if (item && m_bAddToAccount)
 		item->addToAccount();

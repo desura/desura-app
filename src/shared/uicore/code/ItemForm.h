@@ -36,6 +36,7 @@ $/LicenseInfo$
 #include "LinkArgs.h"
 
 class GatherInfoThread;
+class GatherInfoHandlerHelper;
 class LanguageTestDialog;
 
 typedef std::pair<UserCore::Item::Helper::ACTION, gcString> SIPArg;
@@ -47,150 +48,150 @@ namespace UserCore
 
 namespace UI
 {
-namespace Forms
-{
+	namespace Forms
+	{
 
-enum class INSTALL_ACTION
-{
-	IA_NONE,
-	IA_INSTALL,
-	IA_INSTALL_CHECK,
-	IA_INSTALL_TESTMCF,
-	IA_LAUNCH,
-	IA_STARTUP_CHECK,
-	IA_SWITCH_BRANCH,
-	IA_UNINSTALL,
-	IA_UPDATE,
-	IA_VERIFY,
-	IA_CLEANCOMPLEX,
-};
+		enum class INSTALL_ACTION
+		{
+			IA_NONE,
+			IA_INSTALL,
+			IA_INSTALL_CHECK,
+			IA_INSTALL_TESTMCF,
+			IA_LAUNCH,
+			IA_STARTUP_CHECK,
+			IA_SWITCH_BRANCH,
+			IA_UNINSTALL,
+			IA_UPDATE,
+			IA_VERIFY,
+			IA_CLEANCOMPLEX,
+		};
 
-namespace ItemFormPage
-{
-	class BaseInstallPage;
-}
+		namespace ItemFormPage
+		{
+			class BaseInstallPage;
+		}
 
-///////////////////////////////////////////////////////////////////////////////
-/// Class ItemForm
-///////////////////////////////////////////////////////////////////////////////
-class ItemForm : public gcFrame,
-	public UserCore::Item::Helper::ItemUninstallHelperI,
-	public UserCore::Item::Helper::ItemLaunchHelperI,
-	public UserCore::Item::Helper::ItemHandleFactoryI
-{
-public:
-	ItemForm(wxWindow* parent, const char* action = nullptr, const char* id = nullptr);
-	~ItemForm();
 
-	void finishUninstall(bool complete, bool account);
-	void finishInstallCheck();
+		class ItemFormProxy;
 
-	void setItemId(DesuraId id);
+		///////////////////////////////////////////////////////////////////////////////
+		/// Class ItemForm
+		///////////////////////////////////////////////////////////////////////////////
+		class ItemForm : public gcFrame
+		{
+		public:
+			ItemForm(wxWindow* parent, const char* action = nullptr, const char* id = nullptr);
+			~ItemForm();
 
-	void init(INSTALL_ACTION action, MCFBranch branch = MCFBranch(), MCFBuild build = MCFBuild(), bool showForm = true, UserCore::Item::ItemHandleI* pItemHandle = nullptr);
-	void newAction(INSTALL_ACTION action, MCFBranch branch = MCFBranch(), MCFBuild build = MCFBuild(), bool showForm = true);
-	void setPaused(bool state = true);
+			void finishUninstall(bool complete, bool account);
+			void finishInstallCheck();
 
-	DesuraId getItemId();
+			void setItemId(DesuraId id);
 
-	bool isStopped();
+			void init(INSTALL_ACTION action, MCFBranch branch = MCFBranch(), MCFBuild build = MCFBuild(), bool showForm = true, gcRefPtr<UserCore::Item::ItemHandleI> pItemHandle = gcRefPtr<UserCore::Item::ItemHandleI>());
+			void newAction(INSTALL_ACTION action, MCFBranch branch = MCFBranch(), MCFBuild build = MCFBuild(), bool showForm = true);
+			void setPaused(bool state = true);
 
-	bool startVerify(bool files, bool tools, bool hooks);
-	bool startUninstall(bool complete, bool removeFromAccount);
-	bool verifyAfterHashFail();
+			DesuraId getItemId();
 
-	void onError(gcException &e);
+			bool isStopped();
 
-	bool isInit();
+			bool startVerify(bool files, bool tools, bool hooks);
+			bool startUninstall(bool complete, bool removeFromAccount);
+			bool verifyAfterHashFail();
 
-	void pushArgs(const LinkArgs &args);
-	void popArgs();
+			void onError(gcException &e);
 
-protected:
+			bool isInit();
 
-	Event<bool> onVerifyAfterHashFailEvent;
-	void verifyAfterHashFail(bool& res);
+			void pushArgs(const LinkArgs &args);
+			void popArgs();
 
-	ItemFormPage::BaseInstallPage* m_pPage;	
-	wxBoxSizer* m_bsSizer;
+		protected:
+			friend class ItemFormProxy;
 
-	void uninstall();
+			Event<bool> onVerifyAfterHashFailEvent;
+			void verifyAfterHashFail(bool& res);
 
-	void setTitle(const wchar_t* key);
-	void onStageChange(UserCore::Item::ITEM_STAGE &stage);
+			ItemFormPage::BaseInstallPage* m_pPage;
+			wxBoxSizer* m_bsSizer;
 
-	void onFormClose(wxCloseEvent& event);
-	void onModalClose(wxCloseEvent& event);
-	
-	void cleanUpPages();
+			void uninstall();
 
-	void onItemInfoGathered();
+			void setTitle(const wchar_t* key);
+			void onStageChange(UserCore::Item::ITEM_STAGE &stage);
 
-	bool verifyItem();
-	bool launchItem();
-	bool installTestMcf(MCFBranch branch, MCFBuild build);
+			void onFormClose(wxCloseEvent& event);
+			void onModalClose(wxCloseEvent& event);
 
-	virtual void showUpdatePrompt();
-	virtual void showLaunchPrompt();
-	virtual void showComplexLaunchPrompt();
-	virtual void showEULAPrompt();
-	virtual void showPreOrderPrompt();
-	virtual void launchError(gcException& e);
-	virtual bool stopStagePrompt();
-	
+			void cleanUpPages();
+
+			void onItemInfoGathered();
+
+			bool verifyItem();
+			bool launchItem();
+			bool installTestMcf(MCFBranch branch, MCFBuild build);
+
+			void showUpdatePrompt();
+			void showLaunchPrompt();
+			void showComplexLaunchPrompt();
+			void showEULAPrompt();
+			void showPreOrderPrompt();
+			void launchError(gcException& e);
+			bool stopStagePrompt();
+
 #ifdef NIX
-	virtual void showWinLaunchDialog();
+			virtual void showWinLaunchDialog();
 #endif
 
-	virtual void getGatherInfoHelper(UserCore::Item::Helper::GatherInfoHandlerHelperI** helper);
-	virtual void getInstallHelper(UserCore::Item::Helper::InstallerHandleHelperI** helper);
+			gcRefPtr<UserCore::Item::Helper::GatherInfoHandlerHelperI> getGatherInfoHelper();
+			gcRefPtr<UserCore::Item::Helper::InstallerHandleHelperI> getInstallHelper();
 
-	void onShowPlatformError(bool& res);
-	void onSelectBranch(std::pair<bool, MCFBranch> &info);
-	void onShowComplexPrompt(bool &shouldContinue);
-	void onShowInstallPrompt(SIPArg &args);
-	void onGatherInfoComplete();
-	void onShowError(std::pair<bool, uint8> &args);
-	
+			void onShowPlatformError(bool& res);
+			void onSelectBranch(std::pair<bool, MCFBranch> &info);
+			void onShowComplexPrompt(bool &shouldContinue);
+			void onShowInstallPrompt(SIPArg &args);
+			void onGatherInfoComplete();
+			void onShowError(std::pair<bool, uint8> &args);
+
 #ifdef NIX
-	void onShowWinLaunchDialog();
-	void onShowToolPrompt(std::pair<bool, uint32> &args);
+			void onShowWinLaunchDialog();
+			void onShowToolPrompt(std::pair<bool, uint32> &args);
 #endif
 
-	EventV onDeleteEvent;
 #ifdef NIX
-	EventV onShowWinLaunchDialogEvent;
+			EventV onShowWinLaunchDialogEvent;
 #endif
-	void onGatherInfoHandlerHelperDelete(void* &gihh);
+			void cleanUpCallbacks();
 
-	void cleanUpCallbacks();
+			friend class ::LanguageTestDialog;
+			static void showLaunchError();
 
-	friend class ::LanguageTestDialog;
-	static void showLaunchError();
+		private:
+			GatherInfoThread* m_pGIThread;
 
-private:
-	GatherInfoThread* m_pGIThread;
+			INSTALL_ACTION m_iaLastAction;
+			gcWString m_szName;
+			gcString m_szLaunchExe;
 
-	INSTALL_ACTION m_iaLastAction;
-	gcWString m_szName;
-	gcString m_szLaunchExe;
+			DesuraId m_ItemId;
+			gcRefPtr<UserCore::Item::ItemHandleI> m_pItemHandle;
 
-	DesuraId m_ItemId;
-	UserCore::Item::ItemHandleI* m_pItemHandle;
+			MCFBuild m_uiMCFBuild; //this holds the build number if we are processing an un authed item
+			MCFBranch m_uiMCFBranch;
 
-	MCFBuild m_uiMCFBuild; //this holds the build number if we are processing an un authed item
-	MCFBranch m_uiMCFBranch;
+			bool m_bIsInit;
 
-	bool m_bIsInit;
-	
-	wxDialog* m_pDialog;
+			wxDialog* m_pDialog;
 
-	UserCore::ToolManagerI* m_pToolManager = nullptr;
+			gcRefPtr<UserCore::ToolManagerI> m_pToolManager;
 
-	std::vector<LinkArgs> m_vArgs;
-};
+			std::vector<LinkArgs> m_vArgs;
 
-}
+			gcRefPtr<GatherInfoHandlerHelper> m_GIHH;
+			gcRefPtr<ItemFormProxy> m_pProxy;
+		};
+	}
 }
 
 #endif //DESURA_ItemForm_H

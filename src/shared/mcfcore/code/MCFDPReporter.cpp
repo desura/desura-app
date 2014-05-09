@@ -60,7 +60,7 @@ uint32 DPReproter::getProviderCount()
 uint32 DPReproter::getProviderId(uint32 index)
 {
 	std::lock_guard<std::mutex> guard(m_MapLock);
-	DPProvider* item = getItem(index);
+	auto item = getItem(index);
 
 	if (item)
 		return item->getId();
@@ -71,7 +71,7 @@ uint32 DPReproter::getProviderId(uint32 index)
 void DPReproter::getName(uint32 id, char* buff, uint32 size)
 {
 	std::lock_guard<std::mutex> guard(m_MapLock);
-	DPProvider* item = findItem(id);
+	auto item = findItem(id);
 
 	if (item)
 	{
@@ -83,7 +83,7 @@ void DPReproter::getName(uint32 id, char* buff, uint32 size)
 uint32 DPReproter::getLastRate(uint32 id)
 {
 	std::lock_guard<std::mutex> guard(m_MapLock);
-	DPProvider* item = findItem(id);
+	auto item = findItem(id);
 
 	if (item)
 		return item->getLastRate();
@@ -96,7 +96,7 @@ void DPReproter::reportProgress(uint32 id, uint32 prog)
 	m_uiTotal += prog;
 
 	std::lock_guard<std::mutex> guard(m_MapLock);
-	DPProvider* item = findItem(id);
+	auto item = findItem(id);
 
 	if (item)
 		item->reportProgress(prog);

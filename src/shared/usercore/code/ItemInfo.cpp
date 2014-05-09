@@ -96,7 +96,7 @@ void ItemInfo::deleteFromDb(sqlite3x::sqlite3_connection* db)
 		m_vBranchList[x]->deleteFromDb(db);
 	}
 
-	std::for_each(m_mBranchInstallInfo.begin(), m_mBranchInstallInfo.end(), [&db](std::pair<uint32, BranchInstallInfo*> p)
+	std::for_each(m_mBranchInstallInfo.begin(), m_mBranchInstallInfo.end(), [&db](std::pair<uint32, gcRefPtr<BranchInstallInfo>> p)
 	{
 		p.second->deleteFromDb(db);
 	});
@@ -181,7 +181,7 @@ void ItemInfo::saveDb(sqlite3x::sqlite3_connection* db)
 			m_vBranchList[x]->saveDb(db);
 		}
 
-		std::for_each(m_mBranchInstallInfo.begin(), m_mBranchInstallInfo.end(), [&db](std::pair<uint32, BranchInstallInfo*> p)
+		std::for_each(m_mBranchInstallInfo.begin(), m_mBranchInstallInfo.end(), [&db](std::pair<uint32, gcRefPtr<BranchInstallInfo>> p)
 		{
 			p.second->saveDb(db);
 		});

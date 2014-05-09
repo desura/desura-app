@@ -50,8 +50,8 @@ namespace UserCore
 class BasePage : public gcPanel 
 {
 public:
-	BasePage(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize, long style = wxTAB_TRAVERSAL, UserCore::ItemManagerI* pItemManager = nullptr);
-	BasePage(wxWindow* parent, UserCore::ItemManagerI* pItemManager);
+	BasePage(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize, long style = wxTAB_TRAVERSAL, gcRefPtr<UserCore::ItemManagerI> pItemManager = gcRefPtr<UserCore::ItemManagerI>());
+	BasePage(wxWindow* parent, gcRefPtr<UserCore::ItemManagerI> pItemManager);
 
 
 	//! Sets the item info id
@@ -59,7 +59,7 @@ public:
 	//! @param id Item id
 	//!
 	virtual void setInfo(DesuraId id) final;
-	virtual void setInfo(DesuraId id, UserCore::Item::ItemInfoI* pItemInfo);
+	virtual void setInfo(DesuraId id, gcRefPtr<UserCore::Item::ItemInfoI> pItemInfo);
 
 	//! Sets the mcf build number
 	//! Maybe this shouldnt be here?
@@ -79,7 +79,7 @@ public:
 	//!
 	//! @return ItemInfo if found or nullptr if not
 	//!
-	UserCore::Item::ItemInfoI* getItemInfo();
+	gcRefPtr<UserCore::Item::ItemInfoI> getItemInfo();
 
 	//! Gets the item id number
 	//!
@@ -102,8 +102,8 @@ protected:
 	uint32 m_uiMCFBuild = 0;
 	uint32 m_uiMCFBranch = 0;
 
-	UserCore::ItemManagerI* m_pItemManager = nullptr;
-	UserCore::Item::ItemInfoI* m_pItemInfo = nullptr;
+	gcRefPtr<UserCore::ItemManagerI> m_pItemManager;
+	gcRefPtr<UserCore::Item::ItemInfoI> m_pItemInfo;
 };
 
 

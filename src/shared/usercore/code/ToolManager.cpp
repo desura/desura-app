@@ -35,7 +35,7 @@ $/LicenseInfo$
 #include "ToolInstallThread.h"
 
 #ifdef WIN32
-UserCore::ToolInfo* NewJSToolInfo(DesuraId id);
+gcRefPtr<UserCore::ToolInfo> NewJSToolInfo(DesuraId id);
 #endif
 
 using namespace UserCore;
@@ -77,7 +77,7 @@ void ToolManager::loadItems()
 
 	for (size_t x=0; x<toolIdList.size(); x++)
 	{
-		ToolInfo* tool = findItem(toolIdList[x].toInt64());
+		auto tool = findItem(toolIdList[x].toInt64());
 
 		bool bAdd = false;
 
@@ -86,7 +86,7 @@ void ToolManager::loadItems()
 		if (!tool)
 		{
 			if (negId >= 0)
-				tool = new ToolInfo(toolIdList[x]);
+				tool = gcRefPtr<UserCore::ToolInfo>::create(toolIdList[x]);
 #ifdef WIN32
 			else
 				tool = NewJSToolInfo(toolIdList[x]);
@@ -115,7 +115,7 @@ void ToolManager::saveItems()
 
 		for (uint32 x=0; x<getCount(); x++)
 		{
-			ToolInfo* tool = getItem(x);
+			auto tool = getItem(x);
 
 			if (!tool)
 				continue;
@@ -141,7 +141,7 @@ void ToolManager::saveItems()
 
 void ToolManager::removeTransaction(ToolTransactionId ttid, bool forced)
 {
-	Misc::ToolTransInfo* info = nullptr;
+	gcRefPtr<Misc::ToolTransInfo> info;
 
 	m_MapLock.lock();
 
@@ -162,8 +162,6 @@ void ToolManager::removeTransaction(ToolTransactionId ttid, bool forced)
 		else
 			cancelInstall(ttid);
 	}
-
-	safe_delete(info);
 }
 
 ToolTransactionId ToolManager::downloadTools(gcRefPtr<Misc::ToolTransaction> transaction)
@@ -263,7 +261,7 @@ void ToolManager::parseXml(const XML::gcXMLElement &toolinfoNode)
 		wcm.parseXML(wildcardNode);
 
 	//clear the java path value
-	WildcardInfo* temp = wcm.findItem("JAVA_EXE");
+	gcRefPtr<WildcardInfo> temp = wcm.findItem("JAVA_EXE");
 
 	if (temp)
 	{
@@ -320,7 +318,7 @@ void ToolManager::startDownload(gcRefPtr<Misc::ToolTransInfo> info)
 	for (size_t x=0; x<idList.size(); x++)
 	{
 		DesuraId id = idList[x];
-		ToolInfo* tool = findItem(id.toInt64());
+		auto tool = findItem(id.toInt64());
 
 		//This should not happen as there is a check before a download starts to make sure all tool ids are valid
 		if (!tool)
@@ -405,7 +403,7 @@ void ToolManager::onToolDLComplete(DesuraId id)
 
 	{
 		std::lock_guard<std::mutex> al(m_MapLock);
-		for_each([id](Misc::ToolTransInfo* info){
+		for_each([id](gcRefPtr<Misc::ToolTransInfo> info){
 			info->onDLComplete(id);
 		});
 	}
@@ -422,7 +420,7 @@ void ToolManager::onToolDLError(DesuraId id, gcException &e)
 
 	std::lock_guard<std::mutex> al(m_MapLock);
 
-	for_each([id, e](Misc::ToolTransInfo* info){
+	for_each([id, e](gcRefPtr<Misc::ToolTransInfo> &info){
 		info->onDLError(id, e);
 	});
 }
@@ -431,7 +429,7 @@ void ToolManager::onToolDLProgress(DesuraId id, UserCore::Misc::ToolProgress &pr
 {
 	std::lock_guard<std::mutex> al(m_MapLock);
 
-	for_each([id, &prog](Misc::ToolTransInfo* info){
+	for_each([id, &prog](gcRefPtr<Misc::ToolTransInfo> &info){
 		info->onDLProgress(id, prog);
 	});
 }
@@ -459,7 +457,7 @@ bool ToolManager::areAllToolsValid(const std::vector<DesuraId> &list)
 {
 	for (auto t : list)
 	{
-		ToolInfo* info = findItem(t.toInt64());
+		auto info = findItem(t.toInt64());
 
 		if (!info)
 			return false;
@@ -472,7 +470,7 @@ bool ToolManager::areAllToolsDownloaded(const std::vector<DesuraId> &list)
 {
 	for (auto t : list)
 	{
-		ToolInfo* info = findItem(t.toInt64());
+		auto info = findItem(t.toInt64());
 
 		if (!info || (!info->isDownloaded() && !info->isInstalled()))
 			return false;
@@ -485,7 +483,7 @@ bool ToolManager::areAllToolsInstalled(const std::vector<DesuraId> &list)
 {
 	for (auto t : list)
 	{
-		ToolInfo* info = findItem(t.toInt64());
+		auto info = findItem(t.toInt64());
 
 		if (!info || !info->isInstalled())
 			return false;
@@ -497,7 +495,7 @@ bool ToolManager::areAllToolsInstalled(const std::vector<DesuraId> &list)
 
 std::string ToolManager::getToolName(DesuraId toolId)
 {
-	ToolInfo* info = findItem(toolId.toInt64());
+	auto info = findItem(toolId.toInt64());
 
 	if (!info)
 		return "";
@@ -536,7 +534,7 @@ void ToolManager::invalidateTools(std::vector<DesuraId> &list)
 {
 	for (size_t x=0; x<list.size(); x++)
 	{
-		ToolInfo* info = findItem(list[x].toInt64());
+		auto info = findItem(list[x].toInt64());
 
 		if (info)
 			info->setInstalled(false);

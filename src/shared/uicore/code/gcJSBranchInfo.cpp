@@ -31,7 +31,7 @@ $/LicenseInfo$
 #include "usercore/BranchInfoI.h"
 
 template <>
-void FromJSObject<UserCore::Item::BranchInfoI*>(UserCore::Item::BranchInfoI* &branch, JSObjHandle& arg)
+void FromJSObject<gcRefPtr<UserCore::Item::BranchInfoI>>(gcRefPtr<UserCore::Item::BranchInfoI> &branch, JSObjHandle& arg)
 {
 	if (arg->isObject())
 		branch = arg->getUserObject<UserCore::Item::BranchInfoI>();
@@ -69,63 +69,63 @@ bool DesuraJSBranchInfo::preExecuteValidation(const char* function, uint32 funct
 	if (argc == 0)
 		return false;
 
-	UserCore::Item::BranchInfoI* branch = nullptr;
+	auto branch = nullptr;
 	FromJSObject(branch, argv[0]);
 
 	return isValidBranch(branch);
 }
 
-bool DesuraJSBranchInfo::isValidBranch(UserCore::Item::BranchInfoI* branch)
+bool DesuraJSBranchInfo::isValidBranch(gcRefPtr<UserCore::Item::BranchInfoI> branch)
 {
 	return branch?true:false;
 }
 
-int32 DesuraJSBranchInfo::getBranchFlags(UserCore::Item::BranchInfoI* branch)
+int32 DesuraJSBranchInfo::getBranchFlags(gcRefPtr<UserCore::Item::BranchInfoI> branch)
 {
 	return branch->getFlags();
 }
 
-gcString DesuraJSBranchInfo::getItemId(UserCore::Item::BranchInfoI* branch)
+gcString DesuraJSBranchInfo::getItemId(gcRefPtr<UserCore::Item::BranchInfoI> branch)
 {
 	return branch->getItemId().toString();
 }
 
-gcString DesuraJSBranchInfo::getBranchId(UserCore::Item::BranchInfoI* branch)
+gcString DesuraJSBranchInfo::getBranchId(gcRefPtr<UserCore::Item::BranchInfoI> branch)
 {
 	return gcString("{0}", branch->getBranchId());
 }
 
-gcString DesuraJSBranchInfo::getBranchName(UserCore::Item::BranchInfoI* branch)
+gcString DesuraJSBranchInfo::getBranchName(gcRefPtr<UserCore::Item::BranchInfoI> branch)
 {
 	return branch->getName();
 }
 
-gcString DesuraJSBranchInfo::getBranchCost(UserCore::Item::BranchInfoI* branch)
+gcString DesuraJSBranchInfo::getBranchCost(gcRefPtr<UserCore::Item::BranchInfoI> branch)
 {
 	return branch->getCost();
 }
 
-gcString DesuraJSBranchInfo::getBranchPreorderDate(UserCore::Item::BranchInfoI* branch)
+gcString DesuraJSBranchInfo::getBranchPreorderDate(gcRefPtr<UserCore::Item::BranchInfoI> branch)
 {
 	return branch->getPreOrderExpDate();
 }
 
-bool DesuraJSBranchInfo::isWindows(UserCore::Item::BranchInfoI* branch)
+bool DesuraJSBranchInfo::isWindows(gcRefPtr<UserCore::Item::BranchInfoI> branch)
 {
 	return branch->isWindows();
 }
 
-bool DesuraJSBranchInfo::isLinux(UserCore::Item::BranchInfoI* branch)
+bool DesuraJSBranchInfo::isLinux(gcRefPtr<UserCore::Item::BranchInfoI> branch)
 {
 	return branch->isLinux();
 }
 
-bool DesuraJSBranchInfo::is32Bit(UserCore::Item::BranchInfoI* branch)
+bool DesuraJSBranchInfo::is32Bit(gcRefPtr<UserCore::Item::BranchInfoI> branch)
 {
 	return branch->is32Bit();
 }
 
-bool DesuraJSBranchInfo::is64Bit(UserCore::Item::BranchInfoI* branch)
+bool DesuraJSBranchInfo::is64Bit(gcRefPtr<UserCore::Item::BranchInfoI> branch)
 {
 	return branch->is64Bit();
 }

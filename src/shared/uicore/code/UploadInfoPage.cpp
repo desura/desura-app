@@ -246,8 +246,10 @@ void UploadInfoPage::resetAllValues()
 	gcString filePath;
 	gcString cachePath;
 	
-	if (GetUserCore())
-		cachePath = GetUserCore()->getMcfCachePath();
+	auto userCore = GetUserCore();
+
+	if (userCore)
+		cachePath = userCore->getMcfCachePath();
 
 	if (!m_pItemInfo)
 		filePath = gcString("{0}{1}temp{1}", cachePath, DIRS_STR);
@@ -258,7 +260,7 @@ void UploadInfoPage::resetAllValues()
 	m_tbItemFile->SetValue(wfilePath.c_str());
 }
 
-void UploadInfoPage::setInfo(DesuraId id, UserCore::Item::ItemInfoI* pItemInfo)
+void UploadInfoPage::setInfo(DesuraId id, gcRefPtr<UserCore::Item::ItemInfoI> pItemInfo)
 {
 	if (!pItemInfo && GetUserCore() && !GetUserCore()->isAdmin())
 	{	
@@ -270,7 +272,7 @@ void UploadInfoPage::setInfo(DesuraId id, UserCore::Item::ItemInfoI* pItemInfo)
 	resetAllValues();
 }
 
-void UploadInfoPage::setInfo_key(DesuraId id, UserCore::Item::ItemInfoI* pItemInfo, const char* key)
+void UploadInfoPage::setInfo_key(DesuraId id, gcRefPtr<UserCore::Item::ItemInfoI> pItemInfo, const char* key)
 {
 	setInfo(id, pItemInfo);
 
@@ -281,7 +283,7 @@ void UploadInfoPage::setInfo_key(DesuraId id, UserCore::Item::ItemInfoI* pItemIn
 	}
 }
 
-void UploadInfoPage::setInfo_path(DesuraId id, UserCore::Item::ItemInfoI* pItemInfo, const char* path)
+void UploadInfoPage::setInfo_path(DesuraId id, gcRefPtr<UserCore::Item::ItemInfoI> pItemInfo, const char* path)
 {
 	setInfo(id, pItemInfo);
 	if (path)
@@ -320,14 +322,14 @@ void UploadInfoPage::onResume()
 	m_bResume = true;
 
 	safe_delete(m_pUpInfo);
-	m_pUpInfo = new WebCore::Misc::ResumeUploadInfo();
+	m_pUpInfo = gcRefPtr<WebCore::Misc::ResumeUploadInfo>::create();
 
 	if (GetThreadManager())
 	{
 		m_pResumeThread = GetThreadManager()->newUploadResumeThread(getItemId(), m_szKey.c_str(), m_pUpInfo);
 
-		*m_pResumeThread->getErrorEvent() += guiDelegate(this, &UploadInfoPage::onError);
-		*m_pResumeThread->getCompleteStringEvent() += guiDelegate(this, &UploadInfoPage::onResumeCompleteCB);
+		m_pResumeThread->getErrorEvent() += guiDelegate(this, &UploadInfoPage::onError);
+		m_pResumeThread->getCompleteStringEvent() += guiDelegate(this, &UploadInfoPage::onResumeCompleteCB);
 
 		m_pResumeThread->start();
 	}
@@ -407,8 +409,8 @@ void UploadInfoPage::initUpload(const char* path)
 	{
 		m_pPrepThread = GetThreadManager()->newUploadPrepThread(getItemId(), path);
 
-		*m_pPrepThread->getErrorEvent() += guiDelegate(this, &UploadInfoPage::onError);
-		*m_pPrepThread->getCompleteStringEvent() += guiDelegate(this, &UploadInfoPage::onComplete);
+		m_pPrepThread->getErrorEvent() += guiDelegate(this, &UploadInfoPage::onError);
+		m_pPrepThread->getCompleteStringEvent() += guiDelegate(this, &UploadInfoPage::onComplete);
 
 		m_pPrepThread->start();
 	}

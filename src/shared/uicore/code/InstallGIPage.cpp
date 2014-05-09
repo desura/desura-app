@@ -108,7 +108,7 @@ void InstallGIPage::onError(gcException& e)
 
 	if (e.getErrId() == ERR_UNSUPPORTEDPLATFORM)
 	{
-		UserCore::Item::ItemInfoI* item = getItemInfo();
+		gcRefPtr<UserCore::Item::ItemInfoI> item = getItemInfo();
 
 		gcString name("Unknown Item ({0}: {0})", getItemId().getTypeString(), getItemId().getItem());
 

@@ -80,20 +80,7 @@ void NewsForm::setAsGift()
 	SetTitle(m_szTitle.c_str());
 }
 
-void NewsForm::loadNewsItems(const std::vector<std::shared_ptr<UserCore::Misc::NewsItem>> &itemList)
-{
-	for (auto i : itemList)
-	{
-		if (!i)
-			continue;
-
-		m_vItemList.push_back(*i);
-	}
-
-	loadSelection();
-}
-
-void NewsForm::loadNewsItems(const std::vector<UserCore::Misc::NewsItem> &itemList)
+void NewsForm::loadNewsItems(const std::vector<gcRefPtr<UserCore::Misc::NewsItem>> &itemList)
 {
 	for (auto i : itemList)
 		m_vItemList.push_back(i);
@@ -133,15 +120,15 @@ void NewsForm::loadSelection()
 	if (m_uiSelected >=  m_vItemList.size())
 		m_uiSelected = 0;
 
-	gcWString url(L"{0}?url={1}", m_szLoadingUrl, UTIL::STRING::urlEncode(m_vItemList[m_uiSelected].szUrl));
+	gcWString url(L"{0}?url={1}", m_szLoadingUrl, UTIL::STRING::urlEncode(m_vItemList[m_uiSelected]->szUrl));
 	m_ieBrowser->loadUrl(url.c_str());
 	
 	Layout();
 
 	if (m_vItemList.size() > 1)
-		SetTitle(gcWString(L"{0} {1} ({2} of {3})", m_szTitle, m_vItemList[m_uiSelected].szTitle, m_uiSelected+1, m_vItemList.size()));
+		SetTitle(gcWString(L"{0} {1} ({2} of {3})", m_szTitle, m_vItemList[m_uiSelected]->szTitle, m_uiSelected+1, m_vItemList.size()));
 	else
-		SetTitle(gcWString(L"{0} {1}", m_szTitle, m_vItemList[m_uiSelected].szTitle));
+		SetTitle(gcWString(L"{0} {1}", m_szTitle, m_vItemList[m_uiSelected]->szTitle));
 
 	if (m_vItemList.size() == 1)
 	{

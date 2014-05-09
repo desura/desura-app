@@ -101,7 +101,7 @@ namespace WebCore
 		/////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 		void setCookie(const char* sess)  override;
-		void setCookies(CookieCallbackI *pCallback) override;
+		void setCookies(gcRefPtr<CookieCallbackI> pCallback) override;
 		void setWCCookies(HttpHandle& hh)  override;
 		void setUrlDomain(const char* domain)  override;
 

@@ -52,7 +52,7 @@ ValidateTask::~ValidateTask()
 
 void ValidateTask::doRun()
 {
-	UserCore::MCFManagerI *mm = getUserCore()->getInternal()->getMCFManager();
+	auto mm = getUserCore()->getInternal()->getMCFManager();
 	auto pItem = getItemInfo();
 
 	if (!pItem)
@@ -76,7 +76,7 @@ void ValidateTask::doRun()
 
 	validateHeader(build, branch);
 
-	UserCore::Item::BranchInfoI* curBranch = pItem->getCurrentBranch();
+	auto curBranch = pItem->getCurrentBranch();
 
 	if (isStopped())
 		return;
@@ -319,7 +319,7 @@ void ValidateTask::copyLocalMcfs(MCFBranch branch, MCFBuild build)
 	if (isStopped())
 		return;
 
-	UserCore::MCFManagerI *mm = getUserCore()->getInternal()->getMCFManager();
+	auto mm = getUserCore()->getInternal()->getMCFManager();
 
 	std::vector<McfPathData> vOldMcfs;
 	mm->getAllMcfPaths(getItemId(), vOldMcfs);

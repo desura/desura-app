@@ -36,19 +36,13 @@ $/LicenseInfo$
 
 namespace UserCore
 {
-namespace ItemTask
-{
-
-bool VSCheckMcfDownload::doTask(gcString &path)
-{
-	UserCore::MCFManagerI *mm = getUserCore()->getInternal()->getMCFManager();
-	path = mm->getMcfPath(getItemId(), getMcfBranch(), getMcfBuild());
-	return checkMcf(path);
-}
-
-
-
-
-
-}
+	namespace ItemTask
+	{
+		bool VSCheckMcfDownload::doTask(gcString &path)
+		{
+			auto mm = getUserCore()->getInternal()->getMCFManager();
+			path = mm->getMcfPath(getItemId(), getMcfBranch(), getMcfBuild());
+			return checkMcf(path);
+		}
+	}
 }

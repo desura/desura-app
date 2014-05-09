@@ -48,65 +48,65 @@ public:
 
 	
 private:
-	gcString getItemId(UserCore::Item::ItemInfoI* item);
-	gcString getItemParentId(UserCore::Item::ItemInfoI* item);
-	gcString getItemInstalledModId(UserCore::Item::ItemInfoI* item);
+	gcString getItemId(gcRefPtr<UserCore::Item::ItemInfoI> item);
+	gcString getItemParentId(gcRefPtr<UserCore::Item::ItemInfoI> item);
+	gcString getItemInstalledModId(gcRefPtr<UserCore::Item::ItemInfoI> item);
 
-	int32 getItemChangedFlags(UserCore::Item::ItemInfoI* item);
-	int32 getItemStatus(UserCore::Item::ItemInfoI* item);
-	int32 getItemPercent(UserCore::Item::ItemInfoI* item);
-	int32 getItemPermissions(UserCore::Item::ItemInfoI* item);
-	int32 getItemOptions(UserCore::Item::ItemInfoI* item);
+	int32 getItemChangedFlags(gcRefPtr<UserCore::Item::ItemInfoI> item);
+	int32 getItemStatus(gcRefPtr<UserCore::Item::ItemInfoI> item);
+	int32 getItemPercent(gcRefPtr<UserCore::Item::ItemInfoI> item);
+	int32 getItemPermissions(gcRefPtr<UserCore::Item::ItemInfoI> item);
+	int32 getItemOptions(gcRefPtr<UserCore::Item::ItemInfoI> item);
 
-	bool isLink(UserCore::Item::ItemInfoI* item);
-	bool isItemValid(UserCore::Item::ItemInfoI* item);
-	bool isItemLaunchable(UserCore::Item::ItemInfoI* item);
-	bool isItemUpdating(UserCore::Item::ItemInfoI* item);
-	bool isItemInstalled(UserCore::Item::ItemInfoI* item);
-	bool isItemDownloadable(UserCore::Item::ItemInfoI* item);
+	bool isLink(gcRefPtr<UserCore::Item::ItemInfoI> item);
+	bool isItemValid(gcRefPtr<UserCore::Item::ItemInfoI> item);
+	bool isItemLaunchable(gcRefPtr<UserCore::Item::ItemInfoI> item);
+	bool isItemUpdating(gcRefPtr<UserCore::Item::ItemInfoI> item);
+	bool isItemInstalled(gcRefPtr<UserCore::Item::ItemInfoI> item);
+	bool isItemDownloadable(gcRefPtr<UserCore::Item::ItemInfoI> item);
 
-	gcString getItemGenre(UserCore::Item::ItemInfoI* item);
-	gcString getItemRating(UserCore::Item::ItemInfoI* item);
-	gcString getItemDev(UserCore::Item::ItemInfoI* item);
-	gcString getItemName(UserCore::Item::ItemInfoI* item);
-	gcString getItemShortName(UserCore::Item::ItemInfoI* item);
-	gcString getItemStatusStr(UserCore::Item::ItemInfoI* item);
+	gcString getItemGenre(gcRefPtr<UserCore::Item::ItemInfoI> item);
+	gcString getItemRating(gcRefPtr<UserCore::Item::ItemInfoI> item);
+	gcString getItemDev(gcRefPtr<UserCore::Item::ItemInfoI> item);
+	gcString getItemName(gcRefPtr<UserCore::Item::ItemInfoI> item);
+	gcString getItemShortName(gcRefPtr<UserCore::Item::ItemInfoI> item);
+	gcString getItemStatusStr(gcRefPtr<UserCore::Item::ItemInfoI> item);
 
-	gcString getItemPath(UserCore::Item::ItemInfoI* item);
-	gcString getItemInsPrimary(UserCore::Item::ItemInfoI* item);
-	gcString getItemIcon(UserCore::Item::ItemInfoI* item);
-	gcString getItemLogo(UserCore::Item::ItemInfoI* item);
-	gcString getItemIconUrl(UserCore::Item::ItemInfoI* item);
-	gcString getItemLogoUrl(UserCore::Item::ItemInfoI* item);
-	gcString getItemProfile(UserCore::Item::ItemInfoI* item);
-	gcString getItemDevProfile(UserCore::Item::ItemInfoI* item);
-	gcString getItemInstalledVersion(UserCore::Item::ItemInfoI* item);
+	gcString getItemPath(gcRefPtr<UserCore::Item::ItemInfoI> item);
+	gcString getItemInsPrimary(gcRefPtr<UserCore::Item::ItemInfoI> item);
+	gcString getItemIcon(gcRefPtr<UserCore::Item::ItemInfoI> item);
+	gcString getItemLogo(gcRefPtr<UserCore::Item::ItemInfoI> item);
+	gcString getItemIconUrl(gcRefPtr<UserCore::Item::ItemInfoI> item);
+	gcString getItemLogoUrl(gcRefPtr<UserCore::Item::ItemInfoI> item);
+	gcString getItemProfile(gcRefPtr<UserCore::Item::ItemInfoI> item);
+	gcString getItemDevProfile(gcRefPtr<UserCore::Item::ItemInfoI> item);
+	gcString getItemInstalledVersion(gcRefPtr<UserCore::Item::ItemInfoI> item);
 
-	int32 getItemBranchCount(UserCore::Item::ItemInfoI* item);
-	void* getItemBranchByIndex(UserCore::Item::ItemInfoI* item, int32 index);
-	void* getItemBranchById(UserCore::Item::ItemInfoI* item, int32 id);
-	void* getItemCurrentBranch(UserCore::Item::ItemInfoI* item);
+	int32 getItemBranchCount(gcRefPtr<UserCore::Item::ItemInfoI> item);
+	void* getItemBranchByIndex(gcRefPtr<UserCore::Item::ItemInfoI> item, int32 index);
+	void* getItemBranchById(gcRefPtr<UserCore::Item::ItemInfoI> item, int32 id);
+	void* getItemCurrentBranch(gcRefPtr<UserCore::Item::ItemInfoI> item);
 
-	int32 getItemInstallSize(UserCore::Item::ItemInfoI* item);
-	int32 getItemDownloadSize(UserCore::Item::ItemInfoI* item);
-	int32 getItemInstalledBuild(UserCore::Item::ItemInfoI* item);
-	int32 getItemInstalledBranch(UserCore::Item::ItemInfoI* item);
-	int32 getItemType(UserCore::Item::ItemInfoI* item);
-
-
-	bool isItemFavorite(UserCore::Item::ItemInfoI* item);
-	void setItemFavorite(UserCore::Item::ItemInfoI* item, bool setFav);
-
-	void addItemOptionFlags(UserCore::Item::ItemInfoI* item, int32 options);
-	void delItemOptionFlags(UserCore::Item::ItemInfoI* item, int32 options);
+	int32 getItemInstallSize(gcRefPtr<UserCore::Item::ItemInfoI> item);
+	int32 getItemDownloadSize(gcRefPtr<UserCore::Item::ItemInfoI> item);
+	int32 getItemInstalledBuild(gcRefPtr<UserCore::Item::ItemInfoI> item);
+	int32 getItemInstalledBranch(gcRefPtr<UserCore::Item::ItemInfoI> item);
+	int32 getItemType(gcRefPtr<UserCore::Item::ItemInfoI> item);
 
 
-	std::vector<MapElementI*> getItemExeInfo(UserCore::Item::ItemInfoI* item);
-	void setItemUserArgs(UserCore::Item::ItemInfoI* item, std::vector<std::map<gcString, gcString>> args);
+	bool isItemFavorite(gcRefPtr<UserCore::Item::ItemInfoI> item);
+	void setItemFavorite(gcRefPtr<UserCore::Item::ItemInfoI> item, bool setFav);
 
-	bool isItemBusy(UserCore::Item::ItemInfoI* item);
-	bool createItemDesktopShortcut(UserCore::Item::ItemInfoI* item);
-	bool createItemMenuEntry(UserCore::Item::ItemInfoI* item);
+	void addItemOptionFlags(gcRefPtr<UserCore::Item::ItemInfoI> item, int32 options);
+	void delItemOptionFlags(gcRefPtr<UserCore::Item::ItemInfoI> item, int32 options);
+
+
+	std::vector<MapElementI*> getItemExeInfo(gcRefPtr<UserCore::Item::ItemInfoI> item);
+	void setItemUserArgs(gcRefPtr<UserCore::Item::ItemInfoI> item, std::vector<std::map<gcString, gcString>> args);
+
+	bool isItemBusy(gcRefPtr<UserCore::Item::ItemInfoI> item);
+	bool createItemDesktopShortcut(gcRefPtr<UserCore::Item::ItemInfoI> item);
+	bool createItemMenuEntry(gcRefPtr<UserCore::Item::ItemInfoI> item);
 
 	uint32 m_uiValidItemHash;
 };

@@ -31,27 +31,28 @@ $/LicenseInfo$
 
 namespace WebCore
 {
-namespace Misc
-{
-
-//! Information needed to resume an upload
-//!
-class ResumeUploadInfo
-{
-public:
-	ResumeUploadInfo()
+	namespace Misc
 	{
-		size = 0;
-		upsize = 0;
+
+		//! Information needed to resume an upload
+		//!
+		class ResumeUploadInfo : public gcRefCount
+		{
+		public:
+			ResumeUploadInfo()
+			{
+				size = 0;
+				upsize = 0;
+			}
+
+			gcString szDate;
+			gcString szHash;
+			uint64 size;
+			uint64 upsize;
+
+		};
+
 	}
-
-	gcString szDate;
-	gcString szHash;
-	uint64 size;
-	uint64 upsize;
-};
-
-}
 }
 
 #endif //DESURA_UPLOADRESUME_H

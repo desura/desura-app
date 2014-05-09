@@ -75,7 +75,7 @@ namespace UserCore
 	class MCFManagerI : public gcRefBase
 	{
 	public:
-		virtual gcString getMcfPath(UserCore::Item::ItemInfoI* item, bool isUnAuthed =false)=0;
+		virtual gcString getMcfPath(gcRefPtr<UserCore::Item::ItemInfoI> item, bool isUnAuthed = false) = 0;
 		virtual gcString getMcfPath(DesuraId id, MCFBranch branch, MCFBuild build, bool isUnAuthed = false)=0;
 		virtual gcString newMcfPath(DesuraId id, MCFBranch branch, MCFBuild build, bool isUnAuthed = false)=0;
 
@@ -94,7 +94,7 @@ namespace UserCore
 	class MCFManagerMock : public MCFManagerI
 	{
 	public:
-		MOCK_METHOD2(getMcfPath, gcString(UserCore::Item::ItemInfoI* item, bool isUnAuthed));
+		MOCK_METHOD2(getMcfPath, gcString(gcRefPtr<UserCore::Item::ItemInfoI> item, bool isUnAuthed));
 		MOCK_METHOD4(getMcfPath, gcString(DesuraId id, MCFBranch branch, MCFBuild build, bool isUnAuthed));
 		MOCK_METHOD4(newMcfPath, gcString(DesuraId id, MCFBranch branch, MCFBuild build, bool isUnAuthed));
 
@@ -117,7 +117,7 @@ namespace UserCore
 	public:
 		MCFManager(const char* appDataPath, const char* mcfDataPath);
 
-		gcString getMcfPath(UserCore::Item::ItemInfoI* item, bool isUnAuthed =false) override;
+		gcString getMcfPath(gcRefPtr<UserCore::Item::ItemInfoI> item, bool isUnAuthed = false) override;
 		gcString getMcfPath(DesuraId id, MCFBranch branch, MCFBuild build, bool isUnAuthed = false) override;
 		gcString newMcfPath(DesuraId id, MCFBranch branch, MCFBuild build, bool isUnAuthed = false) override;
 

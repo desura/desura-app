@@ -304,7 +304,7 @@ namespace WebCore
 		//!
 		//! @param pCallback Callback to use, caller responsible for deletion
 		//!
-		virtual void setCookies(CookieCallbackI *pCallback)=0;
+		virtual void setCookies(gcRefPtr<CookieCallbackI> pCallback)=0;
 
 		template <typename T>
 		void setCookies(T &t)
@@ -323,10 +323,10 @@ namespace WebCore
 				}
 
 				T &m_tCallback;
+				gc_IMPLEMENT_REFCOUNTING(CCB);
 			};
 
-			CCB ccb(t);
-			setCookies(&ccb);
+			setCookies(gcRefPtr<CCB>::create(t));
 		}
 
 		//! Gets a url for app update downloads

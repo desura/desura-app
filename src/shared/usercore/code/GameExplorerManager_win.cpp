@@ -79,7 +79,7 @@ void GameExplorerManager::addItem(DesuraId item)
 
 void GameExplorerManager::removeItem(DesuraId item)
 {
-	Misc::GameExplorerInfo* gei = BaseManager::findItem(item.toInt64());
+	auto gei = BaseManager::findItem(item.toInt64());
 
 	if (gei)
 		gei->removeDll();

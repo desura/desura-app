@@ -39,7 +39,7 @@ namespace UserCore
 class TBIBaseMenu
 {
 public:
-	TBIBaseMenu(UserCore::ItemManagerI* pItemManager)
+	TBIBaseMenu(gcRefPtr<UserCore::ItemManagerI> pItemManager)
 		: m_pItemManager(pItemManager)
 	{
 	}
@@ -53,10 +53,10 @@ public:
 protected:
 	void loadIcon(wxMenuItem* item, const char* icon);
 
-	UserCore::ItemManagerI* getItemManager();
+	gcRefPtr<UserCore::ItemManagerI> getItemManager();
 
 private:
-	UserCore::ItemManagerI* m_pItemManager;
+	gcRefPtr<UserCore::ItemManagerI> m_pItemManager;
 };
 
 #endif //DESURA_TBI_BASEMENU_H

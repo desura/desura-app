@@ -50,7 +50,7 @@ public:
 
 	void dispose() override;
 
-	void setInfo(DesuraId id, UserCore::Item::ItemInfoI* pItemInfo) override;
+	void setInfo(DesuraId id, gcRefPtr<UserCore::Item::ItemInfoI> pItemInfo) override;
 	void run() override {}
 	
 protected:

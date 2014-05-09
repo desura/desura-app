@@ -50,7 +50,7 @@ public:
 
 	void dispose();
 
-	void setInfo(DesuraId id, UserCore::Item::ItemInfoI* pItemInfo, uint32 hash, uint32 start);
+	void setInfo(DesuraId id, gcRefPtr<UserCore::Item::ItemInfoI> pItemInfo, uint32 hash, uint32 start);
 	void run();
 
 protected:

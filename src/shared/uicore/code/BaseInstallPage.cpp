@@ -107,6 +107,8 @@ public:
 
 private:
 	uint32 m_uiId;
+
+	gc_IMPLEMENT_REFCOUNTING(ItemHandleHelper);
 };
 
 
@@ -136,12 +138,12 @@ typedef void (BaseInstallPage::*onCompleteStrFn)(gcString&);
 	 m_pItemHandle = nullptr;
  }
  
-void BaseInstallPage::setInfo(DesuraId id, UserCore::Item::ItemInfoI* pItemInfo)
+ void BaseInstallPage::setInfo(DesuraId id, gcRefPtr<UserCore::Item::ItemInfoI> pItemInfo)
 {
 	setInfo(GetUserCore()->getItemManager()->findItemHandle(id));
 }
 
-void BaseInstallPage::setInfo(UserCore::Item::ItemHandleI* pItemHandle)
+ void BaseInstallPage::setInfo(gcRefPtr<UserCore::Item::ItemHandleI> pItemHandle)
 {
 	gcTrace("");
 
@@ -178,7 +180,7 @@ void BaseInstallPage::registerHandle()
 	ItemForm* inf = dynamic_cast<ItemForm*>(GetParent());
 	deregisterHandle();
 
-	m_pIHH = std::make_unique<ItemHandleHelper>();
+	m_pIHH = gcRefPtr<ItemHandleHelper>::create();
 
 	m_pIHH->onCompleteEvent += guiDelegate(this, (onCompleteIntFn)&BaseInstallPage::onComplete);
 	m_pIHH->onProgressUpdateEvent += guiDelegate(this, &BaseInstallPage::onProgressUpdate);
@@ -192,8 +194,8 @@ void BaseInstallPage::registerHandle()
 	m_pIHH->onVerifyCompleteEvent += guiDelegate(this, &BaseInstallPage::onVerifyComplete);
 	m_pIHH->onPauseEvent += guiDelegate(this, &BaseInstallPage::onPause);
 
-	m_pItemHandle->addHelper(m_pIHH.get());
-	*m_pItemHandle->getItemInfo()->getInfoChangeEvent() += guiDelegate(this, &BaseInstallPage::onItemUpdate);
+	m_pItemHandle->addHelper(m_pIHH);
+	m_pItemHandle->getItemInfo()->getInfoChangeEvent() += guiDelegate(this, &BaseInstallPage::onItemUpdate);
 }
 
 void BaseInstallPage::deregisterHandle()
@@ -202,10 +204,10 @@ void BaseInstallPage::deregisterHandle()
 
 	if (m_pItemHandle)
 	{
-		*m_pItemHandle->getItemInfo()->getInfoChangeEvent() -= guiDelegate(this, &BaseInstallPage::onItemUpdate);
+		m_pItemHandle->getItemInfo()->getInfoChangeEvent() -= guiDelegate(this, &BaseInstallPage::onItemUpdate);
 
 		if (m_pIHH.get())
-			m_pItemHandle->delHelper(m_pIHH.get());
+			m_pItemHandle->delHelper(m_pIHH);
 	}
 
 	m_pIHH.reset();

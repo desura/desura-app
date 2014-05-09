@@ -115,7 +115,7 @@ void InstallINPage::onComplete(uint32& res)
 	m_pbProgress->setProgress(100);
 	m_butHide->SetLabel(Managers::GetString(L"#CLOSE"));
 	
-	UserCore::Item::BranchInfoI *bi = getItemInfo()->getCurrentBranch();
+	auto bi = getItemInfo()->getCurrentBranch();
 
 	m_butPause->Enable(true);
 	m_butPause->SetLabel(Managers::GetString(L"#CLOSE"));

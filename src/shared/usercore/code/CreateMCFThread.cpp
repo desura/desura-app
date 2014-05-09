@@ -136,7 +136,7 @@ void CreateMCFThread::compareBranches(std::vector<gcRefPtr<UserCore::Item::Branc
 		if (isStopped())
 			return;
 
-		UserCore::Item::BranchInfo* bi = vBranchList[x];
+		auto bi = vBranchList[x];
 
 		McfHandle tempMcf;
 		tempMcf->setHeader(getItemId(), bi->getBranchId(), MCFBuild());
@@ -203,7 +203,7 @@ void CreateMCFThread::createMcf()
 
 	gcString file("NewMcf_b{0}_{1}.mcf", branch, timeStr);
 
-	UserCore::MCFManagerI *mm = getUserCore()->getInternal()->getMCFManager();
+	auto mm = getUserCore()->getInternal()->getMCFManager();
 	m_szFilePath = gcString("{0}{1}{2}", mm->getMcfSavePath(), DIRS_STR, getItemId().getFolderPathExtension(file.c_str()));
 
 

@@ -31,11 +31,11 @@ $/LicenseInfo$
 #include "mcfcore/MCFMain.h"
 
 #include "MCFDPReporter.h"
-#include "mcfcore/MCFDPReporterI.h"
-
 
 gcString g_szMCFVersion("{0}.{1}.{2}.{3}", VERSION_MAJOR, VERSION_MINOR, VERSION_BUILDNO, VERSION_EXTEND);
 
+
+gcRefPtr<MCFCore::DPReproter> g_pDPReporter;
 
 namespace MCFCore
 {
@@ -51,7 +51,10 @@ namespace MCFCore
 		}
 		if (strcmp(name, MCF_DPREPORTER) == 0)
 		{
-			return static_cast<void*>(MCFCore::GetDPReporter());
+			if (!g_pDPReporter)
+				g_pDPReporter = MCFCore::GetDPReporter();
+
+			return static_cast<void*>(g_pDPReporter.get());
 		}
 		return nullptr;
 	}

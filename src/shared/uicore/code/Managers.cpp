@@ -82,18 +82,22 @@ CONCOMMAND(cc_reloadlanguage, "reload_language")
 }
 
 
-UserCore::UserThreadManagerI* GetThreadManager()
+gcRefPtr<UserCore::UserThreadManagerI> GetThreadManager()
 {
-	if (GetUserCore())
-		return GetUserCore()->getThreadManager();
+	auto userCore = GetUserCore();
+
+	if (userCore)
+		return userCore->getThreadManager();
 
 	return nullptr;	
 }
 
-UserCore::UploadManagerI* GetUploadMng()
+gcRefPtr<UserCore::UploadManagerI> GetUploadMng()
 {
-	if (GetUserCore())
-		return GetUserCore()->getUploadManager();
+	auto userCore = GetUserCore();
+
+	if (userCore)
+		return userCore->getUploadManager();
 
 	return nullptr;
 }

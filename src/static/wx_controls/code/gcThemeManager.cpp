@@ -27,7 +27,8 @@ $/LicenseInfo$
 #include "gcThemeManager.h"
 
 
-gcThemeManager::gcThemeManager() : BaseManager(true)
+gcThemeManager::gcThemeManager() 
+	: BaseManager()
 {
 }
 
@@ -40,18 +41,18 @@ gcImageHandle gcThemeManager::getImageHandle(const char* path)
 	m_WaitMutex.lock();
 
 	gcString name(path);
-	gcImageInfo* h = findItem(name.c_str());
+	auto h = findItem(name.c_str());
 
 	if (!h)
 	{
 		//if path name starts with an # that means we need to load from theme
 		if (path && path[0] == '#')
 		{
-			h = new gcImageInfo(getImage(path+1), name.c_str());
+			h = gcRefPtr<gcImageInfo>::create(getImage(path+1), name.c_str());
 		}
 		else
 		{
-			h = new gcImageInfo(path, name.c_str());
+			h = gcRefPtr<gcImageInfo>::create(path, name.c_str());
 		}
 
 		addItem(h);
@@ -69,7 +70,7 @@ void gcThemeManager::newImgHandle(uint32 hash)
 {
 	m_WaitMutex.lock();
 
-	gcImageInfo* h = findItem(hash);
+	auto h = findItem(hash);
 
 	if (h)
 		h->incRef();
@@ -81,7 +82,7 @@ void gcThemeManager::desposeImgHandle(uint32 hash)
 {
 	m_WaitMutex.lock();
 
-	gcImageInfo* h = findItem(hash);
+	auto h = findItem(hash);
 
 	if (h)
 	{
@@ -99,7 +100,7 @@ void gcThemeManager::desposeImgHandle(uint32 hash)
 
 wxBitmap gcThemeManager::getSprite(wxImage& img, const char* spriteId, const char* spriteName)
 {
-	SpriteRectI* rect = getSpriteRect(spriteId, spriteName);
+	auto rect = getSpriteRect(spriteId, spriteName);
 
 	if (!rect || !img.IsOk())
 		return wxBitmap();
@@ -152,7 +153,7 @@ Color gcThemeManager::getColor(const char* name, const char* id)
 	return GetThemeManager().getColor(name, id);
 }
 
-SpriteRectI* gcThemeManager::getSpriteRect(const char* id, const char* rectId)
+gcRefPtr<SpriteRectI> gcThemeManager::getSpriteRect(const char* id, const char* rectId)
 {
 	return GetThemeManager().getSpriteRect(id, rectId);
 }

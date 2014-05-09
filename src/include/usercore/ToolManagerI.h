@@ -112,7 +112,7 @@ namespace UserCore
 	
 	namespace Item
 	{
-		class ItemInfo;
+		class ItemInfoI;
 	}
 
 	class ToolManagerI : public gcRefBase
@@ -169,7 +169,7 @@ namespace UserCore
 
 		//! checks the item install script and finds the tools that the item will use
 		//!
-		virtual void findJSTools(gcRefPtr<UserCore::Item::ItemInfo> item) = 0;
+		virtual void findJSTools(gcRefPtr<UserCore::Item::ItemInfoI> item) = 0;
 
 		//! init the script engine. Must be called before findJSTools is called. Can be called on different threads
 		//!
@@ -216,7 +216,7 @@ namespace UserCore
 		MOCK_METHOD1(areAllToolsInstalled, bool(const std::vector<DesuraId> &list));
 		MOCK_METHOD0(saveItems, void());
 		MOCK_METHOD1(getToolName, std::string(DesuraId toolId));
-		MOCK_METHOD1(findJSTools, void(gcRefPtr<UserCore::Item::ItemInfo> item));
+		MOCK_METHOD1(findJSTools, void(gcRefPtr<UserCore::Item::ItemInfoI> item));
 		MOCK_METHOD0(initJSEngine, bool());
 		MOCK_METHOD0(destroyJSEngine, void());
 		MOCK_METHOD1(invalidateTools, void(std::vector<DesuraId> &list));

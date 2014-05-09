@@ -39,7 +39,7 @@ void UploadResumeThread::doRun()
 {
 	gcAssert(m_pUpInfo);
 
-	getWebCore()->resumeUpload(getItemId(), m_szKey.c_str(), *m_pUpInfo);
+	getWebCore()->resumeUpload(getItemId(), m_szKey.c_str(), *m_pUpInfo.get());
 
 	const char* localFilePath = getUploadManager()->findUpload(m_szKey.c_str());
 	gcString sLocalFP(localFilePath);

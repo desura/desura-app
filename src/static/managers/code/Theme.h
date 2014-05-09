@@ -75,6 +75,8 @@ public:
 	int32 y;
 	int32 w;
 	int32 h;
+
+	gc_IMPLEMENT_REFCOUNTING(SpriteRect);
 };
 
 

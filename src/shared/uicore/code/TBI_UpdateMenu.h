@@ -41,7 +41,7 @@ namespace UserCore
 class TBIUpdateMenu : public TBIBaseMenu
 {
 public:
-	TBIUpdateMenu(UserCore::ItemManagerI* pItemManager)
+	TBIUpdateMenu(gcRefPtr<UserCore::ItemManagerI> pItemManager)
 		: TBIBaseMenu(pItemManager)
 	{
 	}

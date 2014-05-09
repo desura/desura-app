@@ -40,7 +40,7 @@ namespace UserCore
 		class ToolTransInfo : public gcRefCount
 		{
 		public:
-			ToolTransInfo(bool download, ToolTransaction* transaction, ToolManager* pToolManager);
+			ToolTransInfo(bool download, gcRefPtr<Misc::ToolTransaction> transaction, gcRefPtr<ToolManager> pToolManager);
 			~ToolTransInfo();
 
 			void removeItem(DesuraId id);
@@ -58,7 +58,7 @@ namespace UserCore
 
 			void getIds(std::vector<DesuraId> &idList);
 			void startingIPC();
-			void updateTransaction(Misc::ToolTransaction* pTransaction);
+			void updateTransaction(gcRefPtr<Misc::ToolTransaction> pTransaction);
 
 
 		protected:
@@ -69,10 +69,10 @@ namespace UserCore
 			bool m_bIsDownload = false;
 			uint32 m_uiCompleteCount = 0;
 
-			std::shared_ptr<Misc::ToolTransaction> m_pTransaction;
 			std::vector<UserCore::Misc::ToolProgress> m_vProgress;
 
-			ToolManager* m_pToolManager = nullptr;
+			gcRefPtr<Misc::ToolTransaction> m_pTransaction;
+			gcRefPtr<ToolManager> m_pToolManager;
 		};
 	}
 }

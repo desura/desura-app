@@ -39,7 +39,7 @@ class ConCommand;
 #define COLOR_ONE 1
 #define COLOR_TWO 2
 
-class SpriteRectI
+class SpriteRectI : public gcRefBase
 {
 public:
 	virtual int32 getX()=0;
@@ -73,7 +73,7 @@ public:
 	virtual const char* getThemeFolder()=0;
 
 	virtual Color getColor(const char* name, const char* id)=0;
-	virtual SpriteRectI* getSpriteRect(const char* id, const char* rectId)=0;
+	virtual gcRefPtr<SpriteRectI> getSpriteRect(const char* id, const char* rectId) = 0;
 
 	virtual void loadFromFolder(const char* folder)=0;
 	virtual void loadTheme(const char* name)=0;

@@ -46,8 +46,6 @@ GatherInfoTask::GatherInfoTask(gcRefPtr<UserCore::Item::ItemHandleI> handle, MCF
 
 GatherInfoTask::~GatherInfoTask()
 {
-	if (m_pGIHH)
-		m_pGIHH->destroy();
 }
 
 void GatherInfoTask::doRun()
@@ -151,7 +149,7 @@ bool GatherInfoTask::isValidBranch()
 	if (HasAnyFlags(m_uiFlags, GI_FLAG_TEST))
 		return true;
 
-	UserCore::Item::BranchInfoI* bInfo = getItemInfo()->getBranchById(getMcfBranch());
+	auto bInfo = getItemInfo()->getBranchById(getMcfBranch());
 	return bInfo && HasAnyFlags(bInfo->getFlags(), UserCore::Item::BranchInfoI::BF_DEMO|UserCore::Item::BranchInfoI::BF_FREE|UserCore::Item::BranchInfoI::BF_ONACCOUNT|UserCore::Item::BranchInfoI::BF_TEST);
 }
 
@@ -331,14 +329,14 @@ void GatherInfoTask::checkRequirements()
 
 uint32 GatherInfoTask::validate()
 {
-	UserCore::Item::ItemInfoI* pItemInfo = getItemHandle()->getItemInfo();
+	auto pItemInfo = getItemHandle()->getItemInfo();
 	uint32 isValid = 0;
 
 	if (!pItemInfo)
 		return UserCore::Item::Helper::V_BADINFO;
 
 	DesuraId par = pItemInfo->getParentId();
-	UserCore::Item::ItemInfoI *parInfo = nullptr;
+	gcRefPtr<UserCore::Item::ItemInfoI> parInfo;
 
 	if (par.isOk())
 	{

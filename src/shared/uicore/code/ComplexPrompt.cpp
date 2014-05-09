@@ -79,7 +79,7 @@ ComplexPrompt::~ComplexPrompt()
 
 void ComplexPrompt::setInfo(DesuraId id)
 {
-	UserCore::Item::ItemInfoI *item = GetUserCore()->getItemManager()->findItemInfo(id);
+	auto item = GetUserCore()->getItemManager()->findItemInfo(id);
 
 	if (!item)
 	{

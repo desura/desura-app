@@ -70,7 +70,7 @@ using namespace UserCore;
 class ItemManager::ParseInfo
 {
 public:
-	ParseInfo(uint32 statusOverride, WildcardManager* pWildCard = nullptr, bool reset=false, InfoMaps* maps=nullptr)
+	ParseInfo(uint32 statusOverride, gcRefPtr<WildcardManager> pWildCard = gcRefPtr<WildcardManager>(), bool reset = false, InfoMaps* maps = nullptr)
 	{
 		this->statusOverride = statusOverride;
 		this->pWildCard = pWildCard;
@@ -83,7 +83,7 @@ public:
 	XML::gcXMLElement rootNode;
 	XML::gcXMLElement infoNode;
 
-	WildcardManager* pWildCard;
+	gcRefPtr<WildcardManager> pWildCard;
 	InfoMaps* maps;
 
 	uint32 statusOverride = 0;
@@ -1070,7 +1070,7 @@ void ItemManager::parseLoginXml2(const XML::gcXMLElement &gamesNode, const XML::
 	InfoMaps maps;
 	generateInfoMaps(gamesNode, &maps);
 
-	ParseInfo pi(UM::ItemInfoI::STATUS_ONACCOUNT, 0, false, &maps);
+	ParseInfo pi(UM::ItemInfoI::STATUS_ONACCOUNT, nullptr, false, &maps);
 
 	platformNodes.for_each_child("platform", [this, &pi](const XML::gcXMLElement &platform)
 	{

@@ -187,7 +187,7 @@ void WebCoreClass::setCookie(const char* sess)
 	onCookieUpdateEvent();
 }
 
-void WebCoreClass::setCookies(CookieCallbackI *pCallback)
+void WebCoreClass::setCookies(gcRefPtr<CookieCallbackI> pCallback)
 {
 	gcAssert(pCallback);
 
@@ -196,8 +196,8 @@ void WebCoreClass::setCookies(CookieCallbackI *pCallback)
 
 	auto strRoot = getUrl(WebCore::Root);
 
-	(*pCallback)(strRoot.c_str(), "freeman", m_szIdCookie.c_str());
-	(*pCallback)(strRoot.c_str(), "masterchief", gcString(m_szSessCookie).c_str());
+	(*pCallback.get())(strRoot.c_str(), "freeman", m_szIdCookie.c_str());
+	(*pCallback.get())(strRoot.c_str(), "masterchief", gcString(m_szSessCookie).c_str());
 }
 
 void WebCoreClass::setWCCookies(HttpHandle& hh)

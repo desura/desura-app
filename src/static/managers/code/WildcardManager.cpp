@@ -180,9 +180,7 @@ void WildcardManager::constructPath(const char* path, char **res, uint8 *depth)
 			}
 
 			AutoDelete<char> tad(temp);
-			AutoDelete<WildcardInfo> wad;
-
-			WildcardInfo* wcInfo = nullptr;
+			gcRefPtr<WildcardInfo> wcInfo;
 
 			if (Safe::stricmp(temp, "TEMP") == 0)
 			{
@@ -192,9 +190,7 @@ void WildcardManager::constructPath(const char* path, char **res, uint8 *depth)
 
 				if (info.handled)
 				{
-					wcInfo = new WildcardInfo("temp", info.result.c_str(), "temp", true);
-					AutoDelete<WildcardInfo> ad(wcInfo);
-					wad = ad;
+					wcInfo = gcRefPtr<WildcardInfo>::create("temp", info.result.c_str(), "temp", true);
 				}
 			}
 			else
@@ -286,7 +282,7 @@ uint8 WildcardManager::parseXML(const XML::gcXMLElement &xmlElement)
 	return WCM_OK;
 }
 
-void WildcardManager::resolveWildCard(WildcardInfo *wcInfo)
+void WildcardManager::resolveWildCard(gcRefPtr<WildcardInfo> wcInfo)
 {
 	if (wcInfo->m_bResolved)
 		return;

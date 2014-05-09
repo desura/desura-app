@@ -49,7 +49,7 @@ VSDownloadMissing::~VSDownloadMissing()
 {
 	m_hMcf->getNewProvider() -= delegate(this, &VSDownloadMissing::onNewProvider);
 
-	UserCore::User* pUser = dynamic_cast<UserCore::User*>(getUserCore());
+	auto pUser = gcRefPtr<UserCore::User>::dyn_cast(getUserCore());
 
 	if (pUser)
 		pUser->getBDManager()->cancelDownloadBannerHooks(this);
@@ -102,7 +102,7 @@ bool VSDownloadMissing::checkComplex()
 {
 	if (HasAnyFlags(getItemInfo()->getStatus(), UserCore::Item::ItemInfoI::STATUS_INSTALLCOMPLEX))
 	{
-		UserCore::Item::ItemInfoI* par = getParentItemInfo();
+		auto par = getParentItemInfo();
 
 		if (par && (!par->getInstalledModId().isOk() || par->getInstalledModId() != getItemId()))
 		{		
@@ -129,7 +129,7 @@ void VSDownloadMissing::onNewProvider(MCFCore::Misc::DP_s& dp)
 
 	if (dp.action == MCFCore::Misc::DownloadProvider::ADD)
 	{
-		UserCore::User* pUser = dynamic_cast<UserCore::User*>(getUserCore());
+		auto pUser = gcRefPtr<UserCore::User>::dyn_cast(getUserCore());
 
 		if (pUser)
 			pUser->getBDManager()->downloadBanner(this, *dp.provider);

@@ -170,7 +170,7 @@ void CreateInfoPage::resetAllValues()
 	m_butCreate->Enable( false );
 }
 
-void CreateInfoPage::setInfo(DesuraId id, UserCore::Item::ItemInfoI* pItemInfo)
+void CreateInfoPage::setInfo(DesuraId id, gcRefPtr<UserCore::Item::ItemInfoI> pItemInfo)
 {
 	if (!pItemInfo && GetUserCore() && !GetUserCore()->isAdmin())
 	{	

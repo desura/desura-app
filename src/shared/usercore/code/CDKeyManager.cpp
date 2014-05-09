@@ -47,7 +47,7 @@ CDKeyManager::~CDKeyManager()
 	}
 }
 
-void CDKeyManager::getCDKeyForCurrentBranch(DesuraId id, gcRefPtr<UserCore::Misc::CDKeyCallBackI> &callback)
+void CDKeyManager::getCDKeyForCurrentBranch(DesuraId id, gcRefPtr<UserCore::Misc::CDKeyCallBackI> callback)
 {
 	if (!callback)
 		return;
@@ -97,7 +97,7 @@ void CDKeyManager::getCDKeyForCurrentBranch(DesuraId id, gcRefPtr<UserCore::Misc
 	m_pUser->getThreadPool()->forceTask(task);
 }
 
-void CDKeyManager::cancelRequest(DesuraId id, gcRefPtr<UserCore::Misc::CDKeyCallBackI> &callback)
+void CDKeyManager::cancelRequest(DesuraId id, gcRefPtr<UserCore::Misc::CDKeyCallBackI> callback)
 {
 	std::lock_guard<std::mutex> guard(m_TaskListLock);
 
@@ -121,12 +121,12 @@ void CDKeyManager::cancelRequest(DesuraId id, gcRefPtr<UserCore::Misc::CDKeyCall
 
 bool CDKeyManager::hasCDKeyForCurrentBranch(DesuraId id)
 {
-	UserCore::Item::ItemInfoI* info = m_pUser->getItemManager()->findItemInfo(id);
+	auto info = m_pUser->getItemManager()->findItemInfo(id);
 	
 	if (!info)
 		return false;
 
-	UserCore::Item::BranchInfoI* binfo = info->getCurrentBranch();
+	auto binfo = info->getCurrentBranch();
 
 	if (!binfo)
 		return false;

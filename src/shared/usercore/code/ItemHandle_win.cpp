@@ -55,7 +55,7 @@ void ItemHandle::doLaunch(gcRefPtr<Helper::ItemLaunchHelperI> helper)
 		x++;
 	}
 	
-	UserCore::Item::Misc::ExeInfoI* ei = getItemInfo()->getActiveExe();
+	auto ei = getItemInfo()->getActiveExe();
 
 	gcString args;
 	gcString ea(ei->getExeArgs());

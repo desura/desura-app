@@ -136,7 +136,7 @@ void InstallBranch::onButtonClick(wxCommandEvent &event)
 
 		if (b == UINT_MAX)
 		{
-			UserCore::Item::ItemInfoI* pItemInfo = GetUserCore()->getItemManager()->findItemInfo(m_Item);
+			gcRefPtr<UserCore::Item::ItemInfoI> pItemInfo = GetUserCore()->getItemManager()->findItemInfo(m_Item);
 
 			if ((m_bIsMod || m_bIsExpansion) && !m_bSelectBranch)
 				pItemInfo = GetUserCore()->getItemManager()->findItemInfo(pItemInfo->getParentId());
@@ -189,7 +189,7 @@ void InstallBranch::fixName(gcWString &name)
 int InstallBranch::setInfo(DesuraId id, bool selectBranch)
 {
 	m_bSelectBranch = selectBranch;
-	UserCore::Item::ItemInfoI* pItemInfo = GetUserCore()->getItemManager()->findItemInfo(id);
+	gcRefPtr<UserCore::Item::ItemInfoI> pItemInfo = GetUserCore()->getItemManager()->findItemInfo(id);
 
 	if (!pItemInfo)
 		return 1;
@@ -203,7 +203,7 @@ int InstallBranch::setInfo(DesuraId id, bool selectBranch)
 	gcWString itemName = pItemInfo->getName();
 	
 	DesuraId par = pItemInfo->getParentId();
-	UserCore::Item::ItemInfoI *parInfo = nullptr;
+	gcRefPtr<UserCore::Item::ItemInfoI> parInfo = nullptr;
 	if (par.isOk())
 	{
 		parInfo = GetUserCore()->getItemManager()->findItemInfo(par);
@@ -236,7 +236,7 @@ int InstallBranch::setInfo(DesuraId id, bool selectBranch)
 	uint32 fullReadyCount = 0;
 	m_bBuy = true;
 
-	UserCore::Item::ItemInfoI *i = pItemInfo;
+	auto i = pItemInfo;
 
 	bool isCheckingParent = (m_bIsMod || m_bIsExpansion) && !selectBranch;
 
@@ -251,11 +251,11 @@ int InstallBranch::setInfo(DesuraId id, bool selectBranch)
 		i = parInfo;
 	}
 
-	std::vector<UserCore::Item::BranchInfoI*> bList;
+	std::vector<gcRefPtr<UserCore::Item::BranchInfoI>> bList;
 
 	for (uint32 x=0; x<i->getBranchCount(); x++)
 	{
-		UserCore::Item::BranchInfoI* bi = i->getBranch(x);
+		auto bi = i->getBranch(x);
 
 		if (!bi)
 			continue;
@@ -318,7 +318,7 @@ int InstallBranch::setInfo(DesuraId id, bool selectBranch)
 
 	for (size_t x=0; x<bList.size(); x++)
 	{
-		UserCore::Item::BranchInfoI* bi = bList[x];
+		auto bi = bList[x];
 		gcString name = bi->getName();
 		gcWString title;
 		
@@ -411,12 +411,12 @@ void InstallBranch::onChoice(wxCommandEvent& event)
 		return;
 	}
 
-	UserCore::Item::ItemInfoI* pItemInfo = GetUserCore()->getItemManager()->findItemInfo(m_Item);
+	gcRefPtr<UserCore::Item::ItemInfoI> pItemInfo = GetUserCore()->getItemManager()->findItemInfo(m_Item);
 
 	if ((m_bIsMod || m_bIsExpansion) && !m_bSelectBranch)
 		pItemInfo = GetUserCore()->getItemManager()->findItemInfo(pItemInfo->getParentId());
 
-	UserCore::Item::BranchInfoI* bi = pItemInfo->getBranchById(b);
+	auto bi = pItemInfo->getBranchById(b);
 
 	m_bBuy = (!(bi->getFlags()&UserCore::Item::BranchInfoI::BF_ONACCOUNT) && !(bi->getFlags()&UserCore::Item::BranchInfoI::BF_FREE));
 

@@ -62,7 +62,7 @@ namespace
 		virtual void post(gcRefPtr<Helper::ItemHandleHelperI> &helper)
 		{
 			if (m_EVFn)
-				(*helper.*m_EVFn)();
+				(*helper.get().*m_EVFn)();
 		}
 
 		EventVoidFn m_EVFn;
@@ -94,9 +94,9 @@ namespace
 		virtual void post(gcRefPtr<Helper::ItemHandleHelperI> &helper)
 		{
 			if (m_bIsRef)
-				(*helper.*m_ERFn)(m_t);
+				(*helper.get().*m_ERFn)(m_t);
 			else
-				(*helper.*m_EFn)(m_t);
+				(*helper.get().*m_EFn)(m_t);
 		}
 
 		bool m_bIsRef;
@@ -112,7 +112,7 @@ namespace
 		for (size_t x = 0; x < vList.size(); x++)
 		{
 			if (vList[x])
-				(*vList[x].*Fn)();
+				(*vList[x].get().*Fn)();
 		}
 	}
 
@@ -122,7 +122,7 @@ namespace
 		for (size_t x = 0; x < vList.size(); x++)
 		{
 			if (vList[x])
-				(*vList[x].*Fn)(t);
+				(*vList[x].get().*Fn)(t);
 		}
 	}
 
@@ -132,7 +132,7 @@ namespace
 		for (size_t x = 0; x < vList.size(); x++)
 		{
 			if (vList[x])
-				(*vList[x].*Fn)(t);
+				(*vList[x].get().*Fn)(t);
 		}
 	}
 

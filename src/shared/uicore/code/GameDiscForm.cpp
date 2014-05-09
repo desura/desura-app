@@ -81,7 +81,7 @@ GameDiskForm::~GameDiskForm()
 {
 }
 
-void GameDiskForm::setInfo(DesuraId id, UserCore::ItemManagerI* pItemManager)
+void GameDiskForm::setInfo(DesuraId id, gcRefPtr<UserCore::ItemManagerI> pItemManager)
 {
 	if (!pItemManager)
 		pItemManager = GetUserCore()->getItemManager();
@@ -94,7 +94,7 @@ void GameDiskForm::setInfo(DesuraId id, UserCore::ItemManagerI* pItemManager)
 		return;
 	}
 
-	UserCore::Item::ItemInfoI* parent = m_pItem;
+	gcRefPtr<UserCore::Item::ItemInfoI> parent = m_pItem;
 
 	if (m_pItem->getId().getType() == DesuraId::TYPE_MOD && m_pItem->getParentId().isOk())
 		parent = pItemManager->findItemInfo(m_pItem->getParentId());

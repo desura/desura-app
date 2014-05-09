@@ -129,7 +129,7 @@ void IPCToolMain::message(int type, const char* msg, uint64 col, std::map<std::s
 	}
 }
 
-gcException IPCToolMain::installTool(UserCore::ToolInfo* info)
+gcException IPCToolMain::installTool(gcRefPtr<UserCore::ToolInfo> info)
 {
 	return installTool(info->getExe(), info->getArgs());
 }

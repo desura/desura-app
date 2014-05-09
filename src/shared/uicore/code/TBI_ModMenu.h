@@ -39,7 +39,7 @@ namespace UserCore
 class TBIModMenu : public TBIBaseMenu
 {
 public:
-	TBIModMenu(UserCore::ItemManagerI* pItemManager)
+	TBIModMenu(gcRefPtr<UserCore::ItemManagerI> pItemManager)
 		: TBIBaseMenu(pItemManager)
 	{
 	}

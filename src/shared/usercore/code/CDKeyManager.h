@@ -46,8 +46,8 @@ namespace UserCore
 		CDKeyManager(gcRefPtr<UserCore::User> user);
 		~CDKeyManager();
 
-		void getCDKeyForCurrentBranch(DesuraId id, gcRefPtr<UserCore::Misc::CDKeyCallBackI> &callback) override;
-		void cancelRequest(DesuraId id, gcRefPtr<UserCore::Misc::CDKeyCallBackI> &callback) override;
+		void getCDKeyForCurrentBranch(DesuraId id, gcRefPtr<UserCore::Misc::CDKeyCallBackI> callback) override;
+		void cancelRequest(DesuraId id, gcRefPtr<UserCore::Misc::CDKeyCallBackI> callback) override;
 		bool hasCDKeyForCurrentBranch(DesuraId id) override;
 
 		gc_IMPLEMENT_REFCOUNTING(CDKeyManager);

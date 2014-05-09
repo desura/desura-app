@@ -63,7 +63,7 @@ namespace Thread
 		//!
 		//! @return True if has task, false if not
 		//!
-		bool hasTask(){ return (m_pTask != nullptr); }
+		bool hasTask(){ return m_pTask; }
 
 		//! ALerts thread of a new task
 		//!

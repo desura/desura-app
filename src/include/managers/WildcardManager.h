@@ -118,7 +118,7 @@ protected:
 	void constructPath(const char* path, char **res, uint8* depth);
 
 	//!
-	void resolveWildCard(WildcardInfo *temp);
+	void resolveWildCard(gcRefPtr<WildcardInfo> temp);
 
 private:
 	uint32 m_uiDepth;

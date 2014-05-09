@@ -46,7 +46,7 @@ namespace UserCore
 	class MCFDownloadProviders : public MCFCore::Misc::DownloadProvidersI
 	{
 	public:
-		MCFDownloadProviders(WebCore::WebCoreI* pWebCore, int nUserId);
+		MCFDownloadProviders(gcRefPtr<WebCore::WebCoreI> pWebCore, int nUserId);
 
 		void setInfo(DesuraId id, MCFBranch branch, MCFBuild build) override;
 
@@ -82,7 +82,7 @@ namespace UserCore
 		MCFBranch m_Branch;
 
 		gcTime m_tLastUpdate;
-		WebCore::WebCoreI* m_pWebCore;
+		gcRefPtr<WebCore::WebCoreI> m_pWebCore;
 
 		std::mutex m_UpdateLock;
 		std::vector<std::shared_ptr<const MCFCore::Misc::DownloadProvider>> m_vDownloadProviders;

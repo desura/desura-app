@@ -49,20 +49,20 @@ public:
 	virtual bool preExecuteValidation(const char* function, uint32 functionHash, JSObjHandle object, size_t argc, JSObjHandle* argv);
 
 private:
-	bool isValidBranch(UserCore::Item::BranchInfoI* branch);
-	int32 getBranchFlags(UserCore::Item::BranchInfoI* branch);
+	bool isValidBranch(gcRefPtr<UserCore::Item::BranchInfoI> branch);
+	int32 getBranchFlags(gcRefPtr<UserCore::Item::BranchInfoI> branch);
 
-	gcString getItemId(UserCore::Item::BranchInfoI* branch);
-	gcString getBranchId(UserCore::Item::BranchInfoI* branch);
-	gcString getBranchName(UserCore::Item::BranchInfoI* branch);
-	gcString getBranchCost(UserCore::Item::BranchInfoI* branch);
-	gcString getBranchPreorderDate(UserCore::Item::BranchInfoI* branch);
+	gcString getItemId(gcRefPtr<UserCore::Item::BranchInfoI> branch);
+	gcString getBranchId(gcRefPtr<UserCore::Item::BranchInfoI> branch);
+	gcString getBranchName(gcRefPtr<UserCore::Item::BranchInfoI> branch);
+	gcString getBranchCost(gcRefPtr<UserCore::Item::BranchInfoI> branch);
+	gcString getBranchPreorderDate(gcRefPtr<UserCore::Item::BranchInfoI> branch);
 
-	bool isWindows(UserCore::Item::BranchInfoI* branch);
-	bool isLinux(UserCore::Item::BranchInfoI* branch);
+	bool isWindows(gcRefPtr<UserCore::Item::BranchInfoI> branch);
+	bool isLinux(gcRefPtr<UserCore::Item::BranchInfoI> branch);
 	
-	bool is32Bit(UserCore::Item::BranchInfoI* branch);
-	bool is64Bit(UserCore::Item::BranchInfoI* branch);
+	bool is32Bit(gcRefPtr<UserCore::Item::BranchInfoI> branch);
+	bool is64Bit(gcRefPtr<UserCore::Item::BranchInfoI> branch);
 
 
 	uint32 m_uiIsValidHash;

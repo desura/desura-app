@@ -31,7 +31,7 @@ BEGIN_EVENT_TABLE( UploadMCFForm, gcFrame )
 	EVT_CLOSE( UploadMCFForm::onFormClose )
 END_EVENT_TABLE()
 
-UploadMCFForm::UploadMCFForm(wxWindow* parent, UserCore::ItemManagerI* pItemManager) 
+UploadMCFForm::UploadMCFForm(wxWindow* parent, gcRefPtr<UserCore::ItemManagerI> pItemManager) 
 	: gcFrame(parent, wxID_ANY, wxT("Uploading Item"), wxDefaultPosition, wxSize( 370,130 ), wxCAPTION|wxCLOSE_BOX|wxFRAME_FLOAT_ON_PARENT|wxSYSTEM_MENU)
 	, m_pItemManager(pItemManager)
 {
@@ -49,8 +49,10 @@ UploadMCFForm::UploadMCFForm(wxWindow* parent, UserCore::ItemManagerI* pItemMana
 
 UploadMCFForm::~UploadMCFForm()
 {
-	if (GetUserCore())
-		*GetUserCore()->getItemsAddedEvent() -= guiDelegate(this, &UploadMCFForm::updateInfo);
+	auto userCore = GetUserCore();
+
+	if (userCore)
+		userCore->getItemsAddedEvent() -= guiDelegate(this, &UploadMCFForm::updateInfo);
 }
 
 void UploadMCFForm::onFormClose( wxCloseEvent& event )
@@ -77,8 +79,10 @@ void UploadMCFForm::updateInfo(uint32& itemId)
 		if (m_pPage)
 			m_pPage->setInfo(m_uiInternId);
 
-		if (GetUserCore())
-			*GetUserCore()->getItemsAddedEvent() -= guiDelegate(this, &UploadMCFForm::updateInfo);
+		auto userCore = GetUserCore();
+
+		if (userCore)
+			userCore->getItemsAddedEvent() -= guiDelegate(this, &UploadMCFForm::updateInfo);
 	}
 }
 
@@ -88,15 +92,17 @@ void UploadMCFForm::setInfo(DesuraId id)
 
 	if (!m_pItemInfo)
 	{	
-		if (GetUserCore() && !GetUserCore()->isAdmin())
+		auto userCore = GetUserCore();
+
+		if (userCore && !userCore->isAdmin())
 		{
 			Close();
 			return;
 		}
-		else if (GetUserCore())
+		else if (userCore)
 		{
-			*GetUserCore()->getItemsAddedEvent() += guiDelegate(this, &UploadMCFForm::updateInfo);
-			GetUserCore()->getItemManager()->retrieveItemInfoAsync(id);
+			userCore->getItemsAddedEvent() += guiDelegate(this, &UploadMCFForm::updateInfo);
+			userCore->getItemManager()->retrieveItemInfoAsync(id);
 		}
 	}
 

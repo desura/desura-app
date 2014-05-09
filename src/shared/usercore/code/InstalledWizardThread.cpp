@@ -136,7 +136,7 @@ void InstalledWizardThread::onGameFound(UserCore::Misc::InstallInfo &game)
 	m_vGameList.push_back(game);
 	DesuraId id = game.getId();
 
-	UserCore::Item::ItemInfoI *info = getUserCore()->getItemManager()->findItemInfo(id);
+	auto info = getUserCore()->getItemManager()->findItemInfo(id);
 	if (info && (info->getStatus() & (UserCore::Item::ItemInfoI::STATUS_INSTALLED|UserCore::Item::ItemInfoI::STATUS_READY)))
 		return;
 
@@ -170,7 +170,7 @@ void InstalledWizardThread::onModFound(UserCore::Misc::InstallInfo &mod)
 
 	DesuraId id = mod.getId();
 
-	UserCore::Item::ItemInfoI *info = getUserCore()->getItemManager()->findItemInfo(id);
+	auto info = getUserCore()->getItemManager()->findItemInfo(id);
 	if (info && (info->getStatus() & (UserCore::Item::ItemInfoI::STATUS_INSTALLED|UserCore::Item::ItemInfoI::STATUS_READY)))
 		return;
 
@@ -209,7 +209,7 @@ bool InstalledWizardThread::selectBranch(gcRefPtr<UserCore::Item::ItemInfoI> &it
 
 	for (uint32 x=0; x<item->getBranchCount(); x++)
 	{
-		UserCore::Item::BranchInfoI* bi = item->getBranch(x);
+		auto bi = item->getBranch(x);
 
 		if (!bi)
 			continue;

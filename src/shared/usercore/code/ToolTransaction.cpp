@@ -34,15 +34,15 @@ using namespace UserCore;
 using namespace UserCore::Misc;
 
 
-ToolTransInfo::ToolTransInfo(bool download, ToolTransaction* transaction, ToolManager* pToolManager)
+ToolTransInfo::ToolTransInfo(bool download, gcRefPtr<ToolTransaction> transaction, gcRefPtr<ToolManager> pToolManager)
 	: m_bIsDownload(download)
-	, m_pTransaction(std::shared_ptr<ToolTransaction>(transaction))
+	, m_pTransaction(transaction)
 	, m_pToolManager(pToolManager)
 {
 	gcAssert(m_pTransaction);
 
 	if (!m_pTransaction)
-		m_pTransaction = std::make_shared<ToolTransaction>();
+		m_pTransaction = gcRefPtr<ToolTransaction>::create();
 
 	if (!m_bIsDownload)
 		return;
@@ -55,7 +55,7 @@ ToolTransInfo::ToolTransInfo(bool download, ToolTransaction* transaction, ToolMa
 		tp.percent = 0;
 		tp.total = 0;
 				
-		ToolInfo* info = pToolManager->findItem(t.toInt64());
+		auto info = pToolManager->findItem(t.toInt64());
 
 		if (info)
 			tp.total = info->getDownloadSize();
@@ -157,7 +157,7 @@ bool ToolTransInfo::startNextInstall(IPCToolMain* pToolMain, DesuraId &toolId)
 		return false;
 
 	toolId = m_pTransaction->get(m_uiCompleteCount);
-	ToolInfo* info = m_pToolManager->findItem(toolId.toInt64());
+	auto info = m_pToolManager->findItem(toolId.toInt64());
 
 	if (!info)
 		return true;
@@ -231,7 +231,7 @@ void ToolTransInfo::onINError(gcException &e)
 	m_pTransaction->onErrorEvent(e);
 }
 
-void ToolTransInfo::updateTransaction(Misc::ToolTransaction* pTransaction)
+void ToolTransInfo::updateTransaction(gcRefPtr<Misc::ToolTransaction> pTransaction)
 {
 	m_pTransaction->onStartInstallEvent.reset();
 	m_pTransaction->onCompleteEvent.reset();

@@ -41,7 +41,7 @@ namespace UserCore
 class EULAForm : public gcFrame 
 {
 public:
-	EULAForm(wxWindow* parent, UserCore::ItemManagerI* pItemManager = nullptr);
+	EULAForm(wxWindow* parent, gcRefPtr<UserCore::ItemManagerI> pItemManager = gcRefPtr<UserCore::ItemManagerI>());
 	~EULAForm();
 
 	bool setInfo(DesuraId id);
@@ -66,7 +66,7 @@ private:
 	DesuraId m_uiInternId;
 	bool m_bLoadingProperPage;
 
-	UserCore::ItemManagerI* m_pItemManager = nullptr;
+	gcRefPtr<UserCore::ItemManagerI> m_pItemManager;
 };
 
 #endif //DESURA_EULAFORM_H

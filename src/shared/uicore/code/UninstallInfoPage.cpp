@@ -93,7 +93,7 @@ UninstallInfoPage::~UninstallInfoPage()
 
 void UninstallInfoPage::init()
 {
-	UserCore::Item::ItemInfoI *info = getItemInfo();
+	auto info = getItemInfo();
 
 	if (!info)
 	{
@@ -106,7 +106,7 @@ void UninstallInfoPage::init()
 
 	for (size_t x=0; x<info->getBranchCount(); x++)
 	{
-		UserCore::Item::BranchInfoI* b = info->getBranch(x);
+		auto b = info->getBranch(x);
 
 		if (b && HasAnyFlags(b->getFlags(), UserCore::Item::BranchInfoI::BF_ONACCOUNT) && !HasAnyFlags(b->getFlags(), UserCore::Item::BranchInfoI::BF_DEMO|UserCore::Item::BranchInfoI::BF_FREE|UserCore::Item::BranchInfoI::BF_TEST))
 			hasPaidBranch = true;

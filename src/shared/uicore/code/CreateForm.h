@@ -44,7 +44,7 @@ $/LicenseInfo$
 class CreateMCFForm : public gcFrame 
 {
 public:
-	CreateMCFForm(wxWindow* parent, UserCore::ItemManagerI* pItemManager = nullptr);
+	CreateMCFForm(wxWindow* parent, gcRefPtr<UserCore::ItemManagerI> pItemManager = gcRefPtr<UserCore::ItemManagerI>());
 	~CreateMCFForm();
 
 	void setInfo(DesuraId id);
@@ -82,7 +82,7 @@ private:
 	bool m_bPromptClose = true;
 	DesuraId m_uiInternId;
 
-	UserCore::ItemManagerI* m_pItemManager = nullptr;
+	gcRefPtr<UserCore::ItemManagerI> m_pItemManager;
 
 	DECLARE_EVENT_TABLE();
 };

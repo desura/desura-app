@@ -33,7 +33,7 @@ $/LicenseInfo$
 REGISTER_JSEXTENDER(DesuraJSBinding);
 
 template <>
-void FromJSObject<UserCore::Item::ItemInfoI*>(UserCore::Item::ItemInfoI* &item, JSObjHandle& arg)
+void FromJSObject<gcRefPtr<UserCore::Item::ItemInfoI>>(gcRefPtr<UserCore::Item::ItemInfoI> &item, JSObjHandle& arg)
 {
 	if (arg->isObject() == false)
 		return;
@@ -41,7 +41,7 @@ void FromJSObject<UserCore::Item::ItemInfoI*>(UserCore::Item::ItemInfoI* &item, 
 	item = arg->getUserObject<UserCore::Item::ItemInfoI>();
 }
 
-UserCore::ItemManagerI* DesuraJSBinding::gs_pItemManager = nullptr;
+gcRefPtr<UserCore::ItemManagerI> DesuraJSBinding::gs_pItemManager = nullptr;
 
 DesuraJSBinding *GetJSBinding()
 {
@@ -101,7 +101,7 @@ DesuraJSBinding::~DesuraJSBinding()
 {
 }
 
-UserCore::ItemManagerI* DesuraJSBinding::getItemManager()
+gcRefPtr<UserCore::ItemManagerI> DesuraJSBinding::getItemManager()
 {
 	if (!gs_pItemManager)
 		gs_pItemManager = GetUserCore()->getItemManager();
@@ -187,7 +187,7 @@ std::vector<void*> DesuraJSBinding::getDevItems()
 	if (!getItemManager())
 		return ret;
 
-	std::vector<UserCore::Item::ItemInfoI*> gList;
+	std::vector<gcRefPtr<UserCore::Item::ItemInfoI>> gList;
 	getItemManager()->getDevList(gList);
 
 	for (size_t x=0; x<gList.size(); x++)
@@ -203,7 +203,7 @@ std::vector<void*> DesuraJSBinding::getGames()
 	if (!getItemManager())
 		return ret;
 
-	std::vector<UserCore::Item::ItemInfoI*> gList;
+	std::vector<gcRefPtr<UserCore::Item::ItemInfoI>> gList;
 	getItemManager()->getGameList(gList);
 
 	for (size_t x=0; x<gList.size(); x++)
@@ -212,14 +212,14 @@ std::vector<void*> DesuraJSBinding::getGames()
 	return ret;
 }
 
-std::vector<void*> DesuraJSBinding::getMods(UserCore::Item::ItemInfoI* game)
+std::vector<void*> DesuraJSBinding::getMods(gcRefPtr<UserCore::Item::ItemInfoI> game)
 {
 	std::vector<void*> ret;
 
 	if (!game || !getItemManager())
 		return ret;
 
-	std::vector<UserCore::Item::ItemInfoI*> mList;
+	std::vector<gcRefPtr<UserCore::Item::ItemInfoI>> mList;
 	getItemManager()->getModList(game->getId(), mList);
 
 	for (size_t x=0; x<mList.size(); x++)
@@ -235,7 +235,7 @@ std::vector<void*> DesuraJSBinding::getLinks()
 	if (!getItemManager())
 		return ret;
 
-	std::vector<UserCore::Item::ItemInfoI*> gList;
+	std::vector<gcRefPtr<UserCore::Item::ItemInfoI>> gList;
 	getItemManager()->getLinkList(gList);
 
 	for (size_t x=0; x<gList.size(); x++)
@@ -251,7 +251,7 @@ std::vector<void*> DesuraJSBinding::getFavorites()
 	if (!getItemManager())
 		return ret;
 
-	std::vector<UserCore::Item::ItemInfoI*> gList;
+	std::vector<gcRefPtr<UserCore::Item::ItemInfoI>> gList;
 	getItemManager()->getFavList(gList);
 
 	for (size_t x=0; x<gList.size(); x++)
@@ -267,7 +267,7 @@ std::vector<void*> DesuraJSBinding::getRecent()
 	if (!getItemManager())
 		return ret;
 
-	std::vector<UserCore::Item::ItemInfoI*> gList;
+	std::vector<gcRefPtr<UserCore::Item::ItemInfoI>> gList;
 	getItemManager()->getRecentList(gList);
 
 	for (size_t x=0; x<gList.size(); x++)
@@ -305,7 +305,7 @@ std::vector<void*> DesuraJSBinding::getNewItems()
 	if (!getItemManager())
 		return ret;
 
-	std::vector<UserCore::Item::ItemInfoI*> gList;
+	std::vector<gcRefPtr<UserCore::Item::ItemInfoI>> gList;
 	getItemManager()->getNewItems(gList);
 
 	for (size_t x=0; x<gList.size(); x++)
@@ -456,8 +456,10 @@ bool DesuraJSBinding::isValidIcon(gcString url)
 
 void DesuraJSBinding::updateCounts(int32 msg, int32 updates, int32 threads, int32 cart)
 {
-	if (GetUserCore())
-		GetUserCore()->setCounts(msg, updates, threads, cart);
+	auto userCore = GetUserCore();
+
+	if (userCore)
+		userCore->setCounts(msg, updates, threads, cart);
 }
 
 void DesuraJSBinding::forceUpdatePoll()
@@ -520,7 +522,7 @@ void* DesuraJSBinding::addLink(gcString name, gcString exe, gcString args)
 	return getItemManager()->findItemInfo(id);
 }
 
-void DesuraJSBinding::delLink(UserCore::Item::ItemInfoI* item)
+void DesuraJSBinding::delLink(gcRefPtr<UserCore::Item::ItemInfoI> item)
 {
 	if (item->getId().getType() != DesuraId::TYPE_LINK)
 		return;
@@ -531,7 +533,7 @@ void DesuraJSBinding::delLink(UserCore::Item::ItemInfoI* item)
 	getItemManager()->removeItem(item->getId());	
 }
 
-void DesuraJSBinding::updateLink(UserCore::Item::ItemInfoI* item, gcString args)
+void DesuraJSBinding::updateLink(gcRefPtr<UserCore::Item::ItemInfoI> item, gcString args)
 {
 	if (!getItemManager())
 		return;

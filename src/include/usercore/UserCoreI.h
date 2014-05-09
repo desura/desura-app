@@ -121,8 +121,11 @@ namespace UserCore
 
 	class UserI : public gcRefBase
 	{
-	public:
+	protected:
 		virtual ~UserI(){};
+
+	public:
+		virtual void destroy() = 0;
 
 		//! Set up default user
 		//!
@@ -500,6 +503,8 @@ namespace UserCore
 	class UserMock : public UserI
 	{
 	public:
+		MOCK_METHOD0(destroy, void());
+
 		MOCK_METHOD1(init, void(const char* appDataPath));
 		MOCK_METHOD0(getAppDataPath, const char*());
 		MOCK_METHOD0(getMcfCachePath, const char*());

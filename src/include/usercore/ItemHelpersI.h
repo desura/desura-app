@@ -96,10 +96,6 @@ namespace UserCore
 				//!
 				virtual ACTION showInstallPrompt(const char* path) = 0;
 
-				//! Destroys this class
-				//!
-				virtual void destroy() = 0;
-
 				//! Branch belongs to another platform. Return true to select a new branch
 				//!
 				virtual bool showPlatformError() = 0;
@@ -118,7 +114,6 @@ namespace UserCore
 			{
 			public:
 				virtual bool verifyAfterHashFail() = 0;
-				virtual void destroy() = 0;
 			};
 
 			class ItemHandleFactoryI : public gcRefBase

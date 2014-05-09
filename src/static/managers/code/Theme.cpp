@@ -38,7 +38,7 @@ Theme::Theme(const char* name)
 
 const char* Theme::getImage(const char* id)
 {
-	ThemeImageInfo* img = ImageList::findItem(id);
+	auto img = ImageList::findItem(id);
 
 	if (img)
 		return img->path.c_str();
@@ -48,7 +48,7 @@ const char* Theme::getImage(const char* id)
 
 const char* Theme::getWebPage(const char* id)
 {
-	ThemeWebInfo* web = WebList::findItem(id);
+	auto web = WebList::findItem(id);
 
 	if (web)
 		return web->path.c_str();
@@ -58,7 +58,7 @@ const char* Theme::getWebPage(const char* id)
 
 Color Theme::getColor(const char* name, const char* id)
 {
-	ThemeControlInfo* col = ControlList::findItem(name);
+	auto col = ControlList::findItem(name);
 
 	if (col)
 		return col->getColor(name, id);
