@@ -296,7 +296,7 @@ void SMTController::fillFileList()
 		vList.emplace_back(m_rvFileList[x]->getSize(), (uint32)x);
 	}
 
-	std::sort(vList.begin(), vList.end(), [](tFile &a, tFile &b){
+    std::sort(vList.begin(), vList.end(), [](const tFile &a, const tFile &b){
 		return (a.size < b.size);
 	});
 
