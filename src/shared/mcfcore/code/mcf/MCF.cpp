@@ -90,7 +90,7 @@ bool MCF::isCompressed()
 
 void MCF::setFile(const char* file)
 {
-   m_szFile = file;
+    m_szFile = UTIL::FS::PathWithFile(file).getFullPath();
 }
 
 void MCF::setFile(const char* file, uint64 offset)
