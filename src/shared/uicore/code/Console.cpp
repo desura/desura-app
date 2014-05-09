@@ -128,7 +128,7 @@ private:
 };
 
 
-std::atomic<std::thread::id> Console::s_IgnoredThread;
+std::atomic<std::thread::id> Console::s_IgnoredThread = {std::thread::id()};
 
 
 ///////////////////////////////////////////////////////////////////////////////

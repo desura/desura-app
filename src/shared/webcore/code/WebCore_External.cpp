@@ -156,7 +156,7 @@ void WebCoreClass::downloadBanner(MCFCore::Misc::DownloadProvider* dlp, const ch
 
 	WebCore::Misc::DownloadImageInfo dii(dlp->getBanner());
 
-	std::atomic<bool> stop;
+    std::atomic<bool> stop = {false};
 	downloadImage(&dii, stop);
 	dlp->setBanner(dii.outPath.c_str());
 }

@@ -676,7 +676,7 @@ int32 MCF::verifyAll(const char* tempPath)
 	UTIL::FS::FileHandle fh(getFile(), UTIL::FS::FILE_READ);
 
 	uint32 badCount = 0;
-	std::atomic<bool> placeholder;
+    std::atomic<bool> placeholder = {false};
 
 	for (size_t x=0; x<m_pFileList.size(); x++)
 	{

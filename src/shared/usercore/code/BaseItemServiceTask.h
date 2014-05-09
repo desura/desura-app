@@ -73,8 +73,8 @@ namespace UserCore
 
 		private:
 			::Thread::WaitCondition m_WaitCond;
-			std::atomic<bool> m_bFinished;
-			std::atomic<bool> m_bStarted;
+            std::atomic<bool> m_bFinished = {false};
+            std::atomic<bool> m_bStarted = {false};
 		};
 	}
 }

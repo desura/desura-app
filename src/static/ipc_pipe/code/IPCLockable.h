@@ -58,7 +58,7 @@ namespace IPC
 	private:
 		IPCParameterI* m_pResult = nullptr;
 
-		std::atomic<bool> m_bTriggered;
+        std::atomic<bool> m_bTriggered = {false};
 		Thread::WaitCondition m_WaitCond;
 		std::mutex m_InternalLock;
 	};

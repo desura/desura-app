@@ -277,7 +277,7 @@ namespace IPC
 
 		gcString m_szThreadName;
 
-		std::atomic<uint64> m_nMsgSerial;
+        std::atomic<uint64> m_nMsgSerial = {0};
 		std::mutex m_PartLock;
 		std::map<uint64, std::vector<PipeMessage*>> m_mOutstandingPartMessages;
 
