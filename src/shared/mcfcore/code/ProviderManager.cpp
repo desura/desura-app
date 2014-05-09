@@ -272,8 +272,6 @@ bool ProviderManager::hasValidAgents()
 
 #ifdef WITH_GTEST
 
-#include <gtest/gtest.h>
-
 namespace UnitTest
 {
 

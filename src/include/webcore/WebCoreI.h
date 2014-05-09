@@ -29,9 +29,6 @@ $/LicenseInfo$
 #pragma once
 #endif
 
-#ifdef LINK_WITH_GMOCK
-#include <gmock/gmock.h>
-#endif
 
 #include "ResumeUploadInfo.h"
 #include "DLLVersion.h"

@@ -542,8 +542,6 @@ void UpdateThreadOld::updateBuildVer()
 
 #ifdef WITH_GTEST
 
-#include <gtest/gtest.h>
-
 namespace UnitTest
 {
 	class UpdateThreadOldFixture : public ::testing::Test

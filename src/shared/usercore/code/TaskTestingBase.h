@@ -32,9 +32,6 @@ $/LicenseInfo$
 
 #ifdef LINK_WITH_GMOCK
 
-#include <gtest/gtest.h>
-#include <gmock/gmock.h>
-
 #include "usercore/ToolManagerI.h"
 #include "BranchInfo.h"
 #include "BranchInstallInfo.h"

@@ -607,8 +607,6 @@ gcString MCFManager::getMcfSavePath()
 
 #ifdef WITH_GTEST
 
-#include <gtest/gtest.h>
-
 namespace UnitTest
 {
 	class MCFManagerFixture : public ::testing::Test

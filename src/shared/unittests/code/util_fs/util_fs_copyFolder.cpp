@@ -20,7 +20,6 @@ Linden Research, Inc., 945 Battery Street, San Francisco, CA  94111  USA
 $/LicenseInfo$
 */
 
-#include <gtest/gtest.h>
 
 // interface: void copyFolder(Path src, Path dest, std::vector<std::string> *vIgnoreList = nullptr, bool copyOverExisting = true);
 //            void copyFolder(std::string src, std::string dest, std::vector<std::string> *vIgnoreList = nullptr, bool copyOverExisting = true)
