@@ -101,6 +101,12 @@ public:
 	EventHandler(gcWebControlI* parent);
 	~EventHandler();
 
+	void nullControl()
+	{
+		std::lock_guard<std::mutex> guard(m_ParentLock);
+		m_pParent = nullptr;
+	}
+
 	bool onNavigateUrl(const char* url, bool isMain) override;
 	void onPageLoadStart() override;
 	void onPageLoadEnd() override;
@@ -161,6 +167,7 @@ private:
 	uint32 m_uiLastContextMenuX;
 	uint32 m_uiLastContextMenuY;
 
+	std::mutex m_ParentLock;
 	gcWebControlI* m_pParent;
 
 	std::mutex m_UrlLock;
