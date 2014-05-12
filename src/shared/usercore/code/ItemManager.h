@@ -58,6 +58,8 @@ namespace UserCore
 		ItemManager(gcRefPtr<User> user);
 		~ItemManager();
 
+		void destroy();
+
 		typedef std::map<uint64, gcRefPtr<UserCore::Item::ItemHandle>>::iterator itemIterator;
 
 		void loadItems() override;

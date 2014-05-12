@@ -46,7 +46,7 @@ $/LicenseInfo$
 #include "VSInstallMissing.h"
 
 #include "MCFDownloadProviders.h"
-
+#include "user.h"
 
 enum TIER
 {
@@ -257,7 +257,7 @@ void VerifyServiceTask::checkHooks()
 	const char* insPath = getItemInfo()->getPath();
 
 	if (hookPath && UTIL::FS::isValidFile(hookPath))
-		getUserCore()->getServiceMain()->runInstallScript(hookPath, insPath, "PostInstall");
+		getUserCore()->getInternal()->getServiceMain()->runInstallScript(hookPath, insPath, "PostInstall");
 }
 
 void VerifyServiceTask::refreshInfo()

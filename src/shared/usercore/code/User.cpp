@@ -56,9 +56,6 @@ $/LicenseInfo$
 namespace UM = UserCore::Misc;
 using namespace UserCore;
 
-gc_REFPTR_DESTRUCTOR(User);
-
-
 User::User()
 	: m_bAltProvider(false)
 {
@@ -67,6 +64,12 @@ User::User()
 }
 
 User::~User() 
+{
+	gcTrace("");
+	destroy();
+}
+
+void User::destroy()
 {
 	gcTrace("");
 
@@ -82,11 +85,6 @@ User::~User()
 	safe_delete(m_pThreadPool);
 	safe_delete(m_pWebCore);
 	safe_delete(m_pMcfManager);
-}
-
-void User::destroy()
-{
-	
 }
 
 void User::onLoginItemsLoaded()
@@ -160,6 +158,10 @@ void User::cleanUp()
 	safe_delete(m_pGameExplorerManager);
 #endif
 	safe_delete(m_pCIPManager);
+
+	if (m_pItemManager)
+		m_pItemManager->destroy();
+
 	safe_delete(m_pItemManager);
 	safe_delete(m_pToolManager);
 	

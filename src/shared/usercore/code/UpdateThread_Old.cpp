@@ -481,8 +481,8 @@ void UpdateThreadOld::checkAppUpdate(const XML::gcXMLElement &uNode, std::functi
 			gcString strAppid("{0}", appid);
 			gcString strAppVer("{0}", mcfversion - 1);
 
-			m_pUser->getServiceMain()->updateRegKey(APPID, strAppid.c_str());
-			m_pUser->getServiceMain()->updateRegKey(APPBUILD, strAppVer.c_str());
+			m_pUser->getInternal()->getServiceMain()->updateRegKey(APPID, strAppid.c_str());
+			m_pUser->getInternal()->getServiceMain()->updateRegKey(APPBUILD, strAppVer.c_str());
 		}
 #endif
 

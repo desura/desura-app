@@ -105,8 +105,6 @@ private:
 	private:											\
 	gcRefCount m_RefCount;
 
-#define gc_REFPTR_DESTRUCTOR(ClassName) 
-
 template <class T>
 class gcRefPtr
 {
@@ -124,27 +122,37 @@ public:
 	gcRefPtr(T* p)
 		: m_pPtr(p)
 	{
-		m_pRefFn = generateCleanupFunct();
-		m_pRefFn(this, p, true);
+		if (m_pPtr)
+		{
+			m_pRefFn = generateCleanupFunct();
+			m_pRefFn(this, p, true);
+		}
 	}
 
 	gcRefPtr(T* p, gcRefBaseFn refBaseFn)
 		: m_pPtr(p)
 		, m_pRefFn(refBaseFn)
 	{
-		m_pRefFn(this, p, true);
+		gcAssert(!m_pPtr || (m_pPtr && m_pRefFn));
+
+		if (m_pRefFn)
+			m_pRefFn(this, m_pPtr, true);
 	}
 
 	gcRefPtr(const gcRefPtr<T>& r)
 		: m_pPtr(r.m_pPtr)
 		, m_pRefFn(r.m_pRefFn)
 	{
-		m_pRefFn(this, m_pPtr, true);
+		gcAssert(!m_pPtr || (m_pPtr && m_pRefFn));
+
+		if (m_pRefFn)
+			m_pRefFn(this, m_pPtr, true);
 	}
 
 	~gcRefPtr()
 	{
-		m_pRefFn(this, m_pPtr, false);
+		if (m_pRefFn)
+			m_pRefFn(this, m_pPtr, false);
 	}
 
 	T* get() const
@@ -166,6 +174,9 @@ public:
 
 	gcRefPtr<T>& operator=(T* p)
 	{
+		if (!m_pRefFn)
+			m_pRefFn = generateCleanupFunct();
+
 		m_pRefFn(this, p, true);
 		m_pRefFn(this, m_pPtr, false);
 		m_pPtr = p;
@@ -221,7 +232,9 @@ public:
 
 	void reset()
 	{
-		m_pRefFn(this, m_pPtr, false);
+		if (m_pPtr)
+			m_pRefFn(this, m_pPtr, false);
+
 		m_pPtr = nullptr;
 		m_pRefFn = nullptr;
 	}

@@ -79,9 +79,9 @@ void BaseItemServiceTask::onStop()
 	m_WaitCond.notify();
 }
 
-gcRefPtr<IPC::ServiceMainI> BaseItemServiceTask::getServiceMain()
+IPC::ServiceMainI* BaseItemServiceTask::getServiceMain()
 {
-	return getUserCore()->getServiceMain();
+	return getUserCore()->getInternal()->getServiceMain();
 }
 
 void BaseItemServiceTask::onFinish()

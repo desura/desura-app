@@ -531,7 +531,7 @@ bool ItemHandle::getComplexLock()
 		return true;
 
 	gcException eItem(ERR_INVALID, "Failed to get lock. Another task is using this item. Please stop that task and try again.");
-	gcException eGame(ERR_INVALID, "Failed to get lock. Another task is using the parent game. Please stop that task and try again.");
+	gcException eGame(ERR_INVALID, "Failed to get lock. Another task is using the parent game-> Please stop that task and try again.");
 	
 	if (obj != parentHandle)
 		onErrorEvent(eItem);
@@ -1466,16 +1466,16 @@ namespace UnitTest
 		ItemHandleLaunchMod()
 			: gid("1", "games")
 			, mid("2", "mods")
-			, game(&user, gid, &fs)
-			, mod(new ItemInfo(&user, mid, gid, &fs))
+			, game(gcRefPtr<ItemInfo>::create(&user, gid, &fs))
+			, mod(gcRefPtr<ItemInfo>::create(&user, mid, gid, &fs))
 		{
 
 			ON_CALL(user, getItemsAddedEvent()).WillByDefault(ReturnRef(itemAddedEvent));
 			ON_CALL(user, getItemManager()).WillByDefault(Return(&itemManager));
-			ON_CALL(itemManager, findItemInfo(_)).WillByDefault(Invoke([&](DesuraId id) -> ItemInfoI*
+			ON_CALL(itemManager, findItemInfo(_)).WillByDefault(Invoke([&](DesuraId id) -> gcRefPtr<ItemInfoI>
 			{
-				if (id == game.getId())
-					return &game;
+				if (id == game->getId())
+					return game;
 
 				if (id == mod->getId())
 					return mod;
@@ -1508,8 +1508,8 @@ namespace UnitTest
 		DesuraId gid;
 		DesuraId mid;
 
-		ItemInfo game;
-		ItemInfo* mod;
+		gcRefPtr<ItemInfo> game;
+		gcRefPtr<ItemInfo> mod;
 	};
 
 	TEST_F(ItemHandleLaunchMod, LaunchModWithParentNotInstalled)
@@ -1524,7 +1524,7 @@ namespace UnitTest
 			sqlite3x::sqlite3_connection db(":memory:");
 			setUpDb(db, vSqlCommands);
 
-			game.loadDb(&db);
+			game->loadDb(&db);
 			mod->loadDb(&db);
 		}
 
@@ -1552,13 +1552,13 @@ namespace UnitTest
 			sqlite3x::sqlite3_connection db(":memory:");
 			setUpDb(db, vSqlCommands);
 
-			game.loadDb(&db);
+			game->loadDb(&db);
 			mod->loadDb(&db);
 		}
 
-		ASSERT_TRUE(game.isInstalled());
-		ASSERT_TRUE(game.isLaunchable());
-		ASSERT_FALSE(game.hasAcceptedEula());
+		ASSERT_TRUE(game->isInstalled());
+		ASSERT_TRUE(game->isLaunchable());
+		ASSERT_FALSE(game->hasAcceptedEula());
 
 		ItemHandleMock modHandle(mod, &user);
 		ItemLaunchHelperMock ilh;
@@ -1584,13 +1584,13 @@ namespace UnitTest
 			sqlite3x::sqlite3_connection db(":memory:");
 			setUpDb(db, vSqlCommands);
 
-			game.loadDb(&db);
+			game->loadDb(&db);
 			mod->loadDb(&db);
 		}
 
-		ASSERT_TRUE(game.isInstalled());
-		ASSERT_TRUE(game.isLaunchable());
-		ASSERT_TRUE(game.hasAcceptedEula());
+		ASSERT_TRUE(game->isInstalled());
+		ASSERT_TRUE(game->isLaunchable());
+		ASSERT_TRUE(game->hasAcceptedEula());
 
 		std::function<void(ITEM_STAGE&)> stageChange = [](ITEM_STAGE&){
 			//Should never change stage
@@ -1630,13 +1630,13 @@ namespace UnitTest
 			sqlite3x::sqlite3_connection db(":memory:");
 			setUpDb(db, vSqlCommands);
 
-			game.loadDb(&db);
+			game->loadDb(&db);
 			mod->loadDb(&db);
 		}
 
-		ASSERT_TRUE(game.isInstalled());
-		ASSERT_TRUE(game.isLaunchable());
-		ASSERT_TRUE(game.hasAcceptedEula());
+		ASSERT_TRUE(game->isInstalled());
+		ASSERT_TRUE(game->isLaunchable());
+		ASSERT_TRUE(game->hasAcceptedEula());
 
 		ASSERT_TRUE(mod->isInstalled());
 		ASSERT_TRUE(mod->isLaunchable());
@@ -1669,7 +1669,7 @@ namespace UnitTest
 
 			ON_CALL(userInternalMock, getMCFManager()).WillByDefault(Return(&mcfManager));
 
-			ON_CALL(itemManager, findItemInfo(_)).WillByDefault(Invoke([&](DesuraId id) -> ItemInfoI*
+			ON_CALL(itemManager, findItemInfo(_)).WillByDefault(Invoke([&](DesuraId id) -> gcRefPtr<ItemInfoI>
 			{
 				if (id == game->getId())
 					return game.get();
@@ -1760,8 +1760,8 @@ namespace UnitTest
 	TEST_F(ItemHandleComplexMods, LaunchParent_ModInstalled)
 	{
 		ON_CALL(mcfManager, getMcfPath(_, _)).WillByDefault(Return(gcString()));
-		ON_CALL(mcfManager, getMcfPath(Eq(modA.get()), _)).WillByDefault(Return(gcString("existing.file")));
-		ON_CALL(mcfManager, getMcfPath(Eq(game.get()), _)).WillByDefault(Return(gcString("existing.file")));
+		ON_CALL(mcfManager, getMcfPath(Eq(modA), _)).WillByDefault(Return(gcString("existing.file")));
+		ON_CALL(mcfManager, getMcfPath(Eq(game), _)).WillByDefault(Return(gcString("existing.file")));
 
 		static const std::vector<std::string> vSqlCommands =
 		{
@@ -1802,7 +1802,7 @@ namespace UnitTest
 	TEST_F(ItemHandleComplexMods, LaunchMod_ModNotInstalled)
 	{
 		ON_CALL(mcfManager, getMcfPath(_, _)).WillByDefault(Return(gcString()));
-		ON_CALL(mcfManager, getMcfPath(Eq(game.get()), _)).WillByDefault(Return(gcString("existing.file")));
+		ON_CALL(mcfManager, getMcfPath(Eq(game), _)).WillByDefault(Return(gcString("existing.file")));
 
 		static const std::vector<std::string> vSqlCommands =
 		{
@@ -1843,8 +1843,8 @@ namespace UnitTest
 	TEST_F(ItemHandleComplexMods, LaunchModA_ModAInstalled)
 	{
 		ON_CALL(mcfManager, getMcfPath(_, _)).WillByDefault(Return(gcString()));
-		ON_CALL(mcfManager, getMcfPath(Eq(modA.get()), _)).WillByDefault(Return(gcString("existing.file")));
-		ON_CALL(mcfManager, getMcfPath(Eq(game.get()), _)).WillByDefault(Return(gcString("existing.file")));
+		ON_CALL(mcfManager, getMcfPath(Eq(modA), _)).WillByDefault(Return(gcString("existing.file")));
+		ON_CALL(mcfManager, getMcfPath(Eq(game), _)).WillByDefault(Return(gcString("existing.file")));
 
 		static const std::vector<std::string> vSqlCommands =
 		{
@@ -1885,9 +1885,9 @@ namespace UnitTest
 	TEST_F(ItemHandleComplexMods, LaunchModA_ModBInstalled)
 	{
 		ON_CALL(mcfManager, getMcfPath(_, _)).WillByDefault(Return(gcString()));
-		ON_CALL(mcfManager, getMcfPath(Eq(modA.get()), _)).WillByDefault(Return(gcString("existing.file")));
-		ON_CALL(mcfManager, getMcfPath(Eq(modB.get()), _)).WillByDefault(Return(gcString("existing.file")));
-		ON_CALL(mcfManager, getMcfPath(Eq(game.get()), _)).WillByDefault(Return(gcString("existing.file")));
+		ON_CALL(mcfManager, getMcfPath(Eq(modA), _)).WillByDefault(Return(gcString("existing.file")));
+		ON_CALL(mcfManager, getMcfPath(Eq(modB), _)).WillByDefault(Return(gcString("existing.file")));
+		ON_CALL(mcfManager, getMcfPath(Eq(game), _)).WillByDefault(Return(gcString("existing.file")));
 
 		static const std::vector<std::string> vSqlCommands =
 		{

@@ -33,6 +33,7 @@ $/LicenseInfo$
 #include "ItemInfo.h"
 #include "usercore/UserCoreI.h"
 #include "webcore/WebCoreI.h"
+#include "user.h"
 
 namespace UserCore
 {
@@ -67,7 +68,7 @@ bool VSInstallMissing::doTask()
 	const char* val = getUserCore()->getCVarValue("gc_corecount");
 	gcException errFailMCFServ(ERR_NULLHANDLE, "Failed to create uninstall MCF service!\n");
 
-	m_pIPCIM = getUserCore()->getServiceMain()->newInstallMcf();
+	m_pIPCIM = getUserCore()->getInternal()->getServiceMain()->newInstallMcf();
 	if (!m_pIPCIM)
 	{
 		onErrorEvent(errFailMCFServ);

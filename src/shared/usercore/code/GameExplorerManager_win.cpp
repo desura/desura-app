@@ -32,6 +32,8 @@ $/LicenseInfo$
 #include "sqlite3x.hpp"
 #include "sql\GameExplorerSql.h"
 
+#include "user.h"
+
 using namespace UserCore;
 
 GameExplorerManager::GameExplorerManager(gcRefPtr<UserI> user) 
@@ -87,8 +89,8 @@ void GameExplorerManager::removeItem(DesuraId item)
 
 void GameExplorerManager::loadItems()
 {
-	if (m_pUser->getServiceMain())
-		m_pUser->getServiceMain()->addDesuraToGameExplorer();
+	if (m_pUser->getInternal()->getServiceMain())
+		m_pUser->getInternal()->getServiceMain()->addDesuraToGameExplorer();
 
 	sqlite3x::sqlite3_connection db(getGameExplorerDb(m_pUser->getAppDataPath()).c_str());
 

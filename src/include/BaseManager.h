@@ -136,6 +136,17 @@ public:
 		m_mItemMap.clear();
 	}
 
+	std::vector<gcRefPtr<T>> dumpAndClear()
+	{
+		std::vector<gcRefPtr<T>> ret;
+
+		for (auto p : m_mItemMap)
+			ret.push_back(p.second);
+
+		m_mItemMap.clear();
+		return ret;
+	}
+
 protected:
 	void addItem(const gcRefPtr<T> &pItem)
 	{

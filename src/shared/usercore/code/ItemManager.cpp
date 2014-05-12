@@ -124,11 +124,19 @@ ItemManager::ItemManager(gcRefPtr<User> user)
 
 ItemManager::~ItemManager()
 {
+	destroy();
+}
+
+void ItemManager::destroy()
+{
 	saveDbItems(true);
 
 	onUpdateEvent.reset();
 	onFavoriteUpdateEvent.reset();
 	onRecentUpdateEvent.reset();
+
+	auto list = dumpAndClear();
+	safe_delete(list);
 }
 
 void ItemManager::migrateOldItemInfo(const char* olddb, const char* newdb)

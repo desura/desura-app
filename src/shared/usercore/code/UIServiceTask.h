@@ -50,7 +50,7 @@ namespace UserCore
 			virtual void onServiceError(gcException& e);
 
 		private:
-			gcRefPtr<IPCUninstallMcf> m_pIPCUI;
+			IPCUninstallMcf* m_pIPCUI;
 
 			bool m_bRemoveAll;
 			bool m_bRemoveAcc;

@@ -36,6 +36,7 @@ $/LicenseInfo$
 
 #include "sqlite3x.hpp"
 #include "webcore/WebCoreI.h"
+#include "user.h"
 
 #pragma pack(push)
 #pragma pack(2)
@@ -217,8 +218,8 @@ void GameExplorerInfo::installDll()
 	if (!m_pItemInfo)
 		return;
 
-	if (m_pUser->getServiceMain())
-		m_pUser->getServiceMain()->addItemGameToGameExplorer(m_pItemInfo->getName(), m_szDllPath.c_str());
+	if (m_pUser->getInternal()->getServiceMain())
+		m_pUser->getInternal()->getServiceMain()->addItemGameToGameExplorer(m_pItemInfo->getName(), m_szDllPath.c_str());
 
 	m_uiFlags |= FLAG_INSTALLED;
 	m_uiFlags &= ~FLAG_NEEDSUPATE;
@@ -229,8 +230,8 @@ void GameExplorerInfo::removeDll()
 	if (!UTIL::FS::isValidFile(m_szDllPath))
 		return;
 
-	if (m_pUser->getServiceMain())
-		m_pUser->getServiceMain()->removeGameFromGameExplorer(m_szDllPath.c_str(), true);
+	if (m_pUser->getInternal()->getServiceMain())
+		m_pUser->getInternal()->getServiceMain()->removeGameFromGameExplorer(m_szDllPath.c_str(), true);
 
 	m_szDllPath = "";
 

@@ -70,7 +70,7 @@ namespace UserCore
 			gcString downloadMcfHeader();
 
 		private:
-			gcRefPtr<IPCInstallMcf> m_pIPCIM;
+			IPCInstallMcf* m_pIPCIM;
 
 			bool m_bHasError;
 			bool m_bInstalling;

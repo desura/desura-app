@@ -66,7 +66,7 @@ namespace UserCore
 			bool m_bEndStage;
 
 			uint8 m_uiCompleteAction;
-			gcRefPtr<IPCComplexLaunch> m_pIPCCL;
+			IPCComplexLaunch* m_pIPCCL;
 		};
 	}
 }

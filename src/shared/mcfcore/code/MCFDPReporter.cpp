@@ -29,9 +29,6 @@ $/LicenseInfo$
 using namespace MCFCore;
 
 
-gc_REFPTR_DESTRUCTOR(DPReproter);
-gc_REFPTR_DESTRUCTOR(DPProvider);
-
 namespace
 {
 	static gcRefPtr<DPReproter> g_DPReporter = gcRefPtr<DPReproter>::create();

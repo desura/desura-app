@@ -68,7 +68,7 @@ namespace UserCore
 			volatile bool m_bStopped = false;
 
 			gcRefPtr<ToolInfo> m_pTool;
-			gcRefPtr<HttpHandleI> m_pHttpHandle;
+			HttpHandleI* m_pHttpHandle;
 
 			UTIL::FS::Path m_Path;
 			UTIL::FS::FileHandle m_fhFile;

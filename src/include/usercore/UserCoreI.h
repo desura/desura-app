@@ -286,12 +286,6 @@ namespace UserCore
 		//!
 		virtual gcRefPtr<::Thread::ThreadPoolI> getThreadPool() = 0;
 
-		//! Gets the service main for talking to Desura service
-		//!
-		//! @return ServiceMain
-		//!
-		virtual gcRefPtr<IPC::ServiceMainI> getServiceMain() = 0;
-
 		//! Gets the webcore handle
 		//!
 		//! @return WebCore
@@ -533,7 +527,6 @@ namespace UserCore
 		MOCK_METHOD0(getThreadCount, uint32());
 		MOCK_METHOD1(getCVarValue, const char*(const char* cvarName));
 		MOCK_METHOD0(getThreadPool, gcRefPtr<::Thread::ThreadPoolI>());
-		MOCK_METHOD0(getServiceMain, gcRefPtr<IPC::ServiceMainI>());
 		MOCK_METHOD0(getWebCore, gcRefPtr<WebCore::WebCoreI>());
 		MOCK_METHOD0(getThreadManager, gcRefPtr<UserCore::UserThreadManagerI>());
 		MOCK_METHOD0(getUploadManager, gcRefPtr<UserCore::UploadManagerI>());

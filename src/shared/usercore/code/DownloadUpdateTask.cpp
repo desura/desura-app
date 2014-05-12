@@ -142,7 +142,7 @@ void DownloadUpdateTask::downloadUpdate()
 		else
 		{
 			//sometimes this gets called after shutdown and causes major problems
-			if (!getUserCore() || !getUserCore()->getServiceMain())
+			if (!getUserCore() || !getUserCore()->getInternal()->getServiceMain())
 				return;
 
 			gcString av("{0}", appver);
@@ -151,8 +151,8 @@ void DownloadUpdateTask::downloadUpdate()
 
 			try
 			{
-				getUserCore()->getServiceMain()->updateRegKey(APPID, av.c_str());
-				getUserCore()->getServiceMain()->updateRegKey(APPBUILD, ab.c_str());
+				getUserCore()->getInternal()->getServiceMain()->updateRegKey(APPID, av.c_str());
+				getUserCore()->getInternal()->getServiceMain()->updateRegKey(APPBUILD, ab.c_str());
 			}
 			catch (gcException &e)
 			{

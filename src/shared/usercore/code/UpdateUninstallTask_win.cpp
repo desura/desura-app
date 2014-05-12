@@ -29,13 +29,14 @@ $/LicenseInfo$
 #include "usercore/UserCoreI.h"
 #include "usercore/ItemManagerI.h"
 #include "service_pipe/IPCServiceMain.h"
+#include "user.h"
 
 using namespace UserCore;
 
 
 void UpdateUninstallTask::doTask()
 {
-	auto service = m_pUser->getServiceMain();
+	auto service = m_pUser->getInternal()->getServiceMain();
 	auto itemManager = m_pUser->getItemManager();
 
 	gcAssert(service && itemManager);

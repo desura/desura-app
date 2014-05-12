@@ -100,7 +100,7 @@ namespace UserCore
 
 			DesuraId m_iRemoveId;
 
-			gcRefPtr<IPCComplexLaunch> m_pIPCIM;
+			IPCComplexLaunch* m_pIPCIM;
 			gcRefPtr<UserCore::Item::Helper::InstallerHandleHelperI> m_pIHH;
 		};
 	}

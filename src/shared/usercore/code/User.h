@@ -105,7 +105,7 @@ namespace UserCore
 		} update_s;
 	}
 
-	class UserInternalI : public gcRefCount
+	class UserInternalI : public gcRefBase
 	{
 	public:
 #ifdef WIN32
@@ -127,6 +127,8 @@ namespace UserCore
 		virtual void changeAccount(DesuraId id, uint8 action) = 0;
 
 
+		virtual IPC::ServiceMainI* getServiceMain() = 0;
+
 		virtual gcRefPtr<MCFManagerI> getMCFManager() = 0;
 	};
 
@@ -141,6 +143,9 @@ namespace UserCore
 		MOCK_METHOD2(downloadImage, void(gcRefPtr<UserCore::Item::ItemInfo>, uint8));
 		MOCK_METHOD2(changeAccount, void(DesuraId, uint8));
 		MOCK_METHOD0(getMCFManager, gcRefPtr<MCFManagerI>());
+		MOCK_METHOD0(getServiceMain, IPC::ServiceMainI*());
+
+		gc_MOCK_REFCOUNTING(UserInternalMock);
 	};
 #endif
 
@@ -206,7 +211,7 @@ namespace UserCore
 
 		const char* getCVarValue(const char* cvarName) override;
 		gcRefPtr<::Thread::ThreadPoolI> getThreadPool() override;
-		gcRefPtr<IPC::ServiceMainI> getServiceMain() override;
+		
 		gcRefPtr<WebCore::WebCoreI> getWebCore() override;
 		gcRefPtr<UserCore::UserThreadManagerI> getThreadManager() override;
 		gcRefPtr<UserCore::UploadManagerI> getUploadManager() override;
@@ -313,7 +318,7 @@ namespace UserCore
 		bool platformFilter(const XML::gcXMLElement &platform, PlatformType type);
 
 		gcRefPtr<BDManager> getBDManager();
-
+		IPC::ServiceMainI* getServiceMain() override;
 
 		gc_IMPLEMENT_REFCOUNTING(UserCore);
 	protected:
@@ -481,7 +486,7 @@ namespace UserCore
 		return m_pThreadPool;
 	}
 
-	inline gcRefPtr<IPC::ServiceMainI> User::getServiceMain()
+	inline IPC::ServiceMainI* User::getServiceMain()
 	{
 		if (!m_pPipeClient)
 			return nullptr;

@@ -59,7 +59,7 @@ namespace UserCore
 			void doRun() override;
 			virtual void onFinish();
 
-			gcRefPtr<IPC::ServiceMainI> getServiceMain();
+			IPC::ServiceMainI* getServiceMain();
 
 			void waitForFinish();
 			void resetFinish();

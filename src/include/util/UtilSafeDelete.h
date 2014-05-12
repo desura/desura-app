@@ -140,6 +140,11 @@ void safe_delete(std::shared_ptr<T> &pShared)
 template <typename T>
 void safe_delete(gcRefPtr<T> &pShared)
 {
+#if defined(DEBUG) && defined(WIN32)
+	if (pShared.getRefCt() > 1)
+		pShared.get()->dumpStackTraces();
+#endif
+
 	gcAssert(pShared.getRefCt() <= 1);
 	pShared = gcRefPtr<T>();
 }

@@ -48,7 +48,7 @@ namespace UserCore
 			virtual void onComplete();
 
 		private:
-			gcRefPtr<IPCUninstallBranch> m_pIPCIM;
+			IPCUninstallBranch* m_pIPCIM;
 			gcString m_szPath;
 		};
 	}
