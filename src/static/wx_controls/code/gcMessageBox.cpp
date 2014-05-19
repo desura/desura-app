@@ -66,14 +66,15 @@ int gcMessageBox(wxWindow *parent, const wxString& message, const wxString& capt
 	gcMessageDialog dialog(parent, message, caption, decorated_style|wxSTAY_ON_TOP);
 	dialog.addHelper(helper);
 
+	bool setMessageBox = false;
 	gcFrame* pFrame = dynamic_cast<gcFrame*>(parent);
 
 	if (pFrame)
-		pFrame->setMessageBox(&dialog);
+		setMessageBox = pFrame->setMessageBox(&dialog);
 
 	int ans = dialog.ShowModal();
 
-	if (pFrame)
+	if (pFrame && setMessageBox)
 		pFrame->setMessageBox(nullptr);
 
 	if (ans == wxID_OK)
