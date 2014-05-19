@@ -144,6 +144,8 @@ public:
 #ifdef WIN32
 	bool initWxWidgets(HINSTANCE hInst, int CmdShow, int argc, char** argv)
 	{
+		SetUIThreadId();
+
 		hIISHook = SetWindowsHookEx(WH_CALLWNDPROC, (HOOKPROC)CallWndProc, 0, GetCurrentThreadId());
 
 		wxSetInstance(hInst);
@@ -283,6 +285,8 @@ public:
 
 	int runUnitTests(int argc, char** argv)
 	{
+		SetUIThreadId();
+
 #ifdef WITH_GTEST
 		testing::InitGoogleTest(&argc, argv);
 		return RUN_ALL_TESTS();
