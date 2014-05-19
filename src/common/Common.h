@@ -85,6 +85,10 @@ inline void DoAssert(const char* szExp, const char* szFile, int nLine)
 	#define gcAssert( X ) do { } while(false)
 #endif
 
+void SetUIThreadId();
+bool IsUIThread();
+#define ASSERT_UITHREAD() gcAssert(IsUIThread())
+
 	#define BOOST_ENABLE_ASSERT_HANDLER 1
 	namespace 
 	{

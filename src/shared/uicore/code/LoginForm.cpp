@@ -714,6 +714,9 @@ void LoginForm::onTextBoxEnter( wxCommandEvent& event )
 
 void LoginForm::onClose( wxCloseEvent& event )
 {
+	if (m_pNewAccount)
+		m_pNewAccount->EndModal(0);
+
 	if (m_bDisabled)
 	{
 		event.Skip();
@@ -736,7 +739,10 @@ void LoginForm::onLinkClick(wxCommandEvent& event)
 	else if (event.GetId() == m_linkLostPassword->GetId())
 	{
 		PasswordReminder wxPassReminderForm(this);
+
+		m_pNewAccount = &wxPassReminderForm;
 		wxPassReminderForm.ShowModal();
+		m_pNewAccount = nullptr;
 	}
 	else if (event.GetId() == m_linkOffline->GetId())
 	{
@@ -773,6 +779,7 @@ void LoginForm::doLogin()
 
 void LoginForm::doLogin(gcString user, gcString pass)
 {
+	ASSERT_UITHREAD();
 	if (user == "" || pass == "")
 	{
 		gcWString errMsg(L"{0}\n", Managers::GetString(L"#LF_VALDERROR"));
@@ -829,6 +836,7 @@ void LoginForm::doLogin(gcString user, gcString pass)
 
 void LoginForm::onStartLogin(std::pair<gcString, gcString> &l)
 {
+	ASSERT_UITHREAD();
 	safe_delete(m_pLogThread);
 
 	gcString user = l.first;
@@ -848,6 +856,7 @@ void LoginForm::onStartLogin(std::pair<gcString, gcString> &l)
 
 void LoginForm::onLogin()
 {
+	ASSERT_UITHREAD();
 	safe_delete(m_pLogThread);
 
 	bool remPass = m_cbRemPass->GetValue();
@@ -874,6 +883,7 @@ void LoginForm::onLogin()
 
 void LoginForm::onLoginError(gcException &e)
 {
+	ASSERT_UITHREAD();
 	safe_delete(m_pLogThread);
 
 	if (!m_bAutoLogin)
@@ -1009,6 +1019,8 @@ void LoginForm::processTab(bool forward, int32 id)
 
 void LoginForm::onNewAccount()
 {
+	ASSERT_UITHREAD();
+
 	gcString strApiUrl;
 
 	if (m_comboProvider && m_comboProvider->GetSelection() != 0)
@@ -1029,6 +1041,8 @@ void LoginForm::newAccountLogin(const char* username, const char* cookie)
 
 void LoginForm::newAccountLoginCB(std::pair<gcString, gcString> &info)
 {
+	ASSERT_UITHREAD();
+
 	gcString username = info.first;
 	gcString cookie = info.second;
 
@@ -1066,6 +1080,8 @@ void LoginForm::newAccountLoginError(const char* szErrorMessage)
 
 void LoginForm::newAccountLoginErrorCB(gcString &szErrorMessage)
 {
+	ASSERT_UITHREAD();
+
 	if (m_pNewAccount)
 		m_pNewAccount->EndModal(0);
 
@@ -1091,6 +1107,8 @@ void LoginForm::onAltLoginClick(wxCommandEvent& event)
 
 void LoginForm::onAltLogin(const char* szProvider)
 {
+	ASSERT_UITHREAD();
+
 	if (szProvider == nullptr)
 		return;
 

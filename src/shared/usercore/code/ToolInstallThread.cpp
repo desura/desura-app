@@ -145,7 +145,9 @@ void ToolInstallThread::doNextInstall()
 	{
 		it->second->onINComplete();
 
-		if (it->second->startNextInstall(getToolMain(), m_CurrentInstallId) != ToolStartRes::Success)
+		if (it->second->startNextInstall(getToolMain(), m_CurrentInstallId) == ToolStartRes::Success)
+			m_bStillInstalling = true;
+		else
 			m_CurrentInstall = -1;
 	}
 	else
