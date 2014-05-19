@@ -344,11 +344,11 @@ public:
 			std::function<void()> pcb = std::bind(&GuiDelegate<TObj, Args...>::callback, this, std::ref(args)...);
 
 			auto invoker = std::make_shared<Invoker>(pcb);
-			auto event = new wxGuiDelegateEvent(invoker, m_pObj->GetId());
-			m_pObj->GetEventHandler()->QueueEvent(event);
-
 			setInvoker(invoker);
+
+			m_pObj->GetEventHandler()->QueueEvent(new wxGuiDelegateEvent(invoker, m_pObj->GetId()));
 			invoker->wait();
+
 			setInvoker(std::shared_ptr<Invoker>());
 		}
 	}
@@ -357,6 +357,7 @@ protected:
 	void setInvoker(const std::shared_ptr<Invoker> &i)
 	{
 		std::lock_guard<std::mutex> guard(m_InvokerMutex);
+		gcAssert((!m_pInvoker && i) || (m_pInvoker && !i));
 		m_pInvoker = i;
 	}
 
