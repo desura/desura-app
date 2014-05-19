@@ -31,6 +31,7 @@ $/LicenseInfo$
 
 
 #include "util_thread\BaseThread.h"
+#include <atomic>
 
 class ToolInstall;
 
@@ -56,7 +57,7 @@ private:
 	gcString m_szExe;
 	gcString m_szArgs;
 
-	volatile bool m_bActiveInstall;
+	std::atomic<bool> m_bActiveInstall;
 
 	::Thread::WaitCondition m_WaitCond;
 

@@ -41,6 +41,8 @@ ToolInstallThread::~ToolInstallThread()
 
 gcException ToolInstallThread::installTool(const char* exe, const char* args)
 {
+	gcTrace("Tool: {0}, Args: {1}", exe, args);
+
 	PipeIsActive();
 
 	if (m_bActiveInstall)
@@ -75,12 +77,16 @@ void ToolInstallThread::run()
 
 void ToolInstallThread::onStop()
 {
+	gcTrace("");
+
 	killProcess();
 	m_WaitCond.notify();
 }
 
 void ToolInstallThread::doInstall()
 {
+	gcTrace("");
+
 	DWORD dwExitCode = 0; 
 
 	UTIL::FS::Path path(m_szExe, "", true);
@@ -117,8 +123,11 @@ void ToolInstallThread::doInstall()
 
 	if (res == false)
 	{
+		DWORD err = GetLastError();
+		gcTrace("Failed to start: {0}", err);
+
 		m_bActiveInstall = false;
-		gcException gce(ERR_LAUNCH, GetLastError(), gcString("Failed to start exe {0} for tools install. [P: {1}]", exe, params));
+		gcException gce(ERR_LAUNCH, err, gcString("Failed to start exe {0} for tools install. [P: {1}]", exe, params));
 		onErrorEvent(gce);
 	}
 	else
@@ -127,6 +136,8 @@ void ToolInstallThread::doInstall()
 
 		int32 dwExitCode = 0;
 		GetExitCodeProcess(piProcessInfo.hProcess, (DWORD*)&dwExitCode);
+
+		gcTrace("Exit Code: {0}", dwExitCode);
 
 		m_bActiveInstall = false;
 
@@ -140,6 +151,8 @@ void ToolInstallThread::doInstall()
 
 void ToolInstallThread::killProcess()
 {
+	gcTrace("");
+
 	if (!m_bActiveInstall)
 		return;
 
