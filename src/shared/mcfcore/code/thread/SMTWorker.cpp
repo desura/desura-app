@@ -108,10 +108,11 @@ void SMTWorker::run()
 				if (m_pCurFile)
 					name = m_pCurFile->getName();
 
-				gcException e2((ERROR_ID)e.getErrId(), e.getSecErrId(), gcString("{0} [{1}]", e.getErrMsg(), name));
-
 				finishTask();
+
+				gcException e2((ERROR_ID)e.getErrId(), e.getSecErrId(), gcString("{0} [{1}]", e.getErrMsg(), name));
 				m_pCT->reportError(m_uiId, e2);
+				m_phFhSink->close();
 				return;
 			}
 		}
