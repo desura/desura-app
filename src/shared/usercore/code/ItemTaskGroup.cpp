@@ -29,26 +29,14 @@ $/LicenseInfo$
 #include "ItemHandleEvents.h"
 #include "ItemManager.h"
 
-namespace UserCore
-{
-namespace Item
-{
+using namespace UserCore::Item;
+
 
 ItemTaskGroup::ItemTaskGroup(UserCore::ItemManager* manager, ACTION action, uint8 activeCount) 
+	: m_iActiveCount(activeCount)
+	, m_Action(action)
+	, m_pItemManager(manager)
 {
-	m_Action = action;
-
-	m_uiLastActive = -1;
-	m_uiActiveItem = -1;
-
-	m_iActiveCount = activeCount;
-
-	m_bStarted = false;
-	m_bPaused = false;
-	m_bFinal = false;
-
-	m_uiId = 0;
-	m_pItemManager = manager;
 }
 
 ItemTaskGroup::~ItemTaskGroup()
@@ -63,29 +51,31 @@ UserCore::Item::ItemTaskGroupI::ACTION ItemTaskGroup::getAction()
 
 void ItemTaskGroup::getItemList(std::vector<UserCore::Item::ItemHandleI*> &list)
 {
-	m_ListLock.lock();
+	std::lock_guard<std::recursive_mutex> guard(m_ListLock);
+
 	for (size_t x=0; x<m_vWaitingList.size(); x++)
 	{
 		list.push_back(m_vWaitingList[x]);
 	}
-	m_ListLock.unlock();
 }
 
 void ItemTaskGroup::cancelAll()
 {
-	m_ListLock.lock();
-
-	for (auto i : m_vWaitingList)
 	{
-		auto handle = dynamic_cast<ItemHandle*>(i);
+		std::lock_guard<std::recursive_mutex> guard(m_ListLock);
 
-		if (handle)
-			handle->setTaskGroup(nullptr);
+		for (auto i : m_vWaitingList)
+		{
+			auto handle = dynamic_cast<ItemHandle*>(i);
+
+			if (handle)
+				handle->setTaskGroup(nullptr);
+		}
+
+		m_vWaitingList.clear();
 	}
 
-	m_vWaitingList.clear();
-	m_ListLock.unlock();
-
+	//TODO: Replace with shared ptr
 	if (m_bFinal)
 		delete this;
 }
@@ -108,28 +98,30 @@ bool ItemTaskGroup::addItem(UserCore::Item::ItemHandleI* item)
 	if (!handle->setTaskGroup(this))
 		return false;
 
-	m_ListLock.lock();
-	for (size_t x=0; x<m_vWaitingList.size(); x++)
 	{
-		if (m_vWaitingList[x] == handle)
-			return true;
-	}
+		std::lock_guard<std::recursive_mutex> guard(m_ListLock);
+		for (size_t x = 0; x < m_vWaitingList.size(); x++)
+		{
+			if (m_vWaitingList[x] == handle)
+				return true;
+		}
 
-	m_vWaitingList.push_back(handle);
-	m_ListLock.unlock();
+		m_vWaitingList.push_back(handle);
+	}
 
 	if (m_bStarted && m_uiActiveItem == UINT_MAX)
 		nextItem();
 
-	uint32 p=m_vWaitingList.size();
+	uint32 p = m_vWaitingList.size();
 
-	m_TaskListLock.lock();
-	for (size_t x=0; x<m_vTaskList.size(); x++)
 	{
-		if (m_vTaskList[x]->getItemHandle() != getActiveItem())
-			m_vTaskList[x]->onProgUpdateEvent(p);
+		std::lock_guard<std::recursive_mutex> guard(m_TaskListLock);
+		for (size_t x = 0; x < m_vTaskList.size(); x++)
+		{
+			if (m_vTaskList[x]->getItemHandle() != getActiveItem())
+				m_vTaskList[x]->onProgUpdateEvent(p);
+		}
 	}
-	m_TaskListLock.unlock();
 
 	return true;
 }
@@ -146,29 +138,30 @@ bool ItemTaskGroup::removeItem(UserCore::Item::ItemHandleI* item)
 
 	bool found = false;
 
-	m_ListLock.lock();
-	for (size_t x=0; x<m_vWaitingList.size(); x++)
 	{
-		if (m_vWaitingList[x] == handle)
+		std::lock_guard<std::recursive_mutex> guard(m_ListLock);
+		for (size_t x = 0; x < m_vWaitingList.size(); x++)
 		{
-			found = true;
-			m_vWaitingList.erase(m_vWaitingList.begin()+x);
-			break;
+			if (m_vWaitingList[x] == handle)
+			{
+				found = true;
+				m_vWaitingList.erase(m_vWaitingList.begin() + x);
+				break;
+			}
 		}
 	}
-	m_ListLock.unlock();
 
 	if (found)
 		handle->setTaskGroup(nullptr);
 
 	uint32 p=m_vWaitingList.size();
-	m_TaskListLock.lock();
+
+	std::lock_guard<std::recursive_mutex> guard(m_TaskListLock);
 	for (size_t x=0; x<m_vTaskList.size(); x++)
 	{
 		if (m_vTaskList[x]->getItemHandle() != getActiveItem())
 			m_vTaskList[x]->onProgUpdateEvent(p);
 	}
-	m_TaskListLock.unlock();
 
 	return true;
 }
@@ -296,13 +289,12 @@ void ItemTaskGroup::onProgressUpdate(uint32 progress)
 	if (getActiveItem())
 		i.totalAmmount = getActiveItem()->getItemInfo()->getId().toInt64();
 
-	m_TaskListLock.lock();
+	std::lock_guard<std::recursive_mutex> guard(m_TaskListLock);
 	for (size_t x=0; x<m_vTaskList.size(); x++)
 	{
 		if (m_vTaskList[x]->getItemHandle() != getActiveItem())
 			m_vTaskList[x]->onMcfProgressEvent(i);
 	}
-	m_TaskListLock.unlock();
 }
 
 void ItemTaskGroup::onError(gcException e)
@@ -339,38 +331,35 @@ UserCore::ItemTask::BaseItemTask* ItemTaskGroup::newTask(ItemHandle* handle)
 
 void ItemTaskGroup::updateEvents(UserCore::ItemTask::BaseItemTask* task)
 {
-	m_TaskListLock.lock();
+	std::lock_guard<std::recursive_mutex> guard(m_TaskListLock);
 
 	uint32 curItem = m_uiActiveItem;
 
 	if (curItem == UINT_MAX && m_uiLastActive != UINT_MAX)
-		curItem = m_uiLastActive+1; //need to add one as it has to do the current item (x<curItem)
+		curItem = m_uiLastActive + 1; //need to add one as it has to do the current item (x<curItem)
 
 	if (curItem != UINT_MAX)
 	{
 		MCFCore::Misc::ProgressInfo i;
 		i.percent = 100;
 
-		for (size_t x=0; x<curItem; x++)
+		for (size_t x = 0; x < curItem; x++)
 		{
 			i.totalAmmount = m_vWaitingList[x]->getItemInfo()->getId().toInt64();
 			task->onMcfProgressEvent(i);
 		}
 	}
-
-	m_TaskListLock.unlock();
 }
 
 void ItemTaskGroup::registerItemTask(UserCore::ItemTask::BaseItemTask* task)
 {
-	m_TaskListLock.lock();
+	std::lock_guard<std::recursive_mutex> guard(m_TaskListLock);
 	m_vTaskList.push_back(task);
-	m_TaskListLock.unlock();
 }
 
 void ItemTaskGroup::deregisterItemTask(UserCore::ItemTask::BaseItemTask* task)
 {
-	m_TaskListLock.lock();
+	std::lock_guard<std::recursive_mutex> guard(m_TaskListLock);
 
 	for (size_t x=0; x<m_vTaskList.size(); x++)
 	{
@@ -380,15 +369,13 @@ void ItemTaskGroup::deregisterItemTask(UserCore::ItemTask::BaseItemTask* task)
 			break;
 		}
 	}
-
-	m_TaskListLock.unlock();
 }
 
 uint32 ItemTaskGroup::getPos(UserCore::Item::ItemHandleI* item)
 {
 	uint32 res = 0;
 
-	m_ListLock.lock();
+	std::lock_guard<std::recursive_mutex> guard(m_ListLock);
 
 	for (size_t x=0; x<m_vWaitingList.size(); x++)
 	{
@@ -398,8 +385,6 @@ uint32 ItemTaskGroup::getPos(UserCore::Item::ItemHandleI* item)
 			break;
 		}
 	}
-
-	m_ListLock.unlock();
 
 	if (m_uiActiveItem != UINT_MAX)
 		res -= (m_uiActiveItem+1);
@@ -413,9 +398,8 @@ uint32 ItemTaskGroup::getCount()
 {
 	uint32 res = 0;
 
-	m_ListLock.lock();
+	std::lock_guard<std::recursive_mutex> guard(m_ListLock);
 	res = m_vWaitingList.size();
-	m_ListLock.unlock();
 
 	if (m_uiActiveItem != UINT_MAX)
 		res -= (m_uiActiveItem+1);
@@ -423,7 +407,4 @@ uint32 ItemTaskGroup::getCount()
 		res -= m_uiLastActive;
 
 	return res;
-}
-
-}
 }
