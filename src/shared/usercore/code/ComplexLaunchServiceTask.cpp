@@ -308,7 +308,7 @@ bool ComplexLaunchServiceTask::remove()
 	MCFBuild build = item->getInstalledBuild();
 	MCFBranch branch = item->getCurrentBranch()->getBranchId();
 
-	if (m_iRemoveId == getItemId())
+	if (m_iRemoveId == getItemId() && branch != item->getLastInstalledBranch())
 	{
 		build = item->getLastInstalledBuild();
 		branch = item->getLastInstalledBranch();
@@ -319,6 +319,9 @@ bool ComplexLaunchServiceTask::remove()
 	//Might not have a backup
 	if (path == "" || !UTIL::FS::isValidFile(path))
 	{
+		if (m_iRemoveId == getItemId())
+			return true;
+
 		onError(eBadPath);
 		return false;
 	}
