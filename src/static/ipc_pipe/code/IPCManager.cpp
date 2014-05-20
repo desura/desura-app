@@ -665,7 +665,8 @@ void IPCManager::sendMessage(const char* buff, uint32 size, uint32 id, uint8 typ
 	if (m_bDisconnected)
 		throw gcException(ERR_IPC, "Pipe is disconnected!");
 
-	gcAssert(isVaildClass(id));
+	if (!isVaildClass(id))
+		throw gcException(ERR_IPC, gcString("Invalid class id {0}", id));
 
 	uint64 serial = ++m_nMsgSerial;
 
