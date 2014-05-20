@@ -48,7 +48,12 @@ namespace UserCore
 
 	namespace ItemTask
 	{
-
+		enum class RemoveResult
+		{
+			Failed,
+			Started,
+			Ignored
+		};
 
 		class ComplexLaunchServiceTask : public BaseItemServiceTask
 		{
@@ -72,12 +77,13 @@ namespace UserCore
 			bool initService();
 			void onComplete();
 
+			void onMcfError(gcException &e);
 			void onProgress(MCFCore::Misc::ProgressInfo& prog);
 			void onError(gcException &e);
 
 			bool backUp();
 			bool install();
-			bool remove();
+			RemoveResult remove();
 			bool removeAndInstall();
 
 			void completeRemove();
@@ -102,6 +108,8 @@ namespace UserCore
 
 			bool m_bCompleteStage;
 			bool m_bLaunch;
+
+			std::shared_ptr<gcException> m_pException;
 
 			UserCore::Item::Helper::InstallerHandleHelperI* m_pIHH;
 		};

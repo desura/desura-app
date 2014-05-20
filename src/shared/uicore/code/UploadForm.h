@@ -66,6 +66,16 @@ public:
 
 	void setTrueClose(){m_bTrueClose = true;}
 
+	std::string getKey() const
+	{
+		return m_szKey;
+	}
+
+	std::string getUid() const
+	{
+		return m_szUid;
+	}
+
 protected:
 	friend class LanguageTestDialog;
 
@@ -83,6 +93,7 @@ private:
 	bool m_bTrueClose = true;
 
 	gcString m_szKey;
+	gcString m_szUid;
 	gcString m_szPath;
 
 	DesuraId m_uiInternId;

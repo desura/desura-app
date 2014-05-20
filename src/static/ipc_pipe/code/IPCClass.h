@@ -633,7 +633,13 @@ namespace IPC
 
 			memcpy(&et->data, data, size);
 
-			m_pClass->sendMessage(MT_EVENTTRIGGER, (const char*)et, sizeofStruct(et));
+			try
+			{
+				m_pClass->sendMessage(MT_EVENTTRIGGER, (const char*)et, sizeofStruct(et));
+			}
+			catch (...)
+			{
+			}
 
 			safe_delete(buff);
 			safe_delete(data);
