@@ -129,7 +129,7 @@ bool ComplexLaunchServiceTask::initService()
 			//need to uninstall mod
 			m_iTier = T_REMOVEING;
 			m_iRemoveId = pItem->getInstalledModId();
-			return remove();
+			return remove() != RemoveResult::Failed;
 		}
 	}
 	else
@@ -217,7 +217,7 @@ bool ComplexLaunchServiceTask::install()
 		head->setBuild( MCFBuild() );
 
 		McfHandle mcfParH;
-		mcfParH->getErrorEvent() += delegate(&onErrorEvent);
+		mcfParH->getErrorEvent() += delegate(this, &ComplexLaunchServiceTask::onMcfError);
 		mcfParH->getProgEvent() += delegate(this, &ComplexLaunchServiceTask::onProgress);
 		mcfParH->setHeader(head);
 		mcfParH->setFile(parPath.c_str());
@@ -229,6 +229,8 @@ bool ComplexLaunchServiceTask::install()
 
 		try
 		{
+			m_pException = std::shared_ptr<gcException>();
+
 			mcfParH->parseFolder(insPath.c_str());
 			mcfChildH->parseMCF();
 
@@ -240,11 +242,14 @@ bool ComplexLaunchServiceTask::install()
 				mcfParH->saveMCF();
 			else
 				mm->delMcfBackup(getItemInfo()->getParentId(), getItemId());
+
+			if (m_pException)
+				throw *m_pException;
 		}
 		catch (gcException &e)
 		{
 			mm->delMcfBackup(getItemInfo()->getParentId(), getItemId());
-			onErrorEvent(e);
+			onError(e);
 			return false;
 		}
 	}
@@ -256,6 +261,11 @@ bool ComplexLaunchServiceTask::install()
 	m_pIPCIM->startInstall(path.c_str(), insPath.c_str(), getItemInfo()->getInstallScriptPath());
 
 	return true;
+}
+
+void ComplexLaunchServiceTask::onMcfError(gcException &e)
+{
+	m_pException = std::make_shared<gcException>(e);
 }
 
 gcString ComplexLaunchServiceTask::getFullMcf()
@@ -282,7 +292,7 @@ gcString ComplexLaunchServiceTask::getFullMcf()
 	return path;
 }
 
-bool ComplexLaunchServiceTask::remove()
+RemoveResult ComplexLaunchServiceTask::remove()
 {
 	gcException eItemNull(ERR_NULLHANDLE, "Item that is meant to be removed for complex install is null.");
 	gcException eNoInstBrch(ERR_NULLHANDLE, "Item that is meant to be removed for complex install has no installed branches.");
@@ -293,13 +303,13 @@ bool ComplexLaunchServiceTask::remove()
 	if (!item)
 	{
 		onError(eItemNull);
-		return false;
+		return RemoveResult::Failed;
 	}
 
 	if (!item->getCurrentBranch())
 	{
 		onError(eNoInstBrch);
-		return false;
+		return RemoveResult::Failed;
 	}
 
 	m_iMode = REMOVING;
@@ -320,28 +330,33 @@ bool ComplexLaunchServiceTask::remove()
 	if (path == "" || !UTIL::FS::isValidFile(path))
 	{
 		if (m_iRemoveId == getItemId())
-			return true;
+			return RemoveResult::Ignored;
 
 		onError(eBadPath);
-		return false;
+		return RemoveResult::Failed;
 	}
 
 	gcString parPath = mm->getMcfBackup(item->getParentId(), item->getId());
 	gcString insPath = item->getPath();
 
 	m_pIPCIM->startRemove(path.c_str(), parPath.c_str(), insPath.c_str(), getItemInfo()->getInstallScriptPath());
-
-	return true;
+	return RemoveResult::Started;
 }
 
 bool ComplexLaunchServiceTask::removeAndInstall()
 {
-	if (!remove())
+	auto removeRes = remove();
+
+	if (removeRes == RemoveResult::Failed)
 		return false;
 
-	waitForFinish();
+	if (removeRes == RemoveResult::Started)
+		waitForFinish();
+
 	completeRemove();
-	install();
+	
+	if (!install())
+		return false;
 
 	if (isStopped())
 		return false;

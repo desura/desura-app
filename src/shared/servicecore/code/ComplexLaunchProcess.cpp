@@ -130,6 +130,10 @@ void ComplexLaunchProcess::doRemove()
 
 			isrt.run("PreInstall");
 			mcfHandle->saveFiles(m_szIPath.c_str());
+
+			if (m_pException)
+				throw *m_pException;
+
 			isrt.run("PostInstall");
 		}
 		catch (gcException &except)
@@ -168,6 +172,10 @@ void ComplexLaunchProcess::doInstall()
 
 		isrt.run("PreInstall");
 		mcfHandle->saveFiles(m_szIPath.c_str());
+
+		if (m_pException)
+			throw *m_pException;
+
 		isrt.run("PostInstall");
 	}
 	catch (gcException &except)
@@ -215,5 +223,10 @@ void ComplexLaunchProcess::onError(gcException& e)
 	if (e.getErrId() == ERR_HASHMISSMATCH)
 		m_bHashMissMatch = true;
 	else
-		onErrorEvent(e);
+	{
+		if (m_pException && e.getErrId() == ERR_UNKNOWNERROR)
+			return;
+
+		m_pException = std::make_shared<gcException>(e);
+	}
 }
