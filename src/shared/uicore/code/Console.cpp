@@ -135,7 +135,10 @@ std::atomic<std::thread::id> Console::s_IgnoredThread = {std::thread::id()};
 /// Log Form
 ///////////////////////////////////////////////////////////////////////////////
 
-Console::Console(wxWindow* parent) : gcFrame(parent, wxID_ANY, wxT("#CS_TITLE"), wxDefaultPosition, wxSize( 400,300 ), wxDEFAULT_FRAME_STYLE|wxTAB_TRAVERSAL, true)
+Console::Console(wxWindow* parent) 
+	: gcFrame(parent, wxID_ANY, wxT("#CS_TITLE"), wxDefaultPosition, wxSize( 400,300 ), wxDEFAULT_FRAME_STYLE|wxTAB_TRAVERSAL, true)
+	, m_szConsoleBuffer(m_nNumSegments * m_nSegmentSize)
+	, m_UpdateTimer(this)
 {
 	Bind(wxEVT_CLOSE_WINDOW, &Console::onWindowClose, this);
 	Bind(wxEVT_COMMAND_BUTTON_CLICKED, &Console::onSubmitClicked, this);
@@ -174,13 +177,15 @@ Console::Console(wxWindow* parent) : gcFrame(parent, wxID_ANY, wxT("#CS_TITLE"),
 	m_tbInfo->SetFocus();
 	setupAutoComplete();
 	
-	consoleTextEvent += guiDelegate(this, &Console::onConsoleText);
 	showEvent += guiDelegate(this, &Console::onShow);
 
 	wxLog *old_log = wxLog::SetActiveTarget( new wxLogRichTextCtrl( this ) );
 	delete old_log;
 
 	m_bCenterOnParent = false;
+
+	Bind(wxEVT_TIMER, &Console::onConsoleTextCallback, this);
+	m_UpdateTimer.StartOnce(500);
 }
 
 Console::~Console()
@@ -279,11 +284,34 @@ void Console::applyTheme()
 	setSize();
 }
 
-void Console::onConsoleText(ConsoleText_s& text)
+void Console::onConsoleTextCallback(wxTimerEvent&)
 {
-	if (text.str.empty())
-		return;
+	auto lastWritePos = m_nLastWritePos % m_nNumSegments;
+	std::vector<ConsoleText_s> vTextList;
 
+	while ((m_nLastReadPos % m_nNumSegments) != lastWritePos)
+	{
+		auto pos = (m_nLastReadPos % m_nNumSegments);
+		auto saveSpot = m_szConsoleBuffer.c_ptr() + (m_nSegmentSize * pos);
+
+		ConsoleText_s ct;
+		memcpy(&ct.col, saveSpot, sizeof(Color));
+		ct.str = std::string(saveSpot + sizeof(Color), m_nSegmentSize - sizeof(Color));
+
+		if (!ct.str.empty())
+			vTextList.push_back(ct);
+
+		++m_nLastReadPos;
+	}
+
+	if (!vTextList.empty())
+		onConsoleText(vTextList);
+
+	m_UpdateTimer.StartOnce(500);
+}
+
+void Console::onConsoleText(const std::vector<ConsoleText_s> &vTextList)
+{
 	long size = m_rtDisplay->GetLastPosition();
 	if ( size > 50000)
 	{
@@ -291,43 +319,39 @@ void Console::onConsoleText(ConsoleText_s& text)
 		m_rtDisplay->Remove(0, stop);
 	}
 
-	bool endReturn = (text.str[text.str.size()-1] == '\n');
+	m_rtDisplay->Freeze();
+	m_rtDisplay->MoveEnd();
 
-	if (endReturn)
-		text.str.erase(text.str.end()-1);
-
-	std::vector<std::string> tList;
-	UTIL::STRING::tokenize(gcString(text.str), tList, "\n");
-
-	for (std::vector<std::string>::iterator it=tList.begin(); it != tList.end(); ++it)
+	for (auto text : vTextList)
 	{
-		gcWString szText(*it);
-		wxDateTime now = wxDateTime::Now();
+		bool endReturn = (text.str[text.str.size() - 1] == '\n');
 
-#ifdef DEBUG
-		std::stringstream ss;
-		ss << text.id;
+		if (endReturn)
+			text.str.erase(text.str.end() - 1);
 
-		m_rtDisplay->AppendText(gcString("[{0,5}] ", ss.str()));
-#endif
+		std::vector<std::string> tList;
+		UTIL::STRING::tokenize(text.str, tList, "\n");
 
-		m_rtDisplay->AppendText(now.Format("%H:%M\t").c_str());
-
-		if (szText.size() > 0)
+		for (std::vector<std::string>::iterator it = tList.begin(); it != tList.end(); ++it)
 		{
-			auto start = m_rtDisplay->GetInsertionPoint();
-			m_rtDisplay->AppendText(szText.c_str());
-			auto end = m_rtDisplay->GetInsertionPoint();
+			gcWString szText(*it);
+	
+			if (szText.size() > 0)
+			{
+				m_rtDisplay->BeginTextColour(wxColor(text.col));
+				m_rtDisplay->WriteText(szText.c_str());
+				m_rtDisplay->EndTextColour();
+			}
 
-			m_rtDisplay->SetStyle(start, end-1, wxColor(text.col));
+			if (it + 1 != tList.end())
+				m_rtDisplay->WriteText(L"\n");
 		}
 
-		if (it+1 != tList.end())
-			m_rtDisplay->AppendText(L"\n");
+		if (endReturn)
+			m_rtDisplay->WriteText(L"\n");
 	}
 
-	if (endReturn)
-		m_rtDisplay->AppendText(L"\n");
+	m_rtDisplay->Thaw();
 
 	m_rtDisplay->MoveEnd();
 	m_rtDisplay->DiscardEdits();
@@ -337,22 +361,50 @@ void Console::onConsoleText(ConsoleText_s& text)
 
 void Console::appendText(gcWString text, Color col)
 {
+	if (col.getColor() == 0xFFFFFFFF)
+		col = Color(0);
+
 	auto id = std::this_thread::get_id();
 
 	if (s_IgnoredThread == id)
 		return;
 
+	auto strNow = wxDateTime::Now().Format("%H:%M\t");
+	gcString strMessage((const wchar_t*)strNow);
+
+#ifdef DEBUG
+	std::stringstream ss;
+	ss << id;
+
+	strMessage += gcString("[{0,5}] ", ss.str());
+#endif
+
+	strMessage += gcString(text);
+
 #ifdef DEBUG
 	OutputDebugStringW(text.c_str());
 #endif
 
-	ConsoleText_s c;
-	c.str = text;
-	c.col = col;
-	c.id = id;
-	consoleTextEvent(c);
-}
+	char szBuff[m_nSegmentSize];
 
+	char* szTemp = szBuff;
+	memcpy(szTemp, &col, sizeof(Color));
+	szTemp += sizeof(Color);
+
+	if (strMessage.size() > m_nSegmentSize + 1 + sizeof(Color))
+		strMessage = strMessage.substr(0, m_nSegmentSize - 1 - sizeof(Color));
+
+	Safe::strncpy(szTemp, m_nSegmentSize - sizeof(Color), strMessage.c_str(), strMessage.size());
+
+	auto nIndex = ++m_nLastWritePos;
+	uint16 pos = nIndex % m_nNumSegments;
+
+	if (pos == 0)
+		pos = m_nNumSegments;
+
+	auto saveSpot = m_szConsoleBuffer.c_ptr() + (m_nSegmentSize * (pos - 1));
+	memcpy(saveSpot, szBuff, sizeof(Color) + strMessage.size() + 1);
+}
 
 void Console::onWindowClose( wxCloseEvent& event )
 {

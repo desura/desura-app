@@ -41,9 +41,8 @@ $/LicenseInfo$
 
 typedef struct
 {
-	gcWString str;
+	gcString str;
 	Color col;
-	std::thread::id id;
 } ConsoleText_s;
 
 
@@ -84,15 +83,24 @@ protected:
 	void onKeyDown( wxKeyEvent& event );	
 
 	void onShow(uint32&);
-	void onConsoleText(ConsoleText_s& text);
+	void onConsoleText(const std::vector<ConsoleText_s> &vTextList);
+	void onConsoleTextCallback(wxTimerEvent&);
 
-	Event<ConsoleText_s> consoleTextEvent;
 	Event<uint32> showEvent;
 
 	wxBoxSizer* m_pSizer;
 
 private:
 	bool m_bCenterOnParent;
+
+	static const uint16 m_nNumSegments = 4096;
+	static const uint16 m_nSegmentSize = 512;
+
+	std::atomic<uint32> m_nLastWritePos = { 0 };
+	std::atomic<uint32> m_nLastReadPos = { 0 };
+
+	gcBuff m_szConsoleBuffer;
+	wxTimer m_UpdateTimer;
 
 	static std::atomic<std::thread::id> s_IgnoredThread;
 };
