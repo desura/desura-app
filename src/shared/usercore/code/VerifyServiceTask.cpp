@@ -236,6 +236,10 @@ bool VerifyServiceTask::checkTools()
 	refreshInfo();
 
 	std::vector<DesuraId> toolList;
+
+	if (!getItemInfo()->getCurrentBranch())
+		return false;
+
 	getItemInfo()->getCurrentBranch()->getToolList(toolList);
 
 	if (toolList.size() == 0)
