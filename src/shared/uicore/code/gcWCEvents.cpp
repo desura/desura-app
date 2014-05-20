@@ -143,8 +143,8 @@ const ShortCut_s g_ShortCutList[] =
 #endif
 
 EventHandler::EventHandler(gcWebControlI* parent)
+	: m_pParent(parent)
 {
-	m_pParent = parent;
 }
 
 EventHandler::~EventHandler()
@@ -153,6 +153,11 @@ EventHandler::~EventHandler()
 
 bool EventHandler::onNavigateUrl(const char* url, bool isMain)
 {
+	std::lock_guard<std::mutex> guard(m_ParentLock);
+
+	if (!m_pParent)
+		return false;
+
 	newURL_s nu;
 
 	nu.stop = false;
@@ -165,11 +170,21 @@ bool EventHandler::onNavigateUrl(const char* url, bool isMain)
 
 void EventHandler::onPageLoadStart()
 {
+	std::lock_guard<std::mutex> guard(m_ParentLock);
+
+	if (!m_pParent)
+		return;
+
 	m_pParent->onPageStartEvent();
 }
 
 void EventHandler::onPageLoadEnd()
 {
+	std::lock_guard<std::mutex> guard(m_ParentLock);
+
+	if (!m_pParent)
+		return;
+
 	m_pParent->onAnyPageLoadEvent();
 }
 
@@ -191,6 +206,11 @@ bool EventHandler::onJScriptPrompt(const char* msg, const char* defualtVal, bool
 
 bool EventHandler::onKeyEvent(ChromiumDLL::KeyEventType type, int code, int modifiers, bool isSystemKey)
 {
+	std::lock_guard<std::mutex> guard(m_ParentLock);
+
+	if (!m_pParent)
+		return false;
+
 	if (type == ChromiumDLL::KEYEVENT_RAWKEYDOWN)
 	{
 		for (size_t x=0; x<g_uiMaxKeys; x++)
@@ -445,6 +465,11 @@ gcMenu* EventHandler::createMenu(ChromiumDLL::ChromiumMenuInfoI* menuInfo)
 #ifdef NIX
 void EventHandler::displayMenu(ChromiumDLL::ChromiumMenuInfoI* menuInfo, gcMenu *menu, int32 x, int32 y)
 {
+	std::lock_guard<std::mutex> guard(m_ParentLock);
+
+	if (!m_pParent)
+		return;
+
 	setupLastMenuUrl(menuInfo);
 	m_pParent->PopupMenu((wxMenu*)menu, x, y);
 }
@@ -475,11 +500,21 @@ void EventHandler::setupLastMenuUrl(ChromiumDLL::ChromiumMenuInfoI* menuInfo)
 
 void EventHandler::clearCrumbs()
 {
+	std::lock_guard<std::mutex> guard(m_ParentLock);
+
+	if (!m_pParent)
+		return;
+
 	m_pParent->onClearCrumbsEvent();
 }
 
 void EventHandler::addCrumb(const char* name, const char* url)
 {
+	std::lock_guard<std::mutex> guard(m_ParentLock);
+
+	if (!m_pParent)
+		return;
+
 	Crumb c;
 
 	c.url = url;
@@ -490,6 +525,11 @@ void EventHandler::addCrumb(const char* name, const char* url)
 
 void EventHandler::ForwardPopupMenu(ChromiumMenuInfoFromMem* menu)
 {
+	std::lock_guard<std::mutex> guard(m_ParentLock);
+
+	if (!m_pParent)
+		return;
+
 	m_pParent->HandlePopupMenu(menu);
 }
 

@@ -765,6 +765,12 @@ bool InternalLink::checkForPreorder(DesuraId id)
 
 void InternalLink::installItem(DesuraId id, LinkArgs args)
 {
+	if (checkForPreorder(id))
+	{
+		showPreorderPrompt(id, false);
+		return;
+	}
+
 	std::string branch = args.getArgValue("branch");
 	std::string global = args.getArgValue("global");
 
