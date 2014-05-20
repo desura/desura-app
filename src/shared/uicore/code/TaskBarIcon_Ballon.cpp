@@ -67,6 +67,8 @@ void TaskBarIcon::onBallonClick(wxTaskBarIconEvent &event)
 
 void TaskBarIcon::onAppUpdate(UserCore::Misc::UpdateInfo &info)
 {
+	ASSERT_UITHREAD();
+
 	gcWString msg(Managers::GetString(L"#TB_APPUPDATE"), info.build);
 
 	m_iLastBallon = BALLON_APPUPDATE;
@@ -82,6 +84,8 @@ void TaskBarIcon::onAppUpdateComplete(UserCore::Misc::UpdateInfo &info)
 
 void TaskBarIcon::onAppUpdateProg(uint32& prog)
 {
+	ASSERT_UITHREAD();
+
 	if (m_uiLastProg == prog)
 		return;
 
@@ -108,6 +112,8 @@ void TaskBarIcon::onUpdate()
 
 void TaskBarIcon::doBallonMsg()
 {
+	ASSERT_UITHREAD();
+
 	gcWString msg;
 
 	std::sort(m_vNextUpdateList.begin(), m_vNextUpdateList.end(), sortItems);
@@ -130,6 +136,8 @@ void TaskBarIcon::doBallonMsg()
 
 void TaskBarIcon::showGiftPopup(const std::vector<std::shared_ptr<UserCore::Misc::NewsItem>>& itemList)
 {
+	ASSERT_UITHREAD();
+
 	gcWString msg;
 
 	std::vector<std::shared_ptr<UserCore::Misc::NewsItem>> vLocal(itemList);
@@ -152,6 +160,8 @@ void TaskBarIcon::showGiftPopup(const std::vector<std::shared_ptr<UserCore::Misc
 
 bool TaskBarIcon::findUpdateItem(UserCore::Item::ItemInfoI* item)
 {
+	ASSERT_UITHREAD();
+
 	if (!item)
 		return false;
 
@@ -178,6 +188,8 @@ bool TaskBarIcon::findUpdateItem(UserCore::Item::ItemInfoI* item)
 
 void TaskBarIcon::removeUpdateItem(UserCore::Item::ItemInfoI* item)
 {
+	ASSERT_UITHREAD();
+
 	if (!item)
 		return;
 
@@ -208,6 +220,8 @@ void TaskBarIcon::removeUpdateItem(UserCore::Item::ItemInfoI* item)
 
 void TaskBarIcon::swapUpdateList()
 {
+	ASSERT_UITHREAD();
+
 	for (size_t x=0; x<m_vNextUpdateList.size(); x++)
 	{
 		if (!m_vNextUpdateList[x])
@@ -226,6 +240,8 @@ void TaskBarIcon::onItemChangedNonGui(UserCore::Item::ItemInfoI::ItemInfo_s& inf
 
 void TaskBarIcon::onItemChanged(UserCore::Item::ItemInfoI::ItemInfo_s& info)
 {
+	ASSERT_UITHREAD();
+
 	if (!GetUserCore())
 		return;
 
