@@ -113,6 +113,8 @@ const char* szCefDLL = "libcef_desura.so";
 
 bool LoadCEFDll()
 {
+	gcTraceS("");
+
 	if (!g_CEFDll.load(szCefDLL))
 	{
 		WarningS("Failed to load cef library: {0}\n", GetLastError());
@@ -165,6 +167,8 @@ bool LoadCEFDll()
 
 bool InitWebControl()
 {
+	gcTraceS("");
+
 	if (g_bLoaded)
 		return true;
 
@@ -188,6 +192,8 @@ bool InitWebControl()
 
 void ShutdownWebControl()
 {
+	gcTraceS("");
+
 	g_bLoaded = false;
 
 #ifdef NIX
@@ -202,7 +208,9 @@ void ShutdownWebControl()
 		g_pChromiumController->Stop();
 
 	g_pChromiumController = nullptr;
-	g_CEFDll.unload();
+
+	//Dont unload the dll yet, we might still have valid pointers
+	//g_CEFDll.unload();
 }
 
 static std::mutex g_RootUrlMutex;
@@ -279,6 +287,8 @@ ChromiumDLL::ChromiumBrowserI* NewChromiumBrowser(HWND hwnd, const char* name, c
 ChromiumDLL::ChromiumBrowserI* NewChromiumBrowser(int* hwnd, const char* name, const char* loadUrl)
 #endif
 {
+	gcTraceS("Name: {0}, Url: {1}", name, loadUrl);
+
 	if (!g_bLoaded && !InitWebControl())
 		return nullptr;
 
