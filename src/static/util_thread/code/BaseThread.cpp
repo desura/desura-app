@@ -177,12 +177,15 @@ BaseThread::BaseThread(const char* name)
 
 BaseThread::~BaseThread()
 {
-	std::lock_guard<std::mutex> guard(m_pPrivates->m_StartLock);
+	{
+		std::lock_guard<std::mutex> guard(m_pPrivates->m_StartLock);
 
-	//Should of called stop in child class first. Can cause problems with part delete calling stop here.
-	gcAssert(m_pPrivates->m_bStop || !m_pPrivates->m_bIsRunning);
+		//Should of called stop in child class first. Can cause problems with part delete calling stop here.
+		gcAssert(m_pPrivates->m_bStop || !m_pPrivates->m_bIsRunning);
 
-	stop();
+		stop();
+	}
+
 	safe_delete(m_pPrivates);
 }
 
@@ -204,10 +207,10 @@ void BaseThread::start()
 
 	m_pPrivates->m_pThread = new std::thread([this, waitCond](){
 
+		gcTrace("Starting thread {0}", m_pPrivates->m_szName);
+
 		try
 		{
-			gcTrace("Starting thread {0}", m_pPrivates->m_szName);
-
 			waitCond->wait();
 			gcAssert(m_pPrivates->m_pThread);
 
@@ -215,8 +218,6 @@ void BaseThread::start()
 			applyPriority();
 			setThreadName();
 			run();
-
-			gcTrace("Ending thread {0}", m_pPrivates->m_szName);
 		}
 		catch (gcException &e)
 		{
@@ -233,6 +234,8 @@ void BaseThread::start()
 			gcAssert(false);
 			Warning("Unhandled exception in thread {0}", m_pPrivates->m_szName);
 		}
+
+		gcTrace("Ending thread {0}", m_pPrivates->m_szName);
 	});
 
 	waitCond->notify();
