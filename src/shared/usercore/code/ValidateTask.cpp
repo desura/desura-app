@@ -95,9 +95,17 @@ void ValidateTask::doRun()
 	m_bLocalMcf = UTIL::FS::isValidFile(savePath);
 	m_szInstallPath = getItemInfo()->getPath();
 
-	setCurrentMcf(&m_hMCFile);
-	m_hMCFile->dlHeaderFromWeb();
-	setCurrentMcf(nullptr);
+	try
+	{
+		setCurrentMcf(&m_hMCFile);
+		m_hMCFile->dlHeaderFromWeb();
+		setCurrentMcf(nullptr);
+	}
+	catch (...)
+	{
+		setCurrentMcf(nullptr);
+		throw;
+	}
 
 	m_hMCFile->setFile(savePath.c_str());
 
@@ -162,9 +170,17 @@ void ValidateTask::doRun()
 
 	setAction(ACTION::PRE_ALLOCATING);
 
-	setCurrentMcf(&m_hMCFile);
-	m_hMCFile->preAllocateFile();
-	setCurrentMcf(nullptr);
+	try
+	{
+		setCurrentMcf(&m_hMCFile);
+		m_hMCFile->preAllocateFile();
+		setCurrentMcf(nullptr);
+	}
+	catch (...)
+	{
+		setCurrentMcf(nullptr);
+		throw;
+	}
 
 	if (isStopped())
 		return;
@@ -243,9 +259,17 @@ bool ValidateTask::checkExistingMcf(gcString savePath)
 	McfHandle mcfTemp;
 	mcfTemp->setFile(savePath.c_str());
 
-	setCurrentMcf(&mcfTemp);
-	mcfTemp->parseMCF();
-	setCurrentMcf(nullptr);
+	try
+	{
+		setCurrentMcf(&mcfTemp);
+		mcfTemp->parseMCF();
+		setCurrentMcf(nullptr);
+	}
+	catch (...)
+	{
+		setCurrentMcf(nullptr);
+		throw;
+	}
 
 	if (isStopped())
 		return false;
@@ -273,9 +297,18 @@ bool ValidateTask::checkExistingMcf(gcString savePath)
 	bool verify;
 	m_CurMcfIndex = 1;
 
-	setCurrentMcf(&mcfTemp);
-	verify = mcfTemp->verifyMCF();
-	setCurrentMcf(nullptr);
+	try
+	{
+		setCurrentMcf(&mcfTemp);
+		verify = mcfTemp->verifyMCF();
+		setCurrentMcf(nullptr);
+	}
+	catch (...)
+	{
+		setCurrentMcf(nullptr);
+		throw;
+	}
+
 
 	McfHandle curMcf;
 	bool useCurMcf = false;
@@ -295,6 +328,7 @@ bool ValidateTask::checkExistingMcf(gcString savePath)
 		}
 		catch (gcException)
 		{
+			setCurrentMcf(nullptr);
 		}
 	}
 
@@ -411,6 +445,7 @@ void ValidateTask::copyLocalFiles()
 	}
 	catch (gcException &e)
 	{
+		setCurrentMcf(nullptr);
 		Debug(gcString("Failed to parse folder: {0}", e));
 	}
 
