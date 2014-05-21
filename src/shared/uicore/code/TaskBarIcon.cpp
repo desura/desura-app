@@ -173,9 +173,11 @@ void TaskBarIcon::deregEvents()
 		*GetUserCore()->getAppUpdateEvent() -= guiDelegate(this, &TaskBarIcon::onAppUpdate);
 		*GetUserCore()->getAppUpdateProgEvent() -= guiDelegate(this, &TaskBarIcon::onAppUpdateProg);
 		*GetUserCore()->getAppUpdateCompleteEvent() -= guiDelegate(this, &TaskBarIcon::onAppUpdateComplete);
-		*GetUserCore()->getItemManager()->getOnUpdateEvent() -= guiDelegate(this, &TaskBarIcon::onUpdate);
 		*GetUserCore()->getItemsAddedEvent() -= guiDelegate(this, &TaskBarIcon::onItemsAdded);
 		*GetUserCore()->getUserUpdateEvent() -= guiDelegate(this, &TaskBarIcon::onUserUpdate);
+
+		if (GetUserCore()->getItemManager())
+			*GetUserCore()->getItemManager()->getOnUpdateEvent() -= guiDelegate(this, &TaskBarIcon::onUpdate);
 	}
 }
 
