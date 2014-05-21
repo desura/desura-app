@@ -164,6 +164,7 @@ public:
 	std::thread *m_pThread = nullptr;
 	std::condition_variable m_PauseCond;
 	std::mutex m_PauseMutex;
+	std::mutex m_StartLock;
 	std::recursive_mutex m_PauseInitMutex;
 };
 
@@ -176,6 +177,8 @@ BaseThread::BaseThread(const char* name)
 
 BaseThread::~BaseThread()
 {
+	std::lock_guard<std::mutex> guard(m_pPrivates->m_StartLock);
+
 	//Should of called stop in child class first. Can cause problems with part delete calling stop here.
 	gcAssert(m_pPrivates->m_bStop || !m_pPrivates->m_bIsRunning);
 
@@ -190,6 +193,8 @@ const char* BaseThread::getName()
 
 void BaseThread::start()
 {
+	std::lock_guard<std::mutex> guard(m_pPrivates->m_StartLock);
+
 	if (m_pPrivates->m_pThread)
 		return;
 
