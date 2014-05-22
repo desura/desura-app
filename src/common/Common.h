@@ -431,7 +431,7 @@ inline void DoAssert(const char* szExp, const char* szFile, int nLine)
 	#define DEF_CHUNKSIZE (1024*1024*500) //500kb
 
 	#define USERAGENT "Desura Default"
-
+	#define USERAGENT_UPDATE "Desura Update"
 
 	#include "gcError.h"
 	#include "Event.h"

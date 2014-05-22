@@ -50,6 +50,7 @@ void MCF::dlHeaderFromHttp(const char* url)
 	HttpHandle wc(url);
 	wc->setDownloadRange(0, MCFCore::MCFHeader::getSizeS());
 
+	wc->setUserAgent(USERAGENT_UPDATE);
 	wc->getWeb();
 
 	if (wc->getDataSize() != MCFCore::MCFHeader::getSizeS())
@@ -62,6 +63,7 @@ void MCF::dlHeaderFromHttp(const char* url)
 		throw gcException(ERR_BADHEADER);
 
 	wc->cleanUp();
+	wc->setUserAgent(USERAGENT_UPDATE);
 	wc->setDownloadRange(webHeader.getXmlStart(), webHeader.getXmlSize());
 	wc->getWeb();
 

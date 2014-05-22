@@ -45,6 +45,8 @@ UMcfEx::~UMcfEx()
 void UMcfEx::getUpdateInfo(bool saveXml)
 {
 	HttpHandle wc(PRIMUPDATE);
+
+	wc->setUserAgent(USERAGENT_UPDATE);
 	wc->getWeb();
 
 	if (wc->getDataSize() == 0)
@@ -84,6 +86,8 @@ void UMcfEx::downloadMcf()
 	}
 
 	HttpHandle wc(m_szUrl.c_str());
+
+	wc->setUserAgent(USERAGENT_UPDATE);
 	wc->setOutFile(gcString(m_szFile).c_str());
 	wc->getProgressEvent() += delegate((UMcf*)this, &UMcf::updateAllCB);
 	
