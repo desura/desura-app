@@ -121,7 +121,7 @@ public:
 	void onLoginAccepted(bool saveLoginInfo = false, bool autologin = false);
 
 	void logIn(const char* user, const char* pass);
-	void logOut(bool bShowLogin = true, bool autoLogin = false);
+	void logOut(bool bShowLogin = true, bool autoLogin = false, bool webLoggedOut = false);
 
 	void offlineMode();
 	void goOffline();
@@ -157,7 +157,7 @@ public:
 	void showUnitTest();
 
 protected:
-	void showLogin(bool skipAutoLogin = false);
+	void showLogin(bool skipAutoLogin = false, bool webLoggedOut = false);
 	void showOffline();
 	void showMainForm(bool raise = false, bool show = true);
 
@@ -184,6 +184,7 @@ protected:
 	void onAppUpdate(UserCore::Misc::UpdateInfo& info);
 
 	void onCookieUpdate();
+	void onLoggedOut();
 
 	void onLoginAcceptedCB(std::pair<bool,bool> &loginInfo);
 

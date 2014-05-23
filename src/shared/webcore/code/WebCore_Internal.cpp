@@ -35,9 +35,30 @@ $/LicenseInfo$
 
 using namespace WebCore;
 
+namespace
+{
+
+	static std::vector<int> g_vFailedAuthCodes = {
+		103, //invalid password
+		104, //invalid account
+		105, //inactive account
+		106, //banned account
+		109 //suspended account
+	};
+
+	bool isFailedAuthReason(int res)
+	{
+		return std::find(begin(g_vFailedAuthCodes), end(g_vFailedAuthCodes), res) != end(g_vFailedAuthCodes);
+	}
+
+}
+
 
 const XML::gcXMLElement WebCoreClass::postToServer(std::string url, std::string resource, PostMap &postData, XML::gcXMLDocument &xmlDocument, bool useHTTPS)
 {
+	if (!useHTTPS && !m_bUserAuth)
+		throw gcException(ERR_BAD_PORU, "You have been logged out from the server. Please login again");
+
 	gcString httpOut;
 
 	if (m_bDebuggingOut)
@@ -84,7 +105,15 @@ const XML::gcXMLElement WebCoreClass::postToServer(std::string url, std::string 
 			httpOut.assign(const_cast<char*>(hh->getData()), hh->getDataSize());
 	}
 
-	xmlDocument.ProcessStatus(resource);
+	auto res = xmlDocument.ProcessStatus(resource);
+
+	if (!useHTTPS && isFailedAuthReason(res)) //no login
+	{
+		logOut();
+		onLoggedOutEvent();
+		throw gcException(ERR_BAD_PORU, "You have been logged out from the server. Please login again");
+	}
+
 	return xmlDocument.GetRoot(resource);
 }
 

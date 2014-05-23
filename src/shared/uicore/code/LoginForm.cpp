@@ -1123,3 +1123,9 @@ void LoginForm::onAltLogin(const char* szProvider)
 	naf.ShowModal();
 	m_pNewAccount = nullptr;
 }
+
+void LoginForm::showForcedLogoutPromt()
+{
+	gcException e(ERR_NOUSER, "Your login has expired, please re-login.");
+	gcErrorBox(this, "#LF_ERRTITLE", "#LF_ERROR", e);
+}

@@ -401,7 +401,7 @@ void MainApp::logIn(const char* user, const char* pass)
 	}
 }
 
-void MainApp::logOut(bool bShowLogin, bool autoLogin)
+void MainApp::logOut(bool bShowLogin, bool autoLogin, bool webLoggedOut)
 {
 	gcTrace("");
 
@@ -425,6 +425,7 @@ void MainApp::logOut(bool bShowLogin, bool autoLogin)
 			*user->getAppUpdateProgEvent()				-= guiDelegate(this, &MainApp::onAppUpdateProg);
 			*user->getAppUpdateCompleteEvent()			-= guiDelegate(this, &MainApp::onAppUpdate);
 			*user->getWebCore()->getCookieUpdateEvent() -= guiDelegate(this, &MainApp::onCookieUpdate);
+			user->getWebCore()->getLoggedOutEvent()		-= guiDelegate(this, &MainApp::onLoggedOut);
 
 			safe_delete(user);
 		}
@@ -437,7 +438,7 @@ void MainApp::logOut(bool bShowLogin, bool autoLogin)
 	m_iMode = APP_MODE::MODE_UNINT;
 
 	if (bShowLogin)
-		showLogin(!autoLogin);
+		showLogin(!autoLogin, webLoggedOut);
 
 	HideLogForm();
 
@@ -591,6 +592,7 @@ void MainApp::onLoginAcceptedCB(std::pair<bool,bool> &loginInfo)
 	*GetUserCore()->getAppUpdateProgEvent() += guiDelegate(this, &MainApp::onAppUpdateProg);
 	*GetUserCore()->getAppUpdateCompleteEvent() += guiDelegate(this, &MainApp::onAppUpdate);
 	*GetWebCore()->getCookieUpdateEvent() += guiDelegate(this, &MainApp::onCookieUpdate);
+	GetWebCore()->getLoggedOutEvent() += guiDelegate(this, &MainApp::onLoggedOut);
 	*GetUserCore()->getPipeDisconnectEvent() += guiDelegate(this, &MainApp::onPipeDisconnect);
 	
 	//trigger this so it sets cookies first time around
@@ -684,7 +686,7 @@ void MainApp::showMainForm(bool raise, bool show)
 		m_wxMainForm->forceRaise();
 }
 
-void MainApp::showLogin(bool skipAutoLogin)
+void MainApp::showLogin(bool skipAutoLogin, bool webLoggedOut)
 {
 #ifdef DEBUG
 	showUnitTest();
@@ -701,6 +703,8 @@ void MainApp::showLogin(bool skipAutoLogin)
 	if (m_wxLoginForm->IsShown())
 		m_wxLoginForm->Raise();
 
+	if (webLoggedOut)
+		m_wxLoginForm->showForcedLogoutPromt();
 }
 
 void MainApp::onAppUpdateProg(uint32& prog)
@@ -793,6 +797,11 @@ void MainApp::onNeedCvar(UserCore::Misc::CVar_s& info)
 void MainApp::onCookieUpdate()
 {
 	SetCookies();
+}
+
+void MainApp::onLoggedOut()
+{
+	logOut(true, false, true);
 }
 
 void MainApp::onPipeDisconnect()

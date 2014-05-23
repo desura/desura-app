@@ -113,7 +113,7 @@ public:
 	virtual void closeForm(int32 id)=0;
 
 	virtual void logIn(const char* user, const char* pass)=0;
-	virtual void logOut(bool bShowLogin = true, bool autoLogin = false)=0;
+	virtual void logOut(bool bShowLogin = true, bool autoLogin = false, bool webLoggedOut = false)=0;
 	virtual void onLoginAccepted(bool saveLoginInfo = false, bool autologin = false)=0;
 
 	virtual bool isOffline()=0;
