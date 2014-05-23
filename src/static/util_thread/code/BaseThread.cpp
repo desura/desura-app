@@ -156,8 +156,8 @@ public:
 	const std::string m_szName;
 
 	bool m_bIsRunning = false;
-	std::atomic<bool> m_bPause;
-	std::atomic<bool> m_bStop;
+    std::atomic<bool> m_bPause = {false};
+    std::atomic<bool> m_bStop = {false};
 
 	BaseThread::PRIORITY m_uiPriority = NORMAL;
 

@@ -329,8 +329,8 @@ namespace IPC
 	//!
 	class IPCClass : public IPCLockable
 	{
-	public:
-		//! Constructor
+    public:
+        //! Constructor
 		//! 
 		//! @param mang Manager
 		//! @param id Class id
@@ -487,7 +487,7 @@ namespace IPC
 		const uint32 m_uiId;
 		DesuraId m_uiItemId;
 
-		std::atomic<int> m_nKillCount;				
+        std::atomic<uint32> m_nKillCount = {0};
 		::Thread::WaitCondition m_KillCondition;
 
 		std::map<uint32, NetworkFunctionI*> m_mFunc;
@@ -633,7 +633,13 @@ namespace IPC
 
 			memcpy(&et->data, data, size);
 
-			m_pClass->sendMessage(MT_EVENTTRIGGER, (const char*)et, sizeofStruct(et));
+			try
+			{
+				m_pClass->sendMessage(MT_EVENTTRIGGER, (const char*)et, sizeofStruct(et));
+			}
+			catch (...)
+			{
+			}
 
 			safe_delete(buff);
 			safe_delete(data);

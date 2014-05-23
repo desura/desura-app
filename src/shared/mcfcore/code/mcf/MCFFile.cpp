@@ -873,8 +873,6 @@ void MCFFile::clearDiff()
 
 #ifdef WITH_GTEST
 
-#include <gtest/gtest.h>
-
 static const char* gs_szTestFileXml = 
 "<files><file>"
 "    <name>market_g.png</name>"

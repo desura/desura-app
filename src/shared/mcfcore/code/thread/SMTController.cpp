@@ -296,7 +296,7 @@ void SMTController::fillFileList()
 		vList.emplace_back(m_rvFileList[x]->getSize(), (uint32)x);
 	}
 
-	std::sort(vList.begin(), vList.end(), [](tFile &a, tFile &b){
+    std::sort(vList.begin(), vList.end(), [](const tFile &a, const tFile &b){
 		return (a.size < b.size);
 	});
 
@@ -396,6 +396,10 @@ void SMTController::reportError(uint32 id, gcException &e)
 #endif
 	Warning("SMTControler {0} Error: {1}.\n", id, e);
 	onErrorEvent(e);
+
+	m_iRunningWorkers--;
+	//wake thread up
+	m_WaitCond.notify();
 }
 
 void SMTController::reportProgress(uint32 id, uint64 ammount)

@@ -43,16 +43,16 @@ $/LicenseInfo$
 #include "usercore/ItemHandleI.h"
 
 template <class T>
-T* findForm( DesuraId id, std::vector<wxFrame*>& vSubForms )
+T* findForm(const std::function<bool(T*)> &callback, std::vector<wxFrame*>& vSubForms)
 {
-	for (size_t x=0; x<vSubForms.size(); x++)
+	for (size_t x = 0; x<vSubForms.size(); x++)
 	{
 		T * temp = dynamic_cast< T *>(vSubForms[x]);
 
 		if (!temp)
 			continue;
 
-		if (temp->getItemId() == id )
+		if (callback(temp))
 		{
 			return temp;
 		}
@@ -60,6 +60,16 @@ T* findForm( DesuraId id, std::vector<wxFrame*>& vSubForms )
 
 	return nullptr;
 }
+
+template <class T>
+T* findForm(DesuraId id, std::vector<wxFrame*>& vSubForms)
+{
+	return findForm<T>([id](T* pForm){
+		return pForm->getItemId() == id;
+	}, vSubForms);
+}
+
+
 
 #define FINDFORM( id, type )									\
 	{															\
@@ -765,6 +775,12 @@ bool InternalLink::checkForPreorder(DesuraId id)
 
 void InternalLink::installItem(DesuraId id, LinkArgs args)
 {
+	if (checkForPreorder(id))
+	{
+		showPreorderPrompt(id, false);
+		return;
+	}
+
 	std::string branch = args.getArgValue("branch");
 	std::string global = args.getArgValue("global");
 
@@ -1163,6 +1179,16 @@ void InternalLink::resumeUploadMCF(DesuraId id, LinkArgs args)
 	std::string key = args.getArgValue("key");
 	std::string uid = args.getArgValue("uid");
 
+	auto pForm = findForm<UploadMCFForm>([key, uid](UploadMCFForm* pForm){
+		return (!key.empty() && pForm->getKey() == key) || (!uid.empty() && pForm->getUid() == uid);
+	}, m_vSubForms);
+
+	if (pForm)
+	{
+		pForm->Raise();
+		return;
+	}
+		
 	UserCore::Item::ItemInfoI* item = GetUserCore()->getItemManager()->findItemInfo( id );
 	if (!item && !GetUserCore()->isAdmin())
 	{

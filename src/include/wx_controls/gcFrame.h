@@ -81,7 +81,7 @@ public:
 	//!
 	bool loadSavedWindowPos();
 
-	void setMessageBox(wxWindow *pDialog);
+	bool setMessageBox(wxWindow *pDialog);
 
 protected:
 	bool checkAndSetPendingClose();

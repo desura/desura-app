@@ -64,7 +64,7 @@ namespace UserCore
 			virtual void onStop();
 			volatile bool isStopped();
 
-			std::atomic<bool> m_bStopped;
+            std::atomic<bool> m_bStopped = {false};
 		private:
 			DesuraId m_iId;
 

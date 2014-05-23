@@ -105,7 +105,7 @@ ToolInstallThread::ToolInstallThread(ToolManager* toolManager, std::mutex &mapLo
 	m_pToolManager = toolManager;
 	m_bStillInstalling = false;
 	
-	m_pToolMain = new IPCToolMain();
+    m_pToolMain = std::make_shared<IPCToolMain>();
 	m_pToolMain->onCompleteEvent += delegate(this, &ToolInstallThread::onINComplete);
 }
 
@@ -115,7 +115,7 @@ ToolInstallThread::~ToolInstallThread()
 	safe_delete(m_pToolMain);
 }
 
-IPCToolMain* ToolInstallThread::getToolMain()
+std::shared_ptr<IPCToolMain> ToolInstallThread::getToolMain()
 {
 	return m_pToolMain;
 }

@@ -321,8 +321,8 @@ namespace MCFCore
 		uint16 m_uiWCount = 0;
 		gcString m_szFile;
 
-		std::atomic<bool> m_bStopped;
-		std::atomic<bool> m_bPaused;
+        std::atomic<bool> m_bStopped = {false};
+        std::atomic<bool> m_bPaused = {false};
 
 		uint32 m_iLastSorted = 0;
 		uint32 m_uiChunkCount = 0;

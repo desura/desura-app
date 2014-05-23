@@ -25,10 +25,6 @@ $/LicenseInfo$
 
 #pragma warning( disable : 4627 )
 
-#ifdef DESURA_EXE
-	#include "stdafx.h"
-#endif
-
 #include "Common.h"
 #include "IPCUpdateApp.h"
 #include "IPCManager.h"

@@ -376,8 +376,6 @@ void WGTWorker::requestNewUrl(gcException& e)
 
 #ifdef WITH_GTEST
 
-#include <gtest/gtest.h>
-
 namespace UnitTest
 {
 	class StubMCFServerCon : public MCFCore::Misc::MCFServerConI

@@ -302,7 +302,8 @@ void MCF::dlFilesFromWeb( )
 
 void MCF::parseFolder(const char *path, bool hashFile, bool reportProgress)
 {
-	parseFolder(nullptr, path);
+    auto strFullPath = UTIL::FS::PathWithFile(path).getFullPath();
+    parseFolder(nullptr, strFullPath.c_str());
 
 	if (!hashFile)
 		return;
@@ -425,16 +426,21 @@ void MCF::parseFolder(const char *filePath, const char *oPath)
 
 void MCF::saveFiles(const char* path)
 {
+    auto strFullPath = UTIL::FS::PathWithFile(path).getFullPath();
+
 	gcTrace("Path: {0}", path);
 
 	gcAssert(!m_pTHandle);
 
-	if (m_bStopped || !path)
+    if (!path)
+        return;
+
+    if (m_bStopped)
 		return;
 
-	UTIL::FS::recMakeFolder(UTIL::FS::Path(path, "", false));
+    UTIL::FS::recMakeFolder(strFullPath);
 
-	MCFCore::Thread::SFTController *temp = new MCFCore::Thread::SFTController(m_uiWCount, this, path);
+    MCFCore::Thread::SFTController *temp = new MCFCore::Thread::SFTController(m_uiWCount, this, strFullPath.c_str());
 	temp->onProgressEvent +=delegate(&onProgressEvent);
 	temp->onErrorEvent += delegate(&onErrorEvent);
 
@@ -864,8 +870,6 @@ bool MCF::fixMD5AndCRC()
 
 
 #ifdef WITH_GTEST
-
-#include <gtest/gtest.h>
 
 namespace UnitTest
 {

@@ -120,7 +120,11 @@ void VerifyServiceTask::finishVerify(UserCore::Misc::VerifyComplete::VSTATUS sta
 	if (status == UserCore::Misc::VerifyComplete::V_INSTALL)
 	{
 		getItemInfo()->addToAccount();
-		getItemHandle()->getInternal()->goToStageInstall(installpath, getMcfBranch());
+
+		if (getItemInfo()->isComplex())
+			getItemHandle()->getInternal()->goToStageInstallComplex(getMcfBranch(), getMcfBuild(), false);
+		else
+			getItemHandle()->getInternal()->goToStageInstall(installpath, getMcfBranch());
 	}
 	else if (status == UserCore::Misc::VerifyComplete::V_DOWNLOAD)
 	{
@@ -128,8 +132,10 @@ void VerifyServiceTask::finishVerify(UserCore::Misc::VerifyComplete::VSTATUS sta
 
 		if (installpath)
 			getItemHandle()->getInternal()->goToStageDownload(installpath);
+		else if (getItemInfo()->getCurrentBranch())
+			getItemHandle()->getInternal()->goToStageDownload(getItemInfo()->getCurrentBranch()->getBranchId(), m_McfBuild);
 		else
-			getItemHandle()->getInternal()->goToStageDownload(getItemInfo()->getCurrentBranch()->getBranchId(), m_McfBuild);	
+			getItemHandle()->getInternal()->goToStageDownload(m_McfBranch, m_McfBuild);
 	}
 	else if (status == UserCore::Misc::VerifyComplete::V_SWITCHBRANCH)
 	{

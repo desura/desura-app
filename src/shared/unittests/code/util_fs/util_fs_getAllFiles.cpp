@@ -20,8 +20,6 @@ Linden Research, Inc., 945 Battery Street, San Francisco, CA  94111  USA
 $/LicenseInfo$
 */
 
-#include <gtest/gtest.h>
-
 // interface: void getAllFiles(Path path, std::vector<Path> &outList, std::vector<std::string> *extsFilter);
 
 // set up test env for util_fs testing

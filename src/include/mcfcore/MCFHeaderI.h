@@ -36,10 +36,6 @@ $/LicenseInfo$
 //#define MCF_HEADERSIZE 35
 #define MCF_CURRENTVERSION 0x02
 
-#ifdef LINK_WITH_GMOCK
-#include <gmock/gmock.h>
-#endif
-
 namespace MCFCore
 {
 	//! This is an Interface for a Mcf Header

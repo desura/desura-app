@@ -59,7 +59,11 @@ namespace UserCore
 			virtual void doRun();
 			virtual void onFinish();
 
-
+			virtual void onError(gcException &e)
+			{
+				//should handle this
+				gcAssert(false);
+			}
 
 			IPC::ServiceMainI* getServiceMain();
 
@@ -69,8 +73,8 @@ namespace UserCore
 
 		private:
 			::Thread::WaitCondition m_WaitCond;
-			std::atomic<bool> m_bFinished;
-			std::atomic<bool> m_bStarted;
+            std::atomic<bool> m_bFinished = {false};
+            std::atomic<bool> m_bStarted = {false};
 		};
 	}
 }

@@ -124,7 +124,9 @@ gcWebControl::~gcWebControl()
 	m_pChromeBrowser->destroy();
 	m_pChromeBrowser = nullptr;
 
-	safe_delete(m_pEventHandler);
+	//This will leak event handler, better than crashing though
+	if (m_pEventHandler)
+		m_pEventHandler->nullControl();
 }
 
 void gcWebControl::onFocus(wxFocusEvent& event)

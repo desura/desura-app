@@ -30,11 +30,6 @@ $/LicenseInfo$
 #pragma once
 #endif
 
-
-#ifdef LINK_WITH_GMOCK
-#include <gmock/gmock.h>
-#endif
-
 class IPCUpdateApp;
 class IPCUninstallMcf;
 class IPCInstallMcf;

@@ -540,6 +540,11 @@ bool WGTController::fillBlockList()
 	}
 	catch (gcException &e)
 	{
+		{
+			std::lock_guard<std::mutex> guard(m_McfLock);
+			m_pCurMcf = nullptr;
+		}
+
 		onErrorEvent(e);
 		return false;
 	}

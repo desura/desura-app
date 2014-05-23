@@ -369,7 +369,7 @@ const std::string dateTimeToDisplay(const char* dateTime)
 {
 	std::string date_time_str = fixDateTimeString(dateTime);
 
-	gcTime t1( gcTime::from_iso_string(dateTime) );
+	gcTime t1(gcTime::from_iso_string(date_time_str));
 	time_t t2 = t1.to_time_t();
 
 	char szOut[255];

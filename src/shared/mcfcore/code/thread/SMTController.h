@@ -127,7 +127,7 @@ namespace MCFCore
 		private:
 			const std::vector<SMTWorkerInfo*> m_vWorkerList;
 
-			std::atomic<uint32> m_iRunningWorkers;
+            std::atomic<uint32> m_iRunningWorkers = {0};
 			bool m_bCreateDiff = false;
 
 			::Thread::WaitCondition m_WaitCond;
