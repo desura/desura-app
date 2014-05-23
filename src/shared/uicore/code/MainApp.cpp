@@ -448,20 +448,12 @@ void MainApp::logOut(bool bShowLogin, bool autoLogin)
 void MainApp::goOffline()
 {
 	gcTrace("");
+	gcMessageDialog msgBox(nullptr, Managers::GetString(L"#MF_OFFLINE"), Managers::GetString(L"#MF_OFFLINE_TITLE"), wxYES_NO | wxICON_QUESTION);
 
-	if (!m_pOfflineDialog)
-		m_pOfflineDialog = new gcMessageDialog(nullptr, Managers::GetString(L"#MF_OFFLINE"), Managers::GetString(L"#MF_OFFLINE_TITLE"), wxYES_NO | wxICON_QUESTION);
+	AutoScopeMemberVar<gcMessageDialog> asv(m_pOfflineDialog, &msgBox);
 
-	int ans = m_pOfflineDialog->ShowModal();
-
-	if (m_pOfflineDialog)
-	{
-		m_pOfflineDialog->Destroy();
-		m_pOfflineDialog = nullptr;
-
-		if (ans == wxID_YES)
-			offlineMode();
-	}
+	if (msgBox.ShowModal() == wxID_YES)
+		offlineMode();
 }
 
 bool MainApp::isOffline()
@@ -529,6 +521,9 @@ void MainApp::showMainWindow(bool raise)
 void MainApp::onClose(wxCloseEvent& event)
 {
 	gcTrace("");
+
+	if (m_pOfflineDialog)
+		m_pOfflineDialog->EndModal(0);
 
 	if (m_wxLoginForm)
 	{

@@ -207,7 +207,6 @@ protected:
 
 private:
 	friend class Desura;
-
 	gcMessageDialog *m_pOfflineDialog = nullptr;
 
 	std::vector<std::shared_ptr<UserCore::Misc::NewsItem>> m_vNewsItems;
