@@ -263,11 +263,14 @@ ItemTabPage::~ItemTabPage()
 
 	if (GetUserCore())
 	{
-		std::vector<UserCore::Item::ItemInfoI*> aList;
-		GetUserCore()->getItemManager()->getAllItems(aList);
+		if (GetUserCore()->getItemManager())
+		{
+			std::vector<UserCore::Item::ItemInfoI*> aList;
+			GetUserCore()->getItemManager()->getAllItems(aList);
 
-		for (size_t x=0; x<aList.size(); x++)
-			*aList[x]->getInfoChangeEvent() -= guiDelegate(this, &ItemTabPage::onItemUpdate);
+			for (size_t x = 0; x<aList.size(); x++)
+				*aList[x]->getInfoChangeEvent() -= guiDelegate(this, &ItemTabPage::onItemUpdate);
+		}
 
 		*GetUserCore()->getLowSpaceEvent() -= guiDelegate(this, &ItemTabPage::onLowDiskSpace);
 		*GetUserCore()->getForcedUpdatePollEvent() -= guiDelegate(this, &ItemTabPage::onUpdatePoll);

@@ -38,44 +38,26 @@ MCFHeader::MCFHeader(MCFHeaderI* head) : UMcfHeader(head)
 {
 }
 
-MCFHeader::MCFHeader(const uint8* string) : UMcfHeader()
+MCFHeader::MCFHeader(const char* string) : UMcfHeader()
 {
 	strToHeader(string);
 }
 
 void MCFHeader::saveToFile(UTIL::FS::FileHandle& hFile)
 {
-	const uint8* str = headerToStr();
+	char* str = headerToStr();
+	AutoDelete<char> ad(str);
 
-	try
-	{
-	    hFile.seek(0);
-		hFile.write((const char*)str, getSize());
-		safe_delete(str);
-	}
-	catch (gcException &)
-	{
-		safe_delete(str);
-		throw;
-	}
+	hFile.seek(0);
+	hFile.write((const char*)str, getSize());
 }
 
 void MCFHeader::readFromFile(UTIL::FS::FileHandle& hFile)
 {
-	uint8* str = new uint8[getSize()];
+	gcBuff buff(getSize());
 
-	try
-	{
-		hFile.read((char*)str, getSize());
-	}
-	catch (gcException &)
-	{
-		safe_delete(str);
-		throw;
-	}
-
-	strToHeader(str);
-	safe_delete(str);
+	hFile.read(buff.c_ptr(), getSize());
+	strToHeader(buff.c_ptr());
 
 	if (!isValid())
 		throw gcException((ERROR_ID)ERR_INVALID, "The file is not a MCF file");

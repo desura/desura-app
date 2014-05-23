@@ -63,19 +63,10 @@ gcString WildcardManager::constructPath(const char* path, bool fixPath)
 {
 	gcString ret;
 	char *szPathOut = nullptr;
+	AutoDelete<char> ad(szPathOut);
 
-	try
-	{
-		constructPath(path, &szPathOut, fixPath);
-		ret = szPathOut;
-		safe_delete(szPathOut);
-	}
-	catch (...)
-	{
-		safe_delete(szPathOut);
-		throw;
-	}
-
+	constructPath(path, &szPathOut, fixPath);
+	ret = szPathOut;
 	return ret;
 }
 	
@@ -173,14 +164,12 @@ void WildcardManager::constructPath(const char* path, char **res, uint8 *depth)
 
 			if (strlen(temp)==0)
 			{
-			  delete [] temp;
+				delete [] temp;
 				throw gcException(ERR_WILDCARD, gcString("Failed to find wildcard [{0}] Current node is null", path));
 			}
 
 			AutoDelete<char> tad(temp);
-			AutoDelete<WildcardInfo> wad;
-
-			WildcardInfo* wcInfo = nullptr;
+			std::shared_ptr<WildcardInfo> wcInfo;
 
 			if (Safe::stricmp(temp, "TEMP") == 0)
 			{
@@ -189,21 +178,18 @@ void WildcardManager::constructPath(const char* path, char **res, uint8 *depth)
 				onNeedInstallSpecialEvent(info);
 
 				if (info.handled)
-				{
-					wcInfo = new WildcardInfo("temp", info.result.c_str(), "temp", true);
-					AutoDelete<WildcardInfo> ad(wcInfo);
-					wad = ad;
-				}
+					wcInfo = std::make_shared<WildcardInfo>("temp", info.result.c_str(), "temp", true);
 			}
 			else
 			{
-				wcInfo = findItem(temp);
+				//hack hack fix when base manager changes give out shared ptr
+				wcInfo = std::shared_ptr<WildcardInfo>(findItem(temp), [](WildcardInfo*){});
 			}
 
 			if (!wcInfo)
 				throw gcException(ERR_WILDCARD, gcString("Failed to find wildcard [{0}]", temp));
 
-			resolveWildCard(wcInfo);
+			resolveWildCard(wcInfo.get());
 
 			if (!wcInfo->m_bResolved)
 				throw gcException(ERR_WILDCARD, gcString("Failed to resolve wildcard [{0}]", temp));

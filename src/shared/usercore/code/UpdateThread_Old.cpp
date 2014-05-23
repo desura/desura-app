@@ -226,10 +226,6 @@ bool UpdateThreadOld::pollUpdates()
 	checkFreeSpace();
 #endif
 
-	m_hHttpHandle->cleanPostInfo();
-	m_hHttpHandle->cleanUp();
-	m_hHttpHandle->clearCookies();
-
 	return true;
 }
 

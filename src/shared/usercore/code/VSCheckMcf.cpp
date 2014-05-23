@@ -87,6 +87,9 @@ void VSCheckMcf::onStop()
 {
 	if (m_hTempMcf.handle())
 		m_hTempMcf->stop();
+
+	if (m_hMcf)
+		m_hMcf->stop();
 }
 
 gcString VSCheckMcf::downloadMCFHeader()

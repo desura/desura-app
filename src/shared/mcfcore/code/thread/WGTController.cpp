@@ -410,6 +410,7 @@ void WGTController::saveBuffers(UTIL::FS::FileHandle& fileHandle, bool allBlocks
 		do
 		{
 			auto block = worker->popBlock();
+			AutoDelete<Misc::WGTBlock> ad(block);
 
 			if (!block)
 				break;
@@ -429,11 +430,8 @@ void WGTController::saveBuffers(UTIL::FS::FileHandle& fileHandle, bool allBlocks
 			catch (gcException &e)
 			{
 				onErrorEvent(e);
-				safe_delete(block);
 				break;
 			}
-
-			safe_delete(block);
 		}
 		while (allBlocks); //if all blocks is true it will keep looping until buff size is zero else it will run once
 	}
@@ -537,18 +535,8 @@ bool WGTController::fillBlockList()
 
 	try
 	{
-		{
-			std::lock_guard<std::mutex> guard(m_McfLock);
-			m_pCurMcf = &webMcf;
-		}
-
+		AutoScopeLockedMemberVar<MCFCore::MCF> aslmv(m_pCurMcf, m_McfLock, webMcf);
 		webMcf.dlHeaderFromWeb();
-
-		{
-			std::lock_guard<std::mutex> guard(m_McfLock);
-			m_pCurMcf = nullptr;
-		}
-
 	}
 	catch (gcException &e)
 	{

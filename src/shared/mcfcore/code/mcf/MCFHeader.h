@@ -34,49 +34,42 @@ $/LicenseInfo$
 /// \brief MCFCore namespace houses all functionality relating to MCF files.
 namespace MCFCore
 {
-
-//! MCFHeader represents the binary header section of a MCF file which holds
-//! the key information about the content within the MCF
-//! 
-//! If you make changes here make sure you update UMCFHeader as well.
-class MCFHeader : public UMcfHeader
-{
-public:
-	//! Default Constructor
-	MCFHeader();
-
-	//! Copy Constuctor
-	MCFHeader(MCFHeaderI* head);
-
-	//! Load from string Constuctor
-	MCFHeader(const uint8* string);
-
-
-	//! Gets the size of the header for in a MCF file always the newest version
-	//!
-	//! @return size of the header in a MCF file
+	//! MCFHeader represents the binary header section of a MCF file which holds
+	//! the key information about the content within the MCF
 	//! 
-	static uint8 getSizeS(){return MCF_HEADERSIZE_V2;}
+	//! If you make changes here make sure you update UMCFHeader as well.
+	class MCFHeader : public UMcfHeader
+	{
+	public:
+		//! Default Constructor
+		MCFHeader();
+
+		//! Copy Constructor
+		MCFHeader(MCFHeaderI* head);
+
+		//! Load from string Constructor
+		MCFHeader(const char* string);
 
 
-	//! Saves the MCF header to a MCF file
-	//!
-	//! @param hFile File Handle to save the header to
-	//!
-	void saveToFile(UTIL::FS::FileHandle& hFile);
-
-	//! Reads the MCF header from a MCF file
-	//!
-	//! @param hFile File Handle to read the header from
-	//!
-	void readFromFile(UTIL::FS::FileHandle& hFile);
+		//! Gets the size of the header for in a MCF file always the newest version
+		//!
+		//! @return size of the header in a MCF file
+		//! 
+		static uint8 getSizeS(){ return MCF_HEADERSIZE_V2; }
 
 
-protected:
+		//! Saves the MCF header to a MCF file
+		//!
+		//! @param hFile File Handle to save the header to
+		//!
+		void saveToFile(UTIL::FS::FileHandle& hFile);
 
-};
-
-
+		//! Reads the MCF header from a MCF file
+		//!
+		//! @param hFile File Handle to read the header from
+		//!
+		void readFromFile(UTIL::FS::FileHandle& hFile);
+	};
 }
 
 

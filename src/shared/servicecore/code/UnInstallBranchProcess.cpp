@@ -27,31 +27,21 @@ $/LicenseInfo$
 #include "UnInstallBranchProcess.h"
 #include "McfInit.h"
 #include "InstallScriptRunTime.h"
+#include "mcfcore/MCFMain.h"
 
-UninstallBranchProcess::UninstallBranchProcess(const char* oldBranchMcf, const char* newBranchMcf, const char* inspath, const char* installScript) : Thread::BaseThread("UninstallBranch Thread")
+UninstallBranchProcess::UninstallBranchProcess(const char* oldBranchMcf, const char* newBranchMcf, const char* inspath, const char* installScript) 
+	: Thread::BaseThread("UninstallBranch Thread")
+	, m_szOldMcfPath(oldBranchMcf)
+	, m_szNewMcfPath(newBranchMcf)
+	, m_szInstallPath(inspath)
+	, m_szInstallScript(installScript)
 {
-	m_szOldMcfPath = oldBranchMcf;
-	m_szNewMcfPath = newBranchMcf;
-	m_szInstallPath = inspath;
-	m_szInstallScript = installScript;
-
-	m_pOldBranchMcf = nullptr;
-	m_pNewBranchMcf = nullptr;
-
-	m_uiLastProg = 0;
 }
 
 UninstallBranchProcess::~UninstallBranchProcess()
 {
 	stop();
-
-	if (m_pOldBranchMcf)
-		mcfDelFactory(m_pOldBranchMcf);
-
-	if (m_pNewBranchMcf)
-		mcfDelFactory(m_pNewBranchMcf);
 }
-
 
 void UninstallBranchProcess::run()
 {
@@ -63,11 +53,8 @@ void UninstallBranchProcess::run()
 		return;
 	}
 
-	MCFCore::MCFI *oldMcf = mcfFactory();
-	m_pOldBranchMcf = oldMcf;
-
-	MCFCore::MCFI *newMcf = mcfFactory();
-	m_pNewBranchMcf = newMcf;
+	McfHandle oldMcf;
+	McfHandle newMcf;
 
 	oldMcf->setFile(m_szOldMcfPath.c_str());
 	newMcf->setFile(m_szNewMcfPath.c_str());
@@ -76,6 +63,9 @@ void UninstallBranchProcess::run()
 
 	try
 	{
+		AutoScopeLockedMemberVar<MCFCore::MCFI> asmv1(m_pOldBranchMcf, m_McfLock, oldMcf);
+		AutoScopeLockedMemberVar<MCFCore::MCFI> asmv2(m_pNewBranchMcf, m_McfLock, newMcf);
+
 		oldMcf->parseMCF();
 		newMcf->parseMCF();
 
@@ -91,12 +81,6 @@ void UninstallBranchProcess::run()
 	catch (gcException &)
 	{
 	}
-
-	m_pOldBranchMcf=nullptr;
-	m_pNewBranchMcf=nullptr;
-
-	mcfDelFactory(newMcf);
-	mcfDelFactory(oldMcf);
 	
 	onCompleteEvent();
 	onFinishEvent();
@@ -104,20 +88,35 @@ void UninstallBranchProcess::run()
 
 void UninstallBranchProcess::onStop()
 {
+	std::lock_guard<std::mutex> guard(m_McfLock);
+
 	if (m_pNewBranchMcf)
 		m_pNewBranchMcf->stop();
+
+	if (m_pOldBranchMcf)
+		m_pOldBranchMcf->stop();
 }
 
 void UninstallBranchProcess::onPause()
 {
+	std::lock_guard<std::mutex> guard(m_McfLock);
+
 	if (m_pNewBranchMcf)
 		m_pNewBranchMcf->pause();
+
+	if (m_pOldBranchMcf)
+		m_pOldBranchMcf->pause();
 }
 
 void UninstallBranchProcess::onUnpause()
 {
+	std::lock_guard<std::mutex> guard(m_McfLock);
+
 	if (m_pNewBranchMcf)
 		m_pNewBranchMcf->unpause();
+
+	if (m_pOldBranchMcf)
+		m_pOldBranchMcf->unpause();
 }
 
 

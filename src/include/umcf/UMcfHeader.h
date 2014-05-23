@@ -67,7 +67,7 @@ public:
 	//!
 	//! @return size of the header in a MCF file
 	//! 
-	uint8 getSize();
+	uint8 getSize() const;
 
 
 	//! Reads the MCF header from a MCF file
@@ -85,67 +85,67 @@ public:
 	//!
 	//! @return true for valid, false for invalid
 	//!
-	bool isValid();
+	bool isValid() const;
 
 	//! Gets the magic number for the MCF header. Should be LMCF
 	//!
 	//! @return Magic number as string
 	//!
-	const char* getMagicNumber(){return m_szId;}
+	const char* getMagicNumber() const{ return m_szId; }
 
 	//! Gets the MCF file version
 	//!
 	//! @return File version
 	//!
-	uint8 getFileVer(){return m_iFileVer;}
+	uint8 getFileVer() const{ return m_iFileVer; }
 
 	//! Gets the item version
 	//!
 	//! @return Item Version
 	//!
-	MCFBuild getBuild(){return m_iBuild;}
+	MCFBuild getBuild() const{ return m_iBuild; }
 
 	//! Gets the item desura Id
 	//!
 	//! @return Desura Id
 	//!
-	uint32 getId(){return m_iId;}
+	uint32 getId() const{ return m_iId; }
 
 	//! Gets the item desura type
 	//!
 	//! @return Desura Type
 	//!
-	uint8 getType(){return m_iType;}
+	uint8 getType() const{ return m_iType; }
 
 	//! Gets the Xml Start position
 	//!
 	//! @return Xml offset
 	//!
-	uint64 getXmlStart(){return m_iXmlStart;}
+	uint64 getXmlStart() const{ return m_iXmlStart; }
 
 	//! Gets the Xml Length
 	//!
 	//! @return Xml Length
 	//!
-	uint32 getXmlSize(){return m_iXmlSize;}
+	uint32 getXmlSize() const{ return m_iXmlSize; }
 
 	//! Gets the Mcf Flags
 	//!
 	//! @return Mcf Flags
 	//!
-	uint8 getFlags(){return m_iFlags;}
+	uint8 getFlags() const{ return m_iFlags; }
 
 	//! Gets the MCF parent version (i.e. the MCF this one was based off)
 	//!
 	//! @return Mcf Parent Version
 	//!
-	uint32 getParent(){return m_iParentMcf;}
+	uint32 getParent() const{ return m_iParentMcf; }
 
 	//! Gets the MCF branch
 	//!
 	//! @return Mcf branch
 	//!
-	MCFBranch getBranch(){return m_iBranch;}
+	MCFBranch getBranch() const{ return m_iBranch; }
 
 
 	//! Sets the Desura type
@@ -209,9 +209,9 @@ public:
 	//! @param other Header to compare against
 	//! @return true If matches, false if doesnt
 	//!
-	bool matches(MCFCore::MCFHeaderI* other);
+	bool matches(MCFCore::MCFHeaderI* other) const;
 
-	DesuraId getDesuraId(){return DesuraId(m_iId, m_iType);}
+	DesuraId getDesuraId() const{ return DesuraId(m_iId, m_iType); }
 
 	virtual void updateFileVersion();
 
@@ -220,13 +220,13 @@ protected:
 	//!
 	//! @param str Header string to load
 	//!
-	void strToHeader(const uint8* str);
+	void strToHeader(const char* str);
 
 	//! Saves header information to a string. Note: Must delete the string after
 	//!
 	//! @return Header String
 	//!
-	const uint8* headerToStr();
+	char* headerToStr() const;
 
 	//! Sets all values to default
 	//!

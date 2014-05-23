@@ -132,6 +132,11 @@ ExternalLoaderScheme::ExternalLoaderScheme() : DesuraSchemeBase<ExternalLoaderSc
 
 bool ExternalLoaderScheme::processRequest(ChromiumDLL::SchemeRequestI* request, bool* redirect)
 {
+	auto pWebCore = GetWebCore();
+
+	if (!pWebCore)
+		return false;
+
 	char wurl[255];
 	request->getURL(wurl, 255);
 
@@ -142,7 +147,7 @@ bool ExternalLoaderScheme::processRequest(ChromiumDLL::SchemeRequestI* request, 
 
 	if (url == "play.js")
 	{
-		m_szRedirectUrl = GetWebCore()->getUrl(WebCore::WebCoreUrl::PlayJavaScript);
+		m_szRedirectUrl = pWebCore->getUrl(WebCore::WebCoreUrl::PlayJavaScript);
 		*redirect = true;
 		return true;
 	}

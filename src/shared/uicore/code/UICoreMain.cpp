@@ -436,6 +436,8 @@ public:
 
 	virtual bool OnInit() override
 	{
+		gcTrace("");
+
 		g_uiMainThreadId = Thread::BaseThread::GetCurrentThreadId();
 
 		gcString link;
@@ -524,7 +526,7 @@ public:
 
 	virtual int OnExit() override
 	{
-		ERROR_OUTPUT("OnExit wxAPP");
+		gcTrace("");
 
 		safe_delete(m_pChecker);
 		ShutdownWebControl();
