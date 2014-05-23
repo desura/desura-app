@@ -56,6 +56,8 @@ public:
 	void newAccountLogin(const char* username, const char* cookie);
 	void newAccountLoginError(const char* szErrorMessage);
 
+	void showForcedLogoutPromt();
+
 protected:
 	friend class LanguageTestDialog;
 

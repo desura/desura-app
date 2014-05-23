@@ -331,6 +331,10 @@ namespace WebCore
 		//! Sets appId and appBuild to the values returned by the api.
 		//!
 		virtual gcString getAppUpdateDownloadUrl(uint32 &appId, uint32 &appBuild)=0;
+
+		//! User has been logged out of the client
+		//!
+		virtual EventV& getLoggedOutEvent() = 0;
 	};
 }
 
