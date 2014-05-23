@@ -920,7 +920,7 @@ void InternalLink::uninstallMCF(DesuraId id)
 {	
 	UI::Forms::ItemForm* form = showItemForm(id, UI::Forms::INSTALL_ACTION::IA_UNINSTALL);
 
-	if (!form)
+	if (form)
 		form->Raise();
 	else
 		Warning("Cant find item (or item not ready) for uninstall [{0}].\n", id.toInt64());
