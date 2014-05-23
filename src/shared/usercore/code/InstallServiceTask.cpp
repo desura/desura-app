@@ -75,12 +75,18 @@ bool InstallServiceTask::initService()
 {
 	gcTrace("");
 
-	gcException eBadItem(ERR_BADITEM);
-
 	auto pItem = getItemInfo();
 	if (!pItem)
 	{
-		onErrorEvent(eBadItem);
+		gcException e(ERR_BADITEM);
+		onErrorEvent(e);
+		return false;
+	}
+
+	if (!getServiceMain())
+	{
+		gcException e(ERR_INVALID, "Service is not running");
+		onErrorEvent(e);
 		return false;
 	}
 

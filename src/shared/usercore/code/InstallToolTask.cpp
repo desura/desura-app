@@ -54,6 +54,10 @@ void InstallToolTask::doRun()
 	getItemInfo()->getInternal()->setPercent(per);
 
 	std::vector<DesuraId> toolList;
+
+	if (!getItemInfo()->getCurrentBranch())
+		throw gcException(ERR_INVALID, "Item doesnt have a valid current branch.");
+
 	getItemInfo()->getCurrentBranch()->getToolList(toolList);
 
 	if (!getUserCore()->getToolManager()->areAllToolsValid(toolList))
