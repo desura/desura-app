@@ -145,7 +145,7 @@ namespace MCFCore
 
 			
 			std::mutex m_McfLock;
-			MCFCore::MCF* m_pCurMcf;
+			MCFCore::MCF* m_pCurMcf = nullptr;
 
 #ifdef DEBUG
 			uint64 m_uiSaved = 0;

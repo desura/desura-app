@@ -54,9 +54,10 @@ private:
 	gcString m_szMCFPath;
 	gcString m_szInstallScript;
 
-	uint64 m_uiLastProg;
+	uint64 m_uiLastProg = 0;
 
-	MCFCore::MCFI* m_pMcfHandle;
+	std::mutex m_McfLock;
+	MCFCore::MCFI* m_pMcfHandle = nullptr;
 };
 
 #endif

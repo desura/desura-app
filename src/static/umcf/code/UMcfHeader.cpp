@@ -86,28 +86,22 @@ uint8 UMcfHeader::readFromFile(FILE* hFile)
 		return UMcfHeader::ERR_NULLHANDLE;
 
 	uint32 size = getSize();
-	uint8* str = new uint8[size];
+	gcBuff szBuff(size);
 
 #ifdef WIN32
 	DWORD dwRead = 0;
-	int readRet = ReadFile(hFile, str, size, &dwRead, nullptr);
+	int readRet = ReadFile(hFile, szBuff.c_ptr(), size, &dwRead, nullptr);
 
 	if (dwRead != size)
-	{
-		safe_delete(str);
 		return UMcfHeader::ERR_PARTREAD;
-	}
 #else
-	size_t amount = fread(str, 1, size, hFile);
+	size_t amount = fread(szBuff.c_ptr(), 1, size, hFile);
+
 	if (amount != size)
-	{
-		safe_delete(str);	
 		return UMcfHeader::ERR_PARTREAD;
-	}
 #endif
 		
-	strToHeader(str);
-	safe_delete(str);
+	strToHeader(szBuff.c_ptr());
 
 	if (isValid())
 		return UMcfHeader::OK;
@@ -115,9 +109,9 @@ uint8 UMcfHeader::readFromFile(FILE* hFile)
 		return UMcfHeader::ERR_INVALID;
 }
 
-const uint8* UMcfHeader::headerToStr()
+char* UMcfHeader::headerToStr() const
 {
-	uint8* temp = new uint8[getSize()];
+	char* temp = new char[getSize()];
 
 	temp[0]  = m_szId[0];
 	temp[1]  = m_szId[1];
@@ -162,7 +156,25 @@ const uint8* UMcfHeader::headerToStr()
 	return temp;
 };
 
-void UMcfHeader::strToHeader(const uint8* str)
+
+template <typename T>
+T readInt(const uint8* str)
+{
+	T res = 0;
+
+	for (size_t x = 0; x < sizeof(T); ++x)
+		res += ((T)str[x]) << (x * 8);
+
+	return res;
+}
+
+template <typename T>
+T readInt(const char* str)
+{
+	return readInt<T>((uint8*)str);
+}
+
+void UMcfHeader::strToHeader(const char* str)
 {
 	m_szId[0] = str[0];
 	m_szId[1] = str[1];
@@ -170,30 +182,22 @@ void UMcfHeader::strToHeader(const uint8* str)
 	m_szId[3] = str[3];
 	m_iFileVer = str[4];
 
-	m_iBuild = MCFBuild::BuildFromInt((((uint32)str[5])) + (((uint32)str[6])<<8) + (((uint32)str[7])<<16) + (((uint32)str[8])<<24));
-	m_iId = (((uint32)str[9])) + (((uint32)str[10])<<8) + (((uint32)str[11])<<16) + (((uint32)str[12])<<24);
+	m_iBuild = MCFBuild::BuildFromInt(readInt<uint32>(&str[5]));
+	m_iId = readInt<uint32>(&str[9]);
 	m_iType = str[13];
-	m_iXmlStart =	(((uint64)str[14])) + (((uint64)str[15])<< 8) +
-					(((uint64)str[16])<<16) + (((uint64)str[17])<<24) +
-					(((uint64)str[18])<<32) + (((uint64)str[19])<<40) +
-					(((uint64)str[20])<<48) + (((uint64)str[21])<<56);
-
-	m_iXmlSize = (str[22]) + (str[23]<<8) + (str[24]<<16) + (str[25]<<24);
+	m_iXmlStart = readInt<uint64>(&str[14]);
+	m_iXmlSize = readInt<uint32>(&str[22]);
 	m_iFlags = str[26];
-	m_iParentMcf = (str[27]) + (str[28]<<8) + (str[29]<<16) + (str[30]<<24);
+	m_iParentMcf = readInt<uint32>(&str[27]);
 
 	if (m_iFileVer >= 0x02)
-	{
-		m_iBranch = MCFBranch::BranchFromInt((str[31]) + (str[32]<<8) + (str[33]<<16) + (str[34]<<24));
-	}
+		m_iBranch = MCFBranch::BranchFromInt(readInt<uint32>(&str[31]));
 	else
-	{
 		m_iBranch = MCFBranch();
-	}
 }
 
 
-bool UMcfHeader::isValid()
+bool UMcfHeader::isValid() const
 {
 	if ( !(m_szId[0] == 'L' && m_szId[1] == 'M' && m_szId[2] == 'C' && m_szId[3] == 'F') )
 		return false;
@@ -201,12 +205,12 @@ bool UMcfHeader::isValid()
 	return true;
 }
 
-bool UMcfHeader::matches(MCFCore::MCFHeaderI* other)
+bool UMcfHeader::matches(MCFCore::MCFHeaderI* other) const
 {
 	return (other && getDesuraId() == other->getDesuraId() && getBranch() == other->getBranch());
 }
 
-uint8 UMcfHeader::getSize()
+uint8 UMcfHeader::getSize() const
 {
 	switch (m_iFileVer)
 	{

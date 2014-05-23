@@ -231,6 +231,7 @@ bool EventHandler::onLoadError(const char* errorMsg, const char* url, char* buff
 		return false;
 
 	char* fileBuff = nullptr;
+	AutoDelete<char> ad(fileBuff);
 
 	try
 	{

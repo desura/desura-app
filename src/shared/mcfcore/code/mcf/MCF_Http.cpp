@@ -56,7 +56,7 @@ void MCF::dlHeaderFromHttp(const char* url)
 	if (wc->getDataSize() != MCFCore::MCFHeader::getSizeS())
 		throw gcException(ERR_BADHEADER);
 
-	MCFCore::MCFHeader webHeader((uint8*)wc->getData());
+	MCFCore::MCFHeader webHeader(wc->getData());
 	setHeader(&webHeader);
 	
 	if (!webHeader.isValid())
@@ -76,19 +76,11 @@ void MCF::dlHeaderFromHttp(const char* url)
 	if ( isCompressed() )
 	{
 		bz2Buff = new char[bz2BuffLen];
-		UTIL::STRING::zeroBuffer(bz2Buff, bz2BuffLen);
+		AutoDelete<char> ad(bz2Buff);
 
-		try
-		{
-			UTIL::BZIP::BZ2DBuff((char*)bz2Buff, &bz2BuffLen, const_cast<char*>(wc->getData()), wc->getDataSize());
-			parseXml(bz2Buff, bz2BuffLen);
-			safe_delete(bz2Buff);
-		}
-		catch (gcException &)
-		{
-			safe_delete(bz2Buff);
-			throw;
-		}
+		UTIL::STRING::zeroBuffer(bz2Buff, bz2BuffLen);
+		UTIL::BZIP::BZ2DBuff((char*)bz2Buff, &bz2BuffLen, const_cast<char*>(wc->getData()), wc->getDataSize());
+		parseXml(bz2Buff, bz2BuffLen);
 	}
 	else
 	{

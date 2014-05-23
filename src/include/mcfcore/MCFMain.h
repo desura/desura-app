@@ -88,6 +88,11 @@ public:
 		return temp;
 	}
 
+	operator MCFCore::MCFI*() const
+	{
+		return m_pMcf;
+	}
+
 	void setHandle(MCFCore::MCFI* handle)
 	{
 		if (m_pMcf)

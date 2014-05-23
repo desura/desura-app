@@ -261,20 +261,19 @@ void HGTController::fillDownloadList(bool &usingDiffs)
 {
 	usingDiffs = false;
 	safe_delete(m_vSuperBlockList);
-	MCFCore::MCF *webMcf = new MCFCore::MCF();
+	MCFCore::MCF webMcf;
 
 	try
 	{
-		webMcf->dlHeaderFromHttp(m_szUrl.c_str());
+		webMcf.dlHeaderFromHttp(m_szUrl.c_str());
 	}
 	catch (gcException &e)
 	{
 		onErrorEvent(e);
-		safe_delete(webMcf);
 		return;
 	}
 
-	webMcf->sortFileList();
+	webMcf.sortFileList();
 
 	uint64 mcfOffset = m_pHeader->getSize();
 	size_t fsSize = m_rvFileList.size();
@@ -304,8 +303,8 @@ void HGTController::fillDownloadList(bool &usingDiffs)
 		if (!m_rvFileList[x]->isSaved())
 			continue;	
 
-		uint32 index = webMcf->findFileIndexByHash(m_rvFileList[x]->getHash());
-		auto webFile = webMcf->getFile(index);
+		uint32 index = webMcf.findFileIndexByHash(m_rvFileList[x]->getHash());
+		auto webFile = webMcf.getFile(index);
 
 		uint64 size = m_rvFileList[x]->getCurSize();
 		bool started = m_rvFileList[x]->hasStartedDL();

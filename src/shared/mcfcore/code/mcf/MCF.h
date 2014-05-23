@@ -314,10 +314,7 @@ namespace MCFCore
 		void createCourgetteDiff(CourgetteInstance* ci, UTIL::MISC::Buffer &oldBuff, UTIL::MISC::Buffer &newBuff, const char* oldHash, std::shared_ptr<MCFFile>& file, UTIL::FS::FileHandle& dest);
 		void extractFile(const char* mcfPath, std::shared_ptr<MCFFile>& file, UTIL::MISC::Buffer &outBuff);
 
-		void setServerCon(MCFCore::Misc::MCFServerCon *pMCFServerCon);
 		void doDlHeaderFromWeb(MCFCore::Misc::MCFServerCon &msc);
-
-
 		void runThread(MCFCore::Thread::BaseMCFThread* pThread);
 
 	private:

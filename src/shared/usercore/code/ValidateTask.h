@@ -67,8 +67,6 @@ namespace UserCore
 
 			void onLocalFileProgress(MCFCore::Misc::ProgressInfo& p);
 
-			void setCurrentMcf(McfHandle* pMcfHandle);
-
 		private:
 			enum class ACTION
 			{

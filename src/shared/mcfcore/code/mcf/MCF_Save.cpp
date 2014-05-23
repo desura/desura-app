@@ -137,20 +137,9 @@ void MCF::dlHeaderFromWeb()
 		throw gcException(ERR_ZEROFILE);
 
 	MCFCore::Misc::MCFServerCon msc;
+	AutoScopeLockedMemberVar<MCFCore::Misc::MCFServerCon> aslmv(m_pMCFServerCon, m_mThreadMutex, msc);
 
-	setServerCon(&msc);
-
-	try
-	{
-		doDlHeaderFromWeb(msc);
-	}
-	catch (...)
-	{
-		setServerCon(nullptr);
-		throw;
-	}
-
-	setServerCon(nullptr);
+	doDlHeaderFromWeb(msc);
 }
 
 
@@ -205,9 +194,9 @@ void MCF::doDlHeaderFromWeb(MCFCore::Misc::MCFServerCon &msc)
 			msc.downloadRange(0, headerSize, &out);
 
 			if (out.m_uiTotalSize != headerSize)
-				throw gcException(ERR_BADHEADER, "Did not get correct ammount of data from server.");
+				throw gcException(ERR_BADHEADER, "Did not get correct amount of data from server.");
 
-			MCFCore::MCFHeader webHeader((uint8*)out.m_szBuffer);
+			MCFCore::MCFHeader webHeader(out.m_szBuffer);
 
 			if (!webHeader.isValid())
 				throw gcException(ERR_BADHEADER, "Mcf header was not valid.");
@@ -251,24 +240,16 @@ void MCF::doDlHeaderFromWeb(MCFCore::Misc::MCFServerCon &msc)
 		throw lastE;
 
 	uint32 bz2BuffLen = getHeader()->getXmlSize()*25;
-	char* bz2Buff = nullptr;
+	
 
 	if ( isCompressed() )
 	{
-		bz2Buff = new char[bz2BuffLen];
-		UTIL::STRING::zeroBuffer(bz2Buff, bz2BuffLen);
+		char* bz2Buff = new char[bz2BuffLen];
+		AutoDelete<char> ad(bz2Buff);
 
-		try
-		{
-			UTIL::BZIP::BZ2DBuff((char*)bz2Buff, &bz2BuffLen, out.m_szBuffer, out.m_uiTotalSize);
-			parseXml(bz2Buff, bz2BuffLen);
-			safe_delete(bz2Buff);
-		}
-		catch (gcException &)
-		{
-			safe_delete(bz2Buff);
-			throw;
-		}
+		UTIL::STRING::zeroBuffer(bz2Buff, bz2BuffLen);
+		UTIL::BZIP::BZ2DBuff((char*)bz2Buff, &bz2BuffLen, out.m_szBuffer, out.m_uiTotalSize);
+		parseXml(bz2Buff, bz2BuffLen);
 	}
 	else
 	{
@@ -811,6 +792,9 @@ void MCF::parseMCF()
 			throw gcException(ERR_BZ2, worker.getLastStatus(), "Failed to decompress mcf header xml");
 
 		size_t bz2BuffLen = worker.getReadSize();
+
+		if (bz2BuffLen == 0)
+			throw gcException(ERR_BZ2, worker.getLastStatus(), "Failed to decompress mcf header xml (zero size)");
 
 		UTIL::MISC::Buffer bz2Buff(bz2BuffLen);
 

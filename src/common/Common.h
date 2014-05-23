@@ -563,6 +563,67 @@ inline void DoAssert(const char* szExp, const char* szFile, int nLine)
 	}
 	#endif
 
+	template <typename T>
+	class AutoScopeMemberVar
+	{
+	public:
+		AutoScopeMemberVar(T* &pMemberVar, T &pTempVar)
+			: AutoScopeMemberVar(pMemberVar, &pTempVar)
+		{
+		}
+
+		AutoScopeMemberVar(T* &pMemberVar, T *pTempVar)
+			: m_pMemberVar(pMemberVar)
+			, m_pTempVar(pTempVar)
+		{
+			gcAssert(!pMemberVar);
+			m_pMemberVar = m_pTempVar;
+		}
+
+		~AutoScopeMemberVar()
+		{
+			gcAssert(m_pMemberVar == m_pTempVar);
+			m_pMemberVar = nullptr;
+		}
+
+	private:
+		T* &m_pMemberVar;
+		T* m_pTempVar;
+	};
+
+
+	template <typename T>
+	class AutoScopeLockedMemberVar
+	{
+	public:
+		AutoScopeLockedMemberVar(T* &pMemberVar, std::mutex &mutex, T &pTempVar)
+			: AutoScopeLockedMemberVar(pMemberVar, mutex, &pTempVar)
+		{
+		}
+
+		AutoScopeLockedMemberVar(T* &pMemberVar, std::mutex &mutex, T *pTempVar)
+			: m_Mutex(mutex)
+			, m_pMemberVar(pMemberVar)
+			, m_pTempVar(pTempVar)
+		{
+			std::lock_guard<std::mutex> guard(m_Mutex);
+			gcAssert(!m_pMemberVar);
+			m_pMemberVar = m_pTempVar;
+		}
+
+		~AutoScopeLockedMemberVar()
+		{
+			std::lock_guard<std::mutex> guard(m_Mutex);
+			gcAssert(m_pMemberVar == m_pTempVar);
+			m_pMemberVar = nullptr;
+		}
+
+	private:
+		std::mutex &m_Mutex;
+		T* &m_pMemberVar;
+		T* m_pTempVar;
+	};
+
 #endif
 
 

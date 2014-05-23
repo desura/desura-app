@@ -55,7 +55,7 @@ protected:
 	void onProgress(MCFCore::Misc::ProgressInfo& p);
 
 private:
-	uint64 m_uiLastProg;
+	uint64 m_uiLastProg = 0;
 
 	gcString m_szOldMcfPath;
 	gcString m_szNewMcfPath;
@@ -63,8 +63,9 @@ private:
 
 	gcString m_szInstallScript;
 
-	MCFCore::MCFI* m_pOldBranchMcf;
-	MCFCore::MCFI* m_pNewBranchMcf;
+	std::mutex m_McfLock;
+	MCFCore::MCFI* m_pOldBranchMcf = nullptr;
+	MCFCore::MCFI* m_pNewBranchMcf = nullptr;
 };
 
 #endif //DESURA_UNINSTALLBRANCHPROCESS_H

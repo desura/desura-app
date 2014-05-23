@@ -95,16 +95,9 @@ void ValidateTask::doRun()
 	m_bLocalMcf = UTIL::FS::isValidFile(savePath);
 	m_szInstallPath = getItemInfo()->getPath();
 
-	try
 	{
-		setCurrentMcf(&m_hMCFile);
+		AutoScopeLockedMemberVar<McfHandle> aslmv(m_CurrentMcf, m_McfLock, m_hMCFile);
 		m_hMCFile->dlHeaderFromWeb();
-		setCurrentMcf(nullptr);
-	}
-	catch (...)
-	{
-		setCurrentMcf(nullptr);
-		throw;
 	}
 
 	m_hMCFile->setFile(savePath.c_str());
@@ -170,16 +163,9 @@ void ValidateTask::doRun()
 
 	setAction(ACTION::PRE_ALLOCATING);
 
-	try
 	{
-		setCurrentMcf(&m_hMCFile);
+		AutoScopeLockedMemberVar<McfHandle> aslmv(m_CurrentMcf, m_McfLock, m_hMCFile);
 		m_hMCFile->preAllocateFile();
-		setCurrentMcf(nullptr);
-	}
-	catch (...)
-	{
-		setCurrentMcf(nullptr);
-		throw;
 	}
 
 	if (isStopped())
@@ -259,16 +245,9 @@ bool ValidateTask::checkExistingMcf(gcString savePath)
 	McfHandle mcfTemp;
 	mcfTemp->setFile(savePath.c_str());
 
-	try
 	{
-		setCurrentMcf(&mcfTemp);
+		AutoScopeLockedMemberVar<McfHandle> aslmv(m_CurrentMcf, m_McfLock, mcfTemp);
 		mcfTemp->parseMCF();
-		setCurrentMcf(nullptr);
-	}
-	catch (...)
-	{
-		setCurrentMcf(nullptr);
-		throw;
 	}
 
 	if (isStopped())
@@ -297,18 +276,10 @@ bool ValidateTask::checkExistingMcf(gcString savePath)
 	bool verify;
 	m_CurMcfIndex = 1;
 
-	try
 	{
-		setCurrentMcf(&mcfTemp);
+		AutoScopeLockedMemberVar<McfHandle> aslmv(m_CurrentMcf, m_McfLock, mcfTemp);
 		verify = mcfTemp->verifyMCF();
-		setCurrentMcf(nullptr);
 	}
-	catch (...)
-	{
-		setCurrentMcf(nullptr);
-		throw;
-	}
-
 
 	McfHandle curMcf;
 	bool useCurMcf = false;
@@ -318,17 +289,15 @@ bool ValidateTask::checkExistingMcf(gcString savePath)
 		try
 		{
 			m_CurMcfIndex = 2;
+			AutoScopeLockedMemberVar<McfHandle> aslmv(m_CurrentMcf, m_McfLock, curMcf);
 
-			setCurrentMcf(&curMcf);
 			curMcf->parseFolder(m_szInstallPath.c_str(), false, true);
 			curMcf->hashFiles(mcfTemp.handle());
-			setCurrentMcf(nullptr);
 
 			useCurMcf = true;
 		}
 		catch (gcException)
 		{
-			setCurrentMcf(nullptr);
 		}
 	}
 
@@ -438,14 +407,12 @@ void ValidateTask::copyLocalFiles()
 	{
 		m_CurMcfIndex = 1;
 
-		setCurrentMcf(&curMcf);
+		AutoScopeLockedMemberVar<McfHandle> aslmv(m_CurrentMcf, m_McfLock, curMcf);
 		curMcf->parseFolder(m_szInstallPath.c_str(), false, true);
 		curMcf->hashFiles(m_hMCFile.handle());
-		setCurrentMcf(nullptr);
 	}
 	catch (gcException &e)
 	{
-		setCurrentMcf(nullptr);
 		Debug(gcString("Failed to parse folder: {0}", e));
 	}
 
@@ -625,10 +592,4 @@ void ValidateTask::cancel()
 {
 	onStop();
 	getItemHandle()->getInternal()->resetStage(true);
-}
-
-void ValidateTask::setCurrentMcf(McfHandle* pMcfHandle)
-{
-	std::lock_guard<std::mutex> guard(m_McfLock);
-	m_CurrentMcf = pMcfHandle;
 }

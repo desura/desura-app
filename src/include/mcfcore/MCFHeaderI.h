@@ -63,61 +63,61 @@ namespace MCFCore
 		//!
 		//! @return true for valid, false for invalid
 		//!
-		virtual bool isValid()=0;
+		virtual bool isValid() const =0;
 
 		//! Gets the magic number for the MCF header. Should be LMCF
 		//!
 		//! @return Magic number as string
 		//!
-		virtual const char* getMagicNumber()=0;
+		virtual const char* getMagicNumber() const = 0;
 
 		//! Gets the MCF file version
 		//!
 		//! @return File version
 		//!
-		virtual uint8 getFileVer()=0;
+		virtual uint8 getFileVer() const = 0;
 
 		//! Gets the item version
 		//!
 		//! @return Item content version
 		//!
-		virtual MCFBuild getBuild()=0;
+		virtual MCFBuild getBuild() const = 0;
 
 		//! Gets the item desura Id
 		//!
 		//! @return Desura Id
 		//!
-		virtual uint32 getId()=0;
+		virtual uint32 getId() const = 0;
 
 		//! Gets the item desura type
 		//!
 		//! @return Desura Type
 		//!
-		virtual uint8 getType()=0;
+		virtual uint8 getType() const = 0;
 
 		//! Gets the Xml Start position
 		//!
 		//! @return Xml offset
 		//!
-		virtual uint64 getXmlStart()=0;
+		virtual uint64 getXmlStart() const = 0;
 
 		//! Gets the Xml Length
 		//!
 		//! @return Xml Length
 		//!
-		virtual uint32 getXmlSize()=0;
+		virtual uint32 getXmlSize() const = 0;
 
 		//! Gets the Mcf Flags
 		//!
 		//! @return Mcf Flags
 		//!
-		virtual uint8 getFlags()=0;
+		virtual uint8 getFlags() const = 0;
 
 		//! Gets the MCF parent version (i.e. the MCF this one was based off)
 		//!
 		//! @return Mcf Parent Version
 		//!
-		virtual uint32 getParent()=0;
+		virtual uint32 getParent() const = 0;
 
 
 		//! Sets the Desura type
@@ -161,19 +161,19 @@ namespace MCFCore
 		//! @param other Header to compare against
 		//! @return true If matches, false if doesnt
 		//!
-		virtual bool matches(MCFHeaderI* other)=0;
+		virtual bool matches(MCFHeaderI* other) const = 0;
 
 		//! Gets the desura id class
 		//!
 		//! @return Desura id
 		//!
-		virtual DesuraId getDesuraId()=0;
+		virtual DesuraId getDesuraId() const = 0;
 
 		//! Gets the MCF branch
 		//!
 		//! @return Mcf branch
 		//!
-		virtual MCFBranch getBranch()=0;
+		virtual MCFBranch getBranch() const = 0;
 
 		//! Sets the MCF branch
 		//!
@@ -189,7 +189,7 @@ namespace MCFCore
 		//!
 		//! @return size of the header in a MCF file
 		//!
-		virtual uint8 getSize()=0;
+		virtual uint8 getSize() const = 0;
 	};
 
 

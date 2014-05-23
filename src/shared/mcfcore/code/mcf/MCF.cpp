@@ -181,14 +181,6 @@ void MCF::stop()
 		m_pMCFServerCon->stop();
 }
 
-void MCF::setServerCon(MCFCore::Misc::MCFServerCon *pMCFServerCon)
-{
-	std::lock_guard<std::mutex> guard(m_mThreadMutex);
-
-	gcAssert((pMCFServerCon && !m_pMCFServerCon) || (!pMCFServerCon && m_pMCFServerCon));
-	m_pMCFServerCon = pMCFServerCon;
-}
-
 void MCF::setWorkerCount(uint16 count)
 {
 	if (count == 0)
