@@ -114,7 +114,7 @@ namespace IPC
 		MOCK_METHOD2(removeGameFromGameExplorer, void(const char*, bool));
 #endif
 
-		gc_MOCK_REFCOUNTING(ServiceMainMock);
+		gc_IMPLEMENT_REFCOUNTING(ServiceMainMock);
 	};
 #endif
 }

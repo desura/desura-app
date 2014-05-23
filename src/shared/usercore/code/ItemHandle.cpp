@@ -1436,6 +1436,7 @@ namespace UnitTest
 		ItemHandleMock(gcRefPtr<ItemInfo> itemInfo, gcRefPtr<UserCore::UserI> user)
 			: ItemHandle(itemInfo, user)
 		{
+			addRef();
 		}
 
 		MOCK_METHOD1(completeStage, void(bool close));
@@ -1466,13 +1467,15 @@ namespace UnitTest
 		ItemHandleLaunchMod()
 			: gid("1", "games")
 			, mid("2", "mods")
-			, game(gcRefPtr<ItemInfo>::create(&user, gid, &fs))
-			, mod(gcRefPtr<ItemInfo>::create(&user, mid, gid, &fs))
+			, user(gcRefPtr<UserMock>::create())
+			, itemManager(gcRefPtr<ItemManagerMock>::create())
+			, game(gcRefPtr<ItemInfo>::create(user, gid, &fs))
+			, mod(gcRefPtr<ItemInfo>::create(user, mid, gid, &fs))
 		{
 
-			ON_CALL(user, getItemsAddedEvent()).WillByDefault(ReturnRef(itemAddedEvent));
-			ON_CALL(user, getItemManager()).WillByDefault(Return(&itemManager));
-			ON_CALL(itemManager, findItemInfo(_)).WillByDefault(Invoke([&](DesuraId id) -> gcRefPtr<ItemInfoI>
+			ON_CALL(*user, getItemsAddedEvent()).WillByDefault(ReturnRef(itemAddedEvent));
+			ON_CALL(*user, getItemManager()).WillByDefault(Return(itemManager));
+			ON_CALL(*itemManager, findItemInfo(_)).WillByDefault(Invoke([&](DesuraId id) -> gcRefPtr<ItemInfoI>
 			{
 				if (id == game->getId())
 					return game;
@@ -1502,8 +1505,8 @@ namespace UnitTest
 
 		Event<uint32> itemAddedEvent;
 		UTIL::FS::UtilFSMock fs;
-		ItemManagerMock itemManager;
-		UserMock user;
+		gcRefPtr<ItemManagerMock> itemManager;
+		gcRefPtr<UserMock> user;
 
 		DesuraId gid;
 		DesuraId mid;
@@ -1528,11 +1531,11 @@ namespace UnitTest
 			mod->loadDb(&db);
 		}
 
-		ItemHandleMock modHandle(mod, &user);
-		ItemLaunchHelperMock ilh;
-		EXPECT_CALL(ilh, launchError(_)).Times(1);
+		auto modHandle = gcRefPtr<ItemHandleMock>::create(mod, user);
+		auto ilh = gcRefPtr<ItemLaunchHelperMock>::create();
+		EXPECT_CALL(*ilh, launchError(_)).Times(1);
 
-		auto res = modHandle.launch(&ilh);
+		auto res = modHandle->launch(ilh);
 		ASSERT_FALSE(res);
 	}
 
@@ -1560,11 +1563,11 @@ namespace UnitTest
 		ASSERT_TRUE(game->isLaunchable());
 		ASSERT_FALSE(game->hasAcceptedEula());
 
-		ItemHandleMock modHandle(mod, &user);
-		ItemLaunchHelperMock ilh;
-		EXPECT_CALL(ilh, showEULAPrompt()).Times(1);
+		auto modHandle = gcRefPtr<ItemHandleMock>::create(mod, user);
+		auto ilh = gcRefPtr<ItemLaunchHelperMock>::create();
+		EXPECT_CALL(*ilh, showEULAPrompt()).Times(1);
 
-		auto res = modHandle.launch(&ilh);
+		auto res = modHandle->launch(ilh);
 		ASSERT_FALSE(res);
 	}
 
@@ -1598,13 +1601,13 @@ namespace UnitTest
 		};
 
 
-		ItemHandleMock modHandle(mod, &user);
-		modHandle.getChangeStageEvent() += delegate(stageChange, 1);
+		auto modHandle = gcRefPtr<ItemHandleMock>::create(mod, user);
+		modHandle->getChangeStageEvent() += delegate(stageChange, 1);
 
-		EXPECT_CALL(modHandle, goToStageGatherInfo(_, _, _)).Times(1);
+		EXPECT_CALL(*modHandle, goToStageGatherInfo(_, _, _)).Times(1);
 
-		ItemLaunchHelperMock ilh;
-		auto res = modHandle.launch(&ilh);
+		auto ilh = gcRefPtr<ItemLaunchHelperMock>::create();
+		auto res = modHandle->launch(ilh);
 
 		ASSERT_TRUE(res);
 	}
@@ -1642,11 +1645,11 @@ namespace UnitTest
 		ASSERT_TRUE(mod->isLaunchable());
 		ASSERT_TRUE(mod->hasAcceptedEula());
 
-		ItemHandleMock modHandle(mod, &user);
-		EXPECT_CALL(modHandle, launchForReal(_, _)).Times(1);
+		auto modHandle = gcRefPtr<ItemHandleMock>::create(mod, user);
+		EXPECT_CALL(*modHandle, launchForReal(_, _)).Times(1);
 
-		ItemLaunchHelperMock ilh;
-		modHandle.launch(&ilh);
+		auto ilh = gcRefPtr<ItemLaunchHelperMock>::create();
+		modHandle->launch(ilh);
 	}
 
 
@@ -1658,18 +1661,22 @@ namespace UnitTest
 			: gid("1", "games")
 			, midA("2", "mods")
 			, midB("3", "mods")
-			, game(gcRefPtr<ItemInfo>::create(&user, gid, &fs))
-			, modA(gcRefPtr<ItemInfo>::create(&user, midA, gid, &fs))
-			, modB(gcRefPtr<ItemInfo>::create(&user, midB, gid, &fs))
+			, itemManager(gcRefPtr<ItemManagerMock>::create())
+			, mcfManager(gcRefPtr<MCFManagerMock>::create())
+			, user(gcRefPtr<UserMock>::create())
+			, userInternalMock(gcRefPtr<UserInternalMock>::create())
+			, game(gcRefPtr<ItemInfo>::create(user, gid, &fs))
+			, modA(gcRefPtr<ItemInfo>::create(user, midA, gid, &fs))
+			, modB(gcRefPtr<ItemInfo>::create(user, midB, gid, &fs))
 		{
 
-			ON_CALL(user, getItemsAddedEvent()).WillByDefault(ReturnRef(itemAddedEvent));
-			ON_CALL(user, getItemManager()).WillByDefault(Return(&itemManager));
-			ON_CALL(user, getInternal()).WillByDefault(Return(&userInternalMock));
+			ON_CALL(*user, getItemsAddedEvent()).WillByDefault(ReturnRef(itemAddedEvent));
+			ON_CALL(*user, getItemManager()).WillByDefault(Return(itemManager));
+			ON_CALL(*user, getInternal()).WillByDefault(Return(userInternalMock));
 
-			ON_CALL(userInternalMock, getMCFManager()).WillByDefault(Return(&mcfManager));
+			ON_CALL(*userInternalMock, getMCFManager()).WillByDefault(Return(mcfManager));
 
-			ON_CALL(itemManager, findItemInfo(_)).WillByDefault(Invoke([&](DesuraId id) -> gcRefPtr<ItemInfoI>
+			ON_CALL(*itemManager, findItemInfo(_)).WillByDefault(Invoke([&](DesuraId id) -> gcRefPtr<ItemInfoI>
 			{
 				if (id == game->getId())
 					return game.get();
@@ -1689,6 +1696,11 @@ namespace UnitTest
 			}));
 		}
 
+		~ItemHandleComplexMods()
+		{
+			int a = 1;
+		}
+
 		void setUpDb(sqlite3x::sqlite3_connection &db, const std::vector<std::string> &vSqlCommands)
 		{
 			createItemInfoDbTables(db);
@@ -1706,10 +1718,10 @@ namespace UnitTest
 
 		Event<uint32> itemAddedEvent;
 		UTIL::FS::UtilFSMock fs;
-		ItemManagerMock itemManager;
-		MCFManagerMock mcfManager;
-		UserMock user;
-		UserInternalMock userInternalMock;
+		gcRefPtr<ItemManagerMock> itemManager;
+		gcRefPtr<MCFManagerMock> mcfManager;
+		gcRefPtr<UserMock> user;
+		gcRefPtr<UserInternalMock> userInternalMock;
 
 		DesuraId gid;
 		DesuraId midA;
@@ -1722,8 +1734,8 @@ namespace UnitTest
 
 	TEST_F(ItemHandleComplexMods, LaunchParent_ModNotInstalled)
 	{
-		ON_CALL(mcfManager, getMcfPath(_, _)).WillByDefault(Return(gcString()));
-		ON_CALL(mcfManager, getMcfPath(Eq(game), _)).WillByDefault(Return(gcString("existing.file")));
+		ON_CALL(*mcfManager, getMcfPath(_, _)).WillByDefault(Return(gcString()));
+		ON_CALL(*mcfManager, getMcfPath(Eq(game), _)).WillByDefault(Return(gcString("existing.file")));
 
 		static const std::vector<std::string> vSqlCommands =
 		{
@@ -1750,18 +1762,18 @@ namespace UnitTest
 		ASSERT_FALSE(modA->isLaunchable());
 		ASSERT_TRUE(modA->isComplex());
 
-		ItemHandleMock gameHandle(game, &user);
-		EXPECT_CALL(gameHandle, launchForReal(_, _)).Times(1);
+		auto gameHandle = gcRefPtr<ItemHandleMock>::create(game, user);
+		EXPECT_CALL(*gameHandle, launchForReal(_, _)).Times(1);
 
-		ItemLaunchHelperMock ilh;
-		gameHandle.launch(&ilh);
+		auto ilh = gcRefPtr<ItemLaunchHelperMock>::create();
+		gameHandle->launch(ilh);
 	}
 
 	TEST_F(ItemHandleComplexMods, LaunchParent_ModInstalled)
 	{
-		ON_CALL(mcfManager, getMcfPath(_, _)).WillByDefault(Return(gcString()));
-		ON_CALL(mcfManager, getMcfPath(Eq(modA), _)).WillByDefault(Return(gcString("existing.file")));
-		ON_CALL(mcfManager, getMcfPath(Eq(game), _)).WillByDefault(Return(gcString("existing.file")));
+		ON_CALL(*mcfManager, getMcfPath(_, _)).WillByDefault(Return(gcString()));
+		ON_CALL(*mcfManager, getMcfPath(Eq(modA), _)).WillByDefault(Return(gcString("existing.file")));
+		ON_CALL(*mcfManager, getMcfPath(Eq(game), _)).WillByDefault(Return(gcString("existing.file")));
 
 		static const std::vector<std::string> vSqlCommands =
 		{
@@ -1792,17 +1804,18 @@ namespace UnitTest
 		ASSERT_TRUE(modA->isLaunchable());
 		ASSERT_TRUE(modA->isComplex());
 
-		ItemHandleMock gameHandle(game, &user);
-		EXPECT_CALL(gameHandle, goToStageUninstallComplexBranch(_, _, _)).Times(1);
 
-		ItemLaunchHelperMock ilh;
-		gameHandle.launch(&ilh);
+		auto gameHandle = gcRefPtr<ItemHandleMock>::create(game, user);
+		EXPECT_CALL(*gameHandle, goToStageUninstallComplexBranch(_, _, _)).Times(1);
+
+		auto ilh = gcRefPtr<ItemLaunchHelperMock>::create();
+		gameHandle->launch(ilh);
 	}
 
 	TEST_F(ItemHandleComplexMods, LaunchMod_ModNotInstalled)
 	{
-		ON_CALL(mcfManager, getMcfPath(_, _)).WillByDefault(Return(gcString()));
-		ON_CALL(mcfManager, getMcfPath(Eq(game), _)).WillByDefault(Return(gcString("existing.file")));
+		ON_CALL(*mcfManager, getMcfPath(_, _)).WillByDefault(Return(gcString()));
+		ON_CALL(*mcfManager, getMcfPath(Eq(game), _)).WillByDefault(Return(gcString("existing.file")));
 
 		static const std::vector<std::string> vSqlCommands =
 		{
@@ -1833,18 +1846,18 @@ namespace UnitTest
 		ASSERT_FALSE(modA->isLaunchable());
 		ASSERT_TRUE(modA->isComplex());
 
-		ItemHandleMock modHandle(modA, &user);
-		EXPECT_CALL(modHandle, goToStageGatherInfo(_, _, _)).Times(1);
+		auto modHandle = gcRefPtr<ItemHandleMock>::create(modA, user);
+		EXPECT_CALL(*modHandle, goToStageGatherInfo(_, _, _)).Times(1);
 
-		ItemLaunchHelperMock ilh;
-		modHandle.launch(&ilh);
+		auto ilh = gcRefPtr<ItemLaunchHelperMock>::create();
+		modHandle->launch(ilh);
 	}
 
 	TEST_F(ItemHandleComplexMods, LaunchModA_ModAInstalled)
 	{
-		ON_CALL(mcfManager, getMcfPath(_, _)).WillByDefault(Return(gcString()));
-		ON_CALL(mcfManager, getMcfPath(Eq(modA), _)).WillByDefault(Return(gcString("existing.file")));
-		ON_CALL(mcfManager, getMcfPath(Eq(game), _)).WillByDefault(Return(gcString("existing.file")));
+		ON_CALL(*mcfManager, getMcfPath(_, _)).WillByDefault(Return(gcString()));
+		ON_CALL(*mcfManager, getMcfPath(Eq(modA), _)).WillByDefault(Return(gcString("existing.file")));
+		ON_CALL(*mcfManager, getMcfPath(Eq(game), _)).WillByDefault(Return(gcString("existing.file")));
 
 		static const std::vector<std::string> vSqlCommands =
 		{
@@ -1875,19 +1888,19 @@ namespace UnitTest
 		ASSERT_TRUE(modA->isLaunchable());
 		ASSERT_TRUE(modA->isComplex());
 
-		ItemHandleMock modHandle(modA, &user);
-		EXPECT_CALL(modHandle, launchForReal(_, _)).Times(1);
+		auto modHandle = gcRefPtr<ItemHandleMock>::create(modA, user);
+		EXPECT_CALL(*modHandle, launchForReal(_, _)).Times(1);
 
-		ItemLaunchHelperMock ilh;
-		modHandle.launch(&ilh);
+		auto ilh = gcRefPtr<ItemLaunchHelperMock>::create();
+		modHandle->launch(ilh);
 	}
 
 	TEST_F(ItemHandleComplexMods, LaunchModA_ModBInstalled)
 	{
-		ON_CALL(mcfManager, getMcfPath(_, _)).WillByDefault(Return(gcString()));
-		ON_CALL(mcfManager, getMcfPath(Eq(modA), _)).WillByDefault(Return(gcString("existing.file")));
-		ON_CALL(mcfManager, getMcfPath(Eq(modB), _)).WillByDefault(Return(gcString("existing.file")));
-		ON_CALL(mcfManager, getMcfPath(Eq(game), _)).WillByDefault(Return(gcString("existing.file")));
+		ON_CALL(*mcfManager, getMcfPath(_, _)).WillByDefault(Return(gcString()));
+		ON_CALL(*mcfManager, getMcfPath(Eq(modA), _)).WillByDefault(Return(gcString("existing.file")));
+		ON_CALL(*mcfManager, getMcfPath(Eq(modB), _)).WillByDefault(Return(gcString("existing.file")));
+		ON_CALL(*mcfManager, getMcfPath(Eq(game), _)).WillByDefault(Return(gcString("existing.file")));
 
 		static const std::vector<std::string> vSqlCommands =
 		{
@@ -1928,11 +1941,12 @@ namespace UnitTest
 		ASSERT_TRUE(modB->isLaunchable());
 		ASSERT_TRUE(modB->isComplex());
 
-		ItemHandleMock modHandle(modA, &user);
-		EXPECT_CALL(modHandle, goToStageGatherInfo(_, _, _)).Times(1);
 
-		ItemLaunchHelperMock ilh;
-		modHandle.launch(&ilh);
+		auto modHandle = gcRefPtr<ItemHandleMock>::create(modA, user);
+		EXPECT_CALL(*modHandle, goToStageGatherInfo(_, _, _)).Times(1);
+
+		auto ilh = gcRefPtr<ItemLaunchHelperMock>::create();
+		modHandle->launch(ilh);
 	}
 }
 

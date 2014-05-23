@@ -44,12 +44,12 @@ InstallInfo::~InstallInfo()
 
 void InstallInfo::loadXmlData(const XML::gcXMLElement &xmlNode, gcRefPtr<WildcardManager> &pWildCard)
 {
-	WildcardManager lwc(pWildCard);
+	auto lwc = gcRefPtr<WildcardManager>::create(pWildCard);
 
 	auto wcNode = xmlNode.FirstChildElement("wcards");
 	if (wcNode.IsValid())
 	{
-		lwc.parseXML(wcNode);
+		lwc->parseXML(wcNode);
 	}
 
 	xmlNode.GetChild("name", m_szName);
@@ -78,8 +78,8 @@ void InstallInfo::loadXmlData(const XML::gcXMLElement &xmlNode, gcRefPtr<Wildcar
 
 		try
 		{
-			lwc.constructPath(check.c_str(), &CheckRes);
-			lwc.constructPath(path.c_str(), &PathRes);
+			lwc->constructPath(check.c_str(), &CheckRes);
+			lwc->constructPath(path.c_str(), &PathRes);
 
 			if (CheckRes && PathRes && UTIL::FS::isValidFile(UTIL::FS::PathWithFile(CheckRes)))
 			{

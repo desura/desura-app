@@ -186,7 +186,7 @@ namespace UserCore
 				MOCK_METHOD1(setId, void (uint32));
 				MOCK_METHOD1(onPause, void (bool));
 
-				gc_MOCK_REFCOUNTING(ItemHandleHelperMock);
+				gc_IMPLEMENT_REFCOUNTING(ItemHandleHelperMock);
 			};
 
 			class ItemLaunchHelperMock : public ItemLaunchHelperI
@@ -200,7 +200,7 @@ namespace UserCore
 #ifdef NIX
 				MOCK_METHOD0(showWinLaunchDialog, void());
 #endif
-				gc_MOCK_REFCOUNTING(ItemHandleHelperMock);
+				gc_IMPLEMENT_REFCOUNTING(ItemHandleHelperMock);
 			};
 #endif
 		}

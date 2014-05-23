@@ -250,18 +250,18 @@ void ToolManager::parseXml(const XML::gcXMLElement &toolinfoNode)
 	if (!toolsNode.IsValid())
 		return;
 
-	WildcardManager wcm;
+	auto wcm = gcRefPtr<WildcardManager>::create();
 
-	wcm.onNeedInstallSpecialEvent += delegate(this, &ToolManager::onSpecialCheck);
-	wcm.onNeedSpecialEvent += delegate(&m_pUser->getNeedWildCardEvent());
+	wcm->onNeedInstallSpecialEvent += delegate(this, &ToolManager::onSpecialCheck);
+	wcm->onNeedSpecialEvent += delegate(&m_pUser->getNeedWildCardEvent());
 
 	auto wildcardNode = toolinfoNode.FirstChildElement("wcards");
 
 	if (wildcardNode.IsValid())
-		wcm.parseXML(wildcardNode);
+		wcm->parseXML(wildcardNode);
 
 	//clear the java path value
-	gcRefPtr<WildcardInfo> temp = wcm.findItem("JAVA_EXE");
+	gcRefPtr<WildcardInfo> temp = wcm->findItem("JAVA_EXE");
 
 	if (temp)
 	{
@@ -271,7 +271,7 @@ void ToolManager::parseXml(const XML::gcXMLElement &toolinfoNode)
 
 	bool is64OS = UTIL::OS::is64OS();
 
-	toolsNode.for_each_child("tool", [this, is64OS, &wcm](const XML::gcXMLElement &toolEl)
+	toolsNode.for_each_child("tool", [this, is64OS, wcm](const XML::gcXMLElement &toolEl)
 	{
 		bool isTool64 = false;
 		toolEl.GetChild("bit64", isTool64);
@@ -295,7 +295,7 @@ void ToolManager::parseXml(const XML::gcXMLElement &toolinfoNode)
 			bAdd = true;
 		}
 
-		tool->parseXml(toolEl, &wcm, m_pUser->getAppDataPath());
+		tool->parseXml(toolEl, wcm.get(), m_pUser->getAppDataPath());
 
 		if (bAdd)
 			this->addItem(tool);

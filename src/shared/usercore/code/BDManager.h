@@ -49,7 +49,7 @@ namespace UserCore
 		};
 	}
 
-	class BDManager : public gcRefCount
+	class BDManager : public gcRefBase
 	{
 	public:
 		BDManager(gcRefPtr<UserCore::User> user);
@@ -66,6 +66,8 @@ namespace UserCore
 		std::map<gcRefPtr<UserCore::Task::DownloadBannerTask>, gcRefPtr<UserCore::Misc::BannerNotifierI>> m_mDownloadBannerTask;
 
 		gcRefPtr<UserCore::User> m_pUser;
+
+		gc_IMPLEMENT_REFCOUNTING(BDManager)
 	};
 
 }

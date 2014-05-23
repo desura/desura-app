@@ -108,7 +108,7 @@ namespace UserCore
 
 		MOCK_METHOD0(getMcfSavePath, gcString());
 
-		gc_MOCK_REFCOUNTING(MCFManagerMock);
+		gc_IMPLEMENT_REFCOUNTING(MCFManagerMock);
 	};
 #endif
 

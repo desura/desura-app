@@ -361,8 +361,8 @@ MigrateStandaloneTask::MigrateStandaloneTask(gcRefPtr<UserCore::UserI> user, con
 
 void MigrateStandaloneTask::doTask()
 {
-	WildcardManager wildc = WildcardManager();
-	wildc.onNeedSpecialEvent += delegate(&getUserCore()->getNeedWildCardEvent());
+	auto wildc = gcRefPtr<WildcardManager>::create();
+	wildc->onNeedSpecialEvent += delegate(&getUserCore()->getNeedWildCardEvent());
 
 	for (size_t x=0; x<m_vFileList.size(); x++)
 	{
@@ -403,7 +403,7 @@ void MigrateStandaloneTask::doTask()
 		try
 		{
 			getUserCore()->getCIPManager()->updateItem(itemId, path);
-			getUserCore()->getItemManager()->retrieveItemInfo(getItemId(), 0, &wildc);
+			getUserCore()->getItemManager()->retrieveItemInfo(getItemId(), 0, wildc);
 		}
 		catch (...)
 		{

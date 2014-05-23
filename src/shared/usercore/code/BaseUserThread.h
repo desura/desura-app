@@ -171,6 +171,15 @@ namespace UserCore
 				return gcRefPtr<UserCore::Item::ItemInfo>::dyn_cast(m_pUserCore->getItemManager()->findItemInfo(item->getParentId()));
 			}
 
+			void cleanup() override
+			{
+				gcAssert(Base::isStopped() || !Base::isRunning());
+
+				m_pWebCore.reset();
+				m_pUserCore.reset();
+				m_pThreadManager.reset();
+			}
+
 			gc_IMPLEMENT_REFCOUNTING(BaseUserThread);
 
 		protected:

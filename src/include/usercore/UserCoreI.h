@@ -566,7 +566,7 @@ namespace UserCore
 		MOCK_METHOD2(platformFilter, bool(const XML::gcXMLElement &, PlatformType));
 		MOCK_METHOD0(getInternal, gcRefPtr<UserInternalI>());
 
-		gc_MOCK_REFCOUNTING(UserMock);
+		gc_IMPLEMENT_REFCOUNTING(UserMock);
 	};
 #endif
 

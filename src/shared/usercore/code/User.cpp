@@ -82,6 +82,9 @@ void User::destroy()
 
 	onNeedWildCardEvent -= delegate(this, &User::onNeedWildCardCB);
 
+	if (m_pThreadPool)
+		m_pThreadPool->cleanup();
+
 	safe_delete(m_pThreadPool);
 	safe_delete(m_pWebCore);
 	safe_delete(m_pMcfManager);
@@ -149,6 +152,12 @@ void User::cleanUp()
 	m_pThreadPool->purgeTasks();
 	m_pThreadPool->blockTasks();
 	m_pWebCore->logOut();
+
+	if (m_pThreadManager)
+		m_pThreadManager->cleanup();
+
+	if (m_pUploadManager)
+		m_pUploadManager->cleanup();
 
 	//must delete this one first as upload threads are apart of thread manager
 	safe_delete(m_pUploadManager);

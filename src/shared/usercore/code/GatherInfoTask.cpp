@@ -52,8 +52,8 @@ void GatherInfoTask::doRun()
 {
 	auto item = getItemInfo();
 
-	WildcardManager wildc = WildcardManager();
-	wildc.onNeedSpecialEvent += delegate(&onNeedWCEvent);
+	auto wildc = gcRefPtr<WildcardManager>::create();
+	wildc->onNeedSpecialEvent += delegate(&onNeedWCEvent);
 
 	uint32 prog = 0;
 	onProgUpdateEvent(prog);
@@ -82,7 +82,7 @@ void GatherInfoTask::doRun()
 		if (item && item->getId().getType() == DesuraId::TYPE_GAME)
 			flags |= GI_FLAG_TEST;
 
-		getUserCore()->getItemManager()->retrieveItemInfo(getItemId(), 0, &wildc, MCFBranch(), getMcfBuild(), HasAnyFlags(m_uiFlags, flags));
+		getUserCore()->getItemManager()->retrieveItemInfo(getItemId(), 0, wildc, MCFBranch(), getMcfBuild(), HasAnyFlags(m_uiFlags, flags));
 
 		if (isStopped())
 			return;

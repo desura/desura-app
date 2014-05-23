@@ -73,6 +73,8 @@ namespace UserCore
 		gcRefPtr<Thread::MCFThreadI> newUploadPrepThread(DesuraId id, const char* file) override;
 		gcRefPtr<Thread::MCFThreadI> newUploadResumeThread(DesuraId id, const char* key, gcRefPtr<WebCore::Misc::ResumeUploadInfo> &info) override;
 
+		void cleanup();
+
 		gc_IMPLEMENT_REFCOUNTING(UserThreadManager);
 
 	protected:

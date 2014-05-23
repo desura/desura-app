@@ -26,7 +26,13 @@ $/LicenseInfo$
 #ifndef DESURA_UTILPTR_H
 #define DESURA_UTILPTR_H
 
-
+namespace UTIL
+{
+	namespace OS
+	{
+		class StackTrace;
+	}
+}
 
 
 class gcRefBase
@@ -47,21 +53,25 @@ protected:
 };
 
 #include <atomic>
+#include <memory>
 
-class gcRefCount : public gcRefBase
+class gcRefCount final
 {
 public:
-	int addRef() override
+	gcRefCount(){}
+	gcRefCount(const gcRefCount&) = delete;
+
+	int addRef()
 	{
 		return ++m_nRef;
 	}
 
-	int delRef() override
+	int delRef()
 	{
 		return --m_nRef;
 	}
 
-	int getRefCt() override
+	int getRefCt()
 	{
 		return m_nRef;
 	}
@@ -77,7 +87,7 @@ private:
 
 #if defined(DEBUG) && defined(WIN32)
 	std::mutex m_Lock;
-	std::map<void*, std::string> m_mStackTraces;
+	std::map<void*, std::shared_ptr<UTIL::OS::StackTrace>> m_mStackTraces;
 #endif
 };
 
@@ -93,15 +103,15 @@ private:
 
 #define gc_IMPLEMENT_REFCOUNTING(ClassName)				\
 	public:												\
-	int addRef() { return m_RefCount.addRef(); }    \
-	int delRef() {                                 \
-	int retval = m_RefCount.delRef();          \
-	if (retval == 0)                            \
-	delete this;                            \
-	return retval;                              \
-}                                               \
-	int getRefCt() { return m_RefCount.getRefCt(); }\
-	gc_IMPLEMENT_REFCOUNTING_DEBUG(ClassName)		\
+	int addRef() { return m_RefCount.addRef(); }		\
+	int delRef() {										\
+	int retval = m_RefCount.delRef();					\
+	if (retval == 0)									\
+	delete this;										\
+	return retval;										\
+}														\
+	int getRefCt() { return m_RefCount.getRefCt(); }	\
+	gc_IMPLEMENT_REFCOUNTING_DEBUG(ClassName)			\
 	private:											\
 	gcRefCount m_RefCount;
 
@@ -172,8 +182,17 @@ public:
 		return m_pPtr;
 	}
 
+	T& operator*() const
+	{
+		gcAssert(m_pPtr);
+		return *m_pPtr;
+	}
+
 	gcRefPtr<T>& operator=(T* p)
 	{
+		if (m_pPtr == p)
+			return *this;
+
 		if (!m_pRefFn)
 			m_pRefFn = generateCleanupFunct();
 
@@ -292,22 +311,6 @@ private:
 	T* m_pPtr = nullptr;
 	gcRefBaseFn m_pRefFn = nullptr;
 };
-
-#if defined(DEBUG) && defined(WIN32)
-#define gc_MOCK_REFCOUNTING_DEBUG(ClassName)	\
-	void addStackTrace(void* pObj) { } \
-	void delStackTrace(void* pObj) { } \
-	void dumpStackTraces(){ }
-#else
-#define gc_MOCK_REFCOUNTING_DEBUG(ClassName)
-#endif
-
-#define gc_MOCK_REFCOUNTING(ClassName)		\
-	int addRef() { return 1; }				\
-	int delRef() { return 1; }				\
-	int getRefCt() { return 1; }			\
-	gc_MOCK_REFCOUNTING_DEBUG(ClassName)
-
 
 #endif
 

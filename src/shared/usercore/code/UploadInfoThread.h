@@ -129,6 +129,8 @@ namespace UserCore
 			}
 #endif
 
+			void cleanup();
+
 		protected:
 			void onComplete(uint32& status);
 			void onProgress(UserCore::Misc::UploadInfo& info);

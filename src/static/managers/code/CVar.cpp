@@ -47,6 +47,7 @@ namespace
 CVar::CVar(const char* name, const char* defVal, int32 flags, CVarCallBackFn callBack, CVarRegTargetI *pManager)
 	: CVar(name, defVal, flags, convertToStdFunction(callBack), pManager)
 {
+	addRef();
 }
 
 CVar::CVar(const char* szName, const char* szDefVal, int32 nFlags, std::function<bool(const CVar*, const char*)> callback, CVarRegTargetI *pManager)
@@ -57,6 +58,8 @@ CVar::CVar(const char* szName, const char* szDefVal, int32 nFlags, std::function
 	, m_iFlags(nFlags)
 	, m_pCVarManager(pManager)
 {
+	addRef();
+
 	if (!m_pCVarManager)
 	{
 		InitCVarManger();

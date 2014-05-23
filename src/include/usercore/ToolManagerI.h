@@ -56,7 +56,7 @@ namespace UserCore
 			uint32 done;
 		};
 
-		class ToolTransaction : public gcRefCount
+		class ToolTransaction : public gcRefBase
 		{
 		public:
 			ToolTransaction()
@@ -107,6 +107,8 @@ namespace UserCore
 		private:
 			mutable std::mutex m_Lock;
 			std::vector<DesuraId> m_vToolsList;
+
+			gc_IMPLEMENT_REFCOUNTING(ToolTransaction)
 		};
 	}
 	

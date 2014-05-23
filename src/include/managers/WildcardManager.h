@@ -74,7 +74,7 @@ namespace XML
 }
 
 //! Stores wild cards (path and special locations) and allows them to be resolved into full paths on the file system
-class WildcardManager : public BaseManager<WildcardInfo>, public gcRefCount
+class WildcardManager : public BaseManager<WildcardInfo>, public gcRefBase
 {
 public:
 	WildcardManager();
@@ -122,6 +122,8 @@ protected:
 
 private:
 	uint32 m_uiDepth;
+
+	gc_IMPLEMENT_REFCOUNTING(WildcardManager)
 };
 
 #endif //DESURA_WILDCARD_MANAGER_H

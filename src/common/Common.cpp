@@ -49,8 +49,7 @@ void gcRefCount::addStackTrace(void* pObj)
 
 	auto it = m_mStackTraces.find(pObj);
 	gcAssert(it == end(m_mStackTraces));
-
-	m_mStackTraces[pObj] = UTIL::OS::getStackTraceString(2, 10);
+	m_mStackTraces[pObj] = UTIL::OS::getStackTrace(2, 10);
 }
 
 void gcRefCount::delStackTrace(void* pObj)
@@ -69,6 +68,10 @@ void gcRefCount::dumpStackTraces()
 	Debug("Dumping stacktraces for {0}\n", (size_t)this);
 
 	for (auto p : m_mStackTraces)
-		Debug(" -- 0x{0:x}: {1}\n", (size_t)p.first, p.second);
+	{
+		auto trace = UTIL::OS::getStackTraceString(p.second);
+		Debug(" -- 0x{0:x}: {1}\n", (size_t)p.first, trace);
+	}
+		
 }
 #endif

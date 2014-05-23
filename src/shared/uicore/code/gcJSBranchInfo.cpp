@@ -69,7 +69,7 @@ bool DesuraJSBranchInfo::preExecuteValidation(const char* function, uint32 funct
 	if (argc == 0)
 		return false;
 
-	auto branch = nullptr;
+	gcRefPtr<UserCore::Item::BranchInfoI> branch;
 	FromJSObject(branch, argv[0]);
 
 	return isValidBranch(branch);

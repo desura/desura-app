@@ -110,7 +110,8 @@ public:
 	
 	void run() override
 	{
-		m_pUser->destroy();
+		if (m_pUser)
+			m_pUser->destroy();
 	}
 	
 	gcRefPtr<UserCore::UserI> m_pUser;

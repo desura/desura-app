@@ -36,7 +36,7 @@ namespace WebCore
 
 		//! Information needed to resume an upload
 		//!
-		class ResumeUploadInfo : public gcRefCount
+		class ResumeUploadInfo : public gcRefBase
 		{
 		public:
 			ResumeUploadInfo()
@@ -50,6 +50,7 @@ namespace WebCore
 			uint64 size;
 			uint64 upsize;
 
+			gc_IMPLEMENT_REFCOUNTING(ResumeUploadInfo)
 		};
 
 	}

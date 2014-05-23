@@ -30,11 +30,13 @@ namespace UserCore
 {
 	namespace Item
 	{
-		class EventItemI : public gcRefCount
+		class EventItemI : public gcRefBase
 		{
 		public:
 			virtual void post(gcRefPtr<Helper::ItemHandleHelperI> &helper) = 0;
 			virtual ~EventItemI(){}
+
+			gc_IMPLEMENT_REFCOUNTING(EventItemI)
 		};
 	}
 }

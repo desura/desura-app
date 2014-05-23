@@ -51,7 +51,7 @@ namespace UserCore
 
 	namespace ItemTask
 	{
-		class BaseItemTask : public gcRefCount
+		class BaseItemTask : public gcRefBase
 		{
 		public:
 			BaseItemTask(UserCore::Item::ITEM_STAGE type, const char* name, gcRefPtr<UserCore::Item::ItemHandleI> &handle, MCFBranch branch = MCFBranch(), MCFBuild build = MCFBuild());
@@ -115,6 +115,8 @@ namespace UserCore
 
 			const UserCore::Item::ITEM_STAGE m_uiType;
 			const gcString m_szName;
+
+			gc_IMPLEMENT_REFCOUNTING(BaseItemTask)
 		};
 	}
 }

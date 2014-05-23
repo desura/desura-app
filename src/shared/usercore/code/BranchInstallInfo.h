@@ -119,7 +119,7 @@ namespace UserCore
 			gcString insCheck;
 		};
 
-		class BranchInstallInfo : public gcRefCount
+		class BranchInstallInfo : public gcRefBase
 		{
 		public:
 			BranchInstallInfo(uint32 biId, gcRefPtr<BranchItemInfoI> itemInfo, UTIL::FS::UtilFSI* pFileSystem);
@@ -233,6 +233,8 @@ namespace UserCore
 
 			gcRefPtr<BranchItemInfoI> m_pItem;
 			UTIL::FS::UtilFSI* m_pFileSystem;
+
+			gc_IMPLEMENT_REFCOUNTING(BranchInstallInfo)
 		};
 
 

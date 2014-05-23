@@ -51,7 +51,7 @@ namespace UserCore
 			Finished = 999,
 		};
 
-		class UploadThreadInfo : public gcRefCount
+		class UploadThreadInfo : public gcRefBase
 		{
 		public:
 			UploadThreadInfo(DesuraId id, const char* file, const char* key, uint64 start = 0)
@@ -66,6 +66,8 @@ namespace UserCore
 			gcString szFile;
 			DesuraId itemId;
 			uint64 uiStart;
+
+			gc_IMPLEMENT_REFCOUNTING(UploadThreadInfo)
 		};
 
 		class UploadThread : public MCFThread

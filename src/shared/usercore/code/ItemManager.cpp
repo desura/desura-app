@@ -698,13 +698,13 @@ void ItemManager::retrieveItemInfo(DesuraId id, uint32 statusOveride, gcRefPtr<W
 			}
 			else
 			{
-				WildcardManager wc(pWildCard);
+				auto wc = gcRefPtr<WildcardManager>::create(pWildCard);
 				const XML::gcXMLElement &wcNode = platform.FirstChildElement("wcards");
 
 				if (wcNode.IsValid())
-					wc.parseXML(wcNode);
+					wc->parseXML(wcNode);
 
-				pi.pWildCard = &wc;
+				pi.pWildCard = wc;
 				parseGamesXml(pi);
 				pi.pWildCard = pWildCard;
 			}

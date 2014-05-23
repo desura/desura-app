@@ -48,6 +48,12 @@ namespace UserCore
 			bool validFile(const char* path);
 			bool doSearch(const char* path);
 
+			void cleanup() override
+			{
+				m_pUpInfo.reset();
+				MCFThread::cleanup();
+			}
+
 		private:
 			gcRefPtr<WebCore::Misc::ResumeUploadInfo> m_pUpInfo;
 			gcString m_szKey;

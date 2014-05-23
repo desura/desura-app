@@ -36,7 +36,7 @@ namespace UserCore
 	{
 
 		//! Container class that stores information for one news item
-		class NewsItem : public gcRefCount
+		class NewsItem : public gcRefBase
 		{
 		public:
 			//! Constructor
@@ -80,6 +80,8 @@ namespace UserCore
 			gcString szUrl;
 
 			bool hasBeenShown;
+
+			gc_IMPLEMENT_REFCOUNTING(NewsItem)
 		};
 
 	}

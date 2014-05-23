@@ -34,7 +34,7 @@ $/LicenseInfo$
 #pragma warning( disable : 4275)
 #include <map>
 
-class BaseItem : public gcRefCount
+class BaseItem : public gcRefBase
 {
 public:
 	BaseItem()
@@ -56,6 +56,8 @@ public:
 protected:
 	gcString m_szName;
 	uint64 m_uiHash;
+
+	gc_IMPLEMENT_REFCOUNTING(BaseItem)
 };
 
 

@@ -36,7 +36,7 @@ $/LicenseInfo$
 class InstallProcess;
 
 
-class IPCInstallMcf : public IPC::IPCClass, public gcRefCount
+class IPCInstallMcf : public IPC::IPCClass, public gcRefBase
 {
 public:
 	IPCInstallMcf(IPC::IPCManager* mang, uint32 id, DesuraId itemId);
@@ -64,6 +64,8 @@ protected:
 
 private:
 	void registerFunctions();
+
+	gc_IMPLEMENT_REFCOUNTING(IPCInstallMcf)
 };
 
 

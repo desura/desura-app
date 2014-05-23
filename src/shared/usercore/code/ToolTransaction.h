@@ -37,7 +37,7 @@ namespace UserCore
 {
 	namespace Misc
 	{
-		class ToolTransInfo : public gcRefCount
+		class ToolTransInfo : public gcRefBase
 		{
 		public:
 			ToolTransInfo(bool download, gcRefPtr<Misc::ToolTransaction> transaction, gcRefPtr<ToolManager> pToolManager);
@@ -73,6 +73,8 @@ namespace UserCore
 
 			gcRefPtr<Misc::ToolTransaction> m_pTransaction;
 			gcRefPtr<ToolManager> m_pToolManager;
+
+			gc_IMPLEMENT_REFCOUNTING(ToolTransInfo)
 		};
 	}
 }

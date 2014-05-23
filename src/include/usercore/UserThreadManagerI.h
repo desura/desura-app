@@ -54,10 +54,13 @@ namespace UserCore
 		class InstallInfoI;
 	}
 
-	class UserThreadProxyI : public gcRefCount
+	class UserThreadProxyI : public gcRefBase
 	{
 	public:
 		virtual ::Thread::BaseThread* getThread() = 0;
+		virtual void cleanup() = 0;
+
+		gc_IMPLEMENT_REFCOUNTING(UserThreadProxyI)
 	};
 
 	class UserThreadManagerI : public gcRefBase

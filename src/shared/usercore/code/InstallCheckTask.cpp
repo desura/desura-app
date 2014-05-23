@@ -36,11 +36,11 @@ InstallCheckTask::InstallCheckTask(gcRefPtr<UserCore::Item::ItemHandleI> handle)
 
 void InstallCheckTask::doRun()
 {
-	WildcardManager wildc = WildcardManager();
-	wildc.onNeedSpecialEvent += delegate(&onNeedWCEvent);
-	wildc.onNeedSpecialEvent += delegate(&getUserCore()->getNeedWildCardEvent());
+	auto wildc = gcRefPtr<WildcardManager>::create();
+	wildc->onNeedSpecialEvent += delegate(&onNeedWCEvent);
+	wildc->onNeedSpecialEvent += delegate(&getUserCore()->getNeedWildCardEvent());
 
-	getUserCore()->getItemManager()->retrieveItemInfo(getItemId(), 0, &wildc);
+	getUserCore()->getItemManager()->retrieveItemInfo(getItemId(), 0, wildc);
 
 	uint32 prog = 0;
 	onCompleteEvent(prog);

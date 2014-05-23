@@ -126,7 +126,7 @@ namespace UserCore
 			MOCK_METHOD2(goToStageDownloadTools, void(bool launch, ToolTransactionId ttid));
 			MOCK_METHOD1(goToStageInstallTools, void(bool launch));
 
-			gc_MOCK_REFCOUNTING(ItemHandleInternalMock);
+			gc_IMPLEMENT_REFCOUNTING(ItemHandleInternalMock);
 		};
 #endif
 

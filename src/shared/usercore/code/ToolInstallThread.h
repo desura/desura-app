@@ -53,7 +53,7 @@ namespace UserCore
 	namespace Misc
 	{
 
-		class ToolInstallThread : public ::Thread::BaseThread, public gcRefCount
+		class ToolInstallThread : public ::Thread::BaseThread, public gcRefBase
 		{
 		public:
 #ifdef WIN32
@@ -115,6 +115,8 @@ namespace UserCore
 #endif
 
 			bool m_bStillInstalling;
+
+			gc_IMPLEMENT_REFCOUNTING(ToolInstallThread)
 		};
 
 	}

@@ -45,6 +45,15 @@ UploadManager::UploadManager(gcRefPtr<UserCore::UserI> userCore)
 	load();
 }
 
+void UploadManager::cleanup()
+{
+	std::lock_guard<std::mutex> guard(m_mMutex);
+
+	for (auto i : m_mItemMap)
+		i.second->cleanup();
+
+	BaseManager::removeAll();
+}
 
 void UploadManager::updateItemIds()
 {

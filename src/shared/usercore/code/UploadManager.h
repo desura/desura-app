@@ -79,6 +79,8 @@ namespace UserCore
 
 		EventV onUpdateEvent;
 
+		void cleanup();
+
 		gc_IMPLEMENT_REFCOUNTING(UploadManager);
 
 	protected:

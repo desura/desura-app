@@ -119,7 +119,7 @@ namespace UserCore
 		MOCK_METHOD0(loadItems, void());
 		MOCK_METHOD0(saveItems, void());
 
-		gc_MOCK_REFCOUNTING(GameExplorerManager);
+		gc_IMPLEMENT_REFCOUNTING(GameExplorerManager);
 	};
 #endif
 

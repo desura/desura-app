@@ -261,18 +261,23 @@ JSObjHandle ToJSObject(ChromiumDLL::JavaScriptFactoryI* factory, const gcRefPtr<
 #include <type_traits>
 
 template <typename T>
-typename std::enable_if<std::is_pointer<T>::value, T>::type getUserObject(ChromiumDLL::JavaScriptObjectI* pObj)
+typename void getUserObject(T* &t, JSObjHandle pObj)
 {
 	typedef typename std::remove_pointer<T>::type X;
-	return pObj->getUserObject<X>();
+	t = pObj->getUserObject<X>();
 }
 
 template <typename T>
-typename std::enable_if<!std::is_pointer<T>::value, T>::type  getUserObject(ChromiumDLL::JavaScriptObjectI* pObj)
+typename void getUserObject(gcRefPtr<T> &t, JSObjHandle pObj)
+{
+	FromJSObject(t, pObj);
+}
+
+template <typename T>
+typename void getUserObject(T &t, JSObjHandle pObj)
 {
 	//should not get here
 	gcAssert(false);
-	return T();
 }
 
 template <typename T>
@@ -283,7 +288,7 @@ T popAndConvert(JSObjHandle* argv, size_t &x, bool bFirstIsObj)
 	if (bFirstIsObj && x == 0)
 	{
 		if (argv[0]->isObject())
-			t = getUserObject<T>(argv[0]);
+			getUserObject(t, argv[0]);
 	}
 	else
 	{

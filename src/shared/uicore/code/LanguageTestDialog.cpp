@@ -109,7 +109,7 @@ public:
 	bool m_bSteamGame = false;
 	bool m_bIsPreOrder = false;
 
-	gc_MOCK_REFCOUNTING(LanguageStubExeInfo);
+	gc_IMPLEMENT_REFCOUNTING(LanguageStubExeInfo);
 };
 
 class LanguageStubExeInfo : public UserCore::Item::Misc::ExeInfoI
@@ -125,7 +125,7 @@ public:
 
 	void setUserArgs(const char* args) override {}
 
-	gc_MOCK_REFCOUNTING(LanguageStubExeInfo);
+	gc_IMPLEMENT_REFCOUNTING(LanguageStubExeInfo);
 };
 
 class LanguageStubItem : public UserCore::Item::ItemInfoI
@@ -250,7 +250,7 @@ public:
 
 	DesuraId m_Id;
 
-	gc_MOCK_REFCOUNTING(LanguageStubExeInfo);
+	gc_IMPLEMENT_REFCOUNTING(LanguageStubExeInfo);
 };
 
 class LanguageStubToolManager : public UserCore::ToolManagerI
@@ -280,7 +280,7 @@ public:
 
 	void reloadTools(DesuraId id) override {}
 
-	gc_MOCK_REFCOUNTING(LanguageStubExeInfo);
+	gc_IMPLEMENT_REFCOUNTING(LanguageStubExeInfo);
 };
 
 class LanguageStubItemHandle : public UserCore::Item::ItemHandleI, public UserCore::Item::ItemTaskGroupI
@@ -366,7 +366,7 @@ public:
 	gcRefPtr<Helper::ItemHandleHelperI> m_pHelper;
 
 
-	gc_MOCK_REFCOUNTING(LanguageStubExeInfo);
+	gc_IMPLEMENT_REFCOUNTING(LanguageStubExeInfo);
 };
 
 class LangStubItemManager : public UserCore::ItemManagerI
@@ -434,7 +434,7 @@ public:
 	LanguageStubItem m_Item;
 	LanguageStubItemHandle m_ItemHandle;
 
-	gc_MOCK_REFCOUNTING(LanguageStubExeInfo);
+	gc_IMPLEMENT_REFCOUNTING(LanguageStubExeInfo);
 };
 
 //0. Not installed
@@ -465,44 +465,44 @@ public:
 	{
 		for (int x = 0; x < 17; x++)
 		{
-			m_vItems.push_back(LanguageStubItem());
-			m_vItemHandle.push_back(LanguageStubItemHandle());
+			m_vItems.push_back(gcRefPtr<LanguageStubItem>::create());
+			m_vItemHandle.push_back(gcRefPtr<LanguageStubItemHandle>::create());
 		}
 
 		for (int x = 0; x < 17; x++)
 		{
-			m_vItems[x].m_Id = DesuraId(x+1, DesuraId::TYPE_GAME);
-			m_vItems[x].m_strName = gcString("[Test Game {0:2}]", x);
+			m_vItems[x]->m_Id = DesuraId(x+1, DesuraId::TYPE_GAME);
+			m_vItems[x]->m_strName = gcString("[Test Game {0:2}]", x);
 
-			m_vItemHandle[x].m_pItemInfo = &m_vItems[x];
+			m_vItemHandle[x]->m_pItemInfo = m_vItems[x];
 		}
 
-		m_vItems[1].m_bIsDownloadable = false;
+		m_vItems[1]->m_bIsDownloadable = false;
 
-		m_vItems[2].m_bIsInstalled = true;
-		m_vItems[2].m_bIsDownloadable = false;
+		m_vItems[2]->m_bIsInstalled = true;
+		m_vItems[2]->m_bIsDownloadable = false;
 
-		m_vItemHandle[3].m_Stage = ITEM_STAGE::STAGE_DOWNLOADTOOL;
-		m_vItemHandle[4].m_Stage = ITEM_STAGE::STAGE_INSTALLTOOL;
-		m_vItemHandle[5].m_Stage = ITEM_STAGE::STAGE_LAUNCH;
-		m_vItemHandle[6].m_Stage = ITEM_STAGE::STAGE_VALIDATE;
+		m_vItemHandle[3]->m_Stage = ITEM_STAGE::STAGE_DOWNLOADTOOL;
+		m_vItemHandle[4]->m_Stage = ITEM_STAGE::STAGE_INSTALLTOOL;
+		m_vItemHandle[5]->m_Stage = ITEM_STAGE::STAGE_LAUNCH;
+		m_vItemHandle[6]->m_Stage = ITEM_STAGE::STAGE_VALIDATE;
 
-		m_vItems[7].m_uiStatus = ItemInfoI::STATUS_VERIFING;
-		m_vItems[8].m_uiStatus = ItemInfoI::STATUS_UPDATING;
-		m_vItems[9].m_uiStatus = ItemInfoI::STATUS_DOWNLOADING;
-		m_vItems[10].m_uiStatus = ItemInfoI::STATUS_INSTALLING;
-		m_vItems[11].m_uiStatus = ItemInfoI::STATUS_INSTALLING | ItemInfoI::STATUS_PAUSED;
-		m_vItems[12].m_uiStatus = ItemInfoI::STATUS_READY;
+		m_vItems[7]->m_uiStatus = ItemInfoI::STATUS_VERIFING;
+		m_vItems[8]->m_uiStatus = ItemInfoI::STATUS_UPDATING;
+		m_vItems[9]->m_uiStatus = ItemInfoI::STATUS_DOWNLOADING;
+		m_vItems[10]->m_uiStatus = ItemInfoI::STATUS_INSTALLING;
+		m_vItems[11]->m_uiStatus = ItemInfoI::STATUS_INSTALLING | ItemInfoI::STATUS_PAUSED;
+		m_vItems[12]->m_uiStatus = ItemInfoI::STATUS_READY;
 
-		m_vItems[13].m_uiStatus = ItemInfoI::STATUS_READY | ItemInfoI::STATUS_PRELOADED; //cur branch preloaded
-		m_vItems[13].m_Branch.m_bIsPreOrder = true;
+		m_vItems[13]->m_uiStatus = ItemInfoI::STATUS_READY | ItemInfoI::STATUS_PRELOADED; //cur branch preloaded
+		m_vItems[13]->m_Branch.m_bIsPreOrder = true;
 
-		m_vItems[14].m_uiStatus = ItemInfoI::STATUS_DEVELOPER;
+		m_vItems[14]->m_uiStatus = ItemInfoI::STATUS_DEVELOPER;
 
-		m_vItemHandle[15].m_Stage = ITEM_STAGE::STAGE_WAIT;
+		m_vItemHandle[15]->m_Stage = ITEM_STAGE::STAGE_WAIT;
 
-		m_vItems[16].m_bNullCurBranch = true;
-		m_vItems[16].m_Branch.m_bIsPreOrder = true;
+		m_vItems[16]->m_bNullCurBranch = true;
+		m_vItems[16]->m_Branch.m_bIsPreOrder = true;
 	}
 
 	virtual ~LangPlayItemManager(){}
@@ -520,39 +520,39 @@ public:
 
 	gcRefPtr<UserCore::Item::ItemInfoI> findItemInfo(DesuraId id) override 
 	{ 
-		auto it = std::find_if(begin(m_vItems), end(m_vItems), [id](LanguageStubItem& item){
-			return item.getId() == id;
+		auto it = std::find_if(begin(m_vItems), end(m_vItems), [id](gcRefPtr<LanguageStubItem>& item){
+			return item->getId() == id;
 		});
 
 		if (it == end(m_vItems))
 			return nullptr;
 
-		return &*it;
+		return *it;
 	}
 
 	gcRefPtr<UserCore::Item::ItemHandleI> findItemHandle(DesuraId id) override
 	{ 
-		auto it = std::find_if(begin(m_vItemHandle), end(m_vItemHandle), [id](LanguageStubItemHandle& handle){
-			return handle.m_pItemInfo->getId() == id;
+		auto it = std::find_if(begin(m_vItemHandle), end(m_vItemHandle), [id](gcRefPtr<LanguageStubItemHandle>& handle){
+			return handle->m_pItemInfo->getId() == id;
 		});
 
 		if (it == end(m_vItemHandle))
 			return nullptr;
 
-		return &(*it);
+		return *it;
 	}
 
 	uint32 getCount() override { return m_vItems.size(); }
 
-	gcRefPtr<UserCore::Item::ItemInfoI> getItemInfo(uint32 index) override { return &m_vItems[index]; }
-	gcRefPtr<UserCore::Item::ItemHandleI> getItemHandle(uint32 index) override { return &m_vItemHandle[index]; }
+	gcRefPtr<UserCore::Item::ItemInfoI> getItemInfo(uint32 index) override { return m_vItems[index]; }
+	gcRefPtr<UserCore::Item::ItemHandleI> getItemHandle(uint32 index) override { return m_vItemHandle[index]; }
 
 	void getCIP(DesuraId id, char** buff) override { }
 
 	void getAllItems(std::vector<gcRefPtr<UserCore::Item::ItemInfoI>> &aList) override 
 	{
-		for (auto& i : m_vItems)
-			aList.push_back(&i);
+		for (auto i : m_vItems)
+			aList.push_back(i);
 	}
 
 	void getGameList(std::vector<gcRefPtr<UserCore::Item::ItemInfoI>> &gList, bool includeDeleted = false) override 
@@ -606,10 +606,10 @@ public:
 
 	void saveItem(gcRefPtr<UserCore::Item::ItemInfoI>) override { }
 
-	std::vector<LanguageStubItem> m_vItems;
-	std::vector<LanguageStubItemHandle> m_vItemHandle;
+	std::vector<gcRefPtr<LanguageStubItem>> m_vItems;
+	std::vector<gcRefPtr<LanguageStubItemHandle>> m_vItemHandle;
 
-	gc_MOCK_REFCOUNTING(LanguageStubExeInfo);
+	gc_IMPLEMENT_REFCOUNTING(LanguageStubExeInfo);
 };
 
 

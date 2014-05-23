@@ -39,7 +39,7 @@ namespace UserCore
 
 		class EventItemI;
 
-		class ItemHandleEvents : public gcRefCount
+		class ItemHandleEvents : public gcRefBase
 		{
 		public:
 			ItemHandleEvents(std::mutex &helperLock, std::vector<gcRefPtr<Helper::ItemHandleHelperI>> &vHelperList);
@@ -72,6 +72,8 @@ namespace UserCore
 
 			std::mutex &m_HelperLock;
 			std::vector<gcRefPtr<Helper::ItemHandleHelperI>> &m_vHelperList;
+
+			gc_IMPLEMENT_REFCOUNTING(ItemHandleEvents)
 		};
 	}
 }

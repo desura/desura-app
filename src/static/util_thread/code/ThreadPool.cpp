@@ -43,7 +43,7 @@ public:
 	}
 
 	gcRefPtr<Thread::BaseTask> m_pTask;
-	gc_IMPLEMENT_REFCOUNTING(ThreadPoolTaskSource);
+	gc_IMPLEMENT_REFCOUNTING(ThreadPoolTaskSource)
 };
 
 using namespace Thread;
@@ -63,6 +63,11 @@ ThreadPool::ThreadPool(uint8 num)
 
 ThreadPool::~ThreadPool()
 {
+	cleanup();
+}
+
+void ThreadPool::cleanup()
+{
 	nonBlockStop();
 	m_WaitCondition.notify();
 
@@ -76,10 +81,12 @@ ThreadPool::~ThreadPool()
 	{
 		std::lock_guard<std::mutex> guardThread(m_ThreadMutex);
 
-		for (auto thread : m_vThreadList)
+		for (auto & thread : m_vThreadList)
 		{
 			thread->onCompleteEvent -= delegate(this, &ThreadPool::onThreadComplete);
 			thread->stop();
+
+			safe_delete(thread);
 		}
 
 		m_vThreadList.clear();
@@ -88,10 +95,12 @@ ThreadPool::~ThreadPool()
 	{
 		std::lock_guard<std::mutex> guardForced(m_ForcedMutex);
 
-		for (auto forced : m_vForcedList)
+		for (auto & forced : m_vForcedList)
 		{
 			forced->onCompleteEvent -= delegate(this, &ThreadPool::onThreadComplete);
 			forced->stop();
+
+			safe_delete(forced);
 		}
 
 		m_vForcedList.clear();

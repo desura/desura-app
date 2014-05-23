@@ -109,6 +109,12 @@ namespace UserCore
 				return m_uiMcfBranch;
 			}
 
+			void cleanup() override
+			{
+				m_pUploadManager.reset();
+				BaseUserThread<MCFThreadI, ::Thread::BaseThread>::cleanup();
+			}
+
 		protected:
 			//McfThread
 			Event<MCFCore::Misc::ProgressInfo> onMcfProgressEvent;

@@ -47,32 +47,13 @@ UserThreadManager::UserThreadManager()
 UserThreadManager::~UserThreadManager()
 {
 	m_bDestructor = true;
-	std::vector<gcRefPtr<UserThreadProxyI>> vTemp;
-	
+
 	{
 		std::lock_guard<std::mutex> guard(m_ThreadLock);
-		vTemp = m_vThreadList;
-		m_vThreadList.clear();
+		gcAssert(m_vThreadList.empty());
 	}
 
-	for (auto t : vTemp)
-	{
-		t->getThread()->stop();
-
-		//must set thread manager to null so they dont try and remove them selfs after we are deleted
-		Thread::UserServiceI*	us = dynamic_cast<Thread::UserServiceI*>(t->getThread());
-		Thread::MCFThreadI*		mt = dynamic_cast<Thread::MCFThreadI*>(t->getThread());
-		Thread::UserThreadI*	ut = dynamic_cast<Thread::UserThreadI*>(t->getThread());
-
-		if (us)
-			us->setThreadManager(nullptr);
-
-		if (mt)
-			mt->setThreadManager(nullptr);
-
-		if (ut)
-			ut->setThreadManager(nullptr);
-	}
+	cleanup();
 }
 
 
@@ -212,4 +193,23 @@ void UserThreadManager::printThreadList()
 	}
 
 	Msg("-------------------------------------------\n");
+}
+
+void UserThreadManager::cleanup()
+{
+	std::vector<gcRefPtr<UserThreadProxyI>> vTemp;
+
+	{
+		std::lock_guard<std::mutex> guard(m_ThreadLock);
+		vTemp = m_vThreadList;
+		m_vThreadList.clear();
+	}
+
+	for (auto t : vTemp)
+	{
+		t->getThread()->stop();
+		t->cleanup();
+	}
+
+	m_pUserCore = nullptr;
 }

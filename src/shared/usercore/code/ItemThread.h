@@ -73,6 +73,17 @@ namespace UserCore
 				return this;
 			}
 
+			void cleanup() override
+			{
+				gcAssert(!isRunning());
+
+				purge();
+
+				m_pThreadManager.reset();
+				m_pWebCore.reset();
+				m_pUserCore.reset();
+			}
+
 		protected:
 			void run();
 

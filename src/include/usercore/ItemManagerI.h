@@ -267,7 +267,7 @@ namespace UserCore
 		MOCK_METHOD0(regenLaunchScripts, void());
 		MOCK_METHOD1(saveItem, void(gcRefPtr<UserCore::Item::ItemInfoI> pItem));
 
-		gc_MOCK_REFCOUNTING(ItemManagerMock);
+		gc_IMPLEMENT_REFCOUNTING(ItemManagerMock);
 	};
 
 #endif

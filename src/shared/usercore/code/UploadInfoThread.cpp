@@ -231,7 +231,17 @@ void UploadInfoThread::setUpLoadManager(gcRefPtr<UserCore::UploadManagerI> um)
 }
 
 
+void UploadInfoThread::cleanup()
+{
+	gcAssert(!m_pThread || !m_pThread->isRunning());
 
+	m_pUploadThreadInfo.reset();
+	m_pThread.reset();
+
+	m_pWebCore.reset();
+	m_pUser.reset();
+	m_pUploadManager.reset();
+}
 
 
 

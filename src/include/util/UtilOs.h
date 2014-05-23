@@ -145,7 +145,31 @@ namespace UTIL
 		std::string UserDecodeString(const std::string& strKey, const std::string& strValue);
 
 #ifdef DEBUG
-		std::string getStackTraceString(uint32 nStart = 0, uint32 nStop = 10);
+		class StackTrace
+		{
+		public:
+			StackTrace(int nSize)
+				: m_nCount(0)
+			{
+				if (nSize > 0)
+					m_StackPtrs = new PVOID[nSize];
+				else
+					m_StackPtrs = nullptr;
+			}
+
+			StackTrace(const StackTrace& st) = delete;
+
+			~StackTrace()
+			{
+				delete[] m_StackPtrs;
+			}
+
+			PVOID* m_StackPtrs;
+			uint32 m_nCount;
+		};
+
+		std::shared_ptr<UTIL::OS::StackTrace> getStackTrace(uint32 nStart = 0, uint32 nStop = 10);
+		std::string getStackTraceString(const std::shared_ptr<UTIL::OS::StackTrace> &trace);
 #endif
 	}
 }

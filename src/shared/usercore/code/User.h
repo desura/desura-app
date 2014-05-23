@@ -145,7 +145,7 @@ namespace UserCore
 		MOCK_METHOD0(getMCFManager, gcRefPtr<MCFManagerI>());
 		MOCK_METHOD0(getServiceMain, IPC::ServiceMainI*());
 
-		gc_MOCK_REFCOUNTING(UserInternalMock);
+		gc_IMPLEMENT_REFCOUNTING(UserInternalMock);
 	};
 #endif
 

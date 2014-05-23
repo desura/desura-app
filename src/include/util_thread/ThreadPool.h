@@ -38,7 +38,7 @@ namespace Thread
 
 	//! Basic functions required for a task for the thread pool
 	//!
-	class BaseTask : public gcRefCount
+	class BaseTask : public gcRefBase
 	{
 	public:
 		virtual ~BaseTask(){}
@@ -54,6 +54,8 @@ namespace Thread
 		virtual void onStop(){}
 
 		Event<uint32> onCompleteEvent;
+
+		gc_IMPLEMENT_REFCOUNTING(BaseTask)
 	};
 
 	class ThreadPoolTaskSourceI : public gcRefBase
@@ -103,6 +105,8 @@ namespace Thread
 		//! Enable new tasks to be added
 		void unBlockTasks();
 
+		void cleanup();
+
 	protected:
 		void run();
 
@@ -134,7 +138,7 @@ namespace Thread
 
 		WaitCondition m_WaitCondition;
 
-		gc_IMPLEMENT_REFCOUNTING(ThreadPool);
+		gc_IMPLEMENT_REFCOUNTING(ThreadPool)
 	};
 
 }

@@ -89,6 +89,12 @@ namespace UserCore
 			void parseGame(DesuraId id, const XML::gcXMLElement &game, gcRefPtr<WildcardManager> &pWildCard, const XML::gcXMLElement &info);
 			void parseMod(DesuraId parId, DesuraId id, const XML::gcXMLElement &mod, gcRefPtr<WildcardManager> &pWildCard, const XML::gcXMLElement &info);
 
+			void cleanup() override
+			{
+				m_pTaskGroup.reset();
+				MCFThread::cleanup();
+			}
+
 		private:
 			gcRefPtr<UserCore::Item::ItemTaskGroup> m_pTaskGroup;
 

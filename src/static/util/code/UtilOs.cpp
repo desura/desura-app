@@ -31,9 +31,6 @@ $/LicenseInfo$
 
 #ifdef WIN32
 	#include <shlobj.h>
-#ifdef DEBUG
-	#include "DbgHelp.h"
-#endif
 #endif
 
 #ifdef WIN32
@@ -448,66 +445,69 @@ std::string UserDecodeString(const std::string& strKey, const std::string& strVa
 
 
 #ifdef DEBUG
-
-std::string getStackTraceString(uint32 nStart, uint32 nStop)
-{
 #ifdef WIN32
-	//http://blog.aaronballman.com/2011/04/generating-a-stack-crawl/
-	static std::mutex s_StackLock;
-	static bool s_InitStackTrace = false;
 
-	std::lock_guard<std::mutex> guard(s_StackLock);
+#include "SharedObjectLoader.h"
 
-	if (!s_InitStackTrace)
+typedef bool(*GetStackTraceStringFn)(int nFrames, PVOID* addrs, char* szBuffer, uint32 nBuffSize);
+typedef int(*GetStackTraceFn)(PVOID* addrs, uint32 nStart, uint32 nStop);
+
+static GetStackTraceFn s_GetStackTrace = nullptr;
+static GetStackTraceStringFn s_GetStackTraceString = nullptr;
+static SharedObjectLoader s_StackWalker;
+
+
+std::shared_ptr<UTIL::OS::StackTrace> getStackTrace(uint32 nStart, uint32 nStop)
+{
+	static std::mutex s_Lock;
+	std::lock_guard<std::mutex> guard(s_Lock);
+	if (!s_GetStackTrace || !s_GetStackTraceString)
 	{
-		// Set up the symbol options so that we can gather information from the current
-		// executable's PDB files, as well as the Microsoft symbol servers.  We also want
-		// to undecorated the symbol names we're returned.  If you want, you can add other
-		// symbol servers or paths via a semi-colon separated list in SymInitialized.
-		::SymSetOptions(SYMOPT_DEFERRED_LOADS | SYMOPT_INCLUDE_32BIT_MODULES | SYMOPT_UNDNAME);
+		s_StackWalker.load("stackwalker.dll");
 
-		if (!::SymInitialize(::GetCurrentProcess(), "E:\\SymbolCache;http://msdl.microsoft.com/download/symbols", TRUE))
-			return "";
+		if (!s_StackWalker.handle())
+			return nullptr;
 
-		s_InitStackTrace = true;
+		s_GetStackTrace = s_StackWalker.getFunction<GetStackTraceFn>("getStackTrace");
+		s_GetStackTraceString = s_StackWalker.getFunction<GetStackTraceStringFn>("getStackTraceString");
+
+		if (!s_GetStackTrace || !s_GetStackTraceString)
+			return nullptr;
 	}
 
-	if (nStop > 25)
-		nStop = 25;
+	auto st = std::make_shared<StackTrace>(25);
+	st->m_nCount = s_GetStackTrace(st->m_StackPtrs, nStart, nStop);
+	return st;
+}
 
-	PVOID addrs[25] = { 0 };
-	USHORT frames = CaptureStackBackTrace(nStart, nStop, addrs, NULL);
+std::string getStackTraceString(const std::shared_ptr<UTIL::OS::StackTrace> &trace)
+{
+	if (!s_GetStackTraceString)
+		return "";
 
-	std::string outWalk;
+	char szBuff[2048] = { 0 };
+	if (!s_GetStackTraceString(trace->m_nCount, trace->m_StackPtrs, szBuff, 2048))
+		return "";
 
-	for (USHORT i = 0; i < frames; i++) 
-	{
-		// Allocate a buffer large enough to hold the symbol information on the stack and get 
-		// a pointer to the buffer.  We also have to set the size of the symbol structure itself
-		// and the number of bytes reserved for the name.
-		ULONG64 buffer[(sizeof(SYMBOL_INFO)+1024 + sizeof(ULONG64)-1) / sizeof(ULONG64)] = { 0 };
-		SYMBOL_INFO *info = (SYMBOL_INFO *)buffer;
-		info->SizeOfStruct = sizeof(SYMBOL_INFO);
-		info->MaxNameLen = 1024;
+	return std::string(szBuff);
+}
 
-		// Attempt to get information about the symbol and add it to our output parameter.
-		DWORD64 displacement = 0;
-		if (::SymFromAddr(::GetCurrentProcess(), (DWORD64)addrs[i], &displacement, info)) 
-		{
-			outWalk.append(info->Name, info->NameLen);
-			outWalk.append("\n");
-		}
-	}
-
-	return outWalk;
 #else
+
+std::shared_ptr<UTIL::OS::StackTrace> getStackTrace(uint32 nStart, uint32 nStop)
+{
+	gcAssert(false);
+	return nullptr;
+}
+
+std::string getStackTraceString(const std::shared_ptr<UTIL::OS::StackTrace> &trace)
+{
 	gcAssert(false);
 	return "";
-#endif
 }
 
 #endif
-
+#endif
 
 }
 }

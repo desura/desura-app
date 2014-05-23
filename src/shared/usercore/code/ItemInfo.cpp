@@ -1642,7 +1642,9 @@ namespace UnitTest
 	{
 	public:
 		ItemInfoThirdPartyFixture()
-			: i(&user, DesuraId(12884901920), &fs)
+			: user(gcRefPtr<UserCore::UserMock>::create())
+			, m_ItemManager(gcRefPtr<UserCore::ItemManagerMock>::create())
+			, i(gcRefPtr<ItemInfo>::create(user, DesuraId(12884901920), &fs))
 		{
 			checkPath = [](const UTIL::FS::Path& path) -> bool
 			{
@@ -1650,11 +1652,11 @@ namespace UnitTest
 			};
 
 			ON_CALL(fs, isValidFile(_)).WillByDefault(Invoke(checkPath));
-			ON_CALL(user, getUserId()).WillByDefault(Return(1));
-			ON_CALL(user, getItemsAddedEvent()).WillByDefault(ReturnRef(m_ItemAddedEvent));
-			ON_CALL(user, getItemManager()).WillByDefault(Return(&m_ItemManager));
+			ON_CALL(*user, getUserId()).WillByDefault(Return(1));
+			ON_CALL(*user, getItemsAddedEvent()).WillByDefault(ReturnRef(m_ItemAddedEvent));
+			ON_CALL(*user, getItemManager()).WillByDefault(Return(m_ItemManager));
 
-			ON_CALL(m_ItemManager, getOnNewItemEvent()).WillByDefault(ReturnRef(m_NewItemEvent));
+			ON_CALL(*m_ItemManager, getOnNewItemEvent()).WillByDefault(ReturnRef(m_NewItemEvent));
 		}
 
 		void setUpDb(sqlite3x::sqlite3_connection &db, const std::vector<std::string> &vSqlCommands)
@@ -1680,12 +1682,12 @@ namespace UnitTest
 		Event<DesuraId> m_NewItemEvent;
 		Event<uint32> m_ItemAddedEvent;
 
-		UserCore::UserMock user;
+		gcRefPtr<UserCore::UserMock> user;
 		UTIL::FS::UtilFSMock fs;
-		UserCore::ItemManagerMock m_ItemManager;
+		gcRefPtr<UserCore::ItemManagerMock> m_ItemManager;
 
 		std::function<bool(const UTIL::FS::Path&)> checkPath;
-		ItemInfo i;
+		gcRefPtr<ItemInfo> i;
 	};
 
 	static const std::vector<std::string> vSqlCommands =
@@ -1716,11 +1718,11 @@ namespace UnitTest
 		sqlite3x::sqlite3_connection db(":memory:");
 		
 		setUpDb(db, vSqlCommands);
-		i.loadDb(&db);
+		i->loadDb(&db);
 
-		ASSERT_TRUE(i.isInstalled());
-		ASSERT_TRUE(i.isLaunchable());
-		ASSERT_FALSE(i.isDownloadable());
+		ASSERT_TRUE(i->isInstalled());
+		ASSERT_TRUE(i->isLaunchable());
+		ASSERT_FALSE(i->isDownloadable());
 	}
 
 	const char* szThirdPartyInfo =
@@ -1759,23 +1761,23 @@ namespace UnitTest
 		sqlite3x::sqlite3_connection db(":memory:");
 
 		setUpDb(db, vSqlCommands);
-		i.loadDb(&db);
+		i->loadDb(&db);
 
-		ASSERT_TRUE(i.isInstalled());
-		ASSERT_TRUE(i.isLaunchable());
-		ASSERT_FALSE(i.isDownloadable());
-		ASSERT_FALSE(i.isDeleted());
-		ASSERT_TRUE(!!i.getCurrentBranch());
+		ASSERT_TRUE(i->isInstalled());
+		ASSERT_TRUE(i->isLaunchable());
+		ASSERT_FALSE(i->isDownloadable());
+		ASSERT_FALSE(i->isDeleted());
+		ASSERT_TRUE(!!i->getCurrentBranch());
 
-		i.softDelete();
+		i->softDelete();
 
-		ASSERT_FALSE(i.isInstalled());
-		ASSERT_FALSE(i.isLaunchable());
-		ASSERT_FALSE(i.isDownloadable());
-		ASSERT_TRUE(i.isDeleted());
-		ASSERT_FALSE(!!i.getCurrentBranch());
+		ASSERT_FALSE(i->isInstalled());
+		ASSERT_FALSE(i->isLaunchable());
+		ASSERT_FALSE(i->isDownloadable());
+		ASSERT_TRUE(i->isDeleted());
+		ASSERT_FALSE(!!i->getCurrentBranch());
 
-		WildcardManager wildcard;
+		auto wildcard = gcRefPtr<WildcardManager>::create();
 
 		{
 			static const char* gs_szWildcardXml =
@@ -1785,25 +1787,25 @@ namespace UnitTest
 
 			tinyxml2::XMLDocument doc;
 			doc.Parse(gs_szWildcardXml);
-			wildcard.parseXML(doc.RootElement());
+			wildcard->parseXML(doc.RootElement());
 		}
 
-		wildcard.onNeedSpecialEvent += delegate((ItemInfoThirdPartyFixture*)this, &ItemInfoThirdPartyFixture::resolveWildcard);
-		wildcard.onNeedInstallSpecialEvent += delegate((ItemInfoThirdPartyFixture*)this, &ItemInfoThirdPartyFixture::resolveWildcard);
+		wildcard->onNeedSpecialEvent += delegate((ItemInfoThirdPartyFixture*)this, &ItemInfoThirdPartyFixture::resolveWildcard);
+		wildcard->onNeedInstallSpecialEvent += delegate((ItemInfoThirdPartyFixture*)this, &ItemInfoThirdPartyFixture::resolveWildcard);
 
-		EXPECT_CALL(m_ItemManager, getOnNewItemEvent()).Times(AtLeast(1)).WillRepeatedly(ReturnRef(m_NewItemEvent));
+		EXPECT_CALL(*m_ItemManager, getOnNewItemEvent()).Times(AtLeast(1)).WillRepeatedly(ReturnRef(m_NewItemEvent));
 
 		XML::gcXMLDocument doc;
 		doc.LoadBuffer(szThirdPartyInfo, strlen(szThirdPartyInfo));
 
-		i.loadXmlData(100, doc.GetRoot("game"), 0, &wildcard, false);
+		i->loadXmlData(100, doc.GetRoot("game"), 0, wildcard, false);
 
-		ASSERT_TRUE(i.isInstalled());
-		ASSERT_TRUE(i.isLaunchable());
-		ASSERT_FALSE(i.isDownloadable());
-		ASSERT_FALSE(i.isDeleted());
+		ASSERT_TRUE(i->isInstalled());
+		ASSERT_TRUE(i->isLaunchable());
+		ASSERT_FALSE(i->isDownloadable());
+		ASSERT_FALSE(i->isDeleted());
 
-		ASSERT_TRUE(!!i.getCurrentBranch());
+		ASSERT_TRUE(!!i->getCurrentBranch());
 	}
 
 

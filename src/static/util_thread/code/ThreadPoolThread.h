@@ -36,7 +36,7 @@ namespace Thread
 {
 	//! Thread pool thread that runs tasks
 	//!
-	class ThreadPoolThread : public Thread::BaseThread, public gcRefCount
+	class ThreadPoolThread : public Thread::BaseThread, public gcRefBase
 	{
 	public:
 		//! Constructor
@@ -91,6 +91,9 @@ namespace Thread
 		WaitCondition m_WaitCondition;
 		gcRefPtr<ThreadPoolTaskSourceI> m_pTaskSource;
 		gcRefPtr<BaseTask> m_pTask;
+
+
+		gc_IMPLEMENT_REFCOUNTING(ThreadPoolThread)
 	};
 }
 
