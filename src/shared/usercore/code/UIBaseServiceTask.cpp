@@ -35,7 +35,7 @@ $/LicenseInfo$
 using namespace UserCore::ItemTask;
 
 
-UIBaseServiceTask::UIBaseServiceTask(UserCore::Item::ITEM_STAGE stage, const char* taskname, UserCore::Item::ItemHandle* handle, MCFBranch installBranch, MCFBuild installBuild) 
+UIBaseServiceTask::UIBaseServiceTask(UserCore::Item::ITEM_STAGE stage, const char* taskname, gcRefPtr<UserCore::Item::ItemHandleI> &handle, MCFBranch installBranch, MCFBuild installBuild) 
 	: BaseItemServiceTask(stage, taskname, handle, installBranch, installBuild)
 {
 }
@@ -88,7 +88,7 @@ void UIBaseServiceTask::onServiceError(gcException& e)
 
 gcString UIBaseServiceTask::getBranchMcf(DesuraId id, MCFBranch branch, MCFBuild build)
 {
-	UserCore::MCFManagerI *mm = getUserCore()->getInternal()->getMCFManager();
+	auto mm = getUserCore()->getInternal()->getMCFManager();
 	gcString filePath = mm->getMcfPath(id, branch, build);
 
 	if (filePath == "" || !checkPath(filePath.c_str(), branch, build))
@@ -166,7 +166,7 @@ void UIBaseServiceTask::completeUninstall(bool removeAll, bool removeAccount)
 
 	if (removeAll)
 	{
-		UserCore::MCFManagerI *mm = getUserCore()->getInternal()->getMCFManager();
+		auto mm = getUserCore()->getInternal()->getMCFManager();
 		mm->delAllMcfPath(getItemId());
 
 		UTIL::FS::Path path(getUserCore()->getAppDataPath(), "", false);

@@ -26,13 +26,10 @@ $/LicenseInfo$
 #include "Common.h"
 #include "UploadResumeThread.h"
 
-namespace UserCore
-{
-namespace Thread
-{
+using namespace UserCore::Thread;
 
-
-UploadResumeThread::UploadResumeThread(DesuraId id, const char* key, WebCore::Misc::ResumeUploadInfo *info) : MCFThread("UploadResume Thread", id)
+UploadResumeThread::UploadResumeThread(DesuraId id, const char* key, gcRefPtr<WebCore::Misc::ResumeUploadInfo> info) 
+	: MCFThread("UploadResume Thread", id)
 {
 	m_szKey = gcString(key);
 	m_pUpInfo = info;
@@ -42,7 +39,7 @@ void UploadResumeThread::doRun()
 {
 	gcAssert(m_pUpInfo);
 
-	getWebCore()->resumeUpload(getItemId(), m_szKey.c_str(), *m_pUpInfo);
+	getWebCore()->resumeUpload(getItemId(), m_szKey.c_str(), *m_pUpInfo.get());
 
 	const char* localFilePath = getUploadManager()->findUpload(m_szKey.c_str());
 	gcString sLocalFP(localFilePath);
@@ -64,7 +61,7 @@ void UploadResumeThread::doRun()
 	if (getUserCore()->isAdmin())
 	{
 		searchPath = gcString("{0}{1}temp{1}", appDataPath, DIRS_STR);
-		
+
 		if (doSearch(searchPath.c_str()))
 			return;
 	}
@@ -84,7 +81,7 @@ bool UploadResumeThread::doSearch(const char* path)
 
 	UTIL::FS::getAllFiles(UTIL::FS::PathWithFile(path), fileList, &extList);
 
-	for (size_t x=0; x<fileList.size(); x++)
+	for (size_t x = 0; x<fileList.size(); x++)
 	{
 		if (validFile(fileList[x].getFullPath().c_str()))
 		{
@@ -110,7 +107,4 @@ bool UploadResumeThread::validFile(const char* szPath)
 	std::string md5 = UTIL::MISC::hashFile(path.getFullPath());
 	bool res = (UTIL::FS::getFileSize(path) == m_pUpInfo->size && md5 == m_pUpInfo->szHash);
 	return res;
-}
-
-}
 }

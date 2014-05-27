@@ -35,36 +35,33 @@ class IPCUninstallMcf;
 
 namespace UserCore
 {
-namespace ItemTask
-{
-
-
-class UIServiceTask : public UIBaseServiceTask
-{
-public:
-	UIServiceTask(UserCore::Item::ItemHandle* handle, bool removeAll, bool removeAcc);
-	~UIServiceTask();
-
-protected:
-	virtual bool initService();
-	virtual void onComplete();
-
-	virtual void onServiceError(gcException& e);
-
-	void onError(gcException &e) override
+	namespace ItemTask
 	{
-		onServiceError(e);
+		class UIServiceTask : public UIBaseServiceTask
+		{
+		public:
+			UIServiceTask(gcRefPtr<UserCore::Item::ItemHandleI> handle, bool removeAll, bool removeAcc);
+			~UIServiceTask();
+
+		protected:
+			virtual bool initService();
+			virtual void onComplete();
+
+			virtual void onServiceError(gcException& e);
+
+			void onError(gcException &e) override
+			{
+				onServiceError(e);
+			}
+
+		private:
+			std::shared_ptr<IPCUninstallMcf> m_pIPCUI;
+
+			bool m_bRemoveAll;
+			bool m_bRemoveAcc;
+			volatile bool m_bRunning;
+		};
 	}
-
-private:
-	std::shared_ptr<IPCUninstallMcf> m_pIPCUI;
-
-	bool m_bRemoveAll;
-	bool m_bRemoveAcc;
-	volatile bool m_bRunning;
-};
-
-}
 }
 
 #endif

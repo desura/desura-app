@@ -42,9 +42,9 @@ public:
 		delete this;
 	}
 
-	UserCore::Item::ItemInfo* m_pItem;
-	UserCore::ToolManager* m_pToolManager;
-	UserCore::Item::BranchInfoI* m_pBranch;
+	gcRefPtr<UserCore::Item::ItemInfo> m_pItem;
+	gcRefPtr<UserCore::ToolManager> m_pToolManager;
+	gcRefPtr<UserCore::Item::BranchInfoI> m_pBranch;
 };
 
 template <>
@@ -143,9 +143,9 @@ protected:
 	DesuraId m_ItemId;
 };
 
-UserCore::ToolInfo* NewJSToolInfo(DesuraId id)
+gcRefPtr<UserCore::ToolInfo> NewJSToolInfo(DesuraId id)
 {
-	return new JSToolInfo(id);
+	return gcRefPtr<UserCore::ToolInfo>::create(id);
 }
 
 
@@ -197,17 +197,17 @@ ItemExtender g_ItemExtender;
 
 
 
-void ToolManager::addJSTool(UserCore::Item::ItemInfo* item, uint32 branchId, gcString name, gcString exe, gcString args, gcString res)
+void ToolManager::addJSTool(gcRefPtr<UserCore::Item::ItemInfo> item, uint32 branchId, gcString name, gcString exe, gcString args, gcString res)
 {
 	if (!item)
 		return;
 
-	UserCore::Item::BranchInfoI* branch = item->getBranchById(branchId);
+	auto branch = item->getBranchById(branchId);
 
 	if (!branch)
 		return;
 
-	UserCore::Item::BranchInfo* realBranch = dynamic_cast<UserCore::Item::BranchInfo*>(branch);
+	auto realBranch = gcRefPtr<UserCore::Item::BranchInfo>::dyn_cast(branch);
 
 	if (!realBranch)
 		return;
@@ -215,11 +215,11 @@ void ToolManager::addJSTool(UserCore::Item::ItemInfo* item, uint32 branchId, gcS
 	bool found = false;
 
 
-	JSToolInfo* jsinfo = nullptr;
+	gcRefPtr<JSToolInfo> jsinfo;
 
-	BaseManager<ToolInfo>::for_each([&](ToolInfo* info)
+	BaseManager<ToolInfo>::for_each([&](gcRefPtr<ToolInfo> info)
 	{
-		auto temp = dynamic_cast<JSToolInfo*>(info);
+		auto temp = gcRefPtr<JSToolInfo>::dyn_cast(info);
 
 		if (!temp)
 			return;
@@ -243,12 +243,12 @@ void ToolManager::addJSTool(UserCore::Item::ItemInfo* item, uint32 branchId, gcS
 	DesuraId toolId(m_iLastCustomToolId, DesuraId::TYPE_TOOL);
 	m_iLastCustomToolId--;
 
-	JSToolInfo* tool = new JSToolInfo(item->getId(), realBranch->getBranchId(), toolId, name, exe, args, res);
+	auto tool = gcRefPtr<JSToolInfo>::create(item->getId(), realBranch->getBranchId(), toolId, name, exe, args, res);
 	realBranch->addJSTool(toolId);
 	addItem(tool);
 }
 
-void ToolManager::findJSTools(UserCore::Item::ItemInfo* item)
+void ToolManager::findJSTools(gcRefPtr<UserCore::Item::ItemInfoI> item)
 {
 	bool validPath = false;
 
@@ -285,7 +285,7 @@ void ToolManager::findJSTools(UserCore::Item::ItemInfo* item)
 		ScriptCoreI* instance = (ScriptCoreI*)m_pFactory(SCRIPT_CORE);
 
 		UserItem* userItem = new UserItem();
-		userItem->m_pItem = item;
+		userItem->m_pItem = gcRefPtr<UserCore::Item::ItemInfo>::dyn_cast(item);
 		userItem->m_pBranch = item->getBranch(x);
 		userItem->m_pToolManager = this;
 

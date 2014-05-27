@@ -46,7 +46,7 @@ $/LicenseInfo$
 #include "VSInstallMissing.h"
 
 #include "MCFDownloadProviders.h"
-
+#include "user.h"
 
 enum TIER
 {
@@ -57,12 +57,10 @@ enum TIER
 	INSTALLMISSINGFILES,
 };
 
-namespace UserCore
-{
-namespace ItemTask
-{
+using namespace UserCore::ItemTask;
 
-VerifyServiceTask::VerifyServiceTask(UserCore::Item::ItemHandle* handle, MCFBranch branch, MCFBuild build, bool files, bool tools, bool hooks) 
+
+VerifyServiceTask::VerifyServiceTask(gcRefPtr<UserCore::Item::ItemHandleI> handle, MCFBranch branch, MCFBuild build, bool files, bool tools, bool hooks) 
 	: BaseItemTask(UserCore::Item::ITEM_STAGE::STAGE_VERIFY, "Verify", handle, branch, build)
 {
 	m_iTier = START;
@@ -269,7 +267,7 @@ void VerifyServiceTask::checkHooks()
 	const char* insPath = getItemInfo()->getPath();
 
 	if (hookPath && UTIL::FS::isValidFile(hookPath))
-		getUserCore()->getServiceMain()->runInstallScript(hookPath, insPath, "PostInstall");
+		getUserCore()->getInternal()->getServiceMain()->runInstallScript(hookPath, insPath, "PostInstall");
 }
 
 void VerifyServiceTask::refreshInfo()
@@ -491,7 +489,7 @@ bool VerifyServiceTask::checkItem()
 bool VerifyServiceTask::checkBranch()
 {
 	auto pItem = getItemInfo();
-	UserCore::Item::BranchInfoI* pBranch = pItem->getCurrentBranch();
+	auto pBranch = pItem->getCurrentBranch();
 	
 	if (!pBranch)
 		return false;
@@ -621,8 +619,4 @@ void VerifyServiceTask::onError(gcException& e)
 		pItem->setPaused(true, true);
 
 	onErrorEvent(e);
-}
-
-
-}
 }

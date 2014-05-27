@@ -47,6 +47,7 @@ namespace
 CVar::CVar(const char* name, const char* defVal, int32 flags, CVarCallBackFn callBack, CVarRegTargetI *pManager)
 	: CVar(name, defVal, flags, convertToStdFunction(callBack), pManager)
 {
+	addRef();
 }
 
 CVar::CVar(const char* szName, const char* szDefVal, int32 nFlags, std::function<bool(const CVar*, const char*)> callback, CVarRegTargetI *pManager)
@@ -57,6 +58,8 @@ CVar::CVar(const char* szName, const char* szDefVal, int32 nFlags, std::function
 	, m_iFlags(nFlags)
 	, m_pCVarManager(pManager)
 {
+	addRef();
+
 	if (!m_pCVarManager)
 	{
 		InitCVarManger();
@@ -84,7 +87,7 @@ void CVar::reg(const char* name)
 	if (!m_pCVarManager)
 		return;
 
-	m_bReg = m_pCVarManager->RegCVar(this);
+	m_bReg = m_pCVarManager->RegCVar(gcRefPtr<CVar>(this));
 
 	if (!m_bReg)
 		Warning("Failed to register cvar [{0}] (maybe duplicate)\n", name);		
@@ -93,7 +96,7 @@ void CVar::reg(const char* name)
 void CVar::deregister()
 {
 	if (m_pCVarManager && m_bReg)
-		m_pCVarManager->UnRegCVar(this);
+		m_pCVarManager->UnRegCVar(gcRefPtr<CVar>(this));
 
 	m_bReg = false;
 	m_pCVarManager = nullptr;

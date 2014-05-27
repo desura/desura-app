@@ -76,8 +76,10 @@ DesuraControl::DesuraControl(gcFrame* parent, bool offline, const char* szProvid
 	this->SetBackgroundColour( wxColor(GetGCThemeManager()->getColor("headerbottomborder", "bg")));
 	this->SetSizeHints( wxDefaultSize, wxDefaultSize );
 	
-	if (GetUserCore())
-		*GetUserCore()->getNewAvatarEvent() += guiDelegate(this, &DesuraControl::onNewAvatar);
+	auto userCore = GetUserCore();
+
+	if (userCore)
+		userCore->getNewAvatarEvent() += guiDelegate(this, &DesuraControl::onNewAvatar);
 
 	parent->onActiveEvent += guiDelegate(this, &DesuraControl::onActiveToggle);
 
@@ -93,7 +95,7 @@ DesuraControl::DesuraControl(gcFrame* parent, bool offline, const char* szProvid
 	const char* szUsername = Managers::GetString("#MP_OFFLINE");
 	const char* szAvatar = nullptr;
 	
-	if (GetUserCore())
+	if (userCore)
 	{
 		szAvatar = GetUserCore()->getAvatar();
 
@@ -214,18 +216,20 @@ DesuraControl::DesuraControl(gcFrame* parent, bool offline, const char* szProvid
 	this->SetSizer( fgSizer5 );
 	this->Layout();
 
-	if (GetUserCore())
-		*GetUserCore()->getAppUpdateProgEvent() += guiDelegate(this, &DesuraControl::onDesuraUpdate);
+	if (userCore)
+		userCore->getAppUpdateProgEvent() += guiDelegate(this, &DesuraControl::onDesuraUpdate);
 
 	m_bOffline = offline;
 }
 
 DesuraControl::~DesuraControl()
 {
-	if (GetUserCore())
+	auto userCore = GetUserCore();
+
+	if (userCore)
 	{
-		*GetUserCore()->getNewAvatarEvent() -= guiDelegate(this, &DesuraControl::onNewAvatar);
-		*GetUserCore()->getAppUpdateProgEvent() -= guiDelegate(this, &DesuraControl::onDesuraUpdate);
+		userCore->getNewAvatarEvent() -= guiDelegate(this, &DesuraControl::onNewAvatar);
+		userCore->getAppUpdateProgEvent() -= guiDelegate(this, &DesuraControl::onDesuraUpdate);
 	}
 }
 
@@ -355,14 +359,16 @@ void DesuraControl::onButtonClicked( wxCommandEvent& event )
 	if (m_bOffline)
 		return;
 
+	auto userCore = GetUserCore();
+
 	if (event.GetId() == m_pAvatar->GetId())
 	{
-		if (GetUserCore())
+		if (userCore)
 			g_pMainApp->loadUrl(GetUserCore()->getProfileEditUrl(), COMMUNITY);
 	}
 	else if (event.GetId() == m_pUsernameBox->GetId())
 	{	
-		if (GetUserCore())
+		if (userCore)
 			g_pMainApp->loadUrl(GetUserCore()->getProfileUrl(), COMMUNITY);
 	}
 	else

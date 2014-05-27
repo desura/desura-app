@@ -40,7 +40,7 @@ $/LicenseInfo$
 
 using namespace UserCore::ItemTask;
 
-ValidateTask::ValidateTask(UserCore::Item::ItemHandle* handle, MCFBranch branch, MCFBuild build) 
+ValidateTask::ValidateTask(gcRefPtr<UserCore::Item::ItemHandleI> handle, MCFBranch branch, MCFBuild build)
 	: BaseItemTask(UserCore::Item::ITEM_STAGE::STAGE_VALIDATE, "Validate", handle, branch, build)
 {
 	onErrorEvent += delegate(this, &ValidateTask::onError);
@@ -52,7 +52,7 @@ ValidateTask::~ValidateTask()
 
 void ValidateTask::doRun()
 {
-	UserCore::MCFManagerI *mm = getUserCore()->getInternal()->getMCFManager();
+	auto mm = getUserCore()->getInternal()->getMCFManager();
 	auto pItem = getItemInfo();
 
 	if (!pItem)
@@ -76,7 +76,7 @@ void ValidateTask::doRun()
 
 	validateHeader(build, branch);
 
-	UserCore::Item::BranchInfoI* curBranch = pItem->getCurrentBranch();
+	auto curBranch = pItem->getCurrentBranch();
 
 	if (isStopped())
 		return;
@@ -196,7 +196,7 @@ void ValidateTask::updateStatusFlags()
 	pItem->delSFlag(flags);
 
 	uint32 num = 0;
-	getUserCore()->getItemsAddedEvent()->operator()(num);
+	getUserCore()->getItemsAddedEvent()(num);
 
 	MCFBuild build  = getMcfBuild();
 	MCFBranch branch = getMcfBranch();
@@ -322,7 +322,7 @@ void ValidateTask::copyLocalMcfs(MCFBranch branch, MCFBuild build)
 	if (isStopped())
 		return;
 
-	UserCore::MCFManagerI *mm = getUserCore()->getInternal()->getMCFManager();
+	auto mm = getUserCore()->getInternal()->getMCFManager();
 
 	std::vector<McfPathData> vOldMcfs;
 	mm->getAllMcfPaths(getItemId(), vOldMcfs);

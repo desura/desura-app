@@ -35,7 +35,7 @@ BEGIN_EVENT_TABLE( CreateMCFForm, gcFrame )
 	EVT_CLOSE( CreateMCFForm::onFormClose )
 END_EVENT_TABLE()
 
-CreateMCFForm::CreateMCFForm(wxWindow* parent, UserCore::ItemManagerI* pItemManager) 
+CreateMCFForm::CreateMCFForm(wxWindow* parent, gcRefPtr<UserCore::ItemManagerI> pItemManager) 
 	: gcFrame(parent, wxID_ANY, wxT("Creating MCF"), wxDefaultPosition, wxSize( 415,120 ), wxCAPTION|wxCLOSE_BOX|wxFRAME_FLOAT_ON_PARENT|wxSYSTEM_MENU)
 	, m_bsSizer(new wxBoxSizer(wxVERTICAL))
 	, m_pItemManager(pItemManager)
@@ -53,8 +53,10 @@ CreateMCFForm::CreateMCFForm(wxWindow* parent, UserCore::ItemManagerI* pItemMana
 
 CreateMCFForm::~CreateMCFForm()
 {
-	if (GetUserCore())
-		*GetUserCore()->getItemsAddedEvent() -= guiDelegate(this, &CreateMCFForm::updateInfo);
+	auto userCore = GetUserCore();
+
+	if (userCore)
+		userCore->getItemsAddedEvent() -= guiDelegate(this, &CreateMCFForm::updateInfo);
 }
 
 void CreateMCFForm::onFormClose(wxCloseEvent& event)
@@ -78,7 +80,7 @@ void CreateMCFForm::updateInfo(uint32& count)
 {
 	gcTrace("");
 
-	UserCore::Item::ItemInfoI *item = m_pItemManager->findItemInfo(m_uiInternId);
+	auto item = m_pItemManager->findItemInfo(m_uiInternId);
 
 	if (item)
 	{
@@ -90,8 +92,10 @@ void CreateMCFForm::updateInfo(uint32& count)
 		if (m_pPage)
 			m_pPage->setInfo(m_uiInternId, item);
 
-		if (GetUserCore())
-			*GetUserCore()->getItemsAddedEvent() -= guiDelegate(this, &CreateMCFForm::updateInfo);
+		auto userCore = GetUserCore();
+
+		if (userCore)
+			userCore->getItemsAddedEvent() -= guiDelegate(this, &CreateMCFForm::updateInfo);
 	}
 }
 
@@ -99,7 +103,7 @@ void CreateMCFForm::setInfo(DesuraId id)
 {
 	gcTrace("Id: {0}", id);
 
-	UserCore::Item::ItemInfoI *item = m_pItemManager->findItemInfo(id);
+	auto item = m_pItemManager->findItemInfo(id);
 
 	if (!item)
 	{	
@@ -110,8 +114,10 @@ void CreateMCFForm::setInfo(DesuraId id)
 		}
 		else
 		{
-			if (GetUserCore())
-				*GetUserCore()->getItemsAddedEvent() += guiDelegate(this, &CreateMCFForm::updateInfo);
+			auto userCore = GetUserCore();
+
+			if (userCore)
+				userCore->getItemsAddedEvent() += guiDelegate(this, &CreateMCFForm::updateInfo);
 
 			m_pItemManager->retrieveItemInfoAsync(id);
 		}

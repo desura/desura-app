@@ -54,14 +54,14 @@ std::string TraceClassInfo(ItemInfo *pClass)
 }
 
 
-ItemInfo::ItemInfo(UserCore::UserI *user, DesuraId id, UTIL::FS::UtilFSI* pFileSystem)
+ItemInfo::ItemInfo(gcRefPtr<UserCore::UserI> user, DesuraId id, UTIL::FS::UtilFSI* pFileSystem)
 	: m_pUserCore(user)
 	, m_iId(id)
 	, m_pFileSystem(pFileSystem)
 {
 }
 
-ItemInfo::ItemInfo(UserCore::UserI *user, DesuraId id, DesuraId parid, UTIL::FS::UtilFSI* pFileSystem)
+ItemInfo::ItemInfo(gcRefPtr<UserCore::UserI> user, DesuraId id, DesuraId parid, UTIL::FS::UtilFSI* pFileSystem)
 	: m_pUserCore(user)
 	, m_iId(id)
 	, m_iParentId(parid)
@@ -71,7 +71,6 @@ ItemInfo::ItemInfo(UserCore::UserI *user, DesuraId id, DesuraId parid, UTIL::FS:
 
 ItemInfo::~ItemInfo()
 {
-	safe_delete(m_vBranchList);
 }
 
 
@@ -97,7 +96,7 @@ void ItemInfo::deleteFromDb(sqlite3x::sqlite3_connection* db)
 		m_vBranchList[x]->deleteFromDb(db);
 	}
 
-	std::for_each(m_mBranchInstallInfo.begin(), m_mBranchInstallInfo.end(), [&db](std::pair<uint32, BranchInstallInfo*> p)
+	std::for_each(m_mBranchInstallInfo.begin(), m_mBranchInstallInfo.end(), [&db](std::pair<uint32, gcRefPtr<BranchInstallInfo>> p)
 	{
 		p.second->deleteFromDb(db);
 	});
@@ -182,7 +181,7 @@ void ItemInfo::saveDb(sqlite3x::sqlite3_connection* db)
 			m_vBranchList[x]->saveDb(db);
 		}
 
-		std::for_each(m_mBranchInstallInfo.begin(), m_mBranchInstallInfo.end(), [&db](std::pair<uint32, BranchInstallInfo*> p)
+		std::for_each(m_mBranchInstallInfo.begin(), m_mBranchInstallInfo.end(), [&db](std::pair<uint32, gcRefPtr<BranchInstallInfo>> p)
 		{
 			p.second->saveDb(db);
 		});
@@ -227,15 +226,15 @@ void ItemInfo::saveDbFull(sqlite3x::sqlite3_connection* db)
 
 	cmd.executenonquery();
 
-	for (size_t x=0; x<m_vBranchList.size(); x++)
+	for (auto b : m_vBranchList)
 	{
-		m_vBranchList[x]->saveDbFull(db);
+		b->saveDbFull(db);
 	}
 
-	std::for_each(m_mBranchInstallInfo.begin(), m_mBranchInstallInfo.end(), [&db](std::pair<uint32, BranchInstallInfo*> p)
+	for (auto p : m_mBranchInstallInfo)
 	{
 		p.second->saveDb(db);
-	});
+	}
 }
 
 void ItemInfo::loadDb(sqlite3x::sqlite3_connection* db)
@@ -298,7 +297,7 @@ void ItemInfo::loadDb(sqlite3x::sqlite3_connection* db)
 
 		for (size_t x=0; x<vIdList.size(); x++)
 		{
-			BranchInstallInfo* bii = new BranchInstallInfo(MCFBranch::BranchFromInt(vIdList[x]), this, m_pFileSystem);
+			auto bii = gcRefPtr<BranchInstallInfo>::create(MCFBranch::BranchFromInt(vIdList[x]), this, m_pFileSystem);
 
 			try
 			{
@@ -333,7 +332,7 @@ void ItemInfo::loadDb(sqlite3x::sqlite3_connection* db)
 			if (it == m_mBranchInstallInfo.end())
 				m_mBranchInstallInfo[vIdList[x].second] = new BranchInstallInfo(vIdList[x].second, this, m_pFileSystem);
 
-			BranchInfo* bi = new BranchInfo(MCFBranch::BranchFromInt(vIdList[x].first), m_iId, m_mBranchInstallInfo[vIdList[x].second], 0, m_pUserCore->getUserId());
+			auto bi = gcRefPtr<BranchInfo>::create(MCFBranch::BranchFromInt(vIdList[x].first), m_iId, m_mBranchInstallInfo[vIdList[x].second], 0, m_pUserCore->getUserId());
 			bi->onBranchInfoChangedEvent += delegate(this, &ItemInfo::onBranchInfoChanged);
 
 			try
@@ -367,7 +366,7 @@ void ItemInfo::loadDb(sqlite3x::sqlite3_connection* db)
 
 		if (getStatus() & ItemInfoI::STATUS_INSTALLCOMPLEX)
 		{
-			UserCore::MCFManagerI *mm = getUserCore()->getInternal()->getMCFManager();
+			auto mm = getUserCore()->getInternal()->getMCFManager();
 
 			gcString path = mm->getMcfPath(this);
 
@@ -383,7 +382,7 @@ void ItemInfo::loadDb(sqlite3x::sqlite3_connection* db)
 		}
 		else
 		{
-			BranchInfo* bi = getCurrentBranchFull();
+			auto bi = getCurrentBranchFull();
 
 			if (!bi && HasAnyFlags(getStatus(), ItemInfoI::STATUS_LINK) && m_mBranchInstallInfo.find(BUILDID_PUBLIC) != end(m_mBranchInstallInfo))
 			{
@@ -424,7 +423,7 @@ void ItemInfo::loadBranchXmlData(const XML::gcXMLElement &branch)
 	if (id == 0)
 		return;
 
-	BranchInfo* bi = nullptr;
+	gcRefPtr<BranchInfo> bi;
 	bool found = false;
 
 	for (size_t x=0; x<m_vBranchList.size(); x++)
@@ -471,7 +470,7 @@ void ItemInfo::loadBranchXmlData(const XML::gcXMLElement &branch)
 	}
 }
 
-void ItemInfo::loadXmlData(uint32 platform, const XML::gcXMLElement &xmlNode, uint16 statusOveride, WildcardManager* pWildCard, bool reset)
+void ItemInfo::loadXmlData(uint32 platform, const XML::gcXMLElement &xmlNode, uint16 statusOveride, gcRefPtr<WildcardManager> pWildCard, bool reset)
 {
 	gcTrace("");
 
@@ -512,14 +511,14 @@ void ItemInfo::loadXmlData(uint32 platform, const XML::gcXMLElement &xmlNode, ui
 
 	gcString installCheckFile;
 
-	BranchInfo* bi = getCurrentBranchFull();
+	auto bi = getCurrentBranchFull();
 
 	if (bi)
 		installCheckFile = bi->getInstallInfo()->getInstallCheck();
 
 	if (getStatus() & ItemInfoI::STATUS_INSTALLCOMPLEX)
 	{
-		UserCore::MCFManagerI *mm = getUserCore()->getInternal()->getMCFManager();
+		auto mm = getUserCore()->getInternal()->getMCFManager();
 		installCheckFile = mm->getMcfPath(this);
 	}
 
@@ -538,7 +537,7 @@ void ItemInfo::loadXmlData(uint32 platform, const XML::gcXMLElement &xmlNode, ui
 
 		for (size_t x=0; x<getBranchCount(); x++)
 		{
-			UserCore::Item::BranchInfoI* bi = getBranch(x);
+			auto bi = getBranch(x);
 
 			if (bi->getFlags() & (UserCore::Item::BranchInfoI::BF_MEMBERLOCK|UserCore::Item::BranchInfoI::BF_REGIONLOCK) )
 				continue;
@@ -663,7 +662,7 @@ void ItemInfo::processInfo(const XML::gcXMLElement &xmlEl)
 	}
 }
 
-void ItemInfo::processSettings(uint32 platform, const XML::gcXMLElement &setNode, WildcardManager* pWildCard, bool reset)
+void ItemInfo::processSettings(uint32 platform, const XML::gcXMLElement &setNode, gcRefPtr<WildcardManager> pWildCard, bool reset)
 {
 	gcTrace("");
 
@@ -671,7 +670,7 @@ void ItemInfo::processSettings(uint32 platform, const XML::gcXMLElement &setNode
 
 	for (size_t x=0; x<m_vBranchList.size(); x++)
 	{
-		UserCore::Item::BranchInfoI* branch = m_vBranchList[x];
+		auto branch = m_vBranchList[x];
 
 		if (HasAnyFlags(branch->getFlags(), UserCore::Item::BranchInfoI::BF_ONACCOUNT) && !HasAnyFlags(branch->getFlags(), UserCore::Item::BranchInfoI::BF_NORELEASES))
 		{
@@ -882,7 +881,7 @@ void ItemInfo::addSFlag(uint32 flags)
 	if (shouldTriggerUpdate)
 	{
 		uint32 num = 1;
-		getUserCore()->getItemsAddedEvent()->operator()(num);
+		getUserCore()->getItemsAddedEvent()(num);
 	}
 	
 	onInfoChange();
@@ -909,7 +908,7 @@ void ItemInfo::delSFlag(uint32 flags)
 	DesuraId currentID = getId();
 
 	if (!isDeleted() & wasDeleted)
-		m_pUserCore->getItemManager()->getOnNewItemEvent()->operator()(currentID);
+		m_pUserCore->getItemManager()->getOnNewItemEvent()(currentID);
 }
 
 void ItemInfo::addPFlag(uint8 flags)
@@ -1027,7 +1026,7 @@ void ItemInfo::processUpdateXml(const XML::gcXMLElement &node)
 		if (id == 0)
 			return;
 
-		BranchInfo* bi = nullptr;
+		gcRefPtr<BranchInfo> bi;
 
 		for (size_t x=0; x<m_vBranchList.size(); x++)
 		{
@@ -1047,7 +1046,7 @@ void ItemInfo::processUpdateXml(const XML::gcXMLElement &node)
 			if (it == m_mBranchInstallInfo.end())
 				m_mBranchInstallInfo[platformId] = new BranchInstallInfo(platformId, this, m_pFileSystem);
 
-			bi = new BranchInfo(MCFBranch::BranchFromInt(id), m_iId, m_mBranchInstallInfo[platformId], platformId, m_pUserCore->getUserId());
+			bi = gcRefPtr<BranchInfo>::create(MCFBranch::BranchFromInt(id), m_iId, m_mBranchInstallInfo[platformId], platformId, m_pUserCore->getUserId());
 			bi->loadXmlData(branch);
 
 			bi->onBranchInfoChangedEvent += delegate(this, &ItemInfo::onBranchInfoChanged);
@@ -1078,7 +1077,7 @@ void ItemInfo::broughtCheck()
 
 	for (size_t x=0; x<m_vBranchList.size(); x++)
 	{
-		BranchInfo* bi = m_vBranchList[x];
+		auto bi = m_vBranchList[x];
 
 		bool onAccount = HasAnyFlags(bi->getFlags(), BranchInfoI::BF_ONACCOUNT);
 		bool isDemo = HasAnyFlags(bi->getFlags(), BranchInfoI::BF_DEMO|BranchInfoI::BF_TEST);
@@ -1093,18 +1092,18 @@ void ItemInfo::broughtCheck()
 	if (brought == false)
 		return;
 
-	BranchInfo* bi = getCurrentBranchFull();
+	auto bi = getCurrentBranchFull();
 
 	//if we have an installed mod, means we are complex and cant be forgoten about
 	if (bi && bi->getInstallInfo()->hasInstalledMod())
 		return;
 
-	std::vector<UserCore::Item::ItemInfoI*> modList;
+	std::vector<gcRefPtr<UserCore::Item::ItemInfoI>> modList;
 	m_pUserCore->getItemManager()->getModList(getId(), modList);
 
 	for (size_t x=0; x<modList.size(); x++)
 	{
-		ItemHandleI* ih = m_pUserCore->getItemManager()->findItemHandle(modList[x]->getId());
+		auto ih = m_pUserCore->getItemManager()->findItemHandle(modList[x]->getId());
 
 		//If we are doing something with mods, just dont do any thing
 		if (ih->isInStage())
@@ -1126,7 +1125,7 @@ void ItemInfo::broughtCheck()
 
 	for (size_t x=0; x<modList.size(); x++)
 	{
-		ItemInfo* i = dynamic_cast<ItemInfo*>(modList[x]);
+		auto i = gcRefPtr<ItemInfo>::dyn_cast(modList[x]);
 
 		if (!i)
 			continue;
@@ -1190,7 +1189,7 @@ void ItemInfo::overideInstalledBuild(MCFBuild build)
 
 bool ItemInfo::hasAcceptedEula()
 {
-	BranchInfoI* branch = getCurrentBranch();
+	auto branch = getCurrentBranch();
 
 	if (!branch)
 		return true;
@@ -1200,7 +1199,7 @@ bool ItemInfo::hasAcceptedEula()
 
 const char* ItemInfo::getEulaUrl()	
 {
-	BranchInfoI* branch = getCurrentBranch();
+	auto branch = getCurrentBranch();
 
 	if (branch)
 	{
@@ -1269,12 +1268,12 @@ void ItemInfo::setLinkInfo(const char* exe, const char* args)
 	if (m_mBranchInstallInfo.size() == 0)
 		m_mBranchInstallInfo[BUILDID_PUBLIC] = new UserCore::Item::BranchInstallInfo(BUILDID_PUBLIC, this, m_pFileSystem);
 
-	BranchInstallInfo *bii = m_mBranchInstallInfo[BUILDID_PUBLIC];
+	auto bii = m_mBranchInstallInfo[BUILDID_PUBLIC];
 
 	if (m_vBranchList.size() == 0)
 		m_vBranchList.push_back(new UserCore::Item::BranchInfo(MCFBranch::BranchFromInt(0), getId(), bii, 0, m_pUserCore->getUserId()));
 
-	UserCore::Item::BranchInfo* bi = m_vBranchList[0];
+	auto bi = m_vBranchList[0];
 
 	bii->setLinkInfo(path.getFolderPath().c_str(), exe, args);
 	bi->setLinkInfo(getName());
@@ -1311,11 +1310,11 @@ void ItemInfo::setLinkInfo(const char* exe, const char* args)
 
 MCFBranch ItemInfo::getBestBranch(MCFBranch branch)
 {
-	BranchInfoI* bi = nullptr;
+	gcRefPtr<BranchInfoI> bi;
 
 	if (branch.isGlobal())
 	{
-		std::vector<BranchInfo*> filterList;
+		std::vector<gcRefPtr<BranchInfo>> filterList;
 
 		for (size_t x=0; x<m_vBranchList.size(); x++)
 		{
@@ -1334,12 +1333,12 @@ MCFBranch ItemInfo::getBestBranch(MCFBranch branch)
 	return selectBestBranch(m_vBranchList);
 }
 
-MCFBranch ItemInfo::selectBestBranch(const std::vector<BranchInfo*> &list)
+MCFBranch ItemInfo::selectBestBranch(const std::vector<gcRefPtr<BranchInfo>> &list)
 {
 	if (list.size() == 1)
 		return list[0]->getBranchId();
 
-	std::vector<BranchInfo*> shortList;
+	std::vector<gcRefPtr<BranchInfo>> shortList;
 
 	bool hasWinBranch = false;
 	bool hasNixBranch = false;
@@ -1352,7 +1351,7 @@ MCFBranch ItemInfo::selectBestBranch(const std::vector<BranchInfo*> &list)
 
 		for (size_t x=0; x<list.size(); x++)
 		{
-			UserCore::Item::BranchInfoI* bi = list[x];
+			auto bi = list[x];
 
 			if (!bi)
 				continue;
@@ -1400,7 +1399,7 @@ MCFBranch ItemInfo::selectBestBranch(const std::vector<BranchInfo*> &list)
 	//Remove all windows branches if we have a linux branch
 	if (hasWinBranch && hasNixBranch)
 	{
-		std::vector<BranchInfo*> t = shortList;
+		std::vector<gcRefPtr<BranchInfo>> t = shortList;
 		shortList.clear();
 
 		for (size_t x=0; x<t.size(); x++)
@@ -1413,7 +1412,7 @@ MCFBranch ItemInfo::selectBestBranch(const std::vector<BranchInfo*> &list)
 
 	if (shortList.size() > 1 && is64)
 	{
-		std::vector<BranchInfo*> t = shortList;
+		std::vector<gcRefPtr<BranchInfo>> t = shortList;
 		shortList.clear();
 
 		for (size_t x=0; x<t.size(); x++)
@@ -1433,7 +1432,7 @@ MCFBranch ItemInfo::selectBestBranch(const std::vector<BranchInfo*> &list)
 }
 
 
-BranchInfoI* ItemInfo::getBranch(uint32 index)
+gcRefPtr<BranchInfoI> ItemInfo::getBranch(uint32 index)
 {
 	if ((int32)index >= m_vBranchList.size())
 		return nullptr;
@@ -1441,7 +1440,7 @@ BranchInfoI* ItemInfo::getBranch(uint32 index)
 	return m_vBranchList[index];
 }
 
-BranchInfoI* ItemInfo::getCurrentBranch()
+gcRefPtr<BranchInfoI> ItemInfo::getCurrentBranch()
 {
 	if (m_INBranchIndex == UINT_MAX)
 		return nullptr;
@@ -1449,7 +1448,7 @@ BranchInfoI* ItemInfo::getCurrentBranch()
 	return m_vBranchList[m_INBranchIndex];
 }
 
-BranchInfo* ItemInfo::getCurrentBranchFull()
+gcRefPtr<BranchInfo> ItemInfo::getCurrentBranchFull()
 {
 	if (m_INBranchIndex == UINT_MAX)
 		return nullptr;
@@ -1457,7 +1456,7 @@ BranchInfo* ItemInfo::getCurrentBranchFull()
 	return m_vBranchList[m_INBranchIndex];
 }
 
-BranchInfoI* ItemInfo::getBranchById(uint32 id)
+gcRefPtr<BranchInfoI> ItemInfo::getBranchById(uint32 id)
 {
 	for (size_t x=0; x<m_vBranchList.size(); x++)
 	{
@@ -1478,12 +1477,12 @@ DesuraId ItemInfo::getInstalledModId(MCFBranch branch)
 }
 
 
-BranchInstallInfo* ItemInfo::getBranchOrCurrent(MCFBranch branch)
+gcRefPtr<BranchInstallInfo> ItemInfo::getBranchOrCurrent(MCFBranch branch)
 {
 	if (branch == 0)
 		branch = m_INBranch;
 
-	BranchInfo* bi = dynamic_cast<BranchInfo*>(getBranchById(branch));
+	auto bi = gcRefPtr<BranchInfo>::dyn_cast(getBranchById(branch));
 
 	if (!bi && !isDownloadable() && m_mBranchInstallInfo.size() > 0)
 		return m_mBranchInstallInfo.begin()->second;
@@ -1496,7 +1495,7 @@ BranchInstallInfo* ItemInfo::getBranchOrCurrent(MCFBranch branch)
 
 const char* ItemInfo::getPath(MCFBranch branch)		
 {
-	BranchInstallInfo* bi = getBranchOrCurrent(branch);
+	auto bi = getBranchOrCurrent(branch);
 
 	if (!bi)
 		return nullptr;
@@ -1506,7 +1505,7 @@ const char* ItemInfo::getPath(MCFBranch branch)
 
 const char* ItemInfo::getInsPrimary(MCFBranch branch)		
 {
-	BranchInstallInfo* bi = getBranchOrCurrent(branch);
+	auto bi = getBranchOrCurrent(branch);
 
 	if (!bi)
 		return nullptr;
@@ -1516,7 +1515,7 @@ const char* ItemInfo::getInsPrimary(MCFBranch branch)
 
 void ItemInfo::setInstalledModId(DesuraId id, MCFBranch branch)
 {
-	BranchInstallInfo* bi = getBranchOrCurrent(branch);
+	auto bi = getBranchOrCurrent(branch);
 
 	if (!bi)
 		return;
@@ -1526,7 +1525,7 @@ void ItemInfo::setInstalledModId(DesuraId id, MCFBranch branch)
 
 const char* ItemInfo::getInstalledVersion(MCFBranch branch)	
 {
-	BranchInstallInfo* bi = getBranchOrCurrent(branch);
+	auto bi = getBranchOrCurrent(branch);
 
 	if (!bi)
 		return nullptr;
@@ -1536,7 +1535,7 @@ const char* ItemInfo::getInstalledVersion(MCFBranch branch)
 
 uint64 ItemInfo::getInstallSize(MCFBranch branch)
 {
-	BranchInstallInfo* bi = getBranchOrCurrent(branch);
+	auto bi = getBranchOrCurrent(branch);
 
 	if (!bi)
 		return 0;
@@ -1546,7 +1545,7 @@ uint64 ItemInfo::getInstallSize(MCFBranch branch)
 
 uint64 ItemInfo::getDownloadSize(MCFBranch branch)
 {
-	BranchInstallInfo* bi = getBranchOrCurrent(branch);
+	auto bi = getBranchOrCurrent(branch);
 
 	if (!bi)
 		return 0;
@@ -1556,7 +1555,7 @@ uint64 ItemInfo::getDownloadSize(MCFBranch branch)
 
 MCFBuild ItemInfo::getLastInstalledBuild(MCFBranch branch)
 {
-	BranchInstallInfo* bi = getBranchOrCurrent(branch);
+	auto bi = getBranchOrCurrent(branch);
 
 	if (!bi)
 		return MCFBuild();
@@ -1566,7 +1565,7 @@ MCFBuild ItemInfo::getLastInstalledBuild(MCFBranch branch)
 
 MCFBuild ItemInfo::getInstalledBuild(MCFBranch branch)
 {
-	BranchInstallInfo* bi = getBranchOrCurrent(branch);
+	auto bi = getBranchOrCurrent(branch);
 
 	if (!bi)
 		return MCFBuild();
@@ -1576,7 +1575,7 @@ MCFBuild ItemInfo::getInstalledBuild(MCFBranch branch)
 
 MCFBuild ItemInfo::getNextUpdateBuild(MCFBranch branch)
 {
-	BranchInstallInfo* bi = getBranchOrCurrent(branch);
+	auto bi = getBranchOrCurrent(branch);
 
 	if (!bi)
 		return MCFBuild();
@@ -1586,7 +1585,7 @@ MCFBuild ItemInfo::getNextUpdateBuild(MCFBranch branch)
 
 void ItemInfo::overrideMcfBuild(MCFBuild build, MCFBranch branch)
 {
-	BranchInstallInfo* bi = getBranchOrCurrent(branch);
+	auto bi = getBranchOrCurrent(branch);
 
 	if (!bi)
 		return;
@@ -1596,7 +1595,7 @@ void ItemInfo::overrideMcfBuild(MCFBuild build, MCFBranch branch)
 
 uint32 ItemInfo::getExeCount(bool setActive, MCFBranch branch)
 {
-	BranchInstallInfo* bi = getBranchOrCurrent(branch);
+	auto bi = getBranchOrCurrent(branch);
 
 	if (!bi)
 		return 0;
@@ -1604,9 +1603,9 @@ uint32 ItemInfo::getExeCount(bool setActive, MCFBranch branch)
 	return bi->getExeCount(setActive);
 }
 
-void ItemInfo::getExeList(std::vector<UserCore::Item::Misc::ExeInfoI*> &list, MCFBranch branch)
+void ItemInfo::getExeList(std::vector<gcRefPtr<UserCore::Item::Misc::ExeInfoI>> &list, MCFBranch branch)
 {
-	BranchInstallInfo* bi = getBranchOrCurrent(branch);
+	auto bi = getBranchOrCurrent(branch);
 
 	if (!bi)
 		return;
@@ -1614,9 +1613,9 @@ void ItemInfo::getExeList(std::vector<UserCore::Item::Misc::ExeInfoI*> &list, MC
 	bi->getExeList(list);
 }
 
-UserCore::Item::Misc::ExeInfoI* ItemInfo::getActiveExe(MCFBranch branch)
+gcRefPtr<UserCore::Item::Misc::ExeInfoI> ItemInfo::getActiveExe(MCFBranch branch)
 {
-	BranchInstallInfo* bi = getBranchOrCurrent(branch);
+	auto bi = getBranchOrCurrent(branch);
 
 	if (!bi)
 		return nullptr;
@@ -1626,7 +1625,7 @@ UserCore::Item::Misc::ExeInfoI* ItemInfo::getActiveExe(MCFBranch branch)
 
 void ItemInfo::setActiveExe(const char* name, MCFBranch branch)
 {
-	BranchInstallInfo* bi = getBranchOrCurrent(branch);
+	auto bi = getBranchOrCurrent(branch);
 
 	if (!bi)
 		return;
@@ -1658,7 +1657,9 @@ namespace UnitTest
 	{
 	public:
 		ItemInfoThirdPartyFixture()
-			: i(&user, DesuraId(12884901920), &fs)
+			: user(gcRefPtr<UserCore::UserMock>::create())
+			, m_ItemManager(gcRefPtr<UserCore::ItemManagerMock>::create())
+			, i(gcRefPtr<ItemInfo>::create(user, DesuraId(12884901920), &fs))
 		{
 			checkPath = [](const UTIL::FS::Path& path) -> bool
 			{
@@ -1666,11 +1667,11 @@ namespace UnitTest
 			};
 
 			ON_CALL(fs, isValidFile(_)).WillByDefault(Invoke(checkPath));
-			ON_CALL(user, getUserId()).WillByDefault(Return(1));
-			ON_CALL(user, getItemsAddedEvent()).WillByDefault(Return(&m_ItemAddedEvent));
-			ON_CALL(user, getItemManager()).WillByDefault(Return(&m_ItemManager));
+			ON_CALL(*user, getUserId()).WillByDefault(Return(1));
+			ON_CALL(*user, getItemsAddedEvent()).WillByDefault(ReturnRef(m_ItemAddedEvent));
+			ON_CALL(*user, getItemManager()).WillByDefault(Return(m_ItemManager));
 
-			ON_CALL(m_ItemManager, getOnNewItemEvent()).WillByDefault(Return(&m_NewItemEvent));
+			ON_CALL(*m_ItemManager, getOnNewItemEvent()).WillByDefault(ReturnRef(m_NewItemEvent));
 		}
 
 		void setUpDb(sqlite3x::sqlite3_connection &db, const std::vector<std::string> &vSqlCommands)
@@ -1696,12 +1697,12 @@ namespace UnitTest
 		Event<DesuraId> m_NewItemEvent;
 		Event<uint32> m_ItemAddedEvent;
 
-		UserCore::UserMock user;
+		gcRefPtr<UserCore::UserMock> user;
 		UTIL::FS::UtilFSMock fs;
-		UserCore::ItemManagerMock m_ItemManager;
+		gcRefPtr<UserCore::ItemManagerMock> m_ItemManager;
 
 		std::function<bool(const UTIL::FS::Path&)> checkPath;
-		ItemInfo i;
+		gcRefPtr<ItemInfo> i;
 	};
 
 	static const std::vector<std::string> vSqlCommands =
@@ -1732,11 +1733,11 @@ namespace UnitTest
 		sqlite3x::sqlite3_connection db(":memory:");
 		
 		setUpDb(db, vSqlCommands);
-		i.loadDb(&db);
+		i->loadDb(&db);
 
-		ASSERT_TRUE(i.isInstalled());
-		ASSERT_TRUE(i.isLaunchable());
-		ASSERT_FALSE(i.isDownloadable());
+		ASSERT_TRUE(i->isInstalled());
+		ASSERT_TRUE(i->isLaunchable());
+		ASSERT_FALSE(i->isDownloadable());
 	}
 
 	const char* szThirdPartyInfo =
@@ -1775,23 +1776,23 @@ namespace UnitTest
 		sqlite3x::sqlite3_connection db(":memory:");
 
 		setUpDb(db, vSqlCommands);
-		i.loadDb(&db);
+		i->loadDb(&db);
 
-		ASSERT_TRUE(i.isInstalled());
-		ASSERT_TRUE(i.isLaunchable());
-		ASSERT_FALSE(i.isDownloadable());
-		ASSERT_FALSE(i.isDeleted());
-		ASSERT_TRUE(!!i.getCurrentBranch());
+		ASSERT_TRUE(i->isInstalled());
+		ASSERT_TRUE(i->isLaunchable());
+		ASSERT_FALSE(i->isDownloadable());
+		ASSERT_FALSE(i->isDeleted());
+		ASSERT_TRUE(!!i->getCurrentBranch());
 
-		i.softDelete();
+		i->softDelete();
 
-		ASSERT_FALSE(i.isInstalled());
-		ASSERT_FALSE(i.isLaunchable());
-		ASSERT_FALSE(i.isDownloadable());
-		ASSERT_TRUE(i.isDeleted());
-		ASSERT_FALSE(!!i.getCurrentBranch());
+		ASSERT_FALSE(i->isInstalled());
+		ASSERT_FALSE(i->isLaunchable());
+		ASSERT_FALSE(i->isDownloadable());
+		ASSERT_TRUE(i->isDeleted());
+		ASSERT_FALSE(!!i->getCurrentBranch());
 
-		WildcardManager wildcard;
+		auto wildcard = gcRefPtr<WildcardManager>::create();
 
 		{
 			static const char* gs_szWildcardXml =
@@ -1801,25 +1802,25 @@ namespace UnitTest
 
 			tinyxml2::XMLDocument doc;
 			doc.Parse(gs_szWildcardXml);
-			wildcard.parseXML(doc.RootElement());
+			wildcard->parseXML(doc.RootElement());
 		}
 
-		wildcard.onNeedSpecialEvent += delegate((ItemInfoThirdPartyFixture*)this, &ItemInfoThirdPartyFixture::resolveWildcard);
-		wildcard.onNeedInstallSpecialEvent += delegate((ItemInfoThirdPartyFixture*)this, &ItemInfoThirdPartyFixture::resolveWildcard);
+		wildcard->onNeedSpecialEvent += delegate((ItemInfoThirdPartyFixture*)this, &ItemInfoThirdPartyFixture::resolveWildcard);
+		wildcard->onNeedInstallSpecialEvent += delegate((ItemInfoThirdPartyFixture*)this, &ItemInfoThirdPartyFixture::resolveWildcard);
 
-		EXPECT_CALL(m_ItemManager, getOnNewItemEvent()).Times(AtLeast(1)).WillRepeatedly(Return(&m_NewItemEvent));
+		EXPECT_CALL(*m_ItemManager, getOnNewItemEvent()).Times(AtLeast(1)).WillRepeatedly(ReturnRef(m_NewItemEvent));
 
 		XML::gcXMLDocument doc;
 		doc.LoadBuffer(szThirdPartyInfo, strlen(szThirdPartyInfo));
 
-		i.loadXmlData(100, doc.GetRoot("game"), 0, &wildcard, false);
+		i->loadXmlData(100, doc.GetRoot("game"), 0, wildcard, false);
 
-		ASSERT_TRUE(i.isInstalled());
-		ASSERT_TRUE(i.isLaunchable());
-		ASSERT_FALSE(i.isDownloadable());
-		ASSERT_FALSE(i.isDeleted());
+		ASSERT_TRUE(i->isInstalled());
+		ASSERT_TRUE(i->isLaunchable());
+		ASSERT_FALSE(i->isDownloadable());
+		ASSERT_FALSE(i->isDeleted());
 
-		ASSERT_TRUE(!!i.getCurrentBranch());
+		ASSERT_TRUE(!!i->getCurrentBranch());
 	}
 
 

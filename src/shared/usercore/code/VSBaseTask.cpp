@@ -49,17 +49,17 @@ VSBaseTask::VSBaseTask()
 	m_Result = RES_NONE;
 }
 
-void VSBaseTask::setWebCore(WebCore::WebCoreI *wc)
+void VSBaseTask::setWebCore(gcRefPtr<WebCore::WebCoreI> wc)
 {
 	m_pWebCore = wc;
 }
 
-void VSBaseTask::setUserCore(UserCore::UserI *uc)
+void VSBaseTask::setUserCore(gcRefPtr<UserCore::UserI> uc)
 {
 	m_pUserCore = uc;
 }
 
-void VSBaseTask::setItemHandle(UserCore::Item::ItemHandleI* handle)
+void VSBaseTask::setItemHandle(gcRefPtr<UserCore::Item::ItemHandleI> handle)
 {
 	m_pHandle = handle;
 }
@@ -120,19 +120,19 @@ void VSBaseTask::stop()
 
 
 
-UserCore::Item::ItemHandleI* VSBaseTask::getItemHandle()
+gcRefPtr<UserCore::Item::ItemHandleI> VSBaseTask::getItemHandle()
 {
 	return m_pHandle;
 }
 
-UserCore::Item::ItemInfoI* VSBaseTask::getItemInfo()
+gcRefPtr<UserCore::Item::ItemInfoI> VSBaseTask::getItemInfo()
 {
 	return m_pHandle->getItemInfo();
 }
 
-UserCore::Item::ItemInfoI* VSBaseTask::getParentItemInfo()
+gcRefPtr<UserCore::Item::ItemInfoI> VSBaseTask::getParentItemInfo()
 {
-	UserCore::Item::ItemInfoI* item = getItemInfo();
+	auto item = getItemInfo();
 
 	if (!m_pUserCore || !item)
 		return nullptr;
@@ -145,12 +145,12 @@ DesuraId VSBaseTask::getItemId()
 	return getItemInfo()->getId();
 }
 
-WebCore::WebCoreI* VSBaseTask::getWebCore()
+gcRefPtr<WebCore::WebCoreI> VSBaseTask::getWebCore()
 {
 	return m_pWebCore;
 }
 
-UserCore::UserI* VSBaseTask::getUserCore()
+gcRefPtr<UserCore::UserI> VSBaseTask::getUserCore()
 {
 	return m_pUserCore;
 }

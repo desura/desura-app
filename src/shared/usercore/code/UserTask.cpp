@@ -27,35 +27,28 @@ $/LicenseInfo$
 #include "UserTask.h"
 #include "User.h"
 
-namespace UserCore
+using namespace UserCore::Task;
+
+
+UserTask::UserTask(gcRefPtr<UserCore::UserI> &pUser, DesuraId id)
+	: m_pUserCore(pUser)
+	, m_iId(id)
 {
-namespace Task
-{
-
-
-UserTask::UserTask(UserCore::UserI *user, DesuraId id)
-{
-	m_pUserCore = user;
-
-	if (user)
-		m_pWebCore = user->getWebCore();
-	else
-		m_pWebCore = nullptr;
-
-	m_iId = id;
-	m_bStopped = false;
+	if (m_pUserCore)
+		m_pWebCore = m_pUserCore->getWebCore();
 }
 
 UserTask::~UserTask()
 {
 }
 
-UserCore::Item::ItemInfo* UserTask::getItemInfo()
+gcRefPtr<UserCore::Item::ItemInfo> UserTask::getItemInfo()
 {
 	if (!m_pUserCore || !m_iId.isOk())
 		return nullptr;
 
-	return dynamic_cast<UserCore::Item::ItemInfo*>(m_pUserCore->getItemManager()->findItemInfo(m_iId));
+	auto item = m_pUserCore->getItemManager()->findItemInfo(m_iId);
+	return gcRefPtr<UserCore::Item::ItemInfo>(dynamic_cast<UserCore::Item::ItemInfo*>(item.get()));
 }
 
 void UserTask::onStop()
@@ -68,5 +61,3 @@ volatile bool UserTask::isStopped()
 	return m_bStopped;
 }
 
-}
-}

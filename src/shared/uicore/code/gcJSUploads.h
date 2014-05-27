@@ -33,10 +33,15 @@ $/LicenseInfo$
 
 namespace UserCore
 {
-namespace Misc
-{
-	class UploadInfoThreadI;
-}
+	namespace Misc
+	{
+		class UploadInfoThreadI;
+	}
+
+	namespace Item
+	{
+		class ItemInfoI;
+	}
 }
 
 class DesuraJSUploadInfo : public DesuraJSBase<DesuraJSUploadInfo>
@@ -44,31 +49,31 @@ class DesuraJSUploadInfo : public DesuraJSBase<DesuraJSUploadInfo>
 public:
 	DesuraJSUploadInfo();
 
-	virtual bool preExecuteValidation(const char* function, uint32 functionHash, JSObjHandle object, size_t argc, JSObjHandle* argv);
+	bool preExecuteValidation(const char* function, uint32 functionHash, JSObjHandle object, size_t argc, JSObjHandle* argv) override;
 
-	
+
 private:
-	void* getUploadFromId(int32 uid);
+	gcRefPtr<UserCore::Misc::UploadInfoThreadI> getUploadFromId(int32 uid);
 
-	bool isValid(UserCore::Misc::UploadInfoThreadI* upload);
-	bool isComplete(UserCore::Misc::UploadInfoThreadI* upload);
-	bool hasError(UserCore::Misc::UploadInfoThreadI* upload);
-	bool hasStarted(UserCore::Misc::UploadInfoThreadI* upload);
-	bool isPaused(UserCore::Misc::UploadInfoThreadI* upload);
-	bool shouldDeleteMcf(UserCore::Misc::UploadInfoThreadI* upload);
+	bool isValid(gcRefPtr<UserCore::Misc::UploadInfoThreadI> upload);
+	bool isComplete(gcRefPtr<UserCore::Misc::UploadInfoThreadI> upload);
+	bool hasError(gcRefPtr<UserCore::Misc::UploadInfoThreadI> upload);
+	bool hasStarted(gcRefPtr<UserCore::Misc::UploadInfoThreadI> upload);
+	bool isPaused(gcRefPtr<UserCore::Misc::UploadInfoThreadI> upload);
+	bool shouldDeleteMcf(gcRefPtr<UserCore::Misc::UploadInfoThreadI> upload);
 
-	void setDeleteMcf(UserCore::Misc::UploadInfoThreadI* upload, bool del);
-	void remove(UserCore::Misc::UploadInfoThreadI* upload);
-	void pause(UserCore::Misc::UploadInfoThreadI* upload);
-	void unpause(UserCore::Misc::UploadInfoThreadI* upload);
-	void cancel(UserCore::Misc::UploadInfoThreadI* upload);
-	void exploreMcf(UserCore::Misc::UploadInfoThreadI* upload);
+	void setDeleteMcf(gcRefPtr<UserCore::Misc::UploadInfoThreadI> upload, bool del);
+	void remove(gcRefPtr<UserCore::Misc::UploadInfoThreadI> upload);
+	void pause(gcRefPtr<UserCore::Misc::UploadInfoThreadI> upload);
+	void unpause(gcRefPtr<UserCore::Misc::UploadInfoThreadI> upload);
+	void cancel(gcRefPtr<UserCore::Misc::UploadInfoThreadI> upload);
+	void exploreMcf(gcRefPtr<UserCore::Misc::UploadInfoThreadI> upload);
 
-	void* getItem(UserCore::Misc::UploadInfoThreadI* upload);
-	int32 getProgress(UserCore::Misc::UploadInfoThreadI* upload);
-	gcString getFileName(UserCore::Misc::UploadInfoThreadI* upload);
-	gcString getUploadId(UserCore::Misc::UploadInfoThreadI* upload);
-	gcString getItemId(UserCore::Misc::UploadInfoThreadI* upload);
+	gcRefPtr<UserCore::Item::ItemInfoI> getItem(gcRefPtr<UserCore::Misc::UploadInfoThreadI> upload);
+	int32 getProgress(gcRefPtr<UserCore::Misc::UploadInfoThreadI> upload);
+	gcString getFileName(gcRefPtr<UserCore::Misc::UploadInfoThreadI> upload);
+	gcString getUploadId(gcRefPtr<UserCore::Misc::UploadInfoThreadI> upload);
+	gcString getItemId(gcRefPtr<UserCore::Misc::UploadInfoThreadI> upload);
 
 	uint32 m_uiIsValidHash;
 	uint32 m_uiGetUploadFromIdHash;

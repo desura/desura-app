@@ -33,6 +33,36 @@ $/LicenseInfo$
 #include "Common.h"
 #include "gcJSBase.h"
 
+
+static std::mutex g_JSObjectLock;
+static std::map<std::string, std::function<void()>> g_JSObjectCleanup;
+
+bool FindJSObjectCleanup(const std::string &strKey)
+{
+	std::lock_guard<std::mutex> gaurd(g_JSObjectLock);
+	return g_JSObjectCleanup.find(strKey) != end(g_JSObjectCleanup);
+}
+
+void AddJSObjectCleanup(const std::string &strKey, std::function<void()> fnCleanup)
+{
+	gcAssert(fnCleanup);
+	gcAssert(!FindJSObjectCleanup(strKey));
+
+	std::lock_guard<std::mutex> gaurd(g_JSObjectLock);
+	g_JSObjectCleanup[strKey] = fnCleanup;
+}
+
+void JSObjectCleanup()
+{
+	std::lock_guard<std::mutex> gaurd(g_JSObjectLock);
+
+	for (auto p : g_JSObjectCleanup)
+		p.second();
+
+	g_JSObjectCleanup.clear();
+}
+
+
 JSDelegateI::~JSDelegateI()
 {
 }

@@ -75,8 +75,10 @@ HtmlTabPage::HtmlTabPage(wxWindow* parent, gcString homePage, PAGE area)
 	this->SetSizer( m_pBSBrowserSizer );
 	this->Layout();
 
-	if (GetUserCore())
-		GetUserCore()->getCIPManager()->getItemsUpdatedEvent() += guiDelegate(this, &HtmlTabPage::onCIPUpdate);
+	auto userCore = GetUserCore();
+
+	if (userCore)
+		userCore->getCIPManager()->getItemsUpdatedEvent() += guiDelegate(this, &HtmlTabPage::onCIPUpdate);
 }
 
 HtmlTabPage::~HtmlTabPage()
@@ -95,8 +97,10 @@ HtmlTabPage::~HtmlTabPage()
 		m_pWebControl->onFindEvent -= guiDelegate(this, &HtmlTabPage::onFind);
 	}
 
-	if (GetUserCore())
-		GetUserCore()->getCIPManager()->getItemsUpdatedEvent() -= guiDelegate(this, &HtmlTabPage::onCIPUpdate);
+	auto userCore = GetUserCore();
+
+	if (userCore)
+		userCore->getCIPManager()->getItemsUpdatedEvent() -= guiDelegate(this, &HtmlTabPage::onCIPUpdate);
 }
 
 void HtmlTabPage::onFind()

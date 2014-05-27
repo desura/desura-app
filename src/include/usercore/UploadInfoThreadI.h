@@ -32,50 +32,48 @@ $/LicenseInfo$
 
 namespace UserCore
 {
-namespace Misc
-{
+	namespace Misc
+	{
+		class UploadInfo;
 
-class UploadInfo;
+		class UploadInfoThreadI : public gcRefBase
+		{
+		public:
+			virtual ~UploadInfoThreadI(){}
 
-class UploadInfoThreadI
-{
-public:
-	virtual ~UploadInfoThreadI(){;}
+			virtual uint64 getHash() = 0;
+			virtual DesuraId getItemId() = 0;
+			virtual void setStart(uint32 start) = 0;
 
-	virtual uint64 getHash()=0;
-	virtual DesuraId getItemId()=0;
-	virtual void setStart(uint32 start)=0;
+			virtual Event<uint32>& getCompleteEvent() = 0;
+			virtual Event<UploadInfo>& getUploadProgressEvent() = 0;
+			virtual Event<gcException>& getErrorEvent() = 0;
+			virtual EventV& getActionEvent() = 0;
 
-	virtual Event<uint32>* getCompleteEvent()=0;
-	virtual Event<UploadInfo>* getUploadProgressEvent()=0;
-	virtual Event<gcException>* getErrorEvent()=0;
-	virtual EventV* getActionEvent()=0;
-
-	//BaseThread
-	virtual void start()=0;
-	virtual void stop()=0;
-	virtual void nonBlockStop()=0;
-	virtual void unpause()=0;
-	virtual void pause()=0;
-	virtual bool isPaused()=0;
+			//BaseThread
+			virtual void start() = 0;
+			virtual void stop() = 0;
+			virtual void nonBlockStop() = 0;
+			virtual void unpause() = 0;
+			virtual void pause() = 0;
+			virtual bool isPaused() = 0;
 
 
-	virtual bool isDeleted()=0;
-	virtual void setDeleted()=0;
+			virtual bool isDeleted() = 0;
+			virtual void setDeleted() = 0;
 
-	virtual bool shouldDelMcf()=0;
-	virtual void setDelMcf(bool state = true)=0;
-	virtual bool hasStarted()=0;
-	virtual bool isCompleted()=0;
-	virtual bool hasError()=0;
+			virtual bool shouldDelMcf() = 0;
+			virtual void setDelMcf(bool state = true) = 0;
+			virtual bool hasStarted() = 0;
+			virtual bool isCompleted() = 0;
+			virtual bool hasError() = 0;
 
-	virtual uint32 getProgress()=0;
+			virtual uint32 getProgress() = 0;
 
-	virtual const char* getFile()=0;
-	virtual const char* getKey()=0;
-};
-
-}
+			virtual const char* getFile() = 0;
+			virtual const char* getKey() = 0;
+		};
+	}
 }
 
 #endif //DESURA_UPLOADINFOTHREAD_H

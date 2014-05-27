@@ -34,7 +34,7 @@ $/LicenseInfo$
 #pragma warning( disable : 4275)
 #include <map>
 
-class BaseItem
+class BaseItem : public gcRefBase
 {
 public:
 	BaseItem()
@@ -56,6 +56,8 @@ public:
 protected:
 	gcString m_szName;
 	uint64 m_uiHash;
+
+	gc_IMPLEMENT_REFCOUNTING(BaseItem)
 };
 
 
@@ -64,9 +66,8 @@ template <class T>
 class BaseManager
 {
 public:
-	BaseManager<T>(bool cleanUp = false)
+	BaseManager<T>()
 	{
-		m_bCleanUp = cleanUp;
 	}
 
 	virtual ~BaseManager<T>()
@@ -78,7 +79,7 @@ public:
 	template <typename F>
 	void for_each(F &f)
 	{
-		std::for_each(m_mItemMap.begin(), m_mItemMap.end(), [&f](std::pair<uint64, T*> p){
+		std::for_each(m_mItemMap.begin(), m_mItemMap.end(), [&f](std::pair<uint64, gcRefPtr<T>> p){
 			f(p.second);
 		});
 	}
@@ -86,19 +87,19 @@ public:
 	template <typename F>
 	void for_each(const F &f)
 	{
-		std::for_each(m_mItemMap.begin(), m_mItemMap.end(), [&f](std::pair<uint64, T*> p){
+		std::for_each(m_mItemMap.begin(), m_mItemMap.end(), [&f](std::pair<uint64, gcRefPtr<T>> p){
 			f(p.second);
 		});
 	}	
 #endif
 
 
-	T* findItem(uint64 hash)
+	gcRefPtr<T> findItem(uint64 hash)
 	{
 		if (m_mItemMap.size() == 0)
 			return nullptr;
 
-		typename std::map<uint64,T*>::iterator it = m_mItemMap.find(hash);
+		typename std::map<uint64, gcRefPtr<T>>::iterator it = m_mItemMap.find(hash);
 
 		if (it == m_mItemMap.end())
 			return nullptr;
@@ -106,16 +107,16 @@ public:
 		return it->second;
 	}
 
-	T* findItem(const char* name)
+	gcRefPtr<T> findItem(const char* name)
 	{
 		uint64 hash = UTIL::MISC::RSHash_CSTR(name);
 		return findItem(hash);
 	}
 
-	T* getItem(uint32 index)
+	gcRefPtr<T> getItem(uint32 index)
 	{
-		typename std::map<uint64, T*>::iterator it;
-		typename std::map<uint64, T*>::iterator endit = m_mItemMap.end();
+		typename std::map<uint64, gcRefPtr<T>>::iterator it;
+		typename std::map<uint64, gcRefPtr<T>>::iterator endit = m_mItemMap.end();
 
 		uint32 count = 0;
 
@@ -134,49 +135,53 @@ public:
 
 	void removeAll()
 	{
-		if (m_bCleanUp)
-			safe_delete(m_mItemMap);
+		m_mItemMap.clear();
+	}
+
+	std::vector<gcRefPtr<T>> dumpAndClear()
+	{
+		std::vector<gcRefPtr<T>> ret;
+
+		for (auto p : m_mItemMap)
+			ret.push_back(p.second);
+
+		m_mItemMap.clear();
+		return ret;
 	}
 
 protected:
-	void addItem(T* item)
+	void addItem(const gcRefPtr<T> &pItem)
 	{
-		if (item)
-			addItem(item->getHash(), item);
+		if (pItem)
+			addItem(pItem->getHash(), pItem);
 	}
 
-	void addItem(uint64 index, T* item)
+	void addItem(uint64 index, const gcRefPtr<T> &pItem)
 	{
-		if (item)
-			m_mItemMap.insert(std::pair<uint64,T*>(index, item));
+		if (pItem)
+			m_mItemMap.insert(std::pair<uint64, gcRefPtr<T>>(index, pItem));
 	}
 
-	void removeItem(const char* name, bool del = false)
+	void removeItem(const char* name)
 	{
 		uint64 hash = UTIL::MISC::RSHash_CSTR(name);
-		removeItem(hash, del);
+		removeItem(hash);
 	}
 
-	void removeItem(uint64 hash, bool del = false)
+	void removeItem(uint64 hash)
 	{
 		if (m_mItemMap.size() == 0)
 			return;
 
-		typename std::map<uint64, T*>::iterator it = m_mItemMap.find(hash);
+		typename std::map<uint64, gcRefPtr<T>>::iterator it = m_mItemMap.find(hash);
 
 		if (it == m_mItemMap.end())
 			return;
 
-		if (del)
-			safe_delete(it->second);
-
 		m_mItemMap.erase(it);
 	}
 
-	std::map<uint64, T*> m_mItemMap;
-
-private:
-	bool m_bCleanUp;
+	std::map<uint64, gcRefPtr<T>> m_mItemMap;
 };
 
 

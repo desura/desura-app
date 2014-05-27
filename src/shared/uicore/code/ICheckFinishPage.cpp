@@ -78,7 +78,7 @@ ICheckFinishPage::~ICheckFinishPage()
 
 void ICheckFinishPage::init()
 {
-	UserCore::Item::ItemInfoI *item = getItemHandle()->getItemInfo();
+	auto item = getItemHandle()->getItemInfo();
 
 	if (item)
 	{

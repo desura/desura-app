@@ -40,16 +40,16 @@ wxMenu* TBIGameMenu::createMenu(uint32 &lastMenuId)
 	if (!pItemManager)
 		return menu;
 
-	std::vector<UserCore::Item::ItemInfoI*> gList;
+	std::vector<gcRefPtr<UserCore::Item::ItemInfoI>> gList;
 	pItemManager->getGameList(gList);
 
-	std::sort(gList.begin(), gList.end(), [](UserCore::Item::ItemInfoI* left, UserCore::Item::ItemInfoI* right){
+	std::sort(gList.begin(), gList.end(), [](gcRefPtr<UserCore::Item::ItemInfoI> left, gcRefPtr<UserCore::Item::ItemInfoI> right){
 		return strcmp(left->getName(), right->getName()) <= 0;
 	});
 
 	for (size_t x=0; x<gList.size(); x++)
 	{
-		UserCore::Item::ItemInfoI *item = gList[x];
+		auto item = gList[x];
 
 		if (!item)
 			continue;

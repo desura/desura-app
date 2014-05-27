@@ -37,10 +37,10 @@ public:
 	ThemeManager();
 	~ThemeManager();
 
-	virtual const char* getThemeFolder();
-	virtual const char* getWebPage(const char* id);
-	virtual const char* getImage(const char* id);
-	virtual Color getColor(const char* name, const char* id);
+	const char* getThemeFolder() override;
+	const char* getWebPage(const char* id) override;
+	const char* getImage(const char* id) override;
+	Color getColor(const char* name, const char* id) override;
 
 	//! Gets a rectangle from a sprite section
 	//!
@@ -48,15 +48,15 @@ public:
 	//! @param rectId Rectangle name
 	//! @return Rectangle info
 	//!
-	virtual SpriteRectI* getSpriteRect(const char* id, const char* rectId);
+	gcRefPtr<SpriteRectI> getSpriteRect(const char* id, const char* rectId) override;
 
-	virtual void loadFromFolder(const char* folder);
-	virtual void loadTheme(const char* theme);
+	void loadFromFolder(const char* folder) override;
+	void loadTheme(const char* theme) override;
 
-	virtual void getThemeStubList(std::vector<ThemeStubI*> &vList);
+	void getThemeStubList(std::vector<ThemeStubI*> &vList) override;
 
 private:
-	Theme *m_pTheme;
+	std::shared_ptr<Theme> m_pTheme;
 
 	gcString m_szPath;
 	gcString m_szThemeFolder;

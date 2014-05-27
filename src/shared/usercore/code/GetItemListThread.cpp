@@ -34,10 +34,7 @@ $/LicenseInfo$
 #include "sqlite3x.hpp"
 #include "sql/CustomInstallPathSql.h"
 
-namespace UserCore
-{
-namespace Thread
-{
+using namespace UserCore::Thread;
 
 GetItemListThread::GetItemListThread() : InstalledWizardThread()
 {
@@ -61,12 +58,12 @@ void GetItemListThread::doRun()
 	if (isStopped())
 		return;
 
-	WildcardManager wMng = WildcardManager();
+	auto wMng = gcRefPtr<WildcardManager>::create();
 
 	if (ver == 1)
-		parseItems1(infoNode, &wMng);
+		parseItems1(infoNode, wMng);
 	else
-		parseItems2(infoNode, &wMng);
+		parseItems2(infoNode, wMng);
 
 	try
 	{
@@ -75,10 +72,10 @@ void GetItemListThread::doRun()
 		sqlite3x::sqlite3_connection db(m_szDbName.c_str());
 		sqlite3x::sqlite3_command cmd(db, "REPLACE INTO cipiteminfo (internalid, name) VALUES (?,?);");
 
-		for (size_t x=0; x<m_vGameList.size(); x++)
+		for (size_t x = 0; x<m_vGameList.size(); x++)
 		{
 			cmd.bind(1, (long long int)m_vGameList[x].getId().toInt64());
-			cmd.bind(2, std::string(m_vGameList[x].getName()) ); 
+			cmd.bind(2, std::string(m_vGameList[x].getName()));
 			cmd.executenonquery();
 		}
 	}
@@ -87,10 +84,6 @@ void GetItemListThread::doRun()
 		Warning("Failed to update cip item list: {0}\n", e.what());
 	}
 
-	uint32 prog=0;
+	uint32 prog = 0;
 	onCompleteEvent(prog);
-}
-
-
-}
 }

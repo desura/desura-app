@@ -202,7 +202,7 @@ void InstallPrompt::onButtonClick(wxCommandEvent& event)
 
 void InstallPrompt::setInfo(DesuraId id, const char* path)
 {
-	UserCore::Item::ItemInfoI *item = GetUserCore()->getItemManager()->findItemInfo(id);
+	auto item = GetUserCore()->getItemManager()->findItemInfo(id);
 
 	if (!item || !path)
 	{

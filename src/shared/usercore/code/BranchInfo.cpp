@@ -37,7 +37,7 @@ $/LicenseInfo$
 
 using namespace UserCore::Item;
 
-BranchInfo::BranchInfo(MCFBranch branchId, DesuraId itemId, BranchInstallInfo* bii, uint32 platformId, uint32 userid)
+BranchInfo::BranchInfo(MCFBranch branchId, DesuraId itemId, gcRefPtr<BranchInstallInfo> bii, uint32 platformId, uint32 userid)
 	: m_InstallInfo(bii)
 	, m_ItemId(itemId)
 	, m_uiBranchId(branchId)
@@ -527,7 +527,7 @@ void BranchInfo::setLinkInfo(const char* name)
 #endif
 }
 
-BranchInstallInfo* BranchInfo::getInstallInfo()
+gcRefPtr<BranchInstallInfo> BranchInfo::getInstallInfo()
 {
 	return m_InstallInfo;
 }
@@ -560,22 +560,23 @@ namespace UnitTest
 		}
 
 		uint32 m_nStatus = 0;
+
+		gc_IMPLEMENT_REFCOUNTING(StubBranchItemInfo2);
 	};
 
 	TEST(BranchInfo, CDKeyPerUser)
 	{
-		StubBranchItemInfo2 bi;
-		BranchInstallInfo info(1, &bi, UTIL::FS::g_pDefaultUTILFS);
+		auto bi = gcRefPtr<StubBranchItemInfo2>::create();
+		auto info = gcRefPtr<BranchInstallInfo>::create(1, bi, UTIL::FS::g_pDefaultUTILFS);
+		auto a = gcRefPtr<BranchInfo>::create(MCFBranch::BranchFromInt(1), DesuraId("2", "games"), info, 0, 123);
+		auto b = gcRefPtr<BranchInfo>::create(MCFBranch::BranchFromInt(1), DesuraId("2", "games"), info, 0, 123);
+		auto c = gcRefPtr<BranchInfo>::create(MCFBranch::BranchFromInt(1), DesuraId("2", "games"), info, 0, 456);
 
-		BranchInfo a(MCFBranch::BranchFromInt(1), DesuraId("2", "games"), &info, 0, 123);
-		BranchInfo b(MCFBranch::BranchFromInt(1), DesuraId("2", "games"), &info, 0, 123);
-		BranchInfo c(MCFBranch::BranchFromInt(1), DesuraId("2", "games"), &info, 0, 456);
-
-		a.setCDKey("A Test CD Key");
+		a->setCDKey("A Test CD Key");
 
 		{
 			std::vector<gcString> vCDKeys;
-			a.getCDKey(vCDKeys);
+			a->getCDKey(vCDKeys);
 
 			ASSERT_EQ(1, vCDKeys.size());
 			ASSERT_STREQ("A Test CD Key", vCDKeys[0].c_str());
@@ -586,13 +587,13 @@ namespace UnitTest
 		createItemInfoDbTables(db);
 
 
-		a.saveDbFull(&db);
-		b.loadDb(&db);
-		c.loadDb(&db);
+		a->saveDbFull(&db);
+		b->loadDb(&db);
+		c->loadDb(&db);
 
 		{
 			std::vector<gcString> vCDKeys;
-			b.getCDKey(vCDKeys);
+			b->getCDKey(vCDKeys);
 
 			ASSERT_EQ(1, vCDKeys.size());
 			ASSERT_STREQ("A Test CD Key", vCDKeys[0].c_str());
@@ -600,7 +601,7 @@ namespace UnitTest
 
 		{
 			std::vector<gcString> vCDKeys;
-			c.getCDKey(vCDKeys);
+			c->getCDKey(vCDKeys);
 
 			ASSERT_EQ(0, vCDKeys.size());
 		}

@@ -51,9 +51,12 @@ protected:
 
 	int32 GetFileSize(gcString file);
 
-	void* OpenFileForWrite(gcString file);
-	bool WriteFile(UTIL::FS::FileHandle* handle, gcString string);
-	void CloseFile(UTIL::FS::FileHandle* handle);
+	int32 OpenFileForWrite(gcString file);
+	bool WriteFile(int32 handle, gcString string);
+	void CloseFile(int32 handle);
+
+private:
+	std::vector<UTIL::FS::FileHandle*> m_vFileHandles;
 };
 
 

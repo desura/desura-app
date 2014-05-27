@@ -36,45 +36,41 @@ $/LicenseInfo$
 
 namespace UserCore
 {
-namespace ItemTask
-{
+	namespace ItemTask
+	{
+		class GatherInfoTask : public BaseItemTask
+		{
+		public:
+			GatherInfoTask(gcRefPtr<UserCore::Item::ItemHandleI> handle, MCFBranch branch, MCFBuild build, gcRefPtr<UserCore::Item::Helper::GatherInfoHandlerHelperI> &helper, uint32 flags);
+			~GatherInfoTask();
 
+		protected:
+			virtual void onError(gcException& e);
+			virtual void onComplete();
 
+			virtual void cancel();
 
-class GatherInfoTask : public BaseItemTask
-{
-public:
-	GatherInfoTask(UserCore::Item::ItemHandle *handle, MCFBranch branch, MCFBuild build, UserCore::Item::Helper::GatherInfoHandlerHelperI *helper, uint32 flags);
-	~GatherInfoTask();
+			void doRun();
 
-protected:
-	virtual void onError(gcException& e);
-	virtual void onComplete();
+			void checkRequirements();
+			uint32 validate();
 
-	virtual void cancel();
+			bool isValidBranch();
+			bool handleInvalidBranch();
 
-	void doRun();
+			bool checkNullBranch(gcRefPtr<UserCore::Item::BranchInfoI> &branchInfo);
 
-	void checkRequirements();
-	uint32 validate();
+			void completeStage();
+			void resetStage();
 
-	bool isValidBranch();
-	bool handleInvalidBranch();
+		private:
+			gcRefPtr<UserCore::Item::Helper::GatherInfoHandlerHelperI> m_pGIHH;
+			uint32 m_uiFlags;
 
-	bool checkNullBranch(UserCore::Item::BranchInfoI* branchInfo);
-
-	void completeStage();
-	void resetStage();
-
-private:
-	UserCore::Item::Helper::GatherInfoHandlerHelperI* m_pGIHH;
-	uint32 m_uiFlags;
-
-	bool m_bFirstTime;
-	volatile bool m_bCanceled;
-};
-
-}
+			bool m_bFirstTime;
+			volatile bool m_bCanceled;
+		};
+	}
 }
 
 #endif //DESURA_GATHERINFOTHREAD_H

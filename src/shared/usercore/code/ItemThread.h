@@ -31,74 +31,88 @@ $/LicenseInfo$
 
 #include "util_thread/BaseThread.h"
 #include "BaseItemTask.h"
-
+#include "usercore/UserThreadManagerI.h"
 
 
 namespace UserCore
 {
 	class UserThreadManagerI;
 
-namespace Item
-{
+	namespace Item
+	{
 
-class ItemThread : public ::Thread::BaseThread
-{
-public:
-	ItemThread(UserCore::Item::ItemHandle *handle);
-	~ItemThread();
+		class ItemThread : public ::Thread::BaseThread, public UserThreadProxyI
+		{
+		public:
+			ItemThread(gcRefPtr<UserCore::Item::ItemHandle> handle);
+			~ItemThread();
 
-	void setThreadManager(UserCore::UserThreadManagerI* tm);
-	void setWebCore(WebCore::WebCoreI *wc);
-	void setUserCore(UserCore::UserI *uc);
+			void setThreadManager(const gcRefPtr<UserCore::UserThreadManagerI> &tm);
+			void setWebCore(gcRefPtr<WebCore::WebCoreI> wc);
+			void setUserCore(gcRefPtr<UserCore::UserI> uc);
 
-	void queueTask(UserCore::ItemTask::BaseItemTask *task);
+			void queueTask(const gcRefPtr<UserCore::ItemTask::BaseItemTask> &task);
 
-	void purge();
+			void purge();
 
-	void cancelCurrentTask();
+			void cancelCurrentTask();
 
-	//! Is current task running
-	//!
-	//! @return True if running, false if not
-	//!
-	bool isRunningTask(){return m_bRunningTask;}
+			//! Is current task running
+			//!
+			//! @return True if running, false if not
+			//!
+			bool isRunningTask(){ return m_bRunningTask; }
 
-	bool hasTaskToRun();
+			bool hasTaskToRun();
 
-	Event<ITEM_STAGE> onTaskCompleteEvent;
-	Event<ITEM_STAGE> onTaskStartEvent;
+			Event<ITEM_STAGE> onTaskCompleteEvent;
+			Event<ITEM_STAGE> onTaskStartEvent;
 
-protected:
-	void run();
+			::Thread::BaseThread* getThread() override
+			{
+				return this;
+			}
 
-	void onPause();
-	void onUnpause();
-	void onStop();
+			void cleanup() override
+			{
+				gcAssert(isStopped() || !isRunning());
 
-	bool performTask();
-	UserCore::ItemTask::BaseItemTask* getNewTask();
+				purge();
 
-private:
-	std::deque<UserCore::ItemTask::BaseItemTask*> m_vTaskList;
-	UserCore::ItemTask::BaseItemTask* m_pCurrentTask;
+				m_pThreadManager.reset();
+				m_pWebCore.reset();
+				m_pUserCore.reset();
+			}
 
-	::Thread::WaitCondition m_WaitCond;
+		protected:
+			void run();
 
-	std::mutex m_TaskMutex;
-	std::mutex m_DeleteMutex;
+			void onPause();
+			void onUnpause();
+			void onStop();
 
-	bool m_bRunningTask;
-	bool m_bDeleteCurrentTask;
+			bool performTask();
+			gcRefPtr<UserCore::ItemTask::BaseItemTask> getNewTask();
 
-	UserCore::UserThreadManagerI* m_pThreadManager;
-	WebCore::WebCoreI* m_pWebCore;
-	UserCore::UserI* m_pUserCore;
+		private:
+			std::deque<gcRefPtr<UserCore::ItemTask::BaseItemTask>> m_vTaskList;
+			gcRefPtr<UserCore::ItemTask::BaseItemTask> m_pCurrentTask;
 
-	gcString m_szBaseName;
-};
+			::Thread::WaitCondition m_WaitCond;
 
+			std::mutex m_TaskMutex;
+			std::mutex m_DeleteMutex;
 
-}
+			bool m_bRunningTask;
+			bool m_bDeleteCurrentTask;
+
+			gcRefPtr<UserCore::UserThreadManagerI> m_pThreadManager;
+			gcRefPtr<WebCore::WebCoreI> m_pWebCore;
+			gcRefPtr<UserCore::UserI> m_pUserCore;
+
+			gcString m_szBaseName;
+		};
+	}
 }
 
 #endif //DESURA_ITEMTHREAD_H

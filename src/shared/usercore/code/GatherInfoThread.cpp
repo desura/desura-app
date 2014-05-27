@@ -42,19 +42,17 @@ GatherInfoThread::GatherInfoThread(DesuraId id, MCFBranch branch, MCFBuild build
 
 void GatherInfoThread::doRun()
 {
-	UserCore::Item::ItemInfo* item;
-
-	WildcardManager wildc = WildcardManager();
-	wildc.onNeedSpecialEvent += delegate(&onNeedWCEvent);
+	auto wildc = gcRefPtr<WildcardManager>::create();
+	wildc->onNeedSpecialEvent += delegate(&onNeedWCEvent);
 
 	uint32 prog = 0;
 	onProgUpdateEvent(prog);
-	getUserCore()->getItemManager()->retrieveItemInfo(getItemId(), 0, &wildc, MCFBranch::BranchFromInt(getMcfBranch()), MCFBuild::BuildFromInt(getMcfBuild()));
+	getUserCore()->getItemManager()->retrieveItemInfo(getItemId(), 0, wildc, MCFBranch::BranchFromInt(getMcfBranch()), MCFBuild::BuildFromInt(getMcfBuild()));
 
 	if (isStopped())
 		return;
 
-	item = getItemInfo();
+	auto item = getItemInfo();
 
 	if (!item)
 		throw gcException(ERR_INVALIDDATA, "The item handle was null (gather info failed)");

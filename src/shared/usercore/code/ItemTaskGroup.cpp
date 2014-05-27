@@ -32,7 +32,7 @@ $/LicenseInfo$
 using namespace UserCore::Item;
 
 
-ItemTaskGroup::ItemTaskGroup(UserCore::ItemManager* manager, ACTION action, uint8 activeCount) 
+ItemTaskGroup::ItemTaskGroup(gcRefPtr<UserCore::ItemManager> manager, ACTION action, uint8 activeCount)
 	: m_iActiveCount(activeCount)
 	, m_Action(action)
 	, m_pItemManager(manager)
@@ -49,7 +49,7 @@ UserCore::Item::ItemTaskGroupI::ACTION ItemTaskGroup::getAction()
 	return m_Action;
 }
 
-void ItemTaskGroup::getItemList(std::vector<UserCore::Item::ItemHandleI*> &list)
+void ItemTaskGroup::getItemList(std::vector<gcRefPtr<UserCore::Item::ItemHandleI>> &list)
 {
 	std::lock_guard<std::recursive_mutex> guard(m_ListLock);
 
@@ -62,35 +62,33 @@ void ItemTaskGroup::getItemList(std::vector<UserCore::Item::ItemHandleI*> &list)
 void ItemTaskGroup::cancelAll()
 {
 	{
-		std::lock_guard<std::recursive_mutex> guard(m_ListLock);
-
-		for (auto i : m_vWaitingList)
-		{
-			auto handle = dynamic_cast<ItemHandle*>(i);
-
-			if (handle)
-				handle->setTaskGroup(nullptr);
-		}
-
-		m_vWaitingList.clear();
+		std::lock_guard<std::recursive_mutex> guard(m_TaskListLock);
+		m_vTaskList.clear();
 	}
 
-	//TODO: Replace with shared ptr
-	if (m_bFinal)
-		delete this;
+	std::lock_guard<std::recursive_mutex> guard(m_ListLock);
+	for (auto i : m_vWaitingList)
+	{
+		auto handle = gcRefPtr<ItemHandle>::dyn_cast(i);
+
+		if (handle)
+			handle->setTaskGroup(nullptr);
+	}
+
+	m_vWaitingList.clear();
 }
 
-bool ItemTaskGroup::addItem(UserCore::Item::ItemInfoI* item)
+bool ItemTaskGroup::addItem(gcRefPtr<UserCore::Item::ItemInfoI> item)
 {
 	return addItem(m_pItemManager->findItemHandle(item->getId()));
 }
 
-bool ItemTaskGroup::addItem(UserCore::Item::ItemHandleI* item)
+bool ItemTaskGroup::addItem(gcRefPtr<ItemHandleI> item)
 {
 	if (!item)
 		return false;
 
-	UserCore::Item::ItemHandle* handle = dynamic_cast<UserCore::Item::ItemHandle*>(item);
+	auto handle = gcRefPtr<ItemHandle>::dyn_cast(item);
 
 	if (!handle)
 		return false;
@@ -100,6 +98,7 @@ bool ItemTaskGroup::addItem(UserCore::Item::ItemHandleI* item)
 
 	{
 		std::lock_guard<std::recursive_mutex> guard(m_ListLock);
+
 		for (size_t x = 0; x < m_vWaitingList.size(); x++)
 		{
 			if (m_vWaitingList[x] == handle)
@@ -126,12 +125,12 @@ bool ItemTaskGroup::addItem(UserCore::Item::ItemHandleI* item)
 	return true;
 }
 
-bool ItemTaskGroup::removeItem(UserCore::Item::ItemHandleI* item)
+bool ItemTaskGroup::removeItem(gcRefPtr<ItemHandleI> item)
 {
 	if (!item)
 		return false;
 
-	UserCore::Item::ItemHandle* handle = dynamic_cast<UserCore::Item::ItemHandle*>(item);
+	auto handle = gcRefPtr<ItemHandle>::dyn_cast(item);
 
 	if (!handle)
 		return false;
@@ -166,7 +165,7 @@ bool ItemTaskGroup::removeItem(UserCore::Item::ItemHandleI* item)
 	return true;
 }
 
-UserCore::Item::ItemHandleI* ItemTaskGroup::getActiveItem()
+gcRefPtr<ItemHandleI> ItemTaskGroup::getActiveItem()
 {
 	if (m_uiActiveItem >= m_vWaitingList.size())
 		return nullptr;
@@ -178,7 +177,7 @@ void ItemTaskGroup::nextItem()
 {
 	onProgressUpdate(100);
 
-	UserCore::Item::ItemHandleI* item = getActiveItem();
+	gcRefPtr<ItemHandleI> item = getActiveItem();
 
 	if (item)
 		item->delHelper(this);
@@ -203,11 +202,11 @@ void ItemTaskGroup::nextItem()
 
 		item = getActiveItem();
 		item->addHelper(this);
-		startAction(dynamic_cast<UserCore::Item::ItemHandle*>(item));
+		startAction(gcRefPtr<ItemHandle>::dyn_cast(item));
 	}
 }
 
-void ItemTaskGroup::startAction(UserCore::Item::ItemHandle* item)
+void ItemTaskGroup::startAction(gcRefPtr<UserCore::Item::ItemHandle> item)
 {
 	if (!item)
 		return;
@@ -324,12 +323,17 @@ void ItemTaskGroup::onPause(bool state)
 {
 }
 
-UserCore::ItemTask::BaseItemTask* ItemTaskGroup::newTask(ItemHandle* handle)
+gcRefPtr<UserCore::ItemTask::BaseItemTask> ItemTaskGroup::newTask(gcRefPtr<ItemHandle> handle)
 {
-	return new GroupItemTask(handle, this);
+	auto g = gcRefPtr<GroupItemTask>::create(handle, this);
+
+	std::lock_guard<std::recursive_mutex> guard(m_TaskListLock);
+	m_vTaskList.push_back(g);
+
+	return g;
 }
 
-void ItemTaskGroup::updateEvents(UserCore::ItemTask::BaseItemTask* task)
+void ItemTaskGroup::updateEvents(gcRefPtr<UserCore::ItemTask::BaseItemTask> task)
 {
 	std::lock_guard<std::recursive_mutex> guard(m_TaskListLock);
 
@@ -351,27 +355,7 @@ void ItemTaskGroup::updateEvents(UserCore::ItemTask::BaseItemTask* task)
 	}
 }
 
-void ItemTaskGroup::registerItemTask(UserCore::ItemTask::BaseItemTask* task)
-{
-	std::lock_guard<std::recursive_mutex> guard(m_TaskListLock);
-	m_vTaskList.push_back(task);
-}
-
-void ItemTaskGroup::deregisterItemTask(UserCore::ItemTask::BaseItemTask* task)
-{
-	std::lock_guard<std::recursive_mutex> guard(m_TaskListLock);
-
-	for (size_t x=0; x<m_vTaskList.size(); x++)
-	{
-		if (m_vTaskList[x] == task)
-		{
-			m_vTaskList.erase(m_vTaskList.begin()+x);
-			break;
-		}
-	}
-}
-
-uint32 ItemTaskGroup::getPos(UserCore::Item::ItemHandleI* item)
+uint32 ItemTaskGroup::getPos(gcRefPtr<ItemHandleI> item)
 {
 	uint32 res = 0;
 

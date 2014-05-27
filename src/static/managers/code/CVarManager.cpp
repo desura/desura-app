@@ -96,16 +96,16 @@ CVarManager::CVarManager()
 
 CVarManager::~CVarManager()
 {
-	std::vector<CVar*> vList;
+	std::vector<gcRefPtr<CVar>> vList;
 	getCVarList(vList);
 
 	for (auto pVar : vList)
 		pVar->deregister();
 }
 
-bool CVarManager::RegCVar(CVar* var)
+bool CVarManager::RegCVar(const gcRefPtr<CVar> &var)
 {
-	CVar* temp = findItem(var->getName());
+	auto temp = findItem(var->getName());
 	
 	if (temp)
 		return false;
@@ -113,17 +113,17 @@ bool CVarManager::RegCVar(CVar* var)
 	addItem(var);
 
 	if ((var->getFlags() & CFLAG_USER) && m_bUserLoaded)
-		loadUser(var);
+		loadUser(var.get());
 	else if ((var->getFlags() & CFLAG_WINUSER) && m_bWinUserLoaded)
-		loadWinUser(var);
+		loadWinUser(var.get());
 	else if (m_bNormalLoaded)
-		loadNormal(var);
+		loadNormal(var.get());
 
 	return true;
 }
 
 //if this screws up its too late any way
-void  CVarManager::UnRegCVar(CVar* var)
+void  CVarManager::UnRegCVar(const gcRefPtr<CVar> &var)
 {
 	removeItem(var->getName());
 }
@@ -324,7 +324,7 @@ void CVarManager::cleanUserCvars()
 {
 	for (uint32 x=0; x<getCount(); x++)
 	{
-		CVar* cvarNode = getItem(x);
+		auto cvarNode = getItem(x);
 
 		if (cvarNode->getFlags() & CFLAG_USER)
 			cvarNode->setDefault();
@@ -340,7 +340,7 @@ void CVarManager::loadFromDb(sqlite3x::sqlite3_reader &reader)
 		std::string name = reader.getstring(0);
 		std::string value = reader.getstring(1);
 
-		CVar* temp = findItem(name.c_str());
+		auto temp = findItem(name.c_str());
 
 		if (temp)
 			temp->setValueOveride(value.c_str(), true);
@@ -351,7 +351,7 @@ void CVarManager::saveToDb(sqlite3x::sqlite3_command &cmd, uint8 flags)
 {
 	for (uint32 x=0; x<getCount(); x++)
 	{
-		CVar* cvarNode = getItem(x);
+		auto cvarNode = getItem(x);
 
 		if (cvarNode->getFlags() & CFLAG_NOSAVE)
 			continue;
@@ -373,12 +373,12 @@ void CVarManager::saveToDb(sqlite3x::sqlite3_command &cmd, uint8 flags)
 	}
 }
 
-CVar* CVarManager::findCVar(const char* name)
+gcRefPtr<CVar> CVarManager::findCVar(const char* name)
 {
 	return findItem(name);
 }
 
-void CVarManager::getCVarList(std::vector<CVar*> &vList)
+void CVarManager::getCVarList(std::vector<gcRefPtr<CVar>> &vList)
 {
 	for (uint32 x=0; x<getCount(); x++)
 		vList.push_back(getItem(x));

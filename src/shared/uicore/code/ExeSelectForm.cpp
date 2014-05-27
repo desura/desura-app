@@ -32,7 +32,7 @@ $/LicenseInfo$
 
 //""
 
-ExeSelectForm::ExeSelectForm(wxWindow* parent, bool hasSeenCDKey, UserCore::ItemManagerI* pItemManager) 
+ExeSelectForm::ExeSelectForm(wxWindow* parent, bool hasSeenCDKey, gcRefPtr<UserCore::ItemManagerI> pItemManager) 
 	: gcFrame(parent, wxID_ANY, "#ES_TITLE", wxDefaultPosition, wxSize( 370,150 ), wxCAPTION|wxCLOSE_BOX|wxSYSTEM_MENU|wxWANTS_CHARS|wxMINIMIZE_BOX)
 	, m_pItemManager(pItemManager)
 	, m_bHasSeenCDKey(hasSeenCDKey)
@@ -82,12 +82,7 @@ void ExeSelectForm::onButtonClick(wxCommandEvent& event)
 	{
 		if (m_vButtonList[x]->GetId() == event.GetId())
 		{
-			UserCore::Item::ItemInfoI *item = m_pItemManager->findItemInfo(m_Id);
-
-			std::vector<UserCore::Item::Misc::ExeInfoI*> vExeList;
-			item->getExeList(vExeList);
-
-			g_pMainApp->handleInternalLink(m_Id, ACTION_LAUNCH, FormatArgs(std::string("exe=") + vExeList[x]->getName(), m_bHasSeenCDKey?"cdkey":""));
+			g_pMainApp->handleInternalLink(m_Id, ACTION_LAUNCH, FormatArgs(std::string("exe=") + m_vExeList[x]->getName(), m_bHasSeenCDKey ? "cdkey" : ""));
 			break;
 		}
 	}
@@ -99,7 +94,7 @@ void ExeSelectForm::setInfo(DesuraId id)
 {
 	m_Id = id;
 
-	UserCore::Item::ItemInfoI *item = m_pItemManager->findItemInfo(id);
+	auto item = m_pItemManager->findItemInfo(id);
 
 	if (!item)
 	{	
@@ -119,12 +114,10 @@ void ExeSelectForm::setInfo(DesuraId id)
 	m_labInfo->SetLabel(text);
 	m_labInfo->Wrap(350);
 
-	std::vector<UserCore::Item::Misc::ExeInfoI*> vExeList;
-	item->getExeList(vExeList);
-
+	item->getExeList(m_vExeList);
 	gcButton* def = nullptr;
 
-	for (auto exe : vExeList)
+	for (auto exe : m_vExeList)
 	{
 		gcWString name(exe->getName());
 		gcButton* but = new gcButton(this, wxID_ANY, name, wxDefaultPosition, wxSize(150, -1));

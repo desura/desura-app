@@ -60,8 +60,8 @@ public:
 	CVarManager();
 	~CVarManager();
 
-	bool RegCVar(CVar* var) override;
-	void UnRegCVar(CVar* var) override;
+	bool RegCVar(const gcRefPtr<CVar> &var) override;
+	void UnRegCVar(const gcRefPtr<CVar> &var) override;
 
 	void cleanUserCvars();
 
@@ -76,8 +76,8 @@ public:
 
 	void loadFromFile(const char* file);
 
-	virtual CVar* findCVar(const char* name);
-	virtual void getCVarList(std::vector<CVar*> &vList);
+	gcRefPtr<CVar> findCVar(const char* name) override;
+	void getCVarList(std::vector<gcRefPtr<CVar>> &vList) override;
 
 protected:
 	void loadFromDb(sqlite3x::sqlite3_reader &reader);

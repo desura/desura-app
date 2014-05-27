@@ -45,13 +45,13 @@ class TaskBarIcon : public gcTaskBarIcon //, gcCustomMenu
 friend class windowReg;
 
 public:
-	TaskBarIcon(wxWindow *parent, UserCore::ItemManagerI* pItemManager = nullptr);
+	TaskBarIcon(wxWindow *parent, gcRefPtr<UserCore::ItemManagerI> pItemManager = nullptr);
 	~TaskBarIcon();
 
 	void regEvents();
 	void deregEvents();
 
-	void showGiftPopup(const std::vector<std::shared_ptr<UserCore::Misc::NewsItem>>& itemList);
+	void showGiftPopup(const std::vector<gcRefPtr<UserCore::Misc::NewsItem>>& itemList);
 
 protected:
 	friend class LanguageTestDialog;
@@ -73,8 +73,8 @@ protected:
 	void onItemsAdded(uint32&);
 	void onUserUpdate();
 
-	bool findUpdateItem(UserCore::Item::ItemInfoI* item);
-	void removeUpdateItem(UserCore::Item::ItemInfoI* item);
+	bool findUpdateItem(gcRefPtr<UserCore::Item::ItemInfoI> item);
+	void removeUpdateItem(gcRefPtr<UserCore::Item::ItemInfoI> item);
 	void swapUpdateList();
 
 	void doBallonMsg();
@@ -99,8 +99,8 @@ private:
 	wxIcon m_wxIcon;
 	wxWindow* m_wxParent;
 
-	std::vector<UserCore::Item::ItemInfoI*> m_vNextUpdateList;
-	std::vector<UserCore::Item::ItemInfoI*> m_vUpdatedList;
+	std::vector<gcRefPtr<UserCore::Item::ItemInfoI>> m_vNextUpdateList;
+	std::vector<gcRefPtr<UserCore::Item::ItemInfoI>> m_vUpdatedList;
 
 	UserCore::Misc::UpdateInfo m_AppUpdateVer;
 

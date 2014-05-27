@@ -53,7 +53,7 @@ class UninstallAllThread;
 class UDFProgressPanel : public gcPanel 
 {
 public:
-	UDFProgressPanel(wxWindow* parent, UserCore::UserI* user, uint32 flags);
+	UDFProgressPanel(wxWindow* parent, gcRefPtr<UserCore::UserI> user, uint32 flags);
 	~UDFProgressPanel();
 
 protected:

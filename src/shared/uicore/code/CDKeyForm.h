@@ -41,7 +41,7 @@ namespace UserCore
 class CDKeyForm : public gcFrame 
 {
 public:
-	CDKeyForm(wxWindow* parent, const char* exe, bool launch = false, UserCore::ItemManagerI* pItemManager = nullptr);
+	CDKeyForm(wxWindow* parent, const char* exe, bool launch = false, gcRefPtr<UserCore::ItemManagerI> pItemManager = gcRefPtr<UserCore::ItemManagerI>());
 	~CDKeyForm();
 	
 	void setInfo(DesuraId id);
@@ -63,7 +63,7 @@ private:
 	BasePage* m_pPage;	
 	wxBoxSizer* m_bsSizer;
 
-	UserCore::ItemManagerI* m_pItemManager;
+	gcRefPtr<UserCore::ItemManagerI> m_pItemManager;
 };
 
 #endif //DESURA_CDKEYFORM_H

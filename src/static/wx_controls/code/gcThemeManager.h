@@ -84,22 +84,22 @@ public:
 	~gcThemeManager();
 
 	//gets image handle. Alpha refers to if the image is the alpha version
-	virtual gcImageHandle getImageHandle(const char* path);
-	virtual wxBitmap getSprite(wxImage& img, const char* spriteId, const char* spriteName);
+	gcImageHandle getImageHandle(const char* path) override;
+	wxBitmap getSprite(wxImage& img, const char* spriteId, const char* spriteName) override;
 
-	virtual const char* getThemeFolder();
-	virtual const char* getWebPage(const char* id);
-	virtual const char* getImage(const char* id);
+	const char* getThemeFolder() override;
+	const char* getWebPage(const char* id) override;
+	const char* getImage(const char* id) override;
 
-	virtual Color getColor(const char* name, const char* id);
+	Color getColor(const char* name, const char* id) override;
 
-	virtual SpriteRectI* getSpriteRect(const char* id, const char* rectId);
+	gcRefPtr<SpriteRectI> getSpriteRect(const char* id, const char* rectId) override;
 
-	virtual void loadFromFolder(const char* folder);
-	virtual void loadTheme(const char* name);
+	void loadFromFolder(const char* folder) override;
+	void loadTheme(const char* name) override;
 
 	//make sure to destroy them
-	virtual void getThemeStubList(std::vector<ThemeStubI*> &vList);
+	void getThemeStubList(std::vector<ThemeStubI*> &vList) override;
 
 protected:
 	void newImgHandle(uint32 hash);

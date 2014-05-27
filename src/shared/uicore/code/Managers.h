@@ -40,8 +40,8 @@ $/LicenseInfo$
 
 class CIPManager;
 
-UserCore::UploadManagerI*		GetUploadMng();
-UserCore::UserThreadManagerI*	GetThreadManager();
+gcRefPtr<UserCore::UploadManagerI> GetUploadMng();
+gcRefPtr<UserCore::UserThreadManagerI> GetThreadManager();
 
 void SaveCVars();
 

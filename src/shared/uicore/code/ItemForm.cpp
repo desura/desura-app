@@ -60,6 +60,121 @@ $/LicenseInfo$
 	#include "managers/CVar.h"
 #endif
 
+
+namespace UI
+{
+	namespace Forms
+	{
+		class ItemFormProxy
+			: public UserCore::Item::Helper::ItemUninstallHelperI
+			, public UserCore::Item::Helper::ItemLaunchHelperI
+			, public UserCore::Item::Helper::ItemHandleFactoryI
+		{
+		public:
+			ItemFormProxy(ItemForm *pForm)
+				: m_pItemForm(pForm)
+			{
+			}
+
+			void nullPtr()
+			{
+				m_pItemForm = nullptr;
+			}
+
+			/////////////////////////////////////////////////////////
+			// ItemUninstallHelperI
+			/////////////////////////////////////////////////////////
+
+			bool stopStagePrompt() override
+			{
+				if (!m_pItemForm)
+					return false;
+
+				return m_pItemForm->stopStagePrompt();
+			}
+
+			/////////////////////////////////////////////////////////
+			// ItemLaunchHelperI
+			/////////////////////////////////////////////////////////
+
+			void showUpdatePrompt() override
+			{
+				if (!m_pItemForm)
+					return;
+
+				m_pItemForm->showUpdatePrompt();
+			}
+
+			void showLaunchPrompt() override
+			{
+				if (!m_pItemForm)
+					return;
+
+				m_pItemForm->showLaunchPrompt();
+			}
+
+			void showEULAPrompt() override
+			{
+				if (!m_pItemForm)
+					return;
+
+				m_pItemForm->showEULAPrompt();
+			}
+
+			void showPreOrderPrompt() override
+			{
+				if (!m_pItemForm)
+					return;
+
+				m_pItemForm->showPreOrderPrompt();
+			}
+
+			void launchError(gcException& e) override
+			{
+				if (!m_pItemForm)
+					return;
+
+				m_pItemForm->launchError(e);
+			}
+
+#ifdef NIX
+			void showWinLaunchDialog() override
+			{
+				if (!m_pItemForm)
+					return;
+
+				m_pItemForm->showWinLaunchDialog();
+			}
+
+#endif
+			/////////////////////////////////////////////////////////
+			// ItemHandleFactoryI
+			/////////////////////////////////////////////////////////
+
+			gcRefPtr<UserCore::Item::Helper::GatherInfoHandlerHelperI> getGatherInfoHelper() override
+			{
+				if (!m_pItemForm)
+					return nullptr;
+
+				return m_pItemForm->getGatherInfoHelper();
+			}
+
+			gcRefPtr<UserCore::Item::Helper::InstallerHandleHelperI> getInstallHelper() override
+			{
+				if (!m_pItemForm)
+					return nullptr;
+
+				return m_pItemForm->getInstallHelper();
+			}
+
+		private:
+			ItemForm* m_pItemForm;
+			gc_IMPLEMENT_REFCOUNTING(ItemFormProxy);
+		};
+	}
+}
+
+
 using namespace UserCore::Item;
 
 class GatherInfoThread
@@ -82,9 +197,9 @@ public:
 	{
 		m_pThread = GetThreadManager()->newGatherInfoThread(m_idItemId, m_McfBranch, MCFBuild());
 
-		*m_pThread->getErrorEvent() += delegate(this, &GatherInfoThread::onError);
-		*m_pThread->getCompleteEvent() += delegate(this, &GatherInfoThread::onComplete);
-		*m_pThread->getNeedWCEvent() += wcDelegate(m_pParent);
+		m_pThread->getErrorEvent() += delegate(this, &GatherInfoThread::onError);
+		m_pThread->getCompleteEvent() += delegate(this, &GatherInfoThread::onComplete);
+		m_pThread->getNeedWCEvent() += wcDelegate(m_pParent);
 
 		m_pThread->start();
 	}
@@ -107,7 +222,7 @@ protected:
 private:
 	UI::Forms::ItemForm* m_pParent;
 	DesuraId m_idItemId;
-	UserCore::Thread::MCFThreadI* m_pThread;
+	gcRefPtr<UserCore::Thread::MCFThreadI> m_pThread;
 	MCFBranch m_McfBranch;
 };
 
@@ -115,14 +230,6 @@ private:
 class GatherInfoHandlerHelper : public UserCore::Item::Helper::GatherInfoHandlerHelperI
 {
 public:
-	virtual void destroy()
-	{
-		void* self = this;
-		onDeleteEvent(self);
-
-		delete this;
-	}
-
 	virtual void gatherInfoComplete()
 	{
 		onGatherInfoCompleteEvent();
@@ -207,6 +314,8 @@ public:
 #endif
 
 	EventV onGatherInfoCompleteEvent;
+
+	gc_IMPLEMENT_REFCOUNTING(GatherInfoHandlerHelper);
 };
 
 
@@ -244,6 +353,8 @@ public:
 
 private:
 	UI::Forms::ItemForm *m_pParent;
+
+	gc_IMPLEMENT_REFCOUNTING(InstallerHandleHelper);
 };
 
 
@@ -257,6 +368,7 @@ using namespace UI::Forms;
 
 ItemForm::ItemForm(wxWindow* parent, const char* action, const char* id) 
 	: gcFrame( parent, wxID_ANY, L"[Install Form]", wxDefaultPosition, wxSize( 370,280 ), wxCAPTION|wxCLOSE_BOX|wxFRAME_FLOAT_ON_PARENT|wxSYSTEM_MENU|wxTAB_TRAVERSAL|wxMINIMIZE_BOX )
+	, m_pProxy(gcRefPtr<ItemFormProxy>::create(this))
 {
 	Bind(wxEVT_CLOSE_WINDOW, &ItemForm::onFormClose, this);
 
@@ -290,6 +402,8 @@ ItemForm::ItemForm(wxWindow* parent, const char* action, const char* id)
 
 ItemForm::~ItemForm()
 {
+	m_pProxy->nullPtr();
+
 	if (m_pDialog)
 		m_pDialog->EndModal(wxCANCEL);	
 	
@@ -299,9 +413,23 @@ ItemForm::~ItemForm()
 
 void ItemForm::cleanUpCallbacks()
 {
-	onDeleteEvent();
-	onDeleteEvent.reset();
-	
+	if (m_GIHH)
+	{
+		m_GIHH->onSelectBranchEvent -= guiDelegate(this, &ItemForm::onSelectBranch, MODE_PENDING_WAIT);
+		m_GIHH->onShowComplexPromptEvent -= guiDelegate(this, &ItemForm::onShowComplexPrompt, MODE_PENDING_WAIT);
+		m_GIHH->onshowInstallPromptEvent -= guiDelegate(this, &ItemForm::onShowInstallPrompt, MODE_PENDING_WAIT);
+		m_GIHH->onShowPlatformErrorEvent -= guiDelegate(this, &ItemForm::onShowPlatformError, MODE_PENDING_WAIT);
+
+#ifdef NIX
+		m_GIHH->onShowToolPromptEvent -= guiDelegate(this, &ItemForm::onShowToolPrompt, MODE_PENDING_WAIT);
+#endif
+
+		m_GIHH->onGatherInfoCompleteEvent -= guiDelegate(this, &ItemForm::onGatherInfoComplete);
+		m_GIHH->onShowErrorEvent -= guiDelegate(this, &ItemForm::onShowError, MODE_PENDING_WAIT);
+
+		m_GIHH.reset();
+	}
+
 	//could be deleted by now. Find it again
 	if (GetUserCore() && GetUserCore()->getItemManager())
 	{
@@ -310,7 +438,7 @@ void ItemForm::cleanUpCallbacks()
 		if (m_pItemHandle)
 		{
 //			*m_pItemHandle->getChangeStageEvent() -= guiDelegate(this, &ItemForm::onStageChange, MODE_PENDING_WAIT);
-			*m_pItemHandle->getErrorEvent() -= guiDelegate(this, &ItemForm::onError);
+			m_pItemHandle->getErrorEvent() -= guiDelegate(this, &ItemForm::onError);
 			m_pItemHandle->setFactory(nullptr);
 		}
 	}	
@@ -329,7 +457,7 @@ bool ItemForm::startUninstall(bool complete, bool removeFromAccount)
 	if (!m_pItemHandle)
 		return false;
 
-	return m_pItemHandle->uninstall(this, complete, removeFromAccount);
+	return m_pItemHandle->uninstall(m_pProxy, complete, removeFromAccount);
 }
 
 void ItemForm::newAction(INSTALL_ACTION action, MCFBranch branch, MCFBuild build, bool showForm)
@@ -356,7 +484,7 @@ void ItemForm::setItemId(DesuraId id)
 	m_ItemId = id;
 }
 
-void ItemForm::init(INSTALL_ACTION action, MCFBranch branch, MCFBuild build, bool showForm, UserCore::Item::ItemHandleI* pItemHandle)
+void ItemForm::init(INSTALL_ACTION action, MCFBranch branch, MCFBuild build, bool showForm, gcRefPtr<UserCore::Item::ItemHandleI> pItemHandle)
 {
 	gcTrace("Action: {0}, Branch: {1}, Build: {2}", (uint32)action, branch, build);
 
@@ -374,9 +502,9 @@ void ItemForm::init(INSTALL_ACTION action, MCFBranch branch, MCFBuild build, boo
 		m_pItemHandle = GetUserCore()->getItemManager()->findItemHandle(m_ItemId);
 
 	if (m_pItemHandle)
-		*m_pItemHandle->getErrorEvent() += guiDelegate(this, &ItemForm::onError);
+		m_pItemHandle->getErrorEvent() += guiDelegate(this, &ItemForm::onError);
 
-	UserCore::Item::ItemInfoI* item = nullptr;
+	gcRefPtr<UserCore::Item::ItemInfoI> item = nullptr;
 
 	if (m_pItemHandle)
 		item = m_pItemHandle->getItemInfo();
@@ -406,7 +534,7 @@ void ItemForm::init(INSTALL_ACTION action, MCFBranch branch, MCFBuild build, boo
 	}
 	else
 	{
-		*m_pItemHandle->getChangeStageEvent() += guiDelegate(this, &ItemForm::onStageChange, MODE_PENDING_WAIT);
+		m_pItemHandle->getChangeStageEvent() += guiDelegate(this, &ItemForm::onStageChange, MODE_PENDING_WAIT);
 
 		//if we are currently doing something when setFactory is called it will forward the last events on
 		if (m_pItemHandle->isInStage())
@@ -414,14 +542,14 @@ void ItemForm::init(INSTALL_ACTION action, MCFBranch branch, MCFBuild build, boo
 			auto stage = m_pItemHandle->getStage();
 			onStageChange(stage);
 
-			m_pItemHandle->setFactory(this);
+			m_pItemHandle->setFactory(m_pProxy);
 
 			Show();
 			Raise();
 			return;
 		}
 
-		m_pItemHandle->setFactory(this);
+		m_pItemHandle->setFactory(m_pProxy);
 		bool res = false;
 
 		switch (action)
@@ -455,7 +583,7 @@ void ItemForm::init(INSTALL_ACTION action, MCFBranch branch, MCFBuild build, boo
 			case INSTALL_ACTION::IA_INSTALL:
 				if (!item->getCurrentBranch() || branch != item->getCurrentBranch()->getBranchId())
 				{
-					res = m_pItemHandle->install(this, branch);
+					res = m_pItemHandle->install(m_pProxy, branch);
 					break;
 				}
 
@@ -504,7 +632,7 @@ bool ItemForm::installTestMcf(MCFBranch branch, MCFBuild build)
 	if (!m_pItemHandle)
 		return false;
 
-	UserCore::Item::ItemInfoI* item = m_pItemHandle->getItemInfo();
+	gcRefPtr<UserCore::Item::ItemInfoI> item = m_pItemHandle->getItemInfo();
 
 	if (!GetUserCore()->isAdmin() && !HasAllFlags(item->getStatus(), UserCore::Item::ItemInfoI::STATUS_DEVELOPER))
 	{
@@ -561,7 +689,7 @@ bool ItemForm::launchItem()
 		bool ignoreUpdate = HasAnyFlags(m_pItemHandle->getItemInfo()->getOptions(), UserCore::Item::ItemInfoI::OPTION_NOTREMINDUPDATE | UserCore::Item::ItemInfoI::OPTION_NOTREMINDUPDATE_ONETIME);	
 		m_pItemHandle->getItemInfo()->delOFlag(UserCore::Item::ItemInfoI::OPTION_NOTREMINDUPDATE_ONETIME);
 
-		res = m_pItemHandle->launch(this, offLine, ignoreUpdate);
+		res = m_pItemHandle->launch(m_pProxy, offLine, ignoreUpdate);
 
 		//if res is true we need to keep the form open
 		if (res == true)
@@ -610,7 +738,7 @@ void ItemForm::setTitle(const wchar_t* key)
 
 gcWString ItemForm::getTitleString(const wchar_t* key)
 {
-	UserCore::Item::ItemInfoI* item = m_pItemHandle ? m_pItemHandle->getItemInfo() : nullptr;
+	gcRefPtr<UserCore::Item::ItemInfoI> item = m_pItemHandle?m_pItemHandle->getItemInfo():nullptr;
 	if (item)
 	{
 		m_szName = gcWString(item->getName());
@@ -684,7 +812,7 @@ void ItemForm::setIdealSize(int width, int height)
 
 void ItemForm::finishUninstall(bool complete, bool account)
 {
-	m_pItemHandle->uninstall(this, complete, account);
+	m_pItemHandle->uninstall(m_pProxy, complete, account);
 }
 
 void ItemForm::finishInstallCheck()
@@ -800,7 +928,7 @@ void ItemForm::onStageChange(ITEM_STAGE &stage)
 	else if (stage == ITEM_STAGE::STAGE_LAUNCH)
 	{
 		Show(false);
-		m_pItemHandle->launch(this, g_pMainApp->isOffline());
+		m_pItemHandle->launch(m_pProxy, g_pMainApp->isOffline());
 
 		return;
 	}
@@ -860,7 +988,7 @@ void ItemForm::onItemInfoGathered()
 
 		if (m_pItemHandle)
 		{
-			*m_pItemHandle->getErrorEvent() += guiDelegate(this, &ItemForm::onError);
+			m_pItemHandle->getErrorEvent() += guiDelegate(this, &ItemForm::onError);
 
 			setItemId(m_pItemHandle->getItemInfo()->getId());
 			init(m_iaLastAction, m_uiMCFBranch, m_uiMCFBuild);
@@ -992,7 +1120,7 @@ void ItemForm::onShowWinLaunchDialog()
 class LaunchErrorHelper : public HelperButtonsI
 {
 public:
-	LaunchErrorHelper(UserCore::Item::ItemHandleI* itemHandle)
+	LaunchErrorHelper(gcRefPtr<UserCore::Item::ItemHandleI> itemHandle)
 	{
 		m_pItemHandle = itemHandle;
 	}
@@ -1019,7 +1147,7 @@ public:
 	}
 
 private:
-	UserCore::Item::ItemHandleI* m_pItemHandle;
+	gcRefPtr<UserCore::Item::ItemHandleI> m_pItemHandle;
 };
 
 
@@ -1054,36 +1182,31 @@ bool ItemForm::stopStagePrompt()
 	return gcMessageBox(this, prompt, title, wxICON_QUESTION|wxYES_NO) == wxYES;
 }
 
-void ItemForm::getGatherInfoHelper(UserCore::Item::Helper::GatherInfoHandlerHelperI** helper)
+gcRefPtr<UserCore::Item::Helper::GatherInfoHandlerHelperI> ItemForm::getGatherInfoHelper()
 {
-	GatherInfoHandlerHelper *gihh = new GatherInfoHandlerHelper();
+	if (m_GIHH)
+		return m_GIHH;
 
-	*helper = gihh;
+	m_GIHH = gcRefPtr<GatherInfoHandlerHelper>::create();
 
-	gihh->onSelectBranchEvent += guiDelegate(this, &ItemForm::onSelectBranch, MODE_PENDING_WAIT);
-	gihh->onShowComplexPromptEvent += guiDelegate(this, &ItemForm::onShowComplexPrompt, MODE_PENDING_WAIT);
-	gihh->onshowInstallPromptEvent += guiDelegate(this, &ItemForm::onShowInstallPrompt, MODE_PENDING_WAIT);
-	gihh->onShowPlatformErrorEvent += guiDelegate(this, &ItemForm::onShowPlatformError, MODE_PENDING_WAIT);
+	m_GIHH->onSelectBranchEvent += guiDelegate(this, &ItemForm::onSelectBranch, MODE_PENDING_WAIT);
+	m_GIHH->onShowComplexPromptEvent += guiDelegate(this, &ItemForm::onShowComplexPrompt, MODE_PENDING_WAIT);
+	m_GIHH->onshowInstallPromptEvent += guiDelegate(this, &ItemForm::onShowInstallPrompt, MODE_PENDING_WAIT);
+	m_GIHH->onShowPlatformErrorEvent += guiDelegate(this, &ItemForm::onShowPlatformError, MODE_PENDING_WAIT);
 
 #ifdef NIX
-	gihh->onShowToolPromptEvent += guiDelegate(this, &ItemForm::onShowToolPrompt, MODE_PENDING_WAIT);
+	m_GIHH->onShowToolPromptEvent += guiDelegate(this, &ItemForm::onShowToolPrompt, MODE_PENDING_WAIT);
 #endif
 
-	gihh->onGatherInfoCompleteEvent += guiDelegate(this, &ItemForm::onGatherInfoComplete);
-	gihh->onShowErrorEvent += guiDelegate(this, &ItemForm::onShowError, MODE_PENDING_WAIT);
+	m_GIHH->onGatherInfoCompleteEvent += guiDelegate(this, &ItemForm::onGatherInfoComplete);
+	m_GIHH->onShowErrorEvent += guiDelegate(this, &ItemForm::onShowError, MODE_PENDING_WAIT);
 
-	onDeleteEvent += delegate(gihh, &GatherInfoHandlerHelper::onParentDelete);
-	gihh->onDeleteEvent += delegate(this, &ItemForm::onGatherInfoHandlerHelperDelete);
+	return m_GIHH;
 }
 
-void ItemForm::onGatherInfoHandlerHelperDelete(void* &gihh)
+gcRefPtr<UserCore::Item::Helper::InstallerHandleHelperI> ItemForm::getInstallHelper()
 {
-	onDeleteEvent -= delegate((GatherInfoHandlerHelper*)gihh, &GatherInfoHandlerHelper::onParentDelete);
-}
-
-void ItemForm::getInstallHelper(UserCore::Item::Helper::InstallerHandleHelperI** helper)
-{
-	*helper = new InstallerHandleHelper(this);
+	return gcRefPtr<InstallerHandleHelper>::create(this);
 }
 
 
@@ -1189,7 +1312,7 @@ void ItemForm::onShowInstallPrompt(SIPArg &args)
 
 void ItemForm::onShowPlatformError(bool& res)
 {
-	UserCore::Item::ItemInfoI* item = m_pItemHandle->getItemInfo();
+	gcRefPtr<UserCore::Item::ItemInfoI> item = m_pItemHandle->getItemInfo();
 
 	gcString name("Unknown Item ({0}: {0})", getItemId().getTypeString(), getItemId().getItem());
 
@@ -1237,7 +1360,7 @@ public:
 
 void ItemForm::onShowToolPrompt(std::pair<bool, uint32> &args)
 {
-	UserCore::Item::ItemInfoI* item = m_pItemHandle->getItemInfo();
+	gcRefPtr<UserCore::Item::ItemInfoI> item = m_pItemHandle->getItemInfo();
 
 	gcString name("Unknown Item ({0}: {0})", getItemId().getTypeString(), getItemId().getItem());
 

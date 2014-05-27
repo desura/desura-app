@@ -37,36 +37,34 @@ class IPCToolMain;
 namespace UserCore
 {
 
-class ToolIPCPipeClient : public IPC::PipeClient
-{
-public:
-	ToolIPCPipeClient(const char* user, bool uploadDumps, const char* key, HWND handle);
-	~ToolIPCPipeClient();
+	class ToolIPCPipeClient : public IPC::PipeClient
+	{
+	public:
+		ToolIPCPipeClient(const char* user, bool uploadDumps, const char* key, HWND handle);
+		~ToolIPCPipeClient();
 
-	void start();
+		void start();
 
-	std::shared_ptr<IPCToolMain> getToolMain();
+		std::shared_ptr<IPCToolMain> getToolMain();
 
-protected:
-	void stopHelper();
-	void startHelper();
+	protected:
+		void stopHelper();
+		void startHelper();
 
-	void onDisconnect();
+		void onDisconnect();
 
-	void tryStart();
+		void tryStart();
 
-private:
-	bool m_bUploadDumps;
+	private:
+		bool m_bUploadDumps;
 
-	gcString m_szUser;
-	gcString m_szKey;
+		gcString m_szUser;
+		gcString m_szKey;
 
-	std::shared_ptr<IPCToolMain> m_pServiceMain;
+		std::shared_ptr<IPCToolMain> m_pServiceMain;
 
-	HWND m_WinHandle;
-};
-
-
+		HWND m_WinHandle;
+	};
 }
 
 #endif //DESURA_TOOLIPCPIPECLIENT_H

@@ -53,18 +53,18 @@ const char *modulesNames[] =
 
 CONCOMMAND(cc_test_news, "test_news")
 {
-	std::vector<UserCore::Misc::NewsItem*> itemList;
+	std::vector<gcRefPtr<UserCore::Misc::NewsItem>> itemList;
 
 	if (vArgList.size() == 1)
 	{
-		itemList.push_back(new UserCore::Misc::NewsItem(0, 0, "Link Alpha", "http://www.desura.com"));
-		itemList.push_back(new UserCore::Misc::NewsItem(0, 0, "Link Bravo", "http://www.desura.com/groups"));
-		itemList.push_back(new UserCore::Misc::NewsItem(0, 0, "Link Charlie", "http://www.desura.com/mods"));
-		itemList.push_back(new UserCore::Misc::NewsItem(0, 0, "Link Delta", "http://www.desura.com/games"));
+		itemList.push_back(gcRefPtr<UserCore::Misc::NewsItem>::create(0, 0, "Link Alpha", "http://www.desura.com"));
+		itemList.push_back(gcRefPtr<UserCore::Misc::NewsItem>::create(0, 0, "Link Bravo", "http://www.desura.com/groups"));
+		itemList.push_back(gcRefPtr<UserCore::Misc::NewsItem>::create(0, 0, "Link Charlie", "http://www.desura.com/mods"));
+		itemList.push_back(gcRefPtr<UserCore::Misc::NewsItem>::create(0, 0, "Link Delta", "http://www.desura.com/games"));
 	}
 	else
 	{
-		itemList.push_back(new UserCore::Misc::NewsItem(0, 0, "Test News Link", vArgList[1].c_str()));
+		itemList.push_back(gcRefPtr<UserCore::Misc::NewsItem>::create(0, 0, "Test News Link", vArgList[1].c_str()));
 	}
 
 	dynamic_cast<MainApp*>(g_pMainApp)->onNewsUpdate(itemList);
@@ -180,13 +180,11 @@ CONCOMMAND(cc_NewsTest, "testnews")
 {
 	MainApp *ma = dynamic_cast<MainApp*>(g_pMainApp);
 
-	std::vector<UserCore::Misc::NewsItem*> itemList;
+	std::vector<gcRefPtr<UserCore::Misc::NewsItem>> itemList;
 
-	UserCore::Misc::NewsItem *a,*b,*c;
-
-	a = new UserCore::Misc::NewsItem(0, 0, "News item 1", "http://www.desura.com");
-	b = new UserCore::Misc::NewsItem(0, 0, "News item 2", "http://www.desura.com/mods");
-	c = new UserCore::Misc::NewsItem(0, 0, "News item 3", "http://www.desura.com/games");
+	auto a = gcRefPtr<UserCore::Misc::NewsItem>::create(0, 0, "News item 1", "http://www.desura.com");
+	auto b = gcRefPtr<UserCore::Misc::NewsItem>::create(0, 0, "News item 2", "http://www.desura.com/mods");
+	auto c = gcRefPtr<UserCore::Misc::NewsItem>::create(0, 0, "News item 3", "http://www.desura.com/games");
 
 	itemList.push_back(a);
 	itemList.push_back(b);
@@ -194,28 +192,23 @@ CONCOMMAND(cc_NewsTest, "testnews")
 
 	ma->onNewsUpdate(itemList);
 	ma->showNews();
-
-	safe_delete(itemList);
 }
 
 CONCOMMAND(cc_GiftTest, "testgifts")
 {
 	MainApp *ma = dynamic_cast<MainApp*>(g_pMainApp);
 
-	std::vector<UserCore::Misc::NewsItem*> itemList;
+	std::vector<gcRefPtr<UserCore::Misc::NewsItem>> itemList;
 
-	UserCore::Misc::NewsItem *a,*b,*c;
-
-	a = new UserCore::Misc::NewsItem(0, 0, "News item 1", "http://www.desura.com");
-	b = new UserCore::Misc::NewsItem(0, 0, "News item 2", "http://www.desura.com/mods");
-	c = new UserCore::Misc::NewsItem(0, 0, "News item 3", "http://www.desura.com/games");
+	auto a = gcRefPtr<UserCore::Misc::NewsItem>::create(0, 0, "News item 1", "http://www.desura.com");
+	auto b = gcRefPtr<UserCore::Misc::NewsItem>::create(0, 0, "News item 2", "http://www.desura.com/mods");
+	auto c = gcRefPtr<UserCore::Misc::NewsItem>::create(0, 0, "News item 3", "http://www.desura.com/games");
 
 	itemList.push_back(a);
 	itemList.push_back(b);
 	itemList.push_back(c);
 
 	ma->onGiftUpdate(itemList);
-	safe_delete(itemList);
 }
 
 #endif
@@ -270,8 +263,10 @@ bool OnQaTestingChange(CVar* var, const char* val)
 	//force the value to be set
 	var->setValue(val);
 
-	if (GetUserCore())
-		GetUserCore()->setQATesting(var->getBool());
+	auto userCore = GetUserCore();
+
+	if (userCore)
+		userCore->setQATesting(var->getBool());
 
 	return true;
 }
@@ -280,8 +275,10 @@ CVar gc_qa_testing("gc_qa_testing", "0", CFLAG_NOCALLBACKONLOAD, (CVarCallBackFn
 
 CONCOMMAND(cc_forcetestingupdate, "force_testing_update")
 {
-	if (GetUserCore())
-		GetUserCore()->forceQATestingUpdate();
+	auto userCore = GetUserCore();
+
+	if (userCore)
+		userCore->forceQATestingUpdate();
 }
 
 #endif
@@ -291,8 +288,10 @@ bool OnLinuxBinChange(CVar* var, const char* val)
 	//force the value to be set
 	var->setValue(val);
 	
-	if (GetUserCore())
-		GetUserCore()->getItemManager()->regenLaunchScripts();
+	auto userCore = GetUserCore();
+
+	if (userCore)
+		userCore->getItemManager()->regenLaunchScripts();
 		
 	return true;
 }
@@ -302,8 +301,10 @@ bool OnLinuxArgsChange(CVar* var, const char* val)
 	//force the value to be set
 	var->setValue(val);
 	
-	if (GetUserCore())
-		GetUserCore()->getItemManager()->regenLaunchScripts();
+	auto userCore = GetUserCore();
+
+	if (userCore)
+		userCore->getItemManager()->regenLaunchScripts();
 		
 	return true;
 }
@@ -357,22 +358,24 @@ bool betaChange(CVar* var, const char* val)
 	if (szAppid.size() > 0)
 		appid = Safe::atoi(szAppid.c_str());
 
+	auto userCore = GetUserCore();
+
 	if (strcmp(val, "1")==0 || strcmp(val, "true")==0)
 	{
 		if (appid != BUILDID_BETA)
 		{
 			gc_uploaddumps.setValue("true");
 
-			if (GetUserCore())
-				GetUserCore()->appNeedUpdate(BUILDID_BETA);
+			if (userCore)
+				userCore->appNeedUpdate(BUILDID_BETA);
 		}
 	}
 	else
 	{
 		if (appid != BUILDID_PUBLIC)
 		{
-			if (GetUserCore())
-				GetUserCore()->appNeedUpdate(BUILDID_PUBLIC);
+			if (userCore)
+				userCore->appNeedUpdate(BUILDID_PUBLIC);
 		}
 	}
 
@@ -435,7 +438,7 @@ public:
 		info.branch = 500;
 		info.build = 200;
 
-		GetUserCore()->getAppUpdateCompleteEvent()->operator()(info);
+		GetUserCore()->getAppUpdateCompleteEvent()(info);
 		//MainApp* app = dynamic_cast<MainApp*>(g_pMainApp);
 		//app->onAppUpdate(info);
 	}

@@ -38,10 +38,8 @@ $/LicenseInfo$
 #include "sqlite3x.hpp"
 #include "sql/CustomInstallPathSql.h"
 
-namespace UserCore
-{
-namespace Thread
-{
+using namespace UserCore::Thread;
+
 
 InstalledWizardThread::InstalledWizardThread() : MCFThread( "Installed Wizard Thread" )
 {
@@ -73,9 +71,9 @@ void InstalledWizardThread::doRun()
 	if (!infoNode.IsValid())
 		throw gcException(ERR_BADXML);
 
-	WildcardManager wMng = WildcardManager();
-	wMng.onNeedSpecialEvent += delegate(&onNeedWCEvent);
-	wMng.onNeedSpecialEvent += delegate(getUserCore()->getNeedWildCardEvent());
+	auto wMng = gcRefPtr<WildcardManager>::create();
+	wMng->onNeedSpecialEvent += delegate(&onNeedWCEvent);
+	wMng->onNeedSpecialEvent += delegate(&getUserCore()->getNeedWildCardEvent());
 	
 
 	if (isStopped())
@@ -88,9 +86,9 @@ void InstalledWizardThread::doRun()
 	onMcfProgressEvent(pi);
 
 	if (ver == 1)
-		parseItems1(infoNode, &wMng);
+		parseItems1(infoNode, wMng);
 	else
-		parseItems2(infoNode, &wMng);
+		parseItems2(infoNode, wMng);
 
 	if (m_pTaskGroup)
 	{
@@ -138,7 +136,7 @@ void InstalledWizardThread::onGameFound(UserCore::Misc::InstallInfo &game)
 	m_vGameList.push_back(game);
 	DesuraId id = game.getId();
 
-	UserCore::Item::ItemInfoI *info = getUserCore()->getItemManager()->findItemInfo(id);
+	auto info = getUserCore()->getItemManager()->findItemInfo(id);
 	if (info && (info->getStatus() & (UserCore::Item::ItemInfoI::STATUS_INSTALLED|UserCore::Item::ItemInfoI::STATUS_READY)))
 		return;
 
@@ -146,13 +144,13 @@ void InstalledWizardThread::onGameFound(UserCore::Misc::InstallInfo &game)
 	{
 		try
 		{
-			WildcardManager tempwMng;
-			tempwMng.onNeedSpecialEvent += delegate(&onNeedWCEvent);
-			tempwMng.onNeedSpecialEvent += delegate(getUserCore()->getNeedWildCardEvent());
+			auto tempwMng = gcRefPtr<WildcardManager>::create();
+			tempwMng->onNeedSpecialEvent += delegate(&onNeedWCEvent);
+			tempwMng->onNeedSpecialEvent += delegate(&getUserCore()->getNeedWildCardEvent());
 
-			getUserCore()->getItemManager()->retrieveItemInfo(id, 0, &tempwMng);
+			getUserCore()->getItemManager()->retrieveItemInfo(id, 0, tempwMng);
 
-			UserCore::Item::ItemInfoI *item = getUserCore()->getItemManager()->findItemInfo(id);
+			auto item = getUserCore()->getItemManager()->findItemInfo(id);
 			if ((!item)|| (item->getParentId().isOk() && !getUserCore()->getItemManager()->isInstalled(item->getParentId())))
 				return;
 
@@ -172,7 +170,7 @@ void InstalledWizardThread::onModFound(UserCore::Misc::InstallInfo &mod)
 
 	DesuraId id = mod.getId();
 
-	UserCore::Item::ItemInfoI *info = getUserCore()->getItemManager()->findItemInfo(id);
+	auto info = getUserCore()->getItemManager()->findItemInfo(id);
 	if (info && (info->getStatus() & (UserCore::Item::ItemInfoI::STATUS_INSTALLED|UserCore::Item::ItemInfoI::STATUS_READY)))
 		return;
 
@@ -180,14 +178,14 @@ void InstalledWizardThread::onModFound(UserCore::Misc::InstallInfo &mod)
 	{
 		try
 		{
-			WildcardManager tempwMng;
-			tempwMng.onNeedSpecialEvent += delegate(&onNeedWCEvent);
-			tempwMng.onNeedSpecialEvent += delegate(getUserCore()->getNeedWildCardEvent());
+			auto tempwMng = gcRefPtr<WildcardManager>::create();
+			tempwMng->onNeedSpecialEvent += delegate(&onNeedWCEvent);
+			tempwMng->onNeedSpecialEvent += delegate(&getUserCore()->getNeedWildCardEvent());
 
-			getUserCore()->getItemManager()->retrieveItemInfo(id, 0, &tempwMng);
+			getUserCore()->getItemManager()->retrieveItemInfo(id, 0, tempwMng);
 
 
-			UserCore::Item::ItemInfoI *item = getUserCore()->getItemManager()->findItemInfo(id);
+			auto item = getUserCore()->getItemManager()->findItemInfo(id);
 			if ((!item ) || (item->getParentId().isOk() && !getUserCore()->getItemManager()->isInstalled(item->getParentId())))
 				return;
 
@@ -205,13 +203,13 @@ void InstalledWizardThread::onModFound(UserCore::Misc::InstallInfo &mod)
 	}
 }
 
-bool InstalledWizardThread::selectBranch(UserCore::Item::ItemInfoI *item)
+bool InstalledWizardThread::selectBranch(gcRefPtr<UserCore::Item::ItemInfoI> &item)
 {
 	std::vector<uint32> vBranchIdList;
 
 	for (uint32 x=0; x<item->getBranchCount(); x++)
 	{
-		UserCore::Item::BranchInfoI* bi = item->getBranch(x);
+		auto bi = item->getBranch(x);
 
 		if (!bi)
 			continue;
@@ -301,7 +299,7 @@ void InstalledWizardThread::triggerProgress()
 	}
 }
 
-void InstalledWizardThread::parseGame(DesuraId id, const XML::gcXMLElement &game, WildcardManager *pWildCard, const XML::gcXMLElement &info)
+void InstalledWizardThread::parseGame(DesuraId id, const XML::gcXMLElement &game, gcRefPtr<WildcardManager> &pWildCard, const XML::gcXMLElement &info)
 {
 	pWildCard->updateInstallWildcard("INSTALL_PATH", "INSTALL_PATH");
 	pWildCard->updateInstallWildcard("PARENT_INSTALL_PATH", "%INSTALL_PATH%");
@@ -371,7 +369,7 @@ void InstalledWizardThread::parseGame(DesuraId id, const XML::gcXMLElement &game
 	});
 }
 
-void InstalledWizardThread::parseMod(DesuraId parId, DesuraId id, const XML::gcXMLElement &mod, WildcardManager *pWildCard, const XML::gcXMLElement &info)
+void InstalledWizardThread::parseMod(DesuraId parId, DesuraId id, const XML::gcXMLElement &mod, gcRefPtr<WildcardManager> &pWildCard, const XML::gcXMLElement &info)
 {
 	gcString name = mod.GetChild("name");
 
@@ -403,7 +401,7 @@ void InstalledWizardThread::parseMod(DesuraId parId, DesuraId id, const XML::gcX
 	}
 }
 
-void InstalledWizardThread::parseItems1(const XML::gcXMLElement &fNode, WildcardManager *pWildCard, std::map<uint64, XML::gcXMLElement> *vMap)
+void InstalledWizardThread::parseItems1(const XML::gcXMLElement &fNode, gcRefPtr<WildcardManager> &pWildCard, std::map<uint64, XML::gcXMLElement> *vMap)
 {
 	gcAssert(pWildCard);
 
@@ -430,7 +428,7 @@ void InstalledWizardThread::parseItems1(const XML::gcXMLElement &fNode, Wildcard
 	});
 }
 
-void InstalledWizardThread::parseItems2(const XML::gcXMLElement &fNode, WildcardManager *pWildCard)
+void InstalledWizardThread::parseItems2(const XML::gcXMLElement &fNode, gcRefPtr<WildcardManager> &pWildCard)
 {
 	gcAssert(pWildCard);
 
@@ -459,21 +457,21 @@ void InstalledWizardThread::parseItems2(const XML::gcXMLElement &fNode, Wildcard
 		if (getUserCore()->platformFilter(platform, PlatformType::Item))
 			return;
 
-		WildcardManager wm(pWildCard);
+		auto wm = gcRefPtr<WildcardManager>::create(pWildCard);
 		auto wildCardNode = platform.FirstChildElement("wcards");
 
 		if (wildCardNode.IsValid())
 		{
-			wm.parseXML(wildCardNode);
-			wm.compactWildCards();
+			wm->parseXML(wildCardNode);
+			wm->compactWildCards();
 		}
 
-		parseItems1(platform, &wm, &vMap);
+		parseItems1(platform, wm, &vMap);
 	});
 }
 
 
-void InstalledWizardThread::onItemFound(UserCore::Item::ItemInfoI *item)
+void InstalledWizardThread::onItemFound(gcRefPtr<UserCore::Item::ItemInfoI> &item)
 {
 	bool verify = (item->isInstalled() && item->isDownloadable() && !(item->getStatus()&UserCore::Item::ItemInfoI::STATUS_LINK));
 
@@ -481,7 +479,7 @@ void InstalledWizardThread::onItemFound(UserCore::Item::ItemInfoI *item)
 	{
 		if (!m_pTaskGroup)
 		{
-			UserCore::ItemManager* im = dynamic_cast<UserCore::ItemManager*>(getUserCore()->getItemManager());
+			auto im = gcRefPtr<UserCore::ItemManager>::dyn_cast(getUserCore()->getItemManager());
 			gcAssert(im);
 			m_pTaskGroup = im->newTaskGroup(UserCore::Item::ItemTaskGroupI::A_VERIFY);
 			m_pTaskGroup->start();
@@ -489,7 +487,7 @@ void InstalledWizardThread::onItemFound(UserCore::Item::ItemInfoI *item)
 
 		item->addSFlag(UserCore::Item::ItemInfoI::STATUS_ONCOMPUTER|UserCore::Item::ItemInfoI::STATUS_VERIFING);
 
-		UserCore::Item::ItemHandleI* handle = getUserCore()->getItemManager()->findItemHandle(item->getId());
+		auto handle = getUserCore()->getItemManager()->findItemHandle(item->getId());
 		handle->setPauseOnError(true);
 
 		m_pTaskGroup->addItem(item);
@@ -497,8 +495,4 @@ void InstalledWizardThread::onItemFound(UserCore::Item::ItemInfoI *item)
 
 	DesuraId id = item->getId();
 	onItemFoundEvent(id);
-}
-
-
-}
 }

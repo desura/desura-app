@@ -32,7 +32,7 @@ $/LicenseInfo$
 
 using namespace UI::Forms::ItemFormPage;
 
-InstallINToolPage::InstallINToolPage(wxWindow* parent, UserCore::ToolManagerI* pToolManager) 
+InstallINToolPage::InstallINToolPage(wxWindow* parent, gcRefPtr<UserCore::ToolManagerI> pToolManager) 
 	: BaseInstallPage(parent)
 	, m_pToolManager(pToolManager)
 {

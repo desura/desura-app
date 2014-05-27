@@ -113,18 +113,18 @@ void UploadProgPage::dispose()
 	if (!GetUploadMng())
 		return;
 
-	UserCore::Misc::UploadInfoThreadI* info = GetUploadMng()->findItem(m_uiUploadHash);
+	auto info = GetUploadMng()->findItem(m_uiUploadHash);
 
 	if (info)
 	{
-		*info->getActionEvent() -= guiDelegate(this, &UploadProgPage::onAction);
-		*info->getUploadProgressEvent() -= guiDelegate(this, &UploadProgPage::onProgress);
-		*info->getErrorEvent() -= guiDelegate(this, &UploadProgPage::onError);
-		*info->getCompleteEvent() -= guiDelegate(this, &UploadProgPage::onComplete);
+		info->getActionEvent() -= guiDelegate(this, &UploadProgPage::onAction);
+		info->getUploadProgressEvent() -= guiDelegate(this, &UploadProgPage::onProgress);
+		info->getErrorEvent() -= guiDelegate(this, &UploadProgPage::onError);
+		info->getCompleteEvent() -= guiDelegate(this, &UploadProgPage::onComplete);
 	}
 }
 
-void UploadProgPage::setInfo(DesuraId id, UserCore::Item::ItemInfoI* pItemInfo, uint32 hash, uint32 start)
+void UploadProgPage::setInfo(DesuraId id, gcRefPtr<UserCore::Item::ItemInfoI> pItemInfo, uint32 hash, uint32 start)
 {
 	BasePage::setInfo(id, pItemInfo);
 
@@ -137,13 +137,13 @@ void UploadProgPage::run()
 	if (!GetUploadMng())
 		return;
 
-	UserCore::Misc::UploadInfoThreadI* info = GetUploadMng()->findItem(m_uiUploadHash);
+	auto info = GetUploadMng()->findItem(m_uiUploadHash);
 	gcAssert(info);
 
-	*info->getActionEvent() += guiDelegate(this, &UploadProgPage::onAction);
-	*info->getUploadProgressEvent() += guiDelegate(this, &UploadProgPage::onProgress);
-	*info->getErrorEvent() += guiDelegate(this, &UploadProgPage::onError);
-	*info->getCompleteEvent() += guiDelegate(this, &UploadProgPage::onComplete);
+	info->getActionEvent() += guiDelegate(this, &UploadProgPage::onAction);
+	info->getUploadProgressEvent() += guiDelegate(this, &UploadProgPage::onProgress);
+	info->getErrorEvent() += guiDelegate(this, &UploadProgPage::onError);
+	info->getCompleteEvent() += guiDelegate(this, &UploadProgPage::onComplete);
 
 	info->setStart(m_iStart);
 
@@ -158,7 +158,7 @@ void UploadProgPage::run()
 
 void UploadProgPage::onButClick( wxCommandEvent& event )
 { 
-	UserCore::Misc::UploadInfoThreadI* info = GetUploadMng()->findItem(m_uiUploadHash);
+	auto info = GetUploadMng()->findItem(m_uiUploadHash);
 	gcAssert(info);
 
 	if (event.GetId() == m_butPause->GetId())
@@ -194,7 +194,7 @@ void UploadProgPage::onChecked(wxCommandEvent& event)
 	if (!GetUploadMng())
 		return;
 
-	UserCore::Misc::UploadInfoThreadI* info = GetUploadMng()->findItem(m_uiUploadHash);
+	auto info = GetUploadMng()->findItem(m_uiUploadHash);
 	gcAssert(info);
 
 	info->setDelMcf(m_cbDeleteMcf->GetValue());
@@ -202,7 +202,7 @@ void UploadProgPage::onChecked(wxCommandEvent& event)
 
 void UploadProgPage::onAction()
 {
-	UserCore::Misc::UploadInfoThreadI* info = GetUploadMng()->findItem(m_uiUploadHash);
+	auto info = GetUploadMng()->findItem(m_uiUploadHash);
 
 	gcFrame* par = dynamic_cast<gcFrame*>(GetParent());
 

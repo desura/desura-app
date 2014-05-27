@@ -36,34 +36,34 @@ $/LicenseInfo$
 
 namespace UserCore
 {
-namespace ItemTask
-{
+	namespace ItemTask
+	{
+		class VSDownloadMissing : public VSBaseTask, public UserCore::Misc::BannerNotifierI
+		{
+		public:
+			VSDownloadMissing();
+			~VSDownloadMissing();
 
-class VSDownloadMissing : public VSBaseTask, public UserCore::Misc::BannerNotifierI
-{
-public:
-	VSDownloadMissing();
-	~VSDownloadMissing();
+			virtual bool doTask();
 
-	virtual bool doTask();
+			Event<UserCore::Misc::GuiDownloadProvider> onNewProviderEvent;
+			virtual void onProgress(MCFCore::Misc::ProgressInfo& prog);
 
-	Event<UserCore::Misc::GuiDownloadProvider> onNewProviderEvent;
-	virtual void onProgress(MCFCore::Misc::ProgressInfo& prog);
+			gc_IMPLEMENT_REFCOUNTING(VSDownloadMissing);
 
-protected:
-	virtual void onStop();
+		protected:
+			virtual void onStop();
 
-	bool checkInstall();
-	bool checkComplex();
+			bool checkInstall();
+			bool checkComplex();
 
-	void onNewProvider(MCFCore::Misc::DP_s& dp);
-	void onBannerComplete(MCFCore::Misc::DownloadProvider &info);
+			void onNewProvider(MCFCore::Misc::DP_s& dp);
+			void onBannerComplete(MCFCore::Misc::DownloadProvider &info);
 
-private:
-	uint64 m_uiDoneSize;
-};
-
-}
+		private:
+			uint64 m_uiDoneSize;
+		};
+	}
 }
 
 #endif //DESURA_VSDOWNLOADMISSING_H

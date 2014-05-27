@@ -228,7 +228,7 @@ void MCFManager::createMcfDbTables(const char* dataPath)
 	}
 }
 
-gcString MCFManager::getMcfPath(UserCore::Item::ItemInfoI* item, bool isUnAuthed)
+gcString MCFManager::getMcfPath(gcRefPtr<UserCore::Item::ItemInfoI> item, bool isUnAuthed)
 {
 	if (!item || !item->getCurrentBranch())
 		return "";

@@ -32,12 +32,14 @@ $/LicenseInfo$
 #include "sqlite3x.hpp"
 #include "sql\GameExplorerSql.h"
 
-namespace UserCore
-{
-GameExplorerManager::GameExplorerManager(UserI* user) : BaseManager<Misc::GameExplorerInfo>(true)
-{
-	m_pUser = user;
+#include "user.h"
 
+using namespace UserCore;
+
+GameExplorerManager::GameExplorerManager(gcRefPtr<UserI> user) 
+	: BaseManager<Misc::GameExplorerInfo>()
+	, m_pUser(user)
+{
 	try
 	{
 		createGameExplorerDbTables(m_pUser->getAppDataPath());
@@ -62,11 +64,11 @@ void GameExplorerManager::addItem(DesuraId item)
 	if (!item.isOk())
 		return;
 	
-	Misc::GameExplorerInfo* gei = BaseManager::findItem(item.toInt64());
+	auto gei = BaseManager::findItem(item.toInt64());
 
 	if (!gei)
 	{
-		gei = new Misc::GameExplorerInfo(item, m_pUser);
+		gei = gcRefPtr<Misc::GameExplorerInfo>::create(item, m_pUser);
 		BaseManager<Misc::GameExplorerInfo>::addItem(gei);
 	}
 
@@ -79,7 +81,7 @@ void GameExplorerManager::addItem(DesuraId item)
 
 void GameExplorerManager::removeItem(DesuraId item)
 {
-	Misc::GameExplorerInfo* gei = BaseManager::findItem(item.toInt64());
+	auto gei = BaseManager::findItem(item.toInt64());
 
 	if (gei)
 		gei->removeDll();
@@ -87,8 +89,8 @@ void GameExplorerManager::removeItem(DesuraId item)
 
 void GameExplorerManager::loadItems()
 {
-	if (m_pUser->getServiceMain())
-		m_pUser->getServiceMain()->addDesuraToGameExplorer();
+	if (m_pUser->getInternal()->getServiceMain())
+		m_pUser->getInternal()->getServiceMain()->addDesuraToGameExplorer();
 
 	sqlite3x::sqlite3_connection db(getGameExplorerDb(m_pUser->getAppDataPath()).c_str());
 
@@ -102,7 +104,7 @@ void GameExplorerManager::loadItems()
 			while(reader.read()) 
 			{
 				DesuraId id(reader.getint64(0));
-				BaseManager<Misc::GameExplorerInfo>::addItem(new Misc::GameExplorerInfo(id, m_pUser));
+				BaseManager<Misc::GameExplorerInfo>::addItem(gcRefPtr<Misc::GameExplorerInfo>::create(id, m_pUser));
 			}
 		}
 	}
@@ -112,18 +114,18 @@ void GameExplorerManager::loadItems()
 		return;
 	}
 
-	std::vector<UserCore::Item::ItemInfoI*> vList;
+	std::vector<gcRefPtr<UserCore::Item::ItemInfoI>> vList;
 	m_pUser->getItemManager()->getAllItems(vList);
 
 	bool shouldInstall = shouldInstallItems();
 
 	for (size_t x=0; x<vList.size(); x++)
 	{
-		Misc::GameExplorerInfo* gei = BaseManager::findItem(vList[x]->getId().toInt64());
+		auto gei = BaseManager::findItem(vList[x]->getId().toInt64());
 
 		if (!gei)
 		{
-			gei = new Misc::GameExplorerInfo(vList[x]->getId(), m_pUser);
+			gei = gcRefPtr<Misc::GameExplorerInfo>::create(vList[x]->getId(), m_pUser);
 			BaseManager<Misc::GameExplorerInfo>::addItem(gei);
 		}
 
@@ -168,6 +170,4 @@ void GameExplorerManager::saveItems()
 	{
 		Warning("Failed to save game explorer db: {0}\n", e.what());
 	}
-}
-
 }

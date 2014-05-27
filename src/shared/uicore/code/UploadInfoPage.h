@@ -64,9 +64,9 @@ public:
 	void dispose() override;
 
 	//this is used to resume uploads
-	void setInfo(DesuraId id, UserCore::Item::ItemInfoI* pItemInfo) override;
-	void setInfo_path(DesuraId id, UserCore::Item::ItemInfoI* pItemInfo, const char* path);
-	void setInfo_key(DesuraId id, UserCore::Item::ItemInfoI* pItemInfo, const char* key);
+	void setInfo(DesuraId id, gcRefPtr<UserCore::Item::ItemInfoI> pItemInfo) override;
+	void setInfo_path(DesuraId id, gcRefPtr<UserCore::Item::ItemInfoI> pItemInfo, const char* path);
+	void setInfo_key(DesuraId id, gcRefPtr<UserCore::Item::ItemInfoI> pItemInfo, const char* key);
 
 	void run() override {}
 
@@ -107,10 +107,10 @@ protected:
 
 	EventV onResumeEvent;
 private:
-	UserCore::Thread::MCFThreadI* m_pPrepThread;
-	UserCore::Thread::MCFThreadI* m_pResumeThread;
+	gcRefPtr<UserCore::Thread::MCFThreadI> m_pPrepThread;
+	gcRefPtr<UserCore::Thread::MCFThreadI> m_pResumeThread;
 
-	WebCore::Misc::ResumeUploadInfo *m_pUpInfo;
+	gcRefPtr<WebCore::Misc::ResumeUploadInfo> m_pUpInfo;
 
 	fileValidateThread *m_pVFThread;
 

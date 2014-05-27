@@ -36,51 +36,51 @@ class IPCInstallMcf;
 
 namespace UserCore
 {
-namespace Item
-{
-	namespace Helper
+	namespace Item
 	{
-		class InstallerHandleHelperI;
+		namespace Helper
+		{
+			class InstallerHandleHelperI;
+		}
 	}
-}
 
-namespace ItemTask
-{
+	namespace ItemTask
+	{
 
-class InstallServiceTask : public BaseItemServiceTask
-{
-public:
-	InstallServiceTask(UserCore::Item::ItemHandle* handle, const char* path, MCFBranch branch, UserCore::Item::Helper::InstallerHandleHelperI* ihh);
-	~InstallServiceTask();
+		class InstallServiceTask : public BaseItemServiceTask
+		{
+		public:
+			InstallServiceTask(gcRefPtr<UserCore::Item::ItemHandleI> handle, const char* path, MCFBranch branch, gcRefPtr<UserCore::Item::Helper::InstallerHandleHelperI> &ihh);
+			~InstallServiceTask();
 
 
-protected:
-	bool initService();
-	void onComplete();
+		protected:
+			bool initService();
+			void onComplete();
 
-	virtual void onPause();
-	virtual void onUnpause();
-	virtual void onStop();
+			virtual void onPause();
+			virtual void onUnpause();
+			virtual void onStop();
 
-	void onFinish();
-	void onProgUpdate(MCFCore::Misc::ProgressInfo& info);
-	void onError(gcException &e);
+			void onFinish();
+			void onProgUpdate(MCFCore::Misc::ProgressInfo& info);
+			void onError(gcException &e);
 
-	gcString getCurrentMcf();
-	gcString downloadMcfHeader();
+			gcString getCurrentMcf();
+			gcString downloadMcfHeader();
 
-private:
-	std::shared_ptr<IPCInstallMcf> m_pIPCIM;
+		private:
+			std::shared_ptr<IPCInstallMcf> m_pIPCIM;
 
-	bool m_bHasError;
-	bool m_bInstalling;
-	bool m_bHashMissMatch;
-	gcString m_szPath;
+			bool m_bHasError;
+			bool m_bInstalling;
+			bool m_bHashMissMatch;
+			gcString m_szPath;
 
-	UserCore::Item::Helper::InstallerHandleHelperI* m_pIHH;
-};
+			gcRefPtr<UserCore::Item::Helper::InstallerHandleHelperI> m_pIHH;
+		};
 
-}
+	}
 }
 
 

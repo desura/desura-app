@@ -53,7 +53,7 @@ public:
 
 	void dispose() override;
 
-	void setInfo(DesuraId id, UserCore::Item::ItemInfoI* pItemInfo, const char* path);
+	void setInfo(DesuraId id, gcRefPtr<UserCore::Item::ItemInfoI> pItemInfo, const char* path);
 	void run() override;
 		
 	void setPercent(uint32 per);
@@ -79,7 +79,7 @@ private:
 	bool m_bThreadPaused;
 	gcString m_szFolderPath;
 
-	UserCore::Thread::MCFThreadI* m_pThread;
+	gcRefPtr<UserCore::Thread::MCFThreadI> m_pThread;
 };
 
 

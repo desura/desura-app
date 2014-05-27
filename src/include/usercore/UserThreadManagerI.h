@@ -41,10 +41,10 @@ namespace Thread
 
 namespace WebCore
 {
-namespace Misc
-{
-	class ResumeUploadInfo;
-}
+	namespace Misc
+	{
+		class ResumeUploadInfo;
+	}
 }
 
 namespace UserCore
@@ -54,66 +54,73 @@ namespace UserCore
 		class InstallInfoI;
 	}
 
-class UserThreadManagerI
-{
-public:
-	//! Enlist a thread to be managed
-	//! 
-	//! @param pThread thread
-	//!
-	virtual void enlist(::Thread::BaseThread* pThread)=0;
+	class UserThreadProxyI : public gcRefBase
+	{
+	public:
+		virtual ::Thread::BaseThread* getThread() = 0;
+		virtual void cleanup() = 0;
 
-	//! Delist a thread to be managed
-	//! 
-	//! @param pThread thread
-	//!
-	virtual void delist(::Thread::BaseThread* pThread)=0;
+		gc_IMPLEMENT_REFCOUNTING(UserThreadProxyI)
+	};
 
-	//! Sets the UserCore interface that all threads use
-	//!
-	//! @param uc UserCore interface
-	//!
-	virtual void setUserCore(UserCore::UserI *uc)=0;
+	class UserThreadManagerI : public gcRefBase
+	{
+	public:
+		//! Enlist a thread to be managed
+		//! 
+		//! @param pThread thread
+		//!
+		virtual void enlist(gcRefPtr<UserThreadProxyI> pThread) = 0;
 
-	//! Prints the current thread list
-	//!
-	virtual void printThreadList()=0;
+		//! Delist a thread to be managed
+		//! 
+		//! @param pThread thread
+		//!
+		virtual void delist(gcRefPtr<UserThreadProxyI> pThread) = 0;
 
-	/////////////////////////////////////////////////////////////////////////////////////////////////////
-	// Application Threads
-	/////////////////////////////////////////////////////////////////////////////////////////////////////
-	
-	//! Starts a update poll thread
-	//!
-	virtual Thread::UserThreadI* newUpdateThread(Event<std::tuple<gcOptional<bool>, gcOptional<bool>, gcOptional<bool>>> *onForcePollEvent, bool loadLoginItems)=0;
+		//! Sets the UserCore interface that all threads use
+		//!
+		//! @param uc UserCore interface
+		//!
+		virtual void setUserCore(gcRefPtr<UserCore::UserI> uc) = 0;
 
+		//! Prints the current thread list
+		//!
+		virtual void printThreadList() = 0;
 
-	/////////////////////////////////////////////////////////////////////////////////////////////////////
-	// Mcf Threads
-	/////////////////////////////////////////////////////////////////////////////////////////////////////
+		/////////////////////////////////////////////////////////////////////////////////////////////////////
+		// Application Threads
+		/////////////////////////////////////////////////////////////////////////////////////////////////////
 
-	//! Runs the Installed wizard which looks for installed items
-	//!
-	virtual Thread::MCFThreadI* newInstalledWizardThread()=0;
-
-	virtual Thread::MCFThreadI* newGetItemListThread()=0;
-
-	virtual Thread::MCFThreadI* newGatherInfoThread(DesuraId id, MCFBranch branch, MCFBuild build)=0;
-
-	//! Uses events:
-	//!
-	//! getMcfProgressEvent
-	//! getErrorEvent
-	//! getCompleteStrEvent
-	//!
-	virtual Thread::MCFThreadI* newCreateMCFThread(DesuraId id, const char* path)=0;
-
-	virtual Thread::MCFThreadI* newUploadPrepThread(DesuraId id, const char* file)=0;
-
-	virtual Thread::MCFThreadI* newUploadResumeThread(DesuraId id, const char* key, WebCore::Misc::ResumeUploadInfo *info)=0;
-};
+		//! Starts a update poll thread
+		//!
+		virtual gcRefPtr<Thread::UserThreadI> newUpdateThread(Event<std::tuple<gcOptional<bool>, gcOptional<bool>, gcOptional<bool>>> *onForcePollEvent, bool loadLoginItems) = 0;
 
 
+		/////////////////////////////////////////////////////////////////////////////////////////////////////
+		// Mcf Threads
+		/////////////////////////////////////////////////////////////////////////////////////////////////////
+
+		//! Runs the Installed wizard which looks for installed items
+		//!
+		virtual gcRefPtr<Thread::MCFThreadI> newInstalledWizardThread() = 0;
+
+		virtual gcRefPtr<Thread::MCFThreadI> newGetItemListThread() = 0;
+
+		virtual gcRefPtr<Thread::MCFThreadI> newGatherInfoThread(DesuraId id, MCFBranch branch, MCFBuild build) = 0;
+
+		//! Uses events:
+		//!
+		//! getMcfProgressEvent
+		//! getErrorEvent
+		//! getCompleteStrEvent
+		//!
+		virtual gcRefPtr<Thread::MCFThreadI> newCreateMCFThread(DesuraId id, const char* path) = 0;
+
+		virtual gcRefPtr<Thread::MCFThreadI> newUploadPrepThread(DesuraId id, const char* file) = 0;
+
+		virtual gcRefPtr<Thread::MCFThreadI> newUploadResumeThread(DesuraId id, const char* key, gcRefPtr<WebCore::Misc::ResumeUploadInfo> &info) = 0;
+	};
 }
 
 #endif //DESURA_USERTHREADMANAGERI_H

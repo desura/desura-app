@@ -32,12 +32,14 @@ $/LicenseInfo$
 
 static std::mutex m_WCMutex;
 
-WildcardManager::WildcardManager() : BaseManager( true )
+WildcardManager::WildcardManager() 
+	: BaseManager()
 {
 	m_uiDepth = 0;
 }
 
-WildcardManager::WildcardManager(WildcardManager* mng) : BaseManager( true )
+WildcardManager::WildcardManager(gcRefPtr<WildcardManager> &mng)
+	: BaseManager()
 {
 	m_uiDepth = 0;
 
@@ -45,10 +47,10 @@ WildcardManager::WildcardManager(WildcardManager* mng) : BaseManager( true )
 	{
 		for (uint8 x=0; x<mng->getCount(); x++)
 		{
-			WildcardInfo *temp = dynamic_cast<WildcardInfo*>(mng->getItem(x));
+			auto temp = mng->getItem(x);
 
 			if (temp)
-				addItem(new WildcardInfo(temp->m_szName.c_str(), temp->m_szPath.c_str(), temp->m_szType.c_str(), temp->m_bResolved));
+				addItem(gcRefPtr<WildcardInfo>::create(temp->m_szName.c_str(), temp->m_szPath.c_str(), temp->m_szType.c_str(), temp->m_bResolved));
 		}
 
 		onNeedSpecialEvent += delegate(&(mng->onNeedSpecialEvent));
@@ -169,7 +171,7 @@ void WildcardManager::constructPath(const char* path, char **res, uint8 *depth)
 			}
 
 			AutoDelete<char> tad(temp);
-			std::shared_ptr<WildcardInfo> wcInfo;
+			gcRefPtr<WildcardInfo> wcInfo;
 
 			if (Safe::stricmp(temp, "TEMP") == 0)
 			{
@@ -178,18 +180,19 @@ void WildcardManager::constructPath(const char* path, char **res, uint8 *depth)
 				onNeedInstallSpecialEvent(info);
 
 				if (info.handled)
-					wcInfo = std::make_shared<WildcardInfo>("temp", info.result.c_str(), "temp", true);
+				{
+					wcInfo = gcRefPtr<WildcardInfo>::create("temp", info.result.c_str(), "temp", true);
+				}
 			}
 			else
 			{
-				//hack hack fix when base manager changes give out shared ptr
-				wcInfo = std::shared_ptr<WildcardInfo>(findItem(temp), [](WildcardInfo*){});
+				wcInfo = findItem(temp);
 			}
 
 			if (!wcInfo)
 				throw gcException(ERR_WILDCARD, gcString("Failed to find wildcard [{0}]", temp));
 
-			resolveWildCard(wcInfo.get());
+			resolveWildCard(wcInfo);
 
 			if (!wcInfo->m_bResolved)
 				throw gcException(ERR_WILDCARD, gcString("Failed to resolve wildcard [{0}]", temp));
@@ -263,14 +266,14 @@ uint8 WildcardManager::parseXML(const XML::gcXMLElement &xmlElement)
 			
 		if (!name.empty() && !type.empty() && !string.empty())
 		{
-			addItem(new WildcardInfo(name, string, type));
+			addItem(gcRefPtr<WildcardInfo>::create(name, string, type));
 		}
 	});
 
 	return WCM_OK;
 }
 
-void WildcardManager::resolveWildCard(WildcardInfo *wcInfo)
+void WildcardManager::resolveWildCard(gcRefPtr<WildcardInfo> wcInfo)
 {
 	if (wcInfo->m_bResolved)
 		return;
@@ -347,7 +350,7 @@ void WildcardManager::updateInstallWildcard(const char* name, const char* value)
 {
 	if (strcmp(name, "INSTALL_PATH") == 0 || strcmp(name, "PARENT_INSTALL_PATH")==0)
 	{
-		WildcardInfo* temp = findItem(name);
+		auto temp = findItem(name);
 
 		if (temp)
 		{
@@ -356,7 +359,7 @@ void WildcardManager::updateInstallWildcard(const char* name, const char* value)
 		}
 		else
 		{
-			temp = new WildcardInfo(name, value, "special", true);
+			temp = gcRefPtr<WildcardInfo>::create(name, value, "special", true);
 			addItem(temp);
 		}
 	}
@@ -397,7 +400,7 @@ void WildcardManager::compactWildCards()
 {
 	for (size_t x=0; x<getCount(); x++)
 	{
-		WildcardInfo *temp = dynamic_cast<WildcardInfo*>(getItem((uint32)x));
+		auto temp = getItem((uint32)x);
 
 		if (!temp)
 			continue;

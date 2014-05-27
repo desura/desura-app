@@ -39,6 +39,11 @@ namespace UserCore
 	{
 		class ItemInfoI;
 	}
+
+	namespace Misc
+	{
+		class UploadInfoThreadI;
+	}
 }
 
 class DesuraJSBinding : public DesuraJSBase<DesuraJSBinding>
@@ -47,7 +52,7 @@ public:
 	DesuraJSBinding();
 	~DesuraJSBinding();
 
-	static UserCore::ItemManagerI* getItemManager();
+	static gcRefPtr<UserCore::ItemManagerI> getItemManager();
 
 	EventV onPingEvent;
 
@@ -56,20 +61,20 @@ public:
 protected:
 	friend class MainApp;
 	friend class LanguageTestDialog;
-	static UserCore::ItemManagerI* gs_pItemManager;
+	static gcRefPtr<UserCore::ItemManagerI> gs_pItemManager;
 
 	JSObjHandle getLocalString(ChromiumDLL::JavaScriptFactoryI *m_pFactory, ChromiumDLL::JavaScriptContextI* context, JSObjHandle object, std::vector<JSObjHandle> &args);
 
-	void* getItemInfoFromId(gcString id);
+	gcRefPtr<UserCore::Item::ItemInfoI> getItemInfoFromId(gcString id);
 
-	std::vector<void*> getDevItems();
-	std::vector<void*> getGames();
-	std::vector<void*> getMods(UserCore::Item::ItemInfoI* game);
-	std::vector<void*> getLinks();
-	std::vector<void*> getFavorites();
-	std::vector<void*> getRecent();
-	std::vector<void*> getUploads();
-	std::vector<void*> getNewItems();
+	std::vector<gcRefPtr<UserCore::Item::ItemInfoI>> getDevItems();
+	std::vector<gcRefPtr<UserCore::Item::ItemInfoI>> getGames();
+	std::vector<gcRefPtr<UserCore::Item::ItemInfoI>> getMods(gcRefPtr<UserCore::Item::ItemInfoI> game);
+	std::vector<gcRefPtr<UserCore::Item::ItemInfoI>> getLinks();
+	std::vector<gcRefPtr<UserCore::Item::ItemInfoI>> getFavorites();
+	std::vector<gcRefPtr<UserCore::Item::ItemInfoI>> getRecent();
+	std::vector<gcRefPtr<UserCore::Misc::UploadInfoThreadI>> getUploads();
+	std::vector<gcRefPtr<UserCore::Item::ItemInfoI>> getNewItems();
 
 	gcString getThemeColor(gcString name, gcString id);
 	gcString getThemeImage(gcString id);
@@ -95,9 +100,9 @@ protected:
 	bool is32Bit();
 	bool is64Bit();
 
-	void* addLink(gcString name, gcString exe, gcString args);
-	void delLink(UserCore::Item::ItemInfoI* item);
-	void updateLink(UserCore::Item::ItemInfoI* item, gcString args);
+	gcRefPtr<UserCore::Item::ItemInfoI> addLink(gcString name, gcString exe, gcString args);
+	void delLink(gcRefPtr<UserCore::Item::ItemInfoI> item);
+	void updateLink(gcRefPtr<UserCore::Item::ItemInfoI> item, gcString args);
 
 	void login(gcString username, gcString loginCookie);
 	void loginError(gcString error);

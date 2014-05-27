@@ -102,8 +102,8 @@ bool VSCheckInstall::checkInstallComplex(bool completeMcf)
 	if (HasAnyFlags(getItemInfo()->getStatus(), UserCore::Item::ItemInfoI::STATUS_INSTALLCOMPLEX) == false)
 		return false;
 
-	UserCore::Item::ItemInfoI* pItem = getItemInfo();
-	UserCore::Item::ItemInfoI* pParent = getParentItemInfo();
+	auto pItem = getItemInfo();
+	auto pParent = getParentItemInfo();
 
 	if (pParent)
 	{		

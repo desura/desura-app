@@ -34,45 +34,48 @@ $/LicenseInfo$
 
 namespace UserCore
 {
-namespace Item
-{
+	namespace Item
+	{
 
-class EventItemI;
+		class EventItemI;
 
-class ItemHandleEvents
-{
-public:
-	ItemHandleEvents(std::vector<Helper::ItemHandleHelperI*> &vHelperList);
-	~ItemHandleEvents();
+		class ItemHandleEvents : public gcRefBase
+		{
+		public:
+			ItemHandleEvents(std::recursive_mutex &helperLock, std::vector<gcRefPtr<Helper::ItemHandleHelperI>> &vHelperList);
+			~ItemHandleEvents();
 
-	void registerTask(UserCore::ItemTask::BaseItemTask* task);
-	void deregisterTask(UserCore::ItemTask::BaseItemTask* task);
+			void registerTask(gcRefPtr<UserCore::ItemTask::BaseItemTask> &task);
+			void deregisterTask(gcRefPtr<UserCore::ItemTask::BaseItemTask> &task);
 
-	void postAll(Helper::ItemHandleHelperI* helper);
+			void postAll(gcRefPtr<Helper::ItemHandleHelperI> &helper);
 
-	void reset();
-	void onPause(bool state);
+			void reset();
+			void onPause(bool state);
 
-protected:
-	void onComplete(uint32& status);
-	void onProgressUpdate(uint32& progress);
-	void onError(gcException& e);
-	void onNeedWildCard(WCSpecialInfo& info);
+		protected:
+			void onComplete(uint32& status);
+			void onProgressUpdate(uint32& progress);
+			void onError(gcException& e);
+			void onNeedWildCard(WCSpecialInfo& info);
 
-	void onMcfProgress(MCFCore::Misc::ProgressInfo& info);
-	void onComplete(gcString& str);
+			void onMcfProgress(MCFCore::Misc::ProgressInfo& info);
+			void onComplete(gcString& str);
 
-	void onDownloadProvider(UserCore::Misc::GuiDownloadProvider& provider);
-	void onVerifyComplete(UserCore::Misc::VerifyComplete& info);
+			void onDownloadProvider(UserCore::Misc::GuiDownloadProvider& provider);
+			void onVerifyComplete(UserCore::Misc::VerifyComplete& info);
 
-private:
-	MCFCore::Misc::ProgressInfo m_LastProg;
+		private:
+			MCFCore::Misc::ProgressInfo m_LastProg;
 
-	std::vector<EventItemI*> m_EventHistory;
-	std::vector<Helper::ItemHandleHelperI*> &m_vHelperList;
-};
+			std::vector<gcRefPtr<EventItemI>> m_EventHistory;
 
-}
+			std::recursive_mutex &m_HelperLock;
+			std::vector<gcRefPtr<Helper::ItemHandleHelperI>> &m_vHelperList;
+
+			gc_IMPLEMENT_REFCOUNTING(ItemHandleEvents)
+		};
+	}
 }
 
 #endif //DESURA_ITEMHANDLEEVENTS_H

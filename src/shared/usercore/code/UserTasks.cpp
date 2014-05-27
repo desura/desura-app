@@ -31,6 +31,8 @@ $/LicenseInfo$
 #include "User.h"
 #include "sqlite3x.hpp"
 
+#include "ItemThread.h"
+
 #include "mcfcore/DownloadProvider.h"
 #include "webcore/DownloadImageInfo.h"
 
@@ -46,10 +48,10 @@ namespace Task
 {
 
 
-DeleteThread::DeleteThread(UserCore::UserI* user, ::Thread::BaseThread *thread) 
+DeleteThread::DeleteThread(gcRefPtr<UserCore::UserI> user, gcRefPtr<UserCore::Item::ItemThread> &pThread)
 	: UserTask(user)
+	, m_pThread(pThread)
 {
-	m_pThread = thread;
 }
 
 DeleteThread::~DeleteThread()
@@ -58,9 +60,6 @@ DeleteThread::~DeleteThread()
 
 void DeleteThread::doTask()
 {
-	if (this->isStopped())
-		return;
-
 	safe_delete(m_pThread);
 }
 
@@ -69,7 +68,7 @@ void DeleteThread::doTask()
 ////////////////////////////////////////////////////////////////////////////
 
 
-DownloadImgTask::DownloadImgTask(UserCore::UserI* user, UserCore::Item::ItemInfo* itemInfo, uint8 image) 
+DownloadImgTask::DownloadImgTask(gcRefPtr<UserCore::UserI> user, gcRefPtr<UserCore::Item::ItemInfo> itemInfo, uint8 image) 
 	: UserTask(user)
 {
 	m_Image = image;
@@ -113,14 +112,14 @@ void DownloadImgTask::doTask()
 ////////////////////////////////////////////////////////////////////////////
 
 
-ChangeAccountTask::ChangeAccountTask(UserCore::UserI* user, DesuraId id, uint8 action ) : UserTask(user, id)
+ChangeAccountTask::ChangeAccountTask(gcRefPtr<UserCore::UserI> user, DesuraId id, uint8 action ) : UserTask(user, id)
 {
 	m_Action = action;
 }
 
 void ChangeAccountTask::doTask()
 {
-	UserCore::Item::ItemInfo* pItem = getItemInfo();
+	auto pItem = getItemInfo();
 
 	if (!pItem || !getWebCore())
 		return;
@@ -159,14 +158,21 @@ void ChangeAccountTask::doTask()
 ////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////
 
-DownloadBannerTask::DownloadBannerTask(UserCore::UserI* user, const MCFCore::Misc::DownloadProvider& dp) 
+DownloadBannerTask::DownloadBannerTask(gcRefPtr<UserCore::UserI> user, const MCFCore::Misc::DownloadProvider& dp) 
 	: UserTask(user)
-	, m_DPInfo(this, dp)
+	, m_DownloadProvider(dp)
 {
+}
+
+DownloadBannerTask::~DownloadBannerTask()
+{
+	int a = 1;
 }
 
 void DownloadBannerTask::doTask()
 {
+	BannerCompleteInfo dpinfo(this, m_DownloadProvider);
+
 	try
 	{
 		UTIL::FS::Path path(getUserCore()->getAppDataPath(), "", false);
@@ -174,16 +180,16 @@ void DownloadBannerTask::doTask()
 		path += "temp";
 		UTIL::FS::recMakeFolder(path);
 
-		getWebCore()->downloadBanner(&m_DPInfo.info, path.getFullPath().c_str());
-		m_DPInfo.complete = true;
+		getWebCore()->downloadBanner(&m_DownloadProvider, path.getFullPath().c_str());
+		dpinfo.complete = true;
 	}
 	catch (gcException &e)
 	{
 		Warning("Failed to download banner: {0}\n", e);
-		m_DPInfo.complete = false;
+		dpinfo.complete = false;
 	}
 
-	onDLCompleteEvent(m_DPInfo);
+	onDLCompleteEvent(dpinfo);
 }
 
 ////////////////////////////////////////////////////////////////////////////
@@ -191,7 +197,7 @@ void DownloadBannerTask::doTask()
 ////////////////////////////////////////////////////////////////////////////
 
 
-DownloadAvatarTask::DownloadAvatarTask(UserCore::UserI* user,  const char* url, uint32 userId) : UserTask(user)
+DownloadAvatarTask::DownloadAvatarTask(gcRefPtr<UserCore::UserI> user,  const char* url, uint32 userId) : UserTask(user)
 {
 	m_szUrl = gcString(url);
 	m_uiUserId = userId;
@@ -246,7 +252,7 @@ void DownloadAvatarTask::doTask()
 ////////////////////////////////////////////////////////////////////////////
 
 
-GatherInfoTask::GatherInfoTask(UserCore::UserI* user,  DesuraId id, bool addToAccount) : UserTask(user, id)
+GatherInfoTask::GatherInfoTask(gcRefPtr<UserCore::UserI> user,  DesuraId id, bool addToAccount) : UserTask(user, id)
 {
 	m_bAddToAccount = addToAccount;
 }
@@ -270,7 +276,7 @@ void GatherInfoTask::doTask()
 		if (m_bAddToAccount)
 		{
 			//if we just removed this item from account it will be in a hidden deleted status
-			UserCore::Item::ItemInfoI* info = pUser->getItemManager()->findItemInfo(getItemId());
+			auto info = pUser->getItemManager()->findItemInfo(getItemId());
 
 			if (info)
 				info->delSFlag(UserCore::Item::ItemInfoI::STATUS_DELETED);
@@ -289,7 +295,8 @@ void GatherInfoTask::doTask()
 ////////////////////////////////////////////////////////////////////////////
 
 
-CDKeyTask::CDKeyTask(UserCore::UserI* user, DesuraId id) : UserTask(user, id)
+CDKeyTask::CDKeyTask(gcRefPtr<UserCore::UserI> user, DesuraId id) 
+	: UserTask(user, id)
 {
 }
 
@@ -352,15 +359,16 @@ public:
 };
 
 
-MigrateStandaloneTask::MigrateStandaloneTask(UserCore::UserI* user, const std::vector<UTIL::FS::Path> &fileList) : UserTask(user, DesuraId())
+MigrateStandaloneTask::MigrateStandaloneTask(gcRefPtr<UserCore::UserI> user, const std::vector<UTIL::FS::Path> &fileList) 
+	: UserTask(user, DesuraId())
 {
 	m_vFileList = fileList;
 }
 
 void MigrateStandaloneTask::doTask()
 {
-	WildcardManager wildc = WildcardManager();
-	wildc.onNeedSpecialEvent += delegate(getUserCore()->getNeedWildCardEvent());
+	auto wildc = gcRefPtr<WildcardManager>::create();
+	wildc->onNeedSpecialEvent += delegate(&getUserCore()->getNeedWildCardEvent());
 
 	for (size_t x=0; x<m_vFileList.size(); x++)
 	{
@@ -393,7 +401,7 @@ void MigrateStandaloneTask::doTask()
 
 		DesuraId itemId(id.c_str(), "games");
 
-		UserCore::Item::ItemInfoI* info = getUserCore()->getItemManager()->findItemInfo(itemId);
+		auto info = getUserCore()->getItemManager()->findItemInfo(itemId);
 
 		if (!info || info->isInstalled())
 			continue;
@@ -401,7 +409,7 @@ void MigrateStandaloneTask::doTask()
 		try
 		{
 			getUserCore()->getCIPManager()->updateItem(itemId, path);
-			getUserCore()->getItemManager()->retrieveItemInfo(getItemId(), 0, &wildc);
+			getUserCore()->getItemManager()->retrieveItemInfo(getItemId(), 0, wildc);
 		}
 		catch (...)
 		{
@@ -409,7 +417,7 @@ void MigrateStandaloneTask::doTask()
 		}
 
 		info = getUserCore()->getItemManager()->findItemInfo(itemId);
-		UserCore::Item::ItemInfo* realInfo = dynamic_cast<UserCore::Item::ItemInfo*>(info);
+		auto realInfo = gcRefPtr<UserCore::Item::ItemInfo>::dyn_cast(info);
 
 		if (!realInfo)
 			continue;
@@ -421,15 +429,16 @@ void MigrateStandaloneTask::doTask()
 ////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////
 
-RegenLaunchScriptsTask::RegenLaunchScriptsTask(UserCore::UserI* user) : UserTask(user, DesuraId())
+RegenLaunchScriptsTask::RegenLaunchScriptsTask(gcRefPtr<UserCore::UserI> user) 
+	: UserTask(user, DesuraId())
 {
 }
 
 void RegenLaunchScriptsTask::doTask()
 {
-	std::vector<UserCore::Item::ItemHandleI*> itemList;
+	std::vector<gcRefPtr<UserCore::Item::ItemHandleI>> itemList;
 	
-	ItemManagerI* im = getUserCore()->getItemManager();
+	auto im = getUserCore()->getItemManager();
 	
 	for (size_t x=0; x<im->getCount(); x++)
 	{

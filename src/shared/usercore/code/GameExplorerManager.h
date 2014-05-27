@@ -57,7 +57,7 @@ namespace UserCore
 				FLAG_NEEDSUPATE = 2,
 			};
 
-			GameExplorerInfo(DesuraId id, UserCore::UserI* user);
+			GameExplorerInfo(DesuraId id, gcRefPtr<UserCore::UserI> &user);
 			~GameExplorerInfo();
 
 			void loadFromDb(sqlite3x::sqlite3_connection *db);
@@ -87,12 +87,12 @@ namespace UserCore
 			uint32 m_uiFlags;
 
 			DesuraId m_Id;
-			UserCore::UserI* m_pUser;
-			UserCore::Item::ItemInfoI* m_pItemInfo;
+			gcRefPtr<UserCore::UserI> m_pUser;
+			gcRefPtr<UserCore::Item::ItemInfoI> m_pItemInfo;
 		};
 	}
 
-	class GameExplorerManagerI
+	class GameExplorerManagerI : public gcRefBase
 	{
 	public:
 		virtual void addItem(DesuraId item)=0;
@@ -114,13 +114,15 @@ namespace UserCore
 
 		MOCK_METHOD0(loadItems, void());
 		MOCK_METHOD0(saveItems, void());
+
+		gc_IMPLEMENT_REFCOUNTING(GameExplorerManager);
 	};
 #endif
 
 	class GameExplorerManager : public GameExplorerManagerI, public BaseManager<Misc::GameExplorerInfo>
 	{
 	public:
-		GameExplorerManager(UserI* user);
+		GameExplorerManager(gcRefPtr<UserI> pUser);
 
 		void addItem(DesuraId item) override;
 		void removeItem(DesuraId item) override;
@@ -132,7 +134,9 @@ namespace UserCore
 		bool shouldInstallItems();
 
 	private:
-		UserI* m_pUser;
+		gcRefPtr<UserI> m_pUser;
+
+		gc_IMPLEMENT_REFCOUNTING(GameExplorerManager);
 	};
 }
 

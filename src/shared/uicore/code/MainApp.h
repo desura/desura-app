@@ -41,8 +41,8 @@ extern "C"
 CEXPORT void* CreateMainApp();
 
 extern bool isSafeUrl(const char* url);
-extern WebCore::WebCoreI* GetWebCore();
-extern UserCore::UserI* GetUserCore();
+extern gcRefPtr<WebCore::WebCoreI> GetWebCore();
+extern gcRefPtr<UserCore::UserI> GetUserCore();
 
 const char* GetAppVersion();
 const char* GetUserCoreVersion();
@@ -97,12 +97,12 @@ class MainAppNoUI
 public:
 	friend class UnitTest::MainAppFixture;
 
-	void onGiftUpdate(std::vector<UserCore::Misc::NewsItem*>& itemList);
+	void onGiftUpdate(std::vector<gcRefPtr<UserCore::Misc::NewsItem>>& itemList);
 
 	EventV onNotifyGiftUpdateEvent;
 
 	std::mutex m_NewsLock;
-	std::vector<std::shared_ptr<UserCore::Misc::NewsItem>> m_vGiftItems;
+	std::vector<gcRefPtr<UserCore::Misc::NewsItem>> m_vGiftItems;
 };
 
 class MainApp : public MainAppI, public MainAppProviderI, protected MainAppNoUI
@@ -176,7 +176,7 @@ protected:
 
 	void getSteamUser(WCSpecialInfo *info, wxWindow *parent);
 
-	void onNewsUpdate(std::vector<UserCore::Misc::NewsItem*>& itemList);
+	void onNewsUpdate(std::vector<gcRefPtr<UserCore::Misc::NewsItem>>& itemList);
 	
 	void onNeedCvar(UserCore::Misc::CVar_s& info);
 
@@ -210,9 +210,8 @@ private:
 	friend class Desura;
 	gcMessageDialog *m_pOfflineDialog = nullptr;
 
-	std::vector<std::shared_ptr<UserCore::Misc::NewsItem>> m_vNewsItems;
-
-	UserCore::Thread::UserThreadI* m_pDumpThread = nullptr;
+	std::vector<gcRefPtr<UserCore::Misc::NewsItem>> m_vNewsItems;
+	gcRefPtr<UserCore::Thread::UserThreadI> m_pDumpThread;
 
 	bool m_bQuiteMode = false;
 	bool m_bLoggedIn = false;

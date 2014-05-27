@@ -44,98 +44,103 @@ $/LicenseInfo$
 
 namespace UserCore
 {
-namespace Thread
-{
-
-class MCFThread : public BaseUserThread<MCFThreadI, ::Thread::BaseThread>
-{
-public:
-	MCFThread(const char* threadName, DesuraId id=0, MCFBranch branch = MCFBranch(), MCFBuild build = MCFBuild()) : BaseUserThread<MCFThreadI, ::Thread::BaseThread>(threadName, id)
+	namespace Thread
 	{
-		m_uiMcfBuild = build;
-		m_uiMcfBranch = branch;
-		m_pUploadManager = nullptr;
+
+		class MCFThread : public BaseUserThread<MCFThreadI, ::Thread::BaseThread>
+		{
+		public:
+			MCFThread(const char* threadName, DesuraId id = 0, MCFBranch branch = MCFBranch(), MCFBuild build = MCFBuild()) 
+				: BaseUserThread<MCFThreadI, ::Thread::BaseThread>(threadName, id)
+			{
+				m_uiMcfBuild = build;
+				m_uiMcfBranch = branch;
+				m_pUploadManager = nullptr;
+			}
+
+			//need to stop here before we delete the mcf
+			~MCFThread()
+			{
+				stop();
+			}
+
+			void setUpLoadManager(gcRefPtr<UserCore::UploadManagerI> &um)
+			{
+				m_pUploadManager = um;
+			}
+
+			gcRefPtr<UserCore::UploadManagerI> getUploadManager()
+			{
+				return m_pUploadManager;
+			}
+
+			Event<MCFCore::Misc::ProgressInfo>& getMcfProgressEvent()
+			{
+				return onMcfProgressEvent;
+			}
+
+			Event<gcString>& getCompleteStringEvent()
+			{
+				return onCompleteStrEvent;
+			}
+
+			Event<gcString>& getNewItemEvent()
+			{
+				return onNewItemEvent;
+			}
+
+			Event<DesuraId>& getItemFoundEvent()
+			{
+				return onItemFoundEvent;
+			}
+
+			Event<UserCore::Misc::UploadInfo>& getUploadProgressEvent()
+			{
+				return onUploadProgressEvent;
+			}
+
+			uint32 getMcfBuild()
+			{
+				return m_uiMcfBuild;
+			}
+
+			uint32 getMcfBranch()
+			{
+				return m_uiMcfBranch;
+			}
+
+			void cleanup() override
+			{
+				m_pUploadManager.reset();
+				BaseUserThread<MCFThreadI, ::Thread::BaseThread>::cleanup();
+			}
+
+		protected:
+			//McfThread
+			Event<MCFCore::Misc::ProgressInfo> onMcfProgressEvent;
+			Event<gcString> onCompleteStrEvent;
+
+			//modwizard
+			Event<gcString> onNewItemEvent;
+			Event<DesuraId> onItemFoundEvent;
+
+			//Upload
+			Event<UserCore::Misc::UploadInfo> onUploadProgressEvent;
+
+			virtual void onStop()
+			{
+				if (m_hMCFile.handle())
+					m_hMCFile->stop();
+			}
+
+			McfHandle m_hMCFile;
+
+		private:
+			gcRefPtr<UserCore::UploadManagerI> m_pUploadManager;
+			uint32 m_uiMcfBuild;
+			uint32 m_uiMcfBranch;
+		};
 	}
-
-	//need to stop here before we delete the mcf
-	~MCFThread()
-	{
-		stop();
-	}
-
-	void setUpLoadManager(UserCore::UploadManagerI *um)
-	{
-		m_pUploadManager = um;
-	}
-
-	UserCore::UploadManagerI* getUploadManager()
-	{
-		return m_pUploadManager;
-	}
-
-	Event<MCFCore::Misc::ProgressInfo>* getMcfProgressEvent()
-	{
-		return &onMcfProgressEvent;
-	}
-
-	Event<gcString>* getCompleteStringEvent()
-	{
-		return &onCompleteStrEvent;
-	}
-
-	Event<gcString>* getNewItemEvent()
-	{
-		return &onNewItemEvent;
-	}
-
-	Event<DesuraId>* getItemFoundEvent()
-	{
-		return &onItemFoundEvent;
-	}
-
-	Event<UserCore::Misc::UploadInfo>* getUploadProgressEvent()
-	{
-		return &onUploadProgressEvent;
-	}
-
-	uint32 getMcfBuild()
-	{
-		return m_uiMcfBuild;
-	}
-
-	uint32 getMcfBranch()
-	{
-		return m_uiMcfBranch;
-	}
-
-protected:
-	//McfThread
-	Event<MCFCore::Misc::ProgressInfo> onMcfProgressEvent;
-	Event<gcString> onCompleteStrEvent;
-
-	//modwizard
-	Event<gcString> onNewItemEvent;
-	Event<DesuraId> onItemFoundEvent;
-
-	//Upload
-	Event<UserCore::Misc::UploadInfo> onUploadProgressEvent;
-
-	virtual void onStop()
-	{
-		if (m_hMCFile.handle())
-			m_hMCFile->stop();
-	}
-
-	McfHandle m_hMCFile;
-
-private:
-	UserCore::UploadManagerI* m_pUploadManager;
-	uint32 m_uiMcfBuild;
-	uint32 m_uiMcfBranch;
-};
-
-
-}
 }
 
 #endif //DESURA_MCFTHREAD_H

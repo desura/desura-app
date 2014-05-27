@@ -37,177 +37,191 @@ $/LicenseInfo$
 
 namespace UserCore
 {
-namespace Thread
-{
-
-template<class Interface, class Base>
-class BaseUserThread : public Interface, public Base
-{
-public:
-	BaseUserThread(const char* name, DesuraId id) : Base(name)
+	namespace Thread
 	{
-		m_iId = id;
-		m_pWebCore = nullptr;
-		m_pUserCore = nullptr;
-		m_pThreadManager = nullptr;
-	}
-
-	virtual ~BaseUserThread()
-	{	
-		stop();
-		if (m_pThreadManager)
-			m_pThreadManager->delist(this);
-	}
-
-	DesuraId getItemId()
-	{
-		return m_iId;
-	}
-
-	WebCore::WebCoreI* getWebCore()
-	{
-		return m_pWebCore;
-	}
-
-	UserCore::UserI* getUserCore()
-	{
-		return m_pUserCore;
-	}
-
-	void setThreadManager(UserCore::UserThreadManagerI* tm)
-	{
-		m_pThreadManager = tm;
-
-		if (m_pThreadManager)
-			m_pThreadManager->enlist(this);
-	}
-
-	void setWebCore(WebCore::WebCoreI *wc)
-	{
-		m_pWebCore = wc;
-	}
-
-	void setUserCore(UserCore::UserI *uc)
-	{
-		m_pUserCore = uc;
-	}
-
-	Event<uint32>* getCompleteEvent()
-	{
-		return &onCompleteEvent;
-	}
-
-	Event<uint32>* getProgressEvent()
-	{
-		return &onProgUpdateEvent;
-	}
-
-	Event<gcException>* getErrorEvent()
-	{
-		return &onErrorEvent;
-	}
-
-	Event<WCSpecialInfo>* getNeedWCEvent()
-	{
-		return &onNeedWCEvent;
-	}
-
-	Event<UserCore::Misc::GuiDownloadProvider>* getDownloadProviderEvent()
-	{
-		return &onNewProviderEvent;
-	}
-
-	void start()
-	{
-		Base::start();
-	}
-
-	void stop()
-	{
-		Base::stop();
-	}
-
-	void nonBlockStop()
-	{
-		Base::nonBlockStop();
-	}
-
-	void stopAndDelete(bool nonBlock = false)
-	{
-		Base::stopAndDelete(nonBlock);
-	}
-
-	void unpause()
-	{
-		Base::unpause();
-	}
-
-	void pause()
-	{
-		Base::pause();
-	}
-
-
-	UserCore::Item::ItemInfo* getItemInfo()
-	{
-		if (!m_pUserCore || !m_iId.isOk())
-			return nullptr;
-
-		return dynamic_cast<UserCore::Item::ItemInfo*>(m_pUserCore->getItemManager()->findItemInfo(m_iId));
-	}
-
-	UserCore::Item::ItemInfo* getParentItemInfo()
-	{
-		UserCore::Item::ItemInfo* item = getItemInfo();
-
-		if (!m_pUserCore || !item)
-			return nullptr;
-
-		return dynamic_cast<UserCore::Item::ItemInfo*>(m_pUserCore->getItemManager()->findItemInfo(item->getParentId()));
-	}
-
-protected:
-	virtual void run()
-	{
-		if (!m_pWebCore || !m_pUserCore)
+		template<class Interface, class Base>
+		class BaseUserThread : public Interface, public Base, public UserThreadProxyI
 		{
-			gcException e(ERR_BADCLASS);
-			onErrorEvent(e);
-			return;
-		}
+		public:
+			BaseUserThread(const char* name, DesuraId id) : Base(name)
+			{
+				m_iId = id;
+				m_pWebCore = nullptr;
+				m_pUserCore = nullptr;
+				m_pThreadManager = nullptr;
+			}
 
-		try
-		{
-			doRun();
-		}
-		catch (gcException& e)
-		{
-			onErrorEvent(e);
-		}
+			virtual ~BaseUserThread()
+			{
+				stop();
+
+				if (m_pThreadManager)
+					m_pThreadManager->delist(gcRefPtr<UserThreadProxyI>(this));
+			}
+
+			::Thread::BaseThread* getThread()
+			{
+				return this;
+			}
+
+			DesuraId getItemId()
+			{
+				return m_iId;
+			}
+
+			gcRefPtr<WebCore::WebCoreI> getWebCore()
+			{
+				return m_pWebCore;
+			}
+
+			gcRefPtr<UserCore::UserI> getUserCore()
+			{
+				return m_pUserCore;
+			}
+
+			void setThreadManager(gcRefPtr<UserCore::UserThreadManagerI> tm) override
+			{
+				m_pThreadManager = tm;
+
+				if (m_pThreadManager)
+					m_pThreadManager->enlist(gcRefPtr<UserThreadProxyI>(this));
+			}
+
+			void setWebCore(gcRefPtr<WebCore::WebCoreI> wc) override
+			{
+				m_pWebCore = wc;
+			}
+
+			void setUserCore(gcRefPtr<UserCore::UserI> uc) override
+			{
+				m_pUserCore = uc;
+			}
+
+			Event<uint32>& getCompleteEvent()
+			{
+				return onCompleteEvent;
+			}
+
+			Event<uint32>& getProgressEvent()
+			{
+				return onProgUpdateEvent;
+			}
+
+			Event<gcException>& getErrorEvent()
+			{
+				return onErrorEvent;
+			}
+
+			Event<WCSpecialInfo>& getNeedWCEvent()
+			{
+				return onNeedWCEvent;
+			}
+
+			Event<UserCore::Misc::GuiDownloadProvider>& getDownloadProviderEvent()
+			{
+				return onNewProviderEvent;
+			}
+
+			void start() override
+			{
+				Base::start();
+			}
+
+			void stop() override
+			{
+				Base::stop();
+			}
+
+			void nonBlockStop() override
+			{
+				Base::nonBlockStop();
+			}
+
+			void stopAndDelete(bool nonBlock = false)
+			{
+				Base::stopAndDelete(nonBlock);
+			}
+
+			void unpause() override
+			{
+				Base::unpause();
+			}
+
+			void pause() override
+			{
+				Base::pause();
+			}
+
+
+			gcRefPtr<UserCore::Item::ItemInfo> getItemInfo()
+			{
+				if (!m_pUserCore || !m_iId.isOk())
+					return nullptr;
+
+				return gcRefPtr<UserCore::Item::ItemInfo>::dyn_cast(m_pUserCore->getItemManager()->findItemInfo(m_iId));
+			}
+
+			gcRefPtr<UserCore::Item::ItemInfo> getParentItemInfo()
+			{
+				auto item = getItemInfo();
+
+				if (!m_pUserCore || !item)
+					return nullptr;
+
+				return gcRefPtr<UserCore::Item::ItemInfo>::dyn_cast(m_pUserCore->getItemManager()->findItemInfo(item->getParentId()));
+			}
+
+			void cleanup() override
+			{
+				gcAssert(Base::isStopped() || !Base::isRunning());
+
+				m_pWebCore.reset();
+				m_pUserCore.reset();
+				m_pThreadManager.reset();
+			}
+
+			gc_IMPLEMENT_REFCOUNTING(BaseUserThread);
+
+		protected:
+			virtual void run()
+			{
+				if (!m_pWebCore || !m_pUserCore)
+				{
+					gcException e(ERR_BADCLASS);
+					onErrorEvent(e);
+					return;
+				}
+
+				try
+				{
+					doRun();
+				}
+				catch (gcException& e)
+				{
+					onErrorEvent(e);
+				}
+			}
+
+			Event<uint32> onCompleteEvent;
+			Event<uint32> onProgUpdateEvent;
+			Event<gcException> onErrorEvent;
+			Event<WCSpecialInfo> onNeedWCEvent;
+
+			//download mcf
+			Event<UserCore::Misc::GuiDownloadProvider> onNewProviderEvent;
+
+			virtual void doRun() = 0;
+
+		private:
+			DesuraId m_iId;
+
+			gcRefPtr<WebCore::WebCoreI> m_pWebCore;
+			gcRefPtr<UserCore::UserI> m_pUserCore;
+			gcRefPtr<UserCore::UserThreadManagerI> m_pThreadManager;
+
+			friend class CreateMCFThread; //so we can access usercore
+		};
 	}
-
-	Event<uint32> onCompleteEvent;
-	Event<uint32> onProgUpdateEvent;
-	Event<gcException> onErrorEvent;
-	Event<WCSpecialInfo> onNeedWCEvent;
-
-	//download mcf
-	Event<UserCore::Misc::GuiDownloadProvider> onNewProviderEvent;
-
-	virtual void doRun()=0;
-
-private:
-	DesuraId m_iId;
-
-	WebCore::WebCoreI* m_pWebCore;
-	UserCore::UserI* m_pUserCore;
-	UserCore::UserThreadManagerI* m_pThreadManager;
-
-	friend class CreateMCFThread; //so we can access usercore
-};
-
-
-}
 }
 
 #endif //DESURA_BASEUSERTHREAD_H

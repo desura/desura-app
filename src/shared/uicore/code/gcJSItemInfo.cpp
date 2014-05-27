@@ -35,7 +35,7 @@ $/LicenseInfo$
 REGISTER_JSEXTENDER(DesuraJSItemInfo);
 
 
-/*void FromJSObject(UserCore::Item::ItemInfoI* &item, JSObjHandle& arg)
+/*void FromJSObject(gcRefPtr<UserCore::Item::ItemInfoI> &item, JSObjHandle& arg)
 {
 	if (arg->isObject())
 		item = arg->getUserObject<UserCore::Item::ItemInfoI>();
@@ -155,7 +155,7 @@ bool DesuraJSItemInfo::preExecuteValidation(const char* function, uint32 functio
 	if (argv[0]->isObject() == false)
 		return false;
 
-	UserCore::Item::ItemInfoI* item = nullptr;
+	gcRefPtr<UserCore::Item::ItemInfoI> item = nullptr;
 	FromJSObject(item, argv[0]);
 
 	return isItemValid(item);
@@ -164,111 +164,111 @@ bool DesuraJSItemInfo::preExecuteValidation(const char* function, uint32 functio
 
 
 
-bool DesuraJSItemInfo::isLink(UserCore::Item::ItemInfoI* item)
+bool DesuraJSItemInfo::isLink(gcRefPtr<UserCore::Item::ItemInfoI> item)
 {
 	return item->getId().getType() == DesuraId::TYPE_LINK;
 }
 
-bool DesuraJSItemInfo::isItemValid(UserCore::Item::ItemInfoI* item)
+bool DesuraJSItemInfo::isItemValid(gcRefPtr<UserCore::Item::ItemInfoI> item)
 {
 	return item?true:false;
 }
 
-gcString DesuraJSItemInfo::getItemId(UserCore::Item::ItemInfoI* item)
+gcString DesuraJSItemInfo::getItemId(gcRefPtr<UserCore::Item::ItemInfoI> item)
 {
 	return item->getId().toString();
 }
 
-gcString DesuraJSItemInfo::getItemParentId(UserCore::Item::ItemInfoI* item)
+gcString DesuraJSItemInfo::getItemParentId(gcRefPtr<UserCore::Item::ItemInfoI> item)
 {
 	return item->getParentId().toString();
 }
 
-gcString DesuraJSItemInfo::getItemInstalledModId(UserCore::Item::ItemInfoI* item)
+gcString DesuraJSItemInfo::getItemInstalledModId(gcRefPtr<UserCore::Item::ItemInfoI> item)
 {
 	return item->getInstalledModId().toString();
 }
 
 
 
-int32 DesuraJSItemInfo::getItemChangedFlags(UserCore::Item::ItemInfoI* item)
+int32 DesuraJSItemInfo::getItemChangedFlags(gcRefPtr<UserCore::Item::ItemInfoI> item)
 {
 	return item->getChangedFlags();
 }
 
-int32 DesuraJSItemInfo::getItemStatus(UserCore::Item::ItemInfoI* item)
+int32 DesuraJSItemInfo::getItemStatus(gcRefPtr<UserCore::Item::ItemInfoI> item)
 {
 	return item->getStatus();
 }
 
-int32 DesuraJSItemInfo::getItemPercent(UserCore::Item::ItemInfoI* item)
+int32 DesuraJSItemInfo::getItemPercent(gcRefPtr<UserCore::Item::ItemInfoI> item)
 {
 	return item->getPercent();
 }
 
-int32 DesuraJSItemInfo::getItemPermissions(UserCore::Item::ItemInfoI* item)
+int32 DesuraJSItemInfo::getItemPermissions(gcRefPtr<UserCore::Item::ItemInfoI> item)
 {
 	return item->getPermissions();
 }
 
-int32 DesuraJSItemInfo::getItemOptions(UserCore::Item::ItemInfoI* item)
+int32 DesuraJSItemInfo::getItemOptions(gcRefPtr<UserCore::Item::ItemInfoI> item)
 {
 	return item->getOptions();
 }
 
 
 
-bool DesuraJSItemInfo::isItemLaunchable(UserCore::Item::ItemInfoI* item)
+bool DesuraJSItemInfo::isItemLaunchable(gcRefPtr<UserCore::Item::ItemInfoI> item)
 {
 	return item->isLaunchable();
 }
 
-bool DesuraJSItemInfo::isItemUpdating(UserCore::Item::ItemInfoI* item)
+bool DesuraJSItemInfo::isItemUpdating(gcRefPtr<UserCore::Item::ItemInfoI> item)
 {
 	return item->isUpdating();
 }
 
-bool DesuraJSItemInfo::isItemInstalled(UserCore::Item::ItemInfoI* item)
+bool DesuraJSItemInfo::isItemInstalled(gcRefPtr<UserCore::Item::ItemInfoI> item)
 {
 	return item->isInstalled();
 }
 
-bool DesuraJSItemInfo::isItemDownloadable(UserCore::Item::ItemInfoI* item)
+bool DesuraJSItemInfo::isItemDownloadable(gcRefPtr<UserCore::Item::ItemInfoI> item)
 {
 	return item->isDownloadable();
 }
 
 
 
-gcString DesuraJSItemInfo::getItemGenre(UserCore::Item::ItemInfoI* item)
+gcString DesuraJSItemInfo::getItemGenre(gcRefPtr<UserCore::Item::ItemInfoI> item)
 {
 	return item->getGenre();
 }
 
-gcString DesuraJSItemInfo::getItemRating(UserCore::Item::ItemInfoI* item)
+gcString DesuraJSItemInfo::getItemRating(gcRefPtr<UserCore::Item::ItemInfoI> item)
 {
 	return item->getRating();
 }
 
-gcString DesuraJSItemInfo::getItemDev(UserCore::Item::ItemInfoI* item)
+gcString DesuraJSItemInfo::getItemDev(gcRefPtr<UserCore::Item::ItemInfoI> item)
 {
 	return item->getDev();
 }
 
-gcString DesuraJSItemInfo::getItemName(UserCore::Item::ItemInfoI* item)
+gcString DesuraJSItemInfo::getItemName(gcRefPtr<UserCore::Item::ItemInfoI> item)
 {
 	gcString name = item->getName();
 	return name;
 }
 
-gcString DesuraJSItemInfo::getItemShortName(UserCore::Item::ItemInfoI* item)
+gcString DesuraJSItemInfo::getItemShortName(gcRefPtr<UserCore::Item::ItemInfoI> item)
 {
 	return item->getShortName();
 }
 
-gcString DesuraJSItemInfo::getItemStatusStr(UserCore::Item::ItemInfoI* item)
+gcString DesuraJSItemInfo::getItemStatusStr(gcRefPtr<UserCore::Item::ItemInfoI> item)
 {
-	UserCore::Item::ItemHandleI* handle = DesuraJSBinding::getItemManager()->findItemHandle(item->getId());
+	auto handle = DesuraJSBinding::getItemManager()->findItemHandle(item->getId());
 
 	char buff[255] = {0};
 	handle->getStatusStr(GetLanguageManager(), buff, 255);
@@ -276,17 +276,17 @@ gcString DesuraJSItemInfo::getItemStatusStr(UserCore::Item::ItemInfoI* item)
 	return buff;
 }
 
-gcString DesuraJSItemInfo::getItemPath(UserCore::Item::ItemInfoI* item)
+gcString DesuraJSItemInfo::getItemPath(gcRefPtr<UserCore::Item::ItemInfoI> item)
 {
 	return item->getPath();
 }
 
-gcString DesuraJSItemInfo::getItemInsPrimary(UserCore::Item::ItemInfoI* item)
+gcString DesuraJSItemInfo::getItemInsPrimary(gcRefPtr<UserCore::Item::ItemInfoI> item)
 {
 	return item->getInsPrimary();
 }
 
-gcString DesuraJSItemInfo::getItemIcon(UserCore::Item::ItemInfoI* item)
+gcString DesuraJSItemInfo::getItemIcon(gcRefPtr<UserCore::Item::ItemInfoI> item)
 {
 	gcString icon(item->getIcon());
 	
@@ -298,7 +298,7 @@ gcString DesuraJSItemInfo::getItemIcon(UserCore::Item::ItemInfoI* item)
 	return icon;
 }
 
-gcString DesuraJSItemInfo::getItemLogo(UserCore::Item::ItemInfoI* item)
+gcString DesuraJSItemInfo::getItemLogo(gcRefPtr<UserCore::Item::ItemInfoI> item)
 {
 	gcString logo = item->getLogo();
 	
@@ -310,98 +310,98 @@ gcString DesuraJSItemInfo::getItemLogo(UserCore::Item::ItemInfoI* item)
 	return logo;
 }
 
-gcString DesuraJSItemInfo::getItemIconUrl(UserCore::Item::ItemInfoI* item)
+gcString DesuraJSItemInfo::getItemIconUrl(gcRefPtr<UserCore::Item::ItemInfoI> item)
 {
 	gcString logo = item->getIconUrl();
 	return logo;
 }
 
-gcString DesuraJSItemInfo::getItemLogoUrl(UserCore::Item::ItemInfoI* item)
+gcString DesuraJSItemInfo::getItemLogoUrl(gcRefPtr<UserCore::Item::ItemInfoI> item)
 {
 	gcString logo = item->getLogoUrl();
 	return logo;
 }
 
-gcString DesuraJSItemInfo::getItemProfile(UserCore::Item::ItemInfoI* item)
+gcString DesuraJSItemInfo::getItemProfile(gcRefPtr<UserCore::Item::ItemInfoI> item)
 {
 	return item->getProfile();
 }
 
-gcString DesuraJSItemInfo::getItemDevProfile(UserCore::Item::ItemInfoI* item)
+gcString DesuraJSItemInfo::getItemDevProfile(gcRefPtr<UserCore::Item::ItemInfoI> item)
 {
 	return item->getDevProfile();
 }
 
-gcString DesuraJSItemInfo::getItemInstalledVersion(UserCore::Item::ItemInfoI* item)
+gcString DesuraJSItemInfo::getItemInstalledVersion(gcRefPtr<UserCore::Item::ItemInfoI> item)
 {
 	return item->getInstalledVersion();
 }
 
 
 
-int32 DesuraJSItemInfo::getItemBranchCount(UserCore::Item::ItemInfoI* item)
+int32 DesuraJSItemInfo::getItemBranchCount(gcRefPtr<UserCore::Item::ItemInfoI> item)
 {
 	return item->getBranchCount();
 }
 
-void* DesuraJSItemInfo::getItemBranchByIndex(UserCore::Item::ItemInfoI* item, int32 index)
+gcRefPtr<UserCore::Item::BranchInfoI> DesuraJSItemInfo::getItemBranchByIndex(gcRefPtr<UserCore::Item::ItemInfoI> item, int32 index)
 {
 	return item->getBranch(index);
 }
 
-void* DesuraJSItemInfo::getItemBranchById(UserCore::Item::ItemInfoI* item, int32 id)
+gcRefPtr<UserCore::Item::BranchInfoI> DesuraJSItemInfo::getItemBranchById(gcRefPtr<UserCore::Item::ItemInfoI> item, int32 id)
 {
 	return item->getBranchById(id);
 }
 
-void* DesuraJSItemInfo::getItemCurrentBranch(UserCore::Item::ItemInfoI* item)
+gcRefPtr<UserCore::Item::BranchInfoI> DesuraJSItemInfo::getItemCurrentBranch(gcRefPtr<UserCore::Item::ItemInfoI> item)
 {
 	return item->getCurrentBranch();
 }
 
 
 
-int32 DesuraJSItemInfo::getItemInstallSize(UserCore::Item::ItemInfoI* item)
+int32 DesuraJSItemInfo::getItemInstallSize(gcRefPtr<UserCore::Item::ItemInfoI> item)
 {
 	return item->getInstallSize();
 }
 
-int32 DesuraJSItemInfo::getItemDownloadSize(UserCore::Item::ItemInfoI* item)
+int32 DesuraJSItemInfo::getItemDownloadSize(gcRefPtr<UserCore::Item::ItemInfoI> item)
 {
 	return item->getDownloadSize();
 }
 
-int32 DesuraJSItemInfo::getItemInstalledBuild(UserCore::Item::ItemInfoI* item)
+int32 DesuraJSItemInfo::getItemInstalledBuild(gcRefPtr<UserCore::Item::ItemInfoI> item)
 {
 	return item->getInstalledBuild();
 }
 
-int32 DesuraJSItemInfo::getItemInstalledBranch(UserCore::Item::ItemInfoI* item)
+int32 DesuraJSItemInfo::getItemInstalledBranch(gcRefPtr<UserCore::Item::ItemInfoI> item)
 {
 	return item->getInstalledBranch();
 }
 
-int32 DesuraJSItemInfo::getItemType(UserCore::Item::ItemInfoI* item)
+int32 DesuraJSItemInfo::getItemType(gcRefPtr<UserCore::Item::ItemInfoI> item)
 {
 	return item->getId().getType();
 }
 
-bool DesuraJSItemInfo::isItemFavorite(UserCore::Item::ItemInfoI* item)
+bool DesuraJSItemInfo::isItemFavorite(gcRefPtr<UserCore::Item::ItemInfoI> item)
 {
 	return item->isFavorite();
 }
 
-void DesuraJSItemInfo::setItemFavorite(UserCore::Item::ItemInfoI* item, bool setFav)
+void DesuraJSItemInfo::setItemFavorite(gcRefPtr<UserCore::Item::ItemInfoI> item, bool setFav)
 {
 	item->setFavorite(setFav);
 }
 
-void DesuraJSItemInfo::addItemOptionFlags(UserCore::Item::ItemInfoI* item, int32 options)
+void DesuraJSItemInfo::addItemOptionFlags(gcRefPtr<UserCore::Item::ItemInfoI> item, int32 options)
 {
 	item->addOFlag(options);
 }
 
-void DesuraJSItemInfo::delItemOptionFlags(UserCore::Item::ItemInfoI* item, int32 options)
+void DesuraJSItemInfo::delItemOptionFlags(gcRefPtr<UserCore::Item::ItemInfoI> item, int32 options)
 {
 	item->delOFlag(options);
 }
@@ -415,11 +415,11 @@ void DesuraJSItemInfo::delItemOptionFlags(UserCore::Item::ItemInfoI* item, int32
 
 
 
-std::vector<MapElementI*> DesuraJSItemInfo::getItemExeInfo(UserCore::Item::ItemInfoI* item)
+std::vector<MapElementI*> DesuraJSItemInfo::getItemExeInfo(gcRefPtr<UserCore::Item::ItemInfoI> item)
 {
 	std::vector<MapElementI*> ret;
 
-	std::vector<UserCore::Item::Misc::ExeInfoI*> vExeList;
+	std::vector<gcRefPtr<UserCore::Item::Misc::ExeInfoI>> vExeList;
 	item->getExeList(vExeList);
 
 	for (size_t x=0; x<vExeList.size(); x++)
@@ -437,9 +437,9 @@ std::vector<MapElementI*> DesuraJSItemInfo::getItemExeInfo(UserCore::Item::ItemI
 	return ret;
 }
 
-void DesuraJSItemInfo::setItemUserArgs(UserCore::Item::ItemInfoI* item, std::vector<std::map<gcString, gcString>> args)
+void DesuraJSItemInfo::setItemUserArgs(gcRefPtr<UserCore::Item::ItemInfoI> item, std::vector<std::map<gcString, gcString>> args)
 {
-	std::vector<UserCore::Item::Misc::ExeInfoI*> vExeList;
+	std::vector<gcRefPtr<UserCore::Item::Misc::ExeInfoI>> vExeList;
 	item->getExeList(vExeList);
 
 	for (size_t x=0; x<args.size(); x++)
@@ -459,20 +459,20 @@ void DesuraJSItemInfo::setItemUserArgs(UserCore::Item::ItemInfoI* item, std::vec
 }
 
 
-bool DesuraJSItemInfo::isItemBusy(UserCore::Item::ItemInfoI* item)
+bool DesuraJSItemInfo::isItemBusy(gcRefPtr<UserCore::Item::ItemInfoI> item)
 {
-	UserCore::Item::ItemHandleI* handle = DesuraJSBinding::getItemManager()->findItemHandle(item->getId());
+	auto handle = DesuraJSBinding::getItemManager()->findItemHandle(item->getId());
 	return handle && handle->isInStage();
 }
 
-bool DesuraJSItemInfo::createItemDesktopShortcut(UserCore::Item::ItemInfoI* item)
+bool DesuraJSItemInfo::createItemDesktopShortcut(gcRefPtr<UserCore::Item::ItemInfoI> item)
 {
-	UserCore::Item::ItemHandleI* handle = DesuraJSBinding::getItemManager()->findItemHandle(item->getId());
+	auto handle = DesuraJSBinding::getItemManager()->findItemHandle(item->getId());
 	return handle && handle->createDesktopShortcut();
 }
 
-bool DesuraJSItemInfo::createItemMenuEntry(UserCore::Item::ItemInfoI* item)
+bool DesuraJSItemInfo::createItemMenuEntry(gcRefPtr<UserCore::Item::ItemInfoI> item)
 {
-	UserCore::Item::ItemHandleI* handle = DesuraJSBinding::getItemManager()->findItemHandle(item->getId());
+	auto handle = DesuraJSBinding::getItemManager()->findItemHandle(item->getId());
 	return handle && handle->createMenuEntry();
 }

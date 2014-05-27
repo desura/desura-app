@@ -41,92 +41,125 @@ namespace WebCore
 namespace UserCore
 {
 
-class UserI;
-class UploadManagerI;
+	class UserI;
+	class UploadManagerI;
 
-namespace Thread
-{
+	namespace Thread
+	{
 
-class UploadThreadInfo;
-class UploadThread;
+		class UploadThreadInfo;
+		class UploadThread;
 
-class UploadInfoThread : public UserCore::Misc::UploadInfoThreadI, public BaseItem
-{
-public:
-	UploadInfoThread(DesuraId id, const char* key, const char* path, uint32 start = 0);
-	~UploadInfoThread();
+		class UploadInfoThread : public UserCore::Misc::UploadInfoThreadI, public BaseItem
+		{
+		public:
+			UploadInfoThread(DesuraId id, const char* key, const char* path, uint32 start = 0);
+			~UploadInfoThread();
 
-	bool isDeleted(){return m_bDeleted;}
-	void setDeleted(){m_bDeleted = true;}
+			bool isDeleted(){ return m_bDeleted; }
+			void setDeleted(){ m_bDeleted = true; }
 
-	bool shouldDelMcf(){return m_bDelMcf;}
-	void setDelMcf(bool state = true);
-	bool hasStarted(){return m_bStarted;}
-	bool isCompleted(){return m_bComplete;}
+			bool shouldDelMcf(){ return m_bDelMcf; }
+			void setDelMcf(bool state = true);
+			bool hasStarted(){ return m_bStarted; }
+			bool isCompleted(){ return m_bComplete; }
 
-	bool hasError(){return m_bErrored;}
-	uint32 getProgress(){return m_uiProgress;}
+			bool hasError(){ return m_bErrored; }
+			uint32 getProgress(){ return m_uiProgress; }
 
-	void start();
+			void start();
 
-	virtual DesuraId getItemId();
-	
-	//Overrides
-	virtual uint64 getHash(){return BaseItem::getHash();}
-	virtual void setStart(uint32 start);
+			virtual DesuraId getItemId();
 
-	virtual Event<uint32>* getCompleteEvent();
-	virtual Event<gcException>* getErrorEvent();
-	virtual EventV* getActionEvent(){return &onActionEvent; }
-	virtual Event<UserCore::Misc::UploadInfo>* getUploadProgressEvent();
+			//Overrides
+			virtual uint64 getHash(){ return BaseItem::getHash(); }
+			virtual void setStart(uint32 start);
 
-	//BaseThread
-	virtual void stop();
-	virtual void nonBlockStop();
-	virtual void unpause();
-	virtual void pause();
-	virtual bool isPaused();
-	
-	virtual const char* getFile();
-	virtual const char* getKey();
+			virtual Event<uint32>& getCompleteEvent();
+			virtual Event<gcException>& getErrorEvent();
+			virtual EventV& getActionEvent(){ return onActionEvent; }
+			virtual Event<UserCore::Misc::UploadInfo>& getUploadProgressEvent();
 
-	EventV onActionEvent;
+			//BaseThread
+			virtual void stop();
+			virtual void nonBlockStop();
+			virtual void unpause();
+			virtual void pause();
+			virtual bool isPaused();
 
-	void setWebCore(WebCore::WebCoreI *wc);
-	void setUserCore(UserCore::UserI *uc);
-	void setUpLoadManager(UserCore::UploadManagerI *um);
+			virtual const char* getFile();
+			virtual const char* getKey();
+
+			EventV onActionEvent;
+
+			void setWebCore(gcRefPtr<WebCore::WebCoreI> wc);
+			void setUserCore(gcRefPtr<UserCore::UserI> uc);
+			void setUpLoadManager(gcRefPtr<UserCore::UploadManagerI> um);
 
 
-protected:
-	void onComplete(uint32& status);
-	void onProgress(UserCore::Misc::UploadInfo& info);
-	void onPause();
-	void onUnpause();
+			int addRef() override
+			{
+				return BaseItem::addRef();
+			}
 
-	void onError(gcException& e);
-	void deleteThread();
+			int delRef() override
+			{
+				return BaseItem::delRef();
+			}
 
-	Event<uint32> onCompleteEvent;
-	Event<UserCore::Misc::UploadInfo> onUploadProgressEvent;
-	Event<gcException> onErrorEvent;
+			int getRefCt() override
+			{
+				return BaseItem::getRefCt();
+			}
 
-private:
-	bool m_bStarted;
-	bool m_bDeleted;
-	bool m_bDelMcf;
-	bool m_bComplete;
-	bool m_bErrored;
-	uint32 m_uiProgress;
+#if defined(DEBUG) && defined(WIN32)
+			void addStackTrace(void* pObj)
+			{
+				BaseItem::addStackTrace(pObj);
+			}
 
-	UploadThreadInfo* m_pUploadThreadInfo;
-	UploadThread* m_pThread;
+			void delStackTrace(void* pObj)
+			{
+				BaseItem::delStackTrace(pObj);
+			}
 
-	WebCore::WebCoreI* m_pWebCore;
-	UserCore::UserI* m_pUser;
-	UserCore::UploadManagerI* m_pUploadManager;
-};
+			void dumpStackTraces()
+			{
+				BaseItem::dumpStackTraces();
+			}
+#endif
 
-}
+			void cleanup();
+
+		protected:
+			void onComplete(uint32& status);
+			void onProgress(UserCore::Misc::UploadInfo& info);
+			void onPause();
+			void onUnpause();
+
+			void onError(gcException& e);
+			void deleteThread();
+
+			Event<uint32> onCompleteEvent;
+			Event<UserCore::Misc::UploadInfo> onUploadProgressEvent;
+			Event<gcException> onErrorEvent;
+
+		private:
+			bool m_bStarted;
+			bool m_bDeleted;
+			bool m_bDelMcf;
+			bool m_bComplete;
+			bool m_bErrored;
+			uint32 m_uiProgress;
+
+			gcRefPtr<UploadThreadInfo> m_pUploadThreadInfo;
+			gcRefPtr<UploadThread> m_pThread;
+
+			gcRefPtr<WebCore::WebCoreI> m_pWebCore;
+			gcRefPtr<UserCore::UserI> m_pUser;
+			gcRefPtr<UserCore::UploadManagerI> m_pUploadManager;
+		};
+	}
 }
 
 

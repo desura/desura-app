@@ -30,7 +30,7 @@ $/LicenseInfo$
 #include "CDKInfo.h"
 #include "CDKProgress.h"
 
-CDKeyForm::CDKeyForm(wxWindow* parent, const char* exe, bool launch, UserCore::ItemManagerI* pItemManager) 
+CDKeyForm::CDKeyForm(wxWindow* parent, const char* exe, bool launch, gcRefPtr<UserCore::ItemManagerI> pItemManager)
 	: gcFrame(parent, wxID_ANY, Managers::GetString("#CDK_TITLE"), wxDefaultPosition, wxSize(370,140), wxCAPTION|wxCLOSE_BOX|wxSYSTEM_MENU|wxTAB_TRAVERSAL)
 	, m_pItemManager(pItemManager)
 {
@@ -83,7 +83,7 @@ void CDKeyForm::setInfo(DesuraId id)
 {
 	m_ItemId = id;
 
-	UserCore::Item::ItemInfoI *item = m_pItemManager->findItemInfo(id);
+	auto item = m_pItemManager->findItemInfo(id);
 
 	if (!item)
 	{	

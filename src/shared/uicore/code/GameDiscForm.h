@@ -46,7 +46,7 @@ public:
 	GameDiskForm(wxWindow* parent, const char* exe, bool cdkey);
 	~GameDiskForm();
 
-	void setInfo(DesuraId id, UserCore::ItemManagerI* pItemManager = nullptr);
+	void setInfo(DesuraId id, gcRefPtr<UserCore::ItemManagerI> pItemManager = nullptr);
 
 	DesuraId getItemId();
 
@@ -65,7 +65,7 @@ private:
 	gcString m_szExe;
 	bool m_bHasSeenCDKey;
 
-	UserCore::Item::ItemInfoI* m_pItem;
+	gcRefPtr<UserCore::Item::ItemInfoI> m_pItem;
 
 };
 

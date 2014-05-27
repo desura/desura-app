@@ -26,22 +26,26 @@ $/LicenseInfo$
 #include "Common.h"
 #include "MCFDPReporter.h"
 
+using namespace MCFCore;
+
+
+namespace
+{
+	static gcRefPtr<DPReproter> g_DPReporter = gcRefPtr<DPReproter>::create();
+}
+
 namespace MCFCore
 {
-
-
-DPReproter g_DPReporter;
-
-DPReproter* GetDPReporter()
-{
-	return &g_DPReporter;
+	gcRefPtr<DPReproter>& GetDPReporter()
+	{
+		return g_DPReporter;
+	}
 }
 
 
 
-
-DPReproter::DPReproter() 
-	: BaseManager<DPProvider>(true)
+DPReproter::DPReproter()
+	: BaseManager<DPProvider>()
 {
 }
 
@@ -53,7 +57,7 @@ uint32 DPReproter::getProviderCount()
 uint32 DPReproter::getProviderId(uint32 index)
 {
 	std::lock_guard<std::mutex> guard(m_MapLock);
-	DPProvider* item = getItem(index);
+	auto item = getItem(index);
 
 	if (item)
 		return item->getId();
@@ -64,7 +68,7 @@ uint32 DPReproter::getProviderId(uint32 index)
 void DPReproter::getName(uint32 id, char* buff, uint32 size)
 {
 	std::lock_guard<std::mutex> guard(m_MapLock);
-	DPProvider* item = findItem(id);
+	auto item = findItem(id);
 
 	if (item)
 	{
@@ -76,7 +80,7 @@ void DPReproter::getName(uint32 id, char* buff, uint32 size)
 uint32 DPReproter::getLastRate(uint32 id)
 {
 	std::lock_guard<std::mutex> guard(m_MapLock);
-	DPProvider* item = findItem(id);
+	auto item = findItem(id);
 
 	if (item)
 		return item->getLastRate();
@@ -89,7 +93,7 @@ void DPReproter::reportProgress(uint32 id, uint32 prog)
 	m_uiTotal += prog;
 
 	std::lock_guard<std::mutex> guard(m_MapLock);
-	DPProvider* item = findItem(id);
+	auto item = findItem(id);
 
 	if (item)
 		item->reportProgress(prog);
@@ -101,14 +105,14 @@ uint32 DPReproter::newProvider(const char* name)
 	m_uiLastId++;
 
 	std::lock_guard<std::mutex> guard(m_MapLock);
-	addItem(new DPProvider(name, id));
+	addItem(gcRefPtr<DPProvider>::create(name, id));
 	return id;
 }
 
 void DPReproter::delProvider(uint32 id)
 {
 	std::lock_guard<std::mutex> guard(m_MapLock);
-	removeItem(id, true);
+	removeItem(id);
 }
 
 uint64 DPReproter::getTotalSinceStart()
@@ -125,28 +129,10 @@ void DPReproter::resetStart()
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-DPProvider::DPProvider(const char* name, uint32 id) 
-	: BaseItem()
-	, m_uiId(id)
-	, m_szName(name)
+DPProvider::DPProvider(const char* name, uint32 id)
+: BaseItem()
+, m_uiId(id)
+, m_szName(name)
 {
 	m_uiHash = id;
 }
@@ -180,17 +166,13 @@ uint32 DPProvider::getLastRate() const
 {
 	if (m_ullAmmount < 1)
 		return 0;
-	
+
 	auto total = gcTime() - m_tStart;
 
 	if (total.seconds() == 0)
 		return 0;
 
 	double avgRate = ((double)m_ullAmmount) / ((double)total.seconds());
-	return (uint32)(avgRate/1024.0);
+	return (uint32)(avgRate / 1024.0);
 }
 
-
-
-
-}

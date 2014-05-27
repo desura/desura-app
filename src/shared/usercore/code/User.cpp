@@ -56,7 +56,6 @@ $/LicenseInfo$
 namespace UM = UserCore::Misc;
 using namespace UserCore;
 
-
 User::User()
 	: m_bAltProvider(false)
 {
@@ -65,6 +64,12 @@ User::User()
 }
 
 User::~User() 
+{
+	gcTrace("");
+	destroy();
+}
+
+void User::destroy()
 {
 	gcTrace("");
 
@@ -76,6 +81,9 @@ User::~User()
 	cleanUp();
 
 	onNeedWildCardEvent -= delegate(this, &User::onNeedWildCardCB);
+
+	if (m_pThreadPool)
+		m_pThreadPool->cleanup();
 
 	safe_delete(m_pThreadPool);
 	safe_delete(m_pWebCore);
@@ -112,21 +120,18 @@ void User::init(const char* appDataPath, const char* szProviderUrl)
 
 	m_szAppDataPath = appDataPath;
 
-	m_pThreadPool = std::make_shared<::Thread::ThreadPool>(2);
+	m_pThreadPool = gcRefPtr<::Thread::ThreadPool>::create(2);
 	m_pThreadPool->blockTasks();
 
-	m_pWebCore = std::shared_ptr<WebCore::WebCoreI>((WebCore::WebCoreI*)WebCore::FactoryBuilder(WEBCORE), [](WebCore::WebCoreI* pWebCore){
-		pWebCore->destroy();
-	});
-
+	m_pWebCore = gcRefPtr<WebCore::WebCoreI>((WebCore::WebCoreI*)WebCore::FactoryBuilder(WEBCORE));
 	m_pWebCore->init(appDataPath, szProviderUrl);
 
-	m_pBannerDownloadManager = std::make_shared<BDManager>(this);
-	m_pCDKeyManager = std::make_shared<CDKeyManager>(this);
+	m_pBannerDownloadManager = gcRefPtr<BDManager>::create(this);
+	m_pCDKeyManager = gcRefPtr<CDKeyManager>::create(this);
 
 	m_szMcfCachePath = gcString(UTIL::OS::getMcfCachePath());
 
-	m_pMcfManager = std::make_shared<MCFManager>(appDataPath, m_szMcfCachePath.c_str());
+	m_pMcfManager = gcRefPtr<MCFManager>::create(appDataPath, m_szMcfCachePath.c_str());
 	m_pMcfManager->init();
 
 	init();
@@ -148,6 +153,18 @@ void User::cleanUp()
 	m_pThreadPool->blockTasks();
 	m_pWebCore->logOut();
 
+	if (m_pThreadManager)
+		m_pThreadManager->cleanup();
+
+	if (m_pUploadManager)
+		m_pUploadManager->cleanup();
+
+	if (m_pBannerDownloadManager)
+		m_pBannerDownloadManager->cleanup();
+
+	if (m_pItemManager)
+		m_pItemManager->cleanup();
+
 	//must delete this one first as upload threads are apart of thread manager
 	safe_delete(m_pUploadManager);
 	safe_delete(m_pUThread);
@@ -158,9 +175,7 @@ void User::cleanUp()
 	safe_delete(m_pCIPManager);
 	safe_delete(m_pItemManager);
 	safe_delete(m_pToolManager);
-	
 	safe_delete(m_pPipeClient);
-
 	safe_delete(m_pCDKeyManager);
 	safe_delete(m_pBannerDownloadManager);
 
@@ -172,8 +187,8 @@ void User::cleanUp()
 
 void User::init()
 {
-	m_pUploadManager = std::make_shared<UserCore::UploadManager>(this);
-	m_pThreadManager = std::make_shared<UserCore::UserThreadManager>();
+	m_pUploadManager = gcRefPtr<UserCore::UploadManager>::create(this);
+	m_pThreadManager = gcRefPtr<UserCore::UserThreadManager>::create();
 	m_pThreadManager->setUserCore(this);
 
 	m_iUserId = 0;
@@ -184,14 +199,14 @@ void User::init()
 	m_uiLastUpdateVer = 0;
 	m_uiLastUpdateBuild = 0;
 
-	m_pItemManager = std::make_shared<ItemManager>(this);
-	m_pToolManager = std::make_shared<ToolManager>(this);
+	m_pItemManager = gcRefPtr<ItemManager>::create(this);
+	m_pToolManager = gcRefPtr<ToolManager>::create(this);
 
 #ifdef WIN32
-	m_pGameExplorerManager = std::make_shared<GameExplorerManager>(this);
+	m_pGameExplorerManager = gcRefPtr<GameExplorerManager>::create(this);
 #endif
 
-	m_pCIPManager = std::make_shared<CIPManager>(this);
+	m_pCIPManager = gcRefPtr<CIPManager>::create(this);
 	m_pPipeClient = nullptr;
 
 	m_bDownloadingUpdate = false;
@@ -261,11 +276,11 @@ void User::appNeedUpdate(uint32 appver, uint32 appbuild, bool bForced)
 		m_uiLastUpdateBuild = appbuild;
 	}
 
-	UserCore::Task::DownloadUpdateTask *task = new UserCore::Task::DownloadUpdateTask(this, m_uiLastUpdateVer, m_uiLastUpdateBuild, bForced);
+	auto task = gcRefPtr<UserCore::Task::DownloadUpdateTask>::create(this, m_uiLastUpdateVer, m_uiLastUpdateBuild, bForced);
 
 	task->onDownloadCompleteEvent += delegate(this, &User::onUpdateComplete);
 	task->onDownloadStartEvent += delegate(this, &User::onUpdateStart);
-	task->onDownloadProgressEvent += delegate(getAppUpdateProgEvent());
+	task->onDownloadProgressEvent += delegate(&getAppUpdateProgEvent());
 
 	m_pThreadPool->forceTask(task);
 }
@@ -376,36 +391,32 @@ void User::setAvatarPath(const char* path)
 	onNewAvatarEvent(m_szAvatar);
 }
 
-void User::downloadImage(UserCore::Item::ItemInfo* itemInfo, uint8 image)
+void User::downloadImage(gcRefPtr<UserCore::Item::ItemInfo> itemInfo, uint8 image)
 {
-	m_pThreadPool->queueTask(new UserCore::Task::DownloadImgTask(this, itemInfo, image));
+	m_pThreadPool->queueTask(gcRefPtr<UserCore::Task::DownloadImgTask>::create(this, itemInfo, image));
 }
 
 void User::changeAccount(DesuraId id, uint8 action)
 {
-	m_pThreadPool->queueTask(new UserCore::Task::ChangeAccountTask(this, id, action) );
+	m_pThreadPool->queueTask(gcRefPtr<UserCore::Task::ChangeAccountTask>::create(this, id, action));
 }
-
-
 
 void User::parseNews(const XML::gcXMLElement &newsNode)
 {
 	parseNewsAndGifts(newsNode, "item", onNewsUpdateEvent);
 }
 
-
 void User::parseGifts(const XML::gcXMLElement &giftNode)
 {
-
 	parseNewsAndGifts(giftNode, "gift", onGiftUpdateEvent);
 }
 
-void User::parseNewsAndGifts(const XML::gcXMLElement &xmlNode, const char* szChildName, Event<std::vector<UserCore::Misc::NewsItem*> > &onEvent)
+void User::parseNewsAndGifts(const XML::gcXMLElement &xmlNode, const char* szChildName, Event<std::vector<gcRefPtr<UserCore::Misc::NewsItem>>> &onEvent)
 {
 	if (!xmlNode.IsValid())
 		return;
 
-	std::vector<UserCore::Misc::NewsItem*> itemList;
+	std::vector<gcRefPtr<UserCore::Misc::NewsItem>> itemList;
 
 	xmlNode.for_each_child(szChildName, [&itemList](const XML::gcXMLElement &itemElem)
 	{
@@ -422,14 +433,12 @@ void User::parseNewsAndGifts(const XML::gcXMLElement &xmlNode, const char* szChi
 
 		uint32 id = (uint32)Safe::atoi(szId.c_str());
 
-		UserCore::Misc::NewsItem *temp = new UserCore::Misc::NewsItem(id, 0, szTitle.c_str(), szUrl.c_str());
+		auto temp = gcRefPtr<UserCore::Misc::NewsItem>::create(id, 0, szTitle.c_str(), szUrl.c_str());
 		itemList.push_back(temp);
 	});
 
 	if (itemList.size() > 0)
 		onEvent(itemList);
-
-	safe_delete(itemList);
 }
 
 void User::restartPipe()
@@ -577,11 +586,11 @@ void User::setAvatarUrl(const char* szAvatarUrl)
 	else if (gcString(szAvatarUrl) != (std::string)m_szAvatarUrl)
 	{
 		m_szAvatarUrl = szAvatarUrl;
-		m_pThreadPool->queueTask(new UserCore::Task::DownloadAvatarTask(this, szAvatarUrl, m_iUserId));
+		m_pThreadPool->queueTask(gcRefPtr<UserCore::Task::DownloadAvatarTask>::create(this, szAvatarUrl, m_iUserId));
 	}
 }
 
-MCFManagerI* User::getMCFManager()
+gcRefPtr<MCFManagerI> User::getMCFManager()
 {
-	return m_pMcfManager.get();
+	return m_pMcfManager;
 }

@@ -29,27 +29,18 @@ $/LicenseInfo$
 #include "ToolInfo.h"
 #include "User.h"
 
-namespace UserCore
-{
-namespace Task
-{
+using namespace UserCore::Task;
 
 
-DownloadToolTask::DownloadToolTask(UserCore::User* user, UserCore::ToolInfo* tool) : UserTask(user)
+DownloadToolTask::DownloadToolTask(gcRefPtr<UserCore::UserI> user, gcRefPtr<UserCore::ToolInfo> &tool) 
+	: UserTask(user)
+	, m_pTool(tool)
 {
-	m_pTool = tool;
-	
 	if (tool)
 	{
 		m_Path = tool->getPathFromUrl(user->getAppDataPath());
 		UTIL::FS::recMakeFolder(m_Path);
 	}
-
-	m_uiRefCount = 1;
-	m_uiPercent = 0;
-	m_bStopped = false;
-
-	m_pHttpHandle = nullptr;
 }
 
 DownloadToolTask::~DownloadToolTask()
@@ -158,7 +149,4 @@ void DownloadToolTask::decreaseRefCount(bool forced)
 		if (m_uiPercent < 75 || forced)
 			onStop();
 	}
-}
-
-}
 }

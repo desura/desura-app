@@ -28,10 +28,8 @@ $/LicenseInfo$
 
 #include "XMLMacros.h"
 
-namespace UserCore
-{
-namespace Misc
-{
+using namespace UserCore::Misc;
+
 
 InstallInfo::InstallInfo(DesuraId id, DesuraId pid)
 {
@@ -44,14 +42,14 @@ InstallInfo::~InstallInfo()
 {
 }
 
-void InstallInfo::loadXmlData(const XML::gcXMLElement &xmlNode, WildcardManager* pWildCard)
+void InstallInfo::loadXmlData(const XML::gcXMLElement &xmlNode, gcRefPtr<WildcardManager> &pWildCard)
 {
-	WildcardManager lwc(pWildCard);
+	auto lwc = gcRefPtr<WildcardManager>::create(pWildCard);
 
 	auto wcNode = xmlNode.FirstChildElement("wcards");
 	if (wcNode.IsValid())
 	{
-		lwc.parseXML(wcNode);
+		lwc->parseXML(wcNode);
 	}
 
 	xmlNode.GetChild("name", m_szName);
@@ -80,8 +78,8 @@ void InstallInfo::loadXmlData(const XML::gcXMLElement &xmlNode, WildcardManager*
 
 		try
 		{
-			lwc.constructPath(check.c_str(), &CheckRes);
-			lwc.constructPath(path.c_str(), &PathRes);
+			lwc->constructPath(check.c_str(), &CheckRes);
+			lwc->constructPath(path.c_str(), &PathRes);
 
 			if (CheckRes && PathRes && UTIL::FS::isValidFile(UTIL::FS::PathWithFile(CheckRes)))
 			{
@@ -97,7 +95,4 @@ void InstallInfo::loadXmlData(const XML::gcXMLElement &xmlNode, WildcardManager*
 		safe_delete(CheckRes);
 		safe_delete(PathRes);
 	});
-}
-
-}
 }

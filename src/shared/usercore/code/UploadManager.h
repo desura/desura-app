@@ -36,62 +36,64 @@ $/LicenseInfo$
 
 namespace UserCore
 {
+	class UserI;
 
-class UserI;
-
-class UploadManager : public UploadManagerI, public BaseManager<UserCore::Thread::UploadInfoThread>
-{
-public:
-	UploadManager(UserCore::UserI* userCore);
-
-	//if a upload is in progress this returns the file for a given key
-	const char* findUpload(const char* key);
-
-	//removes an upload given a key
-	void removeUpload(const char* key, bool stopThread = true);
-
-	//add new upload given info
-	uint64 addUpload(DesuraId id, const char* key, const char* path);
-
-	UserCore::Misc::UploadInfoThreadI* findItem(uint64 hash)
+	class UploadManager : public UploadManagerI, public BaseManager<UserCore::Thread::UploadInfoThread>
 	{
-		return BaseManager<UserCore::Thread::UploadInfoThread>::findItem(hash);
-	}
+	public:
+		UploadManager(gcRefPtr<UserCore::UserI> userCore);
 
-	UserCore::Misc::UploadInfoThreadI* findItem(const char* key)
-	{
-		return BaseManager<UserCore::Thread::UploadInfoThread>::findItem(key);
-	}
+		//if a upload is in progress this returns the file for a given key
+		const char* findUpload(const char* key) override;
 
-	virtual EventV* getUpdateEvent()
-	{
-		return &onUpdateEvent;
-	}
+		//removes an upload given a key
+		void removeUpload(const char* key, bool stopThread = true) override;
 
-	virtual UserCore::Misc::UploadInfoThreadI* getItem(uint32 index)
-	{
-		return BaseManager<UserCore::Thread::UploadInfoThread>::getItem(index);
-	}
+		//add new upload given info
+		uint64 addUpload(DesuraId id, const char* key, const char* path) override;
 
-	virtual uint32 getCount()
-	{
-		return BaseManager<UserCore::Thread::UploadInfoThread>::getCount();
-	}
+		gcRefPtr<UserCore::Misc::UploadInfoThreadI> findItem(uint64 hash) override
+		{
+			return BaseManager<UserCore::Thread::UploadInfoThread>::findItem(hash);
+		}
 
-	EventV onUpdateEvent;
+		gcRefPtr<UserCore::Misc::UploadInfoThreadI> findItem(const char* key) override
+		{
+			return BaseManager<UserCore::Thread::UploadInfoThread>::findItem(key);
+		}
 
-protected:	
-	uint8 saveToFile(const char* file){return 0;}
-	uint8 loadFromFile(const char* file){return 0;} //doesnt return any thing but due to parent class must return uint8
+		EventV& getUpdateEvent() override
+		{
+			return onUpdateEvent;
+		}
 
-	void load();
-	void updateItemIds();
+		gcRefPtr<UserCore::Misc::UploadInfoThreadI> getItem(uint32 index) override
+		{
+			return BaseManager<UserCore::Thread::UploadInfoThread>::getItem(index);
+		}
 
-private:
-	UserCore::UserI* m_pUserCore;
-	std::mutex m_mMutex;
-};
+		uint32 getCount() override
+		{
+			return BaseManager<UserCore::Thread::UploadInfoThread>::getCount();
+		}
 
+		EventV onUpdateEvent;
+
+		void cleanup();
+
+		gc_IMPLEMENT_REFCOUNTING(UploadManager);
+
+	protected:
+		uint8 saveToFile(const char* file){ return 0; }
+		uint8 loadFromFile(const char* file){ return 0; } //doesnt return any thing but due to parent class must return uint8
+
+		void load();
+		void updateItemIds();
+
+	private:
+		gcRefPtr<UserCore::UserI> m_pUserCore;
+		std::mutex m_mMutex;
+	};
 }
 
 #endif //DESURA_UPLOADMANAGER_H

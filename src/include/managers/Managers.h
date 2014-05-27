@@ -39,7 +39,7 @@ class ConCommand;
 #define COLOR_ONE 1
 #define COLOR_TWO 2
 
-class SpriteRectI
+class SpriteRectI : public gcRefBase
 {
 public:
 	virtual int32 getX()=0;
@@ -73,7 +73,7 @@ public:
 	virtual const char* getThemeFolder()=0;
 
 	virtual Color getColor(const char* name, const char* id)=0;
-	virtual SpriteRectI* getSpriteRect(const char* id, const char* rectId)=0;
+	virtual gcRefPtr<SpriteRectI> getSpriteRect(const char* id, const char* rectId) = 0;
 
 	virtual void loadFromFolder(const char* folder)=0;
 	virtual void loadTheme(const char* name)=0;
@@ -117,8 +117,8 @@ public:
 
 	virtual void loadUser(uint32 userId)=0;
 
-	virtual CVar* findCVar(const char* name)=0;
-	virtual void getCVarList(std::vector<CVar*> &vList)=0;
+	virtual gcRefPtr<CVar> findCVar(const char* name) = 0;
+	virtual void getCVarList(std::vector<gcRefPtr<CVar>> &vList) = 0;
 
 protected:
 	virtual ~CVarManagerI(){};
@@ -127,15 +127,15 @@ protected:
 class CVarRegTargetI
 {
 public:
-	virtual bool RegCVar(CVar* var) = 0;
-	virtual void UnRegCVar(CVar* var) = 0;
+	virtual bool RegCVar(const gcRefPtr<CVar> &var) = 0;
+	virtual void UnRegCVar(const gcRefPtr<CVar> &var) = 0;
 };
 
 class CCommandManagerI
 {
 public:
-	virtual ConCommand* findCCommand(const char* name)=0;
-	virtual void getConCommandList(std::vector<ConCommand*> &vList)=0;
+	virtual gcRefPtr<ConCommand> findCCommand(const char* name) = 0;
+	virtual void getConCommandList(std::vector<gcRefPtr<ConCommand>> &vList) = 0;
 
 protected:
 	virtual ~CCommandManagerI(){};

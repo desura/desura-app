@@ -34,7 +34,7 @@ $/LicenseInfo$
 
 class ComplexLaunchProcess;
 
-class IPCComplexLaunch : public IPC::IPCClass
+class IPCComplexLaunch : public IPC::IPCClass, public gcRefBase
 {
 public:
 	IPCComplexLaunch(IPC::IPCManager* mang, uint32 id, DesuraId itemId);
@@ -59,6 +59,8 @@ private:
 
 	ComplexLaunchProcess* m_pThread;
 	void registerFunctions();
+
+	gc_IMPLEMENT_REFCOUNTING(IPCComplexLaunch)
 };
 
 #endif //DESURA_IPCCOMPLEXLAUNCH_H

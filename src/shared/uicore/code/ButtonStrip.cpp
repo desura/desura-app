@@ -76,9 +76,11 @@ ButtonStrip::ButtonStrip(wxWindow *parent) : gcPanel(parent)
 
 	Connect( wxEVT_ERASE_BACKGROUND, wxEraseEventHandler( ButtonStrip::OnEraseBG ) );
 
-	if (GetUserCore())
+	auto userCore = GetUserCore();
+
+	if (userCore)
 	{
-		*GetUserCore()->getUserUpdateEvent() += delegate(this, &ButtonStrip::onUserUpdate);
+		userCore->getUserUpdateEvent() += delegate(this, &ButtonStrip::onUserUpdate);
 
 		m_pPMsgButton->setCount(GetUserCore()->getPmCount());
 		m_pUpdateButton->setCount(GetUserCore()->getUpCount());
@@ -87,8 +89,10 @@ ButtonStrip::ButtonStrip(wxWindow *parent) : gcPanel(parent)
 
 ButtonStrip::~ButtonStrip()
 {
-	if (GetUserCore())
-		*GetUserCore()->getUserUpdateEvent() -= delegate(this, &ButtonStrip::onUserUpdate);
+	auto userCore = GetUserCore();
+
+	if (userCore)
+		userCore->getUserUpdateEvent() -= delegate(this, &ButtonStrip::onUserUpdate);
 }
 
 

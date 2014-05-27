@@ -241,24 +241,28 @@ ItemToolBarControl::ItemToolBarControl(wxWindow* parent) : BaseToolBarControl(pa
 	this->SetSizer( fgSizer1 );
 	this->Layout();
 
-	if (GetUserCore() && GetUploadMng())
+	auto userCore = GetUserCore();
+
+	if (userCore && GetUploadMng())
 	{
-		*GetUserCore()->getItemsAddedEvent() += guiDelegate(this, &ItemToolBarControl::onItemsAdded);
-		*GetUserCore()->getLoginItemsLoadedEvent() += guiDelegate(this, &ItemToolBarControl::onLoginItemsLoaded);
-		*GetUploadMng()->getUpdateEvent() += guiDelegate(this, &ItemToolBarControl::onUploadItemsAdded);
+		userCore->getItemsAddedEvent() += guiDelegate(this, &ItemToolBarControl::onItemsAdded);
+		userCore->getLoginItemsLoadedEvent() += guiDelegate(this, &ItemToolBarControl::onLoginItemsLoaded);
+		GetUploadMng()->getUpdateEvent() += guiDelegate(this, &ItemToolBarControl::onUploadItemsAdded);
 	}
 }
 
 ItemToolBarControl::~ItemToolBarControl()
 {
-	if (GetUserCore())
+	auto userCore = GetUserCore();
+
+	if (userCore)
 	{
-		*GetUserCore()->getItemsAddedEvent() -= guiDelegate(this, &ItemToolBarControl::onItemsAdded);
-		*GetUserCore()->getLoginItemsLoadedEvent() -= guiDelegate(this, &ItemToolBarControl::onLoginItemsLoaded);
+		userCore->getItemsAddedEvent() -= guiDelegate(this, &ItemToolBarControl::onItemsAdded);
+		userCore->getLoginItemsLoadedEvent() -= guiDelegate(this, &ItemToolBarControl::onLoginItemsLoaded);
 	}
 
 	if (GetUploadMng())
-		*GetUploadMng()->getUpdateEvent() -= guiDelegate(this, &ItemToolBarControl::onUploadItemsAdded);
+		GetUploadMng()->getUpdateEvent() -= guiDelegate(this, &ItemToolBarControl::onUploadItemsAdded);
 }
 
 void ItemToolBarControl::focusSearch()
@@ -303,7 +307,7 @@ void ItemToolBarControl::createButtons()
 	if (!GetUserCore() || !GetUserCore()->getItemManager())
 		return;
 
-	std::vector<UserCore::Item::ItemInfoI*> dList;
+	std::vector<gcRefPtr<UserCore::Item::ItemInfoI>> dList;
 	GetUserCore()->getItemManager()->getDevList(dList);
 
 	bool dev = (dList.size() > 0) || (GetUploadMng()->getCount() > 0);

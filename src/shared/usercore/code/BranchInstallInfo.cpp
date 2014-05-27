@@ -49,13 +49,10 @@ public:
 	gcString path;
 };
 
-namespace UserCore
-{
-namespace Item
-{
+using namespace UserCore::Item;
 
 
-BranchInstallInfo::BranchInstallInfo(uint32 biId, BranchItemInfoI *itemInfo, UTIL::FS::UtilFSI* pFileSystem)
+BranchInstallInfo::BranchInstallInfo(uint32 biId, gcRefPtr<BranchItemInfoI> itemInfo, UTIL::FS::UtilFSI* pFileSystem)
 	: m_BiId(biId)
 	, m_pItem(itemInfo)
 	, m_ItemId(itemInfo->getId())
@@ -67,7 +64,6 @@ BranchInstallInfo::BranchInstallInfo(uint32 biId, BranchItemInfoI *itemInfo, UTI
 
 BranchInstallInfo::~BranchInstallInfo()
 {
-	safe_delete(m_vExeList);
 }
 
 void BranchInstallInfo::deleteFromDb(sqlite3x::sqlite3_connection* db)
@@ -215,7 +211,7 @@ void BranchInstallInfo::loadDb(sqlite3x::sqlite3_connection* db)
 			gcString userargs = reader.getstring(5);
 			uint32 rank = reader.getint(6);
 
-			ExeInfo *ei = nullptr;
+			gcRefPtr<ExeInfo> ei;
 
 			for (auto exe : m_vExeList)
 			{
@@ -228,7 +224,7 @@ void BranchInstallInfo::loadDb(sqlite3x::sqlite3_connection* db)
 
 			if (!ei)
 			{
-				ei = new ExeInfo(name.c_str());
+				ei = gcRefPtr<ExeInfo>::create(name.c_str());
 				m_vExeList.push_back(ei);
 			}
 
@@ -241,7 +237,7 @@ void BranchInstallInfo::loadDb(sqlite3x::sqlite3_connection* db)
 }
 
 
-void BranchInstallInfo::extractInstallChecks(const XML::gcXMLElement &icsNode, WildcardManager* pWildCard, std::vector<InsCheck> &vInsChecks)
+void BranchInstallInfo::extractInstallChecks(const XML::gcXMLElement &icsNode, gcRefPtr<WildcardManager> &pWildCard, std::vector<InsCheck> &vInsChecks)
 {
 	icsNode.for_each_child("installlocation", [&vInsChecks, pWildCard, this](const XML::gcXMLElement &icNode)
 	{
@@ -304,7 +300,7 @@ bool BranchInstallInfo::updateInstallCheck(gcString &strCheckRes, const gcString
 	return true;
 }
 
-void BranchInstallInfo::UpdateInstallCheckList(const std::vector<InsCheck> &vInsChecks, WildcardManager* pWildCard)
+void BranchInstallInfo::UpdateInstallCheckList(const std::vector<InsCheck> &vInsChecks, gcRefPtr<WildcardManager> &pWildCard)
 {
 	VERIFY_OR_RETURN(!!pWildCard, );
 
@@ -331,7 +327,7 @@ void BranchInstallInfo::UpdateInstallCheckList(const std::vector<InsCheck> &vIns
 	}
 }
 
-ProcessResult BranchInstallInfo::processSettings(const XML::gcXMLElement &setNode, WildcardManager* pWildCard, bool reset, bool hasBroughtItem, const char* cipPath)
+ProcessResult BranchInstallInfo::processSettings(const XML::gcXMLElement &setNode, gcRefPtr<WildcardManager> &pWildCard, bool reset, bool hasBroughtItem, const char* cipPath)
 {
 	ProcessResult pr;
 	pr.found = false;
@@ -449,9 +445,9 @@ ProcessResult BranchInstallInfo::processSettings(const XML::gcXMLElement &setNod
 }
 
 
-UserCore::Item::Misc::ExeInfoI* BranchInstallInfo::getActiveExe()
+gcRefPtr<UserCore::Item::Misc::ExeInfoI> BranchInstallInfo::getActiveExe()
 {
-	UserCore::Item::Misc::ExeInfoI* ei = nullptr;
+	gcRefPtr<UserCore::Item::Misc::ExeInfoI> ei;
 
 	for (auto exe : m_vExeList)
 	{
@@ -495,27 +491,27 @@ void BranchInstallInfo::setActiveExe(const char* name)
 	Warning("Failed to set active exe to [{0}]\n", name);
 }
 
-void BranchInstallInfo::getExeList(std::vector<UserCore::Item::Misc::ExeInfoI*> &list)
+void BranchInstallInfo::getExeList(std::vector<gcRefPtr<UserCore::Item::Misc::ExeInfoI>> &list)
 {
 	for (auto exe : m_vExeList)
 	{
 		if (isValidFile(exe->getExe()))
-			list.push_back(exe);
+			list.push_back(exe.get());
 	}
 
 	if (list.size() == 0 && m_vExeList.size() > 0)
-		list.push_back(m_vExeList[0]);
+		list.push_back(m_vExeList[0].get());
 
-	std::sort(list.begin(), list.end(), [](UserCore::Item::Misc::ExeInfoI* a, UserCore::Item::Misc::ExeInfoI* b) -> bool
+	std::sort(list.begin(), list.end(), [](gcRefPtr<UserCore::Item::Misc::ExeInfoI> &a, gcRefPtr<UserCore::Item::Misc::ExeInfoI> &b) -> bool
 	{
-		return dynamic_cast<ExeInfo*>(a)->m_uiRank < dynamic_cast<ExeInfo*>(b)->m_uiRank;
+		return dynamic_cast<ExeInfo*>(a.get())->m_uiRank < dynamic_cast<ExeInfo*>(b.get())->m_uiRank;
 	});
 }
 
 uint32 BranchInstallInfo::getExeCount(bool setActive)
 {
 	uint32 count = 0;
-	ExeInfo *ei = nullptr;
+	gcRefPtr<ExeInfo> ei;
 
 	for (auto exe : m_vExeList)
 	{
@@ -625,7 +621,7 @@ void BranchInstallInfo::launchExeHack()
 #endif
 }
 
-void BranchInstallInfo::processExes(const XML::gcXMLElement &setNode, WildcardManager* pWildCard, bool useCip)
+void BranchInstallInfo::processExes(const XML::gcXMLElement &setNode, gcRefPtr<WildcardManager> &pWildCard, bool useCip)
 {
 	uint32 rank = 0;
 
@@ -648,7 +644,7 @@ void BranchInstallInfo::processExes(const XML::gcXMLElement &setNode, WildcardMa
 		char* ePathRes = nullptr;
 		char* argsRes = nullptr;
 
-		ExeInfo* ei = nullptr;
+		gcRefPtr<ExeInfo> ei;
 
 		for (auto exe : m_vExeList)
 		{
@@ -661,7 +657,7 @@ void BranchInstallInfo::processExes(const XML::gcXMLElement &setNode, WildcardMa
 
 		if (!ei)
 		{
-			ei = new ExeInfo(name.c_str());
+			ei = gcRefPtr<ExeInfo>::create(name.c_str());
 			m_vExeList.push_back(ei);
 		}
 
@@ -765,9 +761,9 @@ bool BranchInstallInfo::processUpdateXml(const XML::gcXMLElement &branch)
 void BranchInstallInfo::setLinkInfo(const char* exe, const char* args)
 {
 	if (m_vExeList.size() == 0)
-		m_vExeList.push_back(new ExeInfo("Link"));
+		m_vExeList.push_back(gcRefPtr<ExeInfo>::create("Link"));
 
-	ExeInfo* info = m_vExeList[0];
+	gcRefPtr<ExeInfo>& info = m_vExeList[0];
 
 	info->setExe(exe);
 	info->setUserArgs(args);
@@ -792,10 +788,6 @@ void BranchInstallInfo::setLinkInfo(const char* szPath, const char* szExe, const
 }
 
 
-}
-}
-
-
 #ifdef WITH_GTEST
 
 namespace UnitTest
@@ -817,12 +809,14 @@ namespace UnitTest
 		}
 
 		uint32 m_nStatus = 0;
+
+		gc_IMPLEMENT_REFCOUNTING(StubBranchItemInfo);
 	};
 
 	class TestBranchInstallInfo : public BranchInstallInfo
 	{
 	public:
-		TestBranchInstallInfo(uint32 biId, BranchItemInfoI *itemInfo)
+		TestBranchInstallInfo(uint32 biId, gcRefPtr<BranchItemInfoI> itemInfo)
 			: BranchInstallInfo(biId, itemInfo, UTIL::FS::g_pDefaultUTILFS)
 		{
 		}
@@ -851,69 +845,70 @@ namespace UnitTest
 	{
 	public:
 		BranchInstallInfoFixture()
-			: m_BranchInstallInfo(1, &m_BranchItemInfo)
+			: m_BranchItemInfo(gcRefPtr<StubBranchItemInfo>::create())
+			, m_BranchInstallInfo(gcRefPtr<TestBranchInstallInfo>::create(1, m_BranchItemInfo))
 		{
 		}
 
 		void setBuild(MCFBuild nBuild)
 		{
-			m_BranchInstallInfo.m_INBuild = nBuild;
+			m_BranchInstallInfo->m_INBuild = nBuild;
 		}
 
 		MCFBuild getNextBuild()
 		{
-			return m_BranchInstallInfo.m_NextBuild;
+			return m_BranchInstallInfo->m_NextBuild;
 		}
 
 		bool processUpdateXml(const XML::gcXMLElement& branch)
 		{
-			return m_BranchInstallInfo.processUpdateXml(branch);
+			return m_BranchInstallInfo->processUpdateXml(branch);
 		}
 
-		ProcessResult processSettings(const XML::gcXMLElement& setNode, WildcardManager* pWildCard, bool reset, bool hasBroughtItem, const char* cipPath)
+		ProcessResult processSettings(const XML::gcXMLElement& setNode, gcRefPtr<WildcardManager> &pWildCard, bool reset, bool hasBroughtItem, const char* cipPath)
 		{
-			return m_BranchInstallInfo.processSettings(setNode, pWildCard, reset, hasBroughtItem, cipPath);
+			return m_BranchInstallInfo->processSettings(setNode, pWildCard, reset, hasBroughtItem, cipPath);
 		}
 
 		void setInstallInfo(const gcString &strPath, const gcString &strCheck, const gcString &strPrim)
 		{
 			auto strNormCheck = UTIL::FS::PathWithFile(strCheck).getFullPath();
 
-			m_BranchInstallInfo.m_szPath = UTIL::FS::Path(strPath, "", false).getFullPath();
-			m_BranchInstallInfo.m_szInsCheck = strNormCheck;
-			m_BranchInstallInfo.m_szInsPrim = UTIL::FS::Path(strPrim, "", false).getFullPath();
+			m_BranchInstallInfo->m_szPath = UTIL::FS::Path(strPath, "", false).getFullPath();
+			m_BranchInstallInfo->m_szInsCheck = strNormCheck;
+			m_BranchInstallInfo->m_szInsPrim = UTIL::FS::Path(strPrim, "", false).getFullPath();
 
-			m_BranchInstallInfo.m_vInstallChecks.push_back(strNormCheck);
+			m_BranchInstallInfo->m_vInstallChecks.push_back(strNormCheck);
 		}
 
 		void checkInstallInfo(const gcString &strPath, const gcString &strCheck, const gcString &strPrim, int nValidFileCount = -1)
 		{
-			ASSERT_PATHEQ(strPath, m_BranchInstallInfo.m_szPath);
-			ASSERT_FILEEQ(strCheck, m_BranchInstallInfo.m_szInsCheck);
-			ASSERT_PATHEQ(strPrim, m_BranchInstallInfo.m_szInsPrim);
+			ASSERT_PATHEQ(strPath, m_BranchInstallInfo->m_szPath);
+			ASSERT_FILEEQ(strCheck, m_BranchInstallInfo->m_szInsCheck);
+			ASSERT_PATHEQ(strPrim, m_BranchInstallInfo->m_szInsPrim);
 
-			if (m_BranchInstallInfo.isInstalled())
+			if (m_BranchInstallInfo->isInstalled())
 			{
 				if (nValidFileCount == -1)
-					ASSERT_NE(0, m_BranchInstallInfo.m_vInstallChecks.size());
+					ASSERT_NE(0, m_BranchInstallInfo->m_vInstallChecks.size());
 				else
-					ASSERT_EQ(nValidFileCount, m_BranchInstallInfo.m_vInstallChecks.size());
+					ASSERT_EQ(nValidFileCount, m_BranchInstallInfo->m_vInstallChecks.size());
 			}
 				
 		}
 
 		bool updateInstallCheck(gcString &strCheckRes, const gcString &strPath)
 		{
-			return m_BranchInstallInfo.updateInstallCheck(strCheckRes, strPath);
+			return m_BranchInstallInfo->updateInstallCheck(strCheckRes, strPath);
 		}
 
-		void extractInstallChecks(const XML::gcXMLElement &icsNode, WildcardManager* pWildCard, std::vector<InsCheck> &vInsChecks)
+		void extractInstallChecks(const XML::gcXMLElement &icsNode, gcRefPtr<WildcardManager> &pWildCard, std::vector<InsCheck> &vInsChecks)
 		{
-			m_BranchInstallInfo.extractInstallChecks(icsNode, pWildCard, vInsChecks);
+			m_BranchInstallInfo->extractInstallChecks(icsNode, pWildCard, vInsChecks);
 		}
 
-		StubBranchItemInfo m_BranchItemInfo;
-		TestBranchInstallInfo m_BranchInstallInfo;
+		gcRefPtr<StubBranchItemInfo> m_BranchItemInfo;
+		gcRefPtr<TestBranchInstallInfo> m_BranchInstallInfo;
 	};
 
 
@@ -982,10 +977,8 @@ namespace UnitTest
 		tinyxml2::XMLDocument doc;
 		doc.Parse(gs_szSettingsXml);
 
-		m_BranchInstallInfo.m_vValidFiles.push_back("path_a\\check_a.txt");
-
-		WildcardManager wildcard;
-		auto res = processSettings(doc.RootElement(), &wildcard, false, false, nullptr);
+		m_BranchInstallInfo->m_vValidFiles.push_back("path_a\\check_a.txt");
+		auto res = processSettings(doc.RootElement(), gcRefPtr<WildcardManager>::create(), false, false, nullptr);
 
 		ASSERT_TRUE(res.found);
 		ASSERT_FILEEQ("path_a\\check_a.txt", res.insCheck.c_str());
@@ -998,12 +991,11 @@ namespace UnitTest
 		tinyxml2::XMLDocument doc;
 		doc.Parse(gs_szSettingsXml);
 
-		m_BranchInstallInfo.m_vValidFiles.push_back("path_a\\check_a.txt");
+		m_BranchInstallInfo->m_vValidFiles.push_back("path_a\\check_a.txt");
 
 		setInstallInfo("path_a", "path_a\\check_a.txt", "insprim");
 
-		WildcardManager wildcard;
-		auto res = processSettings(doc.RootElement(), &wildcard, false, false, nullptr);
+		auto res = processSettings(doc.RootElement(), gcRefPtr<WildcardManager>::create(), false, false, nullptr);
 
 		ASSERT_TRUE(res.found);
 		ASSERT_FILEEQ("path_a\\check_a.txt", res.insCheck.c_str());
@@ -1016,12 +1008,11 @@ namespace UnitTest
 		tinyxml2::XMLDocument doc;
 		doc.Parse(gs_szSettingsXml);
 
-		m_BranchInstallInfo.m_vValidFiles.push_back("path_b\\check_b.txt");
+		m_BranchInstallInfo->m_vValidFiles.push_back("path_b\\check_b.txt");
 
 		setInstallInfo("path_a", "path_a\\check_a.txt", "insprim");
 
-		WildcardManager wildcard;
-		auto res = processSettings(doc.RootElement(), &wildcard, false, false, nullptr);
+		auto res = processSettings(doc.RootElement(), gcRefPtr<WildcardManager>::create(), false, false, nullptr);
 
 		ASSERT_TRUE(res.found);
 		ASSERT_FILEEQ("path_b\\check_b.txt", res.insCheck.c_str());
@@ -1032,18 +1023,17 @@ namespace UnitTest
 
 	TEST_F(BranchInstallInfoFixture, processSettings_ExistingDifferent_Installed)
 	{
-		m_BranchItemInfo.m_nStatus = ItemInfo::STATUS_INSTALLED;
+		m_BranchItemInfo->m_nStatus = ItemInfo::STATUS_INSTALLED;
 
 
 		tinyxml2::XMLDocument doc;
 		doc.Parse(gs_szSettingsXml);
 
-		m_BranchInstallInfo.m_vValidFiles.push_back("path_a\\check_b.txt");
+		m_BranchInstallInfo->m_vValidFiles.push_back("path_a\\check_b.txt");
 
 		setInstallInfo("path_a", "path_a\\check_a.txt", "insprim");
 
-		WildcardManager wildcard;
-		auto res = processSettings(doc.RootElement(), &wildcard, false, false, nullptr);
+		auto res = processSettings(doc.RootElement(), gcRefPtr<WildcardManager>::create(), false, false, nullptr);
 
 		ASSERT_TRUE(res.found);
 		ASSERT_FILEEQ("path_a\\check_b.txt", res.insCheck.c_str());
@@ -1054,7 +1044,7 @@ namespace UnitTest
 
 	TEST_F(BranchInstallInfoFixture, updateInstallCheck_RelatedPaths)
 	{
-		m_BranchItemInfo.m_nStatus = ItemInfo::STATUS_INSTALLED;
+		m_BranchItemInfo->m_nStatus = ItemInfo::STATUS_INSTALLED;
 		setInstallInfo("D:\\test", "D:\\test\\oldcheck.txt", "insprim");
 
 		gcString strPath("C:\\abc\\def\\check.txt");
@@ -1065,7 +1055,7 @@ namespace UnitTest
 
 	TEST_F(BranchInstallInfoFixture, updateInstallCheck_DiffPaths_SameDrive)
 	{
-		m_BranchItemInfo.m_nStatus = ItemInfo::STATUS_INSTALLED;
+		m_BranchItemInfo->m_nStatus = ItemInfo::STATUS_INSTALLED;
 		setInstallInfo("D:\\test", "D:\\test\\oldcheck.txt", "insprim");
 
 		gcString strPath("C:\\abc\\def\\check.txt");
@@ -1076,7 +1066,7 @@ namespace UnitTest
 
 	TEST_F(BranchInstallInfoFixture, updateInstallCheck_SamePaths_DiffDrive)
 	{
-		m_BranchItemInfo.m_nStatus = ItemInfo::STATUS_INSTALLED;
+		m_BranchItemInfo->m_nStatus = ItemInfo::STATUS_INSTALLED;
 		setInstallInfo("D:\\test", "D:\\test\\oldcheck.txt", "insprim");
 
 		gcString strPath("C:\\abc\\def\\check.txt");
@@ -1088,12 +1078,12 @@ namespace UnitTest
 
 	TEST_F(BranchInstallInfoFixture, extractInstallChecks_expandPath)
 	{
-		WildcardManager wildCards;
+		auto wildCards = gcRefPtr<WildcardManager>::create();
 
 		{
 			tinyxml2::XMLDocument doc;
 			doc.Parse(gs_szWildcardXml);
-			wildCards.parseXML(doc.RootElement());
+			wildCards->parseXML(doc.RootElement());
 		}
 
 		std::vector<InsCheck> vInsChecks;
@@ -1101,7 +1091,7 @@ namespace UnitTest
 		tinyxml2::XMLDocument doc;
 		doc.Parse(gs_szInstallLocationsXml);
 
-		extractInstallChecks(doc.RootElement(), &wildCards, vInsChecks);
+		extractInstallChecks(doc.RootElement(), wildCards, vInsChecks);
 
 		ASSERT_EQ(2, vInsChecks.size());
 

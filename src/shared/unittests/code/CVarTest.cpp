@@ -30,8 +30,8 @@ namespace UnitTest
 	class CVarRegTargetMock : public CVarRegTargetI
 	{
 	public:
-		MOCK_METHOD1(RegCVar, bool(CVar* var));
-		MOCK_METHOD1(UnRegCVar, void(CVar* var));
+		MOCK_METHOD1(RegCVar, bool(const gcRefPtr<CVar> &var));
+		MOCK_METHOD1(UnRegCVar, void(const gcRefPtr<CVar> &var));
 	};
 
 	class CVarTestFixture : public ::testing::Test

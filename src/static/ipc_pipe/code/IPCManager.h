@@ -284,7 +284,6 @@ namespace IPC
 		std::shared_ptr<PendingPartRecvMessage> m_pPendingMessage;
 	};
 
-
 	template <class T>
 	std::shared_ptr<T> CreateIPCClass(IPC::IPCManagerI* mng, const char* name)
 	{

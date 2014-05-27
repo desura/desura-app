@@ -48,77 +48,74 @@ namespace UserCore
 		class ItemInfo;
 	}
 
-namespace ItemTask
-{
-
-
-class VSBaseTask
-{
-public:
-	VSBaseTask();
-
-	enum RESULT
+	namespace ItemTask
 	{
-		RES_NONE,
-		RES_COMPLETE,
-		RES_DOWNLOAD,
-		RES_INSTALL,
-		RES_DOWNLOADMISSING,
-		RES_STOPPED,
-	};
+		class VSBaseTask
+		{
+		public:
+			VSBaseTask();
 
-	RESULT getResult();
-	void stop();
+			enum RESULT
+			{
+				RES_NONE,
+				RES_COMPLETE,
+				RES_DOWNLOAD,
+				RES_INSTALL,
+				RES_DOWNLOADMISSING,
+				RES_STOPPED,
+			};
 
-	Event<gcException> onErrorEvent;
+			RESULT getResult();
+			void stop();
 
-	void setWebCore(WebCore::WebCoreI *wc);
-	void setUserCore(UserCore::UserI *uc);
+			Event<gcException> onErrorEvent;
 
-	void setItemHandle(UserCore::Item::ItemHandleI* handle);
-	void setMcfBuild(MCFBuild build);
-	void setMcfBranch(MCFBranch branch);
+			void setWebCore(gcRefPtr<WebCore::WebCoreI> wc);
+			void setUserCore(gcRefPtr<UserCore::UserI> uc);
 
-	void setMcfHandle(MCFCore::MCFI* handle);
+			void setItemHandle(gcRefPtr<UserCore::Item::ItemHandleI> handle);
+			void setMcfBuild(MCFBuild build);
+			void setMcfBranch(MCFBranch branch);
 
-	virtual void onProgress(MCFCore::Misc::ProgressInfo& prog){}
+			void setMcfHandle(MCFCore::MCFI* handle);
 
-protected:
-	DesuraId getItemId();
+			virtual void onProgress(MCFCore::Misc::ProgressInfo& prog){}
 
-	UserCore::Item::ItemHandleI* getItemHandle();
-	UserCore::Item::ItemInfoI* getItemInfo();
-	UserCore::Item::ItemInfoI* getParentItemInfo();
+		protected:
+			DesuraId getItemId();
 
-	WebCore::WebCoreI* getWebCore();
-	UserCore::UserI* getUserCore();
+			gcRefPtr<UserCore::Item::ItemHandleI> getItemHandle();
+			gcRefPtr<UserCore::Item::ItemInfoI> getItemInfo();
+			gcRefPtr<UserCore::Item::ItemInfoI> getParentItemInfo();
 
-	MCFBuild getMcfBuild();
-	MCFBranch getMcfBranch();
+			gcRefPtr<WebCore::WebCoreI> getWebCore();
+			gcRefPtr<UserCore::UserI> getUserCore();
 
-	bool isStopped();
+			MCFBuild getMcfBuild();
+			MCFBranch getMcfBranch();
 
-	virtual void onStop(){;}
+			bool isStopped();
 
-	void setResult(RESULT res);
-	bool loadMcf(gcString mcfPath);
+			virtual void onStop(){ ; }
 
-	MCFCore::MCFI* m_hMcf;
+			void setResult(RESULT res);
+			bool loadMcf(gcString mcfPath);
 
-private:
-	volatile bool m_bIsStopped;
+			MCFCore::MCFI* m_hMcf;
 
-	UserCore::Item::ItemHandleI* m_pHandle;
-	WebCore::WebCoreI* m_pWebCore;
-	UserCore::UserI* m_pUserCore;
+		private:
+			volatile bool m_bIsStopped;
 
-	MCFBranch m_uiMcfBranch;
-	MCFBuild m_uiMcfBuild;
+			gcRefPtr<UserCore::Item::ItemHandleI> m_pHandle;
+			gcRefPtr<WebCore::WebCoreI> m_pWebCore;
+			gcRefPtr<UserCore::UserI> m_pUserCore;
 
-	RESULT m_Result;
-};
+			MCFBranch m_uiMcfBranch;
+			MCFBuild m_uiMcfBuild;
 
-}
+			RESULT m_Result;
+		};
+	}
 }
 
 #endif //DESURA_VSBASETASK_H

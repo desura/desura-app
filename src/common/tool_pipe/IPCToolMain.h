@@ -50,7 +50,7 @@ public:
 	void message(int type, const char* msg, uint64 col, std::map<std::string, std::string> *mpArgs);
 
 #ifdef DESURA_CLIENT
-	gcException installTool(UserCore::ToolInfo* info);
+	gcException installTool(gcRefPtr<UserCore::ToolInfo> info);
 #else
 	static void SetupLogging();
 #endif

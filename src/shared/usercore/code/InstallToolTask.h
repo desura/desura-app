@@ -37,40 +37,37 @@ $/LicenseInfo$
 
 namespace UserCore
 {
-namespace ItemTask
-{
+	namespace ItemTask
+	{
+		class InstallToolTask : public UserCore::ItemTask::BaseItemTask
+		{
+		public:
+			InstallToolTask(gcRefPtr<UserCore::Item::ItemHandleI> handle, bool launch);
+			virtual ~InstallToolTask();
 
+		protected:
+			void doRun();
 
-class InstallToolTask : public UserCore::ItemTask::BaseItemTask
-{
-public:
-	InstallToolTask(UserCore::Item::ItemHandle* handle, bool launch);
-	virtual ~InstallToolTask();
+			virtual void onPause();
+			virtual void onUnpause();
+			virtual void onStop();
 
-protected:
-	void doRun();
+			void onIPCStart();
+			void onINStart(DesuraId &id);
+			void onINProgress(UserCore::Misc::ToolProgress &p);
+			void onINError(gcException &e);
+			void onINComplete();
 
-	virtual void onPause();
-	virtual void onUnpause();
-	virtual void onStop();
+			void onComplete();
 
-	void onIPCStart();
-	void onINStart(DesuraId &id);
-	void onINProgress(UserCore::Misc::ToolProgress &p);
-	void onINError(gcException &e);
-	void onINComplete();
+		private:
+			bool m_bInError;
+			bool m_bLaunch;
 
-	void onComplete();
-
-private:
-	bool m_bInError;
-	bool m_bLaunch;
-	
-	uint32 m_ToolTTID;
-	::Thread::WaitCondition m_WaitCond;
-};
-
-}
+			uint32 m_ToolTTID;
+			::Thread::WaitCondition m_WaitCond;
+		};
+	}
 }
 
 

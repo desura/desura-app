@@ -35,39 +35,23 @@ $/LicenseInfo$
 #include "ToolInstallThread.h"
 
 #ifdef WIN32
-UserCore::ToolInfo* NewJSToolInfo(DesuraId id);
+gcRefPtr<UserCore::ToolInfo> NewJSToolInfo(DesuraId id);
 #endif
 
 using namespace UserCore;
 
-ToolManager::ToolManager(UserCore::User* user) : BaseManager(true)
+ToolManager::ToolManager(gcRefPtr<UserCore::User> user) 
+	: BaseManager()
 {
 	m_pUser = user;
 	createToolInfoDbTables(user->getAppDataPath());
-
-	m_bDeleteThread = false;
-
-	m_uiLastTransId = 0;
-	m_uiInstanceCount = 0;
-	m_iLastCustomToolId= -1;
-	m_tJSEngineExpireTime = 0;
-
-	m_pToolThread = nullptr;
-	m_pFactory = nullptr;
-
 	m_tJSEngineExpireTime = time(nullptr);
 }
 
 ToolManager::~ToolManager()
 {
 	unloadJSEngine(true);
-
 	safe_delete(m_pToolThread);
-
-	m_MapLock.lock();
-	safe_delete(m_mTransactions);
-	m_MapLock.unlock();
-
 	saveItems();
 }
 
@@ -93,7 +77,7 @@ void ToolManager::loadItems()
 
 	for (size_t x=0; x<toolIdList.size(); x++)
 	{
-		ToolInfo* tool = findItem(toolIdList[x].toInt64());
+		auto tool = findItem(toolIdList[x].toInt64());
 
 		bool bAdd = false;
 
@@ -102,7 +86,7 @@ void ToolManager::loadItems()
 		if (!tool)
 		{
 			if (negId >= 0)
-				tool = new ToolInfo(toolIdList[x]);
+				tool = gcRefPtr<UserCore::ToolInfo>::create(toolIdList[x]);
 #ifdef WIN32
 			else
 				tool = NewJSToolInfo(toolIdList[x]);
@@ -131,7 +115,7 @@ void ToolManager::saveItems()
 
 		for (uint32 x=0; x<getCount(); x++)
 		{
-			ToolInfo* tool = getItem(x);
+			auto tool = getItem(x);
 
 			if (!tool)
 				continue;
@@ -157,11 +141,11 @@ void ToolManager::saveItems()
 
 void ToolManager::removeTransaction(ToolTransactionId ttid, bool forced)
 {
-	Misc::ToolTransInfo* info = nullptr;
+	gcRefPtr<Misc::ToolTransInfo> info;
 
 	m_MapLock.lock();
 
-	std::map<ToolTransactionId, Misc::ToolTransInfo*>::iterator it = m_mTransactions.find(ttid);
+	auto it = m_mTransactions.find(ttid);
 
 	if (it != m_mTransactions.end())
 	{
@@ -178,11 +162,9 @@ void ToolManager::removeTransaction(ToolTransactionId ttid, bool forced)
 		else
 			cancelInstall(ttid);
 	}
-
-	safe_delete(info);
 }
 
-ToolTransactionId ToolManager::downloadTools(Misc::ToolTransaction* transaction)
+ToolTransactionId ToolManager::downloadTools(gcRefPtr<Misc::ToolTransaction> transaction)
 {
 	if (!areAllToolsValid(transaction->getList()))
 	{
@@ -196,7 +178,7 @@ ToolTransactionId ToolManager::downloadTools(Misc::ToolTransaction* transaction)
 		return -1;
 	}
 
-	Misc::ToolTransInfo* info = new Misc::ToolTransInfo(true, transaction, this);
+	auto info = gcRefPtr<Misc::ToolTransInfo>::create(true, transaction, this);
 
 	m_MapLock.lock();
 
@@ -211,7 +193,7 @@ ToolTransactionId ToolManager::downloadTools(Misc::ToolTransaction* transaction)
 }
 
 
-ToolTransactionId ToolManager::installTools(Misc::ToolTransaction* transaction)
+ToolTransactionId ToolManager::installTools(gcRefPtr<Misc::ToolTransaction> transaction)
 {
 	if (!areAllToolsValid(transaction->getList()))
 	{
@@ -225,7 +207,7 @@ ToolTransactionId ToolManager::installTools(Misc::ToolTransaction* transaction)
 		return -2;	
 	}
 
-	Misc::ToolTransInfo* info = new Misc::ToolTransInfo(false, transaction, this);
+	auto info = gcRefPtr<Misc::ToolTransInfo>::create(false, transaction, this);
 
 	m_MapLock.lock();
 
@@ -242,7 +224,7 @@ ToolTransactionId ToolManager::installTools(Misc::ToolTransaction* transaction)
 	for (size_t x=0; x<idList.size(); x++)
 	{
 		DesuraId id = idList[x];
-		ToolInfo* tool = findItem(id.toInt64());
+		auto tool = findItem(id.toInt64());
 
 		//This should not happen as there is a check before a install starts to make sure all tool ids are valid
 		if (!tool)
@@ -268,18 +250,18 @@ void ToolManager::parseXml(const XML::gcXMLElement &toolinfoNode)
 	if (!toolsNode.IsValid())
 		return;
 
-	WildcardManager wcm;
+	auto wcm = gcRefPtr<WildcardManager>::create();
 
-	wcm.onNeedInstallSpecialEvent += delegate(this, &ToolManager::onSpecialCheck);
-	wcm.onNeedSpecialEvent += delegate(m_pUser->getNeedWildCardEvent());
+	wcm->onNeedInstallSpecialEvent += delegate(this, &ToolManager::onSpecialCheck);
+	wcm->onNeedSpecialEvent += delegate(&m_pUser->getNeedWildCardEvent());
 
 	auto wildcardNode = toolinfoNode.FirstChildElement("wcards");
 
 	if (wildcardNode.IsValid())
-		wcm.parseXML(wildcardNode);
+		wcm->parseXML(wildcardNode);
 
 	//clear the java path value
-	WildcardInfo* temp = wcm.findItem("JAVA_EXE");
+	gcRefPtr<WildcardInfo> temp = wcm->findItem("JAVA_EXE");
 
 	if (temp)
 	{
@@ -289,7 +271,7 @@ void ToolManager::parseXml(const XML::gcXMLElement &toolinfoNode)
 
 	bool is64OS = UTIL::OS::is64OS();
 
-	toolsNode.for_each_child("tool", [this, is64OS, &wcm](const XML::gcXMLElement &toolEl)
+	toolsNode.for_each_child("tool", [this, is64OS, wcm](const XML::gcXMLElement &toolEl)
 	{
 		bool isTool64 = false;
 		toolEl.GetChild("bit64", isTool64);
@@ -303,17 +285,17 @@ void ToolManager::parseXml(const XML::gcXMLElement &toolinfoNode)
 			return;
 
 		DesuraId tid(id.c_str(), "tools");
-		ToolInfo* tool = this->findItem(tid.toInt64());
+		auto tool = this->findItem(tid.toInt64());
 
 		bool bAdd = false;
 
 		if (!tool)
 		{
-			tool = new ToolInfo(tid);
+			tool = gcRefPtr<ToolInfo>::create(tid);
 			bAdd = true;
 		}
 
-		tool->parseXml(toolEl, &wcm, m_pUser->getAppDataPath());
+		tool->parseXml(toolEl, wcm.get(), m_pUser->getAppDataPath());
 
 		if (bAdd)
 			this->addItem(tool);
@@ -323,7 +305,7 @@ void ToolManager::parseXml(const XML::gcXMLElement &toolinfoNode)
 }
 
 
-void ToolManager::startDownload(Misc::ToolTransInfo* info)
+void ToolManager::startDownload(gcRefPtr<Misc::ToolTransInfo> info)
 {
 	if (!info)
 		return;
@@ -336,7 +318,7 @@ void ToolManager::startDownload(Misc::ToolTransInfo* info)
 	for (size_t x=0; x<idList.size(); x++)
 	{
 		DesuraId id = idList[x];
-		ToolInfo* tool = findItem(id.toInt64());
+		auto tool = findItem(id.toInt64());
 
 		//This should not happen as there is a check before a download starts to make sure all tool ids are valid
 		if (!tool)
@@ -352,7 +334,7 @@ void ToolManager::startDownload(Misc::ToolTransInfo* info)
 			continue;
 		}
 
-		std::map<uint64, UserCore::Task::DownloadToolTask*>::iterator it = m_mDownloads.find(id.toInt64());
+		auto it = m_mDownloads.find(id.toInt64());
 
 		if (it == m_mDownloads.end())
 			downloadTool(tool);
@@ -363,7 +345,7 @@ void ToolManager::startDownload(Misc::ToolTransInfo* info)
 	m_DownloadLock.unlock();
 }
 
-void ToolManager::cancelDownload(Misc::ToolTransInfo* info, bool force)
+void ToolManager::cancelDownload(gcRefPtr<Misc::ToolTransInfo> info, bool force)
 {
 	if (!info)
 		return;
@@ -376,13 +358,13 @@ void ToolManager::cancelDownload(Misc::ToolTransInfo* info, bool force)
 	for (size_t x=0; x<idList.size(); x++)
 	{
 		DesuraId id = idList[x];
-		ToolInfo* info = findItem(id.toInt64());
+		auto info = findItem(id.toInt64());
 
 		//This should not happen as there is a check before a download starts to make sure all tool ids are valid
 		if (!info)
 			continue;	
 
-		std::map<uint64, UserCore::Task::DownloadToolTask*>::iterator it = m_mDownloads.find(id.toInt64());
+		auto it = m_mDownloads.find(id.toInt64());
 
 		if (it != m_mDownloads.end())
 			it->second->decreaseRefCount(force);
@@ -391,9 +373,9 @@ void ToolManager::cancelDownload(Misc::ToolTransInfo* info, bool force)
 	m_DownloadLock.unlock();	
 }
 
-void ToolManager::downloadTool(ToolInfo* tool)
+void ToolManager::downloadTool(gcRefPtr<ToolInfo> tool)
 {
-	UserCore::Task::DownloadToolTask* dtt = new UserCore::Task::DownloadToolTask(m_pUser, tool);
+	auto dtt = gcRefPtr<UserCore::Task::DownloadToolTask>::create(m_pUser, tool);
 
 	dtt->onCompleteEvent += extraDelegate(this, &ToolManager::onToolDLComplete, tool->getId());
 	dtt->onErrorEvent +=extraDelegate(this, &ToolManager::onToolDLError, tool->getId());
@@ -407,7 +389,7 @@ void ToolManager::downloadTool(ToolInfo* tool)
 void ToolManager::eraseDownload(DesuraId id)
 {
 	m_DownloadLock.lock();
-	std::map<uint64, UserCore::Task::DownloadToolTask*>::iterator it = m_mDownloads.find(id.toInt64());
+	auto it = m_mDownloads.find(id.toInt64());
 
 	if (it != m_mDownloads.end())
 		m_mDownloads.erase(it);
@@ -421,7 +403,7 @@ void ToolManager::onToolDLComplete(DesuraId id)
 
 	{
 		std::lock_guard<std::mutex> al(m_MapLock);
-		for_each([id](Misc::ToolTransInfo* info){
+		for_each([id](gcRefPtr<Misc::ToolTransInfo> info){
 			info->onDLComplete(id);
 		});
 	}
@@ -438,7 +420,7 @@ void ToolManager::onToolDLError(DesuraId id, gcException &e)
 
 	std::lock_guard<std::mutex> al(m_MapLock);
 
-	for_each([id, e](Misc::ToolTransInfo* info){
+	for_each([id, e](gcRefPtr<Misc::ToolTransInfo> &info){
 		info->onDLError(id, e);
 	});
 }
@@ -447,17 +429,17 @@ void ToolManager::onToolDLProgress(DesuraId id, UserCore::Misc::ToolProgress &pr
 {
 	std::lock_guard<std::mutex> al(m_MapLock);
 
-	for_each([id, &prog](Misc::ToolTransInfo* info){
+	for_each([id, &prog](gcRefPtr<Misc::ToolTransInfo> &info){
 		info->onDLProgress(id, prog);
 	});
 }
 
-bool ToolManager::updateTransaction(ToolTransactionId ttid, Misc::ToolTransaction* transaction)
+bool ToolManager::updateTransaction(ToolTransactionId ttid, gcRefPtr<Misc::ToolTransaction> transaction)
 {
 	bool found = false;
 
 	m_MapLock.lock();
-	std::map<ToolTransactionId, Misc::ToolTransInfo*>::iterator it = m_mTransactions.find(ttid);
+	std::map<ToolTransactionId, gcRefPtr<Misc::ToolTransInfo>>::iterator it = m_mTransactions.find(ttid);
 	
 	if (it != m_mTransactions.end())
 	{
@@ -475,7 +457,7 @@ bool ToolManager::areAllToolsValid(const std::vector<DesuraId> &list)
 {
 	for (auto t : list)
 	{
-		ToolInfo* info = findItem(t.toInt64());
+		auto info = findItem(t.toInt64());
 
 		if (!info)
 			return false;
@@ -488,7 +470,7 @@ bool ToolManager::areAllToolsDownloaded(const std::vector<DesuraId> &list)
 {
 	for (auto t : list)
 	{
-		ToolInfo* info = findItem(t.toInt64());
+		auto info = findItem(t.toInt64());
 
 		if (!info || (!info->isDownloaded() && !info->isInstalled()))
 			return false;
@@ -501,7 +483,7 @@ bool ToolManager::areAllToolsInstalled(const std::vector<DesuraId> &list)
 {
 	for (auto t : list)
 	{
-		ToolInfo* info = findItem(t.toInt64());
+		auto info = findItem(t.toInt64());
 
 		if (!info || !info->isInstalled())
 			return false;
@@ -513,7 +495,7 @@ bool ToolManager::areAllToolsInstalled(const std::vector<DesuraId> &list)
 
 std::string ToolManager::getToolName(DesuraId toolId)
 {
-	ToolInfo* info = findItem(toolId.toInt64());
+	auto info = findItem(toolId.toInt64());
 
 	if (!info)
 		return "";
@@ -529,10 +511,10 @@ void ToolManager::startInstall(ToolTransactionId ttid)
 		m_bDeleteThread = false;
 
 #ifdef WIN32
-		m_pToolThread = new UserCore::Misc::ToolInstallThread(this, m_MapLock, m_mTransactions, m_pUser->getUserName(), m_pUser->getMainWindowHandle());
+		m_pToolThread = gcRefPtr<UserCore::Misc::ToolInstallThread>::create(this, m_MapLock, m_mTransactions, m_pUser->getUserName(), m_pUser->getMainWindowHandle());
 		m_pToolThread->onPipeDisconnectEvent += delegate(this, &ToolManager::onPipeDisconnect);
 #else
-		m_pToolThread = new UserCore::Misc::ToolInstallThread(this, m_MapLock, m_mTransactions);
+		m_pToolThread = gcRefPtr<UserCore::Misc::ToolInstallThread>::create(this, m_MapLock, m_mTransactions);
 #endif
 
 		m_pToolThread->onFailedToRunEvent += delegate(this, &ToolManager::onFailedToRun);
@@ -552,7 +534,7 @@ void ToolManager::invalidateTools(std::vector<DesuraId> &list)
 {
 	for (size_t x=0; x<list.size(); x++)
 	{
-		ToolInfo* info = findItem(list[x].toInt64());
+		auto info = findItem(list[x].toInt64());
 
 		if (info)
 			info->setInstalled(false);

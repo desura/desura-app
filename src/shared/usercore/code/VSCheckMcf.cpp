@@ -43,7 +43,7 @@ namespace ItemTask
 
 bool VSCheckMcf::doTask(bool &goodMcf)
 {
-	UserCore::MCFManagerI *mm = getUserCore()->getInternal()->getMCFManager();
+	auto mm = getUserCore()->getInternal()->getMCFManager();
 	gcString filePath = mm->getMcfPath(getItemId(), getMcfBranch(), getMcfBuild());
 
 
@@ -97,7 +97,7 @@ gcString VSCheckMcf::downloadMCFHeader()
 	if (isStopped())
 		return "";
 
-	UserCore::MCFManagerI *mm = getUserCore()->getInternal()->getMCFManager();
+	auto mm = getUserCore()->getInternal()->getMCFManager();
 	gcString path = mm->getMcfPath(getItemId(), getMcfBranch(), getMcfBuild());
 
 	if (path == "")

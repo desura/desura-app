@@ -36,6 +36,7 @@ $/LicenseInfo$
 
 #include "sqlite3x.hpp"
 #include "webcore/WebCoreI.h"
+#include "user.h"
 
 #pragma pack(push)
 #pragma pack(2)
@@ -106,12 +107,10 @@ namespace
 }
 
 
-namespace UserCore
-{
-namespace Misc
-{
+using namespace UserCore::Misc;
 
-GameExplorerInfo::GameExplorerInfo(DesuraId id, UserCore::UserI* user)
+
+GameExplorerInfo::GameExplorerInfo(DesuraId id, gcRefPtr<UserCore::UserI> &user)
 {
 	m_Id = id;
 
@@ -127,7 +126,7 @@ GameExplorerInfo::GameExplorerInfo(DesuraId id, UserCore::UserI* user)
 GameExplorerInfo::~GameExplorerInfo()
 {
 	if (m_pItemInfo)
-		*m_pItemInfo->getInfoChangeEvent() -= delegate(this, &GameExplorerInfo::onInfoChanged);
+		m_pItemInfo->getInfoChangeEvent() -= delegate(this, &GameExplorerInfo::onInfoChanged);
 }
 
 void GameExplorerInfo::regEvent()
@@ -140,8 +139,7 @@ void GameExplorerInfo::regEvent()
 	if (!m_pItemInfo)
 		return;
 
-	Event<UserCore::Item::ItemInfoI::ItemInfo_s> &e = *m_pItemInfo->getInfoChangeEvent();
-	e += delegate(this, &GameExplorerInfo::onInfoChanged);
+	m_pItemInfo->getInfoChangeEvent() += delegate(this, &GameExplorerInfo::onInfoChanged);
 }
 
 void GameExplorerInfo::onInfoChanged(UserCore::Item::ItemInfoI::ItemInfo_s &info)
@@ -220,8 +218,8 @@ void GameExplorerInfo::installDll()
 	if (!m_pItemInfo)
 		return;
 
-	if (m_pUser->getServiceMain())
-		m_pUser->getServiceMain()->addItemGameToGameExplorer(m_pItemInfo->getName(), m_szDllPath.c_str());
+	if (m_pUser->getInternal()->getServiceMain())
+		m_pUser->getInternal()->getServiceMain()->addItemGameToGameExplorer(m_pItemInfo->getName(), m_szDllPath.c_str());
 
 	m_uiFlags |= FLAG_INSTALLED;
 	m_uiFlags &= ~FLAG_NEEDSUPATE;
@@ -232,8 +230,8 @@ void GameExplorerInfo::removeDll()
 	if (!UTIL::FS::isValidFile(m_szDllPath))
 		return;
 
-	if (m_pUser->getServiceMain())
-		m_pUser->getServiceMain()->removeGameFromGameExplorer(m_szDllPath.c_str(), true);
+	if (m_pUser->getInternal()->getServiceMain())
+		m_pUser->getInternal()->getServiceMain()->removeGameFromGameExplorer(m_szDllPath.c_str(), true);
 
 	m_szDllPath = "";
 
@@ -417,7 +415,7 @@ gcWString GameExplorerInfo::generateXml()
 
 	gcString szGenere(m_pItemInfo->getGenre());
 	
-	std::vector<UserCore::Item::Misc::ExeInfoI*> vExeList;
+	std::vector<gcRefPtr<UserCore::Item::Misc::ExeInfoI>> vExeList;
 	m_pItemInfo->getExeList(vExeList);
 
 
@@ -512,7 +510,7 @@ gcWString GameExplorerInfo::generateXml()
 	uint32 count = 0;
 	for (uint32 x=0; x<m_pItemInfo->getBranchCount(); x++)
 	{
-		UserCore::Item::BranchInfoI* bi = m_pItemInfo->getBranch(x);
+		auto bi = m_pItemInfo->getBranch(x);
 
 		if (!bi)
 			continue;
@@ -554,8 +552,4 @@ gcWString GameExplorerInfo::generateXml()
 	res += doc.ToWString(false);
 
 	return res;
-}
-
-
-}
 }

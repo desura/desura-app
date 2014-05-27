@@ -56,12 +56,12 @@ public:
 	{
 	}
 
-	CVar* getCVar(std::string name, std::string def)
+	gcRefPtr<CVar> getCVar(std::string name, std::string def)
 	{
-		CVar* cvar = GetCVarManager()->findCVar(name.c_str());
+		auto cvar = GetCVarManager()->findCVar(name.c_str());
 
 		if (!cvar)
-			cvar = new CVar(name.c_str(), def.c_str(), CFLAG_WINUSER);
+			cvar = gcRefPtr<CVar>::create(name.c_str(), def.c_str(), CFLAG_WINUSER);
 
 		return cvar;
 	}
@@ -112,11 +112,11 @@ public:
 			m_pFormMax	= getCVar(gcString("gc_{0}_max", name), "0");
 	}
 
-	CVar* m_pFormWidth;
-	CVar* m_pFormHeight;
-	CVar* m_pFormXPos;
-	CVar* m_pFormYPos;
-	CVar* m_pFormMax;
+	gcRefPtr<CVar> m_pFormWidth;
+	gcRefPtr<CVar> m_pFormHeight;
+	gcRefPtr<CVar> m_pFormXPos;
+	gcRefPtr<CVar> m_pFormYPos;
+	gcRefPtr<CVar> m_pFormMax;
 
 	bool m_bSaveMax;
 	bool m_bPosSaveEnabled;

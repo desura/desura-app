@@ -47,7 +47,7 @@ namespace UserCore
 		class BaseItemServiceTask : public BaseItemTask
 		{
 		public:
-			BaseItemServiceTask(UserCore::Item::ITEM_STAGE type, const char* name, UserCore::Item::ItemHandle* handle, MCFBranch branch = MCFBranch(), MCFBuild = MCFBuild());
+			BaseItemServiceTask(UserCore::Item::ITEM_STAGE type, const char* name, gcRefPtr<UserCore::Item::ItemHandleI> &handle, MCFBranch branch = MCFBranch(), MCFBuild = MCFBuild());
 			~BaseItemServiceTask();
 
 			bool hasStarted();
@@ -55,10 +55,9 @@ namespace UserCore
 		protected:
 			virtual bool initService() = 0;
 
-			virtual void onStop();
-			virtual void doRun();
+			void onStop() override;
+			void doRun() override;
 			virtual void onFinish();
-
 			virtual void onError(gcException &e)
 			{
 				//should handle this

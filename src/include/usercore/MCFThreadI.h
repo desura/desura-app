@@ -41,49 +41,46 @@ $/LicenseInfo$
 
 namespace UserCore
 {
-namespace Thread
-{
+	namespace Thread
+	{
+		class MCFThreadI : virtual public gcRefBase
+		{
+		public:
+			virtual ~MCFThreadI(){ ; }
 
-class MCFThreadI
-{
-public:
-	virtual ~MCFThreadI(){;}
+			virtual void setThreadManager(gcRefPtr<UserCore::UserThreadManagerI> tm) = 0;
+			virtual void setWebCore(gcRefPtr<WebCore::WebCoreI> wc) = 0;
+			virtual void setUserCore(gcRefPtr<UserCore::UserI> uc) = 0;
 
-	virtual void setThreadManager(UserCore::UserThreadManagerI* tm)=0;
-	virtual void setWebCore(WebCore::WebCoreI *wc)=0;
-	virtual void setUserCore(UserCore::UserI *uc)=0;
+			//events
+			virtual Event<uint32>& getCompleteEvent() = 0;
+			virtual Event<gcException>& getErrorEvent() = 0;
+			virtual Event<WCSpecialInfo>& getNeedWCEvent() = 0;
+			virtual Event<uint32>& getProgressEvent() = 0;
 
-	//events
-	virtual Event<uint32>* getCompleteEvent()=0;
-	virtual Event<gcException>* getErrorEvent()=0;
-	virtual Event<WCSpecialInfo>* getNeedWCEvent()=0;
-	virtual Event<uint32>* getProgressEvent()=0;
+			//BaseThread
+			virtual void start() = 0;
+			virtual void stop() = 0;
 
-	//BaseThread
-	virtual void start()=0;
-	virtual void stop()=0;
+			virtual void nonBlockStop() = 0;
 
-	virtual void nonBlockStop()=0;
+			virtual void unpause() = 0;
+			virtual void pause() = 0;
 
-	virtual void unpause()=0;
-	virtual void pause()=0;
+			//! Sets the Upload Manager for Mcf threads
+			//!
+			//! @param um Upload manager
+			//!
+			virtual void setUpLoadManager(gcRefPtr<UserCore::UploadManagerI> &um) = 0;
 
-	//! Sets the Upload Manager for Mcf threads
-	//!
-	//! @param um Upload manager
-	//!
-	virtual void setUpLoadManager(UserCore::UploadManagerI *um)=0;
-
-	virtual Event<MCFCore::Misc::ProgressInfo>* getMcfProgressEvent()=0;
-	virtual Event<gcString>*					getCompleteStringEvent()=0;
-	virtual Event<gcString>*					getNewItemEvent()=0;
-	virtual Event<DesuraId>*					getItemFoundEvent()=0;
-	virtual Event<UserCore::Misc::GuiDownloadProvider>*	getDownloadProviderEvent()=0;
-	virtual Event<UserCore::Misc::UploadInfo>*			getUploadProgressEvent()=0;
-};
-
-
-}
+			virtual Event<MCFCore::Misc::ProgressInfo>& getMcfProgressEvent() = 0;
+			virtual Event<gcString>&					getCompleteStringEvent() = 0;
+			virtual Event<gcString>&					getNewItemEvent() = 0;
+			virtual Event<DesuraId>&					getItemFoundEvent() = 0;
+			virtual Event<UserCore::Misc::GuiDownloadProvider>&	getDownloadProviderEvent() = 0;
+			virtual Event<UserCore::Misc::UploadInfo>&			getUploadProgressEvent() = 0;
+		};
+	}
 }
 
 #endif //DESURA_MCFTHREADI_H

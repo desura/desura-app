@@ -29,13 +29,15 @@ $/LicenseInfo$
 #include "Managers.h"
 #include "MainApp.h"
 
-UserCore::ItemManagerI* TBIBaseMenu::getItemManager()
+gcRefPtr<UserCore::ItemManagerI> TBIBaseMenu::getItemManager()
 {
 	if (m_pItemManager)
 		return m_pItemManager;
 
-	if (GetUserCore())
-		return GetUserCore()->getItemManager();
+	auto userCore = GetUserCore();
+
+	if (userCore)
+		return userCore->getItemManager();
 
 	return nullptr;
 }

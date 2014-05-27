@@ -185,7 +185,7 @@ void CreateMCFOverview::onButtonClick( wxCommandEvent& event )
 	}
 }
 
-void CreateMCFOverview::setInfo(DesuraId itemId, UserCore::Item::ItemInfoI* pItemInfo, const char* szPath)
+void CreateMCFOverview::setInfo(DesuraId itemId, gcRefPtr<UserCore::Item::ItemInfoI> pItemInfo, const char* szPath)
 {
 	if (!pItemInfo && GetUserCore() && !GetUserCore()->isAdmin())
 	{	

@@ -37,35 +37,40 @@ $/LicenseInfo$
 
 namespace UserCore
 {
-class User;
+	class User;
 
-namespace Misc
-{
-	class BannerNotifierI
+	namespace Misc
+	{
+		class BannerNotifierI : public gcRefBase
+		{
+		public:
+			virtual ~BannerNotifierI(){}
+			virtual void onBannerComplete(MCFCore::Misc::DownloadProvider &info) = 0;
+		};
+	}
+
+	class BDManager : public gcRefBase
 	{
 	public:
-		virtual void onBannerComplete(MCFCore::Misc::DownloadProvider &info)=0;
+		BDManager(gcRefPtr<UserCore::User> user);
+		~BDManager();
+
+		void downloadBanner(gcRefPtr<UserCore::Misc::BannerNotifierI> obj, const MCFCore::Misc::DownloadProvider& provider);
+		void cancelDownloadBannerHooks(UserCore::Misc::BannerNotifierI *pObj);
+
+		void cleanup();
+
+	protected:
+		void onBannerComplete(UserCore::Task::BannerCompleteInfo& bci);
+
+	private:
+		std::recursive_mutex m_BannerLock;
+		std::map<gcRefPtr<UserCore::Task::DownloadBannerTask>, gcRefPtr<UserCore::Misc::BannerNotifierI>> m_mDownloadBannerTask;
+
+		gcRefPtr<UserCore::User> m_pUser;
+
+		gc_IMPLEMENT_REFCOUNTING(BDManager)
 	};
-}
-
-class BDManager
-{
-public:
-	BDManager(UserCore::User* user);
-	~BDManager();
-
-	void downloadBanner(UserCore::Misc::BannerNotifierI* obj, const MCFCore::Misc::DownloadProvider& provider);
-	void cancelDownloadBannerHooks(UserCore::Misc::BannerNotifierI* obj);
-
-protected:
-	void onBannerComplete(UserCore::Task::BannerCompleteInfo& bci);
-
-private:
-	std::mutex m_BannerLock;
-	std::map<UserCore::Task::DownloadBannerTask*, UserCore::Misc::BannerNotifierI*> m_mDownloadBannerTask;
-
-	UserCore::User* m_pUser;
-};
 
 }
 

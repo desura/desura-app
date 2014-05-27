@@ -29,7 +29,7 @@ $/LicenseInfo$
 
 using namespace UserCore::ItemTask;
 
-BaseItemServiceTask::BaseItemServiceTask(UserCore::Item::ITEM_STAGE type, const char* name, UserCore::Item::ItemHandle* handle, MCFBranch branch, MCFBuild build) 
+BaseItemServiceTask::BaseItemServiceTask(UserCore::Item::ITEM_STAGE type, const char* name, gcRefPtr<UserCore::Item::ItemHandleI> &handle, MCFBranch branch, MCFBuild build) 
 	: BaseItemTask(type, name, handle, branch, build)
 {
 }
@@ -89,7 +89,7 @@ void BaseItemServiceTask::onStop()
 
 IPC::ServiceMainI* BaseItemServiceTask::getServiceMain()
 {
-	return getUserCore()->getServiceMain();
+	return getUserCore()->getInternal()->getServiceMain();
 }
 
 void BaseItemServiceTask::onFinish()

@@ -49,7 +49,7 @@ namespace UserCore
 		class DownloadTask : public UserCore::ItemTask::BaseItemTask, public UserCore::Misc::BannerNotifierI
 		{
 		public:
-			DownloadTask(UserCore::Item::ItemHandle* handle, const char* mcfPath);
+			DownloadTask(gcRefPtr<UserCore::Item::ItemHandleI> handle, const char* mcfPath);
 			virtual ~DownloadTask();
 
 		protected:
@@ -76,6 +76,8 @@ namespace UserCore
 			void onToolComplete();
 
 			void startToolDownload();
+
+			gc_IMPLEMENT_REFCOUNTING(DownloadTask);
 
 		private:
 			MCFBuild m_uiOldBuild;

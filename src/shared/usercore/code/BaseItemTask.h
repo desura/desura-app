@@ -51,14 +51,14 @@ namespace UserCore
 
 	namespace ItemTask
 	{
-		class BaseItemTask
+		class BaseItemTask : public gcRefBase
 		{
 		public:
-			BaseItemTask(UserCore::Item::ITEM_STAGE type, const char* name, UserCore::Item::ItemHandleI* handle, MCFBranch branch = MCFBranch(), MCFBuild build = MCFBuild());
+			BaseItemTask(UserCore::Item::ITEM_STAGE type, const char* name, gcRefPtr<UserCore::Item::ItemHandleI> &handle, MCFBranch branch = MCFBranch(), MCFBuild build = MCFBuild());
 			virtual ~BaseItemTask();
 
-			void setWebCore(WebCore::WebCoreI *wc);
-			void setUserCore(UserCore::UserI *uc);
+			void setWebCore(gcRefPtr<WebCore::WebCoreI> &wc);
+			void setUserCore(gcRefPtr<UserCore::UserI> &uc);
 
 			virtual void onStop();
 			virtual void onPause();
@@ -81,18 +81,18 @@ namespace UserCore
 			const char* getTaskName();
 			UserCore::Item::ITEM_STAGE getTaskType();
 
-			UserCore::Item::ItemHandleI* getItemHandle();
+			gcRefPtr<UserCore::Item::ItemHandleI> getItemHandle();
 
 		protected:
 			virtual void doRun()=0;
 
-			UserCore::Item::ItemInfoI* getItemInfo();
-			UserCore::Item::ItemInfoI* getParentItemInfo();
+			gcRefPtr<UserCore::Item::ItemInfoI> getItemInfo();
+			gcRefPtr<UserCore::Item::ItemInfoI> getParentItemInfo();
 
 			DesuraId getItemId();
 
-			WebCore::WebCoreI* getWebCore();
-			UserCore::UserI* getUserCore();
+			gcRefPtr<WebCore::WebCoreI> getWebCore();
+			gcRefPtr<UserCore::UserI> getUserCore();
 
 			MCFBuild getMcfBuild();
 			MCFBranch getMcfBranch();
@@ -109,12 +109,14 @@ namespace UserCore
 			volatile bool m_bIsStopped = false;
 			volatile bool m_bIsPaused = false;
 
-			UserCore::Item::ItemHandleI* m_pHandle = nullptr;
-			WebCore::WebCoreI* m_pWebCore = nullptr;
-			UserCore::UserI* m_pUserCore = nullptr;
+			gcRefPtr<UserCore::Item::ItemHandleI> m_pHandle;
+			gcRefPtr<WebCore::WebCoreI> m_pWebCore;
+			gcRefPtr<UserCore::UserI> m_pUserCore;
 
-			UserCore::Item::ITEM_STAGE m_uiType;
-			gcString m_szName;
+			const UserCore::Item::ITEM_STAGE m_uiType;
+			const gcString m_szName;
+
+			gc_IMPLEMENT_REFCOUNTING(BaseItemTask)
 		};
 	}
 }

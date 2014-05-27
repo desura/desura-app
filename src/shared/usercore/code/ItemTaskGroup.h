@@ -47,15 +47,15 @@ namespace UserCore
 		class ItemTaskGroup : public UserCore::Item::ItemTaskGroupI, public UserCore::Item::Helper::ItemHandleHelperI
 		{
 		public:
-			ItemTaskGroup(UserCore::ItemManager* manager, ACTION action, uint8 activeCount = 1);
+			ItemTaskGroup(gcRefPtr<UserCore::ItemManager> manager, ACTION action, uint8 activeCount = 1);
 			~ItemTaskGroup();
 
-			bool addItem(UserCore::Item::ItemHandleI* item);
-			bool addItem(UserCore::Item::ItemInfoI* item);
+			bool addItem(gcRefPtr<UserCore::Item::ItemHandleI> item);
+			bool addItem(gcRefPtr<UserCore::Item::ItemInfoI> item);
 
-			bool removeItem(UserCore::Item::ItemHandleI* item);
+			bool removeItem(gcRefPtr<UserCore::Item::ItemHandleI> item);
 
-			UserCore::Item::ItemHandleI* getActiveItem();
+			gcRefPtr<UserCore::Item::ItemHandleI> getActiveItem();
 
 			void start();
 			void pause();
@@ -64,13 +64,13 @@ namespace UserCore
 			void finalize();
 
 			virtual UserCore::Item::ItemTaskGroupI::ACTION getAction();
-			virtual void getItemList(std::vector<UserCore::Item::ItemHandleI*> &list);
+			virtual void getItemList(std::vector<gcRefPtr<UserCore::Item::ItemHandleI>> &list);
 			virtual void cancelAll();
 
-			void startAction(UserCore::Item::ItemHandle* item);
-			UserCore::ItemTask::BaseItemTask* newTask(ItemHandle* handle);
+			void startAction(gcRefPtr<ItemHandle> item);
+			gcRefPtr<UserCore::ItemTask::BaseItemTask> newTask(gcRefPtr<ItemHandle> handle);
 
-			uint32 getPos(UserCore::Item::ItemHandleI* item) override;
+			uint32 getPos(gcRefPtr<UserCore::Item::ItemHandleI> item) override;
 			uint32 getCount() override;
 
 			template <typename F>
@@ -82,6 +82,8 @@ namespace UserCore
 				std::lock_guard<std::recursive_mutex> guard(m_ListLock);
 				std::sort(m_vWaitingList.begin(), m_vWaitingList.end(), f);
 			}
+
+			gc_IMPLEMENT_REFCOUNTING(ItemTaskGroup);
 
 		protected:
 			virtual void onComplete(uint32 status);
@@ -104,23 +106,15 @@ namespace UserCore
 			void finish();
 			void nextItem();
 
-			void updateEvents(UserCore::ItemTask::BaseItemTask* task);
-			void registerItemTask(UserCore::ItemTask::BaseItemTask* task);
-			void deregisterItemTask(UserCore::ItemTask::BaseItemTask* task);
+			void updateEvents(gcRefPtr<UserCore::ItemTask::BaseItemTask> task);
 
 			class GroupItemTask :  public UserCore::ItemTask::BaseItemTask
 			{
 			public:
-				GroupItemTask(ItemHandleI* handle, ItemTaskGroup* group) 
+				GroupItemTask(gcRefPtr<ItemHandleI> handle, gcRefPtr<ItemTaskGroup> group)
 					: BaseItemTask(UserCore::Item::ITEM_STAGE::STAGE_WAIT, "TaskGroup", handle)
+					, m_pGroup(group)
 				{
-					m_pGroup = group;
-					m_pGroup->registerItemTask(this);
-				}
-
-				~GroupItemTask()
-				{
-					m_pGroup->deregisterItemTask(this);
 				}
 
 				virtual void doRun()
@@ -140,7 +134,7 @@ namespace UserCore
 				}
 
 				::Thread::WaitCondition m_WaitCon;
-				ItemTaskGroup* m_pGroup;
+				gcRefPtr<ItemTaskGroup> m_pGroup;
 			};
 
 		private:
@@ -157,12 +151,12 @@ namespace UserCore
 			ACTION m_Action;
 
 			std::recursive_mutex m_ListLock;
-			std::vector<UserCore::Item::ItemHandleI*> m_vWaitingList;
+			std::vector<gcRefPtr<UserCore::Item::ItemHandleI>> m_vWaitingList;
 
 			std::recursive_mutex m_TaskListLock;
-			std::vector<UserCore::ItemTask::BaseItemTask*> m_vTaskList;
+			std::vector<gcRefPtr<UserCore::ItemTask::BaseItemTask>> m_vTaskList;
 
-			UserCore::ItemManager* m_pItemManager;
+			gcRefPtr<UserCore::ItemManager> m_pItemManager;
 		};
 	}
 }

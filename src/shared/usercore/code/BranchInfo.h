@@ -44,183 +44,185 @@ namespace sqlite3x
 
 namespace UserCore
 {
-namespace Item
-{
+	namespace Item
+	{
 
-class BranchInstallInfo;
+		class BranchInstallInfo;
 
-class BranchInfo : public BranchInfoI
-{
-public:
-	BranchInfo(MCFBranch branchId, DesuraId itemId, BranchInstallInfo* bii, uint32 platformId, uint32 userid);
-	~BranchInfo();
+		class BranchInfo : public BranchInfoI
+		{
+		public:
+			BranchInfo(MCFBranch branchId, DesuraId itemId, gcRefPtr<BranchInstallInfo> bii, uint32 platformId, uint32 userid);
+			~BranchInfo();
 
-	virtual uint32 getFlags();
-	virtual MCFBranch getBranchId();
-	virtual MCFBranch getGlobalId();
-	virtual DesuraId getItemId();
-	
-	virtual const char* getName();
-	virtual const char* getCost();
-	virtual const char* getEulaUrl();
-	virtual const char* getPreOrderExpDate();
-	virtual const char* getInstallScriptPath();
+			virtual uint32 getFlags();
+			virtual MCFBranch getBranchId();
+			virtual MCFBranch getGlobalId();
+			virtual DesuraId getItemId();
 
-	virtual void getToolList(std::vector<DesuraId> &toolList);
+			virtual const char* getName();
+			virtual const char* getCost();
+			virtual const char* getEulaUrl();
+			virtual const char* getPreOrderExpDate();
+			virtual const char* getInstallScriptPath();
 
-	virtual bool isAvaliable();
-	virtual bool isDownloadable();
-	virtual bool isPreOrder();
-	bool isPreOrderAndNotPreload() override;
-	virtual bool hasAcceptedEula();
-	virtual bool hasCDKey();
-	virtual bool isCDKeyValid();
+			virtual void getToolList(std::vector<DesuraId> &toolList);
 
-	virtual bool isWindows();
-	virtual bool isLinux();
-	virtual bool isMacOsX();
-	virtual bool is32Bit();
-	virtual bool is64Bit();
+			virtual bool isAvaliable();
+			virtual bool isDownloadable();
+			virtual bool isPreOrder();
+			bool isPreOrderAndNotPreload() override;
+			virtual bool hasAcceptedEula();
+			virtual bool hasCDKey();
+			virtual bool isCDKeyValid();
 
-	virtual bool isSteamGame();
+			virtual bool isWindows();
+			virtual bool isLinux();
+			virtual bool isMacOsX();
+			virtual bool is32Bit();
+			virtual bool is64Bit();
 
-	//! Accepts the eula
-	//!
-	void acceptEula();
+			virtual bool isSteamGame();
 
-	//! Removes this branch from the db
-	//!
-	//! @param db Sqlite db connection
-	//!
-	void deleteFromDb(sqlite3x::sqlite3_connection* db);
+			//! Accepts the eula
+			//!
+			void acceptEula();
 
-	//! Save regular changed vars to db
-	//!
-	//! @param db Sqlite db connection
-	//!
-	void saveDb(sqlite3x::sqlite3_connection* db);
+			//! Removes this branch from the db
+			//!
+			//! @param db Sqlite db connection
+			//!
+			void deleteFromDb(sqlite3x::sqlite3_connection* db);
 
-	//! Save all vars to db
-	//!
-	//! @param db Sqlite db connection
-	//!
-	void saveDbFull(sqlite3x::sqlite3_connection* db);
+			//! Save regular changed vars to db
+			//!
+			//! @param db Sqlite db connection
+			//!
+			void saveDb(sqlite3x::sqlite3_connection* db);
 
-	//! Load vars from db
-	//!
-	//! @param db Sqlite db connection
-	//!
-	void loadDb(sqlite3x::sqlite3_connection* db);
+			//! Save all vars to db
+			//!
+			//! @param db Sqlite db connection
+			//!
+			void saveDbFull(sqlite3x::sqlite3_connection* db);
 
-	//! Load data for this branch from xml
-	//!
-	//! @param xmlNode Xml to get data from
-	//!
-	void loadXmlData(const XML::gcXMLElement &xmlNode);
+			//! Load vars from db
+			//!
+			//! @param db Sqlite db connection
+			//!
+			void loadDb(sqlite3x::sqlite3_connection* db);
 
-	//! Returns the last mcf build for this branch
-	//!
-	//! @return build
-	//!
-	MCFBuild getLatestBuild();
+			//! Load data for this branch from xml
+			//!
+			//! @param xmlNode Xml to get data from
+			//!
+			void loadXmlData(const XML::gcXMLElement &xmlNode);
 
-	void getCDKey(std::vector<gcString> &vKeys) const;
-	void setCDKey(gcString key);
+			//! Returns the last mcf build for this branch
+			//!
+			//! @return build
+			//!
+			MCFBuild getLatestBuild();
 
-	EventV onBranchInfoChangedEvent;
-	EventV onBranchCDKeyChangedEvent;
+			void getCDKey(std::vector<gcString> &vKeys) const;
+			void setCDKey(gcString key);
 
-	void addJSTool(DesuraId toolId);
+			EventV onBranchInfoChangedEvent;
+			EventV onBranchCDKeyChangedEvent;
 
-	void setLinkInfo(const char* name);
+			void addJSTool(DesuraId toolId);
 
-	BranchInstallInfo* getInstallInfo();
+			void setLinkInfo(const char* name);
 
-protected:
-	gcString encodeCDKey(const gcString& strRawKey);
-	gcString decodeCDKey(const gcString& strEncodedKey);
+			gcRefPtr<BranchInstallInfo> getInstallInfo();
 
-	void processInstallScript(const XML::gcXMLElement &scriptNode);
+			gc_IMPLEMENT_REFCOUNTING(BranchInfo);
 
-private:
-	DesuraId m_ItemId;
-	
-	gcString m_szName;
-	gcString m_szCost;
-	gcString m_szEulaUrl;
-	gcString m_szEulaDate;
-	gcString m_szPreOrderDate;
-	gcString m_szInstallScript;
+		protected:
+			gcString encodeCDKey(const gcString& strRawKey);
+			gcString decodeCDKey(const gcString& strEncodedKey);
 
-	uint32 m_uiInstallScriptCRC;
-	uint32 m_uiFlags;
-	uint32 m_uiUserId;
+			void processInstallScript(const XML::gcXMLElement &scriptNode);
 
-	MCFBranch m_uiGlobalId;
-	MCFBranch m_uiBranchId;
-	MCFBuild m_uiLatestBuild;
+		private:
+			DesuraId m_ItemId;
 
-	std::vector<DesuraId> m_vToolList;
-	std::vector<gcString> m_vCDKeyList;
+			gcString m_szName;
+			gcString m_szCost;
+			gcString m_szEulaUrl;
+			gcString m_szEulaDate;
+			gcString m_szPreOrderDate;
+			gcString m_szInstallScript;
 
-	BranchInstallInfo* m_InstallInfo;
+			uint32 m_uiInstallScriptCRC;
+			uint32 m_uiFlags;
+			uint32 m_uiUserId;
 
-	mutable std::mutex m_BranchLock;
-};
+			MCFBranch m_uiGlobalId;
+			MCFBranch m_uiBranchId;
+			MCFBuild m_uiLatestBuild;
 
+			std::vector<DesuraId> m_vToolList;
+			std::vector<gcString> m_vCDKeyList;
 
+			gcRefPtr<BranchInstallInfo> m_InstallInfo;
 
-inline uint32 BranchInfo::getFlags()
-{
-	return m_uiFlags;
-}
-
-inline MCFBranch BranchInfo::getBranchId()
-{
-	return m_uiBranchId;
-}
-
-inline MCFBranch BranchInfo::getGlobalId()
-{
-	return m_uiGlobalId;
-}
-
-inline MCFBuild BranchInfo::getLatestBuild()
-{
-	return m_uiLatestBuild;
-}
+			mutable std::mutex m_BranchLock;
+		};
 
 
 
-inline const char* BranchInfo::getName()	
-{
-	return m_szName.c_str();
-}
+		inline uint32 BranchInfo::getFlags()
+		{
+			return m_uiFlags;
+		}
 
-inline const char* BranchInfo::getCost()	
-{
-	return m_szCost.c_str();
-}
+		inline MCFBranch BranchInfo::getBranchId()
+		{
+			return m_uiBranchId;
+		}
 
-inline const char* BranchInfo::getEulaUrl()
-{
-	return m_szEulaUrl.c_str();
-}
+		inline MCFBranch BranchInfo::getGlobalId()
+		{
+			return m_uiGlobalId;
+		}
 
-inline const char* BranchInfo::getPreOrderExpDate()
-{
-	return m_szPreOrderDate.c_str();
-}
+		inline MCFBuild BranchInfo::getLatestBuild()
+		{
+			return m_uiLatestBuild;
+		}
 
-inline const char* BranchInfo::getInstallScriptPath()
-{
-	if (m_szInstallScript.size() > 0)
-		return m_szInstallScript.c_str();
 
-	return nullptr;
-}
 
-}
+		inline const char* BranchInfo::getName()
+		{
+			return m_szName.c_str();
+		}
+
+		inline const char* BranchInfo::getCost()
+		{
+			return m_szCost.c_str();
+		}
+
+		inline const char* BranchInfo::getEulaUrl()
+		{
+			return m_szEulaUrl.c_str();
+		}
+
+		inline const char* BranchInfo::getPreOrderExpDate()
+		{
+			return m_szPreOrderDate.c_str();
+		}
+
+		inline const char* BranchInfo::getInstallScriptPath()
+		{
+			if (m_szInstallScript.size() > 0)
+				return m_szInstallScript.c_str();
+
+			return nullptr;
+		}
+
+	}
 }
 
 

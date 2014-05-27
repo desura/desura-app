@@ -29,6 +29,7 @@ $/LicenseInfo$
 #pragma once
 #endif
 
+#include "usercore/UserCoreI.h"
 #include "usercore/ItemInfoI.h"
 #include "managers/WildcardManager.h"
 #include "BranchInfo.h"
@@ -45,28 +46,26 @@ namespace sqlite3x
 
 namespace UserCore
 {
-	class UserI;
-
 	namespace Item
 	{
 		class BranchInfo;
 		class BranchInstallInfo;
 
-		class BranchItemInfoI
+		class BranchItemInfoI : public gcRefBase
 		{
 		public:
-			 virtual DesuraId getId()=0;
-			 virtual uint32 getStatus()=0;
+			virtual DesuraId getId() = 0;
+			virtual uint32 getStatus() = 0;
 		};
 
-		class ItemInfoInternalI
+		class ItemInfoInternalI : public gcRefBase
 		{
 		public:
-			virtual void setPercent(uint8 percent)=0;
-			virtual MCFBranch getBestBranch(MCFBranch branch)=0;
-			virtual void resetInstalledMcf()=0;
-			virtual void overideInstalledBuild(MCFBuild build)=0;
-			virtual BranchInstallInfo* getBranchOrCurrent(MCFBranch branch)=0;
+			virtual void setPercent(uint8 percent) = 0;
+			virtual MCFBranch getBestBranch(MCFBranch branch) = 0;
+			virtual void resetInstalledMcf() = 0;
+			virtual void overideInstalledBuild(MCFBuild build) = 0;
+			virtual gcRefPtr<BranchInstallInfo> getBranchOrCurrent(MCFBranch branch) = 0;
 		};
 
 		class ItemInfo : public ItemInfoI, public BranchItemInfoI, public ItemInfoInternalI
@@ -76,102 +75,102 @@ namespace UserCore
 			//!
 			//! @param id Item internal id
 			//!
-			ItemInfo(UserCore::UserI *user, DesuraId id, UTIL::FS::UtilFSI* pFileSystem = UTIL::FS::g_pDefaultUTILFS);
+			ItemInfo(gcRefPtr<UserCore::UserI> user, DesuraId id, UTIL::FS::UtilFSI* pFileSystem = UTIL::FS::g_pDefaultUTILFS);
 
 			//! Constructor
 			//!
 			//! @param id Item internal id
 			//! @param parid Parent internal id
 			//!
-			ItemInfo(UserCore::UserI *user, DesuraId id, DesuraId parid, UTIL::FS::UtilFSI* pFileSystem = UTIL::FS::g_pDefaultUTILFS);
+			ItemInfo(gcRefPtr<UserCore::UserI> user, DesuraId id, DesuraId parid, UTIL::FS::UtilFSI* pFileSystem = UTIL::FS::g_pDefaultUTILFS);
 			~ItemInfo();
 
 			//inherited methods
-			 void updated() override;
-			 void addToAccount() override;
-			 void removeFromAccount() override;
+			void updated() override;
+			void addToAccount() override;
+			void removeFromAccount() override;
 
-			 DesuraId getParentId() override;
-			 DesuraId getId() override;
-			 DesuraId getInstalledModId(MCFBranch branch = MCFBranch()) override;
+			DesuraId getParentId() override;
+			DesuraId getId() override;
+			DesuraId getInstalledModId(MCFBranch branch = MCFBranch()) override;
 
-			 uint32 getChangedFlags() override;
-			 uint32 getStatus() override;
+			uint32 getChangedFlags() override;
+			uint32 getStatus() override;
 
-			 uint8 getPercent() override;
-			 uint8 getPermissions() override;
-			 uint8 getOptions() override;
+			uint8 getPercent() override;
+			uint8 getPermissions() override;
+			uint8 getOptions() override;
 
-			 bool isLaunchable() override;
-			 bool isUpdating() override;
-			 bool isInstalled() override;
-			 bool isDownloadable() override;
-			 bool isComplex() override;
-			 bool isParentToComplex() override;
-			 bool isFirstLaunch() override;
+			bool isLaunchable() override;
+			bool isUpdating() override;
+			bool isInstalled() override;
+			bool isDownloadable() override;
+			bool isComplex() override;
+			bool isParentToComplex() override;
+			bool isFirstLaunch() override;
 
-			 bool hasAcceptedEula() override;
-			 bool compare(const char* filter) override;
+			bool hasAcceptedEula() override;
+			bool compare(const char* filter) override;
 
-			 void addSFlag(uint32 status) override;
-			 void addPFlag(uint8 permission) override;
-			 void addOFlag(uint8 option) override;
+			void addSFlag(uint32 status) override;
+			void addPFlag(uint8 permission) override;
+			void addOFlag(uint8 option) override;
 
-			 void delSFlag(uint32 status) override;
-			 void delPFlag(uint8 permission) override;
-			 void delOFlag(uint8 option) override;
+			void delSFlag(uint32 status) override;
+			void delPFlag(uint8 permission) override;
+			void delOFlag(uint8 option) override;
 
-			 const char* getRating() override;
-			 const char* getDev() override;
-			 const char* getName() override;
-			 const char* getShortName() override;
-			 const char* getPath(MCFBranch branch = MCFBranch()) override;
-			 const char* getInsPrimary(MCFBranch branch = MCFBranch()) override;
-			 const char* getIcon() override;
-			 const char* getLogo() override;
-			 const char* getIconUrl() override;
-			 const char* getLogoUrl() override;
-			 const char* getDesc() override;
-			 const char* getTheme() override;
-			 const char* getGenre() override;
-			 const char* getProfile() override;
-			 const char* getDevProfile() override;
+			const char* getRating() override;
+			const char* getDev() override;
+			const char* getName() override;
+			const char* getShortName() override;
+			const char* getPath(MCFBranch branch = MCFBranch()) override;
+			const char* getInsPrimary(MCFBranch branch = MCFBranch()) override;
+			const char* getIcon() override;
+			const char* getLogo() override;
+			const char* getIconUrl() override;
+			const char* getLogoUrl() override;
+			const char* getDesc() override;
+			const char* getTheme() override;
+			const char* getGenre() override;
+			const char* getProfile() override;
+			const char* getDevProfile() override;
 
-			 const char* getPublisher() override;
-			 const char* getPublisherProfile() override;
+			const char* getPublisher() override;
+			const char* getPublisherProfile() override;
 
-			 const char* getEulaUrl() override;
-			 const char* getInstallScriptPath() override;
+			const char* getEulaUrl() override;
+			const char* getInstallScriptPath() override;
 
-			 Event<ItemInfoI::ItemInfo_s>* getInfoChangeEvent() override;
+			Event<ItemInfoI::ItemInfo_s>& getInfoChangeEvent() override;
 
 
 			void overrideMcfBuild(MCFBuild build, MCFBranch branch = MCFBranch());
-			 uint64 getInstallSize(MCFBranch branch = MCFBranch()) override;
-			 uint64 getDownloadSize(MCFBranch branch = MCFBranch()) override;
-			 MCFBuild getLastInstalledBuild(MCFBranch branch = MCFBranch()) override;
-			 MCFBuild getInstalledBuild(MCFBranch branch = MCFBranch()) override;
-			 MCFBuild getNextUpdateBuild(MCFBranch branch = MCFBranch()) override;
-			 MCFBranch getInstalledBranch() override;
-			 MCFBranch getLastInstalledBranch() override;
-			 const char* getInstalledVersion(MCFBranch branch = MCFBranch()) override;
+			uint64 getInstallSize(MCFBranch branch = MCFBranch()) override;
+			uint64 getDownloadSize(MCFBranch branch = MCFBranch()) override;
+			MCFBuild getLastInstalledBuild(MCFBranch branch = MCFBranch()) override;
+			MCFBuild getInstalledBuild(MCFBranch branch = MCFBranch()) override;
+			MCFBuild getNextUpdateBuild(MCFBranch branch = MCFBranch()) override;
+			MCFBranch getInstalledBranch() override;
+			MCFBranch getLastInstalledBranch() override;
+			const char* getInstalledVersion(MCFBranch branch = MCFBranch()) override;
 
 
-			 uint32 getBranchCount() override;
-			 BranchInfoI* getBranch(uint32 index) override;
-			 BranchInfoI* getCurrentBranch() override;
-			 BranchInfoI* getBranchById(uint32 id) override;
+			uint32 getBranchCount() override;
+			gcRefPtr<BranchInfoI> getBranch(uint32 index) override;
+			gcRefPtr<BranchInfoI> getCurrentBranch() override;
+			gcRefPtr<BranchInfoI> getBranchById(uint32 id) override;
 
-			 void acceptEula() override;
+			void acceptEula() override;
 
 
-			 uint32 getExeCount(bool setActive, MCFBranch branch = MCFBranch()) override;
-			 void getExeList(std::vector<UserCore::Item::Misc::ExeInfoI*> &list, MCFBranch branch = MCFBranch()) override;
-			 UserCore::Item::Misc::ExeInfoI* getActiveExe(MCFBranch branch = MCFBranch()) override;
-			 void setActiveExe(const char* name, MCFBranch branch = MCFBranch()) override;
+			uint32 getExeCount(bool setActive, MCFBranch branch = MCFBranch()) override;
+			void getExeList(std::vector<gcRefPtr<UserCore::Item::Misc::ExeInfoI>> &list, MCFBranch branch = MCFBranch()) override;
+			gcRefPtr<UserCore::Item::Misc::ExeInfoI> getActiveExe(MCFBranch branch = MCFBranch()) override;
+			void setActiveExe(const char* name, MCFBranch branch = MCFBranch()) override;
 
-			 bool isFavorite() override;
-			 void setFavorite(bool fav) override;
+			bool isFavorite() override;
+			void setFavorite(bool fav) override;
 
 			//! Removes this item from the db
 			//!
@@ -204,7 +203,7 @@ namespace UserCore
 			//! @param statusOveride New status flags to add when load is complete
 			//! @param pWildCard Wildcard manager to resolve wildcards from
 			//!
-			void loadXmlData(uint32 platform, const XML::gcXMLElement &xmlNode, uint16 statusOveride, WildcardManager* pWildCard=nullptr, bool reset = false);
+			void loadXmlData(uint32 platform, const XML::gcXMLElement &xmlNode, uint16 statusOveride, gcRefPtr<WildcardManager> pWildCard = gcRefPtr<WildcardManager>(), bool reset = false);
 
 
 			//! hash for base manager
@@ -307,9 +306,9 @@ namespace UserCore
 			//! Given a list of branches it will select the best avliable
 			//! If it cant work out best branch it will return 0
 			//!
-			MCFBranch selectBestBranch(const std::vector<BranchInfo*> &list);
+			MCFBranch selectBestBranch(const std::vector<gcRefPtr<BranchInfo>> &list);
 
-			ItemInfoInternalI* getInternal() override
+			gcRefPtr<ItemInfoInternalI> getInternal() override
 			{
 				return this;
 			}
@@ -319,6 +318,8 @@ namespace UserCore
 			//! Remove this item from the play list
 			//!
 			void softDelete();
+
+			gc_IMPLEMENT_REFCOUNTING(ItemInfo);
 
 		protected:
 			//! Event handler for item information changed. Triggers when this item information gets updated
@@ -337,13 +338,13 @@ namespace UserCore
 			//!
 			//! @return UserCore
 			//!
-			UserCore::UserI* getUserCore();
+			gcRefPtr<UserCore::UserI> getUserCore();
 
 
 			void broughtCheck();
 
 			void processInfo(const XML::gcXMLElement &xmlEl);
-			void processSettings(uint32 platform, const XML::gcXMLElement &setNode, WildcardManager* pWildCard, bool reset);
+			void processSettings(uint32 platform, const XML::gcXMLElement &setNode, gcRefPtr<WildcardManager> pWildCard, bool reset);
 
 			void launchExeHack();
 
@@ -351,9 +352,9 @@ namespace UserCore
 			bool shouldSaveDb(sqlite3x::sqlite3_connection* db);
 
 			void loadBranchXmlData(const XML::gcXMLElement &branch);
-	
-			BranchInfo* getCurrentBranchFull();
-			BranchInstallInfo* getBranchOrCurrent(MCFBranch branch) override;
+
+			gcRefPtr<BranchInfo> getCurrentBranchFull();
+			gcRefPtr<BranchInstallInfo> getBranchOrCurrent(MCFBranch branch) override;
 
 
 		private:
@@ -363,7 +364,7 @@ namespace UserCore
 
 			DesuraId m_iId;
 			DesuraId m_iParentId;
-	
+
 
 			uint32 m_iChangedFlags = 0;
 			uint32 m_iStatus = ItemInfoI::STATUS_UNKNOWN;
@@ -395,10 +396,10 @@ namespace UserCore
 			gcString m_szProfile;	//url to profile
 			gcString m_szEULAUrl;	//eula
 
-			std::vector<BranchInfo*> m_vBranchList;
-			std::map<uint32, BranchInstallInfo*> m_mBranchInstallInfo;
+			std::vector<gcRefPtr<BranchInfo>> m_vBranchList;
+			std::map<uint32, gcRefPtr<BranchInstallInfo>> m_mBranchInstallInfo;
 
-			UserCore::UserI *m_pUserCore; 
+			gcRefPtr<UserCore::UserI> m_pUserCore;
 
 			UTIL::FS::UtilFSI* m_pFileSystem;
 		};
@@ -444,17 +445,17 @@ namespace UserCore
 
 		inline bool ItemInfo::isLaunchable()
 		{
-			return (m_iStatus & (UserCore::Item::ItemInfoI::STATUS_INSTALLED|UserCore::Item::ItemInfoI::STATUS_READY))?true:false;
+			return (m_iStatus & (UserCore::Item::ItemInfoI::STATUS_INSTALLED | UserCore::Item::ItemInfoI::STATUS_READY)) ? true : false;
 		}
 
 		inline bool ItemInfo::isInstalled()
 		{
-			return (m_iStatus & UserCore::Item::ItemInfoI::STATUS_INSTALLED)?true:false;
+			return (m_iStatus & UserCore::Item::ItemInfoI::STATUS_INSTALLED) ? true : false;
 		}
 
 		inline bool ItemInfo::isDownloadable()
 		{
-			return !HasAnyFlags(getStatus(), UserCore::Item::ItemInfoI::STATUS_NONDOWNLOADABLE|UserCore::Item::ItemInfoI::STATUS_LINK);
+			return !HasAnyFlags(getStatus(), UserCore::Item::ItemInfoI::STATUS_NONDOWNLOADABLE | UserCore::Item::ItemInfoI::STATUS_LINK);
 		}
 
 		inline bool ItemInfo::isComplex()
@@ -477,62 +478,62 @@ namespace UserCore
 			return HasAllFlags(getStatus(), UserCore::Item::ItemInfoI::STATUS_LAUNCHED) == false;
 		}
 
-		inline const char* ItemInfo::getRating()	
+		inline const char* ItemInfo::getRating()
 		{
 			return m_szRating.c_str();
 		}
 
-		inline const char* ItemInfo::getDev()		
+		inline const char* ItemInfo::getDev()
 		{
 			return m_szDev.c_str();
 		}
 
-		inline const char* ItemInfo::getName()		
+		inline const char* ItemInfo::getName()
 		{
 			return m_szName.c_str();
 		}
 
-		inline const char* ItemInfo::getShortName()	
+		inline const char* ItemInfo::getShortName()
 		{
 			return m_szShortName.c_str();
 		}
 
-		inline const char* ItemInfo::getIcon()		
+		inline const char* ItemInfo::getIcon()
 		{
 			return m_szIcon.c_str();
 		}
 
-		inline const char* ItemInfo::getLogo()		
+		inline const char* ItemInfo::getLogo()
 		{
 			return m_szLogo.c_str();
 		}
 
-		inline const char* ItemInfo::getIconUrl()	
+		inline const char* ItemInfo::getIconUrl()
 		{
 			return m_szIconUrl.c_str();
 		}
 
-		inline const char* ItemInfo::getLogoUrl()	
+		inline const char* ItemInfo::getLogoUrl()
 		{
 			return m_szLogoUrl.c_str();
 		}
 
-		inline const char* ItemInfo::getDesc()		
+		inline const char* ItemInfo::getDesc()
 		{
 			return m_szDesc.c_str();
 		}
 
-		inline const char* ItemInfo::getTheme()		
+		inline const char* ItemInfo::getTheme()
 		{
 			return m_szTheme.c_str();
 		}
 
-		inline const char* ItemInfo::getGenre()		
+		inline const char* ItemInfo::getGenre()
 		{
 			return m_szGenre.c_str();
 		}
 
-		inline const char* ItemInfo::getProfile()	
+		inline const char* ItemInfo::getProfile()
 		{
 			return m_szProfile.c_str();
 		}
@@ -560,9 +561,9 @@ namespace UserCore
 			return getCurrentBranch()->getInstallScriptPath();
 		}
 
-		inline Event<ItemInfoI::ItemInfo_s>* ItemInfo::getInfoChangeEvent()
+		inline Event<ItemInfoI::ItemInfo_s>& ItemInfo::getInfoChangeEvent()
 		{
-			return &onInfoChangeEvent;
+			return onInfoChangeEvent;
 		}
 
 		/////////////////////////////////////////////
@@ -587,12 +588,12 @@ namespace UserCore
 			return m_bPauseCallBack;
 		}
 
-		inline void ItemInfo::setName(const char* name)		
+		inline void ItemInfo::setName(const char* name)
 		{
 			m_szName = gcString(name);
 		}
 
-		inline UserCore::UserI* ItemInfo::getUserCore()
+		inline gcRefPtr<UserCore::UserI> ItemInfo::getUserCore()
 		{
 			return m_pUserCore;
 		}

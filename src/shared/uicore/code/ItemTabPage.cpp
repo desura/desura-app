@@ -261,19 +261,23 @@ ItemTabPage::~ItemTabPage()
 	gcAssert(m_pItemControlBar.unique());
 	m_pItemControlBar.reset();
 
-	if (GetUserCore())
+	auto userCore = GetUserCore();
+
+	if (userCore)
 	{
-		if (GetUserCore()->getItemManager())
+		auto itemManager = userCore->getItemManager();
+	
+		if (itemManager)
 		{
-			std::vector<UserCore::Item::ItemInfoI*> aList;
-			GetUserCore()->getItemManager()->getAllItems(aList);
+			std::vector<gcRefPtr<UserCore::Item::ItemInfoI>> aList;
+			itemManager->getAllItems(aList);
 
 			for (size_t x = 0; x<aList.size(); x++)
-				*aList[x]->getInfoChangeEvent() -= guiDelegate(this, &ItemTabPage::onItemUpdate);
+				aList[x]->getInfoChangeEvent() -= guiDelegate(this, &ItemTabPage::onItemUpdate);
 		}
 
-		*GetUserCore()->getLowSpaceEvent() -= guiDelegate(this, &ItemTabPage::onLowDiskSpace);
-		*GetUserCore()->getForcedUpdatePollEvent() -= guiDelegate(this, &ItemTabPage::onUpdatePoll);
+		userCore->getLowSpaceEvent() -= guiDelegate(this, &ItemTabPage::onLowDiskSpace);
+		userCore->getForcedUpdatePollEvent() -= guiDelegate(this, &ItemTabPage::onUpdatePoll);
 	}
 
 	if (GetUploadMng())
@@ -282,18 +286,18 @@ ItemTabPage::~ItemTabPage()
 
 		for (size_t x=0; x<count; x++)
 		{
-			UserCore::Misc::UploadInfoThreadI* item = GetUploadMng()->getItem(x);
+			auto item = GetUploadMng()->getItem(x);
 
 			gcString key = item->getKey();
-			*item->getUploadProgressEvent() -= guiExtraDelegate(this, &ItemTabPage::onUploadProgress, key);
-			*item->getActionEvent() -= guiExtraDelegate(this, &ItemTabPage::onUploadAction, key);
+			item->getUploadProgressEvent() -= guiExtraDelegate(this, &ItemTabPage::onUploadProgress, key);
+			item->getActionEvent() -= guiExtraDelegate(this, &ItemTabPage::onUploadAction, key);
 
-			item->getUploadProgressEvent()->flush();
-			item->getActionEvent()->flush();
+			item->getUploadProgressEvent().flush();
+			item->getActionEvent().flush();
 		}
 
-		*GetUploadMng()->getUpdateEvent() -= guiDelegate(this, &ItemTabPage::onUploadUpdate);
-		GetUploadMng()->getUpdateEvent()->flush();
+		GetUploadMng()->getUpdateEvent() -= guiDelegate(this, &ItemTabPage::onUploadUpdate);
+		GetUploadMng()->getUpdateEvent().flush();
 	}
 }
 
@@ -337,27 +341,29 @@ void ItemTabPage::constuctBrowser()
 	m_pWebControl->onPageLoadEvent += delegate(&m_pItemControlBar->onPageEndLoadingEvent);
 	m_pWebControl->onPageLoadEvent += delegate(this, &ItemTabPage::doneLoading);
 
-	if (!GetUserCore())
+	auto userCore = GetUserCore();
+
+	if (!userCore)
 		return;
 
-	UserCore::ItemManagerI *im = GetUserCore()->getItemManager();
+	auto im = userCore->getItemManager();
 
 	if (im)
 	{
-		*im->getOnUpdateEvent() += guiDelegate(this, &ItemTabPage::onItemsUpdate);
-		*im->getOnRecentUpdateEvent() += guiDelegate(this, &ItemTabPage::onRecentUpdate);
-		*im->getOnFavoriteUpdateEvent() += guiDelegate(this, &ItemTabPage::onFavoriteUpdate);
-		*im->getOnNewItemEvent() += guiDelegate(this, &ItemTabPage::onNewItem);
+		im->getOnUpdateEvent() += guiDelegate(this, &ItemTabPage::onItemsUpdate);
+		im->getOnRecentUpdateEvent() += guiDelegate(this, &ItemTabPage::onRecentUpdate);
+		im->getOnFavoriteUpdateEvent() += guiDelegate(this, &ItemTabPage::onFavoriteUpdate);
+		im->getOnNewItemEvent() += guiDelegate(this, &ItemTabPage::onNewItem);
 
 		onItemsUpdate();
 	}
 
-	*GetUserCore()->getLowSpaceEvent() += guiDelegate(this, &ItemTabPage::onLowDiskSpace);
-	*GetUserCore()->getForcedUpdatePollEvent() += guiDelegate(this, &ItemTabPage::onUpdatePoll);
-	*GetUploadMng()->getUpdateEvent() += guiDelegate(this, &ItemTabPage::onUploadUpdate);
+	userCore->getLowSpaceEvent() += guiDelegate(this, &ItemTabPage::onLowDiskSpace);
+	userCore->getForcedUpdatePollEvent() += guiDelegate(this, &ItemTabPage::onUpdatePoll);
+	GetUploadMng()->getUpdateEvent() += guiDelegate(this, &ItemTabPage::onUploadUpdate);
 	onUploadUpdate();
 
-	*GetUserCore()->getLoginItemsLoadedEvent() += guiDelegate(this, &ItemTabPage::onLoginItemsLoaded);
+	userCore->getLoginItemsLoadedEvent() += guiDelegate(this, &ItemTabPage::onLoginItemsLoaded);
 
 	GetJSBinding()->onPingEvent += guiDelegate(this, &ItemTabPage::onPing);
 	m_PingTimer.Start(15 * 1000);
@@ -420,13 +426,18 @@ void ItemTabPage::onLoginItemsLoaded()
 
 void ItemTabPage::onItemsUpdate()
 {
-	std::vector<UserCore::Item::ItemInfoI*> aList;
-	GetUserCore()->getItemManager()->getAllItems(aList);
+	auto userCore = GetUserCore();
+
+	if (!userCore)
+		return;
+
+	std::vector<gcRefPtr<UserCore::Item::ItemInfoI>> aList;
+	userCore->getItemManager()->getAllItems(aList);
 
 	for (auto game : aList)
 	{
-		*game->getInfoChangeEvent() -= guiDelegate(this, &ItemTabPage::onItemUpdate);
-		*game->getInfoChangeEvent() += guiDelegate(this, &ItemTabPage::onItemUpdate);
+		game->getInfoChangeEvent() -= guiDelegate(this, &ItemTabPage::onItemUpdate);
+		game->getInfoChangeEvent() += guiDelegate(this, &ItemTabPage::onItemUpdate);
 	}
 
 	postEvent("onItemListUpdated");
@@ -453,19 +464,19 @@ void ItemTabPage::onUploadUpdate()
 
 	for (size_t x=0; x<count; x++)
 	{
-		UserCore::Misc::UploadInfoThreadI* item = GetUploadMng()->getItem(x);
+		auto item = GetUploadMng()->getItem(x);
 
 		gcString key = item->getKey();
 
 		if (item->isDeleted())
 		{
-			*item->getUploadProgressEvent()  -= guiExtraDelegate(this, &ItemTabPage::onUploadProgress, key);
-			*item->getActionEvent() -= guiExtraDelegate(this, &ItemTabPage::onUploadAction, key);
+			item->getUploadProgressEvent()  -= guiExtraDelegate(this, &ItemTabPage::onUploadProgress, key);
+			item->getActionEvent() -= guiExtraDelegate(this, &ItemTabPage::onUploadAction, key);
 		}
 		else
 		{
-			*item->getUploadProgressEvent()  += guiExtraDelegate(this, &ItemTabPage::onUploadProgress, key);
-			*item->getActionEvent() += guiExtraDelegate(this, &ItemTabPage::onUploadAction, key);
+			item->getUploadProgressEvent()  += guiExtraDelegate(this, &ItemTabPage::onUploadProgress, key);
+			item->getActionEvent() += guiExtraDelegate(this, &ItemTabPage::onUploadAction, key);
 		}
 	}
 

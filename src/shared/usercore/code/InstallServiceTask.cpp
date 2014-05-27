@@ -43,7 +43,7 @@ $/LicenseInfo$
 using namespace UserCore::ItemTask;
 
 
-InstallServiceTask::InstallServiceTask(UserCore::Item::ItemHandle* handle, const char* path, MCFBranch branch, UserCore::Item::Helper::InstallerHandleHelperI* ihh) 
+InstallServiceTask::InstallServiceTask(gcRefPtr<UserCore::Item::ItemHandleI> handle, const char* path, MCFBranch branch, gcRefPtr<UserCore::Item::Helper::InstallerHandleHelperI> &ihh)
 	: BaseItemServiceTask(UserCore::Item::ITEM_STAGE::STAGE_INSTALL, "Install", handle, branch)
 {
 	m_szPath = gcString(path);
@@ -66,9 +66,6 @@ InstallServiceTask::~InstallServiceTask()
 
 	if (m_pIPCIM)
 		m_pIPCIM->destroy();
-
-	if (m_pIHH)
-		m_pIHH->destroy();
 }
 
 bool InstallServiceTask::initService()
@@ -155,7 +152,7 @@ void InstallServiceTask::onComplete()
 
 	onMcfProgressEvent(temp);
 
-	UserCore::Item::ItemInfoI *item = getItemHandle()->getItemInfo();
+	auto item = getItemHandle()->getItemInfo();
 	item->delSFlag(UserCore::Item::ItemInfoI::STATUS_PAUSABLE);
 
 	bool verify = false;

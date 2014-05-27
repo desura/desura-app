@@ -73,7 +73,7 @@ void ChangeLogForm::onButClick( wxCommandEvent& event )
 	Close();
 }
 
-void ChangeLogForm::setInfo(UserCore::Item::ItemInfoI* item)
+void ChangeLogForm::setInfo(gcRefPtr<UserCore::Item::ItemInfoI> item)
 {
 	if (!item)
 		return;

@@ -31,13 +31,11 @@ $/LicenseInfo$
 
 
 
-namespace UserCore
-{
-namespace ItemTask
-{
+using namespace UserCore::ItemTask;
 
 
-InstallToolTask::InstallToolTask(UserCore::Item::ItemHandle* handle, bool launch) : BaseItemTask(UserCore::Item::ITEM_STAGE::STAGE_INSTALLTOOL, "InstallTool", handle, MCFBranch(), MCFBuild())
+InstallToolTask::InstallToolTask(gcRefPtr<UserCore::Item::ItemHandleI> handle, bool launch) 
+	: BaseItemTask(UserCore::Item::ITEM_STAGE::STAGE_INSTALLTOOL, "InstallTool", handle, MCFBranch(), MCFBuild())
 {
 	m_bInError = false;
 	m_ToolTTID = UINT_MAX;
@@ -162,8 +160,4 @@ void InstallToolTask::onComplete()
 		else
 			getItemHandle()->getInternal()->completeStage(false);
 	}
-}
-
-
-}
 }

@@ -74,16 +74,16 @@ namespace UserCore
 	class ToolManager : public ToolManagerI, public BaseManager<ToolInfo>
 	{
 	public:
-		ToolManager(UserCore::User* user);
+		ToolManager(gcRefPtr<UserCore::User> user);
 		~ToolManager();
 
 
 		void removeTransaction(ToolTransactionId ttid, bool forced) override;
 
-		ToolTransactionId downloadTools(Misc::ToolTransaction* transaction) override;
-		ToolTransactionId installTools(Misc::ToolTransaction* transaction) override;
+		ToolTransactionId downloadTools(gcRefPtr<Misc::ToolTransaction> transaction) override;
+		ToolTransactionId installTools(gcRefPtr<Misc::ToolTransaction> transaction) override;
 
-		bool updateTransaction(ToolTransactionId ttid, Misc::ToolTransaction* transaction) override;
+		bool updateTransaction(ToolTransactionId ttid, gcRefPtr<Misc::ToolTransaction> transaction) override;
 
 		bool areAllToolsValid(const std::vector<DesuraId> &list) override;
 		bool areAllToolsDownloaded(const std::vector<DesuraId> &list) override;
@@ -97,7 +97,7 @@ namespace UserCore
 
 
 
-		void findJSTools(UserCore::Item::ItemInfo* item) override;
+		void findJSTools(gcRefPtr<UserCore::Item::ItemInfoI> item) override;
 		bool initJSEngine() override;
 		void destroyJSEngine() override;
 
@@ -111,16 +111,18 @@ namespace UserCore
 
 		void reloadTools(DesuraId id) override;
 
+		gc_IMPLEMENT_REFCOUNTING(ToolManager);
+
 	protected:
-		void startDownload(Misc::ToolTransInfo* info);
-		void cancelDownload(Misc::ToolTransInfo* info, bool force);
+		void startDownload(gcRefPtr<Misc::ToolTransInfo> info);
+		void cancelDownload(gcRefPtr<Misc::ToolTransInfo> info, bool force);
 
 		void startInstall(ToolTransactionId ttid);
 		void cancelInstall(ToolTransactionId ttid);
 
 		void onSpecialCheck(WCSpecialInfo &info);
 
-		void downloadTool(ToolInfo* tool);
+		void downloadTool(gcRefPtr<ToolInfo> tool);
 		void eraseDownload(DesuraId id);
 
 		void onToolDLComplete(DesuraId id);
@@ -139,27 +141,27 @@ namespace UserCore
 		template <typename T>
 		void for_each(const T &t)
 		{
-			std::for_each(m_mTransactions.begin(), m_mTransactions.end(), [&t](std::pair<ToolTransactionId, Misc::ToolTransInfo*> info)
+			for (auto p : m_mTransactions)
 			{
-				if (info.second)
-					t(info.second);
-			});
+				if (p.second)
+					t(p.second);
+			}
 		}
 
 	private:
-		bool m_bDeleteThread;
+		bool m_bDeleteThread = false;
 
-		UserCore::User* m_pUser;
-		ToolTransactionId m_uiLastTransId; 
+		gcRefPtr<UserCore::User> m_pUser;
+		ToolTransactionId m_uiLastTransId = 0;
 
 		std::mutex m_MapLock;
-		std::map<ToolTransactionId, Misc::ToolTransInfo*> m_mTransactions;
+		std::map<ToolTransactionId, gcRefPtr<Misc::ToolTransInfo>> m_mTransactions;
 
 		std::mutex m_DownloadLock;
-		std::map<uint64, UserCore::Task::DownloadToolTask*> m_mDownloads;
+		std::map<uint64, gcRefPtr<UserCore::Task::DownloadToolTask>> m_mDownloads;
 
 
-		UserCore::Misc::ToolInstallThread* m_pToolThread;
+		gcRefPtr<UserCore::Misc::ToolInstallThread> m_pToolThread;
 
 
 		//////////////////
@@ -167,16 +169,16 @@ namespace UserCore
 		//////////////////
 
 		friend class ItemExtender;
-		void addJSTool(UserCore::Item::ItemInfo* item, uint32 branchId, gcString name, gcString exe, gcString args, gcString res);
+		void addJSTool(gcRefPtr<UserCore::Item::ItemInfo> item, uint32 branchId, gcString name, gcString exe, gcString args, gcString res);
 
-		uint32 m_uiInstanceCount;
-		FactoryFn m_pFactory;
+		uint32 m_uiInstanceCount = 0;
+		FactoryFn m_pFactory = nullptr;
 
 		SharedObjectLoader m_ScriptCore;
 		std::mutex m_ScriptLock;
 
-		int32 m_iLastCustomToolId;
-		time_t m_tJSEngineExpireTime;
+		int32 m_iLastCustomToolId = -1;
+		time_t m_tJSEngineExpireTime = 0;
 	};
 }
 

@@ -39,18 +39,18 @@ wxMenu* TBIModMenu::createMenu(uint32 &lastMenuId)
 	if (!pItemManager)
 		return menu;
 
-	std::vector<UserCore::Item::ItemInfoI*> gList;
+	std::vector<gcRefPtr<UserCore::Item::ItemInfoI>> gList;
 	pItemManager->getGameList(gList);
 
-	std::sort(gList.begin(), gList.end(), [](UserCore::Item::ItemInfoI* left, UserCore::Item::ItemInfoI* right){
+	std::sort(gList.begin(), gList.end(), [](gcRefPtr<UserCore::Item::ItemInfoI> left, gcRefPtr<UserCore::Item::ItemInfoI> right){
 		return strcmp(left->getName(), right->getName()) <= 0;
 	});
 
 	for (size_t x=0; x<gList.size(); x++)
 	{
-		UserCore::Item::ItemInfoI *game = gList[x];
+		auto game = gList[x];
 
-		std::vector<UserCore::Item::ItemInfoI*> mList;
+		std::vector<gcRefPtr<UserCore::Item::ItemInfoI>> mList;
 		pItemManager->getModList(game->getId(), mList);
 
 		if (mList.size() == 0)
@@ -58,13 +58,13 @@ wxMenu* TBIModMenu::createMenu(uint32 &lastMenuId)
 
 		gcMenu* gameMenu = new gcMenu();
 		
-		std::sort(mList.begin(), mList.end(), [](UserCore::Item::ItemInfoI* left, UserCore::Item::ItemInfoI* right){
+		std::sort(mList.begin(), mList.end(), [](gcRefPtr<UserCore::Item::ItemInfoI> left, gcRefPtr<UserCore::Item::ItemInfoI> right){
 			return strcmp(left->getName(), right->getName()) <= 0;
 		});
 
 		for (size_t y=0; y<mList.size(); y++)
 		{
-			UserCore::Item::ItemInfoI *mod = mList[y];
+			auto mod = mList[y];
 
 			wxMenuItem* menuItem = new gcMenuItem(gameMenu, lastMenuId, mod->getName());
 			gameMenu->Append(menuItem);

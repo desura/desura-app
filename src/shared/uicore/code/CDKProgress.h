@@ -35,7 +35,9 @@ $/LicenseInfo$
 #include "usercore/MCFThreadI.h"
 #include "usercore/CDKeyManagerI.h"
 
-class CDKProgress : public BasePage, public UserCore::Misc::CDKeyCallBackI
+class CDKProgressProxy;
+
+class CDKProgress : public BasePage
 {
 public:
 	CDKProgress(wxWindow* parent, bool launch);
@@ -46,6 +48,7 @@ public:
 
 protected:
 	friend class LanguageTestDialog;
+	friend class CDKProgressProxy;
 
 	Event<gcString> onCompleteEvent;
 	Event<gcException> onErrorEvent;
@@ -53,8 +56,8 @@ protected:
 	void onComplete(gcString& cdKey);
 	void onError(gcException& e);
 
-	void onCDKeyComplete(DesuraId id, gcString &cdKey) override;
-	void onCDKeyError(DesuraId id, gcException& e) override;
+	void onCDKeyComplete(DesuraId id, gcString &cdKey);
+	void onCDKeyError(DesuraId id, gcException& e);
 
 private:
 	wxStaticText* m_labInfo;
@@ -62,6 +65,8 @@ private:
 
 	gcSpinningBar* m_pbProgress;
 	gcButton* m_butClose;
+
+	gcRefPtr<CDKProgressProxy> m_ProgressProxy;
 
 	bool m_bOutstandingRequest = false;
 };

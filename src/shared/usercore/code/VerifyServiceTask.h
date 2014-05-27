@@ -33,68 +33,67 @@ $/LicenseInfo$
 
 namespace UserCore
 {
-namespace ItemTask
-{
-class VSBaseTask;
+	namespace ItemTask
+	{
+		class VSBaseTask;
 
-class VerifyServiceTask : public BaseItemTask
-{
-public:
-	VerifyServiceTask(UserCore::Item::ItemHandle* handle, MCFBranch branch = MCFBranch(), MCFBuild build = MCFBuild(), bool files = true, bool tools = false, bool hooks = false);
-	~VerifyServiceTask();
+		class VerifyServiceTask : public BaseItemTask
+		{
+		public:
+			VerifyServiceTask(gcRefPtr<UserCore::Item::ItemHandleI> handle, MCFBranch branch = MCFBranch(), MCFBuild build = MCFBuild(), bool files = true, bool tools = false, bool hooks = false);
+			~VerifyServiceTask();
 
-protected:
-	void doRun();
-	void onStop();
+		protected:
+			void doRun();
+			void onStop();
 
 
-	void onProgress(MCFCore::Misc::ProgressInfo& prog);
-	void finishVerify(UserCore::Misc::VerifyComplete::VSTATUS status = UserCore::Misc::VerifyComplete::V_COMPLETE, const char* installpath = nullptr, bool endStage = true);
+			void onProgress(MCFCore::Misc::ProgressInfo& prog);
+			void finishVerify(UserCore::Misc::VerifyComplete::VSTATUS status = UserCore::Misc::VerifyComplete::V_COMPLETE, const char* installpath = nullptr, bool endStage = true);
 
-	void onError(gcException& e);
-	void switchBranch();
+			void onError(gcException& e);
+			void switchBranch();
 
-	bool checkMcfDownload(gcString &path);
-	bool checkMcf(bool &completeMcf);
-	bool checkInstall(bool completeMcf);
-	bool downloadMissingFiles();
-	bool installMissingFiles();
+			bool checkMcfDownload(gcString &path);
+			bool checkMcf(bool &completeMcf);
+			bool checkInstall(bool completeMcf);
+			bool downloadMissingFiles();
+			bool installMissingFiles();
 
-	void updateStatus();
-	bool checkItem();
-	bool checkBranch();
-	bool checkUnAuthed();
+			void updateStatus();
+			bool checkItem();
+			bool checkBranch();
+			bool checkUnAuthed();
 
-	void setupCurTask();
-	void setTier(uint8 tier);
+			void setupCurTask();
+			void setTier(uint8 tier);
 
-	bool checkFiles();
-	bool checkTools();
-	void checkHooks();
+			bool checkFiles();
+			bool checkTools();
+			void checkHooks();
 
-	void refreshInfo();
+			void refreshInfo();
 
-private:
-	uint8 m_iTier;
-	bool m_bError;
+		private:
+			uint8 m_iTier;
+			bool m_bError;
 
-	bool m_bCheckFiles;
-	bool m_bCheckTools;
-	bool m_bCheckHooks;
-	bool m_bRefreshedInfo;
+			bool m_bCheckFiles;
+			bool m_bCheckTools;
+			bool m_bCheckHooks;
+			bool m_bRefreshedInfo;
 
-	uint32 m_uiLastPercent;
-	uint32 m_uiOldStatus;
+			uint32 m_uiLastPercent;
+			uint32 m_uiOldStatus;
 
-	MCFBranch m_McfBranch;
-	MCFBuild m_McfBuild;
+			MCFBranch m_McfBranch;
+			MCFBuild m_McfBuild;
 
-	VSBaseTask* m_pCurTask;
+			VSBaseTask* m_pCurTask;
 
-	McfHandle m_hMcf;
-};
-
-}
+			McfHandle m_hMcf;
+		};
+	}
 }
 
 #endif //DESURA_VERIFYTHREAD_H

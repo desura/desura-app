@@ -27,17 +27,14 @@ $/LicenseInfo$
 #include "ThreadPoolThread.h"
 #include "util_thread/ThreadPool.h"
 
-namespace Thread
+using namespace Thread;
+
+
+ThreadPoolThread::ThreadPoolThread(const gcRefPtr<ThreadPoolTaskSourceI> &pTaskSource, bool forced) 
+	: BaseThread("Thread Pool Worker")
+	, m_bForced(forced)
+	, m_pTaskSource(pTaskSource)
 {
-
-
-ThreadPoolThread::ThreadPoolThread(ThreadPoolTaskSourceI* taskSource, bool forced) : BaseThread( "Thread Pool Worker" )
-{
-	m_bForced = forced;
-	m_bCompTask = false;
-
-	m_pTask = nullptr;
-	m_pTaskSource = taskSource;
 }
 
 ThreadPoolThread::~ThreadPoolThread()
@@ -74,25 +71,33 @@ void ThreadPoolThread::run()
 
 bool ThreadPoolThread::doTask()
 {
-	BaseTask* task = m_pTaskSource->getTask();
+	auto task = m_pTaskSource->getTask();
 
 	if (!task)
 		return false;
 
 	std::string name = task->getName();
 
-	m_pTask = task;
+	{
+		std::lock_guard<std::mutex> guard(m_TaskLock);
+		m_pTask = task;
+	}
+	
 	task->doTask();
-	m_pTask = nullptr;
 
-	safe_delete(task);
+	{
+		std::lock_guard<std::mutex> guard(m_TaskLock);
+		m_pTask = nullptr;
+	}
+	
 	onCompleteEvent();
-
 	return true;
 }
 
 void ThreadPoolThread::onStop()
 {
+	std::lock_guard<std::mutex> guard(m_TaskLock);
+
 	if (m_pTask)
 		m_pTask->onStop();
 
@@ -101,8 +106,8 @@ void ThreadPoolThread::onStop()
 
 void ThreadPoolThread::stopTask()
 {
+	std::lock_guard<std::mutex> guard(m_TaskLock);
+
 	if (m_pTask)
 		m_pTask->onStop();
-}
-
 }

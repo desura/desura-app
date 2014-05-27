@@ -35,26 +35,23 @@ class IPCUninstallBranch;
 
 namespace UserCore
 {
-namespace ItemTask
-{
+	namespace ItemTask
+	{
+		class UIPatchServiceTask : public UIBaseServiceTask
+		{
+		public:
+			UIPatchServiceTask(gcRefPtr<UserCore::Item::ItemHandleI> handle, MCFBranch installBranch, MCFBuild installBuild);
+			~UIPatchServiceTask();
 
+		protected:
+			virtual bool initService();
+			virtual void onComplete();
 
-class UIPatchServiceTask : public UIBaseServiceTask
-{
-public:
-	UIPatchServiceTask(UserCore::Item::ItemHandle* handle, MCFBranch installBranch, MCFBuild installBuild);
-	~UIPatchServiceTask();
-
-protected:
-	virtual bool initService();
-	virtual void onComplete();
-
-private:
-	std::shared_ptr<IPCUninstallBranch> m_pIPCIM;
-	gcString m_szPath;
-};
-
-}
+		private:
+			std::shared_ptr<IPCUninstallBranch> m_pIPCIM;
+			gcString m_szPath;
+		};
+	}
 }
 
 #endif //DESURA_UIPATCHSERVICETASK_H

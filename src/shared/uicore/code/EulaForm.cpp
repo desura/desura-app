@@ -28,7 +28,7 @@ $/LicenseInfo$
 #include "MainApp.h"
 
 
-EULAForm::EULAForm(wxWindow* parent, UserCore::ItemManagerI* pItemManager) 
+EULAForm::EULAForm(wxWindow* parent, gcRefPtr<UserCore::ItemManagerI> pItemManager) 
 	: gcFrame(parent, wxID_ANY, wxT("End User License Agreement"), wxDefaultPosition, wxSize(600, 250), wxDEFAULT_FRAME_STYLE|wxTAB_TRAVERSAL)
 	, m_pItemManager(pItemManager)
 {
@@ -91,7 +91,7 @@ void EULAForm::onFormClose( wxCloseEvent& event )
 bool EULAForm::setInfo(DesuraId id)
 {
 	m_uiInternId = id;
-	UserCore::Item::ItemInfoI* item = m_pItemManager->findItemInfo( id );
+	gcRefPtr<UserCore::Item::ItemInfoI> item = m_pItemManager->findItemInfo( id );
 
 	if (!item)
 	{
@@ -121,7 +121,7 @@ void EULAForm::onButtonPressed(wxCommandEvent& event)
 {
 	if (event.GetId() == m_butAgree->GetId())
 	{
-		UserCore::Item::ItemInfoI* item = m_pItemManager->findItemInfo( m_uiInternId );
+		gcRefPtr<UserCore::Item::ItemInfoI> item = m_pItemManager->findItemInfo( m_uiInternId );
 
 		if (item)
 		{

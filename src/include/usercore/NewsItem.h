@@ -32,57 +32,59 @@ $/LicenseInfo$
 
 namespace UserCore
 {
-namespace Misc
-{
-
-//! Container class that stores information for one news item
-class NewsItem
-{
-public:
-	//! Constructor
-	//!
-	//! @param i News item id
-	//! @param c News item category
-	//! @param t Title
-	//! @param u Url
-	//!
-	NewsItem(uint32 i, uint8 c, const char* t, const char* u)
+	namespace Misc
 	{
-		id = i;
-		cat = c;
-		szTitle = gcString(t);
-		szUrl = gcString(u);
-		hasBeenShown = false;
-	}
 
-	//! Copy Constructor
-	//!
-	//! @param item In NewsItem
-	NewsItem(NewsItem* item)
-	{
-		id = 0;
-		cat = 0;
-
-		if (item)
+		//! Container class that stores information for one news item
+		class NewsItem : public gcRefBase
 		{
-			id = item->id;
-			cat = item->cat;
-			szTitle = item->szTitle;
-			szUrl = item->szUrl;
+		public:
+			//! Constructor
+			//!
+			//! @param i News item id
+			//! @param c News item category
+			//! @param t Title
+			//! @param u Url
+			//!
+			NewsItem(uint32 i, uint8 c, const char* t, const char* u)
+			{
+				id = i;
+				cat = c;
+				szTitle = gcString(t);
+				szUrl = gcString(u);
+				hasBeenShown = false;
+			}
 
-			hasBeenShown = item->hasBeenShown;
-		}
+			//! Copy Constructor
+			//!
+			//! @param item In NewsItem
+			NewsItem(NewsItem* item)
+			{
+				id = 0;
+				cat = 0;
+
+				if (item)
+				{
+					id = item->id;
+					cat = item->cat;
+					szTitle = item->szTitle;
+					szUrl = item->szUrl;
+
+					hasBeenShown = item->hasBeenShown;
+				}
+			}
+
+			uint32 id;
+			uint8 cat;
+			gcString szTitle;
+			gcString szUrl;
+
+			bool hasBeenShown;
+
+			gc_IMPLEMENT_REFCOUNTING(NewsItem)
+		};
+
 	}
-
-	uint32 id;
-	uint8 cat;
-	gcString szTitle;
-	gcString szUrl;
-
-	bool hasBeenShown;
-};
-
-}
 }
 
 #endif //DESURA_NEWSITEM_H

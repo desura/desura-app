@@ -444,5 +444,70 @@ std::string UserDecodeString(const std::string& strKey, const std::string& strVa
 }
 
 
+#ifdef DEBUG
+#ifdef WIN32
+
+#include "SharedObjectLoader.h"
+
+typedef bool(*GetStackTraceStringFn)(int nFrames, PVOID* addrs, char* szBuffer, uint32 nBuffSize);
+typedef int(*GetStackTraceFn)(PVOID* addrs, uint32 nStart, uint32 nStop);
+
+static GetStackTraceFn s_GetStackTrace = nullptr;
+static GetStackTraceStringFn s_GetStackTraceString = nullptr;
+static SharedObjectLoader s_StackWalker;
+
+
+std::shared_ptr<UTIL::OS::StackTrace> getStackTrace(uint32 nStart, uint32 nStop)
+{
+	static std::mutex s_Lock;
+	std::lock_guard<std::mutex> guard(s_Lock);
+	if (!s_GetStackTrace || !s_GetStackTraceString)
+	{
+		s_StackWalker.load("stackwalker.dll");
+
+		if (!s_StackWalker.handle())
+			return nullptr;
+
+		s_GetStackTrace = s_StackWalker.getFunction<GetStackTraceFn>("getStackTrace");
+		s_GetStackTraceString = s_StackWalker.getFunction<GetStackTraceStringFn>("getStackTraceString");
+
+		if (!s_GetStackTrace || !s_GetStackTraceString)
+			return nullptr;
+	}
+
+	auto st = std::make_shared<StackTrace>(25);
+	st->m_nCount = s_GetStackTrace(st->m_StackPtrs, nStart, nStop);
+	return st;
+}
+
+std::string getStackTraceString(const std::shared_ptr<UTIL::OS::StackTrace> &trace)
+{
+	if (!s_GetStackTraceString)
+		return "";
+
+	char szBuff[2048] = { 0 };
+	if (!s_GetStackTraceString(trace->m_nCount, trace->m_StackPtrs, szBuff, 2048))
+		return "";
+
+	return std::string(szBuff);
+}
+
+#else
+
+std::shared_ptr<UTIL::OS::StackTrace> getStackTrace(uint32 nStart, uint32 nStop)
+{
+	gcAssert(false);
+	return nullptr;
+}
+
+std::string getStackTraceString(const std::shared_ptr<UTIL::OS::StackTrace> &trace)
+{
+	gcAssert(false);
+	return "";
+}
+
+#endif
+#endif
+
 }
 }

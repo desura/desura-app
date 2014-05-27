@@ -34,99 +34,112 @@ $/LicenseInfo$
 namespace Thread
 {
 
-class ThreadPoolThread;
+	class ThreadPoolThread;
 
-//! Basic functions required for a task for the thread pool
-//!
-class BaseTask
-{
-public: 
-	virtual ~BaseTask()=0;
-
-	virtual const char* getName()=0;
-
-	//! Override doTask to implement the functionality for the task
+	//! Basic functions required for a task for the thread pool
 	//!
-	virtual void doTask()=0;
+	class BaseTask : public gcRefBase
+	{
+	public:
+		virtual ~BaseTask(){}
 
-	//! Gets called when the task is stopped
+		virtual const char* getName() = 0;
+
+		//! Override doTask to implement the functionality for the task
+		//!
+		virtual void doTask() = 0;
+
+		//! Gets called when the task is stopped
+		//!
+		virtual void onStop(){}
+
+		Event<uint32> onCompleteEvent;
+
+		gc_IMPLEMENT_REFCOUNTING(BaseTask)
+	};
+
+	class ThreadPoolTaskSourceI : public gcRefBase
+	{
+	public:
+		virtual gcRefPtr<BaseTask> getTask() = 0;
+	};
+
+	class ThreadPoolI : public gcRefBase
+	{
+	public:
+		virtual void queueTask(gcRefPtr<BaseTask> pTask)=0;
+		virtual void forceTask(gcRefPtr<BaseTask> pTask)=0;
+	};
+
+	//! Basic thread pool
 	//!
-	virtual void onStop(){;};
+	class ThreadPool : public ThreadPoolI, public Thread::BaseThread, public Thread::ThreadPoolTaskSourceI
+	{
+	public:
+		//! Constuctor
+		//!
+		//! @param num Number of threads in pool
+		//!
+		ThreadPool(uint8 num);
+		~ThreadPool();
 
-	Event<uint32> onCompleteEvent;
-};
+		//! Add a task to the queue
+		//!
+		//! @param task Task to add
+		//!
+		void queueTask(gcRefPtr<BaseTask> pTask) override;
 
-class ThreadPoolTaskSourceI
-{
-public:
-	virtual BaseTask* getTask()=0;
-};
+		//! Add a task to the pool and start it strait away
+		//!
+		//! @param task Task to add
+		//!
+		void forceTask(gcRefPtr<BaseTask> pTask) override;
 
-//! Basic thread pool
-//!
-class ThreadPool : public Thread::BaseThread, public Thread::ThreadPoolTaskSourceI
-{
-public:
-	//! Constuctor
-	//!
-	//! @param num Number of threads in pool
-	//!
-	ThreadPool(uint8 num);
-	~ThreadPool();
+		//! Remove all tasks from pool
+		//!
+		void purgeTasks();
 
-	//! Add a task to the queue
-	//!
-	//! @param task Task to add
-	//!
-	void queueTask(BaseTask *task);
+		//! Stop new tasks from being added
+		void blockTasks();
 
-	//! Add a task to the pool and start it strait away
-	//!
-	//! @param task Task to add
-	//!
-	void forceTask(BaseTask *task);
+		//! Enable new tasks to be added
+		void unBlockTasks();
 
-	//! Remove all tasks from pool
-	//!
-	void purgeTasks();
+		void cleanup();
 
-	//! Stop new tasks from being added
-	void blockTasks();
+	protected:
+		void run();
 
-	//! Enable new tasks to be added
-	void unBlockTasks();
+		void onPause();
+		void onUnpause();
+		void onStop();
 
-protected:
-	void run();
+		uint8 activeThreads();
+		void startNewTasks();
 
-	void onPause();
-	void onUnpause();
-	void onStop();
+		void removedForced();
+		void onThreadComplete();
 
-	uint8 activeThreads();
-	void startNewTasks();
+		virtual gcRefPtr<BaseTask> getTask();
 
-	void removedForced();
-	void onThreadComplete();
+	private:
+		uint8 m_uiCount;
 
-	virtual BaseTask* getTask();
-
-private:
-	uint8 m_uiCount;
-
-	volatile bool m_bIsTaskBlocked;
+		volatile bool m_bIsTaskBlocked;
 
 
-	std::vector<ThreadPoolThread*> m_vForcedList;
-	std::vector<ThreadPoolThread*> m_vThreadList;
-	std::deque<BaseTask*> m_vTaskList;
+		std::vector<gcRefPtr<ThreadPoolThread>> m_vForcedList;
+		std::vector<gcRefPtr<ThreadPoolThread>> m_vThreadList;
+		std::deque<gcRefPtr<BaseTask>> m_vTaskList;
 
-	std::mutex m_TaskMutex;
-	std::mutex m_ForcedMutex;
-	std::mutex m_ThreadMutex;
+		std::mutex m_TaskMutex;
+		std::mutex m_ForcedMutex;
+		std::mutex m_ThreadMutex;
 
-	WaitCondition m_WaitCondition;
-};
+		WaitCondition m_WaitCondition;
+
+		gc_IMPLEMENT_REFCOUNTING(ThreadPool)
+	};
 
 }
 

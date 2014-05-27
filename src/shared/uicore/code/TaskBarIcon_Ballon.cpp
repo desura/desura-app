@@ -41,7 +41,7 @@ enum
 
 
 
-bool sortItems(UserCore::Item::ItemInfoI* left, UserCore::Item::ItemInfoI* right) 
+bool sortItems(gcRefPtr<UserCore::Item::ItemInfoI> left, gcRefPtr<UserCore::Item::ItemInfoI> right) 
 { 
 	return strcmp(left->getName(), right->getName()) > 0;
 }
@@ -134,14 +134,14 @@ void TaskBarIcon::doBallonMsg()
 	}
 }
 
-void TaskBarIcon::showGiftPopup(const std::vector<std::shared_ptr<UserCore::Misc::NewsItem>>& itemList)
+void TaskBarIcon::showGiftPopup(const std::vector<gcRefPtr<UserCore::Misc::NewsItem>>& itemList)
 {
 	ASSERT_UITHREAD();
 
 	gcWString msg;
 
-	std::vector<std::shared_ptr<UserCore::Misc::NewsItem>> vLocal(itemList);
-	std::sort(vLocal.begin(), vLocal.end(), [](std::shared_ptr<UserCore::Misc::NewsItem> a, std::shared_ptr<UserCore::Misc::NewsItem> b)
+	std::vector<gcRefPtr<UserCore::Misc::NewsItem>> vLocal(itemList);
+	std::sort(vLocal.begin(), vLocal.end(), [](gcRefPtr<UserCore::Misc::NewsItem> a, gcRefPtr<UserCore::Misc::NewsItem> b)
 	{
 		return strcmp(a->szTitle.c_str(), b->szTitle.c_str()) > 0;
 	});
@@ -158,7 +158,7 @@ void TaskBarIcon::showGiftPopup(const std::vector<std::shared_ptr<UserCore::Misc
 	ShowBalloon(Managers::GetString(L"#TB_GIFTTITLE"), msg.c_str());
 }
 
-bool TaskBarIcon::findUpdateItem(UserCore::Item::ItemInfoI* item)
+bool TaskBarIcon::findUpdateItem(gcRefPtr<UserCore::Item::ItemInfoI> item)
 {
 	ASSERT_UITHREAD();
 
@@ -186,7 +186,7 @@ bool TaskBarIcon::findUpdateItem(UserCore::Item::ItemInfoI* item)
 	return false;
 }
 
-void TaskBarIcon::removeUpdateItem(UserCore::Item::ItemInfoI* item)
+void TaskBarIcon::removeUpdateItem(gcRefPtr<UserCore::Item::ItemInfoI> item)
 {
 	ASSERT_UITHREAD();
 
@@ -247,7 +247,7 @@ void TaskBarIcon::onItemChanged(UserCore::Item::ItemInfoI::ItemInfo_s& info)
 
 	if (info.changeFlags & UserCore::Item::ItemInfoI::CHANGED_STATUS)
 	{
-		UserCore::Item::ItemInfoI* item = GetUserCore()->getItemManager()->findItemInfo(info.id);
+		gcRefPtr<UserCore::Item::ItemInfoI> item = GetUserCore()->getItemManager()->findItemInfo(info.id);
 	
 		if (!item)
 			return;
@@ -272,12 +272,12 @@ void TaskBarIcon::tagItems()
 	if (!GetUserCore())
 		return;
 
-	auto updateDelegate = [this](UserCore::Item::ItemInfoI* game)
+	auto updateDelegate = [this](gcRefPtr<UserCore::Item::ItemInfoI> game)
 	{
 		const uint32 hasFlags = UserCore::Item::ItemInfoI::STATUS_DELETED;
 		const uint32 notFlags = UserCore::Item::ItemInfoI::STATUS_ONACCOUNT | UserCore::Item::ItemInfoI::STATUS_ONCOMPUTER | UserCore::Item::ItemInfoI::STATUS_DEVELOPER;
 
-		*game->getInfoChangeEvent() -= delegate(this, &TaskBarIcon::onItemChangedNonGui);
+		game->getInfoChangeEvent() -= delegate(this, &TaskBarIcon::onItemChangedNonGui);
 
 		if (HasAnyFlags(game->getStatus(), hasFlags))
 			return;
@@ -285,10 +285,10 @@ void TaskBarIcon::tagItems()
 		if (!HasAnyFlags(game->getStatus(), notFlags))
 			return;
 
-		*game->getInfoChangeEvent() += delegate(this, &TaskBarIcon::onItemChangedNonGui);
+		game->getInfoChangeEvent() += delegate(this, &TaskBarIcon::onItemChangedNonGui);
 	};
 
-	std::vector<UserCore::Item::ItemInfoI*> gList;
+	std::vector<gcRefPtr<UserCore::Item::ItemInfoI>> gList;
 	GetUserCore()->getItemManager()->getGameList(gList, true);
 
 	for (auto game : gList)
@@ -296,7 +296,7 @@ void TaskBarIcon::tagItems()
 		updateDelegate(game);
 
 #ifndef UI_HIDE_MODS
-		std::vector<UserCore::Item::ItemInfoI*> mList;
+		std::vector<gcRefPtr<UserCore::Item::ItemInfoI>> mList;
 		GetUserCore()->getItemManager()->getModList(game->getId(), mList, true);
 
 		for (auto mod : mList)

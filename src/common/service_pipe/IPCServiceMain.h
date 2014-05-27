@@ -84,6 +84,8 @@ public:
 
 	void fixFolderPermissions(const char* dir) override;
 
+	gc_IMPLEMENT_REFCOUNTING(IPCServiceMain);
+
 private:
 	void registerFunctions();
 

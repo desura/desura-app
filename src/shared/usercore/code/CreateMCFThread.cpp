@@ -31,12 +31,12 @@ $/LicenseInfo$
 #include "util/gcTime.h"
 #include "MCFDownloadProviders.h"
 
+#include "BranchInstallInfo.h"
+
 #include "User.h"
 
-namespace UserCore
-{
-namespace Thread
-{
+using namespace UserCore::Thread;
+
 CreateMCFThread::CreateMCFThread(DesuraId id, const char* path) : MCFThread( "CreateMCF Thread", id )
 {
 	m_szPath = gcString(path);
@@ -58,7 +58,7 @@ void CreateMCFThread::waitForItemInfo()
 
 void CreateMCFThread::doRun()
 {
-	UserCore::Item::ItemInfo *item = getItemInfo();
+	auto item = getItemInfo();
 
 	if (!item && !getUserCore()->isAdmin())
 		throw gcException(ERR_BADITEM);
@@ -96,7 +96,7 @@ void CreateMCFThread::doRun()
 	}
 	else
 	{
-		std::vector<UserCore::Item::BranchInfo*> vBranchList;
+		std::vector<gcRefPtr<UserCore::Item::BranchInfo>> vBranchList;
 
 		try
 		{
@@ -108,8 +108,6 @@ void CreateMCFThread::doRun()
 		catch (...)
 		{
 		}
-
-		safe_delete(vBranchList);
 	}
 
 
@@ -125,7 +123,7 @@ void CreateMCFThread::doRun()
 	onCompleteStrEvent(m_szFilePath);	
 }
 
-void CreateMCFThread::compareBranches(std::vector<UserCore::Item::BranchInfo*> &vBranchList)
+void CreateMCFThread::compareBranches(std::vector<gcRefPtr<UserCore::Item::BranchInfo>> &vBranchList)
 {
 	uint64 lastSize = 0;
 
@@ -140,7 +138,7 @@ void CreateMCFThread::compareBranches(std::vector<UserCore::Item::BranchInfo*> &
 		if (isStopped())
 			return;
 
-		UserCore::Item::BranchInfo* bi = vBranchList[x];
+		auto bi = vBranchList[x];
 
 		McfHandle tempMcf;
 		tempMcf->setHeader(getItemId(), bi->getBranchId(), MCFBuild());
@@ -207,7 +205,7 @@ void CreateMCFThread::createMcf()
 
 	gcString file("NewMcf_b{0}_{1}.mcf", branch, timeStr);
 
-	UserCore::MCFManagerI *mm = getUserCore()->getInternal()->getMCFManager();
+	auto mm = getUserCore()->getInternal()->getMCFManager();
 	m_szFilePath = gcString("{0}{1}{2}", mm->getMcfSavePath(), DIRS_STR, getItemId().getFolderPathExtension(file.c_str()));
 
 
@@ -246,7 +244,7 @@ void CreateMCFThread::onStop()
 }
 
 
-void CreateMCFThread::retrieveBranchList(std::vector<UserCore::Item::BranchInfo*> &outList)
+void CreateMCFThread::retrieveBranchList(std::vector<gcRefPtr<UserCore::Item::BranchInfo>> &outList)
 {
 	XML::gcXMLDocument doc;
 	getWebCore()->getItemInfo(getItemId(), doc, MCFBranch(), MCFBuild());
@@ -262,7 +260,7 @@ void CreateMCFThread::retrieveBranchList(std::vector<UserCore::Item::BranchInfo*
 	});
 }
 
-void CreateMCFThread::processGames(std::vector<UserCore::Item::BranchInfo*> &outList, const XML::gcXMLElement &platform)
+void CreateMCFThread::processGames(std::vector<gcRefPtr<UserCore::Item::BranchInfo>> &outList, const XML::gcXMLElement &platform)
 {
 	platform.FirstChildElement("games").for_each_child("game", [this, &outList](const XML::gcXMLElement &game)
 	{
@@ -279,7 +277,7 @@ void CreateMCFThread::processGames(std::vector<UserCore::Item::BranchInfo*> &out
 	});
 }
 
-void CreateMCFThread::processMods(std::vector<UserCore::Item::BranchInfo*> &outList, const XML::gcXMLElement &game)
+void CreateMCFThread::processMods(std::vector<gcRefPtr<UserCore::Item::BranchInfo>> &outList, const XML::gcXMLElement &game)
 {
 	game.FirstChildElement("mods").for_each_child("mod", [this, &outList](const XML::gcXMLElement &mod)
 	{
@@ -293,7 +291,7 @@ void CreateMCFThread::processMods(std::vector<UserCore::Item::BranchInfo*> &outL
 	});
 }
 
-void CreateMCFThread::processBranches(std::vector<UserCore::Item::BranchInfo*> &outList, const XML::gcXMLElement &item)
+void CreateMCFThread::processBranches(std::vector<gcRefPtr<UserCore::Item::BranchInfo>> &outList, const XML::gcXMLElement &item)
 {
 	item.FirstChildElement("branches").for_each_child("branch", [this, &outList](const XML::gcXMLElement &branch)
 	{
@@ -303,16 +301,10 @@ void CreateMCFThread::processBranches(std::vector<UserCore::Item::BranchInfo*> &
 		if (id == 0)
 			return;
 
-		UserCore::Item::BranchInfo *bi = new UserCore::Item::BranchInfo(MCFBranch::BranchFromInt(id), this->getItemId(), nullptr, 0, m_pUserCore->getUserId());
+		auto bi = gcRefPtr<UserCore::Item::BranchInfo>::create(MCFBranch::BranchFromInt(id), this->getItemId(), nullptr, 0, m_pUserCore->getUserId());
 		bi->loadXmlData(branch);
 
 		if (!HasAnyFlags(bi->getFlags(), UserCore::Item::BranchInfoI::BF_NORELEASES))
 			outList.push_back(bi);
-		else
-			safe_delete(bi);
 	});
-}
-
-
-}
 }

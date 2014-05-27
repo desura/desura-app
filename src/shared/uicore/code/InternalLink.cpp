@@ -523,7 +523,7 @@ public:
 	{
 		m_Id = id;
 
-		UserCore::Item::ItemInfoI* item = GetUserCore()->getItemManager()->findItemInfo(id);
+		gcRefPtr<UserCore::Item::ItemInfoI> item = GetUserCore()->getItemManager()->findItemInfo(id);
 
 		if (!item)
 			return;
@@ -620,7 +620,7 @@ public:
 void InternalLink::showPrompt(DesuraId id, LinkArgs args)
 {
 	std::string prompt = args.getArgValue("prompt");
-	UserCore::Item::ItemInfoI* item = GetUserCore()->getItemManager()->findItemInfo( id );
+	gcRefPtr<UserCore::Item::ItemInfoI> item = GetUserCore()->getItemManager()->findItemInfo( id );
 
 	if (prompt == "update")
 	{
@@ -649,18 +649,18 @@ void InternalLink::showPrompt(DesuraId id, LinkArgs args)
 
 void InternalLink::showPreorderPrompt(DesuraId id, bool isPreload)
 {
-	UserCore::Item::ItemInfoI* item = GetUserCore()->getItemManager()->findItemInfo( id );
+	gcRefPtr<UserCore::Item::ItemInfoI> item = GetUserCore()->getItemManager()->findItemInfo( id );
 
 	if (!item)
 		return;
 
-	UserCore::Item::BranchInfoI* bi = item->getCurrentBranch();
+	auto bi = item->getCurrentBranch();
 
 	if (!bi)
 	{
 		for (size_t x=0; x<item->getBranchCount(); x++)
 		{
-			UserCore::Item::BranchInfoI *temp = item->getBranch(x);
+			auto temp = item->getBranch(x);
 
 			if (temp->isPreOrder())
 			{
@@ -703,7 +703,7 @@ UI::Forms::ItemForm* InternalLink::showItemForm(DesuraId id, UI::Forms::INSTALL_
 
 UI::Forms::ItemForm* InternalLink::showItemForm(DesuraId id, UI::Forms::INSTALL_ACTION action, MCFBranch branch, MCFBuild build, bool showForm, LinkArgs args)
 {
-	UserCore::Item::ItemInfoI* item = GetUserCore()->getItemManager()->findItemInfo( id );
+	gcRefPtr<UserCore::Item::ItemInfoI> item = GetUserCore()->getItemManager()->findItemInfo( id );
 
 	if (!item && action != UI::Forms::INSTALL_ACTION::IA_INSTALL && action != UI::Forms::INSTALL_ACTION::IA_INSTALL_TESTMCF)
 		return nullptr;
@@ -755,7 +755,7 @@ void InternalLink::cleanComplexMod(DesuraId id)
 
 bool InternalLink::checkForPreorder(DesuraId id)
 {
-	UserCore::Item::ItemInfoI* item = GetUserCore()->getItemManager()->findItemInfo( id );
+	gcRefPtr<UserCore::Item::ItemInfoI> item = GetUserCore()->getItemManager()->findItemInfo( id );
 
 	if (!item)
 		return false;
@@ -835,7 +835,7 @@ void InternalLink::launchItem(DesuraId id, LinkArgs args)
 		return;
 	}
 
-	UserCore::Item::ItemInfoI* item = GetUserCore()->getItemManager()->findItemInfo(id);
+	gcRefPtr<UserCore::Item::ItemInfoI> item = GetUserCore()->getItemManager()->findItemInfo(id);
 
 	if (!item || !item->isLaunchable())
 	{
@@ -971,7 +971,7 @@ void InternalLink::switchBranch(DesuraId id, LinkArgs args)
 
 void InternalLink::showEULA(DesuraId id)
 {
-	UserCore::Item::ItemInfoI* item = GetUserCore()->getItemManager()->findItemInfo( id );
+	gcRefPtr<UserCore::Item::ItemInfoI> item = GetUserCore()->getItemManager()->findItemInfo( id );
 	if (!item)
 	{
 		//cant upload show prompt
@@ -991,7 +991,7 @@ void InternalLink::showEULA(DesuraId id)
 
 void InternalLink::showUpdateLog(DesuraId id)
 {
-	UserCore::Item::ItemInfoI* item = GetUserCore()->getItemManager()->findItemInfo( id );
+	gcRefPtr<UserCore::Item::ItemInfoI> item = GetUserCore()->getItemManager()->findItemInfo( id );
 	if (!item)
 	{
 		//cant upload show prompt
@@ -1011,7 +1011,7 @@ void InternalLink::showExeSelect(DesuraId id, bool hasSeenCDKey)
 {
 	FINDFORM(id, ExeSelectForm);
 
-	UserCore::Item::ItemInfoI* item = GetUserCore()->getItemManager()->findItemInfo(id);
+	gcRefPtr<UserCore::Item::ItemInfoI> item = GetUserCore()->getItemManager()->findItemInfo(id);
 
 	if (!item)
 	{
@@ -1030,7 +1030,7 @@ void InternalLink::showCDKey(DesuraId id, LinkArgs args)
 {
 	FINDFORM(id, CDKeyForm);
 
-	UserCore::Item::ItemInfoI* item = GetUserCore()->getItemManager()->findItemInfo( id );
+	gcRefPtr<UserCore::Item::ItemInfoI> item = GetUserCore()->getItemManager()->findItemInfo( id );
 
 	if (!item)
 	{
@@ -1053,7 +1053,7 @@ void InternalLink::showGameDisk(DesuraId id, const char* exe, bool cdkey)
 {
 	FINDFORM(id, GameDiskForm);
 
-	UserCore::Item::ItemInfoI* item = GetUserCore()->getItemManager()->findItemInfo( id );
+	gcRefPtr<UserCore::Item::ItemInfoI> item = GetUserCore()->getItemManager()->findItemInfo( id );
 
 	if (!item)
 	{
@@ -1070,7 +1070,7 @@ void InternalLink::showGameDisk(DesuraId id, const char* exe, bool cdkey)
 
 void InternalLink::showUpdateForm(DesuraId id, LinkArgs args)
 {
-	UserCore::Item::ItemInfoI* item = GetUserCore()->getItemManager()->findItemInfo( id );
+	gcRefPtr<UserCore::Item::ItemInfoI> item = GetUserCore()->getItemManager()->findItemInfo( id );
 
 	if (!item)
 		return;
@@ -1105,7 +1105,7 @@ void InternalLink::showUpdateForm(DesuraId id, LinkArgs args)
 
 void InternalLink::setPauseItem(DesuraId id, bool state)
 {
-	UserCore::Item::ItemHandleI* itemHandle = GetUserCore()->getItemManager()->findItemHandle(id);
+	auto itemHandle = GetUserCore()->getItemManager()->findItemHandle(id);
 
 	if (itemHandle)
 	  itemHandle->setPaused(state);
@@ -1155,7 +1155,7 @@ void InternalLink::showSettings(LinkArgs &args)
 
 void InternalLink::uploadMCF(DesuraId id)
 {
-	UserCore::Item::ItemInfoI* item = GetUserCore()->getItemManager()->findItemInfo( id );
+	gcRefPtr<UserCore::Item::ItemInfoI> item = GetUserCore()->getItemManager()->findItemInfo( id );
 	if (!item && !GetUserCore()->isAdmin())
 	{
 		//cant upload show prompt
@@ -1189,7 +1189,7 @@ void InternalLink::resumeUploadMCF(DesuraId id, LinkArgs args)
 		return;
 	}
 		
-	UserCore::Item::ItemInfoI* item = GetUserCore()->getItemManager()->findItemInfo( id );
+	gcRefPtr<UserCore::Item::ItemInfoI> item = GetUserCore()->getItemManager()->findItemInfo( id );
 	if (!item && !GetUserCore()->isAdmin())
 	{
 		//cant upload show prompt
@@ -1220,7 +1220,7 @@ void InternalLink::createMCF(DesuraId id)
 {
 	gcTrace("Id: {0}", id);
 
-	UserCore::Item::ItemInfoI* item = GetUserCore()->getItemManager()->findItemInfo( id );
+	gcRefPtr<UserCore::Item::ItemInfoI> item = GetUserCore()->getItemManager()->findItemInfo( id );
 
 	if (!GetUserCore()->isAdmin() && !item)
 	{
@@ -1252,7 +1252,7 @@ void InternalLink::onUploadTrigger(ut& info)
 
 	FINDFORM(info.id, UploadMCFForm);
 
-	UserCore::Item::ItemInfoI* item = GetUserCore()->getItemManager()->findItemInfo( info.id );
+	gcRefPtr<UserCore::Item::ItemInfoI> item = GetUserCore()->getItemManager()->findItemInfo( info.id );
 	if (!item && !GetUserCore()->isAdmin())
 	{
 		//cant upload show prompt
@@ -1341,7 +1341,7 @@ void InternalLink::showUpdateLogApp(uint32 version)
 
 
 
-void InternalLink::showNews(const std::vector<std::shared_ptr<UserCore::Misc::NewsItem>> &newsItems, const std::vector<std::shared_ptr<UserCore::Misc::NewsItem>> &giftItems)
+void InternalLink::showNews(const std::vector<gcRefPtr<UserCore::Misc::NewsItem>> &newsItems, const std::vector<gcRefPtr<UserCore::Misc::NewsItem>> &giftItems)
 {
 	if (newsItems.size() > 0)
 	{

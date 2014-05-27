@@ -34,65 +34,67 @@ $/LicenseInfo$
 
 namespace Thread
 {
-
-//! Thread pool thread that runs tasks
-//!
-class ThreadPoolThread : public Thread::BaseThread
-{
-public:
-	//! Constuctor
+	//! Thread pool thread that runs tasks
 	//!
-	//! @param id Thread id
-	//! @param forced Is a forced task
-	//!
-	ThreadPoolThread(ThreadPoolTaskSourceI* taskSource, bool isForced = false);
-	~ThreadPoolThread();
-	
-	//! Is current task forced
-	//!
-	//! @return True if forced, false if not
-	//!
-	bool isForced(){return m_bForced;}
+	class ThreadPoolThread : public Thread::BaseThread, public gcRefBase
+	{
+	public:
+		//! Constructor
+		//!
+		//! @param id Thread id
+		//! @param forced Is a forced task
+		//!
+		ThreadPoolThread(const gcRefPtr<ThreadPoolTaskSourceI> &pTaskSource, bool isForced = false);
+		~ThreadPoolThread();
 
-	//! Is current task completed
-	//!
-	//! @return True if completed, false if not
-	//!
-	bool hasCompletedTask(){return m_bCompTask;}
+		//! Is current task forced
+		//!
+		//! @return True if forced, false if not
+		//!
+		bool isForced(){ return m_bForced; }
 
-	//! Has a task to run
-	//!
-	//! @return True if has task, false if not
-	//!
-	bool hasTask(){return (m_pTask != nullptr);}
+		//! Is current task completed
+		//!
+		//! @return True if completed, false if not
+		//!
+		bool hasCompletedTask(){ return m_bCompTask; }
 
-	//! ALerts thread of a new task
-	//!
-	void newTask();
+		//! Has a task to run
+		//!
+		//! @return True if has task, false if not
+		//!
+		bool hasTask(){ return m_pTask; }
 
-	//! Stop the current task
-	//!
-	void stopTask();
+		//! ALerts thread of a new task
+		//!
+		void newTask();
 
-	//! Event that triggers when a task is completed
-	//!
-	EventV onCompleteEvent;
+		//! Stop the current task
+		//!
+		void stopTask();
 
-protected:
-	void run();
-	void onStop();
-	bool doTask();
+		//! Event that triggers when a task is completed
+		//!
+		EventV onCompleteEvent;
 
-private:
-	bool m_bForced;
-	bool m_bCompTask;
+	protected:
+		void run();
+		void onStop();
+		bool doTask();
 
-	WaitCondition m_WaitCondition;
-	ThreadPoolTaskSourceI* m_pTaskSource;
-	BaseTask *m_pTask;
-};
+	private:
+		bool m_bForced;
+		bool m_bCompTask = false;
+
+		std::mutex m_TaskLock;
+
+		WaitCondition m_WaitCondition;
+		gcRefPtr<ThreadPoolTaskSourceI> m_pTaskSource;
+		gcRefPtr<BaseTask> m_pTask;
 
 
+		gc_IMPLEMENT_REFCOUNTING(ThreadPoolThread)
+	};
 }
 
 

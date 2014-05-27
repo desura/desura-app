@@ -39,60 +39,59 @@ namespace UnitTest
 namespace UserCore
 {
 
-class UpdateThreadOld : public UpdateThreadI
-{
-public:
-	UpdateThreadOld(Event<std::tuple<gcOptional<bool>, gcOptional<bool>, gcOptional<bool>>> *onForcePollEvent, bool loadLoginItems);
+	class UpdateThreadOld : public UpdateThreadI
+	{
+	public:
+		UpdateThreadOld(Event<std::tuple<gcOptional<bool>, gcOptional<bool>, gcOptional<bool>>> *onForcePollEvent, bool loadLoginItems);
 
-protected:
-	friend class UnitTest::UpdateThreadOldFixture;
+	protected:
+		friend class UnitTest::UpdateThreadOldFixture;
 
-	virtual void doRun();
-	virtual void onStop();
+		virtual void doRun();
+		virtual void onStop();
 
-	bool pollUpdates();
-	void parseXML(const XML::gcXMLDocument &xmlDocument);
-	
+		bool pollUpdates();
+		void parseXML(const XML::gcXMLDocument &xmlDocument);
 
-	void updateBuildVer();
-	void onForcePoll(std::tuple<gcOptional<bool>, gcOptional<bool>, gcOptional<bool>> &info);
 
-	bool onMessageReceived(const char* resource, const XML::gcXMLElement &xmlElement) override;
-	void setInfo(UserCore::UserI* user, WebCore::WebCoreI* webcore) override;
+		void updateBuildVer();
+		void onForcePoll(std::tuple<gcOptional<bool>, gcOptional<bool>, gcOptional<bool>> &info);
+
+		bool onMessageReceived(const char* resource, const XML::gcXMLElement &xmlElement) override;
+		void setInfo(gcRefPtr<UserCore::UserI> &user, gcRefPtr<WebCore::WebCoreI> &webcore) override;
 
 #ifdef WIN32
-	void checkFreeSpace();
+		void checkFreeSpace();
 #endif
 
-	void loadLoginItems();
-	void checkAppUpdate(const XML::gcXMLElement &xmlElement);
-	void checkAppUpdate(const XML::gcXMLElement &uNode, std::function<void(uint32, uint32, bool)> &updateCallback);
+		void loadLoginItems();
+		void checkAppUpdate(const XML::gcXMLElement &xmlElement);
+		void checkAppUpdate(const XML::gcXMLElement &uNode, std::function<void(uint32, uint32, bool)> &updateCallback);
 
-private:
-	uint32 m_iAppId = 100;
-	uint32 m_iAppVersion = 0;
+	private:
+		uint32 m_iAppId = 100;
+		uint32 m_iAppVersion = 0;
 
-	uint32 m_uiLastAppId = 0;
-	uint32 m_uiLastVersion = 0;
+		uint32 m_uiLastAppId = 0;
+		uint32 m_uiLastVersion = 0;
 
-	::Thread::WaitCondition m_WaitCond;
+		::Thread::WaitCondition m_WaitCond;
 
-	Event<std::tuple<gcOptional<bool>, gcOptional<bool>, gcOptional<bool>>> *m_pOnForcePollEvent = nullptr;
+		Event<std::tuple<gcOptional<bool>, gcOptional<bool>, gcOptional<bool>>> *m_pOnForcePollEvent = nullptr;
 
-	volatile bool m_bForcePoll = false;
+		volatile bool m_bForcePoll = false;
 
 #ifdef DESURA_OFFICIAL_BUILD
-	volatile bool m_bInternalTesting = false;
-	volatile bool m_bForceTestingUpdate = false;
+		volatile bool m_bInternalTesting = false;
+		volatile bool m_bForceTestingUpdate = false;
 #endif
 
-	UserCore::UserI* m_pUser = nullptr;
-	WebCore::WebCoreI* m_pWebCore = nullptr;
+		gcRefPtr<UserCore::UserI> m_pUser;
+		gcRefPtr<WebCore::WebCoreI> m_pWebCore;
 
-	bool m_bLastFailed = false;
-	bool m_bLoadLoginItems = false;
-};
-
+		bool m_bLastFailed = false;
+		bool m_bLoadLoginItems = false;
+	};
 }
 
 #endif //DESURA_UPDATETHREAD_OLD_H

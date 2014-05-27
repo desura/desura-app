@@ -70,7 +70,7 @@ DesuraJSSettings::DesuraJSSettings() : DesuraJSBase("settings", "native_binding_
 
 gcString DesuraJSSettings::getValue(gcString name)
 {
-	CVar* cvar = GetCVarManager()->findCVar(name.c_str());
+	auto cvar = GetCVarManager()->findCVar(name.c_str());
 	if (!cvar)
 		return "";
 
@@ -84,7 +84,7 @@ int32 DesuraJSSettings::getCoreCount()
 
 void DesuraJSSettings::setValue(gcString name, gcString val)
 {
-	CVar* cvar = GetCVarManager()->findCVar(name.c_str());
+	auto cvar = GetCVarManager()->findCVar(name.c_str());
 
 	if (cvar && val != gcString(cvar->getString()))
 		cvar->setValue(val.c_str());
@@ -216,8 +216,10 @@ std::vector<MapElementI*> DesuraJSSettings::getCurrentCIPItems()
 {
 	std::vector<UserCore::Misc::CIPItem> list;
 
-	if (GetUserCore())
-		GetUserCore()->getCIPManager()->getCIPList(list);
+	auto userCore = GetUserCore();
+
+	if (userCore)
+		userCore->getCIPManager()->getCIPList(list);
 
 	std::vector<MapElementI*> ret;
 
@@ -239,8 +241,10 @@ std::vector<MapElementI*> DesuraJSSettings::getAllCIPItems()
 {
 	std::vector<UserCore::Misc::CIPItem> list;
 
-	if (GetUserCore())
-		GetUserCore()->getCIPManager()->getItemList(list);
+	auto userCore = GetUserCore();
+
+	if (userCore)
+		userCore->getCIPManager()->getItemList(list);
 
 	std::vector<MapElementI*> ret;
 
@@ -259,8 +263,10 @@ std::vector<MapElementI*> DesuraJSSettings::getAllCIPItems()
 
 void DesuraJSSettings::updateCIPList()
 {
-	if (GetUserCore())
-		GetUserCore()->getCIPManager()->refreshList();
+	auto userCore = GetUserCore();
+
+	if (userCore)
+		userCore->getCIPManager()->refreshList();
 }
 
 void DesuraJSSettings::saveCIPList(std::vector<std::map<gcString, gcString>> savelist)

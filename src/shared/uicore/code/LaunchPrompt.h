@@ -42,7 +42,7 @@ public:
 	LaunchItemDialog( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = wxT("Launch Item"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 370,101 ), long style = wxCAPTION|wxCLOSE_BOX|wxFRAME_FLOAT_ON_PARENT|wxFRAME_TOOL_WINDOW|wxSYSTEM_MENU|wxTAB_TRAVERSAL );
 	~LaunchItemDialog();
 	
-	void setInfo(UserCore::Item::ItemInfoI* item);
+	void setInfo(gcRefPtr<UserCore::Item::ItemInfoI> item);
 
 	DesuraId getItemId(){return m_uiInternId;}
 

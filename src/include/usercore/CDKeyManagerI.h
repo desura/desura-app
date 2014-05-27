@@ -32,28 +32,28 @@ $/LicenseInfo$
 
 namespace UserCore
 {
-namespace Misc
-{
-	class CDKeyCallBackI
+	namespace Misc
 	{
-	public:
-		//! Call back when complete
-		//!
-		//! @param id Item id
-		//! @param cdkey Item cd key
-		//!
-		virtual void onCDKeyComplete(DesuraId id, gcString &cdKey)=0;
+		class CDKeyCallBackI : public gcRefBase
+		{
+		public:
+			//! Call back when complete
+			//!
+			//! @param id Item id
+			//! @param cdkey Item cd key
+			//!
+			virtual void onCDKeyComplete(DesuraId id, gcString &cdKey) = 0;
 
-		//! Call back when error occures
-		//!
-		//! @param id Item id
-		//! @param e Error that occured
-		//!
-		virtual void onCDKeyError(DesuraId id, gcException& e)=0;
-	};
+			//! Call back when error occures
+			//!
+			//! @param id Item id
+			//! @param e Error that occured
+			//!
+			virtual void onCDKeyError(DesuraId id, gcException& e) = 0;
+		};
 
-}
-	class CDKeyManagerI
+	}
+	class CDKeyManagerI : public gcRefBase
 	{
 	public:
 		//! Gets the cd key for currently installed branch of an item
@@ -61,20 +61,20 @@ namespace Misc
 		//! @param id Item id
 		//! @param callback Callback to use when complete
 		//!
-		virtual void getCDKeyForCurrentBranch(DesuraId id, UserCore::Misc::CDKeyCallBackI* callback)=0;
+		virtual void getCDKeyForCurrentBranch(DesuraId id, gcRefPtr<UserCore::Misc::CDKeyCallBackI> pCallback) = 0;
 
 		//! Cancels a request to get a cd key
 		//!
 		//! @param id Item id
 		//! @param callback Request callback used in original request
 		//!
-		virtual void cancelRequest(DesuraId id, UserCore::Misc::CDKeyCallBackI* callback)=0;
+		virtual void cancelRequest(DesuraId id, gcRefPtr<UserCore::Misc::CDKeyCallBackI> pCallback) = 0;
 
 		//! Does the current branch require a cd key
 		//!
 		//! @return true of false
 		//!
-		virtual bool hasCDKeyForCurrentBranch(DesuraId id)=0;
+		virtual bool hasCDKeyForCurrentBranch(DesuraId id) = 0;
 	};
 }
 

@@ -28,34 +28,32 @@ $/LicenseInfo$
 #include "User.h"
 
 
-namespace UserCore
-{
+using namespace UserCore;
 
-CDKeyManager::CDKeyManager(UserCore::User* user)
+
+CDKeyManager::CDKeyManager(gcRefPtr<UserCore::User> user)
+	: m_pUser(user)
 {
-	m_pUser = user;
 }
 
 CDKeyManager::~CDKeyManager()
 {
-	m_TaskListLock.lock();
+	std::lock_guard<std::mutex> guard(m_TaskListLock);
 
-	for (size_t x=0; x<m_vCDKeyTaskList.size(); x++)
+	for (auto t : m_vCDKeyTaskList)
 	{
-		m_vCDKeyTaskList[x]->onCompleteEvent -= delegate(this, &CDKeyManager::onCDKeyComplete);
-		m_vCDKeyTaskList[x]->onErrorEvent -= delegate(this, &CDKeyManager::onCDKeyError);
+		t->onCompleteEvent -= delegate(this, &CDKeyManager::onCDKeyComplete);
+		t->onErrorEvent -= delegate(this, &CDKeyManager::onCDKeyError);
 	}
-
-	m_TaskListLock.unlock();
 }
 
-void CDKeyManager::getCDKeyForCurrentBranch(DesuraId id, UserCore::Misc::CDKeyCallBackI* callback)
+void CDKeyManager::getCDKeyForCurrentBranch(DesuraId id, gcRefPtr<UserCore::Misc::CDKeyCallBackI> callback)
 {
 	if (!callback)
 		return;
 
-	UserCore::Item::ItemInfoI* info = nullptr;
-	UserCore::Item::BranchInfo* binfo = nullptr;
+	gcRefPtr<UserCore::Item::ItemInfoI> info;
+	gcRefPtr<UserCore::Item::BranchInfo> binfo;
 
 	try
 	{
@@ -64,7 +62,7 @@ void CDKeyManager::getCDKeyForCurrentBranch(DesuraId id, UserCore::Misc::CDKeyCa
 		if (!info)
 			throw gcException(ERR_CDKEY, 110, "Item can not be found");
 	
-		binfo = dynamic_cast<UserCore::Item::BranchInfo*>(info->getCurrentBranch());
+		binfo = gcRefPtr<UserCore::Item::BranchInfo>(dynamic_cast<UserCore::Item::BranchInfo*>(info->getCurrentBranch().get()));
 
 		if (!binfo)
 			throw gcException(ERR_CDKEY, 110, "Item has no currently installed branches");
@@ -89,21 +87,19 @@ void CDKeyManager::getCDKeyForCurrentBranch(DesuraId id, UserCore::Misc::CDKeyCa
 		return;
 	}
 
-	m_MapLock.lock();
+	std::lock_guard<std::mutex> guard(m_TaskListLock);
 
-	UserCore::Task::CDKeyTask* task = new UserCore::Task::CDKeyTask(m_pUser, id);
+	auto task = gcRefPtr<UserCore::Task::CDKeyTask>::create(m_pUser, id);
 	task->onCompleteEvent += delegate(this, &CDKeyManager::onCDKeyComplete);
 	task->onErrorEvent += delegate(this, &CDKeyManager::onCDKeyError);
 
-	m_mCDKeyCallbackList.push_back(std::pair<DesuraId, UserCore::Misc::CDKeyCallBackI*>(id, callback));
+	m_mCDKeyCallbackList.push_back(std::pair<DesuraId, gcRefPtr<UserCore::Misc::CDKeyCallBackI>>(id, callback));
 	m_pUser->getThreadPool()->forceTask(task);
-
-	m_MapLock.unlock();
 }
 
-void CDKeyManager::cancelRequest(DesuraId id, UserCore::Misc::CDKeyCallBackI* callback)
+void CDKeyManager::cancelRequest(DesuraId id, gcRefPtr<UserCore::Misc::CDKeyCallBackI> callback)
 {
-	m_MapLock.lock();
+	std::lock_guard<std::mutex> guard(m_TaskListLock);
 
 	CDKeyList::iterator it=m_mCDKeyCallbackList.begin();
 
@@ -121,18 +117,16 @@ void CDKeyManager::cancelRequest(DesuraId id, UserCore::Misc::CDKeyCallBackI* ca
 			it++;
 		}
 	}
-
-	m_MapLock.unlock();
 }
 
 bool CDKeyManager::hasCDKeyForCurrentBranch(DesuraId id)
 {
-	UserCore::Item::ItemInfoI* info = m_pUser->getItemManager()->findItemInfo(id);
+	auto info = m_pUser->getItemManager()->findItemInfo(id);
 	
 	if (!info)
 		return false;
 
-	UserCore::Item::BranchInfoI* binfo = info->getCurrentBranch();
+	auto binfo = info->getCurrentBranch();
 
 	if (!binfo)
 		return false;
@@ -142,72 +136,73 @@ bool CDKeyManager::hasCDKeyForCurrentBranch(DesuraId id)
 
 void CDKeyManager::onCDKeyComplete(UserCore::Task::CDKeyEventInfo<gcString> &info)
 {
-	UserCore::Item::ItemInfoI* iinfo = nullptr;
-	UserCore::Item::BranchInfo* binfo = nullptr;
+	gcRefPtr<UserCore::Item::ItemInfoI> iinfo;
+	gcRefPtr<UserCore::Item::BranchInfo> binfo;
 
 	iinfo = m_pUser->getItemManager()->findItemInfo(info.id);
 	
 	if (iinfo)
 	{
-		binfo = dynamic_cast<UserCore::Item::BranchInfo*>(iinfo->getCurrentBranch());
+		binfo = gcRefPtr<UserCore::Item::BranchInfo>(dynamic_cast<UserCore::Item::BranchInfo*>(iinfo->getCurrentBranch().get()));
 
 		if (binfo)
 			binfo->setCDKey(info.t);
 	}
 	
 
-	m_MapLock.lock();
-
-	std::vector<size_t> delList;
-
-	for (size_t x=0; x<m_mCDKeyCallbackList.size(); x++)
 	{
-		if (m_mCDKeyCallbackList[x].first == info.id)
+		std::lock_guard<std::mutex> guard(m_TaskListLock);
+
+		std::vector<size_t> delList;
+
+		for (size_t x = 0; x < m_mCDKeyCallbackList.size(); x++)
 		{
-			if (m_mCDKeyCallbackList[x].second)
-				m_mCDKeyCallbackList[x].second->onCDKeyComplete(info.id, info.t);
+			if (m_mCDKeyCallbackList[x].first == info.id)
+			{
+				if (m_mCDKeyCallbackList[x].second)
+					m_mCDKeyCallbackList[x].second->onCDKeyComplete(info.id, info.t);
 
-			delList.push_back(x);
+				delList.push_back(x);
+			}
 		}
+
+		std::for_each(delList.rbegin(), delList.rend(), [this](size_t x){
+			m_mCDKeyCallbackList.erase(m_mCDKeyCallbackList.begin() + x);
+		});
 	}
-
-	std::for_each(delList.rbegin(), delList.rend(), [this](size_t x){
-		m_mCDKeyCallbackList.erase(m_mCDKeyCallbackList.begin()+x);
-	});
-
-	m_MapLock.unlock();
 
 	removeTask(info.task);
 }
 
 void CDKeyManager::onCDKeyError(UserCore::Task::CDKeyEventInfo<gcException> &info)
 {
-	m_MapLock.lock();
-
-	std::vector<size_t> delList;
-
-	for (size_t x=0; x<m_mCDKeyCallbackList.size(); x++)
 	{
-		if (m_mCDKeyCallbackList[x].first == info.id)
-		{
-			if (m_mCDKeyCallbackList[x].second)
-				m_mCDKeyCallbackList[x].second->onCDKeyError(info.id, info.t);
+		std::lock_guard<std::mutex> guard(m_TaskListLock);
 
-			delList.push_back(x);
+		std::vector<size_t> delList;
+
+		for (size_t x = 0; x < m_mCDKeyCallbackList.size(); x++)
+		{
+			if (m_mCDKeyCallbackList[x].first == info.id)
+			{
+				if (m_mCDKeyCallbackList[x].second)
+					m_mCDKeyCallbackList[x].second->onCDKeyError(info.id, info.t);
+
+				delList.push_back(x);
+			}
 		}
+
+		std::for_each(delList.rbegin(), delList.rend(), [this](size_t x){
+			m_mCDKeyCallbackList.erase(m_mCDKeyCallbackList.begin() + x);
+		});
 	}
 
-	std::for_each(delList.rbegin(), delList.rend(), [this](size_t x){
-		m_mCDKeyCallbackList.erase(m_mCDKeyCallbackList.begin()+x);
-	});
-
-	m_MapLock.unlock();
 	removeTask(info.task);
 }
 
-void CDKeyManager::removeTask(UserCore::Task::CDKeyTask* task)
+void CDKeyManager::removeTask(gcRefPtr<UserCore::Task::CDKeyTask> &task)
 {
-	m_TaskListLock.lock();
+	std::lock_guard<std::mutex> guard(m_TaskListLock);
 
 	for (size_t x=0; x<m_vCDKeyTaskList.size(); x++)
 	{
@@ -217,8 +212,4 @@ void CDKeyManager::removeTask(UserCore::Task::CDKeyTask* task)
 			break;
 		}
 	}
-
-	m_TaskListLock.unlock();
-}
-
 }

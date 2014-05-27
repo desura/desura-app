@@ -49,7 +49,7 @@ public:
 	static ScriptCoreItemI* GetItem(uint32 itemId);
 
 protected:
-	void* GetRealItem(int32 id);
+	ScriptCoreItemI* GetRealItem(int32 id);
 };
 
 #endif //DESURA_JSITEM_H

@@ -60,20 +60,12 @@ public:
 
 
 
-
-
-
-
-
-
 ThemeManager::ThemeManager()
 {
-	m_pTheme = nullptr;
 }
 
 ThemeManager::~ThemeManager()
 {
-	safe_delete(m_pTheme);
 }
 
 void ThemeManager::loadFromFolder(const char* folder)
@@ -93,7 +85,7 @@ void ThemeManager::loadTheme(const char* theme)
 		return;
 
 	if (!m_pTheme)
-		m_pTheme = new Theme(theme);
+		m_pTheme = std::make_shared<Theme>(theme);
 
 	UTIL::FS::Path path(m_szPath, "theme.xml", false);
 	path += theme;
@@ -133,7 +125,7 @@ Color ThemeManager::getColor(const char* name, const char* id)
 	return Color();
 }
 
-SpriteRectI* ThemeManager::getSpriteRect(const char* id, const char* rectId)
+gcRefPtr<SpriteRectI> ThemeManager::getSpriteRect(const char* id, const char* rectId)
 {
 	if (m_pTheme)
 		return m_pTheme->getSpriteRect(id, rectId);

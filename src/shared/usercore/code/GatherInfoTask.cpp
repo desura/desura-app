@@ -31,12 +31,9 @@ $/LicenseInfo$
 #include "ItemInfo.h"
 #include "ItemHandle.h"
 
-namespace UserCore
-{
-namespace ItemTask
-{
+using namespace UserCore::ItemTask;
 
-GatherInfoTask::GatherInfoTask(UserCore::Item::ItemHandle* handle, MCFBranch branch, MCFBuild build, UserCore::Item::Helper::GatherInfoHandlerHelperI *helper, uint32 flags) 
+GatherInfoTask::GatherInfoTask(gcRefPtr<UserCore::Item::ItemHandleI> handle, MCFBranch branch, MCFBuild build, gcRefPtr<UserCore::Item::Helper::GatherInfoHandlerHelperI> &helper, uint32 flags) 
 	: BaseItemTask(UserCore::Item::ITEM_STAGE::STAGE_GATHERINFO, "GatherInfo", handle, branch, build)
 {
 	m_pGIHH = helper;
@@ -49,16 +46,14 @@ GatherInfoTask::GatherInfoTask(UserCore::Item::ItemHandle* handle, MCFBranch bra
 
 GatherInfoTask::~GatherInfoTask()
 {
-	if (m_pGIHH)
-		m_pGIHH->destroy();
 }
 
 void GatherInfoTask::doRun()
 {
 	auto item = getItemInfo();
 
-	WildcardManager wildc = WildcardManager();
-	wildc.onNeedSpecialEvent += delegate(&onNeedWCEvent);
+	auto wildc = gcRefPtr<WildcardManager>::create();
+	wildc->onNeedSpecialEvent += delegate(&onNeedWCEvent);
 
 	uint32 prog = 0;
 	onProgUpdateEvent(prog);
@@ -87,7 +82,7 @@ void GatherInfoTask::doRun()
 		if (item && item->getId().getType() == DesuraId::TYPE_GAME)
 			flags |= GI_FLAG_TEST;
 
-		getUserCore()->getItemManager()->retrieveItemInfo(getItemId(), 0, &wildc, MCFBranch(), getMcfBuild(), HasAnyFlags(m_uiFlags, flags));
+		getUserCore()->getItemManager()->retrieveItemInfo(getItemId(), 0, wildc, MCFBranch(), getMcfBuild(), HasAnyFlags(m_uiFlags, flags));
 
 		if (isStopped())
 			return;
@@ -154,7 +149,7 @@ bool GatherInfoTask::isValidBranch()
 	if (HasAnyFlags(m_uiFlags, GI_FLAG_TEST))
 		return true;
 
-	UserCore::Item::BranchInfoI* bInfo = getItemInfo()->getBranchById(getMcfBranch());
+	auto bInfo = getItemInfo()->getBranchById(getMcfBranch());
 	return bInfo && HasAnyFlags(bInfo->getFlags(), UserCore::Item::BranchInfoI::BF_DEMO|UserCore::Item::BranchInfoI::BF_FREE|UserCore::Item::BranchInfoI::BF_ONACCOUNT|UserCore::Item::BranchInfoI::BF_TEST);
 }
 
@@ -167,7 +162,7 @@ void GatherInfoTask::onComplete()
 }
 
 
-bool GatherInfoTask::checkNullBranch(UserCore::Item::BranchInfoI* branchInfo)
+bool GatherInfoTask::checkNullBranch(gcRefPtr<UserCore::Item::BranchInfoI> &branchInfo)
 {
 	if (branchInfo)
 		return true;
@@ -218,7 +213,7 @@ bool GatherInfoTask::handleInvalidBranch()
 		if (branch.isGlobal())
 			branch = getItemInfo()->getInternal()->getBestBranch(branch);
 
-		UserCore::Item::BranchInfoI* branchInfo = getItemInfo()->getBranchById(branch);
+		auto branchInfo = getItemInfo()->getBranchById(branch);
 		checkNullBranch(branchInfo);
 	}
 
@@ -233,7 +228,7 @@ void GatherInfoTask::checkRequirements()
 
 	MCFBranch branch = getMcfBranch();
 
-	UserCore::Item::BranchInfoI* branchInfo = getItemHandle()->getItemInfo()->getBranchById(branch);
+	auto branchInfo = getItemHandle()->getItemInfo()->getBranchById(branch);
 	
 	if (!checkNullBranch(branchInfo))
 		return;
@@ -334,14 +329,14 @@ void GatherInfoTask::checkRequirements()
 
 uint32 GatherInfoTask::validate()
 {
-	UserCore::Item::ItemInfoI* pItemInfo = getItemHandle()->getItemInfo();
+	auto pItemInfo = getItemHandle()->getItemInfo();
 	uint32 isValid = 0;
 
 	if (!pItemInfo)
 		return UserCore::Item::Helper::V_BADINFO;
 
 	DesuraId par = pItemInfo->getParentId();
-	UserCore::Item::ItemInfoI *parInfo = nullptr;
+	gcRefPtr<UserCore::Item::ItemInfoI> parInfo;
 
 	if (par.isOk())
 	{
@@ -436,9 +431,4 @@ uint32 GatherInfoTask::validate()
 void GatherInfoTask::cancel()
 {
 	m_bCanceled = true;
-}
-
-
-
-}
 }

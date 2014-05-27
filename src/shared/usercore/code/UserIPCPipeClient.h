@@ -55,6 +55,8 @@ namespace UserCore
 			return m_pServiceMain;
 		}
 
+		gc_IMPLEMENT_REFCOUNTING(UserIPCPipeClient);
+
 	protected:
 #ifdef WIN32
 		void stopService();

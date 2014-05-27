@@ -208,8 +208,10 @@ void MainForm::setTitle(bool offline)
 		#endif
 	#endif
 
-		if (GetUserCore())
-			setTitleReal(gcString("{0}: {1}", title, GetUserCore()->getUserName()));
+		auto userCore = GetUserCore();
+
+		if (userCore)
+			setTitleReal(gcString("{0}: {1}", title, userCore->getUserName()));
 		else
 			setTitleReal(title);
 	}

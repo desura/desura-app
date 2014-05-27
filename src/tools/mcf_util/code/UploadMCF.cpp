@@ -140,7 +140,7 @@ public:
 		try
 		{
 			//need to do this here as news items will be passed onlogin
-			*g_pUserHandle->getNeedCvarEvent() += delegate(this, &UploadMCF::OnNeedCvar);
+			g_pUserHandle->getNeedCvarEvent() += delegate(this, &UploadMCF::OnNeedCvar);
 
 			g_pUserHandle->lockDelete();
 			g_pUserHandle->logInTool(strUsername.c_str(), strPassword.c_str());
@@ -175,16 +175,14 @@ public:
 	{
 		Msg("Creating Mcf....\n");
 
-		UserCore::Thread::MCFThreadI* pThread = g_pUserHandle->getThreadManager()->newCreateMCFThread(id, strFolderPath.c_str());
+		auto pThread = g_pUserHandle->getThreadManager()->newCreateMCFThread(id, strFolderPath.c_str());
 
-		*pThread->getMcfProgressEvent() += delegate((UtilFunction*)this, &UtilFunction::printProgress);
-		*pThread->getErrorEvent() += delegate(this, &UploadMCF::OnMCFCreateError);
-		*pThread->getCompleteStringEvent() += delegate(this, &UploadMCF::OnMCFCreateComplete);
+		pThread->getMcfProgressEvent() += delegate((UtilFunction*)this, &UtilFunction::printProgress);
+		pThread->getErrorEvent() += delegate(this, &UploadMCF::OnMCFCreateError);
+		pThread->getCompleteStringEvent() += delegate(this, &UploadMCF::OnMCFCreateComplete);
 
 		pThread->start();
-
 		g_WaitCon.wait();
-		safe_delete(pThread);
 
 		return g_strMcfOutPath.size() != 0;
 	}
@@ -206,13 +204,12 @@ public:
 		Msg("Starting Mcf Upload....\n");
 
 		//start upload
-		UserCore::Thread::MCFThreadI* pPrepThread = g_pUserHandle->getThreadManager()->newUploadPrepThread(id, g_strMcfOutPath.c_str());
+		auto pPrepThread = g_pUserHandle->getThreadManager()->newUploadPrepThread(id, g_strMcfOutPath.c_str());
 
-		*pPrepThread->getErrorEvent() += delegate(this, &UploadMCF::OnStartUploadError);
-		*pPrepThread->getCompleteStringEvent() += delegate(this, &UploadMCF::OnStartUploadComplete);
+		pPrepThread->getErrorEvent() += delegate(this, &UploadMCF::OnStartUploadError);
+		pPrepThread->getCompleteStringEvent() += delegate(this, &UploadMCF::OnStartUploadComplete);
 
 		pPrepThread->start();
-
 		g_WaitCon.wait();
 
 		return g_strUploadHash.size() != 0;
@@ -264,12 +261,12 @@ public:
 		Msg("Uploading Mcf....\n");
 
 		//upload
-		UserCore::Misc::UploadInfoThreadI* info = g_pUserHandle->getUploadManager()->findItem(g_strUploadHash.c_str());
+		auto info = g_pUserHandle->getUploadManager()->findItem(g_strUploadHash.c_str());
 		gcAssert(info);
 
-		*info->getUploadProgressEvent() += delegate(this, &UploadMCF::OnUploadProgress);
-		*info->getErrorEvent() += delegate(this, &UploadMCF::OnUploadError);
-		*info->getCompleteEvent() += delegate(this, &UploadMCF::OnUploadComplete);
+		info->getUploadProgressEvent() += delegate(this, &UploadMCF::OnUploadProgress);
+		info->getErrorEvent() += delegate(this, &UploadMCF::OnUploadError);
+		info->getCompleteEvent() += delegate(this, &UploadMCF::OnUploadComplete);
 
 		if (info->isPaused())
 			info->unpause();
@@ -281,7 +278,7 @@ public:
 	}
 
 private:
-	UserCore::UserI* g_pUserHandle;
+	gcRefPtr<UserCore::UserI> g_pUserHandle;
 	Thread::WaitCondition g_WaitCon;
 	gcString g_strMcfOutPath;
 	gcString g_strUploadHash;

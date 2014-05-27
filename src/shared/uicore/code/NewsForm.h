@@ -43,9 +43,7 @@ public:
 	NewsForm(wxWindow* parent);
 	~NewsForm();
 
-	void loadNewsItems(const std::vector<std::shared_ptr<UserCore::Misc::NewsItem>> &itemList);
-	void loadNewsItems(const std::vector<UserCore::Misc::NewsItem> &itemList);
-
+	void loadNewsItems(const std::vector<gcRefPtr<UserCore::Misc::NewsItem>> &itemList);
 	void setAsGift();
 
 protected:
@@ -65,7 +63,7 @@ private:
 	gcWString m_szTitle;
 	gcWString m_szLoadingUrl;
 
-	std::vector<UserCore::Misc::NewsItem> m_vItemList;
+	std::vector<gcRefPtr<UserCore::Misc::NewsItem>> m_vItemList;
 };
 
 #endif //DESURA_NEWSFORM_H

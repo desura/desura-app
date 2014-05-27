@@ -104,9 +104,9 @@ void CreateProgPage::dispose()
 {
 	if (m_pThread)
 	{
-		*m_pThread->getMcfProgressEvent() -= delegate(this, &CreateProgPage::onProgress);
-		*m_pThread->getErrorEvent() -= delegate(this, &CreateProgPage::onError);
-		*m_pThread->getCompleteStringEvent() -= delegate(this, &CreateProgPage::onComplete);
+		m_pThread->getMcfProgressEvent() -= delegate(this, &CreateProgPage::onProgress);
+		m_pThread->getErrorEvent() -= delegate(this, &CreateProgPage::onError);
+		m_pThread->getCompleteStringEvent() -= delegate(this, &CreateProgPage::onComplete);
 	}
 
 	safe_delete(m_pThread);
@@ -122,9 +122,9 @@ void CreateProgPage::onButtonClick( wxCommandEvent& event )
 		//other wise app crashes and god kills a kitten. 
 		if (m_pThread)
 		{
-			*m_pThread->getMcfProgressEvent() -= delegate(this, &CreateProgPage::onProgress);
-			*m_pThread->getErrorEvent() -= delegate(this, &CreateProgPage::onError);
-			*m_pThread->getCompleteStringEvent() -= delegate(this, &CreateProgPage::onComplete);
+			m_pThread->getMcfProgressEvent() -= delegate(this, &CreateProgPage::onProgress);
+			m_pThread->getErrorEvent() -= delegate(this, &CreateProgPage::onError);
+			m_pThread->getCompleteStringEvent() -= delegate(this, &CreateProgPage::onComplete);
 			m_pThread->stop();
 		}
 
@@ -170,7 +170,7 @@ void CreateProgPage::onButtonClick( wxCommandEvent& event )
 	}
 }
 
-void CreateProgPage::setInfo(DesuraId id, UserCore::Item::ItemInfoI* pItemInfo, const char* path)
+void CreateProgPage::setInfo(DesuraId id, gcRefPtr<UserCore::Item::ItemInfoI> pItemInfo, const char* path)
 {
 	if (!pItemInfo && GetUserCore() && !GetUserCore()->isAdmin())
 	{	
@@ -197,9 +197,9 @@ void CreateProgPage::run()
 
 	m_pThread = GetThreadManager()->newCreateMCFThread(getItemId(), m_szFolderPath.c_str());
 
-	*m_pThread->getMcfProgressEvent() += guiDelegate(this, &CreateProgPage::onProgress);
-	*m_pThread->getErrorEvent() += guiDelegate(this, &CreateProgPage::onError);
-	*m_pThread->getCompleteStringEvent() += guiDelegate(this, &CreateProgPage::onComplete);
+	m_pThread->getMcfProgressEvent() += guiDelegate(this, &CreateProgPage::onProgress);
+	m_pThread->getErrorEvent() += guiDelegate(this, &CreateProgPage::onError);
+	m_pThread->getCompleteStringEvent() += guiDelegate(this, &CreateProgPage::onComplete);
 
 	m_pThread->start();
 }

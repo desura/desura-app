@@ -30,13 +30,14 @@ $/LicenseInfo$
 #include "User.h"
 
 
-namespace UserCore
-{
+using namespace UserCore;
+using namespace UserCore::Thread;
 
-UploadManager::UploadManager(UserCore::UserI* userCore) : BaseManager( true )
-{
-	m_pUserCore = userCore;
 
+UploadManager::UploadManager(gcRefPtr<UserCore::UserI> userCore) 
+	: BaseManager()
+	, m_pUserCore(userCore)
+{
 	const char* appDataPath = m_pUserCore->getAppDataPath();
 	createMcfUploadDbTables(appDataPath);
 
@@ -44,6 +45,15 @@ UploadManager::UploadManager(UserCore::UserI* userCore) : BaseManager( true )
 	load();
 }
 
+void UploadManager::cleanup()
+{
+	std::lock_guard<std::mutex> guard(m_mMutex);
+
+	for (auto i : m_mItemMap)
+		i.second->cleanup();
+
+	BaseManager::removeAll();
+}
 
 void UploadManager::updateItemIds()
 {
@@ -76,9 +86,12 @@ void UploadManager::updateItemIds()
 //if a upload is in progress this returns the file for a given key
 const char* UploadManager::findUpload(const char* key)
 {
-	m_mMutex.lock();
-	UserCore::Thread::UploadInfoThread* temp = dynamic_cast<UserCore::Thread::UploadInfoThread*>(BaseManager::findItem(key));
-	m_mMutex.unlock();
+	gcRefPtr<UploadInfoThread> temp;
+
+	{
+		std::lock_guard<std::mutex> guard(m_mMutex);
+		temp = BaseManager::findItem(key);
+	}
 
 	if (temp && !temp->isDeleted())
 		return temp->getFile();
@@ -89,9 +102,12 @@ const char* UploadManager::findUpload(const char* key)
 //lazy delete
 void UploadManager::removeUpload(const char* key, bool stopThread)
 {
-	m_mMutex.lock();
-	UserCore::Thread::UploadInfoThread* temp = dynamic_cast<UserCore::Thread::UploadInfoThread*>(BaseManager::findItem(key));
-	m_mMutex.unlock();
+	gcRefPtr<UploadInfoThread> temp;
+
+	{
+		std::lock_guard<std::mutex> guard(m_mMutex);
+		temp = BaseManager::findItem(key);
+	}
 
 	if (temp)
 	{
@@ -123,22 +139,23 @@ void UploadManager::removeUpload(const char* key, bool stopThread)
 
 uint64 UploadManager::addUpload(DesuraId id, const char* key, const char* path)
 {
-	UserCore::Thread::UploadInfoThread* temp = BaseManager<UserCore::Thread::UploadInfoThread>::findItem(key);
+	gcRefPtr<UploadInfoThread> ui;
 
-	if (temp && !temp->isDeleted())
-		return temp->getHash();
+	{
+		std::lock_guard<std::mutex> guard(m_mMutex);
+		auto ui = BaseManager::findItem(key);
 
-	//mem leak if upload is deleted then resumed from web
+		if (ui && !ui->isDeleted())
+			return ui->getHash();
 
-	UserCore::Thread::UploadInfoThread* ui = new UserCore::Thread::UploadInfoThread(id, key, path);
+		ui = gcRefPtr<UploadInfoThread>::create(id, key, path);
 
-	ui->setWebCore(m_pUserCore->getWebCore());
-	ui->setUserCore(m_pUserCore);
-	ui->setUpLoadManager(this);
+		ui->setWebCore(m_pUserCore->getWebCore());
+		ui->setUserCore(m_pUserCore);
+		ui->setUpLoadManager(this);
 
-	m_mMutex.lock();
-	addItem(ui);
-	m_mMutex.unlock();
+		addItem(ui);
+	}
 
 	const char* appDataPath = m_pUserCore->getAppDataPath();
 	gcString szItemDb = getMcfUploadDb(appDataPath);
@@ -166,7 +183,7 @@ uint64 UploadManager::addUpload(DesuraId id, const char* key, const char* path)
 
 void UploadManager::load()
 {
-	m_mMutex.lock();
+	std::lock_guard<std::mutex> guard(m_mMutex);
 
 	const char* appDataPath = m_pUserCore->getAppDataPath();
 	gcString szItemDb = getMcfUploadDb(appDataPath);
@@ -186,11 +203,11 @@ void UploadManager::load()
 
 			if (key != "" && file != "" && id != 0)
 			{
-				UserCore::Thread::UploadInfoThread* temp = BaseManager<UserCore::Thread::UploadInfoThread>::findItem(key.c_str());
+				auto temp = BaseManager<UserCore::Thread::UploadInfoThread>::findItem(key.c_str());
 
 				if (!temp)
 				{
-					temp = new UserCore::Thread::UploadInfoThread(id, key.c_str(), file.c_str());
+					temp = gcRefPtr<UserCore::Thread::UploadInfoThread>::create(id, key.c_str(), file.c_str());
 					temp->setWebCore(m_pUserCore->getWebCore());
 					temp->setUserCore(m_pUserCore);
 					temp->setUpLoadManager(this);
@@ -203,9 +220,4 @@ void UploadManager::load()
 	{
 		Warning("Failed to load mcf uploads: {0}\n", e.what());
 	}
-		
-	m_mMutex.unlock();
-}
-
-
 }

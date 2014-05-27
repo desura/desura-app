@@ -35,10 +35,7 @@ $/LicenseInfo$
 
 #include "McfManager.h"
 
-namespace UserCore
-{
-namespace ItemTask
-{
+using namespace UserCore::ItemTask;
 
 enum
 {
@@ -55,17 +52,11 @@ enum
 	T_UPDATEREMOVE,
 };
 
-ComplexLaunchServiceTask::ComplexLaunchServiceTask(UserCore::Item::ItemHandle *handle, bool clean, MCFBranch branch, MCFBuild build, UserCore::Item::Helper::InstallerHandleHelperI* ihh) 
+ComplexLaunchServiceTask::ComplexLaunchServiceTask(gcRefPtr<UserCore::Item::ItemHandleI> handle, bool clean, MCFBranch branch, MCFBuild build, gcRefPtr<UserCore::Item::Helper::InstallerHandleHelperI> &ihh) 
 	: BaseItemServiceTask(UserCore::Item::ITEM_STAGE::STAGE_INSTALL_COMPLEX, "ComplexLaunch", handle, branch, build)
+	, m_pIHH(ihh)
+	, m_bClean(clean)
 {
-	m_pIPCIM = nullptr;
-	m_iTier = 0;
-	m_iMode = 0;
-	m_bClean = clean;
-	m_bCompleteStage = false;
-	m_bLaunch = false;
-	m_bHashMissMatch = false;
-	m_pIHH = ihh;
 }
 
 ComplexLaunchServiceTask::~ComplexLaunchServiceTask()
@@ -168,7 +159,7 @@ bool ComplexLaunchServiceTask::isFilesToRestore()
 	{
 		auto pItem = getItemInfo();
 
-		UserCore::MCFManagerI *mm = getUserCore()->getInternal()->getMCFManager();
+		auto mm = getUserCore()->getInternal()->getMCFManager();
 		gcString backup = mm->getMcfBackup(pItem->getId(), pItem->getInstalledModId());
 
 		McfHandle mcfH;
@@ -197,7 +188,7 @@ bool ComplexLaunchServiceTask::install()
 {
 	m_iMode = BACKUP;
 
-	UserCore::MCFManagerI *mm = getUserCore()->getInternal()->getMCFManager();
+	auto mm = getUserCore()->getInternal()->getMCFManager();
 
 	gcString path = getFullMcf();
 
@@ -270,7 +261,7 @@ void ComplexLaunchServiceTask::onMcfError(gcException &e)
 
 gcString ComplexLaunchServiceTask::getFullMcf()
 {
-	UserCore::MCFManagerI *mm = getUserCore()->getInternal()->getMCFManager();
+	auto mm = getUserCore()->getInternal()->getMCFManager();
 	
 	gcString path = mm->getMcfPath(getItemInfo());
 
@@ -298,7 +289,7 @@ RemoveResult ComplexLaunchServiceTask::remove()
 	gcException eNoInstBrch(ERR_NULLHANDLE, "Item that is meant to be removed for complex install has no installed branches.");
 	gcException eBadPath(ERR_BADPATH, "Mcf path was null or invalid.");
 
-	UserCore::Item::ItemInfoI *item = getUserCore()->getItemManager()->findItemInfo(m_iRemoveId);
+	auto item = getUserCore()->getItemManager()->findItemInfo(m_iRemoveId);
 	
 	if (!item)
 	{
@@ -313,7 +304,7 @@ RemoveResult ComplexLaunchServiceTask::remove()
 	}
 
 	m_iMode = REMOVING;
-	UserCore::MCFManagerI *mm = getUserCore()->getInternal()->getMCFManager();
+	auto mm = getUserCore()->getInternal()->getMCFManager();
 
 	MCFBuild build = item->getInstalledBuild();
 	MCFBranch branch = item->getCurrentBranch()->getBranchId();
@@ -410,12 +401,12 @@ void ComplexLaunchServiceTask::onTrueComplete()
 
 void ComplexLaunchServiceTask::completeRemove()
 {
-	UserCore::Item::ItemInfoI *item = getUserCore()->getItemManager()->findItemInfo(m_iRemoveId);
+	auto item = getUserCore()->getItemManager()->findItemInfo(m_iRemoveId);
 
 	if (!item)
 		return;
 
-	UserCore::MCFManagerI *mm = getUserCore()->getInternal()->getMCFManager();
+	auto mm = getUserCore()->getInternal()->getMCFManager();
 	mm->delMcfBackup(item->getParentId(), m_iRemoveId);
 
 	getUserCore()->getItemManager()->setInstalledMod(item->getParentId(), DesuraId());
@@ -517,8 +508,4 @@ void ComplexLaunchServiceTask::onProgress(MCFCore::Misc::ProgressInfo &p)
 
 	p.percent = percent;
 	onMcfProgressEvent(p);
-}
-
-
-}
 }

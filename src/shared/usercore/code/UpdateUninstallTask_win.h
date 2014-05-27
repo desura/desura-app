@@ -34,7 +34,7 @@ namespace UserCore
 	class UpdateUninstallTask : public ::Thread::BaseTask
 	{
 	public:
-		UpdateUninstallTask(UserI *pUser)
+		UpdateUninstallTask(gcRefPtr<UserI> pUser)
 			: m_pUser(pUser)
 		{
 			gcAssert(m_pUser);
@@ -55,6 +55,6 @@ namespace UserCore
 		void getAllUninstallIds(std::vector<int64> &vIds);
 
 	private:
-		UserI* m_pUser;
+		gcRefPtr<UserI> m_pUser;
 	};
 }

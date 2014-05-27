@@ -44,11 +44,11 @@ class WCSpecialInfo;
 
 typedef const char* (*UserCoreVersionFN)();
 typedef void *UserCoreGetLoginFN(char**, char**);
-typedef void (*GetStatusStrFn)(UserCore::Item::ItemHandleI* pItemHandle, UserCore::Item::ItemInfoI *pItemInfo, UserCore::Item::ITEM_STAGE nStage, UserCore::Item::ItemTaskGroupI* pTaskGroup, LanguageManagerI &pLangMng, char* buffer, uint32 buffsize);
+typedef void(*GetStatusStrFn)(gcRefPtr<UserCore::Item::ItemHandleI> pItemHandle, gcRefPtr<UserCore::Item::ItemInfoI> pItemInfo, UserCore::Item::ITEM_STAGE nStage, gcRefPtr<UserCore::Item::ItemTaskGroupI> pTaskGroup, LanguageManagerI & pLangMng, char* buffer, uint32 buffsize);
 
 namespace Thread
 {
-	class ThreadPool;
+	class ThreadPoolI;
 }
 
 namespace WebCore
@@ -115,10 +115,13 @@ namespace UserCore
 	};
 
 
-	class UserI
+	class UserI : public gcRefBase
 	{
-	public:
+	protected:
 		virtual ~UserI(){};
+
+	public:
+		virtual void destroy() = 0;
 
 		//! Set up default user
 		//!
@@ -275,63 +278,57 @@ namespace UserCore
 
 		//! Gets the thread pool for this user
 		//!
-		//! @return Threadpool
+		//! @return ThreadPoolI
 		//!
-		virtual ::Thread::ThreadPool* getThreadPool()=0;
-
-		//! Gets the service main for talking to Desura service
-		//!
-		//! @return ServiceMain
-		//!
-		virtual IPC::ServiceMainI* getServiceMain()=0;
+		virtual gcRefPtr<::Thread::ThreadPoolI> getThreadPool() = 0;
 
 		//! Gets the webcore handle
 		//!
 		//! @return WebCore
 		//!
-		virtual WebCore::WebCoreI* getWebCore()=0;
+		virtual gcRefPtr<WebCore::WebCoreI> getWebCore() = 0;
 
 		//! Gets the Thread manager handle
 		//!
 		//! @return Thread manager
 		//!
-		virtual UserCore::UserThreadManagerI* getThreadManager()=0;
+		virtual gcRefPtr<UserCore::UserThreadManagerI> getThreadManager() = 0;
 
 		//! Gets the Upload manager handle
 		//!
 		//! @return Upload manager
 		//!
-		virtual UserCore::UploadManagerI* getUploadManager()=0;
+		virtual gcRefPtr<UserCore::UploadManagerI> getUploadManager() = 0;
 
 		//! Gets the Item manager handle
 		//!
 		//! @return Item manager
 		//!
-		virtual UserCore::ItemManagerI* getItemManager()=0;
+		virtual gcRefPtr<UserCore::ItemManagerI> getItemManager() = 0;
 
 		//! Gets the Tool manager handle
 		//!
 		//! @return Tool manager
 		//!
-		virtual UserCore::ToolManagerI* getToolManager()=0;
+		virtual gcRefPtr<UserCore::ToolManagerI> getToolManager() = 0;
 
 		//! Gets the Game Explorer manager handle
 		//!
 		//! @return Game Explorer manager
 		//!
-		virtual GameExplorerManagerI* getGameExplorerManager()=0;
+		virtual gcRefPtr<GameExplorerManagerI> getGameExplorerManager() = 0;
 
 		//! Gets the cd key manager
 		//!
 		//! @return CDKey Manager
 		//!
-		virtual UserCore::CDKeyManagerI* getCDKeyManager()=0;
+		virtual gcRefPtr<UserCore::CDKeyManagerI> getCDKeyManager() = 0;
 
 		//! Gets the custom install path manager
 		//!
 		//! @return custom install path manager
 		//!
-		virtual UserCore::CIPManagerI* getCIPManager()=0;
+		virtual gcRefPtr<UserCore::CIPManagerI> getCIPManager() = 0;
 
 
 		///////////////////////////////////////////////////////////////////////////////
@@ -342,74 +339,74 @@ namespace UserCore
 		//!
 		//! @return Item added event
 		//!
-		virtual Event<uint32>* getItemsAddedEvent()=0;
+		virtual Event<uint32>& getItemsAddedEvent()=0;
 
 		//! Gets the application update event handler. Triggered when an update is about to downloaded
 		//!
 		//! @return Application update event
 		//!
-		virtual Event<UserCore::Misc::UpdateInfo>* getAppUpdateEvent()=0;
+		virtual Event<UserCore::Misc::UpdateInfo>& getAppUpdateEvent() = 0;
 
 		//! Gets the application update event handler. Triggered when an update is fully downloaded
 		//!
 		//! @return Application update complete event
 		//!
-		virtual Event<UserCore::Misc::UpdateInfo>* getAppUpdateCompleteEvent()=0;
+		virtual Event<UserCore::Misc::UpdateInfo>& getAppUpdateCompleteEvent() = 0;
 
 		//! Gets the application update progress event handler. Triggered when progress is made on update download
 		//! uint32 = progress
 		//!
 		//! @return Application update progress event
 		//!
-		virtual Event<uint32>* getAppUpdateProgEvent()=0;
+		virtual Event<uint32>& getAppUpdateProgEvent() = 0;
 
 		//! Gets the need cvar event handler. Triggered when needing resolving of a cvar in uicore
 		//!
 		//! @return Cvar event
 		//!
-		virtual Event<UserCore::Misc::CVar_s>* getNeedCvarEvent()=0;
+		virtual Event<UserCore::Misc::CVar_s>& getNeedCvarEvent() = 0;
 
 		//! Gets the new avatar event handler. Triggered when user avatar is resolved
 		//!
 		//! @return Avatar event
 		//!
-		virtual EventC<gcString>* getNewAvatarEvent()=0;
+		virtual EventC<gcString>& getNewAvatarEvent() = 0;
 
 		//! Gets the wildcard event handler. Triggered when needing a wildcard resolved by ui core
 		//!
 		//! @return Wildcard event
 		//!
-		virtual Event<WCSpecialInfo>* getNeedWildCardEvent()=0;
+		virtual Event<WCSpecialInfo>& getNeedWildCardEvent() = 0;
 
 		//! Gets the news event handler. Triggered when new news
 		//!
 		//! @return News event
 		//!
-		virtual Event<std::vector<UserCore::Misc::NewsItem*> >* getNewsUpdateEvent()=0;
+		virtual Event<std::vector<gcRefPtr<UserCore::Misc::NewsItem>>>& getNewsUpdateEvent() = 0;
 
 		//! Gets the gift event handler. Triggered when new gifts
 		//!
 		//! @return Gift event
 		//!
-		virtual Event<std::vector<UserCore::Misc::NewsItem*> >* getGiftUpdateEvent()=0;
+		virtual Event<std::vector<gcRefPtr<UserCore::Misc::NewsItem>>>& getGiftUpdateEvent() = 0;
 
 		//! Gets the item update event handler. Triggered when an item information has been updated
 		//!
 		//! @return Item update event
 		//!
-		virtual Event<std::vector<UserCore::Item::ItemUpdateInfo*> >* getItemUpdateEvent()=0;
+		virtual Event<std::vector<gcRefPtr<UserCore::Item::ItemUpdateInfo>>>& getItemUpdateEvent() = 0;
 
 		//! Gets the user update event handler. Triggered when an user information has been updated
 		//!
 		//! @return User update event
 		//!
-		virtual EventV* getUserUpdateEvent()=0;
+		virtual EventV& getUserUpdateEvent()=0;
 
 		//! Gets the event for pipe disconnect. Triggered when desura service dies.
 		//!
 		//! @return Pipe disconnect event
 		//!
-		virtual EventV* getPipeDisconnectEvent()=0;
+		virtual EventV& getPipeDisconnectEvent()=0;
 
 		//! Gets the event for when a forced update poll is triggered.
 		//!
@@ -418,17 +415,17 @@ namespace UserCore
 		//!		set second bool to enable qa builds (admins only)
 		//!		set third bool to force an update (maybe to same version)
 		//!
-		virtual Event<std::tuple<gcOptional<bool>, gcOptional<bool>, gcOptional<bool>>>* getForcedUpdatePollEvent()=0;
+		virtual Event<std::tuple<gcOptional<bool>, gcOptional<bool>, gcOptional<bool>>>& getForcedUpdatePollEvent()=0;
 
 		//! Gets the event for when the login items are loaded
 		//!
-		virtual EventV* getLoginItemsLoadedEvent()=0;
+		virtual EventV& getLoginItemsLoadedEvent()=0;
 
 		//! Gets the event for when low hdd space for mcf saves is detected
 		//! First Event paramater is true if the low space is on the system disk, or false on another disk
 		//! Second Event paramater is the hdd leter
 		//!
-		virtual Event<std::pair<bool, char> >* getLowSpaceEvent()=0;
+		virtual Event<std::pair<bool, char> >& getLowSpaceEvent()=0;
 
 		//! Updates the user counts. Used by javascript api as a cheap update method
 		//!
@@ -488,7 +485,7 @@ namespace UserCore
 
 		//Get internal user object (for user core)
 		//!
-		virtual UserInternalI* getInternal()=0;
+		virtual gcRefPtr<UserInternalI> getInternal() = 0;
 	};
 
 
@@ -496,6 +493,8 @@ namespace UserCore
 	class UserMock : public UserI
 	{
 	public:
+		MOCK_METHOD0(destroy, void());
+
 		MOCK_METHOD1(init, void(const char* appDataPath));
 		MOCK_METHOD0(getAppDataPath, const char*());
 		MOCK_METHOD0(getMcfCachePath, const char*());
@@ -523,31 +522,30 @@ namespace UserCore
 		MOCK_METHOD0(getCartCount, uint32());
 		MOCK_METHOD0(getThreadCount, uint32());
 		MOCK_METHOD1(getCVarValue, const char*(const char* cvarName));
-		MOCK_METHOD0(getThreadPool, ::Thread::ThreadPool*());
-		MOCK_METHOD0(getServiceMain, IPC::ServiceMainI*());
-		MOCK_METHOD0(getWebCore, WebCore::WebCoreI*());
-		MOCK_METHOD0(getThreadManager, UserCore::UserThreadManagerI*());
-		MOCK_METHOD0(getUploadManager, UserCore::UploadManagerI*());
-		MOCK_METHOD0(getItemManager, UserCore::ItemManagerI*());
-		MOCK_METHOD0(getToolManager, UserCore::ToolManagerI*());
-		MOCK_METHOD0(getGameExplorerManager, GameExplorerManagerI*());
-		MOCK_METHOD0(getCDKeyManager, UserCore::CDKeyManagerI*());
-		MOCK_METHOD0(getCIPManager, UserCore::CIPManagerI*());
-		MOCK_METHOD0(getItemsAddedEvent, Event<uint32>*());
-		MOCK_METHOD0(getAppUpdateEvent, Event<UserCore::Misc::UpdateInfo>*());
-		MOCK_METHOD0(getAppUpdateCompleteEvent, Event<UserCore::Misc::UpdateInfo>*());
-		MOCK_METHOD0(getAppUpdateProgEvent, Event<uint32>*());
-		MOCK_METHOD0(getNeedCvarEvent, Event<UserCore::Misc::CVar_s>*());
-		MOCK_METHOD0(getNewAvatarEvent, EventC<gcString>*());
-		MOCK_METHOD0(getNeedWildCardEvent, Event<WCSpecialInfo>*());
-		MOCK_METHOD0(getNewsUpdateEvent, Event<std::vector<UserCore::Misc::NewsItem*> >*());
-		MOCK_METHOD0(getGiftUpdateEvent, Event<std::vector<UserCore::Misc::NewsItem*> >*());
-		MOCK_METHOD0(getItemUpdateEvent, Event<std::vector<UserCore::Item::ItemUpdateInfo*> >*());
-		MOCK_METHOD0(getUserUpdateEvent, EventV*());
-		MOCK_METHOD0(getPipeDisconnectEvent, EventV*());
-		MOCK_METHOD0(getForcedUpdatePollEvent, Event<std::tuple<gcOptional<bool>, gcOptional<bool>, gcOptional<bool>>>*());
-		MOCK_METHOD0(getLoginItemsLoadedEvent, EventV*());
-		MOCK_METHOD0(getLowSpaceEvent, Event<std::pair<bool, char> >*());
+		MOCK_METHOD0(getThreadPool, gcRefPtr<::Thread::ThreadPoolI>());
+		MOCK_METHOD0(getWebCore, gcRefPtr<WebCore::WebCoreI>());
+		MOCK_METHOD0(getThreadManager, gcRefPtr<UserCore::UserThreadManagerI>());
+		MOCK_METHOD0(getUploadManager, gcRefPtr<UserCore::UploadManagerI>());
+		MOCK_METHOD0(getItemManager, gcRefPtr<UserCore::ItemManagerI>());
+		MOCK_METHOD0(getToolManager, gcRefPtr<UserCore::ToolManagerI>());
+		MOCK_METHOD0(getGameExplorerManager, gcRefPtr<GameExplorerManagerI>());
+		MOCK_METHOD0(getCDKeyManager, gcRefPtr<UserCore::CDKeyManagerI>());
+		MOCK_METHOD0(getCIPManager, gcRefPtr<UserCore::CIPManagerI>());
+		MOCK_METHOD0(getItemsAddedEvent, Event<uint32>&());
+		MOCK_METHOD0(getAppUpdateEvent, Event<UserCore::Misc::UpdateInfo>&());
+		MOCK_METHOD0(getAppUpdateCompleteEvent, Event<UserCore::Misc::UpdateInfo>&());
+		MOCK_METHOD0(getAppUpdateProgEvent, Event<uint32>&());
+		MOCK_METHOD0(getNeedCvarEvent, Event<UserCore::Misc::CVar_s>&());
+		MOCK_METHOD0(getNewAvatarEvent, EventC<gcString>&());
+		MOCK_METHOD0(getNeedWildCardEvent, Event<WCSpecialInfo>&());
+		MOCK_METHOD0(getNewsUpdateEvent, Event<std::vector<gcRefPtr<UserCore::Misc::NewsItem>> >&());
+		MOCK_METHOD0(getGiftUpdateEvent, Event<std::vector<gcRefPtr<UserCore::Misc::NewsItem>> >&());
+		MOCK_METHOD0(getItemUpdateEvent, Event<std::vector<gcRefPtr<UserCore::Item::ItemUpdateInfo>> >&());
+		MOCK_METHOD0(getUserUpdateEvent, EventV&());
+		MOCK_METHOD0(getPipeDisconnectEvent, EventV&());
+		MOCK_METHOD0(getForcedUpdatePollEvent, Event<std::tuple<gcOptional<bool>, gcOptional<bool>, gcOptional<bool>>>&());
+		MOCK_METHOD0(getLoginItemsLoadedEvent, EventV&());
+		MOCK_METHOD0(getLowSpaceEvent, Event<std::pair<bool, char> >&());
 		MOCK_METHOD4(setCounts, void(uint32 msgs, uint32 updates, uint32 threads, uint32 cart));
 	#ifdef WIN32
 		MOCK_METHOD1(setMainWindowHandle, void(HWND handle));
@@ -562,7 +560,9 @@ namespace UserCore
 		MOCK_METHOD2(init, void(const char* appDataPath, const char* szProviderUrl));
 		MOCK_METHOD1(setAvatarUrl, void(const char* szAvatarUrl));
 		MOCK_METHOD2(platformFilter, bool(const XML::gcXMLElement &, PlatformType));
-		MOCK_METHOD0(getInternal, UserInternalI*());
+		MOCK_METHOD0(getInternal, gcRefPtr<UserInternalI>());
+
+		gc_IMPLEMENT_REFCOUNTING(UserMock);
 	};
 #endif
 

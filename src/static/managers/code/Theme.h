@@ -75,6 +75,8 @@ public:
 	int32 y;
 	int32 w;
 	int32 h;
+
+	gc_IMPLEMENT_REFCOUNTING(SpriteRect);
 };
 
 
@@ -106,11 +108,11 @@ public:
 class ThemeSpriteInfo : public BaseItem, public BaseManager<SpriteRect>
 {
 public:
-	ThemeSpriteInfo(const char* name) : BaseItem(name), BaseManager<SpriteRect>(true)
+	ThemeSpriteInfo(const char* name) : BaseItem(name), BaseManager<SpriteRect>()
 	{
 	}
 
-	void addItem(SpriteRect* sprite)
+	void addItem(gcRefPtr<SpriteRect> &sprite)
 	{
 		BaseManager<SpriteRect>::addItem(sprite);
 	}
@@ -131,13 +133,13 @@ typedef BaseManager<ThemeColorInfo> ColorList;
 class ThemeControlInfo : public BaseItem, public ColorList
 {
 public:
-	ThemeControlInfo(const char* name) : BaseItem(name), ColorList(true)
+	ThemeControlInfo(const char* name) : BaseItem(name), ColorList()
 	{
 	}
 
 	Color getColor(const char* control, const char* id)
 	{
-		ThemeColorInfo* col = ColorList::findItem(id);
+		auto col = ColorList::findItem(id);
 
 		if (col)
 		{
@@ -150,7 +152,7 @@ public:
 		}
 	}
 
-	void add(ThemeColorInfo* col)
+	void add(gcRefPtr<ThemeColorInfo> &col)
 	{
 		ColorList::addItem(col);
 	}
@@ -197,7 +199,7 @@ public:
 	//! @param rectId Rectangle name
 	//! @return Rectangle info
 	//!
-	SpriteRect* getSpriteRect(const char* id, const char* rectId);
+	gcRefPtr<SpriteRect> getSpriteRect(const char* id, const char* rectId);
 
 	//! Gets the hash of this themes name
 	//!
@@ -217,22 +219,22 @@ protected:
 	void LoadSprites(const XML::gcXMLElement &xmlEl);
 	void LoadControls(const XML::gcXMLElement &xmlEl);
 
-	void addItem(ThemeImageInfo* pImageInfo)
+	void addItem(gcRefPtr<ThemeImageInfo> &pImageInfo)
 	{
 		ImageList::addItem(pImageInfo);
 	}
 
-	void addItem(ThemeWebInfo* pWebInfo)
+	void addItem(gcRefPtr<ThemeWebInfo> &pWebInfo)
 	{
 		WebList::addItem(pWebInfo);
 	}
 
-	void addItem(ThemeControlInfo* pControlInfo)
+	void addItem(gcRefPtr<ThemeControlInfo> &pControlInfo)
 	{
 		ControlList::addItem(pControlInfo);
 	}
 
-	void addItem(ThemeSpriteInfo* pSpritInfo)
+	void addItem(gcRefPtr<ThemeSpriteInfo> &pSpritInfo)
 	{
 		SpriteList::addItem(pSpritInfo);
 	}

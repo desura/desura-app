@@ -71,14 +71,14 @@ uint32 TaskBarIcon::getUpdateCount()
 	uint32 updateCount = 0;
 	uint32 cartCount = 0;
 
-	UserCore::UserI* user = GetUserCore();
+	auto user = GetUserCore();
 	if (user)
 	{
 		messageCount = user->getPmCount();
 		updateCount = user->getUpCount();
 		cartCount = user->getCartCount();
 
-		std::vector<UserCore::Item::ItemInfoI*> gList;
+		std::vector<gcRefPtr<UserCore::Item::ItemInfoI>> gList;
 		user->getItemManager()->getGameList(gList);
 
 		for (size_t x=0; x<gList.size(); x++)
@@ -86,7 +86,7 @@ uint32 TaskBarIcon::getUpdateCount()
 			if (HasAnyFlags(gList[x]->getStatus(), UserCore::Item::ItemInfoI::STATUS_UPDATEAVAL))
 				gameUpdateCount++;
 
-			std::vector<UserCore::Item::ItemInfoI*> mList;
+			std::vector<gcRefPtr<UserCore::Item::ItemInfoI>> mList;
 			user->getItemManager()->getModList(gList[x]->getId(), mList);
 
 			for (size_t y=0; y<mList.size(); y++)

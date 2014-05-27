@@ -44,7 +44,7 @@ public:
 	
 	DesuraId getItemId(){return m_uiItemId;}
 
-	void setInfo(UserCore::Item::ItemInfoI* item);	//used for items
+	void setInfo(gcRefPtr<UserCore::Item::ItemInfoI> item);	//used for items
 	void setInfo(uint32 version);	//used for app
 
 	bool isAppChangeLog(){return m_bApp;}

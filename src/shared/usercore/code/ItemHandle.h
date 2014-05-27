@@ -70,7 +70,7 @@ namespace UserCore
 		class ItemHandleEvents;
 		class ItemTaskGroup;
 
-		class ItemHandleInternalI
+		class ItemHandleInternalI : public gcRefBase
 		{
 		public:
 			virtual void setPausable(bool state = true)=0;
@@ -125,36 +125,37 @@ namespace UserCore
 			MOCK_METHOD4(goToStageDownloadTools, void(ToolTransactionId ttid, const char* downloadPath, MCFBranch branch, MCFBuild build));
 			MOCK_METHOD2(goToStageDownloadTools, void(bool launch, ToolTransactionId ttid));
 			MOCK_METHOD1(goToStageInstallTools, void(bool launch));
+
+			gc_IMPLEMENT_REFCOUNTING(ItemHandleInternalMock);
 		};
 #endif
 
 		class ItemHandle : public ItemHandleI, public ItemHandleInternalI
 		{
 		public:
-			ItemHandle(ItemInfo* itemInfo, UserCore::UserI* user);
-			ItemHandle(std::shared_ptr<UserCore::Item::ItemInfo> &itemInfo, UserCore::UserI* user);
+			ItemHandle(gcRefPtr<ItemInfo> &itemInfo, gcRefPtr<UserCore::UserI> user);
 			~ItemHandle();
 
-			void setFactory(Helper::ItemHandleFactoryI* factory) override;
+			void setFactory(gcRefPtr<Helper::ItemHandleFactoryI> factory) override;
 
-			void addHelper(Helper::ItemHandleHelperI* helper) override;
-			void delHelper(Helper::ItemHandleHelperI* helper) override;
+			void addHelper(gcRefPtr<Helper::ItemHandleHelperI> helper) override;
+			void delHelper(gcRefPtr<Helper::ItemHandleHelperI> helper) override;
 
 			bool cleanComplexMods() override;
 			bool verify(bool files, bool tools, bool hooks) override;
 			bool update() override;
-			bool install(Helper::ItemLaunchHelperI* helper, MCFBranch branch) override;
+			bool install(gcRefPtr<Helper::ItemLaunchHelperI> helper, MCFBranch branch) override;
 			bool install(MCFBranch branch, MCFBuild build, bool test = false) override;
 			bool installCheck() override;
-			bool launch(Helper::ItemLaunchHelperI* helper, bool offline = false, bool ignoreUpdate = false) override;
+			bool launch(gcRefPtr<Helper::ItemLaunchHelperI> helper, bool offline = false, bool ignoreUpdate = false) override;
 			bool switchBranch(MCFBranch branch) override;
 			bool startUpCheck() override;
-			bool uninstall(Helper::ItemUninstallHelperI* helper, bool complete, bool account) override;
+			bool uninstall(gcRefPtr<Helper::ItemUninstallHelperI> helper, bool complete, bool account) override;
 			bool isInStage() override;
 
 			ITEM_STAGE getStage() override;
 			void cancelCurrentStage() override;
-			UserCore::Item::ItemInfoI* getItemInfo() override;
+			gcRefPtr<UserCore::Item::ItemInfoI> getItemInfo() override;
 
 			//void stop(bool block = true) override;
 
@@ -162,13 +163,13 @@ namespace UserCore
 			bool shouldPauseOnError() override;
 			bool isStopped() override;
 
-			Event<ITEM_STAGE>* getChangeStageEvent() override;
-			Event<gcException>* getErrorEvent() override;
+			Event<ITEM_STAGE>& getChangeStageEvent() override;
+			Event<gcException>& getErrorEvent() override;
 
 			void getStatusStr(LanguageManagerI & pLangMng, char* buffer, uint32 buffsize) override;
-			static void getStatusStr_s(UserCore::Item::ItemHandleI* pItemHandle, UserCore::Item::ItemInfoI *pItemInfo, UserCore::Item::ITEM_STAGE nStage, UserCore::Item::ItemTaskGroupI* pTaskGroup, LanguageManagerI & pLangMng, char* buffer, uint32 buffsize);
+			static void getStatusStr_s(gcRefPtr<UserCore::Item::ItemHandleI> pItemHandle, gcRefPtr<UserCore::Item::ItemInfoI> pItemInfo, UserCore::Item::ITEM_STAGE nStage, gcRefPtr<UserCore::Item::ItemTaskGroupI> pTaskGroup, LanguageManagerI & pLangMng, char* buffer, uint32 buffsize);
 
-			ItemTaskGroupI* getTaskGroup() override;
+			gcRefPtr<ItemTaskGroupI> getTaskGroup() override;
 			void force() override;
 
 			bool createDesktopShortcut() override;
@@ -178,7 +179,7 @@ namespace UserCore
 			void installLaunchScripts() override;
 		#endif
 
-			ItemHandleInternalI* getInternal() override
+			gcRefPtr<ItemHandleInternalI> getInternal() override
 			{
 				return this;
 			}
@@ -212,9 +213,9 @@ namespace UserCore
 			uint64 getHash(){return getItemInfo()->getId().toInt64();}
 			const char* getName(){return getItemInfo()->getName();}	
 
-			UserCore::Item::ItemInfo* getItemInfoNorm();
+			gcRefPtr<UserCore::Item::ItemInfo> getItemInfoNorm();
 
-			UserCore::UserI* getUserCore();
+			gcRefPtr<UserCore::UserI> getUserCore();
 
 			bool getLock(void* obj);
 			bool isLocked();
@@ -224,13 +225,17 @@ namespace UserCore
 			void verifyOveride();
 			void uninstallOveride();
 
-			ItemHandleEvents* getEventHandler();
-			bool setTaskGroup(ItemTaskGroup* group, bool force = false);
+			gcRefPtr<ItemHandleEvents> getEventHandler();
+			bool setTaskGroup(gcRefPtr<ItemTaskGroup> group, bool force = false);
 
 			//used to get around the is in stage check
 			bool installPrivate(MCFBranch branch, MCFBuild build, UserCore::ItemTask::GI_FLAGS flags);
 
 			bool isCurrentlyInstalledGameOrMod();
+
+			void cleanup();
+
+			gc_IMPLEMENT_REFCOUNTING(ItemHandle);
 
 		protected:
 			Event<ITEM_STAGE> onChangeStageEvent;
@@ -239,18 +244,18 @@ namespace UserCore
 			void startGatherInfo();
 
 			void setStage(ITEM_STAGE stage);
-			void registerTask(UserCore::ItemTask::BaseItemTask* task);
+			void registerTask(gcRefPtr<UserCore::ItemTask::BaseItemTask> task);
 
 			void stopThread();
 
 			void preLaunchCheck();
 	
-			void doLaunch(Helper::ItemLaunchHelperI* helper);
+			void doLaunch(gcRefPtr<Helper::ItemLaunchHelperI> helper);
 		#ifdef NIX
 			void doLaunch(bool useXdgOpen, const char* globalExe, const char* globalArgs);
 		#endif
 
-			virtual bool launchForReal(Helper::ItemLaunchHelperI* helper, bool offline = false);
+			virtual bool launchForReal(gcRefPtr<Helper::ItemLaunchHelperI> helper, bool offline = false);
 
 			void onTaskStart(ITEM_STAGE &stage);
 			void onTaskComplete(ITEM_STAGE &stage);
@@ -268,19 +273,22 @@ namespace UserCore
 			bool m_bLock = false;
 			void* m_pLockObject = nullptr;
 
-			std::vector<Helper::ItemHandleHelperI*> m_vHelperList;
+			std::recursive_mutex m_HelperLock;
+			std::vector<gcRefPtr<Helper::ItemHandleHelperI>> m_vHelperList;
 
 			uint32 m_uiHelperId = 0;
 			ITEM_STAGE m_uiStage = ITEM_STAGE::STAGE_NONE;
 
 			std::recursive_mutex m_ThreadMutex;
-			UserCore::Item::ItemThread *m_pThread = nullptr;
-			std::shared_ptr<UserCore::Item::ItemInfo> m_pItemInfo;
-			UserCore::UserI* m_pUserCore = nullptr;
+			gcRefPtr<UserCore::Item::ItemThread> m_pThread;
+			gcRefPtr<UserCore::Item::ItemInfo> m_pItemInfo;
+			gcRefPtr<UserCore::UserI> m_pUserCore;
 
-			Helper::ItemHandleFactoryI* m_pFactory = nullptr;
-			ItemHandleEvents* m_pEventHandler = nullptr;
-			ItemTaskGroup* m_pGroup = nullptr;
+			gcRefPtr<Helper::ItemHandleFactoryI> m_pFactory;
+			gcRefPtr<ItemHandleEvents> m_pEventHandler;
+
+			std::mutex m_GroupLock;
+			gcRefPtr<ItemTaskGroup> m_pGroup;
 		};
 	}
 }

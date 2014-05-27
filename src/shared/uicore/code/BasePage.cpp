@@ -30,7 +30,7 @@ $/LicenseInfo$
 #include "usercore/ItemInfoI.h"
 #include "usercore/ItemManagerI.h"
 
-BasePage::BasePage(wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style, UserCore::ItemManagerI* pItemManager) 
+BasePage::BasePage(wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style, gcRefPtr<UserCore::ItemManagerI> pItemManager)
 	: gcPanel( parent, id, pos, size, style )
 	, m_pItemManager(pItemManager)
 {
@@ -38,7 +38,7 @@ BasePage::BasePage(wxWindow* parent, wxWindowID id, const wxPoint& pos, const wx
 		m_pItemManager = GetUserCore()->getItemManager();
 }
 
-BasePage::BasePage(wxWindow* parent, UserCore::ItemManagerI* pItemManager)
+BasePage::BasePage(wxWindow* parent, gcRefPtr<UserCore::ItemManagerI> pItemManager)
 	: BasePage(parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL, pItemManager)
 {
 }
@@ -48,7 +48,7 @@ void BasePage::setInfo(DesuraId id)
 	setInfo(id, m_pItemManager->findItemInfo(id));
 }
 
-void BasePage::setInfo(DesuraId id, UserCore::Item::ItemInfoI* pItemInfo)
+void BasePage::setInfo(DesuraId id, gcRefPtr<UserCore::Item::ItemInfoI> pItemInfo)
 {
 	m_iInternId = id;
 	m_pItemInfo = pItemInfo;
@@ -68,7 +68,7 @@ void BasePage::setMCFInfo(MCFBranch branch, MCFBuild build)
 	m_uiMCFBranch = branch;
 }
 
-UserCore::Item::ItemInfoI* BasePage::getItemInfo()
+gcRefPtr<UserCore::Item::ItemInfoI> BasePage::getItemInfo()
 {
 	if (m_pItemInfo)
 		return m_pItemInfo;

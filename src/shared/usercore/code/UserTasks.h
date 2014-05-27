@@ -50,211 +50,215 @@ namespace MCFCore
 
 namespace UserCore
 {
-namespace Task
-{
-
-class DeleteThread : public UserTask
-{
-public:
-	DeleteThread(UserCore::UserI* user, ::Thread::BaseThread *thread);
-	~DeleteThread();
-
-	void doTask();
-	const char* getName(){return "DeleteThread";}
-
-private:
-	::Thread::BaseThread *m_pThread;
-};
-
-
-
-////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////
-
-
-class DownloadImgTask : public UserTask
-{
-public:
-	enum IMAGE_IDENT
+	namespace Item
 	{
-		ICON = 0,
-		LOGO,
-	};
-
-	//need iteminfo in this case as we might try this before the item is added to the list
-	DownloadImgTask(UserCore::UserI* user, UserCore::Item::ItemInfo* itemInfo, uint8 image);
-	void doTask();
-
-	const char* getName(){return "DownloadImgTask";}
-
-protected:
-	void onComplete();
-
-private:
-	UserCore::Item::ItemInfo* m_pItem;
-	uint8 m_Image;
-};
-
-
-////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////
-
-
-
-
-class ChangeAccountTask : public UserTask
-{
-public:
-	enum ACTION
-	{
-		ACCOUNT_ADD = 0,
-		ACCOUNT_REMOVE,
-	};
-
-	ChangeAccountTask(UserCore::UserI* user, DesuraId id, uint8 action);
-	void doTask();
-
-	const char* getName(){return "ChangeAccountTask";}
-
-private:
-	uint8 m_Action;
-};
-
-
-////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////
-
-class DownloadBannerTask;
-
-class BannerCompleteInfo
-{
-public:
-	BannerCompleteInfo(DownloadBannerTask* pTask, const MCFCore::Misc::DownloadProvider& provider)
-		: task(pTask)
-		, info(provider)
-	{
+		class ItemThread;
 	}
 
-	bool complete;
-	
-	DownloadBannerTask* task;
-	MCFCore::Misc::DownloadProvider info;
-};
+	namespace Task
+	{
+
+		class DeleteThread : public UserTask
+		{
+		public:
+			DeleteThread(gcRefPtr<UserCore::UserI> user, gcRefPtr<UserCore::Item::ItemThread> &pThread);
+			~DeleteThread();
+
+			void doTask();
+			const char* getName(){ return "DeleteThread"; }
+
+		private:
+			gcRefPtr<UserCore::Item::ItemThread> m_pThread;
+		};
 
 
-class DownloadBannerTask : public UserTask
-{
-public:
-	DownloadBannerTask(UserCore::UserI* user, const MCFCore::Misc::DownloadProvider& dp);
 
-	void doTask();
-	Event<BannerCompleteInfo> onDLCompleteEvent;
-
-	const char* getName(){return "DownloadBannerTask";}
-
-private:
-	BannerCompleteInfo m_DPInfo;
-};
+		////////////////////////////////////////////////////////////////////////////
+		////////////////////////////////////////////////////////////////////////////
+		////////////////////////////////////////////////////////////////////////////
 
 
-////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////
+		class DownloadImgTask : public UserTask
+		{
+		public:
+			enum IMAGE_IDENT
+			{
+				ICON = 0,
+				LOGO,
+			};
+
+			//need iteminfo in this case as we might try this before the item is added to the list
+			DownloadImgTask(gcRefPtr<UserCore::UserI> user, gcRefPtr<UserCore::Item::ItemInfo> itemInfo, uint8 image);
+			void doTask();
+
+			const char* getName(){ return "DownloadImgTask"; }
+
+		protected:
+			void onComplete();
+
+		private:
+			gcRefPtr<UserCore::Item::ItemInfo> m_pItem;
+			uint8 m_Image;
+		};
 
 
-class DownloadAvatarTask : public UserTask
-{
-public:
-	DownloadAvatarTask(UserCore::UserI* user, const char* url, uint32 userId);
-	void doTask();
-
-	Event<gcException> onErrorEvent;
-
-	const char* getName(){return "DownloadAvatarTask";}
-
-private:
-	gcString m_szUrl;
-	uint32 m_uiUserId;
-};
+		////////////////////////////////////////////////////////////////////////////
+		////////////////////////////////////////////////////////////////////////////
+		////////////////////////////////////////////////////////////////////////////
 
 
-////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////
 
 
-class GatherInfoTask : public UserTask
-{
-public:
-	GatherInfoTask(UserCore::UserI* user, DesuraId id, bool addToAccount = false);
-	void doTask();
+		class ChangeAccountTask : public UserTask
+		{
+		public:
+			enum ACTION
+			{
+				ACCOUNT_ADD = 0,
+				ACCOUNT_REMOVE,
+			};
 
-	const char* getName(){return "GatherInfoTask";}
+			ChangeAccountTask(gcRefPtr<UserCore::UserI> user, DesuraId id, uint8 action);
+			void doTask();
 
-private:
-	bool m_bAddToAccount;
-};
+			const char* getName(){ return "ChangeAccountTask"; }
 
-////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////
-
-class CDKeyTask;
-
-template <typename T>
-class CDKeyEventInfo
-{
-public:
-	T t;
-	DesuraId id;
-	CDKeyTask* task;
-};
+		private:
+			uint8 m_Action;
+		};
 
 
-class CDKeyTask : public UserTask
-{
-public:
-	CDKeyTask(UserCore::UserI* user, DesuraId id);
-	void doTask();
+		////////////////////////////////////////////////////////////////////////////
+		////////////////////////////////////////////////////////////////////////////
+		////////////////////////////////////////////////////////////////////////////
 
-	Event<CDKeyEventInfo<gcString> > onCompleteEvent;
-	Event<CDKeyEventInfo<gcException> > onErrorEvent;
+		class DownloadBannerTask;
 
-	const char* getName(){return "CDKeyTask";}
-};
+		class BannerCompleteInfo
+		{
+		public:
+			BannerCompleteInfo(gcRefPtr<DownloadBannerTask> pTask, const MCFCore::Misc::DownloadProvider& provider)
+				: task(pTask)
+				, info(provider)
+			{
+			}
 
-////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////
+			bool complete;
 
-class MigrateStandaloneTask : public UserTask
-{
-public:
-	MigrateStandaloneTask(UserCore::UserI* user, const std::vector<UTIL::FS::Path> &fileList);
-	void doTask();
-	const char* getName(){return "MigrateStandaloneTask";}
-
-private:
-	std::vector<UTIL::FS::Path> m_vFileList;
-};
-
-////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////
-
-class RegenLaunchScriptsTask : public UserTask
-{
-public:
-	RegenLaunchScriptsTask(UserCore::UserI* user);
-	void doTask();
-	const char* getName(){return "RegenLaunchScriptsTask";}
-};
+			gcRefPtr<DownloadBannerTask> task;
+			MCFCore::Misc::DownloadProvider info;
+		};
 
 
-}
+		class DownloadBannerTask : public UserTask
+		{
+		public:
+			DownloadBannerTask(gcRefPtr<UserCore::UserI> user, const MCFCore::Misc::DownloadProvider& dp);
+			~DownloadBannerTask();
+
+			void doTask();
+			Event<BannerCompleteInfo> onDLCompleteEvent;
+
+			const char* getName(){ return "DownloadBannerTask"; }
+
+		private:
+			MCFCore::Misc::DownloadProvider m_DownloadProvider;
+		};
+
+
+		////////////////////////////////////////////////////////////////////////////
+		////////////////////////////////////////////////////////////////////////////
+		////////////////////////////////////////////////////////////////////////////
+
+
+		class DownloadAvatarTask : public UserTask
+		{
+		public:
+			DownloadAvatarTask(gcRefPtr<UserCore::UserI> user, const char* url, uint32 userId);
+			void doTask();
+
+			Event<gcException> onErrorEvent;
+
+			const char* getName(){ return "DownloadAvatarTask"; }
+
+		private:
+			gcString m_szUrl;
+			uint32 m_uiUserId;
+		};
+
+
+		////////////////////////////////////////////////////////////////////////////
+		////////////////////////////////////////////////////////////////////////////
+		////////////////////////////////////////////////////////////////////////////
+
+
+		class GatherInfoTask : public UserTask
+		{
+		public:
+			GatherInfoTask(gcRefPtr<UserCore::UserI> user, DesuraId id, bool addToAccount = false);
+			void doTask();
+
+			const char* getName(){ return "GatherInfoTask"; }
+
+		private:
+			bool m_bAddToAccount;
+		};
+
+		////////////////////////////////////////////////////////////////////////////
+		////////////////////////////////////////////////////////////////////////////
+		////////////////////////////////////////////////////////////////////////////
+
+		class CDKeyTask;
+
+		template <typename T>
+		class CDKeyEventInfo
+		{
+		public:
+			T t;
+			DesuraId id;
+			gcRefPtr<CDKeyTask> task;
+		};
+
+
+		class CDKeyTask : public UserTask
+		{
+		public:
+			CDKeyTask(gcRefPtr<UserCore::UserI> user, DesuraId id);
+			void doTask();
+
+			Event<CDKeyEventInfo<gcString> > onCompleteEvent;
+			Event<CDKeyEventInfo<gcException> > onErrorEvent;
+
+			const char* getName(){ return "CDKeyTask"; }
+		};
+
+		////////////////////////////////////////////////////////////////////////////
+		////////////////////////////////////////////////////////////////////////////
+		////////////////////////////////////////////////////////////////////////////
+
+		class MigrateStandaloneTask : public UserTask
+		{
+		public:
+			MigrateStandaloneTask(gcRefPtr<UserCore::UserI> user, const std::vector<UTIL::FS::Path> &fileList);
+			void doTask();
+			const char* getName(){ return "MigrateStandaloneTask"; }
+
+		private:
+			std::vector<UTIL::FS::Path> m_vFileList;
+		};
+
+		////////////////////////////////////////////////////////////////////////////
+		////////////////////////////////////////////////////////////////////////////
+		////////////////////////////////////////////////////////////////////////////
+
+		class RegenLaunchScriptsTask : public UserTask
+		{
+		public:
+			RegenLaunchScriptsTask(gcRefPtr<UserCore::UserI> user);
+			void doTask();
+			const char* getName(){ return "RegenLaunchScriptsTask"; }
+		};
+	}
 }
 
 #endif //DESURA_USERTASKS_H

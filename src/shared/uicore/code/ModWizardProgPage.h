@@ -72,7 +72,7 @@ protected:
 	void onClose( wxCloseEvent& event );
 private:
 
-	UserCore::Thread::MCFThreadI* m_pThread;
+	gcRefPtr<UserCore::Thread::MCFThreadI> m_pThread;
 	volatile bool m_bStopped;
 
 	bool m_bAddToAccount;

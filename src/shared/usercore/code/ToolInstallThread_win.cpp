@@ -34,7 +34,7 @@ using namespace UserCore;
 using namespace UserCore::Misc;
 
 
-ToolInstallThread::ToolInstallThread(ToolManager* toolManager, std::mutex &mapLock, std::map<ToolTransactionId, ToolTransInfo*> &transactions, const char* userName, HWND handle) 
+ToolInstallThread::ToolInstallThread(gcRefPtr<ToolManager> toolManager, std::mutex &mapLock, std::map<ToolTransactionId, gcRefPtr<ToolTransInfo>> &transactions, const char* userName, HWND handle)
 	: ::Thread::BaseThread("Tool Install Thread")
 	, m_mTransactions(transactions)
 	, m_MapLock(mapLock)
@@ -77,7 +77,7 @@ void ToolInstallThread::onPipeDisconnect()
 	
 	gcException e(ERR_PIPE, "Pipe to Tool Install Helper Disconnected. Failed to install tools.");
 
-	std::for_each(m_mTransactions.begin(), m_mTransactions.end(), [&e](std::pair<ToolTransactionId, Misc::ToolTransInfo*> t){
+	std::for_each(m_mTransactions.begin(), m_mTransactions.end(), [&e](std::pair<ToolTransactionId, gcRefPtr<Misc::ToolTransInfo>> t){
 		t.second->onINError(e);
 	});
 
@@ -106,7 +106,7 @@ void ToolInstallThread::startIPC()
 	m_pIPCClient->onDisconnectEvent += delegate(&onPipeDisconnectEvent);
 
 	m_MapLock.lock();
-	std::map<ToolTransactionId, ToolTransInfo*>::iterator it = m_mTransactions.find(m_CurrentInstall);
+	auto it = m_mTransactions.find(m_CurrentInstall);
 	
 	if (it != m_mTransactions.end())
 		it->second->startingIPC();

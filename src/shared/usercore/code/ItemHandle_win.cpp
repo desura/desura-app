@@ -34,16 +34,10 @@ DesuraId g_ElevatedGames [] =
 	DesuraId(),
 };
 
+using namespace UserCore::Item;
 
 
-
-namespace UserCore
-{
-namespace Item
-{
-
-
-void ItemHandle::doLaunch(Helper::ItemLaunchHelperI* helper)
+void ItemHandle::doLaunch(gcRefPtr<Helper::ItemLaunchHelperI> helper)
 {
 	preLaunchCheck();
 	
@@ -61,7 +55,7 @@ void ItemHandle::doLaunch(Helper::ItemLaunchHelperI* helper)
 		x++;
 	}
 	
-	UserCore::Item::Misc::ExeInfoI* ei = getItemInfo()->getActiveExe();
+	auto ei = getItemInfo()->getActiveExe();
 
 	gcString args;
 	gcString ea(ei->getExeArgs());
@@ -122,7 +116,4 @@ bool ItemHandle::createDesktopShortcut()
 bool ItemHandle::createMenuEntry()
 {
 	return false;
-}
-
-}
 }

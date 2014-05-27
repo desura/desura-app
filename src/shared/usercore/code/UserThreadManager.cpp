@@ -37,131 +37,122 @@ $/LicenseInfo$
 
 #include "GetItemListThread.h"
 
-namespace UserCore
-{
+using namespace UserCore;
 
 
 UserThreadManager::UserThreadManager()
 {
-	m_bDestructor = false;
 }
 
 UserThreadManager::~UserThreadManager()
 {
 	m_bDestructor = true;
 
-	for (size_t x=0; x<m_vThreadList.size(); x++)
 	{
-		m_vThreadList[x]->stop();
-
-		//must set thread manager to null so they dont try and remove them selfs after we are deleted
-		Thread::UserServiceI*	us = dynamic_cast<Thread::UserServiceI*>(m_vThreadList[x]);
-		Thread::MCFThreadI*		mt = dynamic_cast<Thread::MCFThreadI*>(m_vThreadList[x]);
-		Thread::UserThreadI*	ut = dynamic_cast<Thread::UserThreadI*>(m_vThreadList[x]);	
-
-		if (us)
-			us->setThreadManager(nullptr);
-
-		if (mt)
-			mt->setThreadManager(nullptr);
-
-		if (ut)
-			ut->setThreadManager(nullptr);
+		std::lock_guard<std::mutex> guard(m_ThreadLock);
+		gcAssert(m_vThreadList.empty());
 	}
+
+	cleanup();
 }
 
 
-void UserThreadManager::enlist(::Thread::BaseThread* pThread)
+void UserThreadManager::enlist(gcRefPtr<UserThreadProxyI> pThread)
 {
 	//we could of all ready been shutdown
 	if (m_bDestructor || !this)
 		return;
 
-	for (size_t x=0; x<m_vThreadList.size(); x++)
+	std::lock_guard<std::mutex> guard(m_ThreadLock);
+
+	if (std::find(begin(m_vThreadList), end(m_vThreadList), pThread) != end(m_vThreadList))
 	{
-		if (m_vThreadList[x] == pThread)
-			return;	
+		gcAssert(false);
+		return;
 	}
 
 	m_vThreadList.push_back(pThread);
 }
 
-void UserThreadManager::delist(::Thread::BaseThread* pThread)
+void UserThreadManager::delist(gcRefPtr<UserThreadProxyI> pThread)
 {
 	//we could of all ready been shutdown
-	if (!this)
+	if (m_bDestructor || !this)
 		return;
 
-	for (size_t x=0; x<m_vThreadList.size(); x++)
+	std::lock_guard<std::mutex> guard(m_ThreadLock);
+
+	auto it = std::find(begin(m_vThreadList), end(m_vThreadList), pThread);
+
+	if (it == end(m_vThreadList))
 	{
-		if (m_vThreadList[x] == pThread)
-		{
-			m_vThreadList.erase(m_vThreadList.begin()+x);
-			break;
-		}	
+		gcAssert(false);
+		return;
 	}
+
+	m_vThreadList.erase(it);
 }
 
-Thread::UserThreadI* UserThreadManager::newUpdateThread(Event<std::tuple<gcOptional<bool>, gcOptional<bool>, gcOptional<bool>>> *onForcePollEvent, bool loadLoginItems)
+gcRefPtr<UserCore::Thread::UserThreadI> UserThreadManager::newUpdateThread(Event<std::tuple<gcOptional<bool>, gcOptional<bool>, gcOptional<bool>>> *onForcePollEvent, bool loadLoginItems)
 {
-	UserCore::Thread::UpdateThread* thread = new UserCore::Thread::UpdateThread(onForcePollEvent, loadLoginItems);
+	gcRefPtr<Thread::UserThreadI> thread = gcRefPtr<UserCore::Thread::UpdateThread>::create(onForcePollEvent, loadLoginItems);
 	setUpThread(thread);
 	return thread;
 }
 
-Thread::MCFThreadI* UserThreadManager::newGetItemListThread()
+gcRefPtr<UserCore::Thread::MCFThreadI> UserThreadManager::newGetItemListThread()
 {
-	UserCore::Thread::GetItemListThread* thread = new UserCore::Thread::GetItemListThread();
+	gcRefPtr<Thread::MCFThreadI> thread = gcRefPtr<UserCore::Thread::GetItemListThread>::create();
 	setUpThread(thread);
 	return thread;
 }
 
-Thread::MCFThreadI* UserThreadManager::newInstalledWizardThread()
+gcRefPtr<UserCore::Thread::MCFThreadI> UserThreadManager::newInstalledWizardThread()
 {
-	UserCore::Thread::InstalledWizardThread* thread = new UserCore::Thread::InstalledWizardThread();
+	gcRefPtr<Thread::MCFThreadI> thread = gcRefPtr<UserCore::Thread::InstalledWizardThread>::create();
 	setUpThread(thread);
 	return thread;
 }
 
-Thread::MCFThreadI* UserThreadManager::newGatherInfoThread(DesuraId id, MCFBranch branch, MCFBuild build)
+gcRefPtr<UserCore::Thread::MCFThreadI> UserThreadManager::newGatherInfoThread(DesuraId id, MCFBranch branch, MCFBuild build)
 {
-	UserCore::Thread::GatherInfoThread* thread = new UserCore::Thread::GatherInfoThread(id, branch, build);
+	gcRefPtr<Thread::MCFThreadI> thread = gcRefPtr<UserCore::Thread::GatherInfoThread>::create(id, branch, build);
 	setUpThread(thread);
 	return thread;
 }
 
-Thread::MCFThreadI* UserThreadManager::newCreateMCFThread(DesuraId id, const char* path)
+gcRefPtr<UserCore::Thread::MCFThreadI> UserThreadManager::newCreateMCFThread(DesuraId id, const char* path)
 {
-	UserCore::Thread::CreateMCFThread* thread = new UserCore::Thread::CreateMCFThread(id, path);
+	gcRefPtr<Thread::MCFThreadI> thread = gcRefPtr<UserCore::Thread::CreateMCFThread>::create(id, path);
 	setUpThread(thread);
 	return thread;
 }
 
-Thread::MCFThreadI* UserThreadManager::newUploadPrepThread(DesuraId id, const char* file)
+gcRefPtr<UserCore::Thread::MCFThreadI> UserThreadManager::newUploadPrepThread(DesuraId id, const char* file)
 {
-	UserCore::Thread::UploadPrepThread* thread = new UserCore::Thread::UploadPrepThread(id, file);
+	gcRefPtr<Thread::MCFThreadI> thread = gcRefPtr<UserCore::Thread::UploadPrepThread>::create(id, file);
 	setUpThread(thread);
 	return thread;
 }
 
-Thread::MCFThreadI* UserThreadManager::newUploadResumeThread(DesuraId id, const char* key, WebCore::Misc::ResumeUploadInfo *info)
+gcRefPtr<UserCore::Thread::MCFThreadI> UserThreadManager::newUploadResumeThread(DesuraId id, const char* key, gcRefPtr<WebCore::Misc::ResumeUploadInfo> &info)
 {
-	UserCore::Thread::UploadResumeThread* thread = new UserCore::Thread::UploadResumeThread(id, key, info);
+	gcRefPtr<Thread::MCFThreadI> thread = gcRefPtr<UserCore::Thread::UploadResumeThread>::create(id, key, info);
 	setUpThread(thread);
 	return thread;
 }
 
-void UserThreadManager::setUpThread(Thread::MCFThreadI* thread)
+void UserThreadManager::setUpThread(gcRefPtr<UserCore::Thread::MCFThreadI> thread)
 {
-	thread->setThreadManager(this);
+	thread->setThreadManager(gcRefPtr<UserThreadManager>(this));
 	thread->setUpLoadManager(m_pUserCore->getUploadManager());
 	thread->setWebCore(m_pUserCore->getWebCore());
 	thread->setUserCore(m_pUserCore);
 }
 
-void UserThreadManager::setUpThread(Thread::UserThreadI* thread)
+void UserThreadManager::setUpThread(gcRefPtr<UserCore::Thread::UserThreadI> thread)
 {
-	thread->setThreadManager(this);
+	thread->setThreadManager(gcRefPtr<UserThreadManager>(this));
 	thread->setWebCore(m_pUserCore->getWebCore());
 	thread->setUserCore(m_pUserCore);
 }
@@ -169,36 +160,56 @@ void UserThreadManager::setUpThread(Thread::UserThreadI* thread)
 
 void UserThreadManager::printThreadList()
 {
+	std::lock_guard<std::mutex> guard(m_ThreadLock);
+
 	Msg("-------------------------------------------\n");
 	Msg(gcString("Thread count: {0}\n", m_vThreadList.size()));
 	Msg("-------------------------------------------\n");
 
-	for (size_t x=0; x<m_vThreadList.size(); x++)
+	size_t x = 1;
+	for (auto t : m_vThreadList)
 	{
 		gcString status;
 
-		if (m_vThreadList[x]->isPaused())
+		if (t->getThread()->isPaused())
 		{
-			status = gcString(" {0}: {1} [{2}]\n", x, m_vThreadList[x]->getName(), "Paused");
+			status = gcString(" {0}: {1} [{2}]\n", x, t->getThread()->getName(), "Paused");
 		}
-		else if (m_vThreadList[x]->isRunning())
+		else if (t->getThread()->isRunning())
 		{
-			status = gcString(" {0}: {1} [{2}]\n", x, m_vThreadList[x]->getName(), "Running");
+			status = gcString(" {0}: {1} [{2}]\n", x, t->getThread()->getName(), "Running");
 		}
-		else if (m_vThreadList[x]->isStopped())
+		else if (t->getThread()->isStopped())
 		{
-			status = gcString(" {0}: {1} [{2}]\n", x, m_vThreadList[x]->getName(), "Stopped");
+			status = gcString(" {0}: {1} [{2}]\n", x, t->getThread()->getName(), "Stopped");
 		}
 		else
 		{
-			status = gcString(" {0}: {1} [{2}]\n", x, m_vThreadList[x]->getName(), "Unknown");
+			status = gcString(" {0}: {1} [{2}]\n", x, t->getThread()->getName(), "Unknown");
 		}
 
 		Msg(status);
+		x++;
 	}
 
 	Msg("-------------------------------------------\n");
 }
 
+void UserThreadManager::cleanup()
+{
+	std::vector<gcRefPtr<UserThreadProxyI>> vTemp;
 
+	{
+		std::lock_guard<std::mutex> guard(m_ThreadLock);
+		vTemp = m_vThreadList;
+		m_vThreadList.clear();
+	}
+
+	for (auto t : vTemp)
+	{
+		t->getThread()->stop();
+		t->cleanup();
+	}
+
+	m_pUserCore = nullptr;
 }

@@ -103,7 +103,7 @@ void ToolInstallThread::doFirstInstall()
 	{
 		std::lock_guard<std::mutex> guard(m_MapLock);
 
-		auto it = m_mTransactions.find(m_CurrentInstall);
+	auto it = m_mTransactions.find(m_CurrentInstall);
 
 		if (it != m_mTransactions.end())
 			startRes = it->second->startNextInstall(getToolMain(), m_CurrentInstallId);
@@ -163,7 +163,7 @@ void ToolInstallThread::onINComplete(int32 &result)
 
 	m_bStillInstalling = false;
 
-	ToolInfo* tool = m_pToolManager->findItem(m_CurrentInstallId.toInt64());
+	auto tool = m_pToolManager->findItem(m_CurrentInstallId.toInt64());
 
 	bool installError = false;
 
@@ -200,7 +200,7 @@ void ToolInstallThread::onINError(gcException &error)
 	m_bStillInstalling = false;
 
 	std::lock_guard<std::mutex> guard(m_MapLock);
-	std::map<ToolTransactionId, ToolTransInfo*>::iterator it = m_mTransactions.find(m_CurrentInstall);
+	auto it = m_mTransactions.find(m_CurrentInstall);
 	
 	if (it != m_mTransactions.end())
 		it->second->onINError(error);

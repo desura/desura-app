@@ -53,13 +53,13 @@ namespace UserCore
 	namespace Misc
 	{
 
-		class ToolInstallThread : public ::Thread::BaseThread
+		class ToolInstallThread : public ::Thread::BaseThread, public gcRefBase
 		{
 		public:
 #ifdef WIN32
-			ToolInstallThread(ToolManager* toolManager, std::mutex &mapLock, std::map<ToolTransactionId, ToolTransInfo*> &transactions, const char* userName, HWND handle);
+			ToolInstallThread(gcRefPtr<ToolManager> toolManager, std::mutex &mapLock, std::map<ToolTransactionId, gcRefPtr<ToolTransInfo>> &transactions, const char* userName, HWND handle);
 #else
-			ToolInstallThread(ToolManager* toolManager, std::mutex &mapLock, std::map<ToolTransactionId, ToolTransInfo*> &transactions);
+			ToolInstallThread(gcRefPtr<ToolManager> toolManager, std::mutex &mapLock, std::map<ToolTransactionId, gcRefPtr<ToolTransInfo>> &transactions);
 #endif
 
 			~ToolInstallThread();
@@ -93,7 +93,7 @@ namespace UserCore
 
 		private:
 			std::mutex &m_MapLock;
-			std::map<ToolTransactionId, Misc::ToolTransInfo*> &m_mTransactions;
+			std::map<ToolTransactionId, gcRefPtr<Misc::ToolTransInfo>> &m_mTransactions;
 
 			::Thread::WaitCondition m_InstallWait;
 			std::mutex m_InstallLock;
@@ -103,7 +103,7 @@ namespace UserCore
 			DesuraId m_CurrentInstallId;
 			ToolTransactionId m_CurrentInstall;
 
-			ToolManager* m_pToolManager;
+			gcRefPtr<ToolManager> m_pToolManager;
 
 
 #ifdef WIN32
@@ -115,6 +115,8 @@ namespace UserCore
 #endif
 
 			bool m_bStillInstalling;
+
+			gc_IMPLEMENT_REFCOUNTING(ToolInstallThread)
 		};
 	}
 }

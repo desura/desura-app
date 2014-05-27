@@ -463,6 +463,7 @@ bool IsUIThread();
 
 	#include "gcError.h"
 	#include "Event.h"
+	#include "util/UtilPtr.h"
 	#include "util/UtilSafeDelete.h"
 	#include "util/UtilSafeString.h"
 	#include "util/UtilMisc.h"
@@ -613,7 +614,6 @@ bool IsUIThread();
 			gcAssert(m_pMemberVar == m_pTempVar);
 			m_pMemberVar = nullptr;
 		}
-
 	private:
 		T* &m_pMemberVar;
 		T* m_pTempVar;
