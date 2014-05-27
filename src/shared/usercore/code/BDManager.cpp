@@ -37,17 +37,22 @@ BDManager::BDManager(gcRefPtr<UserCore::User> user)
 
 BDManager::~BDManager()
 {
-	std::lock_guard<std::mutex> guard(m_BannerLock);
+	cleanup();
+}
 
-	for (auto it : m_mDownloadBannerTask)
+void BDManager::cleanup()
+{
 	{
-		it.first->onDLCompleteEvent -= delegate(this, &BDManager::onBannerComplete);
+		std::lock_guard<std::recursive_mutex> guard(m_BannerLock);
+		m_mDownloadBannerTask.clear();
 	}
+
+	m_pUser.reset();
 }
 
 void BDManager::onBannerComplete(UserCore::Task::BannerCompleteInfo& bci)
 {
-	std::lock_guard<std::mutex> guard(m_BannerLock);
+	std::lock_guard<std::recursive_mutex> guard(m_BannerLock);
 
 	auto it = std::find_if(begin(m_mDownloadBannerTask), end(m_mDownloadBannerTask), [&bci](std::pair<const gcRefPtr<UserCore::Task::DownloadBannerTask>, gcRefPtr<UserCore::Misc::BannerNotifierI>> p){
 		return p.first == bci.task;
@@ -64,7 +69,7 @@ void BDManager::onBannerComplete(UserCore::Task::BannerCompleteInfo& bci)
 
 void BDManager::downloadBanner(gcRefPtr<UserCore::Misc::BannerNotifierI> obj, const MCFCore::Misc::DownloadProvider& provider)
 {
-	std::lock_guard<std::mutex> guard(m_BannerLock);
+	std::lock_guard<std::recursive_mutex> guard(m_BannerLock);
 
 	auto task = gcRefPtr<UserCore::Task::DownloadBannerTask>::create(m_pUser, provider);
 	task->onDLCompleteEvent += delegate(this, &BDManager::onBannerComplete);
@@ -73,12 +78,12 @@ void BDManager::downloadBanner(gcRefPtr<UserCore::Misc::BannerNotifierI> obj, co
 	m_pUser->getThreadPool()->queueTask(task);
 }
 
-void BDManager::cancelDownloadBannerHooks(gcRefPtr<UserCore::Misc::BannerNotifierI> obj)
+void BDManager::cancelDownloadBannerHooks(UserCore::Misc::BannerNotifierI *pObj)
 {
-	std::lock_guard<std::mutex> guard(m_BannerLock);
+	std::lock_guard<std::recursive_mutex> guard(m_BannerLock);
 
-	auto it = std::find_if(begin(m_mDownloadBannerTask), end(m_mDownloadBannerTask), [obj](std::pair<const gcRefPtr<UserCore::Task::DownloadBannerTask>, gcRefPtr<UserCore::Misc::BannerNotifierI>> p){
-		return p.second = obj;
+	auto it = std::find_if(begin(m_mDownloadBannerTask), end(m_mDownloadBannerTask), [pObj](std::pair<const gcRefPtr<UserCore::Task::DownloadBannerTask>, gcRefPtr<UserCore::Misc::BannerNotifierI>> p){
+		return p.second.get() == pObj;
 	});
 
 	if (it != end(m_mDownloadBannerTask))

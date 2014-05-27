@@ -31,6 +31,8 @@ $/LicenseInfo$
 #include "User.h"
 #include "sqlite3x.hpp"
 
+#include "ItemThread.h"
+
 #include "mcfcore/DownloadProvider.h"
 #include "webcore/DownloadImageInfo.h"
 
@@ -46,10 +48,10 @@ namespace Task
 {
 
 
-DeleteThread::DeleteThread(gcRefPtr<UserCore::UserI> user, ::Thread::BaseThread *thread) 
+DeleteThread::DeleteThread(gcRefPtr<UserCore::UserI> user, gcRefPtr<UserCore::Item::ItemThread> &pThread)
 	: UserTask(user)
+	, m_pThread(pThread)
 {
-	m_pThread = thread;
 }
 
 DeleteThread::~DeleteThread()
@@ -58,9 +60,6 @@ DeleteThread::~DeleteThread()
 
 void DeleteThread::doTask()
 {
-	if (this->isStopped())
-		return;
-
 	safe_delete(m_pThread);
 }
 
@@ -161,12 +160,19 @@ void ChangeAccountTask::doTask()
 
 DownloadBannerTask::DownloadBannerTask(gcRefPtr<UserCore::UserI> user, const MCFCore::Misc::DownloadProvider& dp) 
 	: UserTask(user)
-	, m_DPInfo(this, dp)
+	, m_DownloadProvider(dp)
 {
+}
+
+DownloadBannerTask::~DownloadBannerTask()
+{
+	int a = 1;
 }
 
 void DownloadBannerTask::doTask()
 {
+	BannerCompleteInfo dpinfo(this, m_DownloadProvider);
+
 	try
 	{
 		UTIL::FS::Path path(getUserCore()->getAppDataPath(), "", false);
@@ -174,16 +180,16 @@ void DownloadBannerTask::doTask()
 		path += "temp";
 		UTIL::FS::recMakeFolder(path);
 
-		getWebCore()->downloadBanner(&m_DPInfo.info, path.getFullPath().c_str());
-		m_DPInfo.complete = true;
+		getWebCore()->downloadBanner(&m_DownloadProvider, path.getFullPath().c_str());
+		dpinfo.complete = true;
 	}
 	catch (gcException &e)
 	{
 		Warning("Failed to download banner: {0}\n", e);
-		m_DPInfo.complete = false;
+		dpinfo.complete = false;
 	}
 
-	onDLCompleteEvent(m_DPInfo);
+	onDLCompleteEvent(dpinfo);
 }
 
 ////////////////////////////////////////////////////////////////////////////

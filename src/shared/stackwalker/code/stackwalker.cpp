@@ -68,7 +68,12 @@ extern "C"
 			}
 		}
 
-		Safe::strncpy(szBuffer, nBuffSize, outWalk.c_str(), outWalk.size());
+		auto nSize = outWalk.size();
+
+		if (nSize > nBuffSize)
+			nSize = nBuffSize - 1;
+
+		Safe::strncpy(szBuffer, nBuffSize, outWalk.c_str(), nSize);
 		return true;
 
 	}

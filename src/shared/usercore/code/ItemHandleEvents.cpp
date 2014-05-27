@@ -109,7 +109,7 @@ namespace
 		T m_t;
 	};
 
-	void CallEvent(std::vector<gcRefPtr<Helper::ItemHandleHelperI>> &vList, VoidEventItem::EventVoidFn Fn)
+	void CallEvent(std::vector<gcRefPtr<Helper::ItemHandleHelperI>> vList, VoidEventItem::EventVoidFn Fn)
 	{
 		for (size_t x = 0; x < vList.size(); x++)
 		{
@@ -119,7 +119,7 @@ namespace
 	}
 
 	template <typename T>
-	void CallEvent(std::vector<gcRefPtr<Helper::ItemHandleHelperI>> &vList, void (Helper::ItemHandleHelperI::*Fn)(T&), T& t)
+	void CallEvent(std::vector<gcRefPtr<Helper::ItemHandleHelperI>> vList, void (Helper::ItemHandleHelperI::*Fn)(T&), T& t)
 	{
 		for (size_t x = 0; x < vList.size(); x++)
 		{
@@ -129,7 +129,7 @@ namespace
 	}
 
 	template <typename T>
-	void CallEvent(std::vector<gcRefPtr<Helper::ItemHandleHelperI>> &vList, void (Helper::ItemHandleHelperI::*Fn)(T), T t)
+	void CallEvent(std::vector<gcRefPtr<Helper::ItemHandleHelperI>> vList, void (Helper::ItemHandleHelperI::*Fn)(T), T t)
 	{
 		for (size_t x = 0; x < vList.size(); x++)
 		{
@@ -161,7 +161,7 @@ namespace
 }
 
 
-ItemHandleEvents::ItemHandleEvents(std::mutex &helperLock, std::vector<gcRefPtr<Helper::ItemHandleHelperI>> &vHelperList)
+ItemHandleEvents::ItemHandleEvents(std::recursive_mutex &helperLock, std::vector<gcRefPtr<Helper::ItemHandleHelperI>> &vHelperList)
 	: m_HelperLock(helperLock)
 	, m_vHelperList(vHelperList)
 {
@@ -226,31 +226,31 @@ void ItemHandleEvents::deregisterTask(gcRefPtr<UserCore::ItemTask::BaseItemTask>
 
 void ItemHandleEvents::onComplete(uint32& status)
 {
-	std::lock_guard<std::mutex> guard(m_HelperLock);
+	std::lock_guard<std::recursive_mutex> guard(m_HelperLock);
 	CallEvent<uint32>(m_EventHistory, m_vHelperList, &Helper::ItemHandleHelperI::onComplete, status);
 }
 
 void ItemHandleEvents::onProgressUpdate(uint32& progress)
 {
-	std::lock_guard<std::mutex> guard(m_HelperLock);
+	std::lock_guard<std::recursive_mutex> guard(m_HelperLock);
 	CallEvent(m_EventHistory, m_vHelperList, &Helper::ItemHandleHelperI::onProgressUpdate, progress);
 }
 
 void ItemHandleEvents::onError(gcException& e)
 {
-	std::lock_guard<std::mutex> guard(m_HelperLock);
+	std::lock_guard<std::recursive_mutex> guard(m_HelperLock);
 	CallEvent(m_EventHistory, m_vHelperList, &Helper::ItemHandleHelperI::onError, e);
 }
 
 void ItemHandleEvents::onNeedWildCard(WCSpecialInfo& info)
 {
-	std::lock_guard<std::mutex> guard(m_HelperLock);
+	std::lock_guard<std::recursive_mutex> guard(m_HelperLock);
 	CallEvent(m_vHelperList, &Helper::ItemHandleHelperI::onNeedWildCard, info);
 }
 
 void ItemHandleEvents::onMcfProgress(MCFCore::Misc::ProgressInfo& info)
 {
-	std::lock_guard<std::mutex> guard(m_HelperLock);
+	std::lock_guard<std::recursive_mutex> guard(m_HelperLock);
 	if (info.percent != m_LastProg.percent || info.flag != m_LastProg.flag)
 	{
 		m_LastProg = info;
@@ -264,24 +264,24 @@ void ItemHandleEvents::onMcfProgress(MCFCore::Misc::ProgressInfo& info)
 
 void ItemHandleEvents::onComplete(gcString& str)
 {
-	std::lock_guard<std::mutex> guard(m_HelperLock);
+	std::lock_guard<std::recursive_mutex> guard(m_HelperLock);
 	CallEvent(m_EventHistory, m_vHelperList, &Helper::ItemHandleHelperI::onComplete, str);
 }
 
 void ItemHandleEvents::onDownloadProvider(UserCore::Misc::GuiDownloadProvider& provider)
 {
-	std::lock_guard<std::mutex> guard(m_HelperLock);
+	std::lock_guard<std::recursive_mutex> guard(m_HelperLock);
 	CallEvent(m_EventHistory, m_vHelperList, &Helper::ItemHandleHelperI::onDownloadProvider, provider);
 }
 
 void ItemHandleEvents::onVerifyComplete(UserCore::Misc::VerifyComplete& info)
 {
-	std::lock_guard<std::mutex> guard(m_HelperLock);
+	std::lock_guard<std::recursive_mutex> guard(m_HelperLock);
 	CallEvent(m_EventHistory, m_vHelperList, &Helper::ItemHandleHelperI::onVerifyComplete, info);
 }
 
 void ItemHandleEvents::onPause(bool state)
 {
-	std::lock_guard<std::mutex> guard(m_HelperLock);
+	std::lock_guard<std::recursive_mutex> guard(m_HelperLock);
 	CallEvent(m_EventHistory, m_vHelperList, &Helper::ItemHandleHelperI::onPause, state);
 }

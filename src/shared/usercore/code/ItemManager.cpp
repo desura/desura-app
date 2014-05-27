@@ -124,10 +124,10 @@ ItemManager::ItemManager(gcRefPtr<User> user)
 
 ItemManager::~ItemManager()
 {
-	destroy();
+	cleanup();
 }
 
-void ItemManager::destroy()
+void ItemManager::cleanup()
 {
 	saveDbItems(true);
 
@@ -136,6 +136,10 @@ void ItemManager::destroy()
 	onRecentUpdateEvent.reset();
 
 	auto list = dumpAndClear();
+
+	for (const auto & i : list)
+		i->cleanup();
+
 	safe_delete(list);
 }
 

@@ -61,18 +61,22 @@ UserCore::Item::ItemTaskGroupI::ACTION ItemTaskGroup::getAction()
 
 void ItemTaskGroup::getItemList(std::vector<gcRefPtr<ItemHandleI>> &list)
 {
-	m_ListLock.lock();
+	std::lock_guard<std::mutex> guard(m_ListLock);
+
 	for (size_t x=0; x<m_vWaitingList.size(); x++)
 	{
 		list.push_back(m_vWaitingList[x]);
 	}
-	m_ListLock.unlock();
 }
 
 void ItemTaskGroup::cancelAll()
 {
-	m_ListLock.lock();
+	{
+		std::lock_guard<std::mutex> guard(m_TaskListLock);
+		m_vTaskList.clear();
+	}
 
+	std::lock_guard<std::mutex> guard(m_ListLock);
 	for (auto i : m_vWaitingList)
 	{
 		auto handle = gcRefPtr<ItemHandle>::dyn_cast(i);
@@ -82,10 +86,6 @@ void ItemTaskGroup::cancelAll()
 	}
 
 	m_vWaitingList.clear();
-	m_ListLock.unlock();
-
-	if (m_bFinal)
-		delete this;
 }
 
 bool ItemTaskGroup::addItem(gcRefPtr<UserCore::Item::ItemInfoI> item)
@@ -106,15 +106,17 @@ bool ItemTaskGroup::addItem(gcRefPtr<ItemHandleI> item)
 	if (!handle->setTaskGroup(this))
 		return false;
 
-	m_ListLock.lock();
-	for (size_t x=0; x<m_vWaitingList.size(); x++)
 	{
-		if (m_vWaitingList[x] == handle)
-			return true;
-	}
+		std::lock_guard<std::mutex> guard(m_ListLock);
 
-	m_vWaitingList.push_back(handle);
-	m_ListLock.unlock();
+		for (size_t x = 0; x < m_vWaitingList.size(); x++)
+		{
+			if (m_vWaitingList[x] == handle)
+				return true;
+		}
+
+		m_vWaitingList.push_back(handle);
+	}
 
 	if (m_bStarted && m_uiActiveItem == UINT_MAX)
 		nextItem();
@@ -144,17 +146,18 @@ bool ItemTaskGroup::removeItem(gcRefPtr<ItemHandleI> item)
 
 	bool found = false;
 
-	m_ListLock.lock();
-	for (size_t x=0; x<m_vWaitingList.size(); x++)
 	{
-		if (m_vWaitingList[x] == handle)
+		std::lock_guard<std::mutex> guard(m_ListLock);
+		for (size_t x = 0; x < m_vWaitingList.size(); x++)
 		{
-			found = true;
-			m_vWaitingList.erase(m_vWaitingList.begin()+x);
-			break;
+			if (m_vWaitingList[x] == handle)
+			{
+				found = true;
+				m_vWaitingList.erase(m_vWaitingList.begin() + x);
+				break;
+			}
 		}
 	}
-	m_ListLock.unlock();
 
 	if (found)
 		handle->setTaskGroup(nullptr);
@@ -332,7 +335,12 @@ void ItemTaskGroup::onPause(bool state)
 
 gcRefPtr<UserCore::ItemTask::BaseItemTask> ItemTaskGroup::newTask(gcRefPtr<ItemHandle> handle)
 {
-	return gcRefPtr<GroupItemTask>::create(handle, this);
+	auto g = gcRefPtr<GroupItemTask>::create(handle, this);
+
+	std::lock_guard<std::mutex> guard(m_TaskListLock);
+	m_vTaskList.push_back(g);
+
+	return g;
 }
 
 void ItemTaskGroup::updateEvents(gcRefPtr<UserCore::ItemTask::BaseItemTask> task)
@@ -359,34 +367,11 @@ void ItemTaskGroup::updateEvents(gcRefPtr<UserCore::ItemTask::BaseItemTask> task
 	m_TaskListLock.unlock();
 }
 
-void ItemTaskGroup::registerItemTask(gcRefPtr<UserCore::ItemTask::BaseItemTask> task)
-{
-	m_TaskListLock.lock();
-	m_vTaskList.push_back(task);
-	m_TaskListLock.unlock();
-}
-
-void ItemTaskGroup::deregisterItemTask(gcRefPtr<UserCore::ItemTask::BaseItemTask> task)
-{
-	m_TaskListLock.lock();
-
-	for (size_t x=0; x<m_vTaskList.size(); x++)
-	{
-		if (m_vTaskList[x] == task)
-		{
-			m_vTaskList.erase(m_vTaskList.begin()+x);
-			break;
-		}
-	}
-
-	m_TaskListLock.unlock();
-}
-
 uint32 ItemTaskGroup::getPos(gcRefPtr<ItemHandleI> item)
 {
 	uint32 res = 0;
 
-	m_ListLock.lock();
+	std::lock_guard<std::mutex> guard(m_ListLock);
 
 	for (size_t x=0; x<m_vWaitingList.size(); x++)
 	{
@@ -396,8 +381,6 @@ uint32 ItemTaskGroup::getPos(gcRefPtr<ItemHandleI> item)
 			break;
 		}
 	}
-
-	m_ListLock.unlock();
 
 	if (m_uiActiveItem != UINT_MAX)
 		res -= (m_uiActiveItem+1);
@@ -411,9 +394,8 @@ uint32 ItemTaskGroup::getCount()
 {
 	uint32 res = 0;
 
-	m_ListLock.lock();
+	std::lock_guard<std::mutex> guard(m_ListLock);
 	res = m_vWaitingList.size();
-	m_ListLock.unlock();
 
 	if (m_uiActiveItem != UINT_MAX)
 		res -= (m_uiActiveItem+1);

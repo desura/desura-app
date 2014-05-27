@@ -56,13 +56,15 @@ namespace UserCore
 		~BDManager();
 
 		void downloadBanner(gcRefPtr<UserCore::Misc::BannerNotifierI> obj, const MCFCore::Misc::DownloadProvider& provider);
-		void cancelDownloadBannerHooks(gcRefPtr<UserCore::Misc::BannerNotifierI> obj);
+		void cancelDownloadBannerHooks(UserCore::Misc::BannerNotifierI *pObj);
+
+		void cleanup();
 
 	protected:
 		void onBannerComplete(UserCore::Task::BannerCompleteInfo& bci);
 
 	private:
-		std::mutex m_BannerLock;
+		std::recursive_mutex m_BannerLock;
 		std::map<gcRefPtr<UserCore::Task::DownloadBannerTask>, gcRefPtr<UserCore::Misc::BannerNotifierI>> m_mDownloadBannerTask;
 
 		gcRefPtr<UserCore::User> m_pUser;

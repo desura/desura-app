@@ -47,11 +47,11 @@ namespace UserCore
 			ItemThread(gcRefPtr<UserCore::Item::ItemHandle> handle);
 			~ItemThread();
 
-			void setThreadManager(gcRefPtr<UserCore::UserThreadManagerI> tm);
+			void setThreadManager(const gcRefPtr<UserCore::UserThreadManagerI> &tm);
 			void setWebCore(gcRefPtr<WebCore::WebCoreI> wc);
 			void setUserCore(gcRefPtr<UserCore::UserI> uc);
 
-			void queueTask(gcRefPtr<UserCore::ItemTask::BaseItemTask> task);
+			void queueTask(const gcRefPtr<UserCore::ItemTask::BaseItemTask> &task);
 
 			void purge();
 
@@ -75,7 +75,7 @@ namespace UserCore
 
 			void cleanup() override
 			{
-				gcAssert(!isRunning());
+				gcAssert(isStopped() || !isRunning());
 
 				purge();
 

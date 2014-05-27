@@ -94,7 +94,7 @@ namespace WebCore
 		PlayJavaScript
 	};
 
-	class CookieCallbackI : gcRefBase
+	class CookieCallbackI : public gcRefBase
 	{
 	public:
 		virtual void operator()(const char* szRootUrl, const char* szName, const char* szValue)=0;

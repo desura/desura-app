@@ -29,6 +29,8 @@ $/LicenseInfo$
 #pragma once
 #endif
 
+#include <thread>
+
 namespace UTIL
 {
 	namespace OS
@@ -150,6 +152,7 @@ namespace UTIL
 		public:
 			StackTrace(int nSize)
 				: m_nCount(0)
+				, m_ThreadId(std::this_thread::get_id())
 			{
 				if (nSize > 0)
 					m_StackPtrs = new PVOID[nSize];
@@ -166,6 +169,7 @@ namespace UTIL
 
 			PVOID* m_StackPtrs;
 			uint32 m_nCount;
+			std::thread::id m_ThreadId;
 		};
 
 		std::shared_ptr<UTIL::OS::StackTrace> getStackTrace(uint32 nStart = 0, uint32 nStop = 10);

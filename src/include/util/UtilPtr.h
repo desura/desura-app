@@ -173,7 +173,7 @@ public:
 	template <typename U>
 	operator gcRefPtr<U>()
 	{
-		return gcRefPtr<U>(m_pPtr, (gcRefPtr<U>::gcRefBaseFn)m_pRefFn);
+		return gcRefPtr<U>(m_pPtr);
 	}
 
 	T* operator->() const
@@ -256,6 +256,11 @@ public:
 
 		m_pPtr = nullptr;
 		m_pRefFn = nullptr;
+	}
+
+	bool operator==(T *ptr) const
+	{
+		return m_pPtr == ptr;
 	}
 
 	bool operator==(const gcRefPtr<T> &ptr) const

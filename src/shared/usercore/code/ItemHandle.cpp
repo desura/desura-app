@@ -92,6 +92,16 @@ ItemHandle::~ItemHandle()
 {
 }
 
+void ItemHandle::cleanup()
+{
+	std::lock_guard<std::mutex> guard(m_GroupLock);
+
+	if (m_pGroup)
+		m_pGroup->removeItem(this);
+
+	m_pGroup = nullptr;
+}
+
 void ItemHandle::setFactory(gcRefPtr<Helper::ItemHandleFactoryI> factory)
 {
 	m_pFactory = factory;
@@ -212,16 +222,12 @@ void ItemHandle::delHelper(gcRefPtr<Helper::ItemHandleHelperI> helper)
 	if (!helper)
 		return;
 
-	std::lock_guard<std::mutex> guard(m_HelperLock);
+	std::lock_guard<std::recursive_mutex> guard(m_HelperLock);
 
-	for (size_t x=0; x<m_vHelperList.size(); x++)
-	{
-		if (m_vHelperList[x]->getId() == helper->getId())
-		{
-			m_vHelperList.erase(m_vHelperList.begin()+x);
-			break;
-		}
-	}
+	auto it = std::remove(begin(m_vHelperList), end(m_vHelperList), helper);
+
+	if (it != end(m_vHelperList))
+		m_vHelperList.erase(it, end(m_vHelperList));
 }
 
 Event<ITEM_STAGE>& ItemHandle::getChangeStageEvent()
@@ -651,10 +657,11 @@ void ItemHandle::stopThread()
 	gcTrace("");
 
 	std::lock_guard<std::recursive_mutex> guard(m_ThreadMutex);
+	m_pThread->setThreadManager(nullptr);
 
 	gcAssert(m_pThread.getRefCt() == 1);
-	m_pUserCore->getThreadPool()->queueTask(gcRefPtr<UserCore::Task::DeleteThread>::create(m_pUserCore, m_pThread.get()));
-	
+
+	m_pUserCore->getThreadPool()->queueTask(gcRefPtr<UserCore::Task::DeleteThread>::create(m_pUserCore, m_pThread));
 	m_pThread = nullptr;
 	m_bStopped = true;
 }
@@ -699,7 +706,7 @@ void ItemHandle::addHelper(gcRefPtr<Helper::ItemHandleHelperI> helper)
 	if (!helper)
 		return;
 
-	std::lock_guard<std::mutex> guard(m_HelperLock);
+	std::lock_guard<std::recursive_mutex> guard(m_HelperLock);
 
 	m_vHelperList.push_back(helper);
 	helper->setId(m_uiHelperId);
@@ -1252,6 +1259,7 @@ void ItemHandle::cancelCurrentStage()
 
 void ItemHandle::getStatusStr(LanguageManagerI & pLangMng, char* buffer, uint32 buffsize)
 {
+	std::lock_guard<std::mutex> guard(m_GroupLock);
 	getStatusStr_s(this, m_pItemInfo, m_uiStage, m_pGroup, pLangMng, buffer, buffsize);
 }
 
@@ -1383,6 +1391,7 @@ bool ItemHandle::setTaskGroup(gcRefPtr<ItemTaskGroup> group, bool force)
 			m_pThread->purge();
 	}
 
+	std::lock_guard<std::mutex> guard(m_GroupLock);
 	m_pGroup = group;
 
 	if (group)
@@ -1400,11 +1409,13 @@ bool ItemHandle::setTaskGroup(gcRefPtr<ItemTaskGroup> group, bool force)
 
 gcRefPtr<ItemTaskGroupI> ItemHandle::getTaskGroup()
 {
+	std::lock_guard<std::mutex> guard(m_GroupLock);
 	return m_pGroup;
 }
 
 void ItemHandle::force()
 {
+	std::lock_guard<std::mutex> guard(m_GroupLock);
 	if (!m_pGroup)
 		return;
 

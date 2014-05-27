@@ -35,11 +35,9 @@ public:
 	{
 	}
 
-	virtual gcRefPtr<Thread::BaseTask> getTask()
+	gcRefPtr<Thread::BaseTask> getTask() override
 	{
-		auto task = m_pTask;
-		delete this;
-		return task;
+		return m_pTask;
 	}
 
 	gcRefPtr<Thread::BaseTask> m_pTask;

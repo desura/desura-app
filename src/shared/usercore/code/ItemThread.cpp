@@ -46,6 +46,9 @@ ItemThread::ItemThread(gcRefPtr<UserCore::Item::ItemHandle> handle)
 
 ItemThread::~ItemThread()
 {
+	//Should have this reset before we get here
+	gcAssert(!m_pThreadManager);
+
 	purge();
 
 	//for some reason it blocks on stop. 
@@ -53,9 +56,6 @@ ItemThread::~ItemThread()
 	nonBlockStop();
 	m_WaitCond.notify();
 	join();
-
-	if (m_pThreadManager)
-		m_pThreadManager->delist(this);
 }
 
 void ItemThread::purge()
@@ -78,13 +78,22 @@ void ItemThread::purge()
 	}
 }
 
-void ItemThread::setThreadManager(gcRefPtr<UserCore::UserThreadManagerI> tm)
+void ItemThread::setThreadManager(const gcRefPtr<UserCore::UserThreadManagerI> &tm)
 {
-	gcAssert(tm);
-	m_pThreadManager = tm;
+	if (tm)
+	{
+		m_pThreadManager = tm;
 
-	if (m_pThreadManager)
-		m_pThreadManager->enlist(this);
+		if (m_pThreadManager)
+			m_pThreadManager->enlist(this);
+	}
+	else
+	{
+		if (m_pThreadManager)
+			m_pThreadManager->delist(this);
+
+		m_pThreadManager = tm;
+	}
 }
 
 void ItemThread::setWebCore(gcRefPtr<WebCore::WebCoreI> wc)
@@ -97,13 +106,10 @@ void ItemThread::setUserCore(gcRefPtr<UserCore::UserI> uc)
 	m_pUserCore = uc;
 }
 
-void ItemThread::queueTask(gcRefPtr<UserCore::ItemTask::BaseItemTask> task)
+void ItemThread::queueTask(const gcRefPtr<UserCore::ItemTask::BaseItemTask> &task)
 {
 	if (isStopped())
-	{
-		safe_delete(task);
 		return;
-	}
 
 	if (!task)
 		return;

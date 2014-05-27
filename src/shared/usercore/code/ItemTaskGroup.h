@@ -107,8 +107,6 @@ namespace UserCore
 			void nextItem();
 
 			void updateEvents(gcRefPtr<UserCore::ItemTask::BaseItemTask> task);
-			void registerItemTask(gcRefPtr<UserCore::ItemTask::BaseItemTask> task);
-			void deregisterItemTask(gcRefPtr<UserCore::ItemTask::BaseItemTask> task);
 
 			class GroupItemTask :  public UserCore::ItemTask::BaseItemTask
 			{
@@ -117,12 +115,6 @@ namespace UserCore
 					: BaseItemTask(UserCore::Item::ITEM_STAGE::STAGE_WAIT, "TaskGroup", handle)
 					, m_pGroup(group)
 				{
-					m_pGroup->registerItemTask(this);
-				}
-
-				~GroupItemTask()
-				{
-					m_pGroup->deregisterItemTask(this);
 				}
 
 				virtual void doRun()

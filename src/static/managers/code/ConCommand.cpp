@@ -27,9 +27,11 @@ $/LicenseInfo$
 #include "managers/ConCommand.h"
 #include "ConCommandManager.h"
 
-ConCommand::ConCommand(const char* printname, ConCommandCallBackFn callback) : BaseItem(printname)
+ConCommand::ConCommand(const char* printname, ConCommandCallBackFn callback) 
+	: BaseItem(printname)
+	, m_pCallBack(callback)
 {
-	m_pCallBack = callback;
+	addRef();
 
 	if (!g_pConComMang)
 	{

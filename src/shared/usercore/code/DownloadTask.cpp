@@ -48,7 +48,6 @@ DownloadTask::DownloadTask(gcRefPtr<UserCore::Item::ItemHandleI> handle, const c
 
 DownloadTask::~DownloadTask()
 {
-	clearEvents();
 }
 
 void DownloadTask::doRun()
@@ -176,7 +175,7 @@ void DownloadTask::clearEvents()
 	auto pUser = gcRefPtr<UserCore::User>::dyn_cast(getUserCore());
 
 	if (pUser)
-		pUser->getBDManager()->cancelDownloadBannerHooks(gcRefPtr<UserCore::Misc::BannerNotifierI>(this));
+		pUser->getBDManager()->cancelDownloadBannerHooks(this);
 }
 
 void DownloadTask::onStop()

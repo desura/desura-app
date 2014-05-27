@@ -50,20 +50,25 @@ namespace MCFCore
 
 namespace UserCore
 {
+	namespace Item
+	{
+		class ItemThread;
+	}
+
 	namespace Task
 	{
 
 		class DeleteThread : public UserTask
 		{
 		public:
-			DeleteThread(gcRefPtr<UserCore::UserI> user, ::Thread::BaseThread *thread);
+			DeleteThread(gcRefPtr<UserCore::UserI> user, gcRefPtr<UserCore::Item::ItemThread> &pThread);
 			~DeleteThread();
 
 			void doTask();
 			const char* getName(){ return "DeleteThread"; }
 
 		private:
-			::Thread::BaseThread *m_pThread;
+			gcRefPtr<UserCore::Item::ItemThread> m_pThread;
 		};
 
 
@@ -149,6 +154,7 @@ namespace UserCore
 		{
 		public:
 			DownloadBannerTask(gcRefPtr<UserCore::UserI> user, const MCFCore::Misc::DownloadProvider& dp);
+			~DownloadBannerTask();
 
 			void doTask();
 			Event<BannerCompleteInfo> onDLCompleteEvent;
@@ -156,7 +162,7 @@ namespace UserCore
 			const char* getName(){ return "DownloadBannerTask"; }
 
 		private:
-			BannerCompleteInfo m_DPInfo;
+			MCFCore::Misc::DownloadProvider m_DownloadProvider;
 		};
 
 

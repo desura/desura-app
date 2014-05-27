@@ -233,6 +233,8 @@ namespace UserCore
 
 			bool isCurrentlyInstalledGameOrMod();
 
+			void cleanup();
+
 			gc_IMPLEMENT_REFCOUNTING(ItemHandle);
 
 		protected:
@@ -271,7 +273,7 @@ namespace UserCore
 			bool m_bLock = false;
 			void* m_pLockObject = nullptr;
 
-			std::mutex m_HelperLock;
+			std::recursive_mutex m_HelperLock;
 			std::vector<gcRefPtr<Helper::ItemHandleHelperI>> m_vHelperList;
 
 			uint32 m_uiHelperId = 0;
@@ -284,6 +286,8 @@ namespace UserCore
 
 			gcRefPtr<Helper::ItemHandleFactoryI> m_pFactory;
 			gcRefPtr<ItemHandleEvents> m_pEventHandler;
+
+			std::mutex m_GroupLock;
 			gcRefPtr<ItemTaskGroup> m_pGroup;
 		};
 	}

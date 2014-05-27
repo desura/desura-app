@@ -42,7 +42,7 @@ namespace UserCore
 		class ItemHandleEvents : public gcRefBase
 		{
 		public:
-			ItemHandleEvents(std::mutex &helperLock, std::vector<gcRefPtr<Helper::ItemHandleHelperI>> &vHelperList);
+			ItemHandleEvents(std::recursive_mutex &helperLock, std::vector<gcRefPtr<Helper::ItemHandleHelperI>> &vHelperList);
 			~ItemHandleEvents();
 
 			void registerTask(gcRefPtr<UserCore::ItemTask::BaseItemTask> &task);
@@ -70,7 +70,7 @@ namespace UserCore
 
 			std::vector<gcRefPtr<EventItemI>> m_EventHistory;
 
-			std::mutex &m_HelperLock;
+			std::recursive_mutex &m_HelperLock;
 			std::vector<gcRefPtr<Helper::ItemHandleHelperI>> &m_vHelperList;
 
 			gc_IMPLEMENT_REFCOUNTING(ItemHandleEvents)

@@ -70,7 +70,7 @@ void gcRefCount::dumpStackTraces()
 	for (auto p : m_mStackTraces)
 	{
 		auto trace = UTIL::OS::getStackTraceString(p.second);
-		Debug(" -- 0x{0:x}: {1}\n", (size_t)p.first, trace);
+		Debug(" -- 0x{0:x} [TID: {2}]: {1}\n", (size_t)p.first, trace, p.second->m_ThreadId);
 	}
 		
 }

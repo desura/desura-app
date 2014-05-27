@@ -397,6 +397,8 @@ void MainApp::logIn(const char* user, const char* pass)
 		g_pUserHandle->getNeedCvarEvent() -= delegate(this, &MainApp::onNeedCvar);
 
 		g_pUserHandle->unlockDelete();
+
+		g_pUserHandle->logOut(false, false);
 		safe_delete(g_pUserHandle);
 		throw;
 	}
@@ -410,6 +412,7 @@ void MainApp::logOut(bool bShowLogin, bool autoLogin)
 	safe_delete(m_pInternalLink);
 
 	closeMainForm();
+	wxTheApp->ProcessIdle();
 
 	{
 		std::lock_guard<std::mutex> a(m_UserLock);

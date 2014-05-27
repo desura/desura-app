@@ -159,6 +159,12 @@ void User::cleanUp()
 	if (m_pUploadManager)
 		m_pUploadManager->cleanup();
 
+	if (m_pBannerDownloadManager)
+		m_pBannerDownloadManager->cleanup();
+
+	if (m_pItemManager)
+		m_pItemManager->cleanup();
+
 	//must delete this one first as upload threads are apart of thread manager
 	safe_delete(m_pUploadManager);
 	safe_delete(m_pUThread);
@@ -167,15 +173,9 @@ void User::cleanUp()
 	safe_delete(m_pGameExplorerManager);
 #endif
 	safe_delete(m_pCIPManager);
-
-	if (m_pItemManager)
-		m_pItemManager->destroy();
-
 	safe_delete(m_pItemManager);
 	safe_delete(m_pToolManager);
-	
 	safe_delete(m_pPipeClient);
-
 	safe_delete(m_pCDKeyManager);
 	safe_delete(m_pBannerDownloadManager);
 
