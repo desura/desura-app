@@ -60,8 +60,8 @@ public:
 	CVarManager();
 	~CVarManager();
 
-	bool RegCVar(gcRefPtr<CVar> &var) override;
-	void UnRegCVar(gcRefPtr<CVar> &var) override;
+	bool RegCVar(const gcRefPtr<CVar> &var) override;
+	void UnRegCVar(const gcRefPtr<CVar> &var) override;
 
 	void cleanUserCvars();
 

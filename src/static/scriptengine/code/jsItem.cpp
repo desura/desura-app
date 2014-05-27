@@ -31,6 +31,12 @@ $/LicenseInfo$
 
 
 
+JSObjHandle ToJSObject(ChromiumDLL::JavaScriptFactoryI* factory, const ScriptCoreItemI* pItem)
+{
+	return factory->CreateObject((void*)pItem);
+}
+
+
 ItemJSBinding::ItemJSBinding() : DesuraJSBase("item", "installer_binding_item.js")
 {
 	REG_SIMPLE_JS_FUNCTION( GetRealItem, ItemJSBinding );
@@ -40,7 +46,7 @@ ItemJSBinding::~ItemJSBinding()
 {
 }
 
-void* ItemJSBinding::GetRealItem(int32 id)
+ScriptCoreItemI* ItemJSBinding::GetRealItem(int32 id)
 {
 	return GetItem((uint32)id);
 }

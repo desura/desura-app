@@ -127,8 +127,8 @@ protected:
 class CVarRegTargetI
 {
 public:
-	virtual bool RegCVar(gcRefPtr<CVar> &var) = 0;
-	virtual void UnRegCVar(gcRefPtr<CVar> &var) = 0;
+	virtual bool RegCVar(const gcRefPtr<CVar> &var) = 0;
+	virtual void UnRegCVar(const gcRefPtr<CVar> &var) = 0;
 };
 
 class CCommandManagerI

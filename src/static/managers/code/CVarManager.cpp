@@ -103,7 +103,7 @@ CVarManager::~CVarManager()
 		pVar->deregister();
 }
 
-bool CVarManager::RegCVar(gcRefPtr<CVar> &var)
+bool CVarManager::RegCVar(const gcRefPtr<CVar> &var)
 {
 	auto temp = findItem(var->getName());
 	
@@ -123,7 +123,7 @@ bool CVarManager::RegCVar(gcRefPtr<CVar> &var)
 }
 
 //if this screws up its too late any way
-void  CVarManager::UnRegCVar(gcRefPtr<CVar> &var)
+void  CVarManager::UnRegCVar(const gcRefPtr<CVar> &var)
 {
 	removeItem(var->getName());
 }

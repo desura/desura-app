@@ -147,6 +147,8 @@ namespace UTIL
 		std::string UserDecodeString(const std::string& strKey, const std::string& strValue);
 
 #ifdef DEBUG
+
+#ifdef WIN32
 		class StackTrace
 		{
 		public:
@@ -171,6 +173,12 @@ namespace UTIL
 			uint32 m_nCount;
 			std::thread::id m_ThreadId;
 		};
+#else
+		class StackTrace
+		{
+		public:
+		};
+#endif
 
 		std::shared_ptr<UTIL::OS::StackTrace> getStackTrace(uint32 nStart = 0, uint32 nStop = 10);
 		std::string getStackTraceString(const std::shared_ptr<UTIL::OS::StackTrace> &trace);
