@@ -30,7 +30,7 @@ $/LicenseInfo$
 using namespace Thread;
 
 
-ThreadPoolThread::ThreadPoolThread(gcRefPtr<ThreadPoolTaskSourceI> &pTaskSource, bool forced) 
+ThreadPoolThread::ThreadPoolThread(const gcRefPtr<ThreadPoolTaskSourceI> &pTaskSource, bool forced) 
 	: BaseThread("Thread Pool Worker")
 	, m_bForced(forced)
 	, m_pTaskSource(pTaskSource)

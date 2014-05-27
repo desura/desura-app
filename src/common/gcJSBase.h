@@ -261,20 +261,20 @@ JSObjHandle ToJSObject(ChromiumDLL::JavaScriptFactoryI* factory, const gcRefPtr<
 #include <type_traits>
 
 template <typename T>
-typename void getUserObject(T* &t, JSObjHandle pObj)
+void getUserObject(T* &t, JSObjHandle pObj)
 {
 	typedef typename std::remove_pointer<T>::type X;
 	t = pObj->getUserObject<X>();
 }
 
 template <typename T>
-typename void getUserObject(gcRefPtr<T> &t, JSObjHandle pObj)
+void getUserObject(gcRefPtr<T> &t, JSObjHandle pObj)
 {
 	FromJSObject(t, pObj);
 }
 
 template <typename T>
-typename void getUserObject(T &t, JSObjHandle pObj)
+void getUserObject(T &t, JSObjHandle pObj)
 {
 	//should not get here
 	gcAssert(false);

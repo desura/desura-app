@@ -44,7 +44,7 @@ namespace Thread
 		//! @param id Thread id
 		//! @param forced Is a forced task
 		//!
-		ThreadPoolThread(gcRefPtr<ThreadPoolTaskSourceI> &pTaskSource, bool isForced = false);
+		ThreadPoolThread(const gcRefPtr<ThreadPoolTaskSourceI> &pTaskSource, bool isForced = false);
 		~ThreadPoolThread();
 
 		//! Is current task forced
