@@ -41,8 +41,8 @@ public:
 	ConsoleCommandManager();
 	~ConsoleCommandManager();
 
-	bool RegCCom(gcRefPtr<ConCommand> &var);
-	void UnRegCCom(gcRefPtr<ConCommand> &var);
+	bool RegCCom(const gcRefPtr<ConCommand> &var);
+	void UnRegCCom(const gcRefPtr<ConCommand> &var);
 
 	gcRefPtr<ConCommand> findCCommand(const char* name) override;
 	void getConCommandList(std::vector<gcRefPtr<ConCommand>> &vList) override;

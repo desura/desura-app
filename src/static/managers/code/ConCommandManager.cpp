@@ -50,7 +50,7 @@ ConsoleCommandManager::~ConsoleCommandManager()
 {
 }
 
-bool ConsoleCommandManager::RegCCom(gcRefPtr<ConCommand> &var)
+bool ConsoleCommandManager::RegCCom(const gcRefPtr<ConCommand> &var)
 {
 	auto temp = findItem(var->getName());
 	
@@ -62,7 +62,7 @@ bool ConsoleCommandManager::RegCCom(gcRefPtr<ConCommand> &var)
 }
 
 //if this screws up its too late any way
-void  ConsoleCommandManager::UnRegCCom(gcRefPtr<ConCommand> &var)
+void  ConsoleCommandManager::UnRegCCom(const gcRefPtr<ConCommand> &var)
 {
 	removeItem(var->getName());
 }
