@@ -140,6 +140,8 @@ void UploadMCFForm::setInfo_uid(DesuraId id, const char* uploadId)
 {
 	setInfo(id);
 
+	m_szUid = uploadId;
+
 	uint32 hash = Safe::atoi(uploadId);
 	auto pUpload = GetUploadMng()->findItem(hash);
 

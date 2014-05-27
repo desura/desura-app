@@ -90,7 +90,7 @@ bool MCF::isCompressed()
 
 void MCF::setFile(const char* file)
 {
-   m_szFile = file;
+    m_szFile = UTIL::FS::PathWithFile(file).getFullPath();
 }
 
 void MCF::setFile(const char* file, uint64 offset)
@@ -179,14 +179,6 @@ void MCF::stop()
 
 	if (m_pMCFServerCon)
 		m_pMCFServerCon->stop();
-}
-
-void MCF::setServerCon(MCFCore::Misc::MCFServerCon *pMCFServerCon)
-{
-	std::lock_guard<std::mutex> guard(m_mThreadMutex);
-
-	gcAssert((pMCFServerCon && !m_pMCFServerCon) || (!pMCFServerCon && m_pMCFServerCon));
-	m_pMCFServerCon = pMCFServerCon;
 }
 
 void MCF::setWorkerCount(uint16 count)
@@ -676,7 +668,7 @@ int32 MCF::verifyAll(const char* tempPath)
 	UTIL::FS::FileHandle fh(getFile(), UTIL::FS::FILE_READ);
 
 	uint32 badCount = 0;
-	std::atomic<bool> placeholder;
+    std::atomic<bool> placeholder = {false};
 
 	for (size_t x=0; x<m_pFileList.size(); x++)
 	{

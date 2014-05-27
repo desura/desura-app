@@ -749,8 +749,8 @@ void changeFolderPermissions(const std::wstring& dir)
 	Safe::wcscpy(&localDir, dir.c_str(), dir.size());
 
 	AutoDelete<wchar_t> ad(localDir);
-	AutoDeleteLocal<PACL> adNewDACL(&pNewDACL);
-	AutoDeleteLocal<PSID> adPsid(&psid);
+	AutoDeleteLocal<PACL> adNewDACL(pNewDACL);
+	AutoDeleteLocal<PSID> adPsid(psid);
 
 	// Get the current Security Info for the path
 	res = GetNamedSecurityInfo(localDir, SE_FILE_OBJECT, DACL_SECURITY_INFORMATION, nullptr, nullptr, &pDacl, nullptr, &ppSecurityDescriptor);

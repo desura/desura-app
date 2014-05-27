@@ -69,8 +69,6 @@ namespace UserCore
 		void checkAppUpdate(const XML::gcXMLElement &uNode, std::function<void(uint32, uint32, bool)> &updateCallback);
 
 	private:
-		HttpHandle m_hHttpHandle;
-
 		uint32 m_iAppId = 100;
 		uint32 m_iAppVersion = 0;
 

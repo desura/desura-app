@@ -265,11 +265,16 @@ ItemTabPage::~ItemTabPage()
 
 	if (userCore)
 	{
-		std::vector<gcRefPtr<UserCore::Item::ItemInfoI>> aList;
-		userCore->getItemManager()->getAllItems(aList);
+		auto itemManager = userCore->getItemManager();
+	
+		if (itemManager)
+		{
+			std::vector<gcRefPtr<UserCore::Item::ItemInfoI>> aList;
+			itemManager->getAllItems(aList);
 
-		for (size_t x=0; x<aList.size(); x++)
-			aList[x]->getInfoChangeEvent() -= guiDelegate(this, &ItemTabPage::onItemUpdate);
+			for (size_t x = 0; x<aList.size(); x++)
+				aList[x]->getInfoChangeEvent() -= guiDelegate(this, &ItemTabPage::onItemUpdate);
+		}
 
 		userCore->getLowSpaceEvent() -= guiDelegate(this, &ItemTabPage::onLowDiskSpace);
 		userCore->getForcedUpdatePollEvent() -= guiDelegate(this, &ItemTabPage::onUpdatePoll);

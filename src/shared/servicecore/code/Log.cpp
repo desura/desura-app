@@ -32,23 +32,53 @@ class Color;
 
 LogCallback* g_pLogCallBack = nullptr;
 
+std::mutex g_RegDllLock;
+std::vector<RegDLLCB_MCF> g_pRegDlls;
+
 
 void InitLogging(RegDLLCB_MCF cb)
 {
+	if (g_pLogCallBack)
+	{
+		if (cb)
+		{
+			std::lock_guard<std::mutex> guard(g_RegDllLock);
+			cb(g_pLogCallBack);
+			g_pRegDlls.push_back(cb);
+		}
+
+		return;
+	}
+		
+
 	LogCallback::MessageFn messageFn = [](MSG_TYPE type, const char* msg, Color* col, std::map<std::string, std::string> *mpArgs)
 	{
 		LogMsg(type, msg, col, mpArgs);
 	};
 
-	safe_delete(g_pLogCallBack);
 	g_pLogCallBack = new LogCallback();
 	g_pLogCallBack->RegMsg(messageFn);
 
-	cb(g_pLogCallBack);
+	if (cb)
+	{
+		g_pRegDlls.push_back(cb);
+		cb(g_pLogCallBack);
+	}
+
+	gcTraceS("");
 }
 
 void DestroyLogging()
 {
+	gcTraceS("");
+
+	{
+		std::lock_guard<std::mutex> guard(g_RegDllLock);
+
+		for (auto cb : g_pRegDlls)
+			cb(nullptr);
+	}
+
 	safe_delete(g_pLogCallBack);
 }
 

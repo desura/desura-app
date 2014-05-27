@@ -214,7 +214,7 @@ public:
 			pc.setUpPipes();
 			pc.start();
 
-			IPCUpdateApp* ipua = IPC::CreateIPCClass<IPCUpdateApp>(&pc, "IPCUpdateApp");
+			std::shared_ptr<IPCUpdateApp> ipua = IPC::CreateIPCClass<IPCUpdateApp>(&pc, "IPCUpdateApp");
 
 			if (!ipua)
 				return -1;
@@ -282,7 +282,7 @@ public:
 			pc.setUpPipes();
 			pc.start();
 
-			IPCUpdateApp* ipua = IPC::CreateIPCClass<IPCUpdateApp>(&pc, "IPCUpdateApp");
+			std::shared_ptr<IPCUpdateApp> ipua = IPC::CreateIPCClass<IPCUpdateApp>(&pc, "IPCUpdateApp");
 
 			if (!ipua)
 				return -1;

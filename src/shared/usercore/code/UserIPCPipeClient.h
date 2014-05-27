@@ -50,7 +50,10 @@ namespace UserCore
 #endif
 		void start();
 
-		IPCServiceMain* getServiceMain(){ return m_pServiceMain; }
+		std::shared_ptr<IPCServiceMain> getServiceMain()
+		{
+			return m_pServiceMain;
+		}
 
 		gc_IMPLEMENT_REFCOUNTING(UserIPCPipeClient);
 
@@ -73,7 +76,8 @@ namespace UserCore
 		gcString m_szUser;
 		gcString m_szAppDataPath;
 
-		IPCServiceMain *m_pServiceMain;
+		std::shared_ptr<IPCServiceMain> m_pServiceMain;
+
 #ifdef NIX
 		SharedObjectLoader m_hServiceDll;
 		IPCServerI *m_pServer;

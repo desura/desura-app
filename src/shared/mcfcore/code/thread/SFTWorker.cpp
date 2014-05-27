@@ -223,7 +223,8 @@ int SFTWorker::doDecompression(const char* buff, uint32 buffSize, bool endFile)
 	if (outBuffSize == 0)
 		return m_pBzs->getLastStatus();
 
-	AutoDelete<char> outBuff(new char[outBuffSize]);
+	char* szBuff = new char[outBuffSize];
+	AutoDelete<char> outBuff(szBuff);
 
 	m_pBzs->read(outBuff, outBuffSize);
 	int32 res = doWrite(outBuff, outBuffSize);
@@ -311,8 +312,6 @@ bool SFTWorker::bzErrorCheck(int32 bzStatus)
 
 
 #ifdef WITH_GTEST
-
-#include <gtest/gtest.h>
 
 namespace UnitTest
 {

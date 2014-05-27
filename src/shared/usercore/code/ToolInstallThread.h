@@ -88,7 +88,7 @@ namespace UserCore
 
 			bool hasToolMain();
 
-			IPCToolMain* getToolMain();
+			std::shared_ptr<IPCToolMain> getToolMain();
 			bool preInstallStart();
 
 		private:
@@ -111,14 +111,13 @@ namespace UserCore
 			HWND m_WinHandle;
 			gcString m_szUserName;
 #else
-			IPCToolMain* m_pToolMain;
+            std::shared_ptr<IPCToolMain> m_pToolMain;
 #endif
 
 			bool m_bStillInstalling;
 
 			gc_IMPLEMENT_REFCOUNTING(ToolInstallThread)
 		};
-
 	}
 }
 

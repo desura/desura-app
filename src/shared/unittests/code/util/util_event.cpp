@@ -19,8 +19,6 @@ or write to the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
 Linden Research, Inc., 945 Battery Street, San Francisco, CA  94111  USA
 $/LicenseInfo$
 */
-
-#include <gtest/gtest.h>
 #include "Common.h"
 
 namespace UnitTest

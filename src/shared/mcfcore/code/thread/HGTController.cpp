@@ -211,7 +211,7 @@ bool HGTController::writeDiff(uint64 &tot, uint64 fsize, const char* buff, size_
 
 void HGTController::doDownload()
 {
-	//header should be saved all ready so appened to it
+	//header should be saved all ready so appended to it
 	m_hFile.open(m_szFile, UTIL::FS::FILE_APPEND);
 	m_hFile.seek(0);
 
@@ -261,20 +261,19 @@ void HGTController::fillDownloadList(bool &usingDiffs)
 {
 	usingDiffs = false;
 	safe_delete(m_vSuperBlockList);
-	MCFCore::MCF *webMcf = new MCFCore::MCF();
+	MCFCore::MCF webMcf;
 
 	try
 	{
-		webMcf->dlHeaderFromHttp(m_szUrl.c_str());
+		webMcf.dlHeaderFromHttp(m_szUrl.c_str());
 	}
 	catch (gcException &e)
 	{
 		onErrorEvent(e);
-		safe_delete(webMcf);
 		return;
 	}
 
-	webMcf->sortFileList();
+	webMcf.sortFileList();
 
 	uint64 mcfOffset = m_pHeader->getSize();
 	size_t fsSize = m_rvFileList.size();
@@ -304,8 +303,8 @@ void HGTController::fillDownloadList(bool &usingDiffs)
 		if (!m_rvFileList[x]->isSaved())
 			continue;	
 
-		uint32 index = webMcf->findFileIndexByHash(m_rvFileList[x]->getHash());
-		auto webFile = webMcf->getFile(index);
+		uint32 index = webMcf.findFileIndexByHash(m_rvFileList[x]->getHash());
+		auto webFile = webMcf.getFile(index);
 
 		uint64 size = m_rvFileList[x]->getCurSize();
 		bool started = m_rvFileList[x]->hasStartedDL();
@@ -324,34 +323,36 @@ void HGTController::fillDownloadList(bool &usingDiffs)
 		if (!started)
 			m_rvFileList[x]->setOffSet(mcfOffset);
 
+		auto offset = m_rvFileList[x]->getOffSet();
+		auto webOffset = webFile->getOffSet();
 
-		Misc::WGTBlock* temp = new Misc::WGTBlock;
-
-		temp->fileOffset = m_rvFileList[x]->getOffSet();
-		temp->file = m_rvFileList[x];
-
-		if (webFile->hasDiff() && HasAllFlags(m_rvFileList[x]->getFlags(), MCFFileI::FLAG_CANUSEDIFF))
+		do
 		{
-			temp->webOffset = webFile->getDiffOffSet();
-			temp->size = webFile->getDiffSize();
+			uint32 tSize = INT_MAX;
 
-			if (!started)
-				mcfOffset += webFile->getSize();
+			if (size < INT_MAX)
+				tSize = (uint32)size;
 
-			usingDiffs = true;
-		}
-		else
-		{
+			Misc::WGTBlock* temp = new Misc::WGTBlock;
+
+			temp->fileOffset = offset;
+			temp->file = m_rvFileList[x];
+
 			m_rvFileList[x]->delFlag(MCFFileI::FLAG_CANUSEDIFF);
-			temp->webOffset = webFile->getOffSet();
-			temp->size = size;
+			temp->webOffset = webOffset;
+			temp->size = tSize;
 
 			if (!started)
-				mcfOffset += size;
-		}
+				mcfOffset += tSize;
 
-		vBlockList.push_back(temp);
-		m_uiTotal += temp->size;
+			vBlockList.push_back(temp);
+			m_uiTotal += tSize;
+
+			webOffset += tSize;
+			offset += tSize;
+			size -= tSize;
+		} 
+		while (size > INT_MAX);
 	}
 
 

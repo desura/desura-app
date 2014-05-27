@@ -61,8 +61,10 @@ void InstallVIPage::onButtonPressed(wxCommandEvent& event)
 		getItemHandle()->setPaused(true);
 		GetParent()->Close();
 	}
-
-	InstallBannerPage::onButtonPressed(event);
+	else
+	{
+		InstallBannerPage::onButtonPressed(event);
+	}
 }
 
 void InstallVIPage::onVerifyComplete(UserCore::Misc::VerifyComplete& info)

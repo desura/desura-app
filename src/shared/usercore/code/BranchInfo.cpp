@@ -541,7 +541,6 @@ void BranchInfo::getCDKey(std::vector<gcString> &vKeys) const
 
 #ifdef WITH_GTEST
 
-#include <gtest/gtest.h>
 #include "sql/ItemInfoSql.h"
 #include "ItemInfo.h"
 

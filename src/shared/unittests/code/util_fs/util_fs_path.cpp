@@ -20,7 +20,6 @@ Linden Research, Inc., 945 Battery Street, San Francisco, CA  94111  USA
 $/LicenseInfo$
 */
 
-#include <gtest/gtest.h>
 #include "Common.h"
 
 using namespace UTIL::FS;

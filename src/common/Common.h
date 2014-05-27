@@ -23,8 +23,32 @@ Linden Research, Inc., 945 Battery Street, San Francisco, CA  94111  USA
 $/LicenseInfo$
 */
 
+#ifdef DESURA_EXE
+#include "stdafx.h"
+#endif
+
 #ifndef COMMON_H
 	#define COMMON_H
+
+#ifdef WIN32
+#pragma warning( push ) 
+#pragma warning( disable : 4251)
+#pragma warning( disable : 4275)
+#endif
+
+#ifdef LINK_WITH_GTEST
+#include <gtest/gtest.h>
+#endif
+
+#ifdef LINK_WITH_GMOCK
+#include <gmock/gmock.h>
+#endif
+
+#ifdef WIN32
+#pragma warning( pop )
+#endif
+
+
 	#include <exception>
 
 	#ifdef DEBUG
@@ -60,6 +84,10 @@ inline void DoAssert(const char* szExp, const char* szFile, int nLine)
 #else
 	#define gcAssert( X ) do { } while(false)
 #endif
+
+void SetUIThreadId();
+bool IsUIThread();
+#define ASSERT_UITHREAD() gcAssert(IsUIThread())
 
 	#define BOOST_ENABLE_ASSERT_HANDLER 1
 	namespace 
@@ -431,7 +459,7 @@ inline void DoAssert(const char* szExp, const char* szFile, int nLine)
 	#define DEF_CHUNKSIZE (1024*1024*500) //500kb
 
 	#define USERAGENT "Desura Default"
-
+	#define USERAGENT_UPDATE "Desura Update"
 
 	#include "gcError.h"
 	#include "Event.h"
@@ -494,9 +522,6 @@ inline void DoAssert(const char* szExp, const char* szFile, int nLine)
 	}
 
 	#include <memory>
-
-	#define WeakPtr std::weak_ptr
-	#define SmartPtr std::shared_ptr
 
 	template <typename T>
 	T Clamp(T val, T minVal, T maxVal)
@@ -567,12 +592,64 @@ inline void DoAssert(const char* szExp, const char* szFile, int nLine)
 	}
 	#endif
 
-#endif
+	template <typename T>
+	class AutoScopeMemberVar
+	{
+	public:
+		AutoScopeMemberVar(T* &pMemberVar, T &pTempVar)
+			: AutoScopeMemberVar(pMemberVar, &pTempVar)
+		{
+		}
 
-#ifdef LINK_WITH_GTEST
-#include <gtest/gtest.h>
-#endif
+		AutoScopeMemberVar(T* &pMemberVar, T *pTempVar)
+			: m_pMemberVar(pMemberVar)
+			, m_pTempVar(pTempVar)
+		{
+			gcAssert(!pMemberVar);
+			m_pMemberVar = m_pTempVar;
+		}
 
-#ifdef LINK_WITH_GMOCK
-#include <gmock/gmock.h>
+		~AutoScopeMemberVar()
+		{
+			gcAssert(m_pMemberVar == m_pTempVar);
+			m_pMemberVar = nullptr;
+		}
+	private:
+		T* &m_pMemberVar;
+		T* m_pTempVar;
+	};
+
+
+	template <typename T>
+	class AutoScopeLockedMemberVar
+	{
+	public:
+		AutoScopeLockedMemberVar(T* &pMemberVar, std::mutex &mutex, T &pTempVar)
+			: AutoScopeLockedMemberVar(pMemberVar, mutex, &pTempVar)
+		{
+		}
+
+		AutoScopeLockedMemberVar(T* &pMemberVar, std::mutex &mutex, T *pTempVar)
+			: m_Mutex(mutex)
+			, m_pMemberVar(pMemberVar)
+			, m_pTempVar(pTempVar)
+		{
+			std::lock_guard<std::mutex> guard(m_Mutex);
+			gcAssert(!m_pMemberVar);
+			m_pMemberVar = m_pTempVar;
+		}
+
+		~AutoScopeLockedMemberVar()
+		{
+			std::lock_guard<std::mutex> guard(m_Mutex);
+			gcAssert(m_pMemberVar == m_pTempVar);
+			m_pMemberVar = nullptr;
+		}
+
+	private:
+		std::mutex &m_Mutex;
+		T* &m_pMemberVar;
+		T* m_pTempVar;
+	};
+
 #endif

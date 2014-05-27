@@ -32,10 +32,6 @@ $/LicenseInfo$
 #include "DownloadProvider.h"
 #include "Event.h"
 
-#ifdef LINK_WITH_GMOCK
-#include <gmock/gmock.h>
-#endif
-
 #include <array>
 
 #define MCF_FACTORY "MCF_INTERFACE_001"

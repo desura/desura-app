@@ -733,30 +733,81 @@ void ItemForm::setPaused(bool state)
 
 void ItemForm::setTitle(const wchar_t* key)
 {
+	SetTitle(getTitleString(key).c_str());
+}
+
+gcWString ItemForm::getTitleString(const wchar_t* key)
+{
 	gcRefPtr<UserCore::Item::ItemInfoI> item = m_pItemHandle?m_pItemHandle->getItemInfo():nullptr;
 	if (item)
 	{
 		m_szName = gcWString(item->getName());
-		SetTitle(gcWString(L"{0} {1}", Managers::GetString(key), m_szName));
+		return gcWString(L"{0} {1}", Managers::GetString(key), m_szName);
 	}
 	else
 	{
-		SetTitle(Managers::GetString(key));
+		return Managers::GetString(key);
 	}
 }
 
 void ItemForm::uninstall()
 {
-	cleanUpPages();
+	if (m_pPage)
+	{
+		m_HiddenPage.pPage = m_pPage;
+		m_HiddenPage.strTitle = GetTitle().wc_str();
+		m_HiddenPage.size = GetSize();
 
-	m_pPage =  new ItemFormPage::UninstallInfoPage(this);
+		m_pPage->Show(false);
+	}
+		
+	m_bsSizer->Clear(false);
+
+	m_bInitUninstall = true;
+	m_pPage = new ItemFormPage::UninstallInfoPage(this);
+	m_bInitUninstall = false;
+
 	m_pPage->setInfo(m_pItemHandle);
 
 	setTitle(L"#IF_UNINSTALL");
+	m_bsSizer->Add(m_pPage, 1, wxEXPAND, 0);
 
-	m_bsSizer->Add( m_pPage, 1, wxEXPAND, 0 );
 	Layout();
 	Refresh();
+}
+
+bool ItemForm::restorePage()
+{
+	if (!m_HiddenPage.pPage)
+		return false;
+
+	cleanUpPages();
+
+	m_pPage = m_HiddenPage.pPage;
+	m_pPage->Show(true);
+
+	gcFrame::setIdealSize(m_HiddenPage.size.GetWidth(), m_HiddenPage.size.GetHeight());
+
+	SetTitle(m_HiddenPage.strTitle.c_str());
+	m_bsSizer->Add(m_pPage, 1, wxEXPAND, 0);
+
+	Layout();
+	Refresh();
+
+	m_HiddenPage = HiddenPage();
+	return true;
+}
+
+void ItemForm::setIdealSize(int width, int height)
+{
+	if (m_bInitUninstall || !m_HiddenPage.pPage)
+	{
+		gcFrame::setIdealSize(width, height);
+	}
+	else
+	{
+		m_HiddenPage.size = wxSize(width, height);
+	}
 }
 
 void ItemForm::finishUninstall(bool complete, bool account)
@@ -778,6 +829,95 @@ void ItemForm::finishInstallCheck()
 	m_pPage->init();
 }
 
+void ItemForm::getNewPage(ITEM_STAGE stage, ItemFormPage::BaseInstallPage* &pPage, gcWString &strTitle)
+{
+	if (stage == ITEM_STAGE::STAGE_INSTALL)
+	{
+		strTitle = L"#IF_INSTALL";
+		pPage = new ItemFormPage::InstallINPage(this);
+	}
+	else if (stage == ITEM_STAGE::STAGE_INSTALL_COMPLEX)
+	{
+		strTitle = L"#IF_INSTALL";
+		pPage = new ItemFormPage::InstallINCPage(this);
+	}
+	else if (stage == ITEM_STAGE::STAGE_DOWNLOAD)
+	{
+		strTitle = L"#IF_DOWNLOAD";
+		pPage = new ItemFormPage::InstallDLPage(this);
+	}
+	else if (stage == ITEM_STAGE::STAGE_VERIFY)
+	{
+		strTitle = L"#IF_VERIFY";
+		pPage = new ItemFormPage::InstallVIPage(this);
+	}
+	else if (stage == ITEM_STAGE::STAGE_GATHERINFO)
+	{
+		strTitle = L"#IF_TITLE";
+		pPage = new ItemFormPage::InstallGIPage(this);
+	}
+	else if (stage == ITEM_STAGE::STAGE_UNINSTALL)
+	{
+		strTitle = L"#IF_UNINSTALL";
+		pPage = new ItemFormPage::UninstallProgressPage(this, L"#IF_UNINSTALL_LABEL");
+	}
+	else if (stage == ITEM_STAGE::STAGE_UNINSTALL_BRANCH)
+	{
+		strTitle = L"#IF_UNINSTALL_BRANCH";
+		pPage = new ItemFormPage::UninstallProgressPage(this, L"#IF_UNINSTALL_BRANCH_LABEL");
+	}
+	else if (stage == ITEM_STAGE::STAGE_UNINSTALL_PATCH || stage == ITEM_STAGE::STAGE_UNINSTALL_UPDATE)
+	{
+		strTitle = L"#IF_UNINSTALL_PATCH";
+		pPage = new ItemFormPage::UninstallProgressPage(this, L"#IF_UNINSTALL_PATCH_LABEL");
+	}
+	else if (stage == ITEM_STAGE::STAGE_UNINSTALL_COMPLEX)
+	{
+		if (m_pItemHandle)
+		{
+			m_szName = gcWString(m_pItemHandle->getItemInfo()->getName());
+			strTitle = gcWString(L"{0}: {1}", m_szName, Managers::GetString(L"#IF_UNINSTALL_COMPLEX"));
+		}
+		else
+		{
+			strTitle = L"#IF_UNINSTALL_COMPLEX";
+		}
+
+		pPage = new ItemFormPage::UninstallProgressPage(this, L"#IF_UNINSTALL_COMPLEX_LABEL");
+	}
+	else if (stage == ITEM_STAGE::STAGE_INSTALL_CHECK)
+	{
+		strTitle = L"#IF_INSTALL_CHECK";
+		pPage = new ItemFormPage::ICheckProgressPage(this);
+	}
+	else if (stage == ITEM_STAGE::STAGE_DOWNLOADTOOL)
+	{
+		strTitle = L"#IF_DOWNLOADTOOL";
+		pPage = new ItemFormPage::InstallDLToolPage(this);
+	}
+	else if (stage == ITEM_STAGE::STAGE_INSTALLTOOL)
+	{
+		strTitle = L"#IF_INSTALLTOOL";
+		pPage = new ItemFormPage::InstallINToolPage(this, m_pToolManager);
+	}
+	else if (stage == ITEM_STAGE::STAGE_VALIDATE)
+	{
+		strTitle = L"#IF_VALIDATE_TITLE";
+		pPage = new ItemFormPage::InstallDVPage(this);
+	}
+	else if (stage == ITEM_STAGE::STAGE_WAIT)
+	{
+		strTitle = L"#IF_WAIT_TITLE";
+		pPage = new ItemFormPage::InstallWaitPage(this);
+	}
+	else
+	{
+		//shouldn't get here!!!!!
+		gcAssert(false);
+		return;
+	}
+}
+
 void ItemForm::onStageChange(ITEM_STAGE &stage)
 {
 	if (stage == ITEM_STAGE::STAGE_CLOSE)
@@ -793,102 +933,49 @@ void ItemForm::onStageChange(ITEM_STAGE &stage)
 		return;
 	}
 
-	cleanUpPages();
 
-	if (stage == ITEM_STAGE::STAGE_INSTALL)
-	{
-		setTitle(L"#IF_INSTALL");
-		m_pPage = new ItemFormPage::InstallINPage(this);
-	}
-	else if (stage == ITEM_STAGE::STAGE_INSTALL_COMPLEX)
-	{
-		setTitle(L"#IF_INSTALL");
-		m_pPage = new ItemFormPage::InstallINCPage(this);
-	}
-	else if (stage == ITEM_STAGE::STAGE_DOWNLOAD)
-	{
-		setTitle(L"#IF_DOWNLOAD");
-		m_pPage = new ItemFormPage::InstallDLPage(this);
-	}
-	else if (stage == ITEM_STAGE::STAGE_VERIFY)
-	{
-		setTitle(L"#IF_VERIFY");
-		m_pPage = new ItemFormPage::InstallVIPage(this);
-	}
-	else if (stage == ITEM_STAGE::STAGE_GATHERINFO)
-	{
-		setTitle(L"#IF_TITLE");
-		m_pPage = new ItemFormPage::InstallGIPage(this);
-	}
-	else if (stage == ITEM_STAGE::STAGE_UNINSTALL)
-	{
-		setTitle(L"#IF_UNINSTALL");
-		m_pPage = new ItemFormPage::UninstallProgressPage(this, L"#IF_UNINSTALL_LABEL");
-	}
-	else if (stage == ITEM_STAGE::STAGE_UNINSTALL_BRANCH)
-	{
-		setTitle(L"#IF_UNINSTALL_BRANCH");
-		m_pPage = new ItemFormPage::UninstallProgressPage(this, L"#IF_UNINSTALL_BRANCH_LABEL");
-	}
-	else if (stage == ITEM_STAGE::STAGE_UNINSTALL_PATCH || stage == ITEM_STAGE::STAGE_UNINSTALL_UPDATE)
-	{
-		setTitle(L"#IF_UNINSTALL_PATCH");
-		m_pPage = new ItemFormPage::UninstallProgressPage(this, L"#IF_UNINSTALL_PATCH_LABEL");
-	}
-	else if (stage == ITEM_STAGE::STAGE_UNINSTALL_COMPLEX)
-	{
-		if (m_pItemHandle)
-		{
-			m_szName = gcWString(m_pItemHandle->getItemInfo()->getName());
-			SetTitle(gcWString(L"{0}: {1}", m_szName, Managers::GetString(L"#IF_UNINSTALL_COMPLEX")));
-		}
-		else
-		{
-			setTitle(L"#IF_UNINSTALL_COMPLEX");
-		}
+	ItemFormPage::BaseInstallPage *pPage = nullptr;
+	gcWString strTitle;
 
-		m_pPage = new ItemFormPage::UninstallProgressPage(this, L"#IF_UNINSTALL_COMPLEX_LABEL");
-	}
-	else if (stage == ITEM_STAGE::STAGE_INSTALL_CHECK)
+	auto size = GetSize();
+
+	getNewPage(stage, pPage, strTitle);
+
+	if (!pPage)
+		return;
+
+	pPage->setMCFInfo(m_uiMCFBranch, m_uiMCFBuild);
+	pPage->setInfo(m_pItemHandle);
+
+	if (stage == ITEM_STAGE::STAGE_UNINSTALL)
 	{
-		setTitle(L"#IF_INSTALL_CHECK");
-		m_pPage = new ItemFormPage::ICheckProgressPage(this);
+		cleanUpPage(m_HiddenPage.pPage);
+		m_HiddenPage = HiddenPage();
 	}
-	else if (stage == ITEM_STAGE::STAGE_DOWNLOADTOOL)
+
+	if (m_HiddenPage.pPage)
 	{
-		setTitle(L"#IF_DOWNLOADTOOL");
-		m_pPage = new ItemFormPage::InstallDLToolPage(this);
-	}
-	else if (stage == ITEM_STAGE::STAGE_INSTALLTOOL)
-	{
-		setTitle(L"#IF_INSTALLTOOL");
-		m_pPage = new ItemFormPage::InstallINToolPage(this, m_pToolManager);
-	}
-	else if (stage == ITEM_STAGE::STAGE_VALIDATE)
-	{
-		setTitle(L"#IF_VALIDATE_TITLE");
-		m_pPage = new ItemFormPage::InstallDVPage(this);
-	}
-	else if (stage == ITEM_STAGE::STAGE_WAIT)
-	{
-		setTitle(L"#IF_WAIT_TITLE");
-		m_pPage = new ItemFormPage::InstallWaitPage(this);
+		pPage->Show(false);
+		cleanUpPage(m_HiddenPage.pPage);
+
+		m_HiddenPage.pPage = pPage;
+		m_HiddenPage.strTitle = getTitleString(strTitle.c_str());
+
+		SetSize(size);
 	}
 	else
 	{
-		//shouldn't get here!!!!!
-		gcAssert(false);
-		return;
+		cleanUpPages();
+
+		setTitle(strTitle.c_str());
+
+		m_pPage = pPage;
+		m_pPage->Show(true);
+
+		m_bsSizer->Add(m_pPage, 1, wxEXPAND, 5);
+		Layout();
+		Refresh();
 	}
-
-	m_pPage->setMCFInfo(m_uiMCFBranch, m_uiMCFBuild);
-	m_pPage->setInfo(m_pItemHandle);
-
-	m_pPage->Show(true);
-
-	m_bsSizer->Add( m_pPage, 1, wxEXPAND, 5 );
-	Layout();
-	Refresh();
 }
 
 
@@ -934,23 +1021,31 @@ void ItemForm::onFormClose(wxCloseEvent& event)
 	
 	g_pMainApp->closeForm(this->GetId());
 	cleanUpPages();
+
+	if (m_HiddenPage.pPage)
+		cleanUpPage(m_HiddenPage.pPage);
+
+	m_HiddenPage = HiddenPage();
 }
 
 void ItemForm::cleanUpPages()
 {
 	m_bsSizer->Clear(false);
-
-	if (m_pPage)
-	{
-		m_pPage->deregisterHandle();
-
-		m_pPage->Show(false);
-		m_pPage->Close();
-		m_pPage->Destroy();
-		m_pPage = nullptr;
-	}
+	cleanUpPage(m_pPage);
+	m_pPage = nullptr;
 }
 
+void ItemForm::cleanUpPage(ItemFormPage::BaseInstallPage* pPage)
+{
+	if (!pPage)
+		return;
+
+	pPage->deregisterHandle();
+
+	pPage->Show(false);
+	pPage->Close();
+	pPage->Destroy();
+}
 
 
 

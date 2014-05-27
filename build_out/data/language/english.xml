@@ -348,7 +348,7 @@
 		<str name="#IF_CHECK_CIP">Custom Install</str>
 		<str name="#IF_CHECK_FOUND">{0} has been found and is now ready to go.</str><!-- {0} item name -->
 	
-		<str name="#IF_COMPLEXLABEL_INIT">{0} (Initilizing)</str>
+		<str name="#IF_COMPLEXLABEL_INIT">{0} (Initializing)</str>
 		<str name="#IF_COMPLEXREMOVE">Removing Old Files</str>
 		<str name="#IF_COMPLEXBACKUP">Backing up Game Files</str>
 		<str name="#IF_COMPLEXINSTALL">Installing Files</str>

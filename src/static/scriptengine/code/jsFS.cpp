@@ -47,12 +47,13 @@ FileSystemJSBinding::FileSystemJSBinding() : DesuraJSBase("fs", "installer_bindi
 	REG_SIMPLE_JS_FUNCTION( GetFileSize, FileSystemJSBinding );
 
 	REG_SIMPLE_JS_FUNCTION( OpenFileForWrite, FileSystemJSBinding );
-	REG_SIMPLE_JS_OBJ_FUNCTION( WriteFile, FileSystemJSBinding );
-	REG_SIMPLE_JS_OBJ_VOIDFUNCTION( CloseFile, FileSystemJSBinding );
+	REG_SIMPLE_JS_FUNCTION(WriteFile, FileSystemJSBinding);
+	REG_SIMPLE_JS_VOIDFUNCTION(CloseFile, FileSystemJSBinding);
 }
 
 FileSystemJSBinding::~FileSystemJSBinding()
 {
+	safe_delete(m_vFileHandles);
 }
 
 bool FileSystemJSBinding::IsValidFile(gcString file)
@@ -106,7 +107,7 @@ bool FileSystemJSBinding::DeleteFolder(gcString path)
 	return UTIL::FS::isValidFolder(path);
 }
 
-void* FileSystemJSBinding::OpenFileForWrite(gcString file)
+int32 FileSystemJSBinding::OpenFileForWrite(gcString file)
 {
 	UTIL::FS::Path path = UTIL::FS::PathWithFile(file);
 	UTIL::FS::recMakeFolder(path);
@@ -116,7 +117,8 @@ void* FileSystemJSBinding::OpenFileForWrite(gcString file)
 	try
 	{
 		handle->open(path, UTIL::FS::FILE_WRITE);
-		return handle;
+		m_vFileHandles.push_back(handle);
+		return m_vFileHandles.size() - 1;
 	}
 	catch (gcException &e)
 	{
@@ -124,17 +126,19 @@ void* FileSystemJSBinding::OpenFileForWrite(gcString file)
 		Warning("Failed to to open file in scriptcore: {0}\n", e);
 	}
 
-	return nullptr;
+	return 0;
 }
 
-bool FileSystemJSBinding::WriteFile(UTIL::FS::FileHandle* handle, gcString string)
+bool FileSystemJSBinding::WriteFile(int32 handle, gcString string)
 {
-	if (!handle)
+	if (handle < 0 || handle > (int32)m_vFileHandles.size())
 		return false;
+
+	auto fh = m_vFileHandles[handle];
 
 	try
 	{
-		handle->write(string.c_str(), string.size());
+		fh->write(string.c_str(), string.size());
 		return true;
 	}
 	catch (gcException &e)
@@ -145,11 +149,14 @@ bool FileSystemJSBinding::WriteFile(UTIL::FS::FileHandle* handle, gcString strin
 	return false;
 }
 
-void FileSystemJSBinding::CloseFile(UTIL::FS::FileHandle* handle)
+void FileSystemJSBinding::CloseFile(int32 handle)
 {
-	if (!handle)
+	if (handle < 0 || handle > (int32)m_vFileHandles.size())
 		return;
 
-	handle->close();
-	safe_delete(handle);
+	auto fh = m_vFileHandles[handle];
+
+	fh->close();
+	safe_delete(fh);
+	m_vFileHandles[handle] = nullptr;
 }

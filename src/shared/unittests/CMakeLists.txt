@@ -23,6 +23,7 @@ file(GLOB Sources code/util/gcBuff_test.cpp
 				  code/CVarTest.cpp
 				  code/JSTest.cpp
 				  code/CrashDumpTest.cpp
+				  code/McfTest.cpp
 )
 
 
@@ -38,6 +39,7 @@ add_library(unittest SHARED ${Sources} ${WIN_Sources})
 
 target_link_libraries(unittest
   gcJSBase
+  mcfcore
   util
   util_fs
   managers

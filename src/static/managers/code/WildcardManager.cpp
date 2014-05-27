@@ -65,19 +65,10 @@ gcString WildcardManager::constructPath(const char* path, bool fixPath)
 {
 	gcString ret;
 	char *szPathOut = nullptr;
+	AutoDelete<char> ad(szPathOut);
 
-	try
-	{
-		constructPath(path, &szPathOut, fixPath);
-		ret = szPathOut;
-		safe_delete(szPathOut);
-	}
-	catch (...)
-	{
-		safe_delete(szPathOut);
-		throw;
-	}
-
+	constructPath(path, &szPathOut, fixPath);
+	ret = szPathOut;
 	return ret;
 }
 	
@@ -175,7 +166,7 @@ void WildcardManager::constructPath(const char* path, char **res, uint8 *depth)
 
 			if (strlen(temp)==0)
 			{
-			  delete [] temp;
+				delete [] temp;
 				throw gcException(ERR_WILDCARD, gcString("Failed to find wildcard [{0}] Current node is null", path));
 			}
 

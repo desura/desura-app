@@ -58,11 +58,6 @@ uint64 GetMainThreadId();
 class EventHelper
 {
 public:
-	EventHelper()
-	{
-		m_bDone = false;
-	}
-
 	void done()
 	{
 		if (m_bDone)
@@ -85,7 +80,7 @@ public:
 
 private:
 	Thread::WaitCondition m_WaitCond;
-	volatile bool m_bDone;
+	std::atomic<bool> m_bDone;
 };
 
 class Invoker
@@ -103,23 +98,25 @@ public:
 
 	void invoke()
 	{
-		std::lock_guard<std::recursive_mutex> guard(m_Lock);
+		gcAssert(!m_bCallbackHit);
 
-		m_bInCallback = true;
+		std::lock_guard<std::mutex> guard(m_Lock);
+		m_bCallbackHit = true;
 
 		if (m_fnCallback)
 			m_fnCallback();
-
-		m_bInCallback = false;
 
 		m_pHelper.done();
 	}
 
 	void cancel()
 	{
-		std::lock_guard<std::recursive_mutex> guard(m_Lock);
+		if (m_bCallbackHit)
+			return;
 
-		if (!m_bInCallback)
+		std::lock_guard<std::mutex> guard(m_Lock);
+
+		if (!m_bCallbackHit)
 		{
 			m_fnCallback = std::function<void()>();
 			m_pHelper.done();
@@ -131,15 +128,9 @@ public:
 		m_pHelper.wait();
 	}
 
-	bool isCanceled()
-	{
-		std::lock_guard<std::recursive_mutex> guard(m_Lock);
-		return m_pHelper.isDone();
-	}
-
 private:
-	bool m_bInCallback = false;
-	std::recursive_mutex m_Lock;
+	std::atomic<bool> m_bCallbackHit;
+	std::mutex m_Lock;
 	EventHelper m_pHelper;
 	std::function<void()> m_fnCallback;
 };
@@ -353,11 +344,11 @@ public:
 			std::function<void()> pcb = std::bind(&GuiDelegate<TObj, Args...>::callback, this, std::ref(args)...);
 
 			auto invoker = std::make_shared<Invoker>(pcb);
-			auto event = new wxGuiDelegateEvent(invoker, m_pObj->GetId());
-			m_pObj->GetEventHandler()->QueueEvent(event);
-
 			setInvoker(invoker);
+
+			m_pObj->GetEventHandler()->QueueEvent(new wxGuiDelegateEvent(invoker, m_pObj->GetId()));
 			invoker->wait();
+
 			setInvoker(std::shared_ptr<Invoker>());
 		}
 	}
@@ -366,6 +357,7 @@ protected:
 	void setInvoker(const std::shared_ptr<Invoker> &i)
 	{
 		std::lock_guard<std::mutex> guard(m_InvokerMutex);
+		gcAssert((!m_pInvoker && i) || (m_pInvoker && !i));
 		m_pInvoker = i;
 	}
 

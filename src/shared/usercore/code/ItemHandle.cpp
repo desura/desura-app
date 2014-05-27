@@ -637,6 +637,10 @@ void ItemHandle::goToStageInstallComplex(MCFBranch branch, MCFBuild build, bool 
 
 		registerTask(clst);
 	}
+	else
+	{
+		gcAssert(false);
+	}
 }
 
 void ItemHandle::goToStageInstall(const char* path, MCFBranch branch)
@@ -649,6 +653,10 @@ void ItemHandle::goToStageInstall(const char* path, MCFBranch branch)
 			helper = m_pFactory->getInstallHelper();
 
 		registerTask(gcRefPtr<UserCore::ItemTask::InstallServiceTask>::create(this, path, branch, helper));
+	}
+	else
+	{
+		gcAssert(false);
 	}
 }
 
@@ -1424,8 +1432,6 @@ void ItemHandle::force()
 }
 
 #ifdef LINK_WITH_GMOCK
-
-#include <gmock/gmock.h>
 
 #include "sqlite3x.hpp"
 #include "sql/ItemInfoSql.h"

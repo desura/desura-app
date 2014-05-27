@@ -226,10 +226,6 @@ bool UpdateThreadOld::pollUpdates()
 	checkFreeSpace();
 #endif
 
-	m_hHttpHandle->cleanPostInfo();
-	m_hHttpHandle->cleanUp();
-	m_hHttpHandle->clearCookies();
-
 	return true;
 }
 
@@ -541,8 +537,6 @@ void UpdateThreadOld::updateBuildVer()
 
 
 #ifdef WITH_GTEST
-
-#include <gtest/gtest.h>
 
 namespace UnitTest
 {

@@ -27,24 +27,19 @@ $/LicenseInfo$
 #include "UnInstallProcess.h"
 #include "McfInit.h"
 #include "InstallScriptRunTime.h"
+#include "mcfcore/MCFMain.h"
 
-
-UninstallProcess::UninstallProcess(const char* mcfpath, const char* inspath, const char* installScript) : Thread::BaseThread("UninstallProcess Thread")
+UninstallProcess::UninstallProcess(const char* mcfpath, const char* inspath, const char* installScript) 
+	: Thread::BaseThread("UninstallProcess Thread")
+	, m_szMCFPath(mcfpath)
+	, m_szIPath(inspath)
+	, m_szInstallScript(installScript)
 {
-	m_szMCFPath = gcString(mcfpath);
-	m_szIPath = gcString(inspath);
-	m_szInstallScript = installScript;
-
-	m_pMcfHandle = nullptr;
-	m_uiLastProg = 0;
 }
 
 UninstallProcess::~UninstallProcess()
 {
 	stop();
-
-	if (m_pMcfHandle)
-		mcfDelFactory(m_pMcfHandle);
 }
 
 void UninstallProcess::run()
@@ -58,8 +53,7 @@ void UninstallProcess::run()
 		return;
 	}
 
-	MCFCore::MCFI *mcfHandle = mcfFactory();
-	m_pMcfHandle = mcfHandle;
+	McfHandle mcfHandle;
 	mcfHandle->getErrorEvent() += delegate(&onErrorEvent);
 	mcfHandle->getProgEvent() += delegate(this, &UninstallProcess::onProgress);
 
@@ -67,6 +61,8 @@ void UninstallProcess::run()
 
 	try
 	{
+		AutoScopeLockedMemberVar<MCFCore::MCFI> asmv1(m_pMcfHandle, m_McfLock, mcfHandle);
+
 		mcfHandle->setFile(m_szMCFPath.c_str());
 		mcfHandle->parseMCF();
 
@@ -79,14 +75,13 @@ void UninstallProcess::run()
 		onErrorEvent(except);
 	}
 
-	m_pMcfHandle=nullptr;
-	mcfDelFactory(mcfHandle);
-
 	onCompleteEvent();
 }
 
 void UninstallProcess::onStop()
 {
+	std::lock_guard<std::mutex> gaurd(m_McfLock);
+
 	if (m_pMcfHandle)
 		m_pMcfHandle->stop();
 }

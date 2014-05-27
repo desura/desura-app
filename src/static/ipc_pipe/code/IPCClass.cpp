@@ -35,60 +35,58 @@ $/LicenseInfo$
 
 namespace IPC
 {
-
-typedef struct
-{
-	char* data;
-	uint32 size;
-} PS_s;
-
-char* serializeList(std::vector<IPCParameterI*> &pList, uint32 &rsize)
-{
-	rsize = 0;
-
-	for (auto p : pList)
-		rsize += IPCParameterSIZE + p->getSerializeSize();
-
-	char* buff = new char[rsize];
-	char* temp = buff;
-
-	for (auto p : pList)
+	typedef struct
 	{
-		IPCParameter* pStruct = (IPCParameter*)temp;
+		char* data;
+		uint32 size;
+	} PS_s;
 
-		pStruct->size = p->getSerializeSize();
-		pStruct->type = p->getType();
+	char* serializeList(std::vector<IPCParameterI*> &pList, uint32 &rsize)
+	{
+		rsize = 0;
 
-		temp += IPCParameterSIZE;
-		p->serialize(temp);
-		temp += pStruct->size;
+		for (auto p : pList)
+			rsize += IPCParameterSIZE + p->getSerializeSize();
+
+		char* buff = new char[rsize];
+		char* temp = buff;
+
+		for (auto p : pList)
+		{
+			IPCParameter* pStruct = (IPCParameter*)temp;
+
+			pStruct->size = p->getSerializeSize();
+			pStruct->type = p->getType();
+
+			temp += IPCParameterSIZE;
+			p->serialize(temp);
+			temp += pStruct->size;
+		}
+
+		return buff;
 	}
 
-	return buff;
-}
-
-uint32 deserializeList(std::vector<IPCParameterI*> &list, const char* buffer, uint32 size)
-{
-	uint32 sizeLeft = size;
-	const char* tempB = buffer;
-
-	while (sizeLeft > 0)
+	uint32 deserializeList(std::vector<IPCParameterI*> &list, const char* buffer, uint32 size)
 	{
-		auto tempP = (IPCParameter*)tempB;
-		IPCParameterI* p = getParameter(tempP->type, &tempP->data, tempP->size);
+		uint32 sizeLeft = size;
+		const char* tempB = buffer;
 
-		list.push_back(p);
+		while (sizeLeft > 0)
+		{
+			auto tempP = (IPCParameter*)tempB;
+			IPCParameterI* p = getParameter(tempP->type, &tempP->data, tempP->size);
 
-		tempB += tempP->size + IPCParameterSIZE;
-		sizeLeft -= tempP->size + IPCParameterSIZE;
+			list.push_back(p);
+
+			tempB += tempP->size + IPCParameterSIZE;
+			sizeLeft -= tempP->size + IPCParameterSIZE;
+		}
+
+		return size - sizeLeft;
 	}
-
-	return size - sizeLeft;
 }
 
-
-
-
+using namespace IPC;
 
 
 
@@ -176,7 +174,7 @@ IPCParameterI* IPCClass::callFunction(const char* name, bool async, std::vector<
 		if (lock->wait(30, 0))
 			throw gcException(ERR_IPC, "Waited too long with no response");
 
-		ret = lock->result;
+		ret = lock->popResult();
 	}
 
 	return ret;
@@ -247,7 +245,7 @@ IPCParameterI* IPCClass::callLoopback(const char* name, bool async, std::vector<
 
 		//wait on mutex
 		lock->wait();
-		ret = lock->result;
+		ret = lock->popResult();
 	}
 
 	return ret;
@@ -303,6 +301,24 @@ void IPCClass::messageRecived(uint8 type, const char* buff, uint32 size)
 	else if (type == MT_EVENTTRIGGER)
 	{
 		handleEventTrigger(buff,size);
+	}
+	else if (type == MT_KILL)
+	{
+		gcTrace("MT_KILL {0}", m_uiId);
+
+		if (++m_nKillCount == 2)
+		{
+			sendMessage(MT_KILL_COMPLETE, nullptr, 0);
+			m_pManager->destroyClass(this);
+		}		
+	}
+	else if (type == MT_KILL_COMPLETE)
+	{
+		gcTrace("MT_KILL_COMPLETE {0}", m_uiId);
+
+		//need to wait till both event thread and callback thread are purged
+		if (++m_nKillCount == 2)
+			m_KillCondition.notify();
 	}
 }
 
@@ -382,13 +398,12 @@ void IPCClass::handleFunctionCall(const char* buff, uint32 size, bool async)
 void IPCClass::handleFunctionReturn(const char* buff, uint32 size)
 {
 	IPCFunctionCall *fch = (IPCFunctionCall*)buff;
-	IPCLock* lock = findLock(fch->id);
+	std::shared_ptr<IPCLock> lock = findLock(fch->id);
 
 	if (lock)
 	{
 		IPCParameter* par = (IPCParameter*)&fch->data;
-		lock->result = getParameter(par->type, &par->data, par->size);
-		lock->trigger();
+		lock->trigger(getParameter(par->type, &par->data, par->size));
 	}
 	else
 	{
@@ -440,9 +455,11 @@ void IPCClass::sendLoopbackMessage(uint8 type, const char* buff, uint32 size)
 void IPCClass::destroy()
 {
 	if (!m_pManager->isDisconnected())
-		sendMessage( MT_KILL, nullptr, 0 );
+	{
+		gcTrace("MT_KILL {0}", m_uiId);
+		sendMessage(MT_KILL, nullptr, 0);
+		m_KillCondition.wait();
+	}
 
 	m_pManager->destroyClass(this);
-}
-
 }

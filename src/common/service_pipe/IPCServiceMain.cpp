@@ -45,7 +45,7 @@ $/LicenseInfo$
 typedef BOOL (WINAPI* SetDllDirectoryFunc)(LPCTSTR);
 #endif
 
-IPCServiceMain* servicemain = nullptr;
+IPCServiceMain* g_pServicemain = nullptr;
 
 #ifndef DESURA_CLIENT
 
@@ -60,9 +60,9 @@ void StopLogging()
 
 gcString GetSpecialPath(int32 key)
 {
-	if (servicemain)
+	if (g_pServicemain)
 	{
-		IPC::PBlob str = servicemain->getSpecialPath(key);
+		IPC::PBlob str = g_pServicemain->getSpecialPath(key);
 		return std::string(str.getData(), str.getSize());
 	}
 
@@ -78,7 +78,7 @@ void SetTracer(TracerI *pTracer)
 
 void LogMsg(MSG_TYPE type, std::string msg, Color* col, std::map<std::string, std::string> *mpArgs)
 {
-	if (!servicemain || !g_bLogEnabled)
+	if (!g_pServicemain || !g_bLogEnabled)
 		return;
 
 #ifndef DEBUG
@@ -93,12 +93,12 @@ void LogMsg(MSG_TYPE type, std::string msg, Color* col, std::map<std::string, st
 
 	if (mpArgs)
 	{
-		servicemain->message((int)type, msg.c_str(), nCol, *mpArgs);
+		g_pServicemain->message((int)type, msg.c_str(), nCol, *mpArgs);
 	}
 	else
 	{
 		std::map<std::string, std::string> mEmpty;
-		servicemain->message((int)type, msg.c_str(), nCol, mEmpty);
+		g_pServicemain->message((int)type, msg.c_str(), nCol, mEmpty);
 	}
 
 	if (g_pTracer && type == MT_TRACE)
@@ -114,7 +114,7 @@ REG_IPC_CLASS( IPCServiceMain );
 IPCServiceMain::IPCServiceMain(IPC::IPCManager* mang, uint32 id, DesuraId itemId) : IPC::IPCClass(mang, id, itemId)
 {
 	registerFunctions();
-	servicemain = this;
+	g_pServicemain = this;
 
 #ifndef DESURA_CLIENT
 	m_pServiceThread = nullptr;
@@ -123,6 +123,8 @@ IPCServiceMain::IPCServiceMain(IPC::IPCManager* mang, uint32 id, DesuraId itemId
 
 IPCServiceMain::~IPCServiceMain()
 {
+	g_pServicemain = nullptr;
+
 #ifndef DESURA_CLIENT
 	if (m_pServiceThread)
 		m_pServiceThread->stop();
@@ -225,27 +227,27 @@ void IPCServiceMain::updateBinaryRegKey(const char* key, const char* value, size
 	IPC::functionCallV(this, "updateBinaryRegKeyBlob", key, blob);
 }
 
-IPCUpdateApp* IPCServiceMain::newUpdateApp()
+std::shared_ptr<IPCUpdateApp> IPCServiceMain::newUpdateApp()
 {
 	return IPC::CreateIPCClass< IPCUpdateApp >(m_pManager, "IPCUpdateApp");
 }
 
-IPCUninstallMcf* IPCServiceMain::newUninstallMcf()
+std::shared_ptr<IPCUninstallMcf> IPCServiceMain::newUninstallMcf()
 {
 	return IPC::CreateIPCClass< IPCUninstallMcf >(m_pManager, "IPCUninstallMcf");
 }
 
-IPCInstallMcf* IPCServiceMain::newInstallMcf()
+std::shared_ptr<IPCInstallMcf> IPCServiceMain::newInstallMcf()
 {
 	return IPC::CreateIPCClass< IPCInstallMcf >(m_pManager, "IPCInstallMcf");
 }
 
-IPCComplexLaunch* IPCServiceMain::newComplexLaunch()
+std::shared_ptr<IPCComplexLaunch> IPCServiceMain::newComplexLaunch()
 {
 	return IPC::CreateIPCClass< IPCComplexLaunch >(m_pManager, "IPCComplexLaunch");
 }
 
-IPCUninstallBranch* IPCServiceMain::newUninstallBranch()
+std::shared_ptr<IPCUninstallBranch> IPCServiceMain::newUninstallBranch()
 {
 	return IPC::CreateIPCClass< IPCUninstallBranch >(m_pManager, "IPCUninstallBranch");
 }

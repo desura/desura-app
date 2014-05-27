@@ -50,6 +50,8 @@ void gcErrorBox(wxWindow *parent, const char* title, const char* prompt, const g
 
 int gcMessageBox(wxWindow *parent, const wxString& message, const wxString& caption, long style, HelperButtonsI* helper)
 {
+	gcTraceS("Caption: {0}, Message: {1}", caption, message);
+
 	long decorated_style = style;
 
 	if (!HasAnyFlags(style, (wxICON_EXCLAMATION|wxICON_HAND|wxICON_INFORMATION|wxICON_QUESTION)))
@@ -66,14 +68,15 @@ int gcMessageBox(wxWindow *parent, const wxString& message, const wxString& capt
 	gcMessageDialog dialog(parent, message, caption, decorated_style|wxSTAY_ON_TOP);
 	dialog.addHelper(helper);
 
+	bool setMessageBox = false;
 	gcFrame* pFrame = dynamic_cast<gcFrame*>(parent);
 
 	if (pFrame)
-		pFrame->setMessageBox(&dialog);
+		setMessageBox = pFrame->setMessageBox(&dialog);
 
 	int ans = dialog.ShowModal();
 
-	if (pFrame)
+	if (pFrame && setMessageBox)
 		pFrame->setMessageBox(nullptr);
 
 	if (ans == wxID_OK)

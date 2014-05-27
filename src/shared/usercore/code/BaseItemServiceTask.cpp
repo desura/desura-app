@@ -54,7 +54,7 @@ void BaseItemServiceTask::resetFinish()
 
 void BaseItemServiceTask::waitForFinish()
 {
-	if (!m_bFinished)
+	if (hasStarted() && !m_bFinished)
 		m_WaitCond.wait();
 
 	m_bFinished = true;
@@ -65,12 +65,20 @@ void BaseItemServiceTask::doRun()
 	m_bStarted = true;
 	resetFinish();
 
-	bool shouldWait = initService();
+	try
+	{
+		bool shouldWait = initService();
 
-	if (shouldWait && !m_bFinished && !isStopped())
-		m_WaitCond.wait();
+		if (shouldWait && !m_bFinished && !isStopped())
+			m_WaitCond.wait();
 
-	setFinished();
+		setFinished();
+	}
+	catch (gcException &e)
+	{
+		onError(e);
+		setFinished();
+	}
 }
 
 void BaseItemServiceTask::onStop()

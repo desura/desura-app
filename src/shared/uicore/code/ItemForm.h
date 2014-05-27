@@ -107,6 +107,10 @@ namespace UI
 			void pushArgs(const LinkArgs &args);
 			void popArgs();
 
+			bool restorePage();
+
+			void setIdealSize(int width, int height) override;
+
 		protected:
 			friend class ItemFormProxy;
 
@@ -118,6 +122,9 @@ namespace UI
 
 			void uninstall();
 
+			void getNewPage(UserCore::Item::ITEM_STAGE stage, ItemFormPage::BaseInstallPage* &pPage, gcWString &strTitle);
+
+			gcWString getTitleString(const wchar_t* key);
 			void setTitle(const wchar_t* key);
 			void onStageChange(UserCore::Item::ITEM_STAGE &stage);
 
@@ -125,6 +132,7 @@ namespace UI
 			void onModalClose(wxCloseEvent& event);
 
 			void cleanUpPages();
+			void cleanUpPage(ItemFormPage::BaseInstallPage* pPage);
 
 			void onItemInfoGathered();
 
@@ -168,6 +176,15 @@ namespace UI
 			static void showLaunchError();
 
 		private:
+			class HiddenPage
+			{
+			public:
+				ItemFormPage::BaseInstallPage* pPage = nullptr;
+				gcWString strTitle;
+				wxSize size;
+			};
+
+
 			GatherInfoThread* m_pGIThread;
 
 			INSTALL_ACTION m_iaLastAction;
@@ -181,15 +198,16 @@ namespace UI
 			MCFBranch m_uiMCFBranch;
 
 			bool m_bIsInit;
+			bool m_bInitUninstall;
 
 			wxDialog* m_pDialog;
 
 			gcRefPtr<UserCore::ToolManagerI> m_pToolManager;
 
 			std::vector<LinkArgs> m_vArgs;
-
-			gcRefPtr<GatherInfoHandlerHelper> m_GIHH;
+			HiddenPage m_HiddenPage;
 			gcRefPtr<ItemFormProxy> m_pProxy;
+			gcRefPtr<GatherInfoHandlerHelper> m_GIHH;
 		};
 	}
 }

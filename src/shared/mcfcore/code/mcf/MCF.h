@@ -314,18 +314,15 @@ namespace MCFCore
 		void createCourgetteDiff(CourgetteInstance* ci, UTIL::MISC::Buffer &oldBuff, UTIL::MISC::Buffer &newBuff, const char* oldHash, std::shared_ptr<MCFFile>& file, UTIL::FS::FileHandle& dest);
 		void extractFile(const char* mcfPath, std::shared_ptr<MCFFile>& file, UTIL::MISC::Buffer &outBuff);
 
-		void setServerCon(MCFCore::Misc::MCFServerCon *pMCFServerCon);
 		void doDlHeaderFromWeb(MCFCore::Misc::MCFServerCon &msc);
-
-
 		void runThread(MCFCore::Thread::BaseMCFThread* pThread);
 
 	private:
 		uint16 m_uiWCount = 0;
 		gcString m_szFile;
 
-		std::atomic<bool> m_bStopped;
-		std::atomic<bool> m_bPaused;
+        std::atomic<bool> m_bStopped = {false};
+        std::atomic<bool> m_bPaused = {false};
 
 		uint32 m_iLastSorted = 0;
 		uint32 m_uiChunkCount = 0;

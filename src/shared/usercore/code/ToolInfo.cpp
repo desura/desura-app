@@ -633,8 +633,6 @@ const char* ToolInfo::getResultString()
 
 #ifdef WITH_GTEST
 
-#include <gtest/gtest.h>
-
 namespace UnitTest
 {
 	class ToolInfoFixture : public ::testing::TestWithParam<int>

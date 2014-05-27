@@ -20,8 +20,6 @@ Linden Research, Inc., 945 Battery Street, San Francisco, CA  94111  USA
 $/LicenseInfo$
 */
 
-#include <gtest/gtest.h>
-
 #include "Common.h"
 #include "util/UtilMisc.h"
 #include "SharedObjectLoader.h"
@@ -189,6 +187,24 @@ namespace UnitTest
 		std::string expected = "";
 
 		ASSERT_EQ(expected, out);
+	}
+
+	TEST(UtilDateTime, DisplayTime)
+	{
+		tm t = { 0 };
+		t.tm_hour = 6;
+		t.tm_min = 28;
+		t.tm_sec = 15;
+
+		t.tm_year = 206;
+		t.tm_mon = 1;
+		t.tm_mday = 7;
+
+		char szOut[255];
+		auto size = strftime(szOut, 255, "%x", &t);
+
+		std::string time_available = UTIL::MISC::dateTimeToDisplay("21060207062815");
+		ASSERT_STREQ(szOut, time_available.c_str());
 	}
 
 	TEST(SharedObjectLoader, ConvertToLinux_Win)

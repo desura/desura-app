@@ -87,7 +87,9 @@ void CreateMCFThread::doRun()
 		throw gcException(ERR_ZEROFILECOUNT, gcString("There are no files in the folder {0}. \nPlease check to see if you have the correct folder and try again.", m_szPath));
 
 
-	if (item->getBranchCount() == 0)
+	const gcString strNoCreatePatch = getUserCore()->getCVarValue("gc_mcfcreate_nopatch");
+
+	if (item->getBranchCount() == 0 || strNoCreatePatch == "1" || strNoCreatePatch == "true")
 	{
 		m_hMCFile->setHeader(getItemId(), MCFBranch(), MCFBuild());
 		m_hMCFile->getHeader()->setParent(0);

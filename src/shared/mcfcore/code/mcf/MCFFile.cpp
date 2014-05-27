@@ -265,21 +265,13 @@ uint8 MCFFile::isEquals( MCFFile * file)
 	{
 		return CMP_SAME;
 	}
-	else if (file->getTimeStamp() == this->getTimeStamp())
-	{
-		return CMP_SAME;
-	}
-	else if (file->getTimeStamp() > this->getTimeStamp())
-	{
-		return CMP_NEWER;
-	}
 	else if (file->getTimeStamp() < this->getTimeStamp())
 	{
 		return CMP_OLDER;
 	}
 	else
 	{
-		return CMP_NOTEQUAL;
+		return CMP_NEWER;
 	}
 }
 
@@ -735,7 +727,7 @@ bool MCFFile::crcCheck(uint16 blockId, UTIL::FS::FileHandle& file)
 {
 	if (m_vCRCList.size() != 0 && blockId >= m_vCRCList.size())
 	{
-		//corupt MCF header. Cant do much about it
+		//corrupt MCF header. Cant do much about it
 		return false;
 	}
 
@@ -744,6 +736,7 @@ bool MCFFile::crcCheck(uint16 blockId, UTIL::FS::FileHandle& file)
 
 
 	char* buff = new char[getBlockSize()];
+	AutoDelete<char> ad(buff);
 
 	uint32 todo = getBlockSize();
 	if (todo > (getCurSize() - offset))
@@ -753,9 +746,8 @@ bool MCFFile::crcCheck(uint16 blockId, UTIL::FS::FileHandle& file)
 	{
 		file.read(buff, todo);
 	}
-	catch (gcException &)
+	catch (...)
 	{
-		safe_delete(buff);
 		return false;
 	}
 
@@ -770,8 +762,6 @@ bool MCFFile::crcCheck(uint16 blockId, UTIL::FS::FileHandle& file)
 		uint32 crc = UTIL::MISC::CRC32((unsigned char*)buff, todo);
 		res = (crc == m_vCRCList[blockId]);
 	}
-
-	safe_delete(buff);
 
 	return res;
 }
@@ -882,8 +872,6 @@ void MCFFile::clearDiff()
 }
 
 #ifdef WITH_GTEST
-
-#include <gtest/gtest.h>
 
 static const char* gs_szTestFileXml = 
 "<files><file>"

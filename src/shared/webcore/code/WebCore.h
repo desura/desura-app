@@ -128,6 +128,12 @@ namespace WebCore
 
 		virtual gcString getUrl(WebCoreUrl id);
 
+
+		EventV& getLoggedOutEvent() override
+		{
+			return onLoggedOutEvent;
+		}
+
 		gcString getAppUpdateDownloadUrl(uint32 &appId, uint32 &appBuild) override;
 
 		//! Sends a password reminder to the dest email
@@ -164,6 +170,7 @@ namespace WebCore
 		const XML::gcXMLElement loginToServer(std::string url, std::string resource, PostMap &postData, XML::gcXMLDocument &xmlDocument);
 
 		EventV onCookieUpdateEvent;
+		EventV onLoggedOutEvent;
 
 		void onHttpProg(std::atomic<bool>* stop, Prog_s& prog);
 

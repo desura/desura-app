@@ -155,7 +155,7 @@ void ToolIPCPipeClient::stopHelper()
 	m_pServiceMain = nullptr;
 }
 
-IPCToolMain* ToolIPCPipeClient::getToolMain()
+std::shared_ptr<IPCToolMain> ToolIPCPipeClient::getToolMain()
 {
 	if (isDisconnected())
 		return nullptr;

@@ -154,14 +154,9 @@ template <typename T>
 class AutoDelete
 {
 public:
-	AutoDelete()
+	AutoDelete(T* &t)
+		: m_pPointer(t)
 	{
-		m_pPointer = nullptr;
-	}
-
-	AutoDelete(T* t)
-	{
-		m_pPointer = t;
 	}
 
 	~AutoDelete()
@@ -172,18 +167,6 @@ public:
 	T* handle()
 	{
 		return m_pPointer;
-	}
-
-	AutoDelete<T>& operator=(AutoDelete<T>& o)
-	{
-		if (this != &o)
-		{
-			safe_delete(m_pPointer);
-			m_pPointer = o.m_pPointer;
-			o.m_pPointer = nullptr;
-		}
-
-		return *this;
 	}
 
 	T* operator->()
@@ -197,35 +180,26 @@ public:
 	}
 
 protected:
-	T* m_pPointer;
+	T* &m_pPointer;
 };
 
 #ifdef WIN32
 template <typename T>
-class AutoDeleteLocal : public AutoDelete<T>
+class AutoDeleteLocal
 {
 public:
-	AutoDeleteLocal(T* t) : AutoDelete<T>(t)
+	AutoDeleteLocal(T t) 
+		: m_pPointer(t)
 	{
 	}
 
 	~AutoDeleteLocal()
 	{
-		LocalFree(*AutoDelete<T>::m_pPointer);
-		AutoDelete<T>::m_pPointer = nullptr;
+		LocalFree(m_pPointer);
 	}
 
-	AutoDeleteLocal<T>& operator=(AutoDeleteLocal<T>& o)
-	{
-		if (this != &o)
-		{
-			LocalFree(*AutoDelete<T>::m_pPointer);
-			AutoDelete<T>::m_pPointer = o.m_pPointer;
-			o.m_pPointer = nullptr;
-		}
-
-		return *this;
-	}
+protected:
+	T m_pPointer;
 };
 #endif
 

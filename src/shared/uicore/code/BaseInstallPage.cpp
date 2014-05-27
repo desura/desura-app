@@ -204,6 +204,7 @@ void BaseInstallPage::deregisterHandle()
 
 	if (m_pItemHandle)
 	{
+		if (m_pItemHandle->getItemInfo())
 		m_pItemHandle->getItemInfo()->getInfoChangeEvent() -= guiDelegate(this, &BaseInstallPage::onItemUpdate);
 
 		if (m_pIHH.get())

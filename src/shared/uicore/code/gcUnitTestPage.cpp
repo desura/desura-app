@@ -28,7 +28,6 @@ $/LicenseInfo$
 #include "gcUnitTestPage.h"
 
 #include <wx/listctrl.h>
-#include <gtest/gtest.h>
 #include "managers/CVar.h"
 
 #include "Console.h"

@@ -157,7 +157,7 @@ int AppUpdateInstall::run()
 		pc.setUpPipes();
 		pc.start();
 
-		IPCUpdateApp* ipua = IPC::CreateIPCClass< IPCUpdateApp >(&pc, "IPCUpdateApp");
+		std::shared_ptr<IPCUpdateApp> ipua = IPC::CreateIPCClass< IPCUpdateApp >(&pc, "IPCUpdateApp");
 
 		if (!ipua)
 		{
@@ -171,7 +171,6 @@ int AppUpdateInstall::run()
 
 		ipua->start(m_pPrivates->m_szMcfPath.c_str(), m_pPrivates->m_szInsPath.c_str(), m_pPrivates->m_bTestMode);
 		WaitForSingleObject(m_pEvent, INFINITE);
-
 
 		ipua->onCompleteEvent -= delegate(this, &AppUpdateInstall::onComplete);
 		ipua->onErrorEvent -= delegate(this, &AppUpdateInstall::onError);

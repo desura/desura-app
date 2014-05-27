@@ -67,7 +67,7 @@ public:
 	//! This was to fix a bug where moving a window that tried to resize it self while moving would 
 	//! cancel the resize
 	//!
-	void setIdealSize(int width, int height);
+	virtual void setIdealSize(int width, int height);
 
 	//! Enables saving of window position in the CVar db
 	//!
@@ -81,7 +81,7 @@ public:
 	//!
 	bool loadSavedWindowPos();
 
-	void setMessageBox(wxWindow *pDialog);
+	bool setMessageBox(wxWindow *pDialog);
 
 protected:
 	bool checkAndSetPendingClose();

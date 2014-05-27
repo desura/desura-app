@@ -156,14 +156,15 @@ public:
 	const std::string m_szName;
 
 	bool m_bIsRunning = false;
-	std::atomic<bool> m_bPause;
-	std::atomic<bool> m_bStop;
+    std::atomic<bool> m_bPause = {false};
+    std::atomic<bool> m_bStop = {false};
 
 	BaseThread::PRIORITY m_uiPriority = NORMAL;
 
 	std::thread *m_pThread = nullptr;
 	std::condition_variable m_PauseCond;
 	std::mutex m_PauseMutex;
+	std::mutex m_StartLock;
 	std::recursive_mutex m_PauseInitMutex;
 };
 
@@ -176,10 +177,15 @@ BaseThread::BaseThread(const char* name)
 
 BaseThread::~BaseThread()
 {
-	//Should of called stop in child class first. Can cause problems with part delete calling stop here.
-	gcAssert(m_pPrivates->m_bStop || !m_pPrivates->m_bIsRunning);
+	{
+		std::lock_guard<std::mutex> guard(m_pPrivates->m_StartLock);
 
-	stop();
+		//Should of called stop in child class first. Can cause problems with part delete calling stop here.
+		gcAssert(m_pPrivates->m_bStop || !m_pPrivates->m_bIsRunning);
+
+		stop();
+	}
+
 	safe_delete(m_pPrivates);
 }
 
@@ -190,6 +196,8 @@ const char* BaseThread::getName()
 
 void BaseThread::start()
 {
+	std::lock_guard<std::mutex> guard(m_pPrivates->m_StartLock);
+
 	if (m_pPrivates->m_pThread)
 		return;
 
@@ -199,10 +207,10 @@ void BaseThread::start()
 
 	m_pPrivates->m_pThread = new std::thread([this, waitCond](){
 
+		gcTrace("Starting thread {0}", m_pPrivates->m_szName);
+
 		try
 		{
-			gcTrace("Starting thread {0}", m_pPrivates->m_szName);
-
 			waitCond->wait();
 			gcAssert(m_pPrivates->m_pThread);
 
@@ -210,8 +218,6 @@ void BaseThread::start()
 			applyPriority();
 			setThreadName();
 			run();
-
-			gcTrace("Ending thread {0}", m_pPrivates->m_szName);
 		}
 		catch (gcException &e)
 		{
@@ -228,6 +234,8 @@ void BaseThread::start()
 			gcAssert(false);
 			Warning("Unhandled exception in thread {0}", m_pPrivates->m_szName);
 		}
+
+		gcTrace("Ending thread {0}", m_pPrivates->m_szName);
 	});
 
 	waitCond->notify();

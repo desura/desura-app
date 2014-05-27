@@ -49,8 +49,13 @@ namespace UserCore
 
 			virtual void onServiceError(gcException& e);
 
+			void onError(gcException &e) override
+			{
+				onServiceError(e);
+			}
+
 		private:
-			IPCUninstallMcf* m_pIPCUI;
+			std::shared_ptr<IPCUninstallMcf> m_pIPCUI;
 
 			bool m_bRemoveAll;
 			bool m_bRemoveAcc;

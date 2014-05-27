@@ -790,8 +790,6 @@ void BranchInstallInfo::setLinkInfo(const char* szPath, const char* szExe, const
 
 #ifdef WITH_GTEST
 
-#include <gtest/gtest.h>
-
 namespace UnitTest
 {
 	using namespace UserCore;

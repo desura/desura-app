@@ -32,10 +32,6 @@ $/LicenseInfo$
 
 #include "usercore/ItemHelpersI.h"
 
-#ifdef LINK_WITH_GMOCK
-#include <gmock/gmock.h>
-#endif
-
 class LanguageManagerI;
 
 namespace UserCore

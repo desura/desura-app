@@ -95,9 +95,10 @@ void ValidateTask::doRun()
 	m_bLocalMcf = UTIL::FS::isValidFile(savePath);
 	m_szInstallPath = getItemInfo()->getPath();
 
-	setCurrentMcf(&m_hMCFile);
-	m_hMCFile->dlHeaderFromWeb();
-	setCurrentMcf(nullptr);
+	{
+		AutoScopeLockedMemberVar<McfHandle> aslmv(m_CurrentMcf, m_McfLock, m_hMCFile);
+		m_hMCFile->dlHeaderFromWeb();
+	}
 
 	m_hMCFile->setFile(savePath.c_str());
 
@@ -162,9 +163,10 @@ void ValidateTask::doRun()
 
 	setAction(ACTION::PRE_ALLOCATING);
 
-	setCurrentMcf(&m_hMCFile);
-	m_hMCFile->preAllocateFile();
-	setCurrentMcf(nullptr);
+	{
+		AutoScopeLockedMemberVar<McfHandle> aslmv(m_CurrentMcf, m_McfLock, m_hMCFile);
+		m_hMCFile->preAllocateFile();
+	}
 
 	if (isStopped())
 		return;
@@ -243,9 +245,10 @@ bool ValidateTask::checkExistingMcf(gcString savePath)
 	McfHandle mcfTemp;
 	mcfTemp->setFile(savePath.c_str());
 
-	setCurrentMcf(&mcfTemp);
-	mcfTemp->parseMCF();
-	setCurrentMcf(nullptr);
+	{
+		AutoScopeLockedMemberVar<McfHandle> aslmv(m_CurrentMcf, m_McfLock, mcfTemp);
+		mcfTemp->parseMCF();
+	}
 
 	if (isStopped())
 		return false;
@@ -273,9 +276,10 @@ bool ValidateTask::checkExistingMcf(gcString savePath)
 	bool verify;
 	m_CurMcfIndex = 1;
 
-	setCurrentMcf(&mcfTemp);
-	verify = mcfTemp->verifyMCF();
-	setCurrentMcf(nullptr);
+	{
+		AutoScopeLockedMemberVar<McfHandle> aslmv(m_CurrentMcf, m_McfLock, mcfTemp);
+		verify = mcfTemp->verifyMCF();
+	}
 
 	McfHandle curMcf;
 	bool useCurMcf = false;
@@ -285,11 +289,10 @@ bool ValidateTask::checkExistingMcf(gcString savePath)
 		try
 		{
 			m_CurMcfIndex = 2;
+			AutoScopeLockedMemberVar<McfHandle> aslmv(m_CurrentMcf, m_McfLock, curMcf);
 
-			setCurrentMcf(&curMcf);
 			curMcf->parseFolder(m_szInstallPath.c_str(), false, true);
 			curMcf->hashFiles(mcfTemp.handle());
-			setCurrentMcf(nullptr);
 
 			useCurMcf = true;
 		}
@@ -404,10 +407,9 @@ void ValidateTask::copyLocalFiles()
 	{
 		m_CurMcfIndex = 1;
 
-		setCurrentMcf(&curMcf);
+		AutoScopeLockedMemberVar<McfHandle> aslmv(m_CurrentMcf, m_McfLock, curMcf);
 		curMcf->parseFolder(m_szInstallPath.c_str(), false, true);
 		curMcf->hashFiles(m_hMCFile.handle());
-		setCurrentMcf(nullptr);
 	}
 	catch (gcException &e)
 	{
@@ -590,10 +592,4 @@ void ValidateTask::cancel()
 {
 	onStop();
 	getItemHandle()->getInternal()->resetStage(true);
-}
-
-void ValidateTask::setCurrentMcf(McfHandle* pMcfHandle)
-{
-	std::lock_guard<std::mutex> guard(m_McfLock);
-	m_CurrentMcf = pMcfHandle;
 }

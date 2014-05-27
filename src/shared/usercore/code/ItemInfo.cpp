@@ -346,7 +346,10 @@ void ItemInfo::loadDb(sqlite3x::sqlite3_connection* db)
 			}
 
 			if (vIdList[x].first == m_INBranch)
+			{
+				gcTrace("Changing Current Branch");
 				m_INBranchIndex = x;
+			}
 
 			m_vBranchList.push_back(bi);
 		}
@@ -387,6 +390,7 @@ void ItemInfo::loadDb(sqlite3x::sqlite3_connection* db)
 				bi = m_vBranchList[0];
 				bi->setLinkInfo(getName());
 
+				gcTrace("Changing Current Branch");
 				m_INBranchIndex = 0;
 				m_INBranch = MCFBranch::BranchFromInt(0);
 			}
@@ -427,7 +431,10 @@ void ItemInfo::loadBranchXmlData(const XML::gcXMLElement &branch)
 		if (m_vBranchList[x]->getBranchId() == id)
 		{
 			if (id == m_INBranch)
+			{
+				gcTrace("Changing Current Branch");
 				m_INBranchIndex = x;
+			}		
 
 			bi = m_vBranchList[x];
 			found = true;
@@ -456,7 +463,10 @@ void ItemInfo::loadBranchXmlData(const XML::gcXMLElement &branch)
 
 		size_t x=m_vBranchList.size()-1;
 		if (m_vBranchList[x]->getBranchId() == m_INBranch)
+		{
+			gcTrace("Changing Current Branch");
 			m_INBranchIndex = x;
+		}	
 	}
 }
 
@@ -546,6 +556,8 @@ void ItemInfo::loadXmlData(uint32 platform, const XML::gcXMLElement &xmlNode, ui
 
 		if (vBranchList.size() == 1)
 		{
+			gcTrace("Changing Current Branch");
+
 			m_INBranchIndex = vBranchList[0];
 			m_INBranch = m_vBranchList[m_INBranchIndex]->getBranchId();
 			m_vBranchList[m_INBranchIndex]->getInstallInfo()->setInstalledMcf(m_vBranchList[m_INBranchIndex]->getLatestBuild());
@@ -1128,6 +1140,8 @@ void ItemInfo::broughtCheck()
 
 void ItemInfo::resetInstalledMcf()
 {
+	gcTrace("Changing Current Branch");
+
 	if (getCurrentBranchFull() && getCurrentBranchFull()->getInstallInfo())
 		getCurrentBranchFull()->getInstallInfo()->resetInstalledMcf();
 
@@ -1145,6 +1159,7 @@ bool ItemInfo::setInstalledMcf(MCFBranch branch, MCFBuild build)
 	{
 		if (m_vBranchList[x]->getBranchId() == branch)
 		{
+			gcTrace("Changing Current Branch");
 			m_INBranchIndex = x;
 
 			m_LastBranch = m_INBranch;

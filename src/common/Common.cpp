@@ -29,6 +29,7 @@ $/LicenseInfo$
 //
 
 #include "Common.h"
+#include <thread>
 
 bool CheckVerify(bool bCon, const char* szFunction, const char* szCheck)
 {
@@ -75,3 +76,16 @@ void gcRefCount::dumpStackTraces()
 		
 }
 #endif
+
+static std::thread::id g_UIThreadId;
+
+void SetUIThreadId()
+{
+	g_UIThreadId = std::this_thread::get_id();
+}
+
+bool IsUIThread()
+{
+	return std::this_thread::get_id() == g_UIThreadId;
+}
+

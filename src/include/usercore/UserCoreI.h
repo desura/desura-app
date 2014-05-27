@@ -29,10 +29,6 @@ $/LicenseInfo$
 #pragma once
 #endif
 
-#ifdef LINK_WITH_GMOCK
-#include <gmock/gmock.h>
-#endif
-
 #include "usercore/NewsItem.h"
 #include "usercore/ItemHandleI.h"
 #include "usercore/ItemInfoI.h"

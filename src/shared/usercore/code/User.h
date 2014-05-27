@@ -491,7 +491,7 @@ namespace UserCore
 		if (!m_pPipeClient)
 			return nullptr;
 
-		return m_pPipeClient->getServiceMain();
+		return m_pPipeClient->getServiceMain().get();
 	}
 
 	inline gcRefPtr<WebCore::WebCoreI> User::getWebCore()

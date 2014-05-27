@@ -49,7 +49,7 @@ namespace UserCore
 			virtual void onComplete();
 
 		private:
-			IPCUninstallBranch* m_pIPCIM;
+			std::shared_ptr<IPCUninstallBranch> m_pIPCIM;
 			gcString m_szPath;
 
 			bool m_bTestInstall;

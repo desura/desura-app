@@ -38,14 +38,12 @@ ToolInstallThread::ToolInstallThread(gcRefPtr<ToolManager> toolManager, std::mut
 	: ::Thread::BaseThread("Tool Install Thread")
 	, m_mTransactions(transactions)
 	, m_MapLock(mapLock)
+	, m_szUserName(userName)
+	, m_pToolManager(toolManager)
+	, m_WinHandle(handle)
 {
-	m_WinHandle = handle;
 	m_pIPCClient = nullptr;
-
 	m_CurrentInstall = -1;
-	m_szUserName = userName;
-	m_pToolManager = toolManager;
-
 	m_bStillInstalling = false;
 }
 
@@ -120,7 +118,7 @@ void ToolInstallThread::startIPC()
 	m_pIPCClient->getToolMain()->onErrorEvent += delegate(this, &ToolInstallThread::onINError);
 }
 
-IPCToolMain* ToolInstallThread::getToolMain()
+std::shared_ptr<IPCToolMain> ToolInstallThread::getToolMain()
 {
 	return m_pIPCClient->getToolMain();
 }

@@ -28,12 +28,8 @@ $/LicenseInfo$
 
 #include "ItemForm.h"
 
-namespace UI
-{
-namespace Forms
-{
-namespace ItemFormPage
-{
+using namespace UI::Forms::ItemFormPage;
+
 
 UninstallInfoPage::UninstallInfoPage(wxWindow* parent) : BaseInstallPage(parent)
 {
@@ -134,20 +130,21 @@ void UninstallInfoPage::init()
 
 void UninstallInfoPage::onButtonClicked( wxCommandEvent& event )
 {
-	if (event.GetId() == m_butCancel->GetId())
+	ItemForm* itemForm = dynamic_cast<ItemForm*>(GetParent());
+
+	if (!itemForm)
 	{
 		GetParent()->Close();
+		return;
+	}
+
+	if (event.GetId() == m_butCancel->GetId())
+	{
+		if (!itemForm->restorePage())
+			itemForm->Close();
 	}
 	else if (event.GetId() == m_butUninstall->GetId())
 	{
-		ItemForm* itemForm = dynamic_cast<ItemForm*>(GetParent());
-
-		if (!itemForm)
-		{
-			GetParent()->Close();
-			return;
-		}
-
 		bool res = itemForm->startUninstall(m_cbComplete->GetValue(), m_cbAccount->GetValue());
 
 		if (res)
@@ -163,9 +160,3 @@ void UninstallInfoPage::onButtonClicked( wxCommandEvent& event )
 		}
 	}
 }
-
-
-}
-}
-}
-

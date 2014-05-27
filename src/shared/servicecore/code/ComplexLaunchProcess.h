@@ -68,6 +68,8 @@ private:
 	bool m_iFirstStage;
 	uint8 m_iMode;
 	uint64 m_uiLastProg;
+
+	std::shared_ptr<gcException> m_pException;
 };
 
 #endif //DESURA_COMPLEXLAUNCHPROCESS_H

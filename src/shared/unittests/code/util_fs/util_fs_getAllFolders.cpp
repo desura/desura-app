@@ -20,8 +20,6 @@ Linden Research, Inc., 945 Battery Street, San Francisco, CA  94111  USA
 $/LicenseInfo$
 */
 
-#include <gtest/gtest.h>
-
 // interface: void getAllFolders(Path path, std::vector<Path> &outList)
 
 #define TEST_DIR "getAllFolders"

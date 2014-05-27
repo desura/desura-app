@@ -79,7 +79,7 @@ namespace UserCore
 				if (m_bStarted)
 					return;
 
-				std::lock_guard<std::mutex> guard(m_ListLock);
+				std::lock_guard<std::recursive_mutex> guard(m_ListLock);
 				std::sort(m_vWaitingList.begin(), m_vWaitingList.end(), f);
 			}
 
@@ -138,22 +138,22 @@ namespace UserCore
 			};
 
 		private:
-			bool m_bStarted;
-			bool m_bPaused;
-			bool m_bFinal;
+			bool m_bStarted = false;
+			bool m_bPaused = false;
+			bool m_bFinal = false;
 
 			uint8 m_iActiveCount;
-			uint32 m_uiId;
+			uint32 m_uiId = 0;
 	
-			uint32 m_uiLastActive;
-			uint32 m_uiActiveItem;
+			uint32 m_uiLastActive = -1;
+			uint32 m_uiActiveItem = -1;
 
 			ACTION m_Action;
 
-			std::mutex m_ListLock;
+			std::recursive_mutex m_ListLock;
 			std::vector<gcRefPtr<UserCore::Item::ItemHandleI>> m_vWaitingList;
 
-			std::mutex m_TaskListLock;
+			std::recursive_mutex m_TaskListLock;
 			std::vector<gcRefPtr<UserCore::ItemTask::BaseItemTask>> m_vTaskList;
 
 			gcRefPtr<UserCore::ItemManager> m_pItemManager;
