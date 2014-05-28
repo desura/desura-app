@@ -95,6 +95,8 @@ DesuraJSBinding::DesuraJSBinding() : DesuraJSBase("app", "native_binding.js")
 	REG_SIMPLE_JS_VOIDFUNCTION( loginError, DesuraJSBinding );
 
 	REG_SIMPLE_JS_VOIDFUNCTION( ping, DesuraJSBinding );
+
+	REG_SIMPLE_JS_VOIDFUNCTION( loggedOut, DesuraJSBinding)
 }
 
 DesuraJSBinding::~DesuraJSBinding()
@@ -547,6 +549,11 @@ void DesuraJSBinding::login(gcString username, gcString loginCookie)
 void DesuraJSBinding::loginError(gcString error)
 {
 	g_pMainApp->newAccountLoginError(error.c_str());
+}
+
+void DesuraJSBinding::loggedOut()
+{
+	g_pMainApp->userLoggedOut();
 }
 
 void DesuraJSBinding::ping()

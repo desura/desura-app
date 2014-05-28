@@ -138,6 +138,8 @@ public:
 	virtual void newAccountLoginError(const char* szErrorMessage) = 0;
 
 	virtual void showUnitTest(){}
+
+	virtual void userLoggedOut() = 0;
 };
 
 class MainAppProviderI
