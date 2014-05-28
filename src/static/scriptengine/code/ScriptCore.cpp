@@ -149,18 +149,23 @@ public:
 class RunScript : public ScriptTask
 {
 public:
-	RunScript(ScriptCoreInternal* scriptInternal, const char* file, char* buff, uint32 size) : ScriptTask(scriptInternal), m_AutoDelBuff(buff)
+	RunScript(ScriptCoreInternal* scriptInternal, const char* file) 
+		: ScriptTask(scriptInternal)
+		, m_szFile(file)
+		, m_szFileBuff(nullptr)
+		, m_AutoDelBuff(m_szFileBuff)
 	{
-		m_szFile = file;
-		m_uiSize = size;
+		m_uiSize = UTIL::FS::readWholeFile(file, &m_szFileBuff);
 	}
 
 	virtual void run()
 	{
-		m_pScriptCore->runScript(m_szFile.c_str(), m_AutoDelBuff, m_uiSize);
+		m_pScriptCore->runScript(m_szFile.c_str(), m_szFileBuff, m_uiSize);
 	}
 
 	uint32 m_uiSize;
+
+	char* m_szFileBuff;
 	AutoDelete<char> m_AutoDelBuff;
 	gcString m_szFile;
 };
@@ -256,10 +261,7 @@ void ScriptCore::executeScript(const char* file)
 	if (!file || !UTIL::FS::isValidFile(file))
 		throw gcException(ERR_INVALID, "File does not exist");
 
-	char* out = nullptr;
-	size_t size = UTIL::FS::readWholeFile(file, &out);
-
-	runTask(new RunScript(m_pInternal, file, out, size));
+	runTask(new RunScript(m_pInternal, file));
 }
 
 void ScriptCore::executeString(const char* string)

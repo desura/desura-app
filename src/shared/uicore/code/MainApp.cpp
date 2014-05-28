@@ -453,11 +453,16 @@ void MainApp::logOut(bool bShowLogin, bool autoLogin, bool webLoggedOut)
 void MainApp::goOffline()
 {
 	gcTrace("");
-	gcMessageDialog msgBox(nullptr, Managers::GetString(L"#MF_OFFLINE"), Managers::GetString(L"#MF_OFFLINE_TITLE"), wxYES_NO | wxICON_QUESTION);
 
-	AutoScopeMemberVar<gcMessageDialog> asv(m_pOfflineDialog, &msgBox);
+	int res = wxID_NO;
 
-	if (msgBox.ShowModal() == wxID_YES)
+	{
+		gcMessageDialog msgBox(nullptr, Managers::GetString(L"#MF_OFFLINE"), Managers::GetString(L"#MF_OFFLINE_TITLE"), wxYES_NO | wxICON_QUESTION);
+		AutoScopeMemberVar<gcMessageDialog> asv(m_pOfflineDialog, &msgBox);
+		res = msgBox.ShowModal();
+	}
+
+	if (res == wxID_YES)
 		offlineMode();
 }
 

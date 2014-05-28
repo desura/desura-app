@@ -56,10 +56,12 @@ ControllerForm::ControllerForm() : wxFrame(nullptr, wxID_ANY, "HiddenWindow")
 ControllerForm::~ControllerForm()
 {
 	if (m_pUser)
+	{
 		m_pUser->logOut(false, false);
+		m_pUser->destroy();
+	}
 
-	m_pUser->destroy();
-
+	safe_delete(m_pUser);
 	safe_delete(m_pChecker);
 }
 

@@ -96,6 +96,8 @@ protected:
 
 	void onChar(wxKeyEvent& event);
 
+	void onParentClose(wxCloseEvent &e);
+
 private:
 	wxBoxSizer* m_bsButtonSizer;
 

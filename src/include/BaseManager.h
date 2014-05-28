@@ -79,17 +79,15 @@ public:
 	template <typename F>
 	void for_each(F &f)
 	{
-		std::for_each(m_mItemMap.begin(), m_mItemMap.end(), [&f](std::pair<uint64, gcRefPtr<T>> p){
+		for (const auto &p : m_mItemMap)
 			f(p.second);
-		});
 	}
 	
 	template <typename F>
 	void for_each(const F &f)
 	{
-		std::for_each(m_mItemMap.begin(), m_mItemMap.end(), [&f](std::pair<uint64, gcRefPtr<T>> p){
+		for (const auto &p : m_mItemMap)
 			f(p.second);
-		});
 	}	
 #endif
 

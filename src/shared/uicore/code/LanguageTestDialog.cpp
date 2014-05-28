@@ -321,7 +321,7 @@ public:
 	ITEM_STAGE getStage() override { return ITEM_STAGE::STAGE_NONE; }
 	void cancelCurrentStage() override { }
 
-	gcRefPtr<UserCore::Item::ItemInfoI> getItemInfo() override { return m_pItemInfo; }
+	const gcRefPtr<UserCore::Item::ItemInfoI>& getItemInfo() override { return m_pItemInfo; }
 
 	Event<ITEM_STAGE>& getChangeStageEvent() override { return m_ChangeStageEvent; }
 	Event<gcException>& getErrorEvent() override { return m_ErrorEvent; }

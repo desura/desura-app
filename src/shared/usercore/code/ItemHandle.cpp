@@ -83,6 +83,7 @@ std::string TraceClassInfo(ItemHandle *pClass)
 
 ItemHandle::ItemHandle(gcRefPtr<ItemInfo> &itemInfo, gcRefPtr<UserCore::UserI> user)
 	: m_pItemInfo(itemInfo)
+	, m_pItemInfoI(itemInfo)
 	, m_pUserCore(user)
 	, m_pEventHandler(gcRefPtr<ItemHandleEvents>::create(m_HelperLock, m_vHelperList))
 {
@@ -107,17 +108,17 @@ void ItemHandle::setFactory(gcRefPtr<Helper::ItemHandleFactoryI> factory)
 	m_pFactory = factory;
 }
 
-gcRefPtr<UserCore::UserI> ItemHandle::getUserCore()
+const gcRefPtr<UserCore::UserI>& ItemHandle::getUserCore()
 {
 	return m_pUserCore;
 }
 
-gcRefPtr<UserCore::Item::ItemInfoI> ItemHandle::getItemInfo()
+const gcRefPtr<UserCore::Item::ItemInfoI>& ItemHandle::getItemInfo()
 {
-	return m_pItemInfo;
+	return m_pItemInfoI;
 }
 
-gcRefPtr<UserCore::Item::ItemInfo> ItemHandle::getItemInfoNorm()
+const gcRefPtr<UserCore::Item::ItemInfo>& ItemHandle::getItemInfoNorm()
 {
 	return m_pItemInfo;
 }

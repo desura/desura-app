@@ -269,10 +269,17 @@ void TaskBarIcon::onItemChanged(UserCore::Item::ItemInfoI::ItemInfo_s& info)
 
 void TaskBarIcon::tagItems()
 {
-	if (!GetUserCore())
+	auto uc = GetUserCore();
+
+	if (!uc)
 		return;
 
-	auto updateDelegate = [this](gcRefPtr<UserCore::Item::ItemInfoI> game)
+	auto im = uc->getItemManager();
+
+	if (!im)
+		return;
+
+	auto updateDelegate = [this](gcRefPtr<UserCore::Item::ItemInfoI> &game)
 	{
 		const uint32 hasFlags = UserCore::Item::ItemInfoI::STATUS_DELETED;
 		const uint32 notFlags = UserCore::Item::ItemInfoI::STATUS_ONACCOUNT | UserCore::Item::ItemInfoI::STATUS_ONCOMPUTER | UserCore::Item::ItemInfoI::STATUS_DEVELOPER;
@@ -289,17 +296,17 @@ void TaskBarIcon::tagItems()
 	};
 
 	std::vector<gcRefPtr<UserCore::Item::ItemInfoI>> gList;
-	GetUserCore()->getItemManager()->getGameList(gList, true);
+	im->getGameList(gList, true);
 
-	for (auto game : gList)
+	for (auto& game : gList)
 	{
 		updateDelegate(game);
 
 #ifndef UI_HIDE_MODS
 		std::vector<gcRefPtr<UserCore::Item::ItemInfoI>> mList;
-		GetUserCore()->getItemManager()->getModList(game->getId(), mList, true);
+		im->getModList(game->getId(), mList, true);
 
-		for (auto mod : mList)
+		for (auto& mod : mList)
 		{
 			updateDelegate(mod);
 		}

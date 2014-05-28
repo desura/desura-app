@@ -451,11 +451,20 @@ std::string UserDecodeString(const std::string& strKey, const std::string& strVa
 
 typedef bool(*GetStackTraceStringFn)(int nFrames, PVOID* addrs, char* szBuffer, uint32 nBuffSize);
 typedef int(*GetStackTraceFn)(PVOID* addrs, uint32 nStart, uint32 nStop);
+typedef void(*IgnoreThreadForStackTraceFn)();
 
 static GetStackTraceFn s_GetStackTrace = nullptr;
 static GetStackTraceStringFn s_GetStackTraceString = nullptr;
+static IgnoreThreadForStackTraceFn s_IgnoreThreadForStackTrace = nullptr;
 static SharedObjectLoader s_StackWalker;
 
+std::thread::id ignoreStackTraceOnThisThread()
+{
+	if (s_IgnoreThreadForStackTrace)
+		s_IgnoreThreadForStackTrace();
+
+	return std::this_thread::get_id();
+}
 
 std::shared_ptr<UTIL::OS::StackTrace> getStackTrace(uint32 nStart, uint32 nStop)
 {
@@ -470,6 +479,7 @@ std::shared_ptr<UTIL::OS::StackTrace> getStackTrace(uint32 nStart, uint32 nStop)
 
 		s_GetStackTrace = s_StackWalker.getFunction<GetStackTraceFn>("getStackTrace");
 		s_GetStackTraceString = s_StackWalker.getFunction<GetStackTraceStringFn>("getStackTraceString");
+		s_IgnoreThreadForStackTrace = s_StackWalker.getFunction<IgnoreThreadForStackTraceFn>("ignoreThreadForStackTrace");
 
 		if (!s_GetStackTrace || !s_GetStackTraceString)
 			return nullptr;
@@ -504,6 +514,11 @@ std::string getStackTraceString(const std::shared_ptr<UTIL::OS::StackTrace> &tra
 {
 	gcAssert(false);
 	return "";
+}
+
+std::thread::id ignoreStackTraceOnThisThread()
+{
+	return std::this_thread::get_id();
 }
 
 #endif

@@ -155,10 +155,9 @@ bool DesuraJSItemInfo::preExecuteValidation(const char* function, uint32 functio
 	if (argv[0]->isObject() == false)
 		return false;
 
-	gcRefPtr<UserCore::Item::ItemInfoI> item = nullptr;
+	gcRefPtr<UserCore::Item::ItemInfoI> item;
 	FromJSObject(item, argv[0]);
-
-	return isItemValid(item);
+	return !!item;
 }
 
 

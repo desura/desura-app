@@ -225,11 +225,20 @@ void GetBuildBranch(int &build, int &branch)
 
 	lszValue[0] = 0;
 	DWORD err2 = RegQueryValueEx(hk, "appid", nullptr, &dwType,(LPBYTE)&lszValue, &dwSize);
-	branch = Safe::atoi(lszValue);
+
+	if (dwType == REG_SZ)
+		branch = Safe::atoi(lszValue);
+	else
+		RegQueryValueEx(hk, "appid", nullptr, &dwType, (LPBYTE)&branch, &dwSize);
 
 	lszValue[0] = 0;
+	dwSize = 255;
 	DWORD err3 = RegQueryValueEx(hk, "appver", nullptr, &dwType,(LPBYTE)&lszValue, &dwSize);
-	build = Safe::atoi(lszValue);
+
+	if (dwType == REG_SZ)
+		build = Safe::atoi(lszValue);
+	else
+		RegQueryValueEx(hk, "appver", nullptr, &dwType, (LPBYTE)&build, &dwSize);
 
 	RegCloseKey(hk);
 }

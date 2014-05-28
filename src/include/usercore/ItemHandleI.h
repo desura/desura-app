@@ -115,7 +115,7 @@ namespace UserCore
 			//! 
 			virtual void cancelCurrentStage()=0;
 
-			virtual gcRefPtr<UserCore::Item::ItemInfoI> getItemInfo() = 0;
+			virtual const gcRefPtr<UserCore::Item::ItemInfoI>& getItemInfo() = 0;
 
 			virtual Event<ITEM_STAGE>& getChangeStageEvent()=0;
 			virtual Event<gcException>& getErrorEvent()=0;
@@ -177,7 +177,7 @@ namespace UserCore
 			MOCK_METHOD0(isInStage, bool());
 			MOCK_METHOD0(getStage, ITEM_STAGE());
 			MOCK_METHOD0(cancelCurrentStage, void());
-			MOCK_METHOD0(getItemInfo, gcRefPtr<UserCore::Item::ItemInfoI>());
+			MOCK_METHOD0(getItemInfo, const gcRefPtr<UserCore::Item::ItemInfoI>&());
 			MOCK_METHOD0(getChangeStageEvent, Event<ITEM_STAGE>&());
 			MOCK_METHOD0(getErrorEvent, Event<gcException>&());
 			MOCK_METHOD3(getStatusStr, void(LanguageManagerI & pLangMng, char* buffer, uint32 buffsize));

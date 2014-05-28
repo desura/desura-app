@@ -186,10 +186,20 @@ gcMessageDialog::gcMessageDialog(wxWindow* parent, const wxString& message, cons
 	{
 		m_bButtonList[x]->Bind(wxEVT_CHAR, &gcMessageDialog::onChar, this);
 	}
+
+	if (parent)
+		parent->Bind(wxEVT_CLOSE_WINDOW, &gcMessageDialog::onParentClose, this);
 }
 
 gcMessageDialog::~gcMessageDialog()
 {
+	if (GetParent())
+		GetParent()->Unbind(wxEVT_CLOSE_WINDOW, &gcMessageDialog::onParentClose, this);
+}
+
+void gcMessageDialog::onParentClose(wxCloseEvent &e)
+{
+	EndModal(wxID_ABORT);
 }
 
 void gcMessageDialog::centerOnParent(wxWindow* p)

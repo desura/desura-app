@@ -50,9 +50,28 @@ ToolManager::ToolManager(gcRefPtr<UserCore::User> user)
 
 ToolManager::~ToolManager()
 {
+	cleanup();
+}
+
+void ToolManager::cleanup()
+{
+	if (m_pToolThread)
+		m_pToolThread->stop();
+
 	unloadJSEngine(true);
-	safe_delete(m_pToolThread);
 	saveItems();
+
+	{
+		std::lock_guard<std::mutex> guard(m_DownloadLock);
+		m_mDownloads.clear();
+	}
+
+	{
+		std::lock_guard<std::mutex> guard(m_MapLock);
+		m_mTransactions.clear();
+	}
+
+	safe_delete(m_pToolThread);
 }
 
 void ToolManager::loadItems()

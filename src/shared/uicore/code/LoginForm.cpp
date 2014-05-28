@@ -912,6 +912,17 @@ void LoginForm::onLoginError(gcException &e)
 	m_linkNewAccount->Enable();
 	m_linkLostPassword->Enable();
 
+	//bad password
+	if (e.getSecErrId() == 103)
+	{
+		m_tbPassword->SetFocus();
+	}
+	else
+	{
+		m_tbUsername->SetFocus();
+		m_tbUsername->SelectAll();
+	}	
+
 	m_bAutoLogin = false;
 }
 

@@ -90,17 +90,24 @@ void UpdateThreadOld::doRun()
 	uint32 offset = timer.seconds() + (timer.minutes()%6)*60;
 	bool lastFailed = false;
 
+	auto im = m_pUser->getItemManager();
+	auto tm = m_pUser->getToolManager();
+
+#ifdef WIN32
+	auto gm = m_pUser->getGameExplorerManager();
+#endif
+
 	while (!isStopped())
 	{
 		gcTime now;
 
 		if (now >= savetimer)
 		{
-			m_pUser->getItemManager()->saveItems();
-			m_pUser->getToolManager()->saveItems();
+			im->saveItems();
+			tm->saveItems();
 
 #ifdef WIN32
-			m_pUser->getGameExplorerManager()->saveItems();
+			gm->saveItems();
 #endif
 
 			savetimer = now;
@@ -529,8 +536,8 @@ void UpdateThreadOld::checkAppUpdate(const XML::gcXMLElement &uNode)
 
 void UpdateThreadOld::updateBuildVer()
 {
-	UTIL::OS::setConfigValue(APPID, 999);
-	UTIL::OS::setConfigValue(APPBUILD, 0);
+	UTIL::OS::setConfigValue(APPID, "999");
+	UTIL::OS::setConfigValue(APPBUILD, "0");
 }
 
 #endif

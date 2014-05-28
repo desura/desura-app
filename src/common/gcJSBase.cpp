@@ -301,6 +301,10 @@ const char* DesuraJSBaseNonTemplate::getRegistrationCode()
 
 JSObjHandle DesuraJSBaseNonTemplate::execute(ChromiumDLL::JavaScriptFunctionArgs* args)
 {
+#ifdef DEBUG
+	static std::thread::id s_IgnoreStack = UTIL::OS::ignoreStackTraceOnThisThread();
+#endif
+
 	m_pContext = args->context;
 
 	try

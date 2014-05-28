@@ -155,7 +155,7 @@ namespace UserCore
 
 			ITEM_STAGE getStage() override;
 			void cancelCurrentStage() override;
-			gcRefPtr<UserCore::Item::ItemInfoI> getItemInfo() override;
+			const gcRefPtr<UserCore::Item::ItemInfoI>& getItemInfo() override;
 
 			//void stop(bool block = true) override;
 
@@ -213,9 +213,8 @@ namespace UserCore
 			uint64 getHash(){return getItemInfo()->getId().toInt64();}
 			const char* getName(){return getItemInfo()->getName();}	
 
-			gcRefPtr<UserCore::Item::ItemInfo> getItemInfoNorm();
-
-			gcRefPtr<UserCore::UserI> getUserCore();
+			const gcRefPtr<UserCore::Item::ItemInfo>& getItemInfoNorm();
+			const gcRefPtr<UserCore::UserI>& getUserCore();
 
 			bool getLock(void* obj);
 			bool isLocked();
@@ -281,6 +280,7 @@ namespace UserCore
 
 			std::recursive_mutex m_ThreadMutex;
 			gcRefPtr<UserCore::Item::ItemThread> m_pThread;
+			gcRefPtr<UserCore::Item::ItemInfoI> m_pItemInfoI;
 			gcRefPtr<UserCore::Item::ItemInfo> m_pItemInfo;
 			gcRefPtr<UserCore::UserI> m_pUserCore;
 
