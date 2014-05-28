@@ -77,6 +77,7 @@ namespace UserCore
 		ToolManager(gcRefPtr<UserCore::User> user);
 		~ToolManager();
 
+		void cleanup();
 
 		void removeTransaction(ToolTransactionId ttid, bool forced) override;
 

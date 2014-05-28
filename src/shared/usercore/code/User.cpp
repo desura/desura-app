@@ -165,6 +165,9 @@ void User::cleanUp()
 	if (m_pItemManager)
 		m_pItemManager->cleanup();
 
+	if (m_pToolManager)
+		m_pToolManager->cleanup();
+
 	//must delete this one first as upload threads are apart of thread manager
 	safe_delete(m_pUploadManager);
 	safe_delete(m_pUThread);
