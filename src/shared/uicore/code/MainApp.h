@@ -199,6 +199,8 @@ protected:
 
 	void setProvider(const char* szProvider) override;
 
+	void userLoggedOut() override;
+
 	Event<std::pair<bool,bool>> onLoginAcceptedEvent;
 	EventV onLoginEvent;
 

@@ -850,6 +850,12 @@ const char* MainApp::getProvider() const
 	return m_strServiceProvider.c_str();
 }
 
+void MainApp::userLoggedOut()
+{
+	onLoggedOut();
+}
+
+
 #ifdef WITH_GTEST
 
 namespace UnitTest

@@ -107,6 +107,8 @@ protected:
 	void login(gcString username, gcString loginCookie);
 	void loginError(gcString error);
 
+	void loggedOut();
+
 	void ping();
 	
 };

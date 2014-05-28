@@ -286,6 +286,11 @@ if (!desura.internal) {
 		native function ping();
 		ping();
 	};	
+	
+	desura.utils.userLoggedOut = function(){
+		native function loggedOut();
+		loggedOut();
+	};		
 
 	desura.internal.checkOldCrumbs = function(){
 		if (typeof getBreadCrumbs == 'function')
