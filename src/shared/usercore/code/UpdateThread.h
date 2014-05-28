@@ -41,7 +41,7 @@ namespace XML
 class UpdateThreadI
 {
 public:
-	virtual void setInfo(gcRefPtr<UserCore::UserI> &user, gcRefPtr<WebCore::WebCoreI> &webcore) = 0;
+	virtual void setInfo(const gcRefPtr<UserCore::UserI> &user, const gcRefPtr<WebCore::WebCoreI> &webcore) = 0;
 	virtual void doRun() = 0;
 	virtual void onStop() = 0;
 	virtual bool onMessageReceived(const char* resource, const XML::gcXMLElement &root) = 0;

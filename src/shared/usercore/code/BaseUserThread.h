@@ -158,7 +158,8 @@ namespace UserCore
 				if (!m_pUserCore || !m_iId.isOk())
 					return nullptr;
 
-				return gcRefPtr<UserCore::Item::ItemInfo>::dyn_cast(m_pUserCore->getItemManager()->findItemInfo(m_iId));
+				auto info = m_pUserCore->getItemManager()->findItemInfo(m_iId);
+				return gcRefPtr<UserCore::Item::ItemInfo>::dyn_cast(info);
 			}
 
 			gcRefPtr<UserCore::Item::ItemInfo> getParentItemInfo()

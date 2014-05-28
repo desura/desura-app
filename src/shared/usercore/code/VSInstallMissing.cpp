@@ -33,7 +33,7 @@ $/LicenseInfo$
 #include "ItemInfo.h"
 #include "usercore/UserCoreI.h"
 #include "webcore/WebCoreI.h"
-#include "user.h"
+#include "User.h"
 
 namespace UserCore
 {

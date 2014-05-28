@@ -46,7 +46,7 @@ $/LicenseInfo$
 #include "VSInstallMissing.h"
 
 #include "MCFDownloadProviders.h"
-#include "user.h"
+
 
 enum TIER
 {

@@ -28,7 +28,7 @@ $/LicenseInfo$
 #include "ToolTransaction.h"
 #include "ToolInfo.h"
 
-gcException IPCToolMain::installTool(UserCore::ToolInfo* info)
+gcException IPCToolMain::installTool(gcRefPtr<UserCore::ToolInfo> info)
 {
 	gcString exe(info->getExe());
 	gcString args(info->getArgs());
@@ -98,11 +98,13 @@ namespace UserCore
 namespace Misc
 {
 
-ToolInstallThread::ToolInstallThread(ToolManager* toolManager, std::mutex &mapLock, std::map<ToolTransactionId, ToolTransInfo*> &transactions) 
-	: ::Thread::BaseThread("Tool Install Thread"), m_MapLock(mapLock), m_mTransactions(transactions)
+ToolInstallThread::ToolInstallThread(gcRefPtr<ToolManager> toolManager, std::mutex &mapLock, std::map<ToolTransactionId, gcRefPtr<ToolTransInfo>> &transactions) 
+	: ::Thread::BaseThread("Tool Install Thread")
+	, m_MapLock(mapLock)
+	, m_mTransactions(transactions)
+	, m_pToolManager(toolManager)
 {
 	m_CurrentInstall = -1;
-	m_pToolManager = toolManager;
 	m_bStillInstalling = false;
 	
     m_pToolMain = std::make_shared<IPCToolMain>();
@@ -112,7 +114,6 @@ ToolInstallThread::ToolInstallThread(ToolManager* toolManager, std::mutex &mapLo
 ToolInstallThread::~ToolInstallThread()
 {
 	stop();
-	safe_delete(m_pToolMain);
 }
 
 std::shared_ptr<IPCToolMain> ToolInstallThread::getToolMain()

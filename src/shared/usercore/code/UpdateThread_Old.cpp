@@ -350,7 +350,7 @@ bool UpdateThreadOld::onMessageReceived(const char* resource, const XML::gcXMLEl
 	return false;
 }
 
-void UpdateThreadOld::setInfo(gcRefPtr<UserCore::UserI> &user, gcRefPtr<WebCore::WebCoreI> &webcore)
+void UpdateThreadOld::setInfo(const gcRefPtr<UserCore::UserI> &user, const gcRefPtr<WebCore::WebCoreI> &webcore)
 {
 	m_pUser = user;
 	m_pWebCore = webcore;

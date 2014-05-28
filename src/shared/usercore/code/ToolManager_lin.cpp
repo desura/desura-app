@@ -136,7 +136,7 @@ void ToolManager::symLinkTools(std::vector<DesuraId> &list, const char* path)
 	
 	for (size_t x=0; x<list.size(); x++)
 	{
-		ToolInfo* info = findItem(list[x].toInt64());
+		auto info = findItem(list[x].toInt64());
 
 		if (!info || !info->isInstalled())
 			continue;
@@ -163,7 +163,7 @@ int ToolManager::hasNonInstallableTool(std::vector<DesuraId> &list)
 {
 	for (size_t x=0; x<list.size(); x++)
 	{
-		UserCore::ToolInfo* info = findItem(list[x].toInt64());
+		auto info = findItem(list[x].toInt64());
 
 		if (!info)
 			continue;
@@ -187,7 +187,7 @@ int ToolManager::hasNonInstallableTool(std::vector<DesuraId> &list)
 
 void ToolManager::postParseXml()
 {
-	BaseManager<ToolInfo>::for_each([](ToolInfo* info)
+	BaseManager<ToolInfo>::for_each([](gcRefPtr<ToolInfo> info)
 	{
 		size_t y=0;
 		
@@ -204,11 +204,11 @@ void ToolManager::postParseXml()
 	});
 }
 
-void ToolManager::addJSTool(UserCore::Item::ItemInfo* item, uint32 branchId, gcString name, gcString exe, gcString args, gcString res)
+void ToolManager::addJSTool(gcRefPtr<UserCore::Item::ItemInfo> item, uint32 branchId, gcString name, gcString exe, gcString args, gcString res)
 {
 }
 
-void ToolManager::findJSTools(UserCore::Item::ItemInfo* item)
+void ToolManager::findJSTools(gcRefPtr<UserCore::Item::ItemInfoI> item)
 {
 }
 

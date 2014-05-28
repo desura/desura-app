@@ -58,7 +58,7 @@ namespace UserCore
 		void onForcePoll(std::tuple<gcOptional<bool>, gcOptional<bool>, gcOptional<bool>> &info);
 
 		bool onMessageReceived(const char* resource, const XML::gcXMLElement &xmlElement) override;
-		void setInfo(gcRefPtr<UserCore::UserI> &user, gcRefPtr<WebCore::WebCoreI> &webcore) override;
+		void setInfo(const gcRefPtr<UserCore::UserI> &user, const gcRefPtr<WebCore::WebCoreI> &webcore) override;
 
 #ifdef WIN32
 		void checkFreeSpace();
