@@ -195,7 +195,7 @@ void UIBaseServiceTask::onComplete()
 #ifdef NIX
 void UIBaseServiceTask::removeScripts()
 {
-	UserCore::Item::ItemInfoI* item = getItemInfo();
+	auto item = getItemInfo();
 	
 	if (!item)
 		return;

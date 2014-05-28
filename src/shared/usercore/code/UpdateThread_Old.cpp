@@ -350,7 +350,7 @@ bool UpdateThreadOld::onMessageReceived(const char* resource, const XML::gcXMLEl
 	return false;
 }
 
-void UpdateThreadOld::setInfo(gcRefPtr<UserCore::UserI> &user, gcRefPtr<WebCore::WebCoreI> &webcore)
+void UpdateThreadOld::setInfo(const gcRefPtr<UserCore::UserI> &user, const gcRefPtr<WebCore::WebCoreI> &webcore)
 {
 	m_pUser = user;
 	m_pWebCore = webcore;
@@ -493,12 +493,12 @@ void UpdateThreadOld::checkAppUpdate(const XML::gcXMLElement &uNode, std::functi
 
 void UpdateThreadOld::checkAppUpdate(const XML::gcXMLElement &uNode)
 {
-	UserCore::User *pUser = dynamic_cast<UserCore::User*>(m_pUser);
+	auto pUser = gcRefPtr<UserCore::User>::dyn_cast(m_pUser);
 
 	if (!pUser)
 		return;
 
-	std::function<void(uint32,uint32, bool)> cb = std::bind(&UserCore::User::appNeedUpdate, pUser, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3);
+	std::function<void(uint32,uint32, bool)> cb = std::bind(&UserCore::User::appNeedUpdate, pUser.get(), std::placeholders::_1, std::placeholders::_2, std::placeholders::_3);
 	checkAppUpdate(uNode, cb);
 }
 

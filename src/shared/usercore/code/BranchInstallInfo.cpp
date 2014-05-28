@@ -502,9 +502,12 @@ void BranchInstallInfo::getExeList(std::vector<gcRefPtr<UserCore::Item::Misc::Ex
 	if (list.size() == 0 && m_vExeList.size() > 0)
 		list.push_back(m_vExeList[0].get());
 
-	std::sort(list.begin(), list.end(), [](gcRefPtr<UserCore::Item::Misc::ExeInfoI> &a, gcRefPtr<UserCore::Item::Misc::ExeInfoI> &b) -> bool
+	std::sort(list.begin(), list.end(), [](const gcRefPtr<UserCore::Item::Misc::ExeInfoI> &a, const gcRefPtr<UserCore::Item::Misc::ExeInfoI> &b) -> bool
 	{
-		return dynamic_cast<ExeInfo*>(a.get())->m_uiRank < dynamic_cast<ExeInfo*>(b.get())->m_uiRank;
+		auto ae = gcRefPtr<ExeInfo>::dyn_cast(a);
+		auto be = gcRefPtr<ExeInfo>::dyn_cast(b);
+
+		return ae->m_uiRank < be->m_uiRank;
 	});
 }
 
@@ -978,7 +981,9 @@ namespace UnitTest
 		doc.Parse(gs_szSettingsXml);
 
 		m_BranchInstallInfo->m_vValidFiles.push_back("path_a\\check_a.txt");
-		auto res = processSettings(doc.RootElement(), gcRefPtr<WildcardManager>::create(), false, false, nullptr);
+
+		auto wc = gcRefPtr<WildcardManager>::create();
+		auto res = processSettings(doc.RootElement(), wc, false, false, nullptr);
 
 		ASSERT_TRUE(res.found);
 		ASSERT_FILEEQ("path_a\\check_a.txt", res.insCheck.c_str());
@@ -995,7 +1000,8 @@ namespace UnitTest
 
 		setInstallInfo("path_a", "path_a\\check_a.txt", "insprim");
 
-		auto res = processSettings(doc.RootElement(), gcRefPtr<WildcardManager>::create(), false, false, nullptr);
+		auto wc = gcRefPtr<WildcardManager>::create();
+		auto res = processSettings(doc.RootElement(), wc, false, false, nullptr);
 
 		ASSERT_TRUE(res.found);
 		ASSERT_FILEEQ("path_a\\check_a.txt", res.insCheck.c_str());
@@ -1012,7 +1018,8 @@ namespace UnitTest
 
 		setInstallInfo("path_a", "path_a\\check_a.txt", "insprim");
 
-		auto res = processSettings(doc.RootElement(), gcRefPtr<WildcardManager>::create(), false, false, nullptr);
+		auto wc = gcRefPtr<WildcardManager>::create();
+		auto res = processSettings(doc.RootElement(), wc, false, false, nullptr);
 
 		ASSERT_TRUE(res.found);
 		ASSERT_FILEEQ("path_b\\check_b.txt", res.insCheck.c_str());
@@ -1033,7 +1040,8 @@ namespace UnitTest
 
 		setInstallInfo("path_a", "path_a\\check_a.txt", "insprim");
 
-		auto res = processSettings(doc.RootElement(), gcRefPtr<WildcardManager>::create(), false, false, nullptr);
+		auto wc = gcRefPtr<WildcardManager>::create();
+		auto res = processSettings(doc.RootElement(), wc, false, false, nullptr);
 
 		ASSERT_TRUE(res.found);
 		ASSERT_FILEEQ("path_a\\check_b.txt", res.insCheck.c_str());

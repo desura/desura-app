@@ -36,15 +36,12 @@ $/LicenseInfo$
 #include "util/UtilLinux.h"
 #endif
 
-namespace UserCore
-{
-namespace Item
-{
+using namespace UserCore::Item;
 
-void ItemHandle::doLaunch(Helper::ItemLaunchHelperI* helper)
+void ItemHandle::doLaunch(gcRefPtr<Helper::ItemLaunchHelperI> helper)
 {
 	char magicBytes[5] = {0};
-	UserCore::Item::Misc::ExeInfoI* ei = getItemInfo()->getActiveExe();
+	auto ei = getItemInfo()->getActiveExe();
 	
 	const char* exe = ei->getExe();
 	const char* args = getUserCore()->getCVarValue("gc_linux_launch_globalargs");
@@ -90,7 +87,7 @@ void ItemHandle::doLaunch(bool useXdgOpen, const char* globalExe, const char* gl
 {
 	preLaunchCheck();
 	
-	UserCore::Item::Misc::ExeInfoI* ei = getItemInfo()->getActiveExe();
+	auto ei = getItemInfo()->getActiveExe();
 	
 	gcString e(globalExe);
 	
@@ -131,7 +128,7 @@ void ItemHandle::doLaunch(bool useXdgOpen, const char* globalExe, const char* gl
 	if (useXdgOpen && args.size() != 0)
 		Warning(gcString("Arguments '{1}' are not being passed to non-executable file '{0}'.", ei->getExe(), args));
 
-	UserCore::Item::BranchInfoI* branch = getItemInfo()->getCurrentBranch();
+	auto branch = getItemInfo()->getCurrentBranch();
 
 #ifdef NIX64
 	// Branches can be marked simultaneously 32- and 64-bit, be sure it isn't.
@@ -199,17 +196,17 @@ void ItemHandle::doLaunch(bool useXdgOpen, const char* globalExe, const char* gl
 
 void ItemHandle::installLaunchScripts()
 {
-	UserCore::Item::ItemInfoI* item = getItemInfo();
+	auto item = getItemInfo();
 	
 	if (!item)
 		return;
 		
-	UserCore::Item::BranchInfoI* branch = item->getCurrentBranch();
+	auto branch = item->getCurrentBranch();
 	
 	if (!branch)
 		return;
 		
-	std::vector<UserCore::Item::Misc::ExeInfoI*> exeList;
+	std::vector<gcRefPtr<UserCore::Item::Misc::ExeInfoI>> exeList;
 	item->getExeList(exeList);
 	
 	char* scriptBin = NULL;
@@ -239,7 +236,7 @@ void ItemHandle::installLaunchScripts()
 	
 	for (size_t x=0; x<exeList.size(); x++)
 	{
-		UserCore::Item::Misc::ExeInfoI* exe = exeList[x];
+		auto exe = exeList[x];
 		
 		if (!exe || !UTIL::FS::isValidFile(exe->getExe()))
 			continue;
@@ -322,7 +319,7 @@ void ItemHandle::installLaunchScripts()
 	safe_delete(scriptXdg);
 }
 
-inline gcString createDesktopFile(ItemInfoI* i)
+inline gcString createDesktopFile(gcRefPtr<ItemInfoI> i)
 {
 	using boost::algorithm::replace_all_copy;
 	// KDE menu doesn't accept files like "Publisher Name-GameName.desktop" so we replace all " " with "_"
@@ -397,5 +394,3 @@ bool ItemHandle::createMenuEntry()
 	return result;
 }
 
-}
-}

@@ -144,8 +144,10 @@ gcRefPtr<UserCore::Thread::MCFThreadI> UserThreadManager::newUploadResumeThread(
 
 void UserThreadManager::setUpThread(gcRefPtr<UserCore::Thread::MCFThreadI> thread)
 {
+	auto um = m_pUserCore->getUploadManager();
+
 	thread->setThreadManager(gcRefPtr<UserThreadManager>(this));
-	thread->setUpLoadManager(m_pUserCore->getUploadManager());
+	thread->setUpLoadManager(um);
 	thread->setWebCore(m_pUserCore->getWebCore());
 	thread->setUserCore(m_pUserCore);
 }

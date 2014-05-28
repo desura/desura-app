@@ -231,14 +231,9 @@ public:
 	}
 
 	template <typename U>
-	static gcRefPtr<T> dyn_cast(gcRefPtr<U> &u)
+	static gcRefPtr<T> dyn_cast(const gcRefPtr<U> &u)
 	{
-		T* pT = dynamic_cast<T*>(u.get());
-
-		if (pT)
-			return gcRefPtr<T>(pT, (gcRefBaseFn)u.m_pRefFn);
-
-		return gcRefPtr<T>();
+		return gcRefPtr<T>(dynamic_cast<T*>(u.get()));
 	}
 
 	int getRefCt() const

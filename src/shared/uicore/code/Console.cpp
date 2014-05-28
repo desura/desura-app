@@ -36,7 +36,7 @@ CONCOMMAND(cmdlist, "cmdlist")
 	std::vector<gcRefPtr<ConCommand>> vList;
 	GetCCommandManager()->getConCommandList(vList);
 	
-	std::sort(begin(vList), end(vList), [](gcRefPtr<ConCommand> &pA, gcRefPtr<ConCommand> &pB)
+	std::sort(begin(vList), end(vList), [](const gcRefPtr<ConCommand> &pA, const gcRefPtr<ConCommand> &pB)
 	{
 		return std::string(pA->getName()) < std::string(pB->getName());
 	});
@@ -54,7 +54,7 @@ CONCOMMAND(cvarlist, "cvarlist")
 
 	uint32 skiped = 0;
 
-	std::sort(begin(vList), end(vList), [](gcRefPtr<CVar> &pA, gcRefPtr<CVar> &pB)
+	std::sort(begin(vList), end(vList), [](const gcRefPtr<CVar> &pA, const gcRefPtr<CVar> &pB)
 	{
 		return std::string(pA->getName()) < std::string(pB->getName()); 
 	});

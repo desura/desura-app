@@ -43,7 +43,7 @@ namespace UserCore
 class IPCToolMain
 {
 public:
-	gcException installTool(UserCore::ToolInfo* toolInfo);
+	gcException installTool(gcRefPtr<UserCore::ToolInfo> toolInfo);
 	Event<int32> onCompleteEvent;
 };
 #endif

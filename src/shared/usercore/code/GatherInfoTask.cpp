@@ -398,7 +398,7 @@ uint32 GatherInfoTask::validate()
 	}
 
 #ifdef NIX
-	UserCore::Item::BranchInfoI* bi = pItemInfo->getBranchById(getMcfBranch());
+	auto bi = pItemInfo->getBranchById(getMcfBranch());
 	
 	std::vector<DesuraId> toolList;
 	bi->getToolList(toolList);

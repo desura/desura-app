@@ -34,7 +34,7 @@ $/LicenseInfo$
 typedef void (*ConCommandCallBackFn)(std::vector<gcString> &vArgList);
 
 #define CONCOMMAND( name, printname )		void name##_cc_func(std::vector<gcString> &vArgList);				\
-											ConCommand name = ConCommand( printname, & name##_cc_func);		\
+											ConCommand name( printname, & name##_cc_func);		\
 											void name##_cc_func(std::vector<gcString> &vArgList)
 
 //! ConCommand repersents a console command provided in the application console
