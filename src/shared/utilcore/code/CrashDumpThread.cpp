@@ -48,8 +48,10 @@ CrashDumpThread::CrashDumpThread() : Thread::BaseThread("CrashDump Thread")
 
 CrashDumpThread::~CrashDumpThread()
 {
-	m_DelMutex.lock();
+	m_DelMutex.lock();	
 	m_DelMutex.unlock();
+
+	stop();
 }
 
 
