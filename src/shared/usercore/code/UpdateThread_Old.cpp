@@ -536,8 +536,8 @@ void UpdateThreadOld::checkAppUpdate(const XML::gcXMLElement &uNode)
 
 void UpdateThreadOld::updateBuildVer()
 {
-	UTIL::OS::setConfigValue(APPID, 999);
-	UTIL::OS::setConfigValue(APPBUILD, 0);
+	UTIL::OS::setConfigValue(APPID, "999");
+	UTIL::OS::setConfigValue(APPBUILD, "0");
 }
 
 #endif

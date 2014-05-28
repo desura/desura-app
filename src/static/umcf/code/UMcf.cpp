@@ -539,15 +539,16 @@ bool UMcf::isUpdateNewer()
 	char lszAppId[255];
 	char lszBuild[255];
 	DWORD dwType=REG_SZ;
-	DWORD dwSize=255;
+	DWORD dwSize1=255;
+	DWORD dwSize2 = 255;
 
 	res = RegOpenKeyEx(HKEY_LOCAL_MACHINE, "SOFTWARE\\Desura\\DesuraApp", 0, KEY_READ, &hk);
 
 	if (res != ERROR_SUCCESS)
 		return true;
 
-	DWORD err1 = RegQueryValueEx(hk, "appid", nullptr, &dwType,(LPBYTE)&lszAppId, &dwSize);
-	DWORD err2 = RegQueryValueEx(hk, "appver", nullptr, &dwType,(LPBYTE)&lszBuild, &dwSize);
+	DWORD err1 = RegQueryValueEx(hk, "appid", nullptr, &dwType, (LPBYTE)&lszAppId, &dwSize1);
+	DWORD err2 = RegQueryValueEx(hk, "appver", nullptr, &dwType,(LPBYTE)&lszBuild, &dwSize2);
 	RegCloseKey(hk);
 
 	if (err1 != ERROR_SUCCESS || err2 != ERROR_SUCCESS)
