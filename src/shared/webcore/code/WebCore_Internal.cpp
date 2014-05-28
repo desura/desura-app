@@ -105,14 +105,24 @@ const XML::gcXMLElement WebCoreClass::postToServer(std::string url, std::string 
 			httpOut.assign(const_cast<char*>(hh->getData()), hh->getDataSize());
 	}
 
-	auto res = xmlDocument.ProcessStatus(resource);
-
-	if (!useHTTPS && isFailedAuthReason(res)) //no login
+	try
 	{
-		logOut();
-		onLoggedOutEvent();
-		throw gcException(ERR_BAD_PORU, "You have been logged out from the server. Please login again");
+		xmlDocument.ProcessStatus(resource);
 	}
+	catch (gcException& e)
+	{
+		if (!useHTTPS && isFailedAuthReason(e.getSecErrId())) //no login
+		{
+			logOut();
+			onLoggedOutEvent();
+			throw gcException(ERR_BAD_PORU, "You have been logged out from the server. Please login again");
+		}
+		else
+		{
+			throw;
+		}
+	}
+
 
 	return xmlDocument.GetRoot(resource);
 }
