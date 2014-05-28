@@ -260,13 +260,38 @@ void gcWebControl::onPageLoad()
 		onPageLoadEvent();
 }
 
+class ForceResizeCallback : public ChromiumDLL::CallbackI
+{
+public:
+	ForceResizeCallback(ChromiumDLL::ChromiumBrowserI* pBrowser, wxSize size)
+		: m_pChromeBrowser(pBrowser)
+		, m_Size(size)
+	{
+	}
+
+	void destroy() override
+	{
+		delete this;
+	}
+
+	void run() override
+	{
+#ifdef WIN32
+		m_pChromeBrowser->onResize();
+#else
+		m_pChromeBrowser->onResize(0, 0, m_Size.GetWidth(), m_Size.GetHeight());
+#endif
+	}
+
+	ChromiumDLL::ChromiumBrowserI* m_pChromeBrowser;
+	wxSize m_Size;
+};
+
+extern void BrowserUICallback(ChromiumDLL::CallbackI* callback);
+
 void gcWebControl::forceResize()
 {
-#ifdef WIN32
-	m_pChromeBrowser->onResize();
-#else
-	m_pChromeBrowser->onResize(0, 0, GetSize().GetWidth(), GetSize().GetHeight());
-#endif
+	BrowserUICallback(new ForceResizeCallback(m_pChromeBrowser, GetSize()));
 }
 
 void gcWebControl::onResize( wxSizeEvent& event )

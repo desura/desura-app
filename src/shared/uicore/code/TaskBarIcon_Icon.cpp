@@ -72,27 +72,33 @@ uint32 TaskBarIcon::getUpdateCount()
 	uint32 cartCount = 0;
 
 	auto user = GetUserCore();
+
 	if (user)
 	{
 		messageCount = user->getPmCount();
 		updateCount = user->getUpCount();
 		cartCount = user->getCartCount();
 
-		std::vector<gcRefPtr<UserCore::Item::ItemInfoI>> gList;
-		user->getItemManager()->getGameList(gList);
+		auto im = user->getItemManager();
 
-		for (size_t x=0; x<gList.size(); x++)
+		if (im)
 		{
-			if (HasAnyFlags(gList[x]->getStatus(), UserCore::Item::ItemInfoI::STATUS_UPDATEAVAL))
-				gameUpdateCount++;
+			std::vector<gcRefPtr<UserCore::Item::ItemInfoI>> gList;
+			im->getGameList(gList);
 
-			std::vector<gcRefPtr<UserCore::Item::ItemInfoI>> mList;
-			user->getItemManager()->getModList(gList[x]->getId(), mList);
-
-			for (size_t y=0; y<mList.size(); y++)
+			for (auto& g : gList)
 			{
-				if (HasAnyFlags(mList[y]->getStatus(), UserCore::Item::ItemInfoI::STATUS_UPDATEAVAL))
+				if (HasAnyFlags(g->getStatus(), UserCore::Item::ItemInfoI::STATUS_UPDATEAVAL))
 					gameUpdateCount++;
+
+				std::vector<gcRefPtr<UserCore::Item::ItemInfoI>> mList;
+				im->getModList(g->getId(), mList);
+
+				for (auto& m : mList)
+				{
+					if (HasAnyFlags(m->getStatus(), UserCore::Item::ItemInfoI::STATUS_UPDATEAVAL))
+						gameUpdateCount++;
+				}
 			}
 		}
 	}

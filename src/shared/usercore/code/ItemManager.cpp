@@ -420,9 +420,9 @@ void ItemManager::getGameList(std::vector<gcRefPtr<UserCore::Item::ItemInfoI>> &
 
 void ItemManager::getModList(DesuraId gameId, std::vector<gcRefPtr<UserCore::Item::ItemInfoI>> &mList, bool includeDeleted)
 {
-	for_each([&mList, includeDeleted, gameId](gcRefPtr<UserCore::Item::ItemHandleI> handle)
+	for_each([&mList, includeDeleted, gameId](const gcRefPtr<UserCore::Item::ItemHandle> &handle)
 	{
-		auto info = handle->getItemInfo();
+		auto& info = handle->getItemInfo();
 
 		if (info->getId().getType() != DesuraId::TYPE_MOD || info->getParentId() != gameId)
 			return;		
@@ -872,7 +872,7 @@ void ItemManager::saveDbItems(bool fullSave)
 		sqlite3x::sqlite3_connection db(szItemDb.c_str());
 		sqlite3x::sqlite3_transaction trans(db);
 	
-		for_each([&db](gcRefPtr<UserCore::Item::ItemHandle> handle){
+		for_each([&db](const gcRefPtr<UserCore::Item::ItemHandle> &handle){
 
 			if (handle && handle->getItemInfoNorm())
 				handle->getItemInfoNorm()->saveDbFull(&db);
@@ -964,14 +964,14 @@ void ItemManager::parseItemUpdateXml(const char* area, const XML::gcXMLElement &
 
 void ItemManager::postParseLoginXml()
 {
-	for_each([this](gcRefPtr<UserCore::Item::ItemHandle> handle){
+	for_each([this](const gcRefPtr<UserCore::Item::ItemHandle> &handle){
 
-		auto info = gcRefPtr<UserCore::Item::ItemInfo>::dyn_cast(handle->getItemInfo());
+		auto info = handle->getItemInfoNorm();
 
 		if (info->wasOnAccount())
 			removeItem(info->getId());
 		else
-			m_pUser->getToolManager()->findJSTools(handle->getItemInfoNorm());
+			m_pUser->getToolManager()->findJSTools(info);
 	});
 
 	m_bFirstLogin = false;

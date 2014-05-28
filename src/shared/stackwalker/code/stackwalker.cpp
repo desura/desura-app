@@ -34,12 +34,24 @@ $/LicenseInfo$
 
 static std::mutex s_StackLock;
 static bool s_InitStackTrace = false;
+static std::thread::id s_IgnoreThread;
+
+std::atomic<uint32> g_StackCount = { 0 };
 
 extern "C"
 {
+	CEXPORT void ignoreThreadForStackTrace()
+	{
+		std::lock_guard<std::mutex> guard(s_StackLock);
+		s_IgnoreThread = std::this_thread::get_id();
+	}
+
 	CEXPORT bool getStackTraceString(int nFrames, PVOID* addrs, char* szBuffer, uint32 nBuffSize)
 	{
 		std::lock_guard<std::mutex> guard(s_StackLock);
+
+		if (s_IgnoreThread == std::this_thread::get_id())
+			return 0;
 
 		if (!s_InitStackTrace)
 		{
@@ -85,6 +97,9 @@ extern "C"
 
 		std::lock_guard<std::mutex> guard(s_StackLock);
 
+		if (s_IgnoreThread == std::this_thread::get_id())
+			return 0;
+
 		if (!s_InitStackTrace)
 		{
 			// Set up the symbol options so that we can gather information from the current
@@ -99,6 +114,7 @@ extern "C"
 			s_InitStackTrace = true;
 		}
 
+		++g_StackCount;
 		return CaptureStackBackTrace(nStart, nStop, addrs, NULL);
 	}
 }
