@@ -149,9 +149,14 @@ const char* User::getMcfCachePath()
 
 void User::cleanUp()
 {
-	m_pThreadPool->purgeTasks();
-	m_pThreadPool->blockTasks();
-	m_pWebCore->logOut();
+	if (m_pThreadPool)
+	{
+		m_pThreadPool->purgeTasks();
+		m_pThreadPool->blockTasks();
+	}
+
+	if (m_pWebCore)
+		m_pWebCore->logOut();
 
 	if (m_pThreadManager)
 		m_pThreadManager->cleanup();
