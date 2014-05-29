@@ -582,7 +582,7 @@ void ValidateTask::onStop()
 
 	std::lock_guard<std::mutex> guard(m_McfLock);
 
-	if (m_CurrentMcf)
+	if (m_CurrentMcf && m_CurrentMcf->handle())
 		m_CurrentMcf->handle()->stop();
 }
 
