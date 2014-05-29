@@ -40,6 +40,8 @@ $/LicenseInfo$
 #include <Propkey.h>
 #include <olectl.h>
 #include <Shellapi.h>
+#include <process.h>
+#include <Psapi.h>
 
 #include <Sddl.h>
 #define getSystemPath(id, path) SHGetFolderPathW(nullptr, id , nullptr, SHGFP_TYPE_CURRENT, path);
@@ -700,10 +702,10 @@ bool launchExe(const char* exe, const char* args, bool elevateIfNeeded, HWND ele
 		gcString param(args);
 
 		SHELLEXECUTEINFOA info;
-		memset(&info, 0, sizeof(SHELLEXECUTEINFO));
+		memset(&info, 0, sizeof(SHELLEXECUTEINFOA));
 
 		info.hwnd = elevationHandle;
-		info.cbSize = sizeof(SHELLEXECUTEINFO);
+		info.cbSize = sizeof(SHELLEXECUTEINFOA);
 
 		uint32 os = UTIL::WIN::getOSId();
 
@@ -886,6 +888,41 @@ bool runAs(const char* command, const char* area)
 	BOOL res = ShellExecuteExA(&info);
 	return (res == TRUE);
 }
+
+
+int findProcessId(const char* szProcessName)
+{
+	unsigned long aProcesses[1024], cbNeeded, cProcesses;
+	if (!EnumProcesses(aProcesses, sizeof(aProcesses), &cbNeeded))
+		return false;
+
+	unsigned long curPID = GetCurrentProcessId();
+
+	cProcesses = cbNeeded / sizeof(unsigned long);
+	for (unsigned int i = 0; i < cProcesses; i++)
+	{
+		if (aProcesses[i] == 0)
+			continue;
+
+		if (aProcesses[i] == curPID)
+			continue;
+
+		HANDLE hProcess = OpenProcess(PROCESS_QUERY_INFORMATION | PROCESS_VM_READ, 0, aProcesses[i]);
+
+		if (!hProcess)
+			continue;
+
+		char buffer[50] = { 0 };
+		GetModuleBaseNameA(hProcess, 0, buffer, 50);
+		CloseHandle(hProcess);
+
+		if (strcmp(szProcessName, buffer) == 0)
+			return aProcesses[i];
+	}
+
+	return -1;
+}
+
 
 }
 }
