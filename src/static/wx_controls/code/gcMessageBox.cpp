@@ -199,7 +199,10 @@ gcMessageDialog::~gcMessageDialog()
 
 void gcMessageDialog::onParentClose(wxCloseEvent &e)
 {
-	EndModal(wxID_ABORT);
+	if (IsModal())
+		EndModal(wxID_ABORT);
+
+	e.Skip();
 }
 
 void gcMessageDialog::centerOnParent(wxWindow* p)
