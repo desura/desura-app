@@ -143,7 +143,7 @@ uint64 UploadManager::addUpload(DesuraId id, const char* key, const char* path)
 
 	{
 		std::lock_guard<std::mutex> guard(m_mMutex);
-		auto ui = BaseManager::findItem(key);
+		ui = BaseManager::findItem(key);
 
 		if (ui && !ui->isDeleted())
 			return ui->getHash();

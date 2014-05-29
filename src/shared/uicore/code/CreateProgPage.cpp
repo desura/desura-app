@@ -108,8 +108,6 @@ void CreateProgPage::dispose()
 		m_pThread->getErrorEvent() -= delegate(this, &CreateProgPage::onError);
 		m_pThread->getCompleteStringEvent() -= delegate(this, &CreateProgPage::onComplete);
 	}
-
-	safe_delete(m_pThread);
 }
 
 void CreateProgPage::onButtonClick( wxCommandEvent& event )
