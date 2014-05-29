@@ -100,7 +100,7 @@ public:
 	{
 		gcAssert(!m_bCallbackHit);
 
-		std::lock_guard<std::mutex> guard(m_Lock);
+		std::lock_guard<std::recursive_mutex> guard(m_Lock);
 		m_bCallbackHit = true;
 
 		if (m_fnCallback)
@@ -114,7 +114,7 @@ public:
 		if (m_bCallbackHit)
 			return;
 
-		std::lock_guard<std::mutex> guard(m_Lock);
+		std::lock_guard<std::recursive_mutex> guard(m_Lock);
 
 		if (!m_bCallbackHit)
 		{
@@ -130,7 +130,7 @@ public:
 
 private:
 	std::atomic<bool> m_bCallbackHit;
-	std::mutex m_Lock;
+	std::recursive_mutex m_Lock;
 	EventHelper m_pHelper;
 	std::function<void()> m_fnCallback;
 };
