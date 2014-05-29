@@ -1676,3 +1676,73 @@ void ItemManager::enableSave()
 	m_bEnableSave = true; 
 	saveItems(); 
 }
+
+void ItemManager::killAllProcesses(DesuraId itemId)
+{
+	auto item = findItemInfo(itemId);
+
+	if (!item)
+		return;
+
+	if (item->getParentId().isOk())
+	{
+		auto p = findItemInfo(item->getParentId());
+
+		if (p)
+			item = p;
+	}
+
+	std::vector<gcRefPtr<UserCore::Item::ItemInfoI>> vItems;
+	getModList(item->getId(), vItems);
+	vItems.push_back(item);
+
+	std::vector<UTIL::FS::Path> vPaths;
+
+	for (const auto &i : vItems)
+	{
+		gcString installPath = i->getPath();
+
+		if (!installPath.empty())
+			vPaths.push_back(UTIL::FS::Path(installPath));
+	}
+
+	for (size_t x = 0; x < vPaths.size(); ++x)
+	{
+		if (vPaths[x].getFolderCount() == 0)
+			continue;
+
+		for (size_t y = x+1; y < vPaths.size(); ++y)
+		{
+			if (vPaths[y].getFolderCount() == 0)
+				continue;
+
+			if (vPaths[x].startsWith(vPaths[y]))
+			{
+				vPaths[x] = UTIL::FS::Path();
+			}
+			else if (vPaths[y].startsWith(vPaths[x]))
+			{
+				vPaths[y] = UTIL::FS::Path();
+			}
+		}
+	}
+
+	if (m_pUser && m_pUser->getServiceMain())
+	{
+		for (auto p : vPaths)
+		{
+			if (p.getFolderCount() == 0)
+				continue;
+
+			auto strPath = p.getFullPath();
+
+			try
+			{
+				m_pUser->getServiceMain()->killProcessesAtPath(strPath.c_str());
+			}
+			catch (...)
+			{
+			}
+		}
+	}
+}

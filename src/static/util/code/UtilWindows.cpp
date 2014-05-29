@@ -898,6 +898,8 @@ int findProcessId(const char* szProcessName)
 
 	unsigned long curPID = GetCurrentProcessId();
 
+	char buffer[50] = { 0 };
+
 	cProcesses = cbNeeded / sizeof(unsigned long);
 	for (unsigned int i = 0; i < cProcesses; i++)
 	{
@@ -912,7 +914,8 @@ int findProcessId(const char* szProcessName)
 		if (!hProcess)
 			continue;
 
-		char buffer[50] = { 0 };
+		buffer[0] = '\0';
+
 		GetModuleBaseNameA(hProcess, 0, buffer, 50);
 		CloseHandle(hProcess);
 
@@ -923,6 +926,49 @@ int findProcessId(const char* szProcessName)
 	return -1;
 }
 
+
+std::vector<uint32> getProcessesRunningAtPath(const char* szPath)
+{
+	std::vector<uint32> res;
+
+	unsigned long aProcesses[1024], cbNeeded, cProcesses;
+
+	if (!EnumProcesses(aProcesses, sizeof(aProcesses), &cbNeeded))
+		return res;
+
+	unsigned long curPID = GetCurrentProcessId();
+
+	char buffer[255] = { 0 };
+
+	UTIL::FS::Path path(szPath);
+
+	cProcesses = cbNeeded / sizeof(unsigned long);
+	for (unsigned int i = 0; i < cProcesses; i++)
+	{
+		if (aProcesses[i] == 0)
+			continue;
+
+		if (aProcesses[i] == curPID)
+			continue;
+
+		HANDLE hProcess = OpenProcess(PROCESS_QUERY_INFORMATION | PROCESS_VM_READ, 0, aProcesses[i]);
+
+		if (!hProcess)
+			continue;
+
+		buffer[0] = '\0';
+		
+		GetModuleFileNameExA(hProcess, 0, buffer, 255);
+		CloseHandle(hProcess);
+
+		UTIL::FS::Path procPath = UTIL::FS::PathWithFile(buffer);
+
+		if (procPath.startsWith(path))
+			res.push_back(aProcesses[i]);
+	}
+
+	return res;
+}
 
 }
 }

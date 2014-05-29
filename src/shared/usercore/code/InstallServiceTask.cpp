@@ -81,6 +81,8 @@ bool InstallServiceTask::initService()
 		return false;
 	}
 
+	getUserCore()->getItemManager()->killAllProcesses(getItemId());
+
 	m_pIPCIM = getServiceMain()->newInstallMcf();
 	if (!m_pIPCIM)
 	{

@@ -60,6 +60,8 @@ bool UIServiceTask::initService()
 	bool isInstaled = getItemInfo()->isInstalled();
 	bool isInstalling = HasAllFlags(getItemInfo()->getStatus(), UserCore::Item::ItemInfoI::STATUS_INSTALLING);
 
+	getUserCore()->getItemManager()->killAllProcesses(getItemId());
+
 	if (!UIBaseServiceTask::initService())
 	{
 		onComplete();

@@ -223,6 +223,10 @@ namespace UserCore
 
 		//! Save item to the db
 		virtual void saveItem(gcRefPtr<UserCore::Item::ItemInfoI> pItem) = 0;
+
+		//! Kills all processes running from the install dir
+		//!
+		virtual void killAllProcesses(DesuraId itemId) = 0;
 	};
 
 #ifdef LINK_WITH_GMOCK
@@ -266,6 +270,7 @@ namespace UserCore
 		MOCK_METHOD1(isItemFavorite, bool(DesuraId id));
 		MOCK_METHOD0(regenLaunchScripts, void());
 		MOCK_METHOD1(saveItem, void(gcRefPtr<UserCore::Item::ItemInfoI> pItem));
+		MOCK_METHOD1(killAllProcesses, void(DesuraId));
 
 		gc_IMPLEMENT_REFCOUNTING(ItemManagerMock);
 	};

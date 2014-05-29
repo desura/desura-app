@@ -71,6 +71,8 @@ namespace IPC
 		virtual void removeGameFromGameExplorer(const char* dllPath, bool deleteDll = true)=0;
 #endif
 
+		virtual void killProcessesAtPath(const char* szPath) = 0;
+
 	protected:
 		virtual ~ServiceMainI(){}
 	};
@@ -108,6 +110,8 @@ namespace IPC
 		MOCK_METHOD2(addItemGameToGameExplorer, void(const char*, const char*));
 		MOCK_METHOD2(removeGameFromGameExplorer, void(const char*, bool));
 #endif
+
+		MOCK_METHOD1(killProcessesAtPath, void(const char*));
 
 		gc_IMPLEMENT_REFCOUNTING(ServiceMainMock);
 	};

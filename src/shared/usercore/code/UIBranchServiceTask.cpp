@@ -50,6 +50,8 @@ UIBranchServiceTask::~UIBranchServiceTask()
 
 bool UIBranchServiceTask::initService()
 {
+	getUserCore()->getItemManager()->killAllProcesses(getItemId());
+
 	if (!UIBaseServiceTask::initService())
 	{
 		onComplete();

@@ -155,6 +155,8 @@ void IPCServiceMain::registerFunctions()
 	REG_FUNCTION_VOID( IPCServiceMain, updateShortCuts);
 	REG_FUNCTION_VOID( IPCServiceMain, fixFolderPermissions);
 	REG_FUNCTION_VOID( IPCServiceMain, runInstallScript);
+
+	REG_FUNCTION_VOID(IPCServiceMain, killProcessesAtPath);
 #else
 	REG_FUNCTION_VOID_T( IPCServiceMain, message, false );
 	REG_FUNCTION( IPCServiceMain, getSpecialPath );
@@ -307,6 +309,11 @@ void IPCServiceMain::fixFolderPermissions(const char* dir)
 void IPCServiceMain::runInstallScript(const char* file, const char* installpath, const char* function)
 {
 	IPC::functionCallAsync(this, "runInstallScript", file, installpath, function);
+}
+
+void IPCServiceMain::killProcessesAtPath(const char* szPath)
+{
+	IPC::functionCallV(this, "killProcessesAtPath", szPath);
 }
 
 #else
@@ -587,5 +594,12 @@ void IPCServiceMain::runInstallScript(const char* file, const char* installpath,
 	}
 }
 
+void IPCServiceMain::killProcessesAtPath(const char* szPath)
+{
+	auto vPids = UTIL::OS::getProcessesRunningAtPath(szPath);
+
+	for (auto pid : vPids)
+		UTIL::OS::killProcess(pid);
+}
 
 #endif

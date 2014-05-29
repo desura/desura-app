@@ -121,6 +121,7 @@ namespace UserCore
 		void regenLaunchScripts() override;
 
 		void saveItem(gcRefPtr<UserCore::Item::ItemInfoI> pItem) override;
+		void killAllProcesses(DesuraId itemId) override;
 
 		gc_IMPLEMENT_REFCOUNTING(ItemManager);
 

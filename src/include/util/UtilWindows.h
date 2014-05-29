@@ -299,6 +299,9 @@ namespace WIN
 	//! Finds the id of the first process running under the name
 	//!
 	int findProcessId(const char* szProcessName);
+
+
+	std::vector<uint32> getProcessesRunningAtPath(const char* szPath);
 }
 }
 
