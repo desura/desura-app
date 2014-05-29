@@ -1009,7 +1009,7 @@ void ItemForm::onItemInfoGathered()
 
 void ItemForm::onFormClose(wxCloseEvent& event)
 {
-	if (checkAndSetPendingClose())
+	if (event.CanVeto() && checkAndSetPendingClose())
 	{
 		event.Veto();
 		return;
