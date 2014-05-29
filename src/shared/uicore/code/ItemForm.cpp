@@ -922,7 +922,9 @@ void ItemForm::onStageChange(ITEM_STAGE &stage)
 {
 	if (stage == ITEM_STAGE::STAGE_CLOSE)
 	{
-		Close();
+		if (!checkAndSetPendingClose())
+			Close();
+
 		return;
 	}
 	else if (stage == ITEM_STAGE::STAGE_LAUNCH)
@@ -1007,13 +1009,13 @@ void ItemForm::onItemInfoGathered()
 
 void ItemForm::onFormClose(wxCloseEvent& event)
 {
-	if (checkAndSetPendingClose())
+	if (event.CanVeto() && checkAndSetPendingClose())
 	{
 		event.Veto();
 		return;
 	}
 
-	if (m_pDialog)
+	if (m_pDialog && m_pDialog->IsModal())
 		m_pDialog->EndModal(wxCANCEL);
 	
 	Show(false);

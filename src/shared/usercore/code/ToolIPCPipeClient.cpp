@@ -65,10 +65,16 @@ void ToolIPCPipeClient::start()
 {
 	startHelper();
 
+	if (UTIL::WIN::findProcessId("toolhelper.exe") < 0)
+		throw gcException(ERR_SERVICE, "Failed to find running tool install helper.");
+
 	size_t x=0;
 
 	do
 	{
+		if (isStopped())
+			break;
+
 		try
 		{
 			tryStart();
@@ -138,6 +144,9 @@ void ToolIPCPipeClient::startHelper()
 	BOOL res = ShellExecuteEx(&info);
 
 	if (res == 0)
+		throw gcException(ERR_SERVICE, GetLastError(), "Failed to start tool install helper.");
+
+	if ((int)info.hInstApp < 32)
 		throw gcException(ERR_SERVICE, GetLastError(), "Failed to start tool install helper.");
 
 	DWORD dwExitCode = 0;

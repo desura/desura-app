@@ -431,6 +431,8 @@ public:
 
 	void saveItem(gcRefPtr<UserCore::Item::ItemInfoI> item) override { }
 
+	void killAllProcesses(DesuraId itemId) override {}
+
 	LanguageStubItem m_Item;
 	LanguageStubItemHandle m_ItemHandle;
 
@@ -605,6 +607,8 @@ public:
 	void regenLaunchScripts() override { }
 
 	void saveItem(gcRefPtr<UserCore::Item::ItemInfoI>) override { }
+
+	void killAllProcesses(DesuraId itemId) override {}
 
 	std::vector<gcRefPtr<LanguageStubItem>> m_vItems;
 	std::vector<gcRefPtr<LanguageStubItemHandle>> m_vItemHandle;

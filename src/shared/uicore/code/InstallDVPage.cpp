@@ -27,7 +27,7 @@ $/LicenseInfo$
 #include "InstallDVPage.h"
 
 #include "usercore/ItemHandleI.h"
-
+#include "MainApp.h"
 
 
 namespace UI
@@ -92,8 +92,7 @@ void InstallDVPage::onButtonPressed(wxCommandEvent& event)
 	}
 	else if (m_butCancel->GetId() == event.GetId())
 	{
-		getItemHandle()->cancelCurrentStage();
-		GetParent()->Close();
+		g_pMainApp->handleInternalLink(getItemId(), ACTION_UNINSTALL);
 	}
 }
 

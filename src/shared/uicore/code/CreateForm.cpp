@@ -65,7 +65,7 @@ void CreateMCFForm::onFormClose(wxCloseEvent& event)
 
 	if (m_bPromptClose)
 	{
-		if (gcMessageBox(this, Managers::GetString(L"#CONFIRM_PROMPT"), Managers::GetString(L"#CONFIRM"), wxICON_QUESTION|wxYES_NO) != wxYES)
+		if (event.CanVeto() && gcMessageBox(this, Managers::GetString(L"#CONFIRM_PROMPT"), Managers::GetString(L"#CONFIRM"), wxICON_QUESTION | wxYES_NO) != wxYES)
 		{
 			event.Veto();
 			return;

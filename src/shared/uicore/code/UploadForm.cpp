@@ -59,7 +59,7 @@ void UploadMCFForm::onFormClose( wxCloseEvent& event )
 {
 	Show(false);
 
-	if (m_bTrueClose)	
+	if (!event.CanVeto() || m_bTrueClose)
 		g_pMainApp->closeForm(this->GetId());
 	else
 		event.Veto();

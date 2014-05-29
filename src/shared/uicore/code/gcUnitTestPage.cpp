@@ -396,7 +396,7 @@ void gcUnitTestForm::OnTextChanged(wxCommandEvent& event)
 
 void gcUnitTestForm::OnClose(wxCloseEvent& event)
 {
-	if (!m_bShouldClose)
+	if (event.CanVeto() && !m_bShouldClose)
 	{
 		event.Veto();
 		Show(false);

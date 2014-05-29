@@ -86,6 +86,8 @@ bool UIComplexModServiceTask::initService()
 		return false;
 	}
 
+	getUserCore()->getItemManager()->killAllProcesses(getItemId());
+
 	m_idLastInstalledMod = parentInfo->getInstalledModId();
 	getUserCore()->getItemManager()->setInstalledMod(parentInfo->getId(), DesuraId());
 

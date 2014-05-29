@@ -406,7 +406,7 @@ void Console::appendText(gcWString text, Color col)
 
 void Console::onWindowClose( wxCloseEvent& event )
 {
-	if (this->GetId() == event.GetId())
+	if (this->GetId() == event.GetId() && event.CanVeto())
 	{
 		Show(false);
 		event.Veto();

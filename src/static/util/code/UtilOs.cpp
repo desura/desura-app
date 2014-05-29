@@ -524,5 +524,25 @@ std::thread::id ignoreStackTraceOnThisThread()
 #endif
 #endif
 
+
+std::vector<uint32> getProcessesRunningAtPath(const char* szPath)
+{
+#ifdef WIN32
+	return UTIL::WIN::getProcessesRunningAtPath(szPath);
+#endif
+
+	return std::vector<uint32>();
+}
+
+void killProcess(uint32 pid)
+{
+#ifdef WIN32
+	auto hProcess = OpenProcess(PROCESS_TERMINATE, FALSE, pid);
+
+	if (hProcess != nullptr)
+		TerminateProcess(hProcess, -1);
+#endif
+}
+
 }
 }

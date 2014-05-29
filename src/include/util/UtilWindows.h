@@ -295,6 +295,13 @@ namespace WIN
 	//! Uses explorer run as command to launch an item
 	//!
 	bool runAs(const char* command, const char* area = "open");
+
+	//! Finds the id of the first process running under the name
+	//!
+	int findProcessId(const char* szProcessName);
+
+
+	std::vector<uint32> getProcessesRunningAtPath(const char* szPath);
 }
 }
 

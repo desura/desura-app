@@ -184,6 +184,9 @@ namespace UTIL
 		std::shared_ptr<UTIL::OS::StackTrace> getStackTrace(uint32 nStart = 0, uint32 nStop = 10);
 		std::string getStackTraceString(const std::shared_ptr<UTIL::OS::StackTrace> &trace);
 #endif
+
+		std::vector<uint32> getProcessesRunningAtPath(const char* szPath);
+		void killProcess(uint32 pid);
 	}
 }
 
