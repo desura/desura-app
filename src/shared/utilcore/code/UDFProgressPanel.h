@@ -70,7 +70,7 @@ protected:
 	void onComplete();
 
 private:
-	UninstallAllThread* m_pThread;
+	gcRefPtr<UninstallAllThread> m_pThread;
 };
 
 #endif //DESURA_UDFPROGRESSPANEL_H
