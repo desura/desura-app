@@ -57,7 +57,7 @@ UDFProgressPanel::UDFProgressPanel(wxWindow* parent, gcRefPtr<UserCore::UserI> u
 	this->Layout();
 
 
-	m_pThread = new UninstallAllThread(flags, user);
+	m_pThread = gcRefPtr<UninstallAllThread>::create(flags, user);
 
 	m_pThread->onCompleteEvent += guiDelegate(this, &UDFProgressPanel::onComplete);
 	m_pThread->onProgressEvent += guiDelegate(this, &UDFProgressPanel::onProgress);

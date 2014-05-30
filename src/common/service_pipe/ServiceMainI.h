@@ -72,6 +72,7 @@ namespace IPC
 #endif
 
 		virtual void killProcessesAtPath(const char* szPath) = 0;
+		virtual uint32 findProcessId(const char* szProcessName) = 0;
 
 	protected:
 		virtual ~ServiceMainI(){}
@@ -112,6 +113,7 @@ namespace IPC
 #endif
 
 		MOCK_METHOD1(killProcessesAtPath, void(const char*));
+		MOCK_METHOD1(findProcessId, uint32(const char*));
 
 		gc_IMPLEMENT_REFCOUNTING(ServiceMainMock);
 	};

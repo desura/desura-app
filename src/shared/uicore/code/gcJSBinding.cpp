@@ -106,8 +106,13 @@ DesuraJSBinding::~DesuraJSBinding()
 gcRefPtr<UserCore::ItemManagerI> DesuraJSBinding::getItemManager()
 {
 	if (!gs_pItemManager)
-		gs_pItemManager = GetUserCore()->getItemManager();
+	{
+		auto uc = GetUserCore();
 
+		if (uc)
+			gs_pItemManager = uc->getItemManager();
+	}
+		
 	return gs_pItemManager;
 }
 
