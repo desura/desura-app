@@ -26,6 +26,7 @@ $/LicenseInfo$
 #include "Common.h"
 #include "ToolIPCPipeClient.h"
 #include "IPCToolMain.h"
+#include "ServiceMainI.h"
 
 #include <branding/branding.h>
 
@@ -38,16 +39,12 @@ using namespace UserCore;
 
 ToolIPCPipeClient::ToolIPCPipeClient(const char* user, bool uploadDumps, const char* key, HWND handle) 
 	: IPC::PipeClient(gcString("DesuraToolHelper-{0}", key).c_str())
+	, m_szKey(key)
+	, m_szUser(user)
+	, m_WinHandle(handle)
+	, m_bUploadDumps(uploadDumps)
 {
-	m_szKey = key;
-	m_WinHandle = handle;
-
 	onDisconnectEvent += delegate(this, &ToolIPCPipeClient::onDisconnect);
-
-	m_szUser = user;
-	m_bUploadDumps = uploadDumps;
-
-	m_pServiceMain = nullptr;
 }
 
 ToolIPCPipeClient::~ToolIPCPipeClient()
@@ -61,11 +58,11 @@ void ToolIPCPipeClient::onDisconnect()
 	m_pServiceMain = nullptr;
 }
 
-void ToolIPCPipeClient::start()
+void ToolIPCPipeClient::start(const std::shared_ptr<IPC::ServiceMainI> &pServiceMain)
 {
 	startHelper();
 
-	if (UTIL::WIN::findProcessId("toolhelper.exe") < 0)
+	if (pServiceMain && pServiceMain->findProcessId("toolhelper.exe") < 0)
 		throw gcException(ERR_SERVICE, "Failed to find running tool install helper.");
 
 	size_t x=0;

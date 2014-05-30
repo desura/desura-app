@@ -34,6 +34,11 @@ $/LicenseInfo$
 
 class IPCToolMain;
 
+namespace IPC
+{
+	class ServiceMainI;
+}
+
 namespace UserCore
 {
 
@@ -43,7 +48,7 @@ namespace UserCore
 		ToolIPCPipeClient(const char* user, bool uploadDumps, const char* key, HWND handle);
 		~ToolIPCPipeClient();
 
-		void start();
+		void start(const std::shared_ptr<IPC::ServiceMainI> &pServiceMain);
 
 		std::shared_ptr<IPCToolMain> getToolMain();
 

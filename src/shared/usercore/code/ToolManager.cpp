@@ -530,7 +530,7 @@ void ToolManager::startInstall(ToolTransactionId ttid)
 		m_bDeleteThread = false;
 
 #ifdef WIN32
-		m_pToolThread = gcRefPtr<UserCore::Misc::ToolInstallThread>::create(this, m_MapLock, m_mTransactions, m_pUser->getUserName(), m_pUser->getMainWindowHandle());
+		m_pToolThread = gcRefPtr<UserCore::Misc::ToolInstallThread>::create(m_pUser->getInternal(), this, m_MapLock, m_mTransactions, m_pUser->getUserName(), m_pUser->getMainWindowHandle());
 		m_pToolThread->onPipeDisconnectEvent += delegate(this, &ToolManager::onPipeDisconnect);
 #else
 		m_pToolThread = gcRefPtr<UserCore::Misc::ToolInstallThread>::create(this, m_MapLock, m_mTransactions);

@@ -50,6 +50,8 @@ public:
 
 namespace UserCore
 {
+	class UserInternalI;
+
 	namespace Misc
 	{
 
@@ -57,7 +59,7 @@ namespace UserCore
 		{
 		public:
 #ifdef WIN32
-			ToolInstallThread(gcRefPtr<ToolManager> toolManager, std::mutex &mapLock, std::map<ToolTransactionId, gcRefPtr<ToolTransInfo>> &transactions, const char* userName, HWND handle);
+			ToolInstallThread(gcRefPtr<UserInternalI> pUserInternal, gcRefPtr<ToolManager> toolManager, std::mutex &mapLock, std::map<ToolTransactionId, gcRefPtr<ToolTransInfo>> &transactions, const char* userName, HWND handle);
 #else
 			ToolInstallThread(gcRefPtr<ToolManager> toolManager, std::mutex &mapLock, std::map<ToolTransactionId, gcRefPtr<ToolTransInfo>> &transactions);
 #endif
@@ -110,6 +112,7 @@ namespace UserCore
 			ToolIPCPipeClient* m_pIPCClient;
 			HWND m_WinHandle;
 			gcString m_szUserName;
+			gcRefPtr<UserInternalI> m_pUserInternal;
 #else
             std::shared_ptr<IPCToolMain> m_pToolMain;
 #endif

@@ -87,7 +87,7 @@ void BaseItemServiceTask::onStop()
 	m_WaitCond.notify();
 }
 
-IPC::ServiceMainI* BaseItemServiceTask::getServiceMain()
+std::shared_ptr<IPC::ServiceMainI> BaseItemServiceTask::getServiceMain()
 {
 	return getUserCore()->getInternal()->getServiceMain();
 }

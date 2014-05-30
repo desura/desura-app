@@ -64,7 +64,7 @@ namespace UserCore
 				gcAssert(false);
 			}
 
-			IPC::ServiceMainI* getServiceMain();
+			std::shared_ptr<IPC::ServiceMainI> getServiceMain();
 
 			void waitForFinish();
 			void resetFinish();

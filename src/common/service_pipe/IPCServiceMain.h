@@ -85,6 +85,7 @@ public:
 	void fixFolderPermissions(const char* dir) override;
 
 	void killProcessesAtPath(const char* szPath) override;
+	uint32 findProcessId(const char* szProcessName) override;
 
 	gc_IMPLEMENT_REFCOUNTING(IPCServiceMain);
 

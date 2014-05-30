@@ -157,6 +157,7 @@ void IPCServiceMain::registerFunctions()
 	REG_FUNCTION_VOID( IPCServiceMain, runInstallScript);
 
 	REG_FUNCTION_VOID(IPCServiceMain, killProcessesAtPath);
+	REG_FUNCTION(IPCServiceMain, findProcessId);
 #else
 	REG_FUNCTION_VOID_T( IPCServiceMain, message, false );
 	REG_FUNCTION( IPCServiceMain, getSpecialPath );
@@ -314,6 +315,16 @@ void IPCServiceMain::runInstallScript(const char* file, const char* installpath,
 void IPCServiceMain::killProcessesAtPath(const char* szPath)
 {
 	IPC::functionCallV(this, "killProcessesAtPath", szPath);
+}
+
+uint32 IPCServiceMain::findProcessId(const char* szProcessName)
+{
+#ifdef WIN32
+	return IPC::functionCall<uint32, const char*>(this, "findProcessId", szProcessName);
+#else
+	gcAssert(false);
+	return -1;
+#endif
 }
 
 #else
@@ -600,6 +611,11 @@ void IPCServiceMain::killProcessesAtPath(const char* szPath)
 
 	for (auto pid : vPids)
 		UTIL::OS::killProcess(pid);
+}
+
+uint32 IPCServiceMain::findProcessId(const char* szProcessName)
+{
+	return UTIL::WIN::findProcessId(szProcessName);
 }
 
 #endif

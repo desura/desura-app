@@ -127,7 +127,7 @@ namespace UserCore
 		virtual void changeAccount(DesuraId id, uint8 action) = 0;
 
 
-		virtual IPC::ServiceMainI* getServiceMain() = 0;
+		virtual std::shared_ptr<IPC::ServiceMainI> getServiceMain() = 0;
 
 		virtual gcRefPtr<MCFManagerI> getMCFManager() = 0;
 	};
@@ -143,7 +143,7 @@ namespace UserCore
 		MOCK_METHOD2(downloadImage, void(gcRefPtr<UserCore::Item::ItemInfo>, uint8));
 		MOCK_METHOD2(changeAccount, void(DesuraId, uint8));
 		MOCK_METHOD0(getMCFManager, gcRefPtr<MCFManagerI>());
-		MOCK_METHOD0(getServiceMain, IPC::ServiceMainI*());
+		MOCK_METHOD0(getServiceMain, std::shared_ptr<IPC::ServiceMainI>());
 
 		gc_IMPLEMENT_REFCOUNTING(UserInternalMock);
 	};
@@ -318,7 +318,7 @@ namespace UserCore
 		bool platformFilter(const XML::gcXMLElement &platform, PlatformType type);
 
 		gcRefPtr<BDManager> getBDManager();
-		IPC::ServiceMainI* getServiceMain() override;
+		std::shared_ptr<IPC::ServiceMainI> getServiceMain() override;
 
 		gc_IMPLEMENT_REFCOUNTING(UserCore);
 	protected:
@@ -486,12 +486,12 @@ namespace UserCore
 		return m_pThreadPool;
 	}
 
-	inline IPC::ServiceMainI* User::getServiceMain()
+	inline std::shared_ptr<IPC::ServiceMainI> User::getServiceMain()
 	{
 		if (!m_pPipeClient)
 			return nullptr;
 
-		return m_pPipeClient->getServiceMain().get();
+		return m_pPipeClient->getServiceMain();
 	}
 
 	inline gcRefPtr<WebCore::WebCoreI> User::getWebCore()
