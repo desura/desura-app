@@ -671,7 +671,8 @@ void ItemHandle::stopThread()
 	gcAssert(m_pThread.getRefCt() == 1);
 
 	m_pUserCore->getThreadPool()->queueTask(gcRefPtr<UserCore::Task::DeleteThread>::create(m_pUserCore, m_pThread));
-	m_pThread = nullptr;
+	gcAssert(!m_pThread); //delete thread should null this to avoid race condition with thread pool deleting before we null it here
+
 	m_bStopped = true;
 }
 

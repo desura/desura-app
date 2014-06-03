@@ -52,6 +52,7 @@ DeleteThread::DeleteThread(gcRefPtr<UserCore::UserI> user, gcRefPtr<UserCore::It
 	: UserTask(user)
 	, m_pThread(pThread)
 {
+	pThread.reset();
 }
 
 DeleteThread::~DeleteThread()
