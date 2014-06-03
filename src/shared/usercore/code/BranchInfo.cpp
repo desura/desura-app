@@ -384,6 +384,8 @@ void BranchInfo::loadXmlData(const XML::gcXMLElement &xmlNode)
 	}
 	else
 	{
+		m_uiFlags &= ~BF_NORELEASES;
+
 		uint32 build = -1;
 		mcfNode.GetChild("build", build);
 
