@@ -666,6 +666,10 @@ void ItemHandle::stopThread()
 	gcTrace("");
 
 	std::lock_guard<std::recursive_mutex> guard(m_ThreadMutex);
+
+	if (!m_pThread)
+		return;
+
 	m_pThread->setThreadManager(nullptr);
 
 	gcAssert(m_pThread.getRefCt() == 1);
