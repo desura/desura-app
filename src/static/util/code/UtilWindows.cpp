@@ -939,6 +939,7 @@ std::vector<uint32> getProcessesRunningAtPath(const char* szPath)
 	unsigned long curPID = GetCurrentProcessId();
 
 	char buffer[255] = { 0 };
+	DWORD nSize = 255;
 
 	UTIL::FS::Path path(szPath);
 
@@ -957,8 +958,9 @@ std::vector<uint32> getProcessesRunningAtPath(const char* szPath)
 			continue;
 
 		buffer[0] = '\0';
-		
-		GetModuleFileNameExA(hProcess, 0, buffer, 255);
+		nSize = 255;
+
+		QueryFullProcessImageNameA(hProcess, 0, buffer, &nSize);
 		CloseHandle(hProcess);
 
 		UTIL::FS::Path procPath = UTIL::FS::PathWithFile(buffer);

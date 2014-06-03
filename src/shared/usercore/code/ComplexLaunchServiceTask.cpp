@@ -188,6 +188,8 @@ bool ComplexLaunchServiceTask::install()
 {
 	m_iMode = BACKUP;
 
+	getUserCore()->getItemManager()->killAllProcesses(getItemId());
+
 	auto mm = getUserCore()->getInternal()->getMCFManager();
 
 	gcString path = getFullMcf();
@@ -288,6 +290,8 @@ RemoveResult ComplexLaunchServiceTask::remove()
 	gcException eItemNull(ERR_NULLHANDLE, "Item that is meant to be removed for complex install is null.");
 	gcException eNoInstBrch(ERR_NULLHANDLE, "Item that is meant to be removed for complex install has no installed branches.");
 	gcException eBadPath(ERR_BADPATH, "Mcf path was null or invalid.");
+
+	getUserCore()->getItemManager()->killAllProcesses(m_iRemoveId);
 
 	auto item = getUserCore()->getItemManager()->findItemInfo(m_iRemoveId);
 	

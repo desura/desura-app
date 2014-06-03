@@ -407,7 +407,13 @@ bool Path::startsWith(const Path &path) const
 
 	for (size_t x = 0; x < path.m_vPath.size(); ++x)
 	{
-		if (m_vPath[x] != path.m_vPath[x])
+		gcString a = m_vPath[x];
+		gcString b = path.m_vPath[x];
+
+		std::transform(a.begin(), a.end(), a.begin(), ::tolower);
+		std::transform(b.begin(), b.end(), b.begin(), ::tolower);
+
+		if (a != b)
 			return false;
 	}
 

@@ -127,8 +127,8 @@ void ICheckFinishPage::onButtonPressed(wxCommandEvent& event)
 	}
 	else if (event.GetId() == m_butTryAgain->GetId())
 	{
-		GetParent()->Close();
 		g_pMainApp->handleInternalLink(getItemInfo()->getId(), ACTION_INSCHECK);
+		GetParent()->Close();
 	}
 }
 
