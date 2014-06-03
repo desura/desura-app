@@ -305,7 +305,8 @@ void DesuraJSSettings::saveCIPList(std::vector<std::map<gcString, gcString>> sav
 
 bool DesuraJSSettings::isValidCIPPath(gcString path)
 {
-	return UTIL::FS::isValidFolder(path);
+	gcString appDir = UTIL::OS::getCurrentDir();
+	return UTIL::FS::isValidFolder(path) && UTIL::FS::Path(appDir) != UTIL::FS::Path(path);
 }
 
 gcWString DesuraJSSettings::browseCIPPath(gcWString name, gcWString path)
