@@ -45,9 +45,7 @@ ToolInstallThread::ToolInstallThread(gcRefPtr<UserInternalI> pUserInternal, gcRe
 	, m_WinHandle(handle)
 	, m_pUserInternal(pUserInternal)
 {
-	m_pIPCClient = nullptr;
-	m_CurrentInstall = -1;
-	m_bStillInstalling = false;
+
 }
 
 ToolInstallThread::~ToolInstallThread()
@@ -98,13 +96,13 @@ void ToolInstallThread::onPipeDisconnect()
 void ToolInstallThread::startIPC()
 {
 	gcTrace("");
-	if (m_pIPCClient)
+	if (m_pIPCClient && !m_pIPCClient->isDisconnected())
 		return;
 
 	time_t t = time(nullptr);
 	gcString id("{0}", t);
 
-	m_pIPCClient = new ToolIPCPipeClient(m_szUserName.c_str(), true, id.c_str(), m_WinHandle);
+	m_pIPCClient = std::make_shared<ToolIPCPipeClient>(m_szUserName.c_str(), true, id.c_str(), m_WinHandle);
 	m_pIPCClient->onDisconnectEvent += delegate(this, &ToolInstallThread::onPipeDisconnect);
 	m_pIPCClient->onDisconnectEvent += delegate(&onPipeDisconnectEvent);
 
@@ -123,5 +121,8 @@ void ToolInstallThread::startIPC()
 
 std::shared_ptr<IPCToolMain> ToolInstallThread::getToolMain()
 {
+	if (!m_pIPCClient)
+		return std::shared_ptr<IPCToolMain>();
+
 	return m_pIPCClient->getToolMain();
 }
