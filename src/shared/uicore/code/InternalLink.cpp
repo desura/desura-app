@@ -649,7 +649,7 @@ void InternalLink::showPrompt(DesuraId id, LinkArgs args)
 
 void InternalLink::showPreorderPrompt(DesuraId id, bool isPreload)
 {
-	gcRefPtr<UserCore::Item::ItemInfoI> item = GetUserCore()->getItemManager()->findItemInfo( id );
+	gcRefPtr<UserCore::Item::ItemInfoI> item = GetUserCore()->getItemManager()->findItemInfo(id);
 
 	if (!item)
 		return;
@@ -658,7 +658,7 @@ void InternalLink::showPreorderPrompt(DesuraId id, bool isPreload)
 
 	if (!bi)
 	{
-		for (size_t x=0; x<item->getBranchCount(); x++)
+		for (size_t x = 0; x < item->getBranchCount(); x++)
 		{
 			auto temp = item->getBranch(x);
 
@@ -682,18 +682,28 @@ void InternalLink::showPreorderPrompt(DesuraId id, bool isPreload)
 	UTIL::MISC::getTimeDiffFromNow(str, days, hours);
 
 	gcString title(Managers::GetString("#IF_PRELOADLAUNCH_TITLE"), item->getName());
-	gcString msg(Managers::GetString("#IF_PRELOADLAUNCH"), item->getName(), 
-					days, 
-						Managers::GetString(isPreload?"#IF_PRELOADLAUNCH_PRELOADED":"#IF_PRELOADLAUNCH_PREORDERED"), 
-							time_available, 
-								Managers::GetString(days == 1 ? "#IF_PRELOADLAUNCH_WORD_DAY":"#IF_PRELOADLAUNCH_WORD_DAYS"));
+	gcString msg(Managers::GetString("#IF_PRELOADLAUNCH"), item->getName(),
+		days,
+		Managers::GetString(isPreload ? "#IF_PRELOADLAUNCH_PRELOADED" : "#IF_PRELOADLAUNCH_PREORDERED"),
+		time_available,
+		Managers::GetString(days == 1 ? "#IF_PRELOADLAUNCH_WORD_DAY" : "#IF_PRELOADLAUNCH_WORD_DAYS"));
 
 	PreloadButtonHelper pobh(id);
 
 	if (pobh.m_bOtherBranches)
 		msg += gcString(Managers::GetString("#IF_PRELOADLAUNCH_INSTALLOTHER_INFO"), item->getName());
 
-	gcMessageBox(g_pMainApp->getMainWindow(), msg, title, wxICON_EXCLAMATION|wxCLOSE, &pobh);
+	auto form = findForm<UI::Forms::ItemForm>(id, m_vSubForms);
+
+	if (form)
+	{
+		gcMessageBox(form, msg, title, wxICON_EXCLAMATION | wxCLOSE, &pobh);
+		form->Close();
+	}
+	else
+	{
+		gcMessageBox(g_pMainApp->getMainWindow(), msg, title, wxICON_EXCLAMATION | wxCLOSE, &pobh);
+	}	
 }
 
 UI::Forms::ItemForm* InternalLink::showItemForm(DesuraId id, UI::Forms::INSTALL_ACTION action, bool showForm, LinkArgs args)
