@@ -535,7 +535,9 @@ public:
 			if (HasAllFlags(flags, UserCore::Item::BranchInfoI::BF_NORELEASES))
 				continue;
 
-			if (item->getBranch(x)->isPreOrder())
+			auto branch = item->getBranch(x);
+
+			if (branch->isPreOrder() || branch == item->getCurrentBranch())
 				continue;
 
 			bool isDemo = HasAnyFlags(flags, UserCore::Item::BranchInfoI::BF_DEMO|UserCore::Item::BranchInfoI::BF_TEST);
@@ -612,7 +614,7 @@ public:
 		return index;
 	}
 
-	bool m_bOtherBranches;
+	bool m_bOtherBranches = false;
 	MCFBranch m_DemoBranch;
 	DesuraId m_Id;
 };
