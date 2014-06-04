@@ -744,10 +744,13 @@ bool ItemHandle::preDownloadCheck(MCFBranch branch, bool test)
 	auto parentInfo = m_pUserCore->getItemManager()->findItemInfo(getItemInfo()->getParentId());
 
 	gcException eExist(ERR_INVALID, "Branch does not exist.");
+	gcException eNotAvaliable(ERR_INVALID, "Branch is not on your account. Please purchase branch first.");
 	gcException eRelease(ERR_INVALID, "Branch has no releases available for download.");
 
 	if (!branchInfo)
 		onErrorEvent(eExist);
+	else if (!branchInfo->isAvaliable() && !test)
+		onErrorEvent(eNotAvaliable);
 	else if (!branchInfo->isDownloadable() && !test)
 		onErrorEvent(eRelease);
 	else if (parentInfo)
