@@ -98,12 +98,18 @@ void ToolInstallThread::doFirstInstall()
 	if (!preInstallStart())
 		return;
 
+	if (!getToolMain())
+	{
+		gcException e(ERR_PIPE, "Pipe to Tool Install Helper not running. Failed to install tools.");
+		onINError(e);
+	}
+
 	ToolStartRes startRes = ToolStartRes::Failed;
 
 	{
 		std::lock_guard<std::mutex> guard(m_MapLock);
 
-	auto it = m_mTransactions.find(m_CurrentInstall);
+		auto it = m_mTransactions.find(m_CurrentInstall);
 
 		if (it != m_mTransactions.end())
 			startRes = it->second->startNextInstall(getToolMain(), m_CurrentInstallId);

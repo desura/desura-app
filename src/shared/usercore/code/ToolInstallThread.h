@@ -103,13 +103,13 @@ namespace UserCore
 			std::deque<ToolTransactionId> m_dvInstallQue;
 
 			DesuraId m_CurrentInstallId;
-			ToolTransactionId m_CurrentInstall;
+			ToolTransactionId m_CurrentInstall = -1;
 
 			gcRefPtr<ToolManager> m_pToolManager;
 
 
 #ifdef WIN32
-			ToolIPCPipeClient* m_pIPCClient;
+			std::shared_ptr<ToolIPCPipeClient> m_pIPCClient;
 			HWND m_WinHandle;
 			gcString m_szUserName;
 			gcRefPtr<UserInternalI> m_pUserInternal;
@@ -117,7 +117,7 @@ namespace UserCore
             std::shared_ptr<IPCToolMain> m_pToolMain;
 #endif
 
-			bool m_bStillInstalling;
+			bool m_bStillInstalling = false;
 
 			gc_IMPLEMENT_REFCOUNTING(ToolInstallThread)
 		};

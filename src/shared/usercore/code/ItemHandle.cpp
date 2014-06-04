@@ -666,12 +666,17 @@ void ItemHandle::stopThread()
 	gcTrace("");
 
 	std::lock_guard<std::recursive_mutex> guard(m_ThreadMutex);
+
+	if (!m_pThread)
+		return;
+
 	m_pThread->setThreadManager(nullptr);
 
 	gcAssert(m_pThread.getRefCt() == 1);
 
 	m_pUserCore->getThreadPool()->queueTask(gcRefPtr<UserCore::Task::DeleteThread>::create(m_pUserCore, m_pThread));
-	m_pThread = nullptr;
+	gcAssert(!m_pThread); //delete thread should null this to avoid race condition with thread pool deleting before we null it here
+
 	m_bStopped = true;
 }
 

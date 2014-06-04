@@ -141,10 +141,10 @@ void ToolIPCPipeClient::startHelper()
 	BOOL res = ShellExecuteEx(&info);
 
 	if (res == 0)
-		throw gcException(ERR_SERVICE, GetLastError(), "Failed to start tool install helper.");
+		throw gcException(ERR_SERVICE, GetLastError(), "Failed to start tool install helper (Shell Execute Failed).");
 
 	if ((int)info.hInstApp < 32)
-		throw gcException(ERR_SERVICE, GetLastError(), "Failed to start tool install helper.");
+		throw gcException(ERR_SERVICE, GetLastError(), "Failed to start tool install helper (Bad Result).");
 
 	DWORD dwExitCode = 0;
 	GetExitCodeProcess(info.hProcess, &dwExitCode);
@@ -152,7 +152,7 @@ void ToolIPCPipeClient::startHelper()
 	CloseHandle(info.hProcess);
 
 	if (dwExitCode != STILL_ACTIVE)
-		throw gcException(ERR_SERVICE, "Failed to start tool install helper.");
+		throw gcException(ERR_SERVICE, "Failed to start tool install helper (Not Active).");
 }
 
 void ToolIPCPipeClient::stopHelper()
