@@ -1729,9 +1729,15 @@ void ItemManager::killAllProcesses(DesuraId itemId)
 
 	if (m_pUser && m_pUser->getServiceMain())
 	{
+		gcString appDir = UTIL::OS::getCurrentDir();
+		auto appPath = UTIL::FS::Path(appDir);
+
 		for (auto p : vPaths)
 		{
 			if (p.getFolderCount() == 0)
+				continue;
+
+			if (p == appPath) //dont kill any procs running from desura exe dir.
 				continue;
 
 			auto strPath = p.getFullPath();
