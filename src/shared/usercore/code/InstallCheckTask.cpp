@@ -38,7 +38,6 @@ void InstallCheckTask::doRun()
 {
 	auto wildc = gcRefPtr<WildcardManager>::create();
 	wildc->onNeedSpecialEvent += delegate(&onNeedWCEvent);
-	wildc->onNeedSpecialEvent += delegate(&getUserCore()->getNeedWildCardEvent());
 
 	getUserCore()->getItemManager()->retrieveItemInfo(getItemId(), 0, wildc);
 
