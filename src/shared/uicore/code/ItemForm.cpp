@@ -190,6 +190,13 @@ public:
 
 	~GatherInfoThread()
 	{
+		if (m_pThread)
+		{
+			m_pThread->getErrorEvent() -= delegate(this, &GatherInfoThread::onError);
+			m_pThread->getCompleteEvent() -= delegate(this, &GatherInfoThread::onComplete);
+			m_pThread->getNeedWCEvent() -= wcDelegate(m_pParent);
+		}
+
 		safe_delete(m_pThread);
 	}
 
