@@ -73,13 +73,12 @@ namespace MCFCore
 			~WGTWorkerInfo()
 			{
 				safe_delete(m_pWorkThread);
-				safe_delete(vBuffer);
 			}
 
 			const uint32 id;
 			uint64 ammountDone = 0;
 					
-			void setCurrentBlock(Misc::WGTSuperBlock* pBlock)
+			void setCurrentBlock(std::shared_ptr<Misc::WGTSuperBlock> pBlock)
 			{
 				std::lock_guard<std::mutex> guard(mutex);
 
@@ -89,7 +88,7 @@ namespace MCFCore
 				gcTrace("");
 			}
 
-			Misc::WGTSuperBlock* resetCurrentBlock()
+			std::shared_ptr<Misc::WGTSuperBlock> resetCurrentBlock()
 			{
 				std::lock_guard<std::mutex> guard(mutex);
 
@@ -102,20 +101,21 @@ namespace MCFCore
 				return block;
 			}
 
-			void addBlock(Misc::WGTBlock* pBlock)
+			void addBlock(std::shared_ptr<Misc::WGTBlock> pBlock)
 			{
 				std::lock_guard<std::mutex> guard(mutex);
 				vBuffer.push_back(pBlock);
+				pBlock.reset();
 			}
 
-			Misc::WGTBlock* popBlock()
+			std::shared_ptr<Misc::WGTBlock> popBlock()
 			{
 				std::lock_guard<std::mutex> guard(mutex);
 
 				if (vBuffer.size() == 0)
 					return nullptr;
 
-				Misc::WGTBlock *block = vBuffer.front();
+				auto block = vBuffer.front();
 				vBuffer.pop_front();
 
 				return block;
@@ -137,7 +137,7 @@ namespace MCFCore
 				return curBlock->vBlockList.size();
 			}
 
-			Misc::WGTSuperBlock* getCurrentBlock()
+			std::shared_ptr<Misc::WGTSuperBlock> getCurrentBlock()
 			{
 				std::lock_guard<std::mutex> al(mutex);
 
@@ -146,7 +146,7 @@ namespace MCFCore
 				return curBlock;
 			}
 
-			Misc::WGTSuperBlock* splitCurrentBlock(size_t halfWay)
+			std::shared_ptr<Misc::WGTSuperBlock> splitCurrentBlock(size_t halfWay)
 			{
 				std::lock_guard<std::mutex> al(mutex);
 
@@ -158,12 +158,12 @@ namespace MCFCore
 				if (halfWay > curBlock->vBlockList.size())
 					return nullptr;
 
-				Misc::WGTSuperBlock* superBlock = new Misc::WGTSuperBlock();
+				std::shared_ptr<Misc::WGTSuperBlock> superBlock = std::make_shared<Misc::WGTSuperBlock>();
 
 				std::lock_guard<std::mutex> cg(curBlock->m_Lock);
 
-				auto firstHalf = std::deque<Misc::WGTBlock*>(curBlock->vBlockList.begin(), curBlock->vBlockList.begin() + halfWay);
-				auto secondHalf = std::deque<Misc::WGTBlock*>(curBlock->vBlockList.begin() + halfWay, curBlock->vBlockList.end());
+				auto firstHalf = std::deque<std::shared_ptr<Misc::WGTBlock>>(curBlock->vBlockList.begin(), curBlock->vBlockList.begin() + halfWay);
+				auto secondHalf = std::deque<std::shared_ptr<Misc::WGTBlock>>(curBlock->vBlockList.begin() + halfWay, curBlock->vBlockList.end());
 
 				size_t totSize = 0;
 
@@ -209,17 +209,17 @@ namespace MCFCore
 
 			std::string toTracerString()
 			{
-				return gcString("CurBlock: {0}, Status: {1}", (uint64)curBlock, (uint32)status);
+				return gcString("CurBlock: {0}, Status: {1}", (uint64)curBlock.get(), (uint32)status);
 			}
 
 		private:
 			WGTWorker* m_pWorkThread;
 
 			MCFThreadStatus status = MCFThreadStatus::SF_STATUS_CONTINUE;
-			Misc::WGTSuperBlock* curBlock = nullptr;
+			std::shared_ptr<Misc::WGTSuperBlock> curBlock = nullptr;
 
 			std::mutex mutex;
-			std::deque<Misc::WGTBlock*> vBuffer;
+			std::deque<std::shared_ptr<Misc::WGTBlock>> vBuffer;
 		};
 
 		class WGTWorkerList
@@ -238,16 +238,16 @@ namespace MCFCore
 			void createWorkers(WGTControllerI *pController, uint32 nCount, MCFCore::Misc::ProviderManager &pProvManager)
 			{
 				for (uint16 x = 0; x<nCount; x++)
-					m_vWorkerList.push_back(new WGTWorkerInfo(pController, x, pProvManager));
+					m_vWorkerList.push_back(std::make_shared<WGTWorkerInfo>(pController, x, pProvManager));
 			}
 
-			operator const std::vector<WGTWorkerInfo*>& ()
+			operator const std::vector<std::shared_ptr<WGTWorkerInfo>>& ()
 			{
 				return m_vWorkerList;
 			}
 
 		private:
-			std::vector<WGTWorkerInfo*> m_vWorkerList;
+			std::vector<std::shared_ptr<WGTWorkerInfo>> m_vWorkerList;
 		};
 	}
 }
@@ -410,7 +410,6 @@ void WGTController::saveBuffers(UTIL::FS::FileHandle& fileHandle, bool allBlocks
 		do
 		{
 			auto block = worker->popBlock();
-			AutoDelete<Misc::WGTBlock> ad(block);
 
 			if (!block)
 				break;
@@ -437,7 +436,7 @@ void WGTController::saveBuffers(UTIL::FS::FileHandle& fileHandle, bool allBlocks
 	}
 }
 
-bool WGTController::checkBlock(Misc::WGTBlock *block, uint32 workerId)
+bool WGTController::checkBlock(const std::shared_ptr<Misc::WGTBlock> &block, uint32 workerId)
 {
 	if (!block)
 		return true;
@@ -489,7 +488,7 @@ bool WGTController::checkBlock(Misc::WGTBlock *block, uint32 workerId)
 	{
 	}
 
-	Misc::WGTSuperBlock* super = new Misc::WGTSuperBlock();
+	auto super = std::make_shared<Misc::WGTSuperBlock>();
 
 	super->vBlockList.push_back(block);
 	super->offset = block->webOffset;
@@ -518,7 +517,7 @@ bool WGTController::checkBlock(Misc::WGTBlock *block, uint32 workerId)
 	return false;
 }
 
-static bool WGTBlockSort(Misc::WGTBlock* a, Misc::WGTBlock* b)
+static bool WGTBlockSort(const std::shared_ptr<Misc::WGTBlock> &a, const std::shared_ptr<Misc::WGTBlock> &b)
 {
 	return a->webOffset < b->webOffset;
 }
@@ -590,7 +589,7 @@ bool WGTController::fillBlockList()
 	{
 	}
 
-	std::deque<Misc::WGTBlock*> vBlockList;
+	std::deque<std::shared_ptr<Misc::WGTBlock>> vBlockList;
 	std::sort(tempFileList.begin(), tempFileList.end(), SortByOffset);
 
 	for (size_t x=0; x<tempFileList.size(); ++x)
@@ -598,10 +597,7 @@ bool WGTController::fillBlockList()
 		auto file = tempFileList[x];
 
 		if (isStopped())
-		{
-			safe_delete(vBlockList);
 			return false;
-		}
 
 		uint32 p = 5 + x*95/fsSize;
 
@@ -675,7 +671,7 @@ bool WGTController::fillBlockList()
 
 		while (offset < size)
 		{
-			Misc::WGTBlock* temp = new Misc::WGTBlock;
+			auto temp = std::make_shared<Misc::WGTBlock>();
 
 			temp->file =  file;
 			temp->index = y;
@@ -716,7 +712,7 @@ bool WGTController::fillBlockList()
 
 	while (vBlockList.size() > 0)
 	{
-		Misc::WGTSuperBlock* sb = new Misc::WGTSuperBlock();
+		auto sb = std::make_shared<Misc::WGTSuperBlock>();
 		sb->offset = vBlockList[0]->webOffset;
 
 		bool size = false;
@@ -725,7 +721,7 @@ bool WGTController::fillBlockList()
 
 		do
 		{
-			Misc::WGTBlock* block = vBlockList.front();
+			auto block = vBlockList.front();
 
 			uint64 t = (uint64)block->size + (uint64)sb->size;
 
@@ -755,11 +751,11 @@ bool WGTController::fillBlockList()
 	return true;
 }
 
-Misc::WGTSuperBlock* WGTController::stealBlocks()
+std::shared_ptr<Misc::WGTSuperBlock> WGTController::stealBlocks()
 {
 	gcTrace("");
 
-	WGTWorkerInfo* largestWorker = nullptr;
+	std::shared_ptr<WGTWorkerInfo> largestWorker;
 	size_t largestCount = 0;
 
 	for (auto w : m_vWorkerList)
@@ -780,13 +776,13 @@ Misc::WGTSuperBlock* WGTController::stealBlocks()
 	return largestWorker->splitCurrentBlock(halfWay);
 }
 
-bool WGTController::newTask(uint32 id, MCFThreadStatus &status, Misc::WGTSuperBlock* &pSuperBlock)
+bool WGTController::newTask(uint32 id, MCFThreadStatus &status, std::shared_ptr<Misc::WGTSuperBlock> &pSuperBlock)
 {
 	gcAssert(!pSuperBlock);
 
 	gcTrace("Id: {0}", id);
 
-	WGTWorkerInfo* worker = findWorker(id);
+	auto worker = findWorker(id);
 	gcAssert(worker);
 
 	status = worker->getStatus();
@@ -848,14 +844,14 @@ bool WGTController::newTask(uint32 id, MCFThreadStatus &status, Misc::WGTSuperBl
 	return true;
 }
 
-void WGTController::workerFinishedSuperBlock(uint32 id, Misc::WGTSuperBlock* &pSuperBlock)
+void WGTController::workerFinishedSuperBlock(uint32 id, std::shared_ptr<Misc::WGTSuperBlock> &pSuperBlock)
 {
 	gcTrace("Id: {0}", id);
 
-	WGTWorkerInfo* worker = findWorker(id);
+	auto worker = findWorker(id);
 	gcAssert(worker);
 
-	Misc::WGTSuperBlock* block = worker->resetCurrentBlock();
+	std::shared_ptr<Misc::WGTSuperBlock> block = worker->resetCurrentBlock();
 
 	gcAssert(block == pSuperBlock);
 	pSuperBlock = nullptr;
@@ -886,9 +882,9 @@ void WGTController::workerFinishedSuperBlock(uint32 id, Misc::WGTSuperBlock* &pS
 	m_WaitCondition.notify();
 }
 
-void WGTController::workerFinishedBlock(uint32 id, Misc::WGTBlock* block)
+void WGTController::workerFinishedBlock(uint32 id, std::shared_ptr<Misc::WGTBlock> &block)
 {
-	WGTWorkerInfo* worker = findWorker(id);
+	auto worker = findWorker(id);
 	gcAssert(worker);
 
 	if (!block || !worker)
@@ -902,7 +898,7 @@ void WGTController::workerFinishedBlock(uint32 id, Misc::WGTBlock* block)
 
 MCFThreadStatus WGTController::getStatus(uint32 id)
 {
-	WGTWorkerInfo* worker = findWorker(id);
+	auto worker = findWorker(id);
 	gcAssert(worker);
 
 	if (isPaused())
@@ -914,13 +910,13 @@ MCFThreadStatus WGTController::getStatus(uint32 id)
 	return worker->getStatus();
 }
 
-void WGTController::reportError(uint32 id, gcException &e, Misc::WGTSuperBlock* &pSuperBlock)
+void WGTController::reportError(uint32 id, gcException &e, std::shared_ptr<Misc::WGTSuperBlock> &pSuperBlock)
 {
 	gcTrace("Id: {0}, E: {1}", id, e);
 
 	workerFinishedSuperBlock(id, pSuperBlock);
 
-	WGTWorkerInfo* worker = findWorker(id);
+	auto worker = findWorker(id);
 	gcAssert(worker);
 
 	Warning("WebGet: {0} Error: {1}.\n", id, e);
@@ -936,7 +932,7 @@ void WGTController::reportError(uint32 id, gcException &e, Misc::WGTSuperBlock* 
 
 void WGTController::reportProgress(uint32 id, uint64 ammount)
 {
-	WGTWorkerInfo* worker = findWorker(id);
+	auto worker = findWorker(id);
 	gcAssert(worker);
 	gcAssert(m_pUPThread);
 
@@ -946,7 +942,7 @@ void WGTController::reportProgress(uint32 id, uint64 ammount)
 
 void WGTController::reportNegProgress(uint32 id, uint64 ammount)
 {
-	WGTWorkerInfo* worker = findWorker(id);
+	auto worker = findWorker(id);
 	gcAssert(worker);
 	gcAssert(m_pUPThread);
 
@@ -954,9 +950,9 @@ void WGTController::reportNegProgress(uint32 id, uint64 ammount)
 	m_pUPThread->reportProg(id, worker->ammountDone);
 }
 
-WGTWorkerInfo* WGTController::findWorker(uint32 id)
+std::shared_ptr<WGTWorkerInfo> WGTController::findWorker(uint32 id)
 {
-	auto it = std::find_if(begin(m_vWorkerList), end(m_vWorkerList), [id](WGTWorkerInfo* w){
+	auto it = std::find_if(begin(m_vWorkerList), end(m_vWorkerList), [id](const std::shared_ptr<WGTWorkerInfo> &w){
 		return w->id == id;
 	});
 

@@ -32,71 +32,67 @@ $/LicenseInfo$
 
 namespace MCFCore
 {
-namespace Thread
-{
-//! Misc items for MCFCore Threads
-namespace Misc
-{
-
-
-//! Containter class for download block information
-class WGTBlock
-{
-public:
-	WGTBlock()
+	namespace Thread
 	{
-		buff = nullptr;
-		webOffset = 0;
-		fileOffset = 0;
-		size = 0;
-		crc = 0;
-		dlsize = 0;
+		//! Misc items for MCFCore Threads
+		namespace Misc
+		{
+			//! Container class for download block information
+			class WGTBlock
+			{
+			public:
+				WGTBlock()
+				{
+					buff = nullptr;
+					webOffset = 0;
+					fileOffset = 0;
+					size = 0;
+					crc = 0;
+					dlsize = 0;
 
-		file = nullptr;
-		index = -1;
+					file = nullptr;
+					index = -1;
+				}
+
+				~WGTBlock()
+				{
+					safe_delete(buff);
+				}
+
+				uint64 webOffset;
+				uint64 fileOffset;
+				char* buff;
+				uint32 size;
+				uint32 dlsize;
+				uint32 crc;
+
+
+				std::shared_ptr<MCFCore::MCFFile> file;
+				uint32 index;
+
+				gcString provider;
+			};
+
+			class WGTSuperBlock
+			{
+			public:
+				WGTSuperBlock()
+				{
+					size = 0;
+					done = 0;
+					offset = 0;
+				}
+
+				uint64 offset;
+
+				size_t size;
+				size_t done;
+
+				std::deque<std::shared_ptr<WGTBlock>> vBlockList;
+				std::mutex m_Lock;
+			};
+		}
 	}
-
-	~WGTBlock()
-	{
-		safe_delete(buff);
-	}
-
-	uint64 webOffset;
-	uint64 fileOffset;
-	char* buff;
-	uint32 size;
-	uint32 dlsize;
-	uint32 crc;
-
-
-	std::shared_ptr<MCFCore::MCFFile> file;
-	uint32 index;
-
-	gcString provider;
-};
-
-class WGTSuperBlock
-{
-public:
-	WGTSuperBlock()
-	{
-		size = 0;
-		done = 0;
-		offset = 0;
-	}
-
-	uint64 offset;
-
-	size_t size;
-	size_t done;
-
-	std::deque<WGTBlock*> vBlockList;
-	std::mutex m_Lock;
-};
-
-
-}
-}
 }
 
 
