@@ -44,7 +44,7 @@ namespace MCFCore
 			//! @param[out] status Current worker status
 			//! @return New worker task
 			//!
-			virtual bool newTask(uint32 id, MCFThreadStatus &status, Misc::WGTSuperBlock* &pSuperBlock) = 0;
+			virtual bool newTask(uint32 id, MCFThreadStatus &status, std::shared_ptr<Misc::WGTSuperBlock> &pSuperBlock) = 0;
 
 			//! Gets the status of a worker
 			//!
@@ -58,7 +58,7 @@ namespace MCFCore
 			//! @param id Worker id
 			//! @param e Exception that occurred
 			//!
-			virtual void reportError(uint32 id, gcException &e, Misc::WGTSuperBlock* &pSuperBlock) = 0;
+			virtual void reportError(uint32 id, gcException &e, std::shared_ptr<Misc::WGTSuperBlock> &pSuperBlock) = 0;
 
 			//! Report progress from a worker
 			//!
@@ -72,13 +72,13 @@ namespace MCFCore
 			//!
 			//! @param id Worker id
 			//!
-			virtual void workerFinishedBlock(uint32 id, Misc::WGTBlock* block) = 0;
+			virtual void workerFinishedBlock(uint32 id, std::shared_ptr<Misc::WGTBlock> &block) = 0;
 
 			//! Report that a worker has completed a super block
 			//!
 			//! @param id Worker id
 			//!
-			virtual void workerFinishedSuperBlock(uint32 id, Misc::WGTSuperBlock* &pSuperBlock) = 0;
+			virtual void workerFinishedSuperBlock(uint32 id, std::shared_ptr<Misc::WGTSuperBlock> &pSuperBlock) = 0;
 
 			//! Wake up the controller
 			//!

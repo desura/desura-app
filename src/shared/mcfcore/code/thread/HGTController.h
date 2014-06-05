@@ -86,8 +86,8 @@ private:
 	gcString m_szUrl;
 	gcString m_szInstallDir;
 
-	Misc::WGTSuperBlock* m_pCurBlock;
-	std::deque<Misc::WGTSuperBlock*> m_vSuperBlockList;
+	std::shared_ptr<Misc::WGTSuperBlock> m_pCurBlock;
+	std::deque<std::shared_ptr<Misc::WGTSuperBlock>> m_vSuperBlockList;
 
 	uint64 m_uiDownloaded;
 	uint64 m_uiTotal;

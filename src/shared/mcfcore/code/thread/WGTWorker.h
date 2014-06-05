@@ -116,7 +116,7 @@ namespace MCFCore
 			std::mutex m_DeleteMutex;
 
 			MCFCore::Thread::WGTControllerI *m_pCT = nullptr;
-			MCFCore::Thread::Misc::WGTSuperBlock *m_pCurBlock = nullptr;
+			std::shared_ptr<MCFCore::Thread::Misc::WGTSuperBlock> m_pCurBlock;
 			MCFCore::Misc::ProviderManager &m_ProvMng;
 
 			std::mutex m_ErrorMutex;

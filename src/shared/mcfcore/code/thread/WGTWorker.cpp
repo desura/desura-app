@@ -152,7 +152,7 @@ bool WGTWorker::writeData(char* data, uint32 size)
 	if (!m_pCurBlock)
 		return false;
 
-	MCFCore::Thread::Misc::WGTBlock* block = nullptr;
+	std::shared_ptr<MCFCore::Thread::Misc::WGTBlock> block;
 
 	m_pCurBlock->m_Lock.lock();
 
@@ -442,12 +442,13 @@ namespace UnitTest
 	public:
 		StubWGTController()
 			: m_bSuperCompleted(false)
+			, m_SuperBlock(std::make_shared<MCFCore::Thread::Misc::WGTSuperBlock>())
 		{
 		}
 
-		bool newTask(uint32 id, MCFThreadStatus &status, MCFCore::Thread::Misc::WGTSuperBlock* &pSuperBlock) override
+		bool newTask(uint32 id, MCFThreadStatus &status, std::shared_ptr<MCFCore::Thread::Misc::WGTSuperBlock> &pSuperBlock) override
 		{
-			pSuperBlock = &m_SuperBlock;
+			pSuperBlock = m_SuperBlock;
 			return true;
 		}
 
@@ -456,7 +457,7 @@ namespace UnitTest
 			return MCFThreadStatus::SF_STATUS_CONTINUE;
 		}
 
-		void reportError(uint32 id, gcException &e, MCFCore::Thread::Misc::WGTSuperBlock* &pSuperBlock) override
+		void reportError(uint32 id, gcException &e, std::shared_ptr<MCFCore::Thread::Misc::WGTSuperBlock> &pSuperBlock) override
 		{
 			pSuperBlock = nullptr;
 		}
@@ -469,12 +470,12 @@ namespace UnitTest
 		{
 		}
 
-		void workerFinishedBlock(uint32 id, MCFCore::Thread::Misc::WGTBlock* block) override
+		void workerFinishedBlock(uint32 id, std::shared_ptr<MCFCore::Thread::Misc::WGTBlock> &block) override
 		{
 			m_vCompletedBlocks.push_back(block);
 		}
 
-		void workerFinishedSuperBlock(uint32 id, MCFCore::Thread::Misc::WGTSuperBlock* &pSuperBlock) override
+		void workerFinishedSuperBlock(uint32 id, std::shared_ptr<MCFCore::Thread::Misc::WGTSuperBlock> &pSuperBlock) override
 		{
 			m_bSuperCompleted = true;
 			pSuperBlock = nullptr;
@@ -485,8 +486,8 @@ namespace UnitTest
 		}
 
 		bool m_bSuperCompleted;
-		std::vector<MCFCore::Thread::Misc::WGTBlock*> m_vCompletedBlocks;
-		MCFCore::Thread::Misc::WGTSuperBlock m_SuperBlock;
+		std::vector<std::shared_ptr<MCFCore::Thread::Misc::WGTBlock>> m_vCompletedBlocks;
+		std::shared_ptr<MCFCore::Thread::Misc::WGTSuperBlock> m_SuperBlock;
 	};
 
 
@@ -560,29 +561,29 @@ namespace UnitTest
 
 		void AddBlock(int nSize)
         {
-			std::shared_ptr<MCFCore::Thread::Misc::WGTBlock> a(new MCFCore::Thread::Misc::WGTBlock());
+			auto a = std::make_shared<MCFCore::Thread::Misc::WGTBlock>();
 			a->size = nSize;
-			a->fileOffset = Controller.m_SuperBlock.size;
-			a->webOffset = Controller.m_SuperBlock.size;
+			a->fileOffset = Controller.m_SuperBlock->size;
+			a->webOffset = Controller.m_SuperBlock->size;
 
 			unsigned char* szTemp = new unsigned char[nSize];
 
 			for (int x = 0; x < nSize; x++)
-				szTemp[x] = (unsigned char)(Controller.m_SuperBlock.size + x);
+				szTemp[x] = (unsigned char)(Controller.m_SuperBlock->size + x);
 
 			a->crc = UTIL::MISC::CRC32(szTemp, nSize);
 			a->index = m_vBlocks.size();
 
 			safe_delete(szTemp);
 
-			Controller.m_SuperBlock.size += nSize;
-			Controller.m_SuperBlock.vBlockList.push_back(a.get());
+			Controller.m_SuperBlock->size += nSize;
+			Controller.m_SuperBlock->vBlockList.push_back(a);
 			m_vBlocks.push_back(a);
 		}
 
 		void DoDownload(int nDownloadSize, int nMaxRequestSize=-1)
 		{
-			int nRunCount = (Controller.m_SuperBlock.size / nMaxRequestSize) + 1;
+			int nRunCount = (Controller.m_SuperBlock->size / nMaxRequestSize) + 1;
 
 			Worker.download(new StubMCFServerCon(nDownloadSize, nMaxRequestSize), nRunCount);
 		}

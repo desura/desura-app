@@ -247,7 +247,7 @@ void HGTController::doDownload()
 	}
 }
 
-static bool WGTBlockSort(Misc::WGTBlock* a, Misc::WGTBlock* b)
+static bool WGTBlockSort(const std::shared_ptr<Misc::WGTBlock> &a, const std::shared_ptr<Misc::WGTBlock> &b)
 {
 	return a->webOffset < b->webOffset;
 }
@@ -290,7 +290,7 @@ void HGTController::fillDownloadList(bool &usingDiffs)
 		}
 	}
 
-	std::deque<Misc::WGTBlock*> vBlockList;
+	std::deque<std::shared_ptr<Misc::WGTBlock>> vBlockList;
 	std::sort(m_rvFileList.begin(), m_rvFileList.end(), SortByOffset);
 
 	for (size_t x=0; x<fsSize; x++)
@@ -333,7 +333,7 @@ void HGTController::fillDownloadList(bool &usingDiffs)
 			if (size < INT_MAX)
 				tSize = (uint32)size;
 
-			Misc::WGTBlock* temp = new Misc::WGTBlock;
+			auto temp = std::make_shared<Misc::WGTBlock>();
 
 			temp->fileOffset = offset;
 			temp->file = m_rvFileList[x];
@@ -360,12 +360,12 @@ void HGTController::fillDownloadList(bool &usingDiffs)
 
 	while (vBlockList.size() > 0)
 	{
-		Misc::WGTSuperBlock* sb = new Misc::WGTSuperBlock();
+		auto sb = std::make_shared<Misc::WGTSuperBlock>();
 		sb->offset = vBlockList[0]->webOffset;
 
 		do
 		{
-			Misc::WGTBlock* block = vBlockList.front();
+			auto block = vBlockList.front();
 			vBlockList.pop_front();
 
 			sb->size += block->size;
@@ -407,7 +407,7 @@ bool HGTController::saveData(const char* data, uint32 size)
 	if (!m_pCurBlock || m_pCurBlock->vBlockList.size() == 0)
 		return true;
 
-	MCFCore::Thread::Misc::WGTBlock* block = m_pCurBlock->vBlockList[0];
+	auto block = m_pCurBlock->vBlockList[0];
 
 	uint64 done = m_pCurBlock->done;
 	uint64 ds = block->size - done;

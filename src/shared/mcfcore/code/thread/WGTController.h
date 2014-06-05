@@ -79,7 +79,7 @@ namespace MCFCore
 			//! @param id worker id
 			//! @return Worker
 			//!
-			WGTWorkerInfo* findWorker(uint32 id);
+			std::shared_ptr<WGTWorkerInfo> findWorker(uint32 id);
 
 			//! Fills the block list with all the blocks needed to be downloaded
 			//!
@@ -110,21 +110,21 @@ namespace MCFCore
 
 			//! Checks a block for errors
 			//!
-			bool checkBlock(Misc::WGTBlock *block, uint32 workerId);
+			bool checkBlock(const std::shared_ptr<Misc::WGTBlock> &block, uint32 workerId);
 
 			//! Steals blocks from other workes
 			//!
 			//! @return true if blocks stolen
 			//!
-			Misc::WGTSuperBlock* stealBlocks();
+			std::shared_ptr<Misc::WGTSuperBlock> stealBlocks();
 
-			bool newTask(uint32 id, MCFThreadStatus &status, Misc::WGTSuperBlock* &pSuperBlock) override;
+			bool newTask(uint32 id, MCFThreadStatus &status, std::shared_ptr<Misc::WGTSuperBlock> &pSuperBlock) override;
 			MCFThreadStatus getStatus(uint32 id) override;
-			void reportError(uint32 id, gcException &e, Misc::WGTSuperBlock* &pSuperBlock) override;
+			void reportError(uint32 id, gcException &e, std::shared_ptr<Misc::WGTSuperBlock> &pSuperBlock) override;
 			void reportProgress(uint32 id, uint64 ammount) override;
 			void reportNegProgress(uint32 id, uint64 ammount) override;
-			void workerFinishedBlock(uint32 id, Misc::WGTBlock* block) override;
-			void workerFinishedSuperBlock(uint32 id, Misc::WGTSuperBlock* &pSuperBlock) override;
+			void workerFinishedBlock(uint32 id, std::shared_ptr<Misc::WGTBlock> &block) override;
+			void workerFinishedSuperBlock(uint32 id, std::shared_ptr<Misc::WGTSuperBlock> &pSuperBlock) override;
 			void pokeThread() override;
 
 		private:
@@ -137,8 +137,8 @@ namespace MCFCore
 			volatile bool m_bDoingStop = false;
 
 			std::unique_ptr<WGTWorkerList> m_pWorkerList;
-			const std::vector<WGTWorkerInfo*>& m_vWorkerList;
-			std::deque<Misc::WGTSuperBlock*> m_vSuperBlockList;
+			const std::vector<std::shared_ptr<WGTWorkerInfo>>& m_vWorkerList;
+			std::deque<std::shared_ptr<Misc::WGTSuperBlock>> m_vSuperBlockList;
 			std::vector<uint32> m_vDlFiles;
 
 			::Thread::WaitCondition m_WaitCondition;
