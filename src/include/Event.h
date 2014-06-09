@@ -123,7 +123,14 @@ public:
 
 	~EventBase()
 	{
-		reset();
+		try
+		{
+			reset();
+		}
+		catch (...)
+		{
+			Warning("EventBase reset threw exception on delete");
+		}
 	}
 
 	void assertType()
