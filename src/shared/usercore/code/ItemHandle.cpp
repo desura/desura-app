@@ -1026,6 +1026,8 @@ bool ItemHandle::checkPaused()
 	{
 		setPaused(false);
 
+		std::lock_guard<std::recursive_mutex> guard(m_ThreadMutex);
+
 		//if we have a valid thread then we should be doing something
 		if (m_pThread && m_pThread->hasTaskToRun())
 			return true;
