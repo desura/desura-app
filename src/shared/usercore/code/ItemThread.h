@@ -103,14 +103,14 @@ namespace UserCore
 			std::mutex m_TaskMutex;
 			std::mutex m_DeleteMutex;
 
-			bool m_bRunningTask;
-			bool m_bDeleteCurrentTask;
+			bool m_bRunningTask = false;
+			bool m_bDeleteCurrentTask = false;
 
 			gcRefPtr<UserCore::UserThreadManagerI> m_pThreadManager;
 			gcRefPtr<WebCore::WebCoreI> m_pWebCore;
 			gcRefPtr<UserCore::UserI> m_pUserCore;
 
-			gcString m_szBaseName;
+			const gcString m_szBaseName;
 		};
 	}
 }

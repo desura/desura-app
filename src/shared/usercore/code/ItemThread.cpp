@@ -37,11 +37,9 @@ using namespace UserCore::Item;
 
 ItemThread::ItemThread(gcRefPtr<UserCore::Item::ItemHandle> handle) 
 	: ::Thread::BaseThread(gcString("{0} Thread", handle->getItemInfo()->getShortName()).c_str())
+	, m_szBaseName("{0}", handle->getItemInfo()->getShortName())
 {
-	m_szBaseName = gcString("{0}", handle->getItemInfo()->getShortName());
-	m_bRunningTask = false;
 	start();
-	m_bDeleteCurrentTask = false;
 }
 
 ItemThread::~ItemThread()
@@ -71,38 +69,35 @@ void ItemThread::purge()
 	{
 		std::lock_guard<std::mutex> guard(m_DeleteMutex);
 
+		m_bDeleteCurrentTask = true;
+
 		if (m_pCurrentTask)
 			m_pCurrentTask->onStop();
-		else if (size > 0) //could be getting a task now
-			m_bDeleteCurrentTask = true;
 	}
 }
 
 void ItemThread::setThreadManager(const gcRefPtr<UserCore::UserThreadManagerI> &tm)
 {
-	if (tm)
-	{
-		m_pThreadManager = tm;
+	std::lock_guard<std::mutex> guard(m_TaskMutex);
 
-		if (m_pThreadManager)
-			m_pThreadManager->enlist(this);
-	}
-	else
-	{
-		if (m_pThreadManager)
-			m_pThreadManager->delist(this);
+	if (m_pThreadManager)
+		m_pThreadManager->delist(this);
 
-		m_pThreadManager = tm;
-	}
+	m_pThreadManager = tm;
+
+	if (m_pThreadManager)
+		m_pThreadManager->enlist(this);
 }
 
 void ItemThread::setWebCore(gcRefPtr<WebCore::WebCoreI> wc)
 {
+	std::lock_guard<std::mutex> guard(m_TaskMutex);
 	m_pWebCore = wc;
 }
 
 void ItemThread::setUserCore(gcRefPtr<UserCore::UserI> uc)
 {
+	std::lock_guard<std::mutex> guard(m_TaskMutex);
 	m_pUserCore = uc;
 }
 
@@ -114,11 +109,12 @@ void ItemThread::queueTask(const gcRefPtr<UserCore::ItemTask::BaseItemTask> &tas
 	if (!task)
 		return;
 
-	task->setUserCore(m_pUserCore);
-	task->setWebCore(m_pWebCore);
-
 	{
 		std::lock_guard<std::mutex> guard(m_TaskMutex);
+
+		task->setUserCore(m_pUserCore);
+		task->setWebCore(m_pWebCore);
+
 		m_vTaskList.push_back(task);
 	}
 
@@ -151,13 +147,22 @@ bool ItemThread::performTask()
 
 	{
 		std::lock_guard<std::mutex> guard(m_DeleteMutex);
-		m_bDeleteCurrentTask = false;
-		taskType = task->getTaskType();
-		m_pCurrentTask = task;
+
+		if (!m_bDeleteCurrentTask)
+		{
+			taskType = task->getTaskType();
+			m_pCurrentTask = task;
+		}
 	}
 
 	if (!m_bDeleteCurrentTask)
 	{
+		gcString name = m_szBaseName;
+		name += " - ";
+		name += task->getTaskName();
+
+		setThreadName(name.c_str());
+
 		m_bRunningTask = true;
 		onTaskStartEvent(taskType);
 
@@ -171,6 +176,7 @@ bool ItemThread::performTask()
 	{
 		std::lock_guard<std::mutex> guard(m_DeleteMutex);
 		m_pCurrentTask = nullptr;
+		m_bDeleteCurrentTask = false;
 	}
 
 	safe_delete(task);
@@ -192,12 +198,6 @@ gcRefPtr<UserCore::ItemTask::BaseItemTask> ItemThread::getNewTask()
 	{
 		task = m_vTaskList.front();
 		m_vTaskList.pop_front();
-
-		gcString name = m_szBaseName;
-		name += " - ";
-		name += task->getTaskName();
-
-		this->setThreadName(name.c_str());
 	}
 	
 	return task;
