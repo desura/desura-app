@@ -129,7 +129,6 @@ public:
 		}
 		catch (...)
 		{
-			Warning("EventBase reset threw exception on delete");
 		}
 	}
 
