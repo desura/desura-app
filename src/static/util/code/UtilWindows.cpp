@@ -26,6 +26,8 @@ $/LicenseInfo$
 #include "Common.h"
 #include "util/UtilWindows.h"
 
+#include "SharedObjectLoader.h"
+
 #ifdef WIN32
 
 #include <winioctl.h> 
@@ -927,9 +929,21 @@ int findProcessId(const char* szProcessName)
 }
 
 
+typedef BOOL(WINAPI *QueryFullProcessImageNameFn)(HANDLE hProcess, DWORD dwFlags, LPSTR lpExeName, PDWORD lpdwSize);
+
 std::vector<uint32> getProcessesRunningAtPath(const char* szPath)
 {
 	std::vector<uint32> res;
+
+	SharedObjectLoader sol;
+
+	if (!sol.load("Kernel32.dll"))
+		return res;
+
+	auto queryFullProcessImageName = sol.getFunction<QueryFullProcessImageNameFn>("QueryFullProcessImageNameA");
+
+	if (!queryFullProcessImageName)
+		return res;
 
 	unsigned long aProcesses[1024], cbNeeded, cProcesses;
 
@@ -960,7 +974,7 @@ std::vector<uint32> getProcessesRunningAtPath(const char* szPath)
 		buffer[0] = '\0';
 		nSize = 255;
 
-		QueryFullProcessImageNameA(hProcess, 0, buffer, &nSize);
+		queryFullProcessImageName(hProcess, 0, buffer, &nSize);
 		CloseHandle(hProcess);
 
 		UTIL::FS::Path procPath = UTIL::FS::PathWithFile(buffer);

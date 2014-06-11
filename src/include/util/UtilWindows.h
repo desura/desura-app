@@ -300,7 +300,7 @@ namespace WIN
 	//!
 	int findProcessId(const char* szProcessName);
 
-
+	//! Note doesnt work on xp
 	std::vector<uint32> getProcessesRunningAtPath(const char* szPath);
 }
 }
