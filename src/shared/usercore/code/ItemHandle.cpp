@@ -1059,10 +1059,10 @@ bool ItemHandle::launch(gcRefPtr<Helper::ItemLaunchHelperI> helper, bool offline
 				helper->launchError(e);
 				return false;
 			}
-			else if (!pParent->hasAcceptedEula())
+			else if (pParent->isFirstLaunch())
 			{
 				if (helper)
-					helper->showEULAPrompt();
+					helper->showParentNoRunPrompt(pParent->getId());
 
 				return false;
 			}
@@ -1593,7 +1593,7 @@ namespace UnitTest
 
 		auto modHandle = gcRefPtr<ItemHandleMock>::create(mod, user);
 		auto ilh = gcRefPtr<ItemLaunchHelperMock>::create();
-		EXPECT_CALL(*ilh, showEULAPrompt()).Times(1);
+		EXPECT_CALL(*ilh, showParentNoRunPrompt(Eq(gid))).Times(1);
 
 		auto res = modHandle->launch(ilh);
 		ASSERT_FALSE(res);
@@ -1606,7 +1606,7 @@ namespace UnitTest
 			"INSERT INTO exe VALUES(4294967328,100,'Play','C:\\Program Files (x86)\\charlie\\Charlie.exe','','',0);",
 			"INSERT INTO installinfo VALUES(4294967328,100,'C:\\Program Files (x86)\\charlie','C:\\Program Files (x86)\\charlie\\Charlie.exe','',0,0,0);",
 			"INSERT INTO installinfoex VALUES(4294967328,100,'C:\\Program Files (x86)\\charlie\\Charlie.exe');",
-			"INSERT INTO iteminfo VALUES(4294967328,0,0,32798,0,'dev-02','Charlie','charlie','','','','','','','dev-02','',1,1);",
+			"INSERT INTO iteminfo VALUES(4294967328,0,0,16810014,0,'dev-02','Charlie','charlie','','','','','','','dev-02','',1,1);",
 			"INSERT INTO branchinfo VALUES(1, 4294967328, 'test', 256, 'http://eula.com', 0, 0, '', '', 0, 1, 100);",
 			"INSERT INTO iteminfo VALUES(8589934608,4294967328,0,0,0,'dev-02','Charlie Mod','charlie-mod','','','','','','','dev-02','',0,0);"
 		};
@@ -1619,6 +1619,7 @@ namespace UnitTest
 			mod->loadDb(&db);
 		}
 
+		ASSERT_FALSE(game->isFirstLaunch());
 		ASSERT_TRUE(game->isInstalled());
 		ASSERT_TRUE(game->isLaunchable());
 		ASSERT_TRUE(game->hasAcceptedEula());

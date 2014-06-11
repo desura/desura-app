@@ -647,6 +647,17 @@ void InternalLink::showPrompt(DesuraId id, LinkArgs args)
 	{
 		showPreorderPrompt(id, true);
 	}
+	else if (prompt == "needtorunfirst")
+	{
+		std::string parentId = args.getArgValue("parentid");
+
+		DesuraId pid(parentId.c_str(), "games");
+		showNeedToRun(id, pid);
+	}
+	else
+	{
+		gcAssert(false);
+	}
 }
 
 void InternalLink::showPreorderPrompt(DesuraId id, bool isPreload)
@@ -987,7 +998,7 @@ void InternalLink::showEULA(DesuraId id)
 	if (!item)
 	{
 		//cant upload show prompt
-		gcMessageBox(g_pMainApp->getMainWindow(),  Managers::GetString(L"#MF_UPDATELOG_ITEMERROR"), Managers::GetString(L"#MF_ERRTITLE") );
+		gcMessageBox(g_pMainApp->getMainWindow(),  Managers::GetString(L"#MF_NAMERESOLVE"), Managers::GetString(L"#MF_ERRTITLE") );
 		return;
 	}
 
@@ -999,6 +1010,56 @@ void InternalLink::showEULA(DesuraId id)
 		form->Show(true);	
 		form->Raise();
 	}
+}
+
+class NeedToRunMessageHelper : public HelperButtonsI
+{
+public:
+	NeedToRunMessageHelper(DesuraId pid)
+		: m_Pid(pid)
+	{
+	}
+
+
+	uint32 getCount() override
+	{
+		return 1;
+	}
+
+	const wchar_t* getLabel(uint32 index) override
+	{
+		return Managers::GetString(L"#LAUNCH");
+	}
+
+	const wchar_t* getToolTip(uint32 index) override
+	{
+		return L"";
+	}
+
+	void performAction(uint32 index) override
+	{
+		g_pMainApp->handleInternalLink(m_Pid, ACTION_LAUNCH, FormatArgs());
+	}
+
+	DesuraId m_Pid;
+};
+
+void InternalLink::showNeedToRun(DesuraId mid, DesuraId pid)
+{
+	gcRefPtr<UserCore::Item::ItemInfoI> mod = GetUserCore()->getItemManager()->findItemInfo(mid);
+	gcRefPtr<UserCore::Item::ItemInfoI> parent = GetUserCore()->getItemManager()->findItemInfo(pid);
+
+	if (!mod || !parent)
+	{
+		//cant upload show prompt
+		gcMessageBox(g_pMainApp->getMainWindow(), Managers::GetString(L"#MF_NAMERESOLVE"), Managers::GetString(L"#MF_ERRTITLE"));
+		return;
+	}
+
+	gcWString msg(Managers::GetString(L"#MF_NEEDTORUN"), mod->getName(), parent->getName());
+
+	NeedToRunMessageHelper helper(pid);
+	gcMessageBox(g_pMainApp->getMainWindow(), msg, Managers::GetString(L"#MF_ERRTITLE"), wxICON_EXCLAMATION | wxOK, &helper);
 }
 
 void InternalLink::showUpdateLog(DesuraId id)

@@ -147,6 +147,15 @@ namespace UI
 			}
 
 #endif
+
+			void showParentNoRunPrompt(DesuraId id) override
+			{
+				if (!m_pItemForm)
+					return;
+
+				m_pItemForm->showParentNoRunPrompt(id);
+			}
+
 			/////////////////////////////////////////////////////////
 			// ItemHandleFactoryI
 			/////////////////////////////////////////////////////////
@@ -1124,6 +1133,16 @@ void ItemForm::onShowWinLaunchDialog()
 		gcMessageBox(this, Managers::GetString(L"#IF_WINDOWS_LAUNCH_WARNING")); 
 } 
 #endif
+
+void ItemForm::showParentNoRunPrompt(DesuraId id)
+{
+	LinkArgs existing;
+
+	if (!m_vArgs.empty())
+		existing = m_vArgs.back();
+
+	g_pMainApp->handleInternalLink(m_ItemId, ACTION_PROMPT, FormatArgs(existing, "prompt=needtorunfirst", gcString("parentid={0}", id.getItem())));
+}
 
 
 class LaunchErrorHelper : public HelperButtonsI

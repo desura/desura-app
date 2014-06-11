@@ -159,6 +159,7 @@ namespace UserCore
 #ifdef NIX
 				virtual void showWinLaunchDialog() = 0;
 #endif
+				virtual void showParentNoRunPrompt(DesuraId id) = 0;
 			};
 
 			class ItemUninstallHelperI : public gcRefBase
@@ -200,6 +201,7 @@ namespace UserCore
 #ifdef NIX
 				MOCK_METHOD0(showWinLaunchDialog, void());
 #endif
+				MOCK_METHOD1(showParentNoRunPrompt, void(DesuraId));
 				gc_IMPLEMENT_REFCOUNTING(ItemHandleHelperMock);
 			};
 #endif

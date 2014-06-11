@@ -392,6 +392,7 @@
 		<str name="#MF_UPERMISSION_ERROR">You don't have permission to upload a MCF for this item.</str>
 		<str name="#MF_UPDATELOG_ITEMERROR">Cannot display changelog. The item cannot be found on your account.</str>
 		<str name="#MF_NONDEV_ERROR">You are not a developer of this item so you do not have permission to make content for it.</str>
+		<str name="#MF_NEEDTORUN">Before mod {0} can be launched the parent game {1} needs to be run at least once.</str>
 		
 		<!-- Create MCF -->
 		<str name="#CREATE_MCF_TITILE">Create MCF: {0}</str><!-- {0} is item name -->

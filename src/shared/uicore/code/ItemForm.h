@@ -146,6 +146,8 @@ namespace UI
 			void showEULAPrompt();
 			void showPreOrderPrompt();
 			void launchError(gcException& e);
+			void showParentNoRunPrompt(DesuraId id);
+
 			bool stopStagePrompt();
 
 #ifdef NIX
