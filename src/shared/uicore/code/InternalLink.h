@@ -82,6 +82,7 @@ protected:
 	void showEULA(DesuraId id);
 	void showUpdateLog(DesuraId id);
 	void showUpdateLogApp(uint32 version);
+	void showNeedToRun(DesuraId mid, DesuraId pid);
 
 	void showGameDisk(DesuraId id, const char* exe, bool cdKey);
 	void showUpdateForm(DesuraId id, LinkArgs args);
