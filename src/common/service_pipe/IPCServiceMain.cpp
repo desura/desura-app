@@ -615,7 +615,12 @@ void IPCServiceMain::killProcessesAtPath(const char* szPath)
 
 uint32 IPCServiceMain::findProcessId(const char* szProcessName)
 {
+#ifdef WIN32
 	return UTIL::WIN::findProcessId(szProcessName);
+#else
+    gcAssert(false);
+    return -1;
+#endif
 }
 
 #endif
