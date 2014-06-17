@@ -39,7 +39,7 @@
 		<str name="#SET_CV_DISABLE_FS_PERMS">Rendi tutte le cartelle di installazione accessibili in scrittura agli utenti normali</str>
 		<str name="#SET_CV_DISABLE_FS_PERMS_TOOLTIP">Poiché alcuni sviluppatori di giochi non sono in grado di seguire gli standard di Windows, molti giochi scrivono nella cartella di installazione e si bloccano se non sono in grado di farlo. Avviso: se si disattiva questa opzione, alcuni giochi potrebbero non funzionare</str>
 
-		<str name="#IF_LOWSPACE_SYS">Il disco fisso di sistema ({0}:\\) ha poco spazio libero. Le prestazioni di Desura saranno compromesse. &lt;a href=&quot;desura://settings/cache&quot;&gt;Puoi spostare la cartella con la cache di Desura su un altro disco per aumentare lo spazio libero.&lt;/a&gt;</str>
+		<str name="#IF_LOWSPACE_SYS">Il disco fisso di sistema ({0}:\\) ha poco spazio libero. Le prestazioni di Desura saranno compromesse. &lt;a href=&quot;http://www.desura.com/groups/desura/apphelp#diskspace&quot;&gt;Puoi spostare la cartella con la cache di Desura su un altro disco per aumentare lo spazio libero.&lt;/a&gt;</str>
 		<str name="#IF_LOWSPACE_CACHE">Il disco fisso in cui viene salvata la cache di Desura ({0}:\\) ha poco spazio libero. Si consiglia di liberare spazio per consentire a Desura di funzionare correttamente.</str>
 
 		<str name="#MW_PROMPT">Con questa procedura guidata puoi trovare i giochi installati su questo computer che sono supportati da Desura. Nota: tutti gli elementi trovati verranno aggiornati alla versione più recente su Desura.</str>

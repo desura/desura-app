@@ -39,7 +39,7 @@
 		<str name="#SET_CV_DISABLE_FS_PERMS">把所有安裝資料夾權限設為可讓一般使用者寫入</str>
 		<str name="#SET_CV_DISABLE_FS_PERMS_TOOLTIP">有些遊戲開發者沒有遵循 Windows 開發標準，因此很多遊戲試圖對安裝資料夾寫入資料，如果不成功程式就會當掉。 警示：如果禁止這設定，有些遊戲可能無法使用</str>
 
-		<str name="#IF_LOWSPACE_SYS">系統硬碟({0}:\\)剩餘可用空間很少，Desura 可能開始出現性能問題。 &lt;a href=&quot;desura://settings/cache&quot;&gt;你可以將 Desura 快取資料夾移到另一硬碟，以便挪出可用空間。&lt;/a&gt;</str>
+		<str name="#IF_LOWSPACE_SYS">系統硬碟({0}:\\)剩餘可用空間很少，Desura 可能開始出現性能問題。 &lt;a href=&quot;http://www.desura.com/groups/desura/apphelp#diskspace&quot;&gt;你可以將 Desura 快取資料夾移到另一硬碟，以便挪出可用空間。&lt;/a&gt;</str>
 		<str name="#IF_LOWSPACE_CACHE">Desura 快取用來儲存資料的硬碟({0}:\\)剩餘可用空間不多。 建議你騰出可用空間，好讓 Desura 正常運作。</str>
 
 		<str name="#MW_PROMPT">此精靈將找出已安裝於電腦且是 Desura 所支援的遊戲。 請注意：這將把找到的所有項目更新成 Desura 上的最新版本。</str>

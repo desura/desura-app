@@ -35,6 +35,16 @@ $/LicenseInfo$
 #include "cef_desura_includes/ChromiumBrowserI.h"
 
 
+CONCOMMAND(gc_show_lowdiskspace, "gc_show_lowdiskspace")
+{
+	auto uc = GetUserCore();
+
+	auto p = std::make_pair<bool, char>(true, 'C');
+
+	if (uc)
+		uc->getLowSpaceEvent()(p);
+}
+
 
 DesuraJSBinding *GetJSBinding();
 
@@ -561,4 +571,44 @@ void ItemTabPage::onPingTimer(wxTimerEvent&)
 void ItemTabPage::onPing()
 {
 	m_bPingBack = true;
+}
+
+
+void ItemTabPage::onNewUrl(newURL_s& info)
+{
+	if (info.stop)
+		return;
+
+	gcString url(info.url);
+	std::transform(url.begin(), url.end(), url.begin(), ::tolower);
+
+	if (strncmp(url.c_str(), "desura://", 9) == 0)
+	{
+		info.stop = true;
+		g_pMainApp->handleInternalLink(url.c_str());
+	}
+
+	if (!info.main)
+		return;
+
+	auto posLoad = url.find("loading.html");
+	auto posPlay = url.find("playlist.html");
+
+	if (strncmp(url.c_str(), "javascript:", 11) == 0)
+	{
+		//dont do any thing
+	}
+	else if (strncmp(url.c_str(), "wyciwyg:", 8) == 0)
+	{
+		//dont do any thing
+	}
+	else if (posLoad != std::string::npos || posPlay != std::string::npos)
+	{
+		//dont do any thing
+	}
+	else
+	{
+		info.stop = true;
+		gcLaunchDefaultBrowser(info.url);
+	}
 }

@@ -39,7 +39,7 @@
 		<str name="#SET_CV_DISABLE_FS_PERMS">Tornar todas as pastas de instalação graváveis por usuários normais</str>
 		<str name="#SET_CV_DISABLE_FS_PERMS_TOOLTIP">Como os desenvolvedores de jogos não seguem os padrões do Windows, muitos jogos gravam na pasta de instalação e falham se não conseguirem. Aviso: desativar isso pode causar o não funcionamento de alguns jogos</str>
 
-		<str name="#IF_LOWSPACE_SYS">O disco rígido do sistema ({0}:\\) está com pouco espaço livre e o Desura terá problemas de desempenho. &lt;a href=&quot;desura://settings/cache&quot;&gt;Você pode mover a pasta de cache do Desura para outro disco para liberar espaço.&lt;/a&gt;</str>
+		<str name="#IF_LOWSPACE_SYS">O disco rígido do sistema ({0}:\\) está com pouco espaço livre e o Desura terá problemas de desempenho. &lt;a href=&quot;http://www.desura.com/groups/desura/apphelp#diskspace&quot;&gt;Você pode mover a pasta de cache do Desura para outro disco para liberar espaço.&lt;/a&gt;</str>
 		<str name="#IF_LOWSPACE_CACHE">O disco rígido no qual o cache do Desura é salvo ({0}:\\) está com pouco espaço rígido. É recomendado que você libere espaço para obter o melhor desempenho do Desura.</str>
 
 		<str name="#MW_PROMPT">Esse assistente encontrará os jogos instalados nesse computador compatíveis com o Desura. Observação: isso atualizará todos os itens encontrados para a versão mais recente do Desura.</str>

@@ -39,7 +39,7 @@
 		<str name="#SET_CV_DISABLE_FS_PERMS">Permitir que los usuarios normales escriban en todas las carpetas de instalación</str>
 		<str name="#SET_CV_DISABLE_FS_PERMS_TOOLTIP">Los desarrolladores de juegos no siempre cumplen las normas de Windows, por lo que muchos juegos escriben en la carpeta de instalación y, si no pueden hacerlo, se bloquean. Atención: si desactivas esta opción, puede que algunos juegos no funcionen.</str>
 
-		<str name="#IF_LOWSPACE_SYS">El disco duro ({0}:\\) del sistema tiene poco espacio libre, por lo que Desura tendrá problemas de rendimiento. &lt;a href=&quot;desura://settings/cache&quot;&gt;Para liberar espacio, puedes mover la carpeta de la memoria caché de Desura a otro disco.&lt;/a&gt;</str>
+		<str name="#IF_LOWSPACE_SYS">El disco duro ({0}:\\) del sistema tiene poco espacio libre, por lo que Desura tendrá problemas de rendimiento. &lt;a href=&quot;http://www.desura.com/groups/desura/apphelp#diskspace&quot;&gt;Para liberar espacio, puedes mover la carpeta de la memoria caché de Desura a otro disco.&lt;/a&gt;</str>
 		<str name="#IF_LOWSPACE_CACHE">El disco duro ({0}:\\) donde Desura guarda la memoria caché tiene poco espacio libre. Se recomienda liberar espacio para que Desura funcione correctamente.</str>
 
 		<str name="#MW_PROMPT">El asistente buscará los juegos compatibles con Desura que estén instalados en este equipo. Nota: todos los elementos encontrados se actualizarán a la versión más reciente de Desura.</str>

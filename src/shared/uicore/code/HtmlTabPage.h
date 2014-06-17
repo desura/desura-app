@@ -63,7 +63,7 @@ protected:
 	void onFullSearch(gcString &text);
 
 	void setCurUrl(const char* page);
-	void onNewUrl(newURL_s& info);
+	virtual void onNewUrl(newURL_s& info);
 	void onPageLoad();
 
 	void clearCrumbs();

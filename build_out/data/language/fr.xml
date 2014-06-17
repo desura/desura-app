@@ -39,7 +39,7 @@
 		<str name="#SET_CV_DISABLE_FS_PERMS">Autoriser l&apos;accès en écriture pour tous les dossiers d&apos;installation aux utilisateurs normaux</str>
 		<str name="#SET_CV_DISABLE_FS_PERMS_TOOLTIP">Comme les développeurs de jeux vidéo ne suivent pas les normes Windows, de nombreux jeux écrivent dans le dossier d&apos;installation et se plantent s&apos;ils ne peuvent pas le faire. Avertissement : si vous désactivez cette option, certains jeux risquent de ne pas fonctionner.</str>
 
-		<str name="#IF_LOWSPACE_SYS">Le disque dur du système ({0}:\\) a peu d&apos;espace disponible et Desura risque de commencer à avoir des problèmes de performance. &lt;a href=&quot;desura://settings/cache&quot;&gt;Vous pouvez déplacer votre dossier cache Desura vers un autre disque pour libérer de l&apos;espace.&lt;/a&gt;</str>
+		<str name="#IF_LOWSPACE_SYS">Le disque dur du système ({0}:\\) a peu d&apos;espace disponible et Desura risque de commencer à avoir des problèmes de performance. &lt;a href=&quot;http://www.desura.com/groups/desura/apphelp#diskspace&quot;&gt;Vous pouvez déplacer votre dossier cache Desura vers un autre disque pour libérer de l&apos;espace.&lt;/a&gt;</str>
 		<str name="#IF_LOWSPACE_CACHE">Le disque dur sur lequel le cache Desura effectue les sauvegardes ({0}:\\) a peu d&apos;espace disponible. Nous vous conseillons de libérer de l&apos;espace pour que Desura fonctionne correctement.</str>
 
 		<str name="#MW_PROMPT">Cet assistant trouvera les jeux installés sur cet ordinateur qui sont pris en charge par Desura. Remarque : tous les éléments trouvés seront mis à jour et passeront à la dernière version de Desura.</str>
