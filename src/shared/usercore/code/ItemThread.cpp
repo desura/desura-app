@@ -190,6 +190,11 @@ gcRefPtr<UserCore::ItemTask::BaseItemTask> ItemThread::getNewTask()
 	if (isPaused())
 		return nullptr;
 
+	{
+		std::lock_guard<std::mutex> guard(m_DeleteMutex);
+		m_bDeleteCurrentTask = false;
+	}
+
 	gcRefPtr<UserCore::ItemTask::BaseItemTask> task;
 
 	std::lock_guard<std::mutex> guard(m_TaskMutex);
