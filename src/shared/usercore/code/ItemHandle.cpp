@@ -286,7 +286,12 @@ void ItemHandle::setPaused(bool state, bool forced)
 	gcTrace("Paused {0}, Forced {1}", state, forced);
 
 	bool isPausable = (getItemInfo()->getStatus()&UserCore::Item::ItemInfoI::STATUS_PAUSABLE)?true:false;
-	bool hasPauseFlag = HasAnyFlags(getItemInfo()->getStatus(), UserCore::Item::ItemInfoI::STATUS_PAUSED);
+	bool hasPauseFlag = false;
+
+	{
+		std::lock_guard<std::recursive_mutex> guard(m_ThreadMutex);
+		hasPauseFlag = m_pThread && m_pThread->isPaused();
+	}
 
 	if ((forced || isPausable) && (hasPauseFlag != state))
 	{
@@ -365,6 +370,9 @@ void ItemHandle::onTaskComplete(ITEM_STAGE &stage)
 		releaseComplexLock();
 		stopThread();
 	}
+
+	//Need to unpause here as sometimes users can pause just be for we complete
+	setPaused(false, true);
 }
 
 void ItemHandle::resetStage(bool close)
