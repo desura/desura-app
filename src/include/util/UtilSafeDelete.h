@@ -77,6 +77,12 @@ void safe_delete(T*& ptr)
 }
 
 template <typename T>
+void safe_delete(std::shared_ptr<T> &pShared)
+{
+    pShared.reset();
+}
+
+template <typename T>
 void safe_delete(std::vector<T>& vec)
 {
 	for (size_t x = 0; x < vec.size(); x++)
@@ -129,12 +135,6 @@ void safe_delete(size_t argc, T **argv)
 		free(argv[n]);
 
 	delete[] argv;
-}
-
-template <typename T>
-void safe_delete(std::shared_ptr<T> &pShared)
-{
-	pShared.reset();
 }
 
 template <typename T>
