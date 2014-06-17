@@ -39,7 +39,7 @@
 		<str name="#SET_CV_DISABLE_FS_PERMS">Normalen Benutzern Schreibzugriff auf alle Installationsordner gewähren</str>
 		<str name="#SET_CV_DISABLE_FS_PERMS_TOOLTIP">Da nicht alle Spieleentwickler den Windows-Standards folgen, schreiben viele Spiele in den Installationsordner und stürzen ab, wenn dies nicht möglich ist. Warnung: Wenn Sie diese Funktion deaktivieren, funktionieren manche Spiele u. U. nicht.</str>
 
-		<str name="#IF_LOWSPACE_SYS">Auf dem Systemdatenträger ({0}:\\) ist nur noch wenig Speicherplatz verfügbar. Die Leistung von Desura wird beeinträchtigt. &lt;a href=&quot;desura://settings/cache&quot;&gt;Sie können den Desura-Cacheordner auf einen anderen Datenträger verlagern, um Speicherplatz freizugeben.&lt;/a&gt;</str>
+		<str name="#IF_LOWSPACE_SYS">Auf dem Systemdatenträger ({0}:\\) ist nur noch wenig Speicherplatz verfügbar. Die Leistung von Desura wird beeinträchtigt. &lt;a href=&quot;http://www.desura.com/groups/desura/apphelp#diskspace&quot;&gt;Sie können den Desura-Cacheordner auf einen anderen Datenträger verlagern, um Speicherplatz freizugeben.&lt;/a&gt;</str>
 		<str name="#IF_LOWSPACE_CACHE">Auf dem Festplattenlaufwerk, das Desura für den Cacheordner verwendet ({0}:\\), ist nur noch wenig Speicherplatz verfügbar. Sie sollten Speicherplatz freigeben, damit Desura ordnungsgemäß funktioniert.</str>
 
 		<str name="#MW_PROMPT">Dieser Assistent findet alle auf diesem Computer installierten Spiele, die von Desura unterstützt werden. Hinweis: Alle gefundenen Komponenten werden auf die neueste Version aktualisiert, die in Desura verfügbar ist.</str>

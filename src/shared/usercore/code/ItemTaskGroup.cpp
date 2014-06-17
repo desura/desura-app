@@ -143,6 +143,14 @@ bool ItemTaskGroup::removeItem(gcRefPtr<ItemHandleI> item)
 		{
 			if (m_vWaitingList[x] == handle)
 			{
+				if (m_uiActiveItem > x)
+					--m_uiActiveItem;
+				else if (m_uiActiveItem == x)
+					m_uiActiveItem = -1;
+
+				if (m_uiLastActive >= x)
+					m_uiLastActive--;
+
 				found = true;
 				m_vWaitingList.erase(m_vWaitingList.begin() + x);
 				break;
@@ -151,7 +159,11 @@ bool ItemTaskGroup::removeItem(gcRefPtr<ItemHandleI> item)
 	}
 
 	if (found)
+	{
+		handle->delHelper(this);
 		handle->setTaskGroup(nullptr);
+	}
+		
 
 	uint32 p=m_vWaitingList.size();
 

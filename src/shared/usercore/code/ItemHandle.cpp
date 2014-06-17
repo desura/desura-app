@@ -95,7 +95,7 @@ ItemHandle::~ItemHandle()
 
 void ItemHandle::cleanup()
 {
-	std::lock_guard<std::mutex> guard(m_GroupLock);
+	std::lock_guard<std::recursive_mutex> guard(m_GroupLock);
 
 	if (m_pGroup)
 		m_pGroup->removeItem(this);
@@ -286,7 +286,12 @@ void ItemHandle::setPaused(bool state, bool forced)
 	gcTrace("Paused {0}, Forced {1}", state, forced);
 
 	bool isPausable = (getItemInfo()->getStatus()&UserCore::Item::ItemInfoI::STATUS_PAUSABLE)?true:false;
-	bool hasPauseFlag = HasAnyFlags(getItemInfo()->getStatus(), UserCore::Item::ItemInfoI::STATUS_PAUSED);
+	bool hasPauseFlag = false;
+
+	{
+		std::lock_guard<std::recursive_mutex> guard(m_ThreadMutex);
+		hasPauseFlag = m_pThread && m_pThread->isPaused();
+	}
 
 	if ((forced || isPausable) && (hasPauseFlag != state))
 	{
@@ -365,6 +370,9 @@ void ItemHandle::onTaskComplete(ITEM_STAGE &stage)
 		releaseComplexLock();
 		stopThread();
 	}
+
+	//Need to unpause here as sometimes users can pause just be for we complete
+	setPaused(false, true);
 }
 
 void ItemHandle::resetStage(bool close)
@@ -1278,7 +1286,7 @@ void ItemHandle::cancelCurrentStage()
 
 void ItemHandle::getStatusStr(LanguageManagerI & pLangMng, char* buffer, uint32 buffsize)
 {
-	std::lock_guard<std::mutex> guard(m_GroupLock);
+	std::lock_guard<std::recursive_mutex> guard(m_GroupLock);
 	getStatusStr_s(this, m_pItemInfo, m_uiStage, m_pGroup, pLangMng, buffer, buffsize);
 }
 
@@ -1410,7 +1418,7 @@ bool ItemHandle::setTaskGroup(gcRefPtr<ItemTaskGroup> group, bool force)
 			m_pThread->purge();
 	}
 
-	std::lock_guard<std::mutex> guard(m_GroupLock);
+	std::lock_guard<std::recursive_mutex> guard(m_GroupLock);
 	m_pGroup = group;
 
 	if (group)
@@ -1428,13 +1436,13 @@ bool ItemHandle::setTaskGroup(gcRefPtr<ItemTaskGroup> group, bool force)
 
 gcRefPtr<ItemTaskGroupI> ItemHandle::getTaskGroup()
 {
-	std::lock_guard<std::mutex> guard(m_GroupLock);
+	std::lock_guard<std::recursive_mutex> guard(m_GroupLock);
 	return m_pGroup;
 }
 
 void ItemHandle::force()
 {
-	std::lock_guard<std::mutex> guard(m_GroupLock);
+	std::lock_guard<std::recursive_mutex> guard(m_GroupLock);
 	if (!m_pGroup)
 		return;
 

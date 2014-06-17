@@ -39,7 +39,7 @@
 		<str name="#SET_CV_DISABLE_FS_PERMS">すべてのインストールフォルダを通常のユーザーが書き込み可能にします</str>
 		<str name="#SET_CV_DISABLE_FS_PERMS_TOOLTIP">ゲーム開発元は Windows の標準に従おうとせず、 多くのゲームはインストールフォルダに書き込みをしようとして、 それに失敗したときクラッシュします。 警告：これを無効にするといくつかのゲームは動きません。</str>
 
-		<str name="#IF_LOWSPACE_SYS">Desura は起動しますが、システムディスク ({0}:\\) の空き容量がないため、パフォーマンスが低下する可能性があります。&lt;a href=&quot;desura://settings/cache&quot;&gt;容量を空けるために Desura キャッシュを新しいディスクに移してください。&lt;/a&gt;</str>
+		<str name="#IF_LOWSPACE_SYS">Desura は起動しますが、システムディスク ({0}:\\) の空き容量がないため、パフォーマンスが低下する可能性があります。&lt;a href=&quot;http://www.desura.com/groups/desura/apphelp#diskspace&quot;&gt;容量を空けるために Desura キャッシュを新しいディスクに移してください。&lt;/a&gt;</str>
 		<str name="#IF_LOWSPACE_CACHE">Desura キャッシュを保存するハードディスク ({0}:\\) に空き容量が少なくなっています。Desura の性能をすべて引き出すために、容量を空けることをお勧めします。</str>
 
 		<str name="#MW_PROMPT">このウィザードは このコンピュータにインストールされている Desura で サポートされているゲームと MOD を検索します。注意： 見つかったすべてのアイテムは Desura 上の 最新バージョンにアップデートされます。</str>

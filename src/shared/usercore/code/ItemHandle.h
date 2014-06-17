@@ -287,7 +287,7 @@ namespace UserCore
 			gcRefPtr<Helper::ItemHandleFactoryI> m_pFactory;
 			gcRefPtr<ItemHandleEvents> m_pEventHandler;
 
-			std::mutex m_GroupLock;
+			std::recursive_mutex m_GroupLock;
 			gcRefPtr<ItemTaskGroup> m_pGroup;
 		};
 	}

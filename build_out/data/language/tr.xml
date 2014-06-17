@@ -39,7 +39,7 @@
 		<str name="#SET_CV_DISABLE_FS_PERMS">Tüm yükleme klasörlerine normal kullanıcıların yazmasına izin ver</str>
 		<str name="#SET_CV_DISABLE_FS_PERMS_TOOLTIP">Oyun geliştiricilerin Windows standartlarını takip edememesi nedeniyle birçok oyun yükleme klasörüne yazma gerçekleştirir; yazamazlarsa da kilitlenirler. Uyarı: Bunu devre dışı bırakırsanız bazı oyunlar çalışmayabilir.</str>
 
-		<str name="#IF_LOWSPACE_SYS">Sistem sabit diskinde ({0}:\\) boş alan miktarı azalmış durumda ve Desura performans sorunları ile başlatılacak. &lt;a href=&quot;desura://settings/cache&quot;&gt;Boş alan sağlamak için Desura önbellek klasörünüzü yeni bir diske taşıyabilirsiniz.&lt;/a&gt;</str>
+		<str name="#IF_LOWSPACE_SYS">Sistem sabit diskinde ({0}:\\) boş alan miktarı azalmış durumda ve Desura performans sorunları ile başlatılacak. &lt;a href=&quot;http://www.desura.com/groups/desura/apphelp#diskspace&quot;&gt;Boş alan sağlamak için Desura önbellek klasörünüzü yeni bir diske taşıyabilirsiniz.&lt;/a&gt;</str>
 		<str name="#IF_LOWSPACE_CACHE">Desura önbelleğinin kaydedildiği sabit diskte ({0}:\\) boş alan azalmış durumda. Desura&apos;nın doğru bir şekilde çalışması için, boş alan sağlamanız tavsiye edilir.</str>
 
 		<str name="#MW_PROMPT">Bu sihirbaz, bu bilgisayara yüklenmiş olan ve Desura tarafından desteklenen oyunları bulacaktır. Lütfen Dikkat Ediniz: Bu işlem, bulunan tüm öğeleri Desura&apos;daki en son sürüme güncelleyecektir.</str>
