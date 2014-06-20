@@ -31,6 +31,21 @@ $/LicenseInfo$
 using namespace UI::Forms::ItemFormPage;
 
 
+namespace UI
+{
+	namespace Forms
+	{
+		namespace ItemFormPage
+		{
+			class CloseWatcher
+			{
+			public:
+				bool m_bIsClosed = false;
+			};
+		}
+	}
+}
+
 UninstallInfoPage::UninstallInfoPage(wxWindow* parent) : BaseInstallPage(parent)
 {
 	Bind(wxEVT_COMMAND_BUTTON_CLICKED, &UninstallInfoPage::onButtonClicked, this);
@@ -85,6 +100,8 @@ UninstallInfoPage::UninstallInfoPage(wxWindow* parent) : BaseInstallPage(parent)
 
 UninstallInfoPage::~UninstallInfoPage()
 {
+	if (m_pCloseWatcher)
+		m_pCloseWatcher->m_bIsClosed = true;
 }
 
 void UninstallInfoPage::init()
@@ -145,7 +162,17 @@ void UninstallInfoPage::onButtonClicked( wxCommandEvent& event )
 	}
 	else if (event.GetId() == m_butUninstall->GetId())
 	{
+		auto closeWatcher = std::make_shared<CloseWatcher>();
+
+		gcAssert(!m_pCloseWatcher);
+		m_pCloseWatcher = closeWatcher;
+
 		bool res = itemForm->startUninstall(m_cbComplete->GetValue(), m_cbAccount->GetValue());
+
+		if (closeWatcher->m_bIsClosed)
+			return;
+
+		m_pCloseWatcher = nullptr;
 
 		if (res)
 		{

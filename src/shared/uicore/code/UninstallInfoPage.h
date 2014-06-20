@@ -34,34 +34,36 @@ $/LicenseInfo$
 
 namespace UI
 {
-namespace Forms
-{
-namespace ItemFormPage
-{
+	namespace Forms
+	{
+		namespace ItemFormPage
+		{
+			class CloseWatcher;
 
-class UninstallInfoPage : public BaseInstallPage 
-{
-public:
-	UninstallInfoPage(wxWindow* parent);
-	~UninstallInfoPage();
+			class UninstallInfoPage : public BaseInstallPage
+			{
+			public:
+				UninstallInfoPage(wxWindow* parent);
+				~UninstallInfoPage();
 
-	virtual void init();
+				virtual void init();
 
-protected:
-	wxStaticText* m_labInfo;
-	gcCheckBox* m_cbComplete;
-	gcCheckBox* m_cbAccount;
-	
-	gcButton* m_butUninstall;
-	gcButton* m_butCancel;
+			protected:
+				wxStaticText* m_labInfo;
+				gcCheckBox* m_cbComplete;
+				gcCheckBox* m_cbAccount;
 
-	void onButtonClicked( wxCommandEvent& event );
+				gcButton* m_butUninstall;
+				gcButton* m_butCancel;
 
-private:
-};
+				void onButtonClicked(wxCommandEvent& event);
 
-}
-}
+			private:
+				std::shared_ptr<CloseWatcher> m_pCloseWatcher;
+			};
+
+		}
+	}
 }
 
 #endif //DESURA_UFINFOPAGE_H

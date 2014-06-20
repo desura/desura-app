@@ -44,6 +44,7 @@ NewAccountDialog::NewAccountDialog(wxWindow* parent, const char* szProviderUrl)
 
 	m_pBrowser = new gcWebControl(this, GetTermsUrl().c_str(), "TermsOfService");
 	m_pBrowser->onPageLoadEvent += delegate(this, &NewAccountDialog::onPageLoad);
+	m_pBrowser->onNewURLEvent += delegate(this, &NewAccountDialog::onNewURL);
 
 	m_butBack = new gcButton( this, wxID_ANY, Managers::GetString(L"#BACK"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_butAgree = new gcButton( this, wxID_ANY, Managers::GetString(L"#AGREE"), wxDefaultPosition, wxDefaultSize, 0 );
@@ -75,6 +76,20 @@ NewAccountDialog::NewAccountDialog(wxWindow* parent, const char* szProviderUrl)
 	m_bTermsOfService = true;
 
 	CenterOnScreen();
+}
+
+void NewAccountDialog::onNewURL(newURL_s &nu)
+{
+	gcString url(nu.url);
+
+	if (url.find("file://") == 0)
+		return;
+	
+	if (url == GetTermsUrl() || url == GetRegisterUrl())
+		return;
+
+	nu.stop = true;
+	gcLaunchDefaultBrowser(nu.url);
 }
 
 void NewAccountDialog::onPageLoad()
