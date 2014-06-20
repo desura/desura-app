@@ -1456,9 +1456,14 @@ void ItemForm::onShowError(std::pair<bool, uint8> &args)
 		InstallBranch prompt(this);
 		int res = prompt.setInfo(m_pItemHandle->getItemInfo()->getId(), false);
 		
+		gcAssert(!m_pDialog);
+		m_pDialog = &prompt;
+
 		//if ok is returned we should continue the install
 		if (res == 1 || prompt.ShowModal() == wxID_OK)
 			args.first = false;
+
+		m_pDialog = nullptr;
 	}
 	else if (flags & UserCore::Item::Helper::V_BADPATH)
 	{
