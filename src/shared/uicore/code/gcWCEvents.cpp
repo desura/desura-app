@@ -164,7 +164,16 @@ bool EventHandler::onNavigateUrl(const char* url, bool isMain)
 	nu.url = url;
 	nu.main = isMain;
 
-	m_pParent->onNewURLEvent(nu);
+	if (url && strncmp(url, "mailto:", 7) == 0)
+	{
+		nu.stop = true;
+		gcLaunchDefaultBrowser(url);
+	}
+	else
+	{
+		m_pParent->onNewURLEvent(nu);
+	}
+
 	return !nu.stop;
 }
 
