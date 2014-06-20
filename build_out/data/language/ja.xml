@@ -483,9 +483,9 @@
 		<!-- Headers -->
 		<str name="#HEAD_NAME">名前</str>
 		<str name="#HEAD_STATUS">ステータス</str>
-		<str name="#HEAD_RATING">レーティング区分</str>
+		<str name="#HEAD_RATING">評価</str>
 		<str name="#HEAD_DEV">開発者</str>
-		<str name="#HEAD_FAV">お気に入り</str>	
+		<str name="#HEAD_FAV">好な物</str>	
 		
 		<!-- Item status -->
 		<str name="#IS_INSTALLED">インストール済み</str>
