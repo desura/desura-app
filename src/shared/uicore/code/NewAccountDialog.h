@@ -47,6 +47,7 @@ public:
 protected:
 	void onButtonClicked(wxCommandEvent& event);
 	void onPageLoad();
+	void onNewURL(newURL_s &nu);
 
 	gcString GetTermsUrl();
 	gcString GetRegisterUrl();
