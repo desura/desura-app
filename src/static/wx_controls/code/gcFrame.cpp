@@ -326,6 +326,11 @@ bool gcFrame::setMessageBox(wxWindow *pDialog)
 	return true;
 }
 
+bool gcFrame::hasMessageBox() const
+{
+	return !!m_pMessageBox;
+}
+
 bool gcFrame::checkAndSetPendingClose()
 {
 	if (!m_pMessageBox)

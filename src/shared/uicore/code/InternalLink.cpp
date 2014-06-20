@@ -708,6 +708,9 @@ void InternalLink::showPreorderPrompt(DesuraId id, bool isPreload)
 
 	auto form = findForm<UI::Forms::ItemForm>(id, m_vSubForms);
 
+	if (form && form->hasMessageBox())
+		return;
+
 	if (form)
 	{
 		gcMessageBox(form, msg, title, wxICON_EXCLAMATION | wxCLOSE, &pobh);
