@@ -96,7 +96,7 @@ void MCFDownloadProviders::forceLoad(MCFCore::MCFI* pMcf)
 void MCFDownloadProviders::downloadXml()
 {
 	//only update once every 5 mins
-	if (m_bInit && gcTime() < (m_tLastUpdate + std::chrono::minutes(5)))
+	if (m_bInit && gcTime() < (m_tLastUpdate + std::chrono::minutes(5)) && m_vDownloadProviders.size() != 0)
 		return;
 
 	XML::gcXMLDocument doc;

@@ -66,7 +66,9 @@ void WGTWorker::run()
 
 	if (!m_DownloadProvider || !m_DownloadProvider->isValidAndNotExpired())
 	{
-		Warning("Mcf Download Thread [{0}] failed to get valid url for download.\n", m_uiId);
+		gcString str("Mcf Download Thread [{0}] failed to get valid url for download.\n", m_uiId);
+		gcException e(ERR_MCFSERVER, str);
+		m_pCT->reportError(m_uiId, e, m_pCurBlock);
 		return;
 	}
 
