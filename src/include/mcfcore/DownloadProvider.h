@@ -131,7 +131,7 @@ namespace Misc
 			uint64 ttl = -1;
 			xmlElement.GetChild("ttl", ttl);
 
-			if (ttl > -1)
+			if (ttl != -1)
 				m_tExpireTime = gcTime() + std::chrono::seconds(ttl);
 		}
 
