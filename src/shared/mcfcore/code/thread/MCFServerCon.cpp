@@ -59,6 +59,8 @@ void MCFServerCon::onProgress(Prog_s &prog)
 
 void MCFServerCon::onWrite(WriteMem_s &mem)
 {
+	m_uiDone += mem.size;
+
 	if (!m_bConnected)
 		mem.stop = true;
 
@@ -129,6 +131,12 @@ void MCFServerCon::downloadRange(uint64 offset, uint32 size, OutBufferI* buff)
 	try
 	{
 		doDownloadRange(offset, size);
+
+		if (m_uiDone != size)
+		{
+			gcString strErr("Expecting to download {0} but only downloaded {1}", UTIL::MISC::niceSizeStr(size), UTIL::MISC::niceSizeStr(m_uiDone));
+			throw gcException(ERR_MCFSERVER, ERR_PARTREAD, strErr.c_str());
+		}
 	}
 	catch (gcException &e)
 	{
@@ -173,6 +181,17 @@ void MCFServerCon::doDownloadRange(uint64 offset, uint32 size)
 		}
 
 		res = m_FtpHandle->postWeb();
+
+		if (res == 0)
+		{
+			auto nStatusCode = m_FtpHandle->getStatusCode();
+
+			if (nStatusCode >= 400 && nStatusCode < 500)
+			{
+				gcString strErr("Link has expired (Server returned {0})", nStatusCode);
+				throw gcException(ERR_MCFSERVER, ERR_INVALID, strErr);
+			}
+		}
 	}
 	else
 	{

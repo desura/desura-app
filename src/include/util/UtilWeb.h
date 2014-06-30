@@ -156,6 +156,9 @@ public:
 	virtual const char* getPassword()=0;
 
 	virtual void dontThrowOnPartFile()=0;
+
+
+	virtual uint32 getStatusCode() = 0;
 };
 
 
