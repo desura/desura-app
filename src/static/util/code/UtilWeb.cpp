@@ -129,6 +129,11 @@ public:
 		m_bDontThrowOnPartFile = true;
 	}
 
+	uint32 getStatusCode() override
+	{
+		return m_nLastStatusCode;
+	}
+
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	// Events
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -193,6 +198,7 @@ private:
 	char m_szErrBuff[CURL_ERROR_SIZE];
 
 	bool m_bDontThrowOnPartFile = false;
+	long m_nLastStatusCode = 0;
 };
 
 
@@ -572,6 +578,8 @@ uint8 HttpHInternal::getWeb()
 	CURLcode res = curl_easy_perform(m_pCurlHandle);
 	curl_slist_free_all(headers);
 
+	curl_easy_getinfo(m_pCurlHandle, CURLINFO_RESPONSE_CODE, &m_nLastStatusCode);
+
 	unlock();
 
 	return processResult(res);
@@ -604,6 +612,7 @@ uint8 HttpHInternal::getWebToFile()
 	curl_slist_s* headers = setUpHeaders();
 	CURLcode res = curl_easy_perform(m_pCurlHandle);
 	curl_slist_free_all(headers);
+	curl_easy_getinfo(m_pCurlHandle, CURLINFO_RESPONSE_CODE, &m_nLastStatusCode);
 	unlock();
 
 	m_bWritingToFile = false;
@@ -651,6 +660,7 @@ uint8 HttpHInternal::postWeb()
 
 	curl_formfree(formPost);
 	curl_slist_free_all(headers);
+	curl_easy_getinfo(m_pCurlHandle, CURLINFO_RESPONSE_CODE, &m_nLastStatusCode);
 
 	unlock();
 
