@@ -73,9 +73,23 @@ namespace IPC
 
 		while (sizeLeft > 0)
 		{
-			auto tempP = (IPCParameter*)tempB;
-			IPCParameterI* p = getParameter(tempP->type, &tempP->data, tempP->size);
+			if (sizeLeft < IPCParameterSIZE)
+			{
+				//crud
+				gcAssert(false);
+				return size;
+			}
 
+			auto tempP = (IPCParameter*)tempB;
+
+			if (sizeLeft < (tempP->size + IPCParameterSIZE))
+			{
+				//crud
+				gcAssert(false);
+				break;
+			}
+
+			IPCParameterI* p = getParameter(tempP->type, &tempP->data, tempP->size);
 			list.push_back(p);
 
 			tempB += tempP->size + IPCParameterSIZE;

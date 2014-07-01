@@ -206,7 +206,7 @@ protected:
 
 	Event<InternalLinkInfo> onInternalLinkEvent;
 	Event<gcString> onInternalLinkStrEvent;
-
+	EventV onLoggedOutEvent;
 
 private:
 	friend class Desura;

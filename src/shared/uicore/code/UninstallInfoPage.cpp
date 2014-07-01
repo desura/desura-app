@@ -41,12 +41,15 @@ namespace UI
 			{
 			public:
 				bool m_bIsClosed = false;
+				std::mutex m_Lock;
 			};
 		}
 	}
 }
 
-UninstallInfoPage::UninstallInfoPage(wxWindow* parent) : BaseInstallPage(parent)
+UninstallInfoPage::UninstallInfoPage(wxWindow* parent) 
+	: BaseInstallPage(parent)
+	, m_pCloseWatcher(std::make_shared<CloseWatcher>())
 {
 	Bind(wxEVT_COMMAND_BUTTON_CLICKED, &UninstallInfoPage::onButtonClicked, this);
 
@@ -100,8 +103,8 @@ UninstallInfoPage::UninstallInfoPage(wxWindow* parent) : BaseInstallPage(parent)
 
 UninstallInfoPage::~UninstallInfoPage()
 {
-	if (m_pCloseWatcher)
-		m_pCloseWatcher->m_bIsClosed = true;
+	std::lock_guard<std::mutex> guard(m_pCloseWatcher->m_Lock);
+	m_pCloseWatcher->m_bIsClosed = true;
 }
 
 void UninstallInfoPage::init()
@@ -162,28 +165,26 @@ void UninstallInfoPage::onButtonClicked( wxCommandEvent& event )
 	}
 	else if (event.GetId() == m_butUninstall->GetId())
 	{
-		auto closeWatcher = std::make_shared<CloseWatcher>();
-
-		gcAssert(!m_pCloseWatcher);
-		m_pCloseWatcher = closeWatcher;
-
+		auto closeWatcher = m_pCloseWatcher;
 		bool res = itemForm->startUninstall(m_cbComplete->GetValue(), m_cbAccount->GetValue());
 
-		if (closeWatcher->m_bIsClosed)
-			return;
-
-		m_pCloseWatcher = nullptr;
-
-		if (res)
 		{
-			m_cbComplete->Enable(false);
-			m_cbAccount->Enable(false);
-			m_butCancel->Enable(false);
-			m_butUninstall->Enable(false);
+			std::lock_guard<std::mutex> guard(closeWatcher->m_Lock);
+
+			if (closeWatcher->m_bIsClosed)
+				return;
+
+			if (res)
+			{
+				m_cbComplete->Enable(false);
+				m_cbAccount->Enable(false);
+				m_butCancel->Enable(false);
+				m_butUninstall->Enable(false);
+				return;
+			}
 		}
-		else
-		{
-			GetParent()->Close();
-		}
+
+		//Cant hold lock above as we will recurse onto it
+		GetParent()->Close();
 	}
 }

@@ -78,7 +78,12 @@ HtmlTabPage::HtmlTabPage(wxWindow* parent, gcString homePage, PAGE area)
 	auto userCore = GetUserCore();
 
 	if (userCore)
-		userCore->getCIPManager()->getItemsUpdatedEvent() += guiDelegate(this, &HtmlTabPage::onCIPUpdate);
+	{
+		auto cip = userCore->getCIPManager();
+
+		if (cip)
+			cip->getItemsUpdatedEvent() += guiDelegate(this, &HtmlTabPage::onCIPUpdate);
+	}
 }
 
 HtmlTabPage::~HtmlTabPage()
@@ -100,7 +105,12 @@ HtmlTabPage::~HtmlTabPage()
 	auto userCore = GetUserCore();
 
 	if (userCore)
-		userCore->getCIPManager()->getItemsUpdatedEvent() -= guiDelegate(this, &HtmlTabPage::onCIPUpdate);
+	{
+		auto cip = userCore->getCIPManager();
+
+		if (cip)
+			cip->getItemsUpdatedEvent() -= guiDelegate(this, &HtmlTabPage::onCIPUpdate);
+	}
 }
 
 void HtmlTabPage::onFind()
