@@ -116,21 +116,36 @@ public:
 	int hours() const
 	{
 		auto t = std::chrono::system_clock::to_time_t(m_TimePoint);
-		tm source = *localtime(&t);
+		auto lt = localtime(&t);
+
+		if (!lt)
+			return 0;
+
+		tm source = *lt;
 		return source.tm_hour;
 	}
 
 	int minutes() const
 	{
 		auto t = std::chrono::system_clock::to_time_t(m_TimePoint);
-		tm source = *localtime(&t);
+		auto lt = localtime(&t);
+
+		if (!lt)
+			return 0;
+
+		tm source = *lt;
 		return source.tm_min;
 	}
 
 	int seconds() const
 	{
 		auto t = std::chrono::system_clock::to_time_t(m_TimePoint);
-		tm source = *localtime(&t);
+		auto lt = localtime(&t);
+
+		if (!lt)
+			return 0;
+
+		tm source = *lt;
 		return source.tm_sec;
 	}
 
@@ -223,7 +238,12 @@ public:
 
 		char szOut[255];
 
-		tm source = *localtime(&t);
+		auto lt = localtime(&t);
+
+		if (!lt)
+			return "";
+
+		tm source = *lt;
 		auto size = strftime(szOut, 255, IOS_TIME_STR_FORMAT, &source);
 
 		return std::string(szOut, size);
@@ -236,7 +256,12 @@ public:
 
 		char szOut[255];
 
-		tm source = *localtime(&t);
+		auto lt = localtime(&t);
+
+		if (!lt)
+			return "";
+
+		tm source = *lt;
 		auto size = strftime(szOut, 255, JS_TIME_STR_FORMAT, &source);
 
 		return std::string(szOut, size);
