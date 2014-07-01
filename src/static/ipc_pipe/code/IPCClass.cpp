@@ -68,6 +68,13 @@ namespace IPC
 
 	uint32 deserializeList(std::vector<IPCParameterI*> &list, const char* buffer, uint32 size)
 	{
+		if (size < IPCParameterSIZE)
+		{
+			//crud
+			gcAssert(false);
+			return size;
+		}
+
 		uint32 sizeLeft = size;
 		const char* tempB = buffer;
 
@@ -78,6 +85,13 @@ namespace IPC
 
 			list.push_back(p);
 
+			if (sizeLeft < (tempP->size + IPCParameterSIZE))
+			{
+				//crud
+				gcAssert(false);
+				break;
+			}
+				
 			tempB += tempP->size + IPCParameterSIZE;
 			sizeLeft -= tempP->size + IPCParameterSIZE;
 		}
