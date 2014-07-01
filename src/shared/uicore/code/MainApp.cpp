@@ -227,6 +227,8 @@ MainApp::MainApp()
 	onInternalLinkEvent += guiDelegate(this, &MainApp::onInternalLink);
 	onInternalLinkStrEvent += guiDelegate(this, &MainApp::onInternalStrLink);
 	onNotifyGiftUpdateEvent += guiDelegate(this, &MainApp::onNotifyGiftUpdate);
+
+	onLoggedOutEvent += guiDelegate(this, &MainApp::onLoggedOut);
 }
 
 MainApp::~MainApp()
@@ -429,7 +431,7 @@ void MainApp::logOut(bool bShowLogin, bool autoLogin, bool webLoggedOut)
 			user->getAppUpdateProgEvent()				-= guiDelegate(this, &MainApp::onAppUpdateProg);
 			user->getAppUpdateCompleteEvent()			-= guiDelegate(this, &MainApp::onAppUpdate);
 			user->getWebCore()->getCookieUpdateEvent() -= guiDelegate(this, &MainApp::onCookieUpdate);
-			user->getWebCore()->getLoggedOutEvent()		-= guiDelegate(this, &MainApp::onLoggedOut);
+			user->getWebCore()->getLoggedOutEvent()		-= delegate(&onLoggedOutEvent);
 
 			user->destroy();
 		}
@@ -604,7 +606,7 @@ void MainApp::onLoginAcceptedCB(std::pair<bool,bool> &loginInfo)
 	GetUserCore()->getAppUpdateProgEvent() += guiDelegate(this, &MainApp::onAppUpdateProg);
 	GetUserCore()->getAppUpdateCompleteEvent() += guiDelegate(this, &MainApp::onAppUpdate);
 	GetWebCore()->getCookieUpdateEvent() += guiDelegate(this, &MainApp::onCookieUpdate);
-	GetWebCore()->getLoggedOutEvent() += guiDelegate(this, &MainApp::onLoggedOut);
+	GetWebCore()->getLoggedOutEvent() += delegate(&onLoggedOutEvent);
 	GetUserCore()->getPipeDisconnectEvent() += guiDelegate(this, &MainApp::onPipeDisconnect);
 	
 	//trigger this so it sets cookies first time around
@@ -857,7 +859,7 @@ const char* MainApp::getProvider() const
 
 void MainApp::userLoggedOut()
 {
-	onLoggedOut();
+	onLoggedOutEvent();
 }
 
 
