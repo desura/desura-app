@@ -59,7 +59,9 @@ public:
 	void onCDKeyError(DesuraId id, gcException& e) override
 	{
 		if (!m_pCDKProgress)
-			m_pCDKProgress->onCDKeyError(id, e);
+			return;
+
+		m_pCDKProgress->onCDKeyError(id, e);
 	}
 
 private:
