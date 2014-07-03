@@ -23,6 +23,15 @@
 <div id="svgintro"></div>
 
 <script>
+
+var colors = [
+	"blue",
+	"green",
+	"coral",
+	"cornflowerblue",
+	"darkorange",
+]
+
 function unicodeCharEscape(charCode) {
     return "#" + charCode;
 }
@@ -62,6 +71,9 @@ function unicodeEscape(string) {
 		var threadStarted = [];
 		var threadStopped = [];
 		
+		var app = null;
+		var appColors = {};
+		
 		svg.clear();
 		
 		$.each(arr, function(i, v){
@@ -94,13 +106,18 @@ function unicodeEscape(string) {
 			var fillCol = 'white';
 			var lineCol = 'black';
 			
-			if (v['app'] == "Service"){
-				lineCol = "blue";
-			}
-			else if (v['app'] == "Tool"){
-				lineCol = "green";
-			}
+			if (!app) {
+				app = v['app'];
+			} if (v['app'] != app) {
 			
+				if (!appColors[v['app']]) {
+					appColors[v['app']] = colors[0];
+					colors.shift();
+				}
+				
+				lineCol = appColors[v['app']];
+			}
+					
 			var x = 10 + ((thread-1) * (width + 10));
 							
 			svg.rect(x, y, 20, height, {fill: fillCol, stroke: lineCol, strokeWidth: 2, onmouseenter: "onMouseEnterSvg(evt)", title: JSON.stringify(v, null, "<br />")});
