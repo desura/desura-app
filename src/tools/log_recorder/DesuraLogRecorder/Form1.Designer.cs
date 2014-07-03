@@ -29,9 +29,6 @@
         private void InitializeComponent()
         {
             this.dgMessages = new System.Windows.Forms.DataGridView();
-            this.butRecord = new System.Windows.Forms.Button();
-            this.butConnect = new System.Windows.Forms.Button();
-            this.butExport = new System.Windows.Forms.Button();
             this.Time = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.App = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.Thread = new System.Windows.Forms.DataGridViewTextBoxColumn();
@@ -39,6 +36,10 @@
             this.Module = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.Message = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.ClassInfo = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.butRecord = new System.Windows.Forms.Button();
+            this.butConnect = new System.Windows.Forms.Button();
+            this.butExport = new System.Windows.Forms.Button();
+            this.cbSharedMemName = new System.Windows.Forms.ComboBox();
             ((System.ComponentModel.ISupportInitialize)(this.dgMessages)).BeginInit();
             this.SuspendLayout();
             // 
@@ -70,37 +71,6 @@
             this.dgMessages.ShowEditingIcon = false;
             this.dgMessages.Size = new System.Drawing.Size(843, 590);
             this.dgMessages.TabIndex = 0;
-            // 
-            // butRecord
-            // 
-            this.butRecord.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.butRecord.Location = new System.Drawing.Point(780, 12);
-            this.butRecord.Name = "butRecord";
-            this.butRecord.Size = new System.Drawing.Size(75, 23);
-            this.butRecord.TabIndex = 1;
-            this.butRecord.Text = "Record";
-            this.butRecord.UseVisualStyleBackColor = true;
-            // 
-            // butConnect
-            // 
-            this.butConnect.Location = new System.Drawing.Point(12, 12);
-            this.butConnect.Name = "butConnect";
-            this.butConnect.Size = new System.Drawing.Size(75, 23);
-            this.butConnect.TabIndex = 2;
-            this.butConnect.Text = "Connect";
-            this.butConnect.UseVisualStyleBackColor = true;
-            this.butConnect.Click += new System.EventHandler(this.butConnect_Click);
-            // 
-            // butExport
-            // 
-            this.butExport.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.butExport.Location = new System.Drawing.Point(699, 12);
-            this.butExport.Name = "butExport";
-            this.butExport.Size = new System.Drawing.Size(75, 23);
-            this.butExport.TabIndex = 3;
-            this.butExport.Text = "Export";
-            this.butExport.UseVisualStyleBackColor = true;
-            this.butExport.Click += new System.EventHandler(this.butExport_Click);
             // 
             // Time
             // 
@@ -156,11 +126,56 @@
             this.ClassInfo.Name = "ClassInfo";
             this.ClassInfo.ReadOnly = true;
             // 
+            // butRecord
+            // 
+            this.butRecord.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.butRecord.Location = new System.Drawing.Point(780, 12);
+            this.butRecord.Name = "butRecord";
+            this.butRecord.Size = new System.Drawing.Size(75, 23);
+            this.butRecord.TabIndex = 1;
+            this.butRecord.Text = "LogTrace";
+            this.butRecord.UseVisualStyleBackColor = true;
+            this.butRecord.Click += new System.EventHandler(this.butRecord_Click);
+            // 
+            // butConnect
+            // 
+            this.butConnect.Location = new System.Drawing.Point(12, 12);
+            this.butConnect.Name = "butConnect";
+            this.butConnect.Size = new System.Drawing.Size(75, 23);
+            this.butConnect.TabIndex = 2;
+            this.butConnect.Text = "Connect";
+            this.butConnect.UseVisualStyleBackColor = true;
+            this.butConnect.Click += new System.EventHandler(this.butConnect_Click);
+            // 
+            // butExport
+            // 
+            this.butExport.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.butExport.Location = new System.Drawing.Point(699, 12);
+            this.butExport.Name = "butExport";
+            this.butExport.Size = new System.Drawing.Size(75, 23);
+            this.butExport.TabIndex = 3;
+            this.butExport.Text = "Export";
+            this.butExport.UseVisualStyleBackColor = true;
+            this.butExport.Click += new System.EventHandler(this.butExport_Click);
+            // 
+            // cbSharedMemName
+            // 
+            this.cbSharedMemName.FormattingEnabled = true;
+            this.cbSharedMemName.Items.AddRange(new object[] {
+            "DESURA_CLIENT_TRACER_OUTPUT",
+            "CEF3_TRACER_OUTPUT"});
+            this.cbSharedMemName.Location = new System.Drawing.Point(94, 12);
+            this.cbSharedMemName.Name = "cbSharedMemName";
+            this.cbSharedMemName.Size = new System.Drawing.Size(303, 21);
+            this.cbSharedMemName.TabIndex = 4;
+            this.cbSharedMemName.Text = "DESURA_CLIENT_TRACER_OUTPUT";
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(867, 642);
+            this.Controls.Add(this.cbSharedMemName);
             this.Controls.Add(this.butExport);
             this.Controls.Add(this.butConnect);
             this.Controls.Add(this.butRecord);
@@ -186,6 +201,7 @@
         private System.Windows.Forms.DataGridViewTextBoxColumn Module;
         private System.Windows.Forms.DataGridViewTextBoxColumn Message;
         private System.Windows.Forms.DataGridViewTextBoxColumn ClassInfo;
+        private System.Windows.Forms.ComboBox cbSharedMemName;
     }
 }
 

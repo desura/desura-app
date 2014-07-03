@@ -6,6 +6,7 @@ using System.Data;
 using System.Diagnostics;
 using System.Drawing;
 using System.IO;
+using System.IO.Compression;
 using System.IO.MemoryMappedFiles;
 using System.Linq;
 using System.Text;
@@ -50,7 +51,7 @@ namespace DesuraLogRecorder
             return def;
         }
 
-        private void Connect()
+        private void Connect(String sharedMemName)
         {
             if (_MappedFile != null)
             {
@@ -62,7 +63,7 @@ namespace DesuraLogRecorder
             {
                 try
                 {
-                    _MappedFile = MemoryMappedFile.OpenExisting("DESURA_CLIENT_TRACER_OUTPUT", MemoryMappedFileRights.Read);
+                    _MappedFile = MemoryMappedFile.OpenExisting(sharedMemName, MemoryMappedFileRights.Read);
                     break;
                 }
                 catch (Exception e)
@@ -261,12 +262,20 @@ namespace DesuraLogRecorder
                 butConnect.Text = "Connect";
                 
                 butRecord.Enabled = false;
+                cbSharedMemName.Enabled = true;
 
                 DataGridViewRow row = new DataGridViewRow();
 
-                var first = dgMessages.Rows[dgMessages.Rows.GetFirstRow(DataGridViewElementStates.None)].Cells[0];
+                if (dgMessages.Rows.Count > 0)
+                {
+                    var first = dgMessages.Rows[dgMessages.Rows.GetFirstRow(DataGridViewElementStates.None)].Cells[0];
+                    row.Cells.Add(new DataGridViewTextBoxCell() { Value = first.Value });
+                }
+                else
+                {
+                    row.Cells.Add(new DataGridViewTextBoxCell() { Value = "0" });
+                }
 
-                row.Cells.Add(new DataGridViewTextBoxCell() { Value = first.Value });
                 row.Cells.Add(new DataGridViewTextBoxCell() { Value = "" });
                 row.Cells.Add(new DataGridViewTextBoxCell() { Value = "" });
                 row.Cells.Add(new DataGridViewTextBoxCell() { Value = "" });
@@ -281,7 +290,12 @@ namespace DesuraLogRecorder
             {
                 if (_Thread == null)
                 {
-                    _Thread = new Thread(Connect);
+                    var name = cbSharedMemName.Text;
+
+                    _Thread = new Thread(() => {
+                        Connect(name);
+                    });
+
                     _Thread.IsBackground = true;
                     _Thread.Start();
 
@@ -291,6 +305,7 @@ namespace DesuraLogRecorder
 
                 butConnect.Text = "Connecting...";
                 butConnect.Enabled = false;
+                cbSharedMemName.Enabled = false;
             }
         }
 
@@ -303,12 +318,37 @@ namespace DesuraLogRecorder
             }
         }
 
+        private string getJson()
+        {
+            var res = new StringBuilder();
+
+            var first = true;
+
+            for (int x = dgMessages.Rows.Count; x > 0; x--)
+            {
+                var row = dgMessages.Rows[x - 1];
+
+                if (row == null || row.Tag == null)
+                    continue;
+
+                if (!first)
+                    res.Append(",\n\t");
+
+                first = false;
+
+                var j = SimpleJson.SerializeObject(row.Tag);
+                res.Append(j);
+            }
+
+            return res.ToString();
+        }
+
         private void butExport_Click(object sender, EventArgs e)
         {
             var dlg = new SaveFileDialog();
 
-            dlg.Title = "Desura Log Export";
-            dlg.FileName = "Desura_Export.json";
+            dlg.Title = "Log Export";
+            dlg.FileName = "Log_Export.json";
             dlg.DefaultExt = ".json";
             dlg.AddExtension = true;
 
@@ -317,26 +357,8 @@ namespace DesuraLogRecorder
                 using (var fh = dlg.OpenFile())
                 using (var s = new StreamWriter(fh))
                 {
-                    var first = true;
-
                     s.Write("[\n\t");
-
-                    for (int x=dgMessages.Rows.Count; x>0; x--)
-                    {
-                        var row = dgMessages.Rows[x-1];
-
-                        if (row == null || row.Tag == null)
-                            continue;
-
-                        if (!first)
-                            s.Write(",\n\t");
-
-                        first = false;
-
-                        var res = SimpleJson.SerializeObject(row.Tag);
-                        s.Write(res);
-                    }
-
+                    s.Write(getJson());
                     s.Write("\n]");
                 }
             }
@@ -345,5 +367,48 @@ namespace DesuraLogRecorder
         public ushort _BlockCount { get; set; }
 
         public ushort _BlockSize { get; set; }
+
+
+        bool _InitTraceResources;
+        String _TempDir;
+
+        private void butRecord_Click(object sender, EventArgs e)
+        {
+            var assembly = typeof(Form1).Assembly;
+
+            if (!_InitTraceResources)
+            {
+                _TempDir = Path.GetTempFileName();
+
+                File.Delete(_TempDir);
+                Directory.CreateDirectory(_TempDir);
+
+                using (Stream stream = assembly.GetManifestResourceStream("DesuraLogRecorder.resources.zip"))
+                using (StreamReader reader = new StreamReader(stream))
+                using (var zip = new ZipArchive(stream))
+                {
+                    zip.ExtractToDirectory(_TempDir);
+                }
+
+                _InitTraceResources = true;
+            }
+
+            var json = getJson();
+            var outFile = Path.Combine(_TempDir, Path.GetRandomFileName()) + ".html";
+            
+            using (Stream stream = assembly.GetManifestResourceStream("DesuraLogRecorder.LogTrace.html"))
+            using (StreamReader reader = new StreamReader(stream))
+            {
+                var all = reader.ReadToEnd();
+                File.WriteAllText(outFile, all.Replace("//@@TRACE_DATA@@", json));
+            }
+
+            var psi = new ProcessStartInfo() {
+                UseShellExecute = true,
+                FileName = String.Format("file:///{0}", outFile.Replace('\\', '/'))
+            };
+
+            Process.Start(psi);
+        }
     }
 }
