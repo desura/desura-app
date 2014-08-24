@@ -245,7 +245,6 @@ gcString WebCoreClass::getUrl(WebCoreUrl id)
 		break;
 
 	case Games:
-		url += "/games";
 		break;
 
 	case Mods:
