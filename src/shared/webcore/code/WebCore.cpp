@@ -237,11 +237,11 @@ gcString WebCoreClass::getUrl(WebCoreUrl id)
 		break;
 
 	case Gifts:
-		url += "/cart/gifts";
+		url += "/gifts";
 		break;
 
 	case ActivateGame:
-		url += "/cart/gifts/activate";
+		url += "/gifts";
 		break;
 
 	case Games:
@@ -264,7 +264,7 @@ gcString WebCoreClass::getUrl(WebCoreUrl id)
 		break;
 
 	case Help:
-		url += "/groups/desura/forum";
+		url += "/forum";
 		break;
 
 	case McfUpload:
@@ -288,7 +288,7 @@ gcString WebCoreClass::getUrl(WebCoreUrl id)
 		break;
 	
 	case ListKeys:
-		url = "https://secure." + g_szRootDomain + "/cart/cdkeys";
+		url += "/collection";
 		break;
 
 	case AppChangeLog:
