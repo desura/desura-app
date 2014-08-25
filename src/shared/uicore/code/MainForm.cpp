@@ -45,9 +45,6 @@ WebCore::WebCoreUrl g_uiUrlList[] =
 {
 	(WebCore::WebCoreUrl)-1,
 	WebCore::Games,
-#ifndef UI_HIDE_MODS
-	WebCore::Mods,
-#endif
 	WebCore::Community,
 	WebCore::Development,
 	WebCore::Support,
@@ -58,9 +55,6 @@ const char* g_szButtonNames[] =
 {
 	"#MP_PLAY",
 	"#MP_GAMES",
-#ifndef UI_HIDE_MODS
-	"#MP_MODS",
-#endif
 	"#MP_COMMUNITY",
 	"#MP_DEVELOPMENT",
 	"#MP_SUPPORT",
@@ -70,9 +64,6 @@ const bool g_bLoadDefault[] =
 {
 	true,
 	true,
-#ifdef WIN32
-	true,
-#endif
 	false,
 	false,
 	false,
