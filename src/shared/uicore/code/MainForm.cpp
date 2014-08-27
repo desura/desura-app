@@ -94,7 +94,7 @@ static CVar gc_allow_wm_positioning("gc_allow_wm_positioning", "true");
 #endif
 
 MainForm::MainForm(wxWindow* parent, bool offline, const char* szProvider) 
-	: gcFrame(parent, wxID_ANY, wxT(PRODUCT_NAME), wxDefaultPosition, wxSize(990, 690), wxDEFAULT_FRAME_STYLE, true )
+	: gcFrame(parent, wxID_ANY, wxT(PRODUCT_NAME), wxDefaultPosition, wxSize(1100, 690), wxDEFAULT_FRAME_STYLE, true )
 {
 	Bind(wxEVT_COMMAND_MENU_SELECTED, &MainForm::onMenuSelect, this);
 	Bind(wxEVT_CLOSE_WINDOW, &MainForm::onFormClose, this);
@@ -117,7 +117,7 @@ MainForm::MainForm(wxWindow* parent, bool offline, const char* szProvider)
 	setTitle(offline);
 
 	loadFrame(wxDEFAULT_FRAME_STYLE);
-	setupPositionSave("main", true, 990, 690);
+	setupPositionSave("main", true, 1100, 690);
 }
 
 MainForm::~MainForm()
