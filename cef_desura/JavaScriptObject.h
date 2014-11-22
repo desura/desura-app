@@ -15,10 +15,10 @@
 #pragma once
 #endif
 
-#include "ChromiumBrowserI.h"
-#include "include/cef.h"
+#include "cef_desura_includes/ChromiumBrowserI.h"
+#include "include/cef_app.h"
 
-class V8ValueBaseWrapper : public CefRefCountWrapper<CefBase>
+class V8ValueBaseWrapper : public CefRefPtr<CefBase>
 {
 public:
 	V8ValueBaseWrapper(CefRefPtr<CefV8Value> object)

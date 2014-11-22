@@ -14,7 +14,7 @@
 #endif
 
 #include "ChromiumBrowser.h"
-#include "include/cef.h"
+#include "include/cef_app.h"
 #include "JavaScriptExtender.h"
 #include "SchemeExtender.h"
 

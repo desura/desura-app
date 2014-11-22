@@ -15,8 +15,8 @@
 #pragma once
 #endif
 
-#include "ChromiumBrowserI.h"
-#include "include/cef.h"
+#include "cef_desura_includes/ChromiumBrowserI.h"
+#include "include/cef_app.h"
 
 class SchemeRequest : public ChromiumDLL::SchemeRequestI
 {

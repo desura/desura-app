@@ -15,8 +15,8 @@
 #pragma once
 #endif
 
-#include "ChromiumBrowserI.h"
-#include "include/cef.h"
+#include "cef_desura_includes/ChromiumBrowserI.h"
+#include "include/cef_app.h"
 
 class ChromiumBrowserEvents;
 
@@ -105,7 +105,7 @@ private:
 	int m_iLastTask;
 };
 
-class TaskWrapper : public CefRefCountWrapper<CefTask>
+class TaskWrapper : public CefRefPtr<CefTask>
 {
 public:
 	TaskWrapper(ChromiumDLL::CallbackI* callback)

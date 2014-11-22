@@ -9,8 +9,8 @@
 //   Created By: Mark Chandler <mailto:mark@moddb.com>
 ////////////////////////////////////////////////////////////////////////////
 
-#include "ChromiumBrowserI.h"
-#include "include/cef.h"
+#include "cef_desura_includes/ChromiumBrowserI.h"
+#include "include/cef_app.h"
 
 class Cookie : public ChromiumDLL::CookieI
 {
@@ -49,7 +49,7 @@ public:
 	CefCookie m_rCookie;
 };
 
-class CookieTask : public CefRefCountWrapper<CefTask>
+class CookieTask : public CefRefPtr<CefTask>
 {
 public:
 	CookieTask(const char* url, CefCookie &cookie)

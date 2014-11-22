@@ -15,8 +15,9 @@
 #pragma once
 #endif
 
-#include "include/cef.h"
-#include "ChromiumBrowserI.h"
+#include "include/cef_app.h"
+#include "cef_desura_includes/ChromiumBrowserI.h"
+#include "include/cef_client.h"
 
 class ChromiumBrowser;
 

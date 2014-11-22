@@ -15,8 +15,8 @@
 #pragma once
 #endif
 
-#include "ChromiumBrowserI.h"
-#include "include/cef.h"
+#include "cef_desura_includes/ChromiumBrowserI.h"
+#include "include/cef_app.h"
 
 class V8HandleBaseWrapper : public CefBase
 {
@@ -53,7 +53,7 @@ public:
 };
 
 
-class JavaScriptExtender : public CefRefCountWrapper<CefV8Handler>
+class JavaScriptExtender : public CefRefPtr<CefV8Handler>
 {
 public:
 	static bool Register(ChromiumDLL::JavaScriptExtenderI* jse);

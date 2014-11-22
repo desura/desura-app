@@ -10,7 +10,7 @@
 ////////////////////////////////////////////////////////////////////////////
 
 #include "JavaScriptFactory.h"
-#include "include/cef.h"
+#include "include/cef_app.h"
 
 #include "JavaScriptExtender.h"
 #include "JavaScriptObject.h"

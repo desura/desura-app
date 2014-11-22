@@ -15,10 +15,10 @@
 #pragma once
 #endif
 
-#include "ChromiumBrowserI.h"
-#include "include/cef.h"
+#include "cef_desura_includes/ChromiumBrowserI.h"
+#include "include/cef_app.h"
 
-class ObjectWrapper : public CefRefCountWrapper<CefBase>
+class ObjectWrapper : public CefRefPtr<CefBase>
 {
 public:
 	ObjectWrapper(void* data)

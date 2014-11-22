@@ -15,11 +15,11 @@
 #pragma once
 #endif
 
-#include "ChromiumBrowserI.h"
-#include "include/cef.h"
+#include "cef_desura_includes/ChromiumBrowserI.h"
+#include "include/cef_app.h"
+#include "include/cef_scheme.h"
 
-
-class SchemeExtender : public CefRefCountWrapper<CefSchemeHandler>, public ChromiumDLL::SchemeCallbackI
+class SchemeExtender : public CefRefPtr<CefSchemeHandler>, public ChromiumDLL::SchemeCallbackI
 {
 public:
 	static bool Register(ChromiumDLL::SchemeExtenderI* se);
