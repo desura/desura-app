@@ -48,7 +48,7 @@ private:
 class ChromiumMenuInfo : public ChromiumDLL::ChromiumMenuInfoI
 {
 public:
-	ChromiumMenuInfo(CefRefPtr<CefContextMenuParams> info, MenuHandle_t hwnd);
+	ChromiumMenuInfo(CefRefPtr<CefContextMenuParams> info, CefRefPtr<CefMenuModel> model, MenuHandle_t hwnd);
 
 	virtual ChromiumDLL::ChromiumMenuInfoI::TypeFlags getTypeFlags();
 	virtual ChromiumDLL::ChromiumMenuInfoI::EditFlags getEditFlags();

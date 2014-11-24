@@ -217,7 +217,7 @@ void MenuHandler::OnBeforeContextMenu(CefRefPtr<CefBrowser> browser, CefRefPtr<C
 	if (!GetCallback())
 		return;
 
-	ChromiumMenuInfo cmi(params, GetBrowser()->GetWindowHandle());
+	ChromiumMenuInfo cmi(params, model, GetBrowser()->GetWindowHandle());
 	GetCallback()->HandlePopupMenu(&cmi);
 }
 

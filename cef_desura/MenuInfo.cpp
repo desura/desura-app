@@ -44,12 +44,12 @@ bool ChromiumMenuItem::isChecked()
 
 
 
-ChromiumMenuInfo::ChromiumMenuInfo(CefMenuHandler::MenuInfo info, MenuHandle_t hwnd)
+ChromiumMenuInfo::ChromiumMenuInfo(CefRefPtr<CefContextMenuParams> info, CefRefPtr<CefMenuModel> model, MenuHandle_t hwnd)
 {
 	m_MenuInfo = info;
 	m_Hwnd = hwnd;
 
-	for (int x=0; x<info.customSize; x++)
+	for (int x=0; x < model->GetCount; x++)
 	{
 		m_vMenuItems.push_back( ChromiumMenuItem(info.customItems[x]) );
 	}
@@ -73,37 +73,46 @@ void ChromiumMenuInfo::getMousePos(int* x, int* y)
 
 const char* ChromiumMenuInfo::getLinkUrl()
 {
-	return (const char*)m_MenuInfo.linkUrl.str;
+	return (const char*)m_MenuInfo->GetLinkUrl().c_str();
 }
 
 const char* ChromiumMenuInfo::getImageUrl()
 {
-	return (const char*)m_MenuInfo.imageUrl.str;
+	if ( m_MenuInfo->HasImageContents() && ( m_MenuInfo->GetMediaType() == CM_MEDIATYPE_IMAGE ) )
+		return (const char*) m_MenuInfo->GetSourceUrl().c_str();
+	else
+		return nullptr;
 }
 
 const char* ChromiumMenuInfo::getPageUrl()
 {
-	return (const char*)m_MenuInfo.pageUrl.str;
+	return (const char*)m_MenuInfo->GetPageUrl().c_str();
 }
 
 const char* ChromiumMenuInfo::getFrameUrl()
 {
-	return (const char*)m_MenuInfo.frameUrl.str;
+	return (const char*)m_MenuInfo->GetFrameUrl().c_str();
 }
 
 const char* ChromiumMenuInfo::getSelectionText()
 {
-	return (const char*)m_MenuInfo.selectionText.str;
+	return (const char*)m_MenuInfo->GetSelectionText().c_str();
 }
 
 const char* ChromiumMenuInfo::getMisSpelledWord()
 {
-	return (const char*)m_MenuInfo.misspelledWord.str;
+	return nullptr;
+
+	// No longer supported
+	//return (const char*)m_MenuInfo.misspelledWord.str;
 }
 
 const char* ChromiumMenuInfo::getSecurityInfo()
 {
-	return (const char*)m_MenuInfo.securityInfo.str;
+	return nullptr;
+
+	// No longer supported
+	//return (const char*)m_MenuInfo.securityInfo.str;
 }
 
 int* ChromiumMenuInfo::getHWND()
