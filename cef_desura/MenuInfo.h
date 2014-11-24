@@ -17,6 +17,7 @@
 
 #include "cef_desura_includes/ChromiumBrowserI.h"
 #include "include/cef_app.h"
+#include "include/cef_context_menu_handler.h"
 
 class ChromiumMenuItem : public ChromiumDLL::ChromiumMenuItemI
 {
@@ -47,7 +48,7 @@ private:
 class ChromiumMenuInfo : public ChromiumDLL::ChromiumMenuInfoI
 {
 public:
-	ChromiumMenuInfo(CefMenuHandler::MenuInfo info, MenuHandle_t hwnd);
+	ChromiumMenuInfo(CefRefPtr<CefContextMenuParams> info, MenuHandle_t hwnd);
 
 	virtual ChromiumDLL::ChromiumMenuInfoI::TypeFlags getTypeFlags();
 	virtual ChromiumDLL::ChromiumMenuInfoI::EditFlags getEditFlags();
@@ -69,7 +70,7 @@ public:
 
 private:
 	std::vector<ChromiumMenuItem> m_vMenuItems;
-	CefMenuHandler::MenuInfo m_MenuInfo;
+	CefRefPtr<CefContextMenuParams> m_MenuInfo;
 	MenuHandle_t m_Hwnd;
 };
 

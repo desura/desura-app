@@ -93,10 +93,10 @@ public:
 /// MenuHandler
 /////////////////////////////////////////////////////////////////////////////////////////////
 
-class MenuHandler : public CefMenuHandler, public virtual ChromiumEventInfoI
+class MenuHandler : public CefContextMenuHandler, public virtual ChromiumEventInfoI
 {
 public:
-	virtual bool OnBeforeMenu(CefRefPtr<CefBrowser> browser, const MenuInfo& menuInfo);
+	virtual void OnBeforeContextMenu(CefRefPtr<CefBrowser> browser, CefRefPtr<CefFrame> frame, CefRefPtr<CefContextMenuParams> params, CefRefPtr<CefMenuModel> model);
 };
 
 

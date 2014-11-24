@@ -212,13 +212,13 @@ bool KeyboardHandler::OnKeyEvent(CefRefPtr<CefBrowser> browser, KeyEventType typ
 /// MenuHandler
 /////////////////////////////////////////////////////////////////////////////////////////////
 
-bool MenuHandler::OnBeforeMenu(CefRefPtr<CefBrowser> browser, const MenuInfo& menuInfo)
+void MenuHandler::OnBeforeContextMenu(CefRefPtr<CefBrowser> browser, CefRefPtr<CefFrame> frame, CefRefPtr<CefContextMenuParams> params, CefRefPtr<CefMenuModel> model)
 {
 	if (!GetCallback())
-		return false;
+		return;
 
-	ChromiumMenuInfo cmi(menuInfo, GetBrowser()->GetWindowHandle());
-	return GetCallback()->HandlePopupMenu(&cmi);
+	ChromiumMenuInfo cmi(params, GetBrowser()->GetWindowHandle());
+	GetCallback()->HandlePopupMenu(&cmi);
 }
 
 
