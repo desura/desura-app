@@ -18,7 +18,9 @@ build_desura() {
 	fi
 	cd build
 	cmake .. -DCMAKE_INSTALL_PREFIX=$PREFIX -DBUILD_CEF=OFF -DWITH_GTEST=OFF -DOFFICIAL_BUILD=$OFFICIAL_BUILD || exit 1
-	make install $@
+	NUM_PROC=`nproc`
+	echo "${NUM_PROC} processors detected"
+	make -j${NUM_PROC} install $@
 	cd ..
 	echo 'Building Desura completed'
 }
@@ -29,7 +31,9 @@ build_cef() {
 	fi
 	cd build_cef
 	cmake .. -DCMAKE_INSTALL_PREFIX=$PREFIX -DBUILD_ONLY_CEF=ON || exit 1
-	make install $@
+	NUM_PROC=`nproc`
+	echo "${NUM_PROC} processors detected"
+	make -j${NUM_PROC} install $@
 	cd ..
 	echo 'Building CEF completed'
 }
