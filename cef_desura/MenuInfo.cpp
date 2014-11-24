@@ -11,34 +11,38 @@
 
 #include "MenuInfo.h"
 
-ChromiumMenuItem::ChromiumMenuItem(CefMenuHandler::MenuItem item)
+ChromiumMenuItem::ChromiumMenuItem( int action, int type, const char* label, bool isEnabled, bool isChecked )
+	: m_action( action )
+	, m_type( type )
+	, m_label( label )
+	, m_isEnabled( isEnabled )
+	, m_isChecked( isChecked )
 {
-	m_MenuItem = item;
 }
 
 int ChromiumMenuItem::getAction()
 {
-	return m_MenuItem.action;
+	return m_action;
 }
 
 int ChromiumMenuItem::getType()
 {
-	return m_MenuItem.type;
+	return m_type;
 }
 
 const char* ChromiumMenuItem::getLabel()
 {
-	return m_MenuItem.label.str;
+	return m_label;
 }
 
 bool ChromiumMenuItem::isEnabled()
 {
-	return m_MenuItem.enabled?true:false;
+	return m_isEnabled;
 }
 
 bool ChromiumMenuItem::isChecked()
 {
-	return m_MenuItem.checked?true:false;
+	return m_isChecked;
 }
 
 
@@ -49,26 +53,26 @@ ChromiumMenuInfo::ChromiumMenuInfo(CefRefPtr<CefContextMenuParams> info, CefRefP
 	m_MenuInfo = info;
 	m_Hwnd = hwnd;
 
-	for (int x=0; x < model->GetCount; x++)
+	for (int x=0; x < model->GetCount(); x++)
 	{
-		m_vMenuItems.push_back( ChromiumMenuItem(info.customItems[x]) );
+		m_vMenuItems.push_back( ChromiumMenuItem( model->GetCommandIdAt( x ), model->GetTypeAt( x ), (const char*) model->GetLabelAt( x ).c_str(), model->IsEnabledAt( x ), model->IsCheckedAt( x ) ) );
 	}
 }
 
 ChromiumDLL::ChromiumMenuInfoI::TypeFlags ChromiumMenuInfo::getTypeFlags()
 {
-	return (ChromiumDLL::ChromiumMenuInfoI::TypeFlags)m_MenuInfo.typeFlags;
+	return (ChromiumDLL::ChromiumMenuInfoI::TypeFlags)m_MenuInfo->GetTypeFlags();
 }
 
 ChromiumDLL::ChromiumMenuInfoI::EditFlags ChromiumMenuInfo::getEditFlags()
 {
-	return (ChromiumDLL::ChromiumMenuInfoI::EditFlags)m_MenuInfo.editFlags;
+	return (ChromiumDLL::ChromiumMenuInfoI::EditFlags)m_MenuInfo->GetEditStateFlags();
 }
 
 void ChromiumMenuInfo::getMousePos(int* x, int* y)
 {
-	*x = m_MenuInfo.x;
-	*y = m_MenuInfo.y;
+	*x = m_MenuInfo->GetXCoord();
+	*y = m_MenuInfo->GetYCoord();
 }
 
 const char* ChromiumMenuInfo::getLinkUrl()
@@ -122,13 +126,13 @@ int* ChromiumMenuInfo::getHWND()
 
 int ChromiumMenuInfo::getCustomCount()
 {
-	return m_MenuInfo.customSize;
+	return m_vMenuItems.size;
 }
 
 ChromiumDLL::ChromiumMenuItemI* ChromiumMenuInfo::getCustomItem(size_t index)
 {
 	if (index >= m_vMenuItems.size())
-		return NULL;
+		return nullptr;
 
 	return &m_vMenuItems[index];
 }

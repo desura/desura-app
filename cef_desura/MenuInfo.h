@@ -22,7 +22,7 @@
 class ChromiumMenuItem : public ChromiumDLL::ChromiumMenuItemI
 {
 public:
-	ChromiumMenuItem(CefMenuHandler::MenuItem item);
+	ChromiumMenuItem( int action, int type, const char* label, bool isEnabled, bool isChecked );
 
 	virtual int getAction();
 	virtual int getType();
@@ -32,7 +32,11 @@ public:
 	virtual bool isChecked();
 
 private:
-	CefMenuHandler::MenuItem m_MenuItem;
+	int m_action;
+	int m_type;
+	const char* m_label;
+	bool m_isEnabled;
+	bool m_isChecked;
 };
 
 
