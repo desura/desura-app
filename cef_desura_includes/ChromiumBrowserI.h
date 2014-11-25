@@ -54,7 +54,7 @@ namespace ChromiumDLL
 		virtual JSObjHandle CreateObject()=0;
 		virtual JSObjHandle CreateObject(void* userData)=0;
 		virtual JSObjHandle CreateException(const char* value)=0;
-		virtual JSObjHandle CreateArray()=0;
+		virtual JSObjHandle CreateArray(int length)=0;
 		virtual JSObjHandle CreateFunction(const char* name, ChromiumDLL::JavaScriptExtenderI* handler)=0;
 	};
 

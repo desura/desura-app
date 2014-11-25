@@ -126,7 +126,7 @@ int* ChromiumMenuInfo::getHWND()
 
 int ChromiumMenuInfo::getCustomCount()
 {
-	return m_vMenuItems.size;
+	return m_vMenuItems.size();
 }
 
 ChromiumDLL::ChromiumMenuItemI* ChromiumMenuInfo::getCustomItem(size_t index)

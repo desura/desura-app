@@ -80,9 +80,9 @@ ChromiumDLL::JSObjHandle JavaScriptFactory::CreateString(const char* value)
 	return new JavaScriptObject(CefV8Value::CreateString(value));
 }
 
-ChromiumDLL::JSObjHandle JavaScriptFactory::CreateArray()
+ChromiumDLL::JSObjHandle JavaScriptFactory::CreateArray(int length)
 {
-	return new JavaScriptObject(CefV8Value::CreateArray());
+	return new JavaScriptObject(CefV8Value::CreateArray(length));
 }
 
 ChromiumDLL::JSObjHandle JavaScriptFactory::CreateObject()

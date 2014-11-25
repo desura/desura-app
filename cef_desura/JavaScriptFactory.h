@@ -47,7 +47,7 @@ public:
 	virtual ChromiumDLL::JSObjHandle CreateInt(int value);
 	virtual ChromiumDLL::JSObjHandle CreateDouble(double value);
 	virtual ChromiumDLL::JSObjHandle CreateString(const char* value);
-	virtual ChromiumDLL::JSObjHandle CreateArray();
+	virtual ChromiumDLL::JSObjHandle CreateArray(int length);
 	virtual ChromiumDLL::JSObjHandle CreateObject();
 	virtual ChromiumDLL::JSObjHandle CreateObject(void* userData);
 	virtual ChromiumDLL::JSObjHandle CreateException(const char* value);
