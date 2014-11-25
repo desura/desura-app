@@ -19,7 +19,7 @@
 #include "include/cef_app.h"
 #include "include/cef_scheme.h"
 
-class SchemeExtender : public CefRefPtr<CefSchemeHandler>, public ChromiumDLL::SchemeCallbackI
+class SchemeExtender : public CefRefPtr<CefResourceHandler>, public ChromiumDLL::SchemeCallbackI
 {
 public:
 	static bool Register(ChromiumDLL::SchemeExtenderI* se);
@@ -28,11 +28,11 @@ public:
 	~SchemeExtender();
 
 
-	virtual bool ProcessRequest(CefRefPtr<CefRequest> request, CefString& redirectUrl, CefRefPtr<CefSchemeHandlerCallback> callback);
+	virtual bool ProcessRequest(CefRefPtr<CefRequest> request, CefString& redirectUrl, CefRefPtr<CefCallback> callback);
 	virtual void Cancel();
 
 	virtual void GetResponseHeaders(CefRefPtr<CefResponse> response, int64& response_length);
-	virtual bool ReadResponse(void* data_out, int bytes_to_read, int& bytes_read, CefRefPtr<CefSchemeHandlerCallback> callback);
+	virtual bool ReadResponse(void* data_out, int bytes_to_read, int& bytes_read, CefRefPtr<CefCallback> callback);
 
 	virtual void responseReady();
 	virtual void dataReady();
@@ -40,7 +40,7 @@ public:
 
 private:
 	ChromiumDLL::SchemeExtenderI* m_pSchemeExtender;
-	CefRefPtr<CefSchemeHandlerCallback> m_Callback;
+	CefRefPtr<CefCallback> m_Callback;
 };
 
 

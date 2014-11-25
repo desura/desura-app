@@ -41,7 +41,7 @@ public:
 		p.second->destroy();
 	}
 
-	CefRefPtr<CefResourceHandler> Create(const CefString& scheme_name, CefRefPtr<CefRequest> request)
+	CefRefPtr<CefResourceHandler> Create(CefRefPtr<CefBrowser> browser, CefRefPtr<CefFrame> frame, const CefString& scheme_name, CefRefPtr<CefRequest> request)
 	{
 		std::string url = request->GetURL();
 		std::vector<size_t> slashes;
@@ -53,15 +53,15 @@ public:
 		}
 
 		if (slashes.size() < 3)
-			return NULL;
+			return nullptr;
 
 		std::string host = url.substr(slashes[1]+1, slashes[2]-slashes[1]-1);
 		std::map<std::string, ChromiumDLL::SchemeExtenderI*>::iterator it = m_mSchemeMap.find(host);
 
 		if (it == m_mSchemeMap.end())
-			return NULL;
+			return nullptr;
 
-		return new SchemeExtender(it->second->clone(scheme_name.c_str()));
+		return new SchemeExtender(it->second->clone((const char*)scheme_name.c_str()));
 	}
 
 	bool registerScheme(ChromiumDLL::SchemeExtenderI* se)
