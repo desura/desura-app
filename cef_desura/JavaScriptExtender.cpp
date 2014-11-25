@@ -16,7 +16,8 @@
 
 bool JavaScriptExtender::Register(ChromiumDLL::JavaScriptExtenderI* jse)
 {
-	return CefRegisterExtension(jse->getName(), jse->getRegistrationCode(), new JavaScriptExtender(jse));
+	JavaScriptExtender extender = JavaScriptExtender(jse);
+	return CefRegisterExtension(jse->getName(), jse->getRegistrationCode(),  extender );
 }
 
 JavaScriptExtender::JavaScriptExtender(ChromiumDLL::JavaScriptExtenderI* jse)
