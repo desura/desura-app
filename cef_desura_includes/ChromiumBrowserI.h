@@ -18,7 +18,7 @@
 #include <stdlib.h>
 
 #if defined(_WIN32)
-	#ifdef BUILDING_CEF_SHARED 
+	#ifdef BUILDING_CEF_DESURA_SHARED 
 		#define DLLINTERFACE __declspec(dllexport)
 	#else
 		#define DLLINTERFACE __declspec(dllimport)
