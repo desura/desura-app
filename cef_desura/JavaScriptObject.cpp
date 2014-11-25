@@ -195,7 +195,7 @@ bool JavaScriptObject::setValue(const char* key, ChromiumDLL::JSObjHandle value)
 	if (!jso)
 		return false;
 
-	return m_pObject->SetValue(key, jso->getCefV8());
+	return m_pObject->SetValue(key, jso->getCefV8(), V8_PROPERTY_ATTRIBUTE_NONE);
 }
 
 bool JavaScriptObject::setValue(int index, ChromiumDLL::JSObjHandle value)

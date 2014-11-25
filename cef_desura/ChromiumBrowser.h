@@ -119,7 +119,7 @@ public:
 			m_pCallback->destroy();
 	}
 
-	virtual void Execute(CefThreadId threadId)
+	virtual void Execute()
 	{
 		if (m_pCallback)
 			m_pCallback->run();

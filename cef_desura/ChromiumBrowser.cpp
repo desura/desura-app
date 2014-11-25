@@ -138,7 +138,7 @@ public:
 		m_Action = action;
 	}
 
-	virtual void Execute(CefThreadId threadId)
+	virtual void Execute()
 	{
 		if (!m_pBrowser)
 			return;
@@ -274,7 +274,7 @@ public:
 		m_szDefaultUrl = defaultUrl;
 	}
 
-	void Execute(CefThreadId threadId)
+	void Execute()
 	{
 		m_pBrowser->initCallback(m_szDefaultUrl);
 	}
