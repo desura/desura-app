@@ -265,17 +265,20 @@ ChromiumDLL::JSObjHandle JavaScriptObject::executeFunction(ChromiumDLL::JavaScri
 	}
 
 	CefRefPtr<CefV8Value> retval;
-	CefString exception;
+//	CefString exception;
 
-	bool res = m_pObject->ExecuteFunctionWithContext(context->getCefV8(), jso?jso->getCefV8():NULL, argList, retval, exception);
+	retval = m_pObject->ExecuteFunctionWithContext(context->getCefV8(), jso?jso->getCefV8():NULL, argList);
 
-	if (!res)
+// TODO: Not clear how to find out the thrown exception, if there was one
+/*
+	if (  )
 	{
 		if (exception.c_str())
 			return GetJSFactory()->CreateException(exception.c_str());
 
 		return GetJSFactory()->CreateException("failed to run function");
 	}
+*/
 
 	if (!retval)
 		return NULL;
@@ -302,8 +305,7 @@ CefRefPtr<CefV8Value> JavaScriptObject::getCefV8()
 
 CefRefPtr<CefBase> JavaScriptObject::getCefBase()
 {
-	CefRefPtr<CefBase> base(new V8ValueBaseWrapper(m_pObject));
-	return base;
+	return CefRefPtr<CefBase>(m_pObject);
 }
 
 void JavaScriptObject::setException()
