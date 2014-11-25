@@ -18,7 +18,7 @@
 #include "cef_desura_includes/ChromiumBrowserI.h"
 #include "include/cef_app.h"
 
-class ObjectWrapper : public CefRefPtr<CefBase>
+class ObjectWrapper : public CefRefPtr<CefV8Accessor>
 {
 public:
 	ObjectWrapper(void* data)

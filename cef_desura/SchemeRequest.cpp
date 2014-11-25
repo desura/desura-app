@@ -111,7 +111,8 @@ void SchemeRequest::setHeaderItem(const char* key, const char* data)
 	CefRequest::HeaderMap map;
 	m_rRequest->GetHeaderMap(map);
 
-	map[key] = data;
+	// Now a multimap
+	map.insert(std::pair<CefString, CefString>(key, data));
 
 	m_rRequest->SetHeaderMap(map);
 }

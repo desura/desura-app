@@ -92,14 +92,14 @@ ChromiumDLL::JSObjHandle JavaScriptFactory::CreateObject()
 
 ChromiumDLL::JSObjHandle JavaScriptFactory::CreateObject(void* userData)
 {
-	CefBase* base = new ObjectWrapper(userData);
-	return new JavaScriptObject(CefV8Value::CreateObject(CefRefPtr<CefBase>(base)));
+	ObjectWrapper base = new ObjectWrapper(userData);
+	return new JavaScriptObject(CefV8Value::CreateObject(base));
 }
 
 ChromiumDLL::JSObjHandle JavaScriptFactory::CreateFunction(const char* name, ChromiumDLL::JavaScriptExtenderI* handler)
 {
-	CefRefPtr<CefV8Handler> e = new JavaScriptExtender(handler);
-	return new JavaScriptObject(CefV8Value::CreateFunction(name, e));
+	JavaScriptExtender* e = new JavaScriptExtender(handler);
+	return new JavaScriptObject(CefV8Value::CreateFunction(name, *e));
 }
 
 ChromiumDLL::JSObjHandle JavaScriptFactory::CreateException(const char* value)
