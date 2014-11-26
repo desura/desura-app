@@ -113,17 +113,6 @@ public:
 };
 
 /////////////////////////////////////////////////////////////////////////////////////////////
-/// WinEventHandler
-/////////////////////////////////////////////////////////////////////////////////////////////
-
-class WinEventHandler : public CefWinEventHandler, public virtual ChromiumEventInfoI
-{
-public:
-	virtual void OnWndProc(CefRefPtr<CefBrowser> browser, int message, int wparam, int lparam);
-};
-
-
-/////////////////////////////////////////////////////////////////////////////////////////////
 /// ChromiumBrowserEvents
 /////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -137,7 +126,6 @@ class ChromiumBrowserEvents :
 	, public KeyboardHandler
 	, public MenuHandler
 	, public JSDialogHandler
-	, public WinEventHandler
 {
 public:
 	ChromiumBrowserEvents(ChromiumBrowser* pParent);
@@ -157,7 +145,6 @@ public:
 	virtual CefRefPtr<CefKeyboardHandler>	GetKeyboardHandler()	{ return (CefKeyboardHandler*)this; }
 	virtual CefRefPtr<CefMenuHandler>		GetMenuHandler()		{ return (CefMenuHandler*)this; }
 	virtual CefRefPtr<CefJSDialogHandler>	GetJSDialogHandler()	{ return (CefJSDialogHandler*)this; }
-	virtual CefRefPtr<CefWinEventHandler>	GetWinEventHandler()	{ return (CefWinEventHandler*)this; }
 
 private:
 	CefRefPtr<CefBrowser> m_Browser;

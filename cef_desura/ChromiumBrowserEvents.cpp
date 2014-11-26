@@ -261,6 +261,8 @@ bool JSDialogHandler::OnJSPrompt(CefRefPtr<CefBrowser> browser, CefRefPtr<CefFra
 /// WinEventHandler
 /////////////////////////////////////////////////////////////////////////////////////////////
 
+// TODO: Implement this properly within CEF.  Also determine if it's actually necessary (support of XBUTTON1/2 for back/forward)
+/*
 void WinEventHandler::OnWndProc(CefRefPtr<CefBrowser> browser, int message, int wparam, int lparam)
 {
 #ifdef OS_WIN
@@ -278,6 +280,7 @@ void WinEventHandler::OnWndProc(CefRefPtr<CefBrowser> browser, int message, int 
 		browser->GoForward();
 #endif
 }
+*/
 
 /////////////////////////////////////////////////////////////////////////////////////////////
 /// ChromiumBrowserEvents
