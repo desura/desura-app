@@ -105,7 +105,7 @@ extern "C"
 
 	DLLINTERFACE void CEF_PostCallback(ChromiumDLL::CallbackI* callback)
 	{
-		CefPostTask(TID_UI, CefRefPtr<CefTask>(new TaskWrapper(callback)));
+		CefPostTask(TID_UI, (CefTask*)(new TaskWrapper(callback)));
 	}
 }
 
@@ -167,10 +167,11 @@ public:
 
 		switch (m_Action)
 		{
-			case A_ZOOMIN:		frame->ZoomIn();	break;
-			case A_ZOOMOUT:		frame->ZoomOut();	break;
-			case A_ZOOMNORMAL:	frame->ZoomNormal(); break;
-			case A_PRINT:		frame->Print();		break;
+// TODO: Resolve what values/function replaces zoomin/zoomout
+//			case A_ZOOMIN:		m_pBrowser->GetHost()->SetZoomLevel(0.0);	break;
+//			case A_ZOOMOUT:		m_pBrowser->GetHost()->SetZoomLevel(0.0);	break;
+			case A_ZOOMNORMAL:	m_pBrowser->GetHost()->SetZoomLevel(0.0);	break;
+			case A_PRINT:		m_pBrowser->GetHost()->Print();				break;
 			case A_VIEWSOURCE:	frame->ViewSource(); break;
 			case A_UNDO:		frame->Undo();		break;
 			case A_REDO:		frame->Redo();		break;
@@ -179,6 +180,7 @@ public:
 			case A_PASTE:		frame->Paste();		break;
 			case A_DEL:			frame->Delete();	break;
 			case A_SELECTALL:	frame->SelectAll(); break;
+
 			default:
 				handled = false;
 				break;
