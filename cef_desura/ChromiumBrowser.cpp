@@ -238,14 +238,16 @@ CefBrowserSettings ChromiumBrowser::getBrowserDefaults()
 {
 	CefBrowserSettings browserDefaults;
 
-	browserDefaults.developer_tools_disabled = false;
-	browserDefaults.webgl_disabled = true;
-	browserDefaults.universal_access_from_file_urls_allowed = true;
-	browserDefaults.file_access_from_file_urls_allowed = true;
-	browserDefaults.java_disabled = true;
-	browserDefaults.javascript_close_windows_disallowed = true;
-	browserDefaults.javascript_open_windows_disallowed = true;
-	browserDefaults.drag_drop_disabled = true;
+// TODO: Resolve these settings (developer_tools_disabled & drag_drop_disabled)
+//	browserDefaults.developer_tools_disabled = false;
+//	browserDefaults.drag_drop_disabled = true;
+
+	browserDefaults.webgl = STATE_DISABLED;
+	browserDefaults.universal_access_from_file_urls = STATE_ENABLED;
+	browserDefaults.file_access_from_file_urls = STATE_ENABLED;
+	browserDefaults.java = STATE_DISABLED;
+	browserDefaults.javascript_close_windows = STATE_DISABLED;
+	browserDefaults.javascript_open_windows = STATE_DISABLED;
 
 	return browserDefaults;
 }
