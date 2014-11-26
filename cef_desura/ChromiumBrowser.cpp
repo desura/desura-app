@@ -265,7 +265,14 @@ void ChromiumBrowser::init(const char *defaultUrl)
 	const char* name = "DesuraCEFBrowser";
 	cef_string_copy(name, strlen(name), &winInfo.window_name);
 
-	CefBrowser::CreateBrowser(winInfo, m_rEventHandler, defaultUrl, getBrowserDefaults());
+	/*
+	static bool CreateBrowser(const CefWindowInfo& windowInfo,
+	CefRefPtr<CefClient> client,
+	const CefString& url,
+	const CefBrowserSettings& settings,
+	CefRefPtr<CefRequestContext> request_context);
+	*/
+	CefBrowserHost::CreateBrowser(winInfo, m_rEventHandler, defaultUrl, getBrowserDefaults());
 }
 
 #else
@@ -443,7 +450,7 @@ void ChromiumBrowser::executeJScript(const char* code, const char* scripturl, in
 void ChromiumBrowser::onFocus()
 {
 	if (m_pBrowser)
-		m_pBrowser->SetFocus(true);
+		m_pBrowser->GetHost()->SetFocus(true);
 }
 
 #if defined(_WIN32)
@@ -465,7 +472,7 @@ void ChromiumBrowser::onResize()
 {
 	HWND hWnd = m_hFormHandle;
 
-	if(m_pBrowser && m_pBrowser->GetWindowHandle())
+	if(m_pBrowser && m_pBrowser->GetHost()->GetWindowHandle())
 	{
 		// Resize the browser window and address bar to match the new frame
 		// window size
@@ -473,7 +480,7 @@ void ChromiumBrowser::onResize()
 		::GetClientRect(hWnd, &rect);
 
 		HDWP hdwp = BeginDeferWindowPos(1);
-		hdwp = DeferWindowPos(hdwp, m_pBrowser->GetWindowHandle(), NULL,rect.left, rect.top, rect.right - rect.left, rect.bottom - rect.top,SWP_NOZORDER);
+		hdwp = DeferWindowPos(hdwp, m_pBrowser->GetHost()->GetWindowHandle(), NULL, rect.left, rect.top, rect.right - rect.left, rect.bottom - rect.top, SWP_NOZORDER);
 		EndDeferWindowPos(hdwp);
 	}
 }
@@ -515,31 +522,31 @@ void ChromiumBrowser::setBrowser(CefBrowser* browser)
 void ChromiumBrowser::showInspector()
 {
 	if (m_pBrowser)
-		m_pBrowser->ShowDevTools();
+		m_pBrowser->GetHost()->ShowDevTools();
 }
 
 void ChromiumBrowser::hideInspector()
 {
 	if (m_pBrowser)
-		m_pBrowser->CloseDevTools();
+		m_pBrowser->GetHost()->CloseDevTools();
 }
 
 void ChromiumBrowser::inspectElement(int x, int y)
 {
 	if (m_pBrowser)
-		m_pBrowser->InspectElement(x, y);
+		m_pBrowser->GetHost()->InspectElement(x, y);
 }
 
 void ChromiumBrowser::scroll(int x, int y, int delta, unsigned int flags)
 {
 	if (m_pBrowser)
-		m_pBrowser->MouseWheelEvent(x, y, delta, flags);
+		m_pBrowser->GetHost()->MouseWheelEvent(x, y, delta, flags);
 }
 
 int* ChromiumBrowser::getBrowserHandle()
 {
 	if (m_pBrowser)
-		return (int*)m_pBrowser->GetWindowHandle();
+		return (int*)m_pBrowser->GetHost()->GetWindowHandle();
 
 	return 0;
 }
