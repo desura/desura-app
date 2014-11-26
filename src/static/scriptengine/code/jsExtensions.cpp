@@ -304,10 +304,10 @@ public:
 		return new JSObject(obj);
 	}
 
-	virtual ChromiumDLL::JSObjHandle CreateArray()
+	virtual ChromiumDLL::JSObjHandle CreateArray(int length)
 	{
 		v8::HandleScope handle_scope;
-		return new JSObject(v8::Array::New());
+		return new JSObject(v8::Array::New(length));
 	}
 
 	virtual ChromiumDLL::JSObjHandle CreateFunction(const char* name, ChromiumDLL::JavaScriptExtenderI* handler)

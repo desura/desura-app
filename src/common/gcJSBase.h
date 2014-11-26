@@ -217,7 +217,7 @@ JSObjHandle ToJSObject(ChromiumDLL::JavaScriptFactoryI* factory, const std::vect
 template <typename T>
 JSObjHandle ToJSObject(ChromiumDLL::JavaScriptFactoryI* factory, const std::vector<T> &list)
 {
-	JSObjHandle arr = factory->CreateArray();
+	JSObjHandle arr = factory->CreateArray(list.size());
 
 	for (size_t x=0; x<list.size(); x++)
 	{

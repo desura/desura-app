@@ -255,10 +255,15 @@ SetupDownloadUrlCustom(BOOST "http://sourceforge.net/projects/boost/files/boost/
 SetupDownloadUrl(BREAKPAD "breakpad-850-r1.zip" b0061a854df1a0d285edc74c5ac37c42)
 
 # no longer available (too old)
-SetupDownloadUrl(CEF "cef-291.tar.gz" 97e925e33f2d48cd50172247dbe40f30)
+#SetupDownloadUrl(CEF "cef-291.tar.gz" 97e925e33f2d48cd50172247dbe40f30)
+# Latest
+SetupDownloadUrlCustom(CEF "file://C:/Work/cef_binary_3.1750.1738.zip" d030bc060452984823105d5ee0a9acd6)
+
+# Instead of patching CEF, this is the corresponding Desura files (should be in /src though)
+#SetupDownloadUrlCustom(CEF_DESURA "file://C:/Work/cef_desura.zip" 113d48d666c1ea98e8600b0dd16bff36)
 
 # 3 years out of date (chromium.org)  Also not clear how this is used.
-SetupDownloadUrl(CHROMIUM "chromium-15.0.876.0.tar.bz2" 22c8e1db4d1c4b474c600dffbb5fdd0c)
+#SetupDownloadUrl(CHROMIUM "chromium-15.0.876.0.tar.bz2" 22c8e1db4d1c4b474c600dffbb5fdd0c)
 
 # no longer available (too old, but 7.39 is available)
 SetupDownloadUrl(CURL "curl-7.32.0.tar.bz2" 30d04b0a8c43c6770039d1bf033dfe79)

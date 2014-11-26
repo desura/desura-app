@@ -230,7 +230,7 @@ JSObjHandle ToJSObject(ChromiumDLL::JavaScriptFactoryI* factory, const std::map<
 
 JSObjHandle ToJSObject(ChromiumDLL::JavaScriptFactoryI* factory, const std::vector<MapElementI*> &map)
 {
-	JSObjHandle obj = factory->CreateArray();
+	JSObjHandle obj = factory->CreateArray(map.size());
 
 	for (size_t x=0; x<map.size(); x++)
 	{

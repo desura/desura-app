@@ -73,43 +73,11 @@ if(BUILD_CEF OR BUILD_ONLY_CEF)
     WORKING_DIRECTORY ${CHROMIUM_SOURCE_DIR}/..
   )
   
-  ExternalProject_Add(
-    fetch_cef
-    URL ${CEF_URL}
-    URL_MD5 ${CEF_MD5}
-    UPDATE_COMMAND ""
-    PATCH_COMMAND ${PATCH_SCRIPT_PATH} ${CMAKE_SOURCE_DIR}/cmake/patches/cef.patch
-    CONFIGURE_COMMAND ""
-    BUILD_COMMAND "" 
-    INSTALL_COMMAND ""
-  )
-
   ExternalProject_Get_Property(
     fetch_cef
     source_dir
   )
   set(FETCH_CEF_SOURCE_DIR ${source_dir})
-
-  ExternalProject_Add_Step(
-    fetch_cef
-    cef_gyp-patch
-    COMMAND ${PATCH_SCRIPT_PATH} ${CMAKE_PATCH_DIR}/cef_gyp.patch
-    DEPENDEES patch
-    WORKING_DIRECTORY ${FETCH_CEF_SOURCE_DIR}
-  )
-  
-  if(WIN32)
-    configure_file(${CMAKE_PATCH_DIR}/cef_gyp_gclient_hook_win.patch.inc ${CMAKE_BINARY_DIR}/gen/patches/cef_gyp_gclient_hook.patch)
-  else()
-    configure_file(${CMAKE_PATCH_DIR}/cef_gyp_gclient_hook_lin.patch.inc ${CMAKE_BINARY_DIR}/gen/patches/cef_gyp_gclient_hook.patch)
-  endif()
-  ExternalProject_Add_Step(
-    fetch_cef
-    cef_gyp_gclient_hook-patch
-    COMMAND ${PATCH_SCRIPT_PATH} ${CMAKE_BINARY_DIR}/gen/patches/cef_gyp_gclient_hook.patch
-    DEPENDEES patch
-    WORKING_DIRECTORY ${FETCH_CEF_SOURCE_DIR}
-  )
 
   ExternalProject_Add(
     cef
@@ -171,14 +139,6 @@ if(BUILD_CEF OR BUILD_ONLY_CEF)
   
   ExternalProject_Add_Step(
     cef
-    nss-3-15-patch
-    COMMAND ${PATCH_SCRIPT_PATH} ${CMAKE_SOURCE_DIR}/cmake/patches/chromium-nss-3.15.patch
-    DEPENDERS patch
-    WORKING_DIRECTORY ${CHROMIUM_SOURCE_DIR}/src
-    )
-
-    ExternalProject_Add_Step(
-    cef
     config_cef
     COMMAND ${CEF_CONFIG_CMD}
     DEPENDEES download
@@ -213,31 +173,6 @@ if(BUILD_CEF OR BUILD_ONLY_CEF)
     download_cef_dep(nacl http://src.chromium.org/native_client/trunk/src/native_client/tests@6668 native_client/tests)
     download_cef_dep(cygwin ${DEFAULT_SVN_URL}/deps/third_party/cygwin@66844 third_party/cygwin)
     download_cef_dep(ffmpeg_bin ${DEFAULT_SVN_URL}/deps/third_party/ffmpeg/binaries/win@99115 third_party/ffmpeg/binaries/chromium/win/ia32)
-  else()
-    # some patches for Linux
-    ExternalProject_Add_Step(
-      cef
-      glib-2-32-patch
-      COMMAND ${PATCH_SCRIPT_PATH} ${CMAKE_PATCH_DIR}/cef_glib_2_32_compile.patch
-      DEPENDERS patch
-      WORKING_DIRECTORY ${WORKING_DIR}
-    )
-
-    ExternalProject_Add_Step(
-      cef
-      gcc-4-7-patch
-      COMMAND ${PATCH_SCRIPT_PATH} ${CMAKE_PATCH_DIR}/cef_gcc47_compile_fix.patch
-      DEPENDERS patch
-      WORKING_DIRECTORY ${WORKING_DIR}
-    )
-
-    ExternalProject_Add_Step(
-      cef
-      bison-2-6-patch
-      COMMAND ${PATCH_SCRIPT_PATH} ${CMAKE_PATCH_DIR}/chromium-bison-2.6.patch
-      DEPENDERS patch
-      WORKING_DIRECTORY ${WORKING_DIR}
-    )
   endif()
   
   add_dependencies(cef depot_tools)
@@ -299,7 +234,7 @@ else(BUILD_CEF)
     URL ${CEF_URL}
     URL_MD5 ${CEF_MD5}
     UPDATE_COMMAND ""
-    PATCH_COMMAND ${PATCH_SCRIPT_PATH} ${CMAKE_SOURCE_DIR}/cmake/patches/cef.patch
+    #PATCH_COMMAND ${PATCH_SCRIPT_PATH} ${CMAKE_SOURCE_DIR}/cmake/patches/cef.patch
     CONFIGURE_COMMAND ""
     BUILD_COMMAND "" 
     INSTALL_COMMAND ""
