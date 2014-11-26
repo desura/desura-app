@@ -113,16 +113,6 @@ public:
 };
 
 /////////////////////////////////////////////////////////////////////////////////////////////
-/// JSBindingHandler
-/////////////////////////////////////////////////////////////////////////////////////////////
-
-class JSBindingHandler : public CefJSBindingHandler, public virtual ChromiumEventInfoI
-{
-public:
-	virtual void OnJSBinding(CefRefPtr<CefBrowser> browser, CefRefPtr<CefFrame> frame, CefRefPtr<CefV8Value> object);
-};
-
-/////////////////////////////////////////////////////////////////////////////////////////////
 /// WinEventHandler
 /////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -147,7 +137,6 @@ class ChromiumBrowserEvents :
 	, public KeyboardHandler
 	, public MenuHandler
 	, public JSDialogHandler
-	, public JSBindingHandler
 	, public WinEventHandler
 {
 public:
@@ -168,7 +157,6 @@ public:
 	virtual CefRefPtr<CefKeyboardHandler>	GetKeyboardHandler()	{ return (CefKeyboardHandler*)this; }
 	virtual CefRefPtr<CefMenuHandler>		GetMenuHandler()		{ return (CefMenuHandler*)this; }
 	virtual CefRefPtr<CefJSDialogHandler>	GetJSDialogHandler()	{ return (CefJSDialogHandler*)this; }
-	virtual CefRefPtr<CefJSBindingHandler>	GetJSBindingHandler()	{ return (CefJSBindingHandler*)this; }
 	virtual CefRefPtr<CefWinEventHandler>	GetWinEventHandler()	{ return (CefWinEventHandler*)this; }
 
 private:

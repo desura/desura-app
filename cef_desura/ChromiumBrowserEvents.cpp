@@ -256,21 +256,6 @@ bool JSDialogHandler::OnJSPrompt(CefRefPtr<CefBrowser> browser, CefRefPtr<CefFra
 	return res;
 }
 
-/////////////////////////////////////////////////////////////////////////////////////////////
-/// JSBindingHandler
-/////////////////////////////////////////////////////////////////////////////////////////////
-
-void JSBindingHandler::OnJSBinding(CefRefPtr<CefBrowser> browser, CefRefPtr<CefFrame> frame, CefRefPtr<CefV8Value> object)
-{
-	setContext(CefV8Context::GetCurrentContext());
-
-	JavaScriptObject obj(object);
-
-	if (GetCallback())
-		GetCallback()->HandleJSBinding(&obj, GetJSFactory());
-}
-
-
 
 /////////////////////////////////////////////////////////////////////////////////////////////
 /// WinEventHandler
