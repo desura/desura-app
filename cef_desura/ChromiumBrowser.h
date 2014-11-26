@@ -103,6 +103,8 @@ private:
 	WIN_HANDLE m_hFormHandle;
 	std::string m_szBuffer;
 	int m_iLastTask;
+
+	CefWindowInfo m_WinInfo;
 };
 
 class TaskWrapper : public CefRefPtr<CefTask>

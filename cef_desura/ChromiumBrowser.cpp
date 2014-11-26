@@ -256,17 +256,15 @@ CefBrowserSettings ChromiumBrowser::getBrowserDefaults()
 
 void ChromiumBrowser::init(const char *defaultUrl)
 {
-	CefWindowInfo winInfo;
-
-	winInfo.style = WS_CHILD | WS_VISIBLE | WS_CLIPCHILDREN | WS_CLIPSIBLINGS | WS_TABSTOP;
-	winInfo.height = 500;
-	winInfo.width = 500;
-	winInfo.parent_window = m_hFormHandle;
+	m_WinInfo.style = WS_CHILD | WS_VISIBLE | WS_CLIPCHILDREN | WS_CLIPSIBLINGS | WS_TABSTOP;
+	m_WinInfo.height = 500;
+	m_WinInfo.width = 500;
+	m_WinInfo.parent_window = m_hFormHandle;
 
 	const char* name = "DesuraCEFBrowser";
-	cef_string_copy(name, strlen(name), &winInfo.window_name);
+	cef_string_copy(name, strlen(name), &m_WinInfo.window_name);
 
-	CefBrowserHost::CreateBrowser(winInfo, m_rEventHandler, defaultUrl, getBrowserDefaults(), CefRequestContext::GetGlobalContext());
+	CefBrowserHost::CreateBrowser( m_WinInfo, m_rEventHandler, defaultUrl, getBrowserDefaults(), CefRequestContext::GetGlobalContext() );
 }
 
 #else
@@ -300,10 +298,9 @@ void ChromiumBrowser::init(const char *defaultUrl)
 
 void ChromiumBrowser::initCallback(const std::string& defaultUrl)
 {
-	CefWindowInfo winInfo;
-	winInfo.SetAsChild(GTK_WIDGET(m_hFormHandle));
+	m_WinInfo.SetAsChild(GTK_WIDGET(m_hFormHandle));
 
-	m_pBrowser = CefBrowser::CreateBrowserSync(winInfo, m_rEventHandler, defaultUrl.c_str(), getBrowserDefaults());
+	m_pBrowser = CefBrowser::CreateBrowserSync(m_WinInfo, m_rEventHandler, defaultUrl.c_str(), getBrowserDefaults());
 	g_signal_connect(GTK_WIDGET(m_hFormHandle), "button-press-event", G_CALLBACK(gtkFocus), this);
 	gtk_widget_show_all(GTK_WIDGET(m_hFormHandle));
 }
@@ -516,7 +513,7 @@ void ChromiumBrowser::setBrowser(CefBrowser* browser)
 void ChromiumBrowser::showInspector()
 {
 	if (m_pBrowser)
-		m_pBrowser->GetHost()->ShowDevTools();
+		m_pBrowser->GetHost()->ShowDevTools( m_WinInfo, m_rEventHandler, getBrowserDefaults() );
 }
 
 void ChromiumBrowser::hideInspector()
@@ -527,14 +524,17 @@ void ChromiumBrowser::hideInspector()
 
 void ChromiumBrowser::inspectElement(int x, int y)
 {
-	if (m_pBrowser)
-		m_pBrowser->GetHost()->InspectElement(x, y);
+// TODO: ChromiumBrowser::InspectElement
+//	if (m_pBrowser)
+//		m_pBrowser->GetHost()->InspectElement(x, y);
 }
 
 void ChromiumBrowser::scroll(int x, int y, int delta, unsigned int flags)
 {
-	if (m_pBrowser)
-		m_pBrowser->GetHost()->MouseWheelEvent(x, y, delta, flags);
+// TODO: Resolve how delta is applied (doesn't look it's used yet)
+//	if (m_pBrowser)
+//		m_pBrowser->MouseWheelEvent(x, y, delta, flags);
+//		m_pBrowser->GetHost()->SendMouseWheelEvent(const CefMouseEvent& event, int deltaX, int deltaY);
 }
 
 int* ChromiumBrowser::getBrowserHandle()
