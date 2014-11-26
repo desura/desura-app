@@ -93,7 +93,7 @@ void LifeSpanHandler::OnAfterCreated(CefRefPtr<CefBrowser> browser)
 
 void LifeSpanHandler::OnBeforeClose(CefRefPtr<CefBrowser> browser)
 {
-	if (GetBrowser() && GetBrowser()->GetWindowHandle() == browser->GetWindowHandle())
+	if (GetBrowser() && GetBrowser()->GetHost()->GetWindowHandle() == browser->GetHost()->GetWindowHandle())
 		SetBrowser(NULL);
 }
 
@@ -168,7 +168,7 @@ bool LoadHandler::OnLoadError(CefRefPtr<CefBrowser> browser, CefRefPtr<CefFrame>
 /// RequestHandler
 /////////////////////////////////////////////////////////////////////////////////////////////
 
-bool RequestHandler::OnBeforeBrowse(CefRefPtr<CefBrowser> browser, CefRefPtr<CefFrame> frame, CefRefPtr<CefRequest> request, NavType navType, bool isRedirect)
+bool RequestHandler::OnBeforeBrowse(CefRefPtr<CefBrowser> browser, CefRefPtr<CefFrame> frame, CefRefPtr<CefRequest> request, bool isRedirect)
 {
 	if (!GetCallback())
 		return false;
@@ -204,7 +204,7 @@ bool KeyboardHandler::OnKeyEvent(CefRefPtr<CefBrowser> browser, const CefKeyEven
 	if (!GetCallback())
 		return false;
 
-	return GetCallback()->onKeyEvent((ChromiumDLL::KeyEventType)event.type, event.windows_key_code, event.modifiers, event.is_system_key);
+	return GetCallback()->onKeyEvent((ChromiumDLL::KeyEventType)event.type, event.windows_key_code, event.modifiers, ( 0 != event.is_system_key ) );
 }
 
 
@@ -217,7 +217,7 @@ void MenuHandler::OnBeforeContextMenu(CefRefPtr<CefBrowser> browser, CefRefPtr<C
 	if (!GetCallback())
 		return;
 
-	ChromiumMenuInfo cmi(params, model, GetBrowser()->GetWindowHandle());
+	ChromiumMenuInfo cmi(params, model, GetBrowser()->GetHost()->GetWindowHandle());
 	GetCallback()->HandlePopupMenu(&cmi);
 }
 
