@@ -56,23 +56,24 @@ extern "C"
 
 	DLLINTERFACE bool CEF_Init(bool threaded, const char* cachePath, const char* logPath, const char* userAgent)
 	{
+		CefMainArgs args;
 		CefSettings settings;
-
 
 		cef_string_copy(cachePath, strlen(cachePath), &settings.cache_path);
 		cef_string_copy(userAgent, strlen(userAgent), &settings.user_agent);
 
 		settings.multi_threaded_message_loop = threaded;
 
-
-		if (!CefInitialize(settings))
+		if (!CefInitialize(args, settings, nullptr, nullptr ))
 			return false;
 
+		// TODO: Suspect these will need paths
 #if defined(_WIN32)
-		CefRegisterFlashPlugin("gcswf32.dll");
+		CefAddWebPluginPath("gcswf32.dll");
 #else
-	CefRegisterFlashPlugin("libdesura_flashwrapper.so");
+		CefAddWebPluginPath("libdesura_flashwrapper.so");
 #endif
+		CefRefreshWebPlugins();
 
 		return true;
 	}
