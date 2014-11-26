@@ -64,7 +64,7 @@ public:
 class RequestHandler : public CefRequestHandler, public virtual ChromiumEventInfoI
 {
 public:
-	virtual bool OnBeforeBrowse(CefRefPtr<CefBrowser> browser, CefRefPtr<CefFrame> frame, CefRefPtr<CefRequest> request, NavType navType, bool isRedirect);
+	virtual bool OnBeforeBrowse(CefRefPtr<CefBrowser> browser, CefRefPtr<CefFrame> frame, CefRefPtr<CefRequest> request, bool isRedirect);
 };
 
 
@@ -86,7 +86,7 @@ public:
 class KeyboardHandler : public CefKeyboardHandler, public virtual ChromiumEventInfoI
 {
 public:
-	virtual bool OnKeyEvent(CefRefPtr<CefBrowser> browser, KeyEventType type, int code, int modifiers, bool isSystemKey);
+	virtual bool OnKeyEvent(CefRefPtr<CefBrowser> browser, const CefKeyEvent& event, CefEventHandle os_event);
 };
 
 /////////////////////////////////////////////////////////////////////////////////////////////

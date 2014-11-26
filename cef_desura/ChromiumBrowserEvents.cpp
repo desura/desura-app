@@ -199,12 +199,12 @@ bool DisplayHandler::OnConsoleMessage(CefRefPtr<CefBrowser> browser, const CefSt
 /// KeyboardHandler
 /////////////////////////////////////////////////////////////////////////////////////////////
 
-bool KeyboardHandler::OnKeyEvent(CefRefPtr<CefBrowser> browser, KeyEventType type, int code, int modifiers, bool isSystemKey)
+bool KeyboardHandler::OnKeyEvent(CefRefPtr<CefBrowser> browser, const CefKeyEvent& event, CefEventHandle os_event)
 {
 	if (!GetCallback())
 		return false;
 
-	return GetCallback()->onKeyEvent((ChromiumDLL::KeyEventType)type, code, modifiers, isSystemKey);
+	return GetCallback()->onKeyEvent((ChromiumDLL::KeyEventType)event.type, event.windows_key_code, event.modifiers, event.is_system_key);
 }
 
 
