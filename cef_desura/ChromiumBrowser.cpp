@@ -253,6 +253,7 @@ CefBrowserSettings ChromiumBrowser::getBrowserDefaults()
 }
 
 #ifdef OS_WIN
+
 void ChromiumBrowser::init(const char *defaultUrl)
 {
 	CefWindowInfo winInfo;
@@ -265,14 +266,7 @@ void ChromiumBrowser::init(const char *defaultUrl)
 	const char* name = "DesuraCEFBrowser";
 	cef_string_copy(name, strlen(name), &winInfo.window_name);
 
-	/*
-	static bool CreateBrowser(const CefWindowInfo& windowInfo,
-	CefRefPtr<CefClient> client,
-	const CefString& url,
-	const CefBrowserSettings& settings,
-	CefRefPtr<CefRequestContext> request_context);
-	*/
-	CefBrowserHost::CreateBrowser(winInfo, m_rEventHandler, defaultUrl, getBrowserDefaults());
+	CefBrowserHost::CreateBrowser(winInfo, m_rEventHandler, defaultUrl, getBrowserDefaults(), CefRequestContext::GetGlobalContext());
 }
 
 #else
