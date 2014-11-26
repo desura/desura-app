@@ -61,7 +61,7 @@ public:
 		if (it == m_mSchemeMap.end())
 			return nullptr;
 
-		return new SchemeExtender(it->second->clone((const char*)scheme_name.c_str()));
+		return (CefResourceHandler*)(new SchemeExtender(it->second->clone((const char*)scheme_name.c_str())));
 	}
 
 	bool registerScheme(ChromiumDLL::SchemeExtenderI* se)
@@ -71,7 +71,7 @@ public:
 
 		m_mSchemeMap[se->getHostName()] = se;
 
-		return CefRegisterSchemeHandlerFactory(se->getSchemeName(), se->getHostName(), this);
+		return CefRegisterSchemeHandlerFactory(se->getSchemeName(), se->getHostName(), (CefSchemeHandlerFactory*) this);
 	}
 
 private:
@@ -168,13 +168,13 @@ bool SchemeExtender::ReadResponse(void* data_out, int bytes_to_read, int& bytes_
 void SchemeExtender::responseReady()
 {
 	if (m_Callback.get())
-		m_Callback->HeadersAvailable();
+		m_Callback->Continue();
 }
 
 void SchemeExtender::dataReady()
 {
 	if (m_Callback.get())
-		m_Callback->BytesAvailable();
+		m_Callback->Continue();
 }
 
 void SchemeExtender::cancel()
