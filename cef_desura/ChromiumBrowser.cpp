@@ -257,13 +257,13 @@ void ChromiumBrowser::init(const char *defaultUrl)
 {
 	CefWindowInfo winInfo;
 
-	winInfo.m_dwStyle =  WS_CHILD | WS_VISIBLE | WS_CLIPCHILDREN | WS_CLIPSIBLINGS | WS_TABSTOP;
-	winInfo.m_nHeight = 500;
-	winInfo.m_nWidth = 500;
-	winInfo.m_hWndParent = m_hFormHandle;
+	winInfo.style = WS_CHILD | WS_VISIBLE | WS_CLIPCHILDREN | WS_CLIPSIBLINGS | WS_TABSTOP;
+	winInfo.height = 500;
+	winInfo.width = 500;
+	winInfo.parent_window = m_hFormHandle;
 
 	const char* name = "DesuraCEFBrowser";
-	cef_string_copy(name, strlen(name), &winInfo.m_windowName);
+	cef_string_copy(name, strlen(name), &winInfo.window_name);
 
 	CefBrowser::CreateBrowser(winInfo, m_rEventHandler, defaultUrl, getBrowserDefaults());
 }
