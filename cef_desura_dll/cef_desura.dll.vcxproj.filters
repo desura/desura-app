@@ -28,6 +28,12 @@
     <Filter Include="cef_desura_includes">
       <UniqueIdentifier>{e0942784-62f1-403f-8d2b-ef6d1c05ce3a}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Libs">
+      <UniqueIdentifier>{67a3b819-ad7a-42af-9bcf-6bf2c80ed79e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Libs\Debug">
+      <UniqueIdentifier>{4e03e36d-5bf1-4d82-811f-3d11d9aa86ec}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <None Include="cefclient.gyp" />
@@ -559,6 +565,27 @@
     <ClInclude Include="fetch_cef-prefix\src\fetch_cef\libcef_dll\cpptoc\end_tracing_callback_cpptoc.h">
       <Filter>libcef_dll\cpptoc</Filter>
     </ClInclude>
+    <None Include="fetch_cef-prefix\src\fetch_cef\Debug\d3dcompiler_43.dll">
+      <Filter>Libs\Debug</Filter>
+    </None>
+    <None Include="fetch_cef-prefix\src\fetch_cef\Debug\d3dcompiler_46.dll">
+      <Filter>Libs\Debug</Filter>
+    </None>
+    <None Include="fetch_cef-prefix\src\fetch_cef\Debug\ffmpegsumo.dll">
+      <Filter>Libs\Debug</Filter>
+    </None>
+    <None Include="fetch_cef-prefix\src\fetch_cef\Debug\icudt.dll">
+      <Filter>Libs\Debug</Filter>
+    </None>
+    <None Include="fetch_cef-prefix\src\fetch_cef\Debug\libcef.dll">
+      <Filter>Libs\Debug</Filter>
+    </None>
+    <None Include="fetch_cef-prefix\src\fetch_cef\Debug\libEGL.dll">
+      <Filter>Libs\Debug</Filter>
+    </None>
+    <None Include="fetch_cef-prefix\src\fetch_cef\Debug\libGLESv2.dll">
+      <Filter>Libs\Debug</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="fetch_cef-prefix\src\fetch_cef\cef_desura\ChromiumBrowser.cpp">
@@ -1007,5 +1034,13 @@
     <ClInclude Include="fetch_cef-prefix\src\fetch_cef\include\capi\cef_zip_reader_capi.h">
       <Filter>libcef_dll</Filter>
     </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Library Include="fetch_cef-prefix\src\fetch_cef\Debug\cef_sandbox.lib">
+      <Filter>Libs\Debug</Filter>
+    </Library>
+    <Library Include="fetch_cef-prefix\src\fetch_cef\Debug\libcef.lib">
+      <Filter>Libs\Debug</Filter>
+    </Library>
   </ItemGroup>
 </Project>

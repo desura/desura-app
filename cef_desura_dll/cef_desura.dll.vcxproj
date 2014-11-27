@@ -288,6 +288,13 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <None Include="cefclient.gyp" />
+    <None Include="fetch_cef-prefix\src\fetch_cef\Debug\d3dcompiler_43.dll" />
+    <None Include="fetch_cef-prefix\src\fetch_cef\Debug\d3dcompiler_46.dll" />
+    <None Include="fetch_cef-prefix\src\fetch_cef\Debug\ffmpegsumo.dll" />
+    <None Include="fetch_cef-prefix\src\fetch_cef\Debug\icudt.dll" />
+    <None Include="fetch_cef-prefix\src\fetch_cef\Debug\libcef.dll" />
+    <None Include="fetch_cef-prefix\src\fetch_cef\Debug\libEGL.dll" />
+    <None Include="fetch_cef-prefix\src\fetch_cef\Debug\libGLESv2.dll" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="fetch_cef-prefix\src\fetch_cef\cef_desura\ChromiumBrowser.h" />
@@ -616,6 +623,10 @@
     <ClCompile Include="fetch_cef-prefix\src\fetch_cef\libcef_dll\cpptoc\run_file_dialog_callback_cpptoc.cc" />
     <ClCompile Include="fetch_cef-prefix\src\fetch_cef\libcef_dll\cpptoc\geolocation_handler_cpptoc.cc" />
     <ClCompile Include="fetch_cef-prefix\src\fetch_cef\libcef_dll\cpptoc\context_menu_handler_cpptoc.cc" />
+  </ItemGroup>
+  <ItemGroup>
+    <Library Include="fetch_cef-prefix\src\fetch_cef\Debug\cef_sandbox.lib" />
+    <Library Include="fetch_cef-prefix\src\fetch_cef\Debug\libcef.lib" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets" />
