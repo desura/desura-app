@@ -11,6 +11,7 @@
 
 #include "cef_desura_includes/ChromiumBrowserI.h"
 #include "include/cef_app.h"
+#include "include/cef_cookie.h"
 
 class Cookie : public ChromiumDLL::CookieI
 {
@@ -76,9 +77,9 @@ public:
 	virtual void Execute(CefThreadId threadId)
 	{
 		if (m_szName.size())
-			CefDeleteCookies(m_szUrl.c_str(), m_szName.c_str());
+			CefCookieManager::GetGlobalManager()->DeleteCookies(m_szUrl, m_szName);
 		else
-			CefSetCookie(m_szUrl.c_str(), m_szCookie);
+			CefCookieManager::GetGlobalManager()->SetCookie(m_szUrl, m_szCookie);
 	}
 
 	bool m_bDel;
@@ -93,7 +94,7 @@ extern "C"
 {
 	DLLINTERFACE void CEF_DeleteCookie(const char* url, const char* name)
 	{
-		CefPostTask(TID_IO, new CookieTask(url, name));
+		CefPostTask( TID_IO, (CefTask*)( new CookieTask(url, name) ) );
 	}
 
 	DLLINTERFACE ChromiumDLL::CookieI* CEF_CreateCookie()
@@ -108,6 +109,6 @@ extern "C"
 		if (!c)
 			return;
 
-		CefPostTask(TID_IO, new CookieTask(url, c->m_rCookie));
+		CefPostTask( TID_IO, (CefTask*)( new CookieTask(url, c->m_rCookie) ) );
 	}
 }
