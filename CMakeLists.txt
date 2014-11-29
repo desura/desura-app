@@ -244,7 +244,9 @@ endmacro()
 
 # custom dll's for Desura
 if(WIN32)
-  SetupDownloadUrl(CEF_BIN "cef_bin_2.zip" ec737b15c3c90f5c43d26c4e22f5dfcc)
+  #SetupDownloadUrl(CEF_BIN "cef_bin_2.zip" ec737b15c3c90f5c43d26c4e22f5dfcc)
+  SetupDownloadUrlCustom(CEF_BIN "file://C:/Work/cef_bin_3.zip" f14668139d13b96c9d2473fb213920b2)
+
   SetupDownloadUrl(DESURA_EXTRA_BIN "desura_extra_bin_v3.zip" 79bd00407c682c6b1dab5c7fb65ba72e) 
 endif()
 
@@ -257,7 +259,7 @@ SetupDownloadUrl(BREAKPAD "breakpad-850-r1.zip" b0061a854df1a0d285edc74c5ac37c42
 # no longer available (too old)
 #SetupDownloadUrl(CEF "cef-291.tar.gz" 97e925e33f2d48cd50172247dbe40f30)
 # Latest
-SetupDownloadUrlCustom(CEF "file://C:/Work/cef_binary_3.1750.1738.zip" d030bc060452984823105d5ee0a9acd6)
+SetupDownloadUrlCustom(CEF "file://C:/Work/cef_3.1750.1738_desura.zip" 62215c96348c60df8853649976627b2f)
 
 # Instead of patching CEF, this is the corresponding Desura files (should be in /src though)
 #SetupDownloadUrlCustom(CEF_DESURA "file://C:/Work/cef_desura.zip" 113d48d666c1ea98e8600b0dd16bff36)
