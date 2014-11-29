@@ -121,7 +121,7 @@ bool LoadCEFDll()
 		return false;
 	}
 
-	CEF_Init = g_CEFDll.getFunction<CEF_InitFn>("CEF_InitEx");
+	CEF_Init = g_CEFDll.getFunction<CEF_InitFn>("CEF_Init");
 
 	UserAgentFN userAgent = (UserAgentFN) WebCore::FactoryBuilder(WEBCORE_USERAGENT);
 	gcString ua;

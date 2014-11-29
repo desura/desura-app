@@ -47,6 +47,26 @@ static void gtkFocus(GtkWidget *widget, GdkEvent *event, ChromiumBrowser *data)
 }
 #endif
 
+
+class SimpleApp : public CefApp, public CefBrowserProcessHandler
+{
+public:
+	SimpleApp() {}
+
+	// CefApp methods:
+	virtual CefRefPtr<CefBrowserProcessHandler> GetBrowserProcessHandler()
+		OVERRIDE{ return this; }
+
+	// CefBrowserProcessHandler methods:
+	//virtual void OnContextInitialized() OVERRIDE;
+
+private:
+	// Include the default reference counting implementation.
+	IMPLEMENT_REFCOUNTING(SimpleApp);
+};
+
+
+
 extern "C"
 {
 	DLLINTERFACE void CEF_DoMsgLoop()
@@ -64,7 +84,11 @@ extern "C"
 
 		settings.multi_threaded_message_loop = threaded;
 
-		if (!CefInitialize(args, settings, nullptr, nullptr ))
+		CefRefPtr<SimpleApp> app(new SimpleApp);
+
+		void* sandbox_info = NULL;
+
+		if (!CefInitialize(args, settings, app.get(), sandbox_info ))
 			return false;
 
 		// TODO: Suspect these will need paths
