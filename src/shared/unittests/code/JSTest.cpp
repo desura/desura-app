@@ -38,7 +38,7 @@ namespace UnitTest
 		MOCK_METHOD0(CreateObject, JSObjHandle());
 		MOCK_METHOD1(CreateObject, JSObjHandle(void* userData));
 		MOCK_METHOD1(CreateException, JSObjHandle(const char* value));
-		MOCK_METHOD0(CreateArray, JSObjHandle(int length));
+		MOCK_METHOD1(CreateArray, JSObjHandle(int length));
 		MOCK_METHOD2(CreateFunction, JSObjHandle(const char* name, ChromiumDLL::JavaScriptExtenderI* handler));
 	};
 
