@@ -81,6 +81,7 @@ extern "C"
 
 		cef_string_copy(cachePath, strlen(cachePath), &settings.cache_path);
 		cef_string_copy(userAgent, strlen(userAgent), &settings.user_agent);
+		settings.no_sandbox = true;
 
 		settings.multi_threaded_message_loop = threaded;
 
@@ -159,7 +160,7 @@ public:
 	BrowserTask(CefBrowser* browser, ACTION action)
 	{
 		m_pBrowser = browser;
-		m_iRef = 1;
+		ref_count_.AddRef();
 		m_Action = action;
 	}
 
@@ -211,28 +212,8 @@ public:
 		};
 	}
 
-	virtual int AddRef()
-	{
-		m_iRef++;
-		return m_iRef;
-	}
+	IMPLEMENT_REFCOUNTING(BrowserTask);
 
-	virtual int Release()
-	{
-		m_iRef--;
-
-		if (m_iRef == 0)
-			delete this;
-
-		return m_iRef;
-	}
-
-	virtual int GetRefCt()
-	{
-		return m_iRef;
-	}
-
-	int m_iRef;
 	ACTION m_Action;
 	CefBrowser* m_pBrowser;
 };
@@ -536,8 +517,9 @@ void ChromiumBrowser::setBrowser(CefBrowser* browser)
 
 void ChromiumBrowser::showInspector()
 {
-	if (m_pBrowser)
-		m_pBrowser->GetHost()->ShowDevTools( m_WinInfo, m_rEventHandler, getBrowserDefaults() );
+// TODO: Need CefPoint argument
+//	if (m_pBrowser)
+//		m_pBrowser->GetHost()->ShowDevTools( m_WinInfo, m_rEventHandler, getBrowserDefaults() );
 }
 
 void ChromiumBrowser::hideInspector()

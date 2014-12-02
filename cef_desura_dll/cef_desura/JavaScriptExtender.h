@@ -24,31 +24,11 @@ public:
 	V8HandleBaseWrapper(CefRefPtr<CefV8Handler> object)
 	{
 		m_pObject = object;
-		m_iNumRef = 1;
+		ref_count_.AddRef();
 	}
 
-	virtual int AddRef()
-	{
-		m_iNumRef++;
-		return m_iNumRef;
-	}
+	IMPLEMENT_REFCOUNTING(V8HandleBaseWrapper);
 
-	virtual int Release()
-	{
-		m_iNumRef--;
-
-		if (m_iNumRef == 0)
-			delete this;
-
-		return m_iNumRef;
-	}
-
-	virtual int GetRefCt()
-	{
-		return m_iNumRef;
-	}
-
-	int m_iNumRef;
 	CefRefPtr<CefV8Handler> m_pObject;
 };
 
