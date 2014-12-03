@@ -122,16 +122,17 @@ Open a 32bit cmd.exe with env vars set up by vc or other scripts (so we have a f
 
     ./build_desura_vis.bat
 	
-* Set BUILD_ALL as startup project
+* Set BUILD_ALL as startup project (should already be set)
+* Confirm that you are set to build either Debug or Release
 * Select Properties for "ALL_BUILD"
 * Change to editing "All Configurations"
 * Under "Configuration Properties", select "General"
-* Set "Output Directory" to "$(SolutionDir)Debug_Out\"
+* Set "Output Directory" to "$(SolutionDir)$(Configuration)_Out\"
 * Set "Target Name" to "desura"
 * Set "Target Extension" to ".exe"
 * Select "Debugging"
-* Set "Command" to "$(SolutionDir)Debug_Out\desura.exe"
-* Set "Working Directory" to "$(SolutionDir)Debug_Out\"
+* Set "Command" to "$(SolutionDir)$(Configuration)_Out\desura.exe"
+* Set "Working Directory" to "$(SolutionDir)$(Configuration)_Out\"
 * Select "OK"
 
 To Rebuild under Visual Studio:
