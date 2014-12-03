@@ -84,7 +84,11 @@ void TracerStorage::trace(const std::string &strTrace, std::map<std::string, std
 		pos = m_nNumSegments;
 
 	auto saveSpot = m_szMappedMemory + (m_nSegmentSize * (pos - 1));
-	Safe::strncpy(saveSpot, m_nSegmentSize, strFormated.c_str(), strFormated.size());
+	size_t limit = strFormated.size();
+	if ( limit >= m_nSegmentSize )
+		limit = ( m_nSegmentSize - 1 );
+
+	Safe::strncpy(saveSpot, m_nSegmentSize, strFormated.c_str(), limit);
 }
 
 const wchar_t* TracerStorage::getSharedMemName()
