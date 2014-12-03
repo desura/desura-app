@@ -325,8 +325,10 @@ void MainApp::Init(int argc, wxCmdLineArgsArray &argv)
 	LoggingapplyTheme();
 	loadFrame(wxDEFAULT_FRAME_STYLE);
 
-//	if (!m_bQuiteMode)
-//		m_wxTBIcon = new TaskBarIcon(this);
+#ifndef NIX
+	if (!m_bQuiteMode)
+		m_wxTBIcon = new TaskBarIcon(this);
+#endif
 	m_wxTBIcon = nullptr;
 
 	std::string szAppid = UTIL::OS::getConfigValue(APPID);
@@ -347,11 +349,13 @@ void MainApp::run()
 
 void MainApp::disableQuietMode()
 {
+#ifndef NIX
 	if (!m_wxTBIcon)
 	{
-//		m_wxTBIcon = new TaskBarIcon(this);
-//		m_wxTBIcon->regEvents();
+		m_wxTBIcon = new TaskBarIcon(this);
+		m_wxTBIcon->regEvents();
 	}
+#endif
 
 	m_bQuiteMode = false;
 }
