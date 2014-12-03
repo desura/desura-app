@@ -49,8 +49,6 @@ void RegisterJSBindings();
 void RegisterSchemes();
 
 typedef gcString (*UserAgentFN)();
-typedef bool (*CEF_InitFn)(bool, const char*, const char*, const char*);
-CEF_InitFn CEF_Init = nullptr;
 
 #ifdef NIX
 guint m_timeoutSource = 0;
@@ -119,8 +117,6 @@ bool LoadCEFDll()
 		WarningS("Failed to load cef library: {0}\n", GetLastError());
 		return false;
 	}
-
-	CEF_Init = g_CEFDll.getFunction<CEF_InitFn>("CEF_Init");
 
 	UserAgentFN userAgent = (UserAgentFN) WebCore::FactoryBuilder(WEBCORE_USERAGENT);
 	gcString ua;
