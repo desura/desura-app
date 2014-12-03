@@ -226,7 +226,7 @@ endif()
 # SVN, HTTP stuff
 ###############################################################################
 
-set(DOWNLOAD_URL "https://s3-us-west-2.amazonaws.com/lecs.desura.lindenlab.com/" CACHE STRING "Download mirror for third party source code and binaries")
+set(DOWNLOAD_URL "http://s3.desura.com.s3-website-us-west-2.amazonaws.com/build/" CACHE STRING "Download mirror for third party source code and binaries")
 
 macro(SetupDownloadUrlCustom name url md5)
   set(${name}_URL_DEFAULT "${url}")
