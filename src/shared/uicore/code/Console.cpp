@@ -332,8 +332,8 @@ void Console::onConsoleText(const std::vector<ConsoleText_s> &vTextList)
 
 		for (std::vector<std::string>::iterator it = tList.begin(); it != tList.end(); ++it)
 		{
-			gcWString szText(*it);
-	
+			std::string szText = *it;
+
 			if (szText.size() > 0)
 			{
 				m_rtDisplay->BeginTextColour(wxColor(text.col));
