@@ -49,9 +49,6 @@ void RegisterJSBindings();
 void RegisterSchemes();
 
 typedef gcString (*UserAgentFN)();
-typedef ChromiumDLL::ChromiumControllerI* (*CEF_InitFn)(bool, const char*, const char*, const char*);
-CEF_InitFn CEF_Init = nullptr;
-
 
 #ifdef NIX
 guint m_timeoutSource = 0;
@@ -121,8 +118,6 @@ bool LoadCEFDll()
 		return false;
 	}
 
-	CEF_Init = g_CEFDll.getFunction<CEF_InitFn>("CEF_InitEx");
-
 	UserAgentFN userAgent = (UserAgentFN) WebCore::FactoryBuilder(WEBCORE_USERAGENT);
 	gcString ua;
 
@@ -150,10 +145,7 @@ bool LoadCEFDll()
 	bool multiThreaded = false;
 #endif
 
-	if (CEF_Init)
-		g_pChromiumController = CEF_Init(multiThreaded, gcString(path.getFolderPath()).c_str(), logPath.c_str(), ua.c_str());
-	else
-		g_pChromiumController = CEF_Init_Legacy(g_CEFDll, multiThreaded, gcString(path.getFolderPath()).c_str(), logPath.c_str(), ua.c_str());
+	g_pChromiumController = CEF_Init_Legacy(g_CEFDll, multiThreaded, gcString(path.getFolderPath()).c_str(), logPath.c_str(), ua.c_str());
 
 	if (!g_pChromiumController)
 	{

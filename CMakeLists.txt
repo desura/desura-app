@@ -242,21 +242,41 @@ macro(SetupDownloadUrl name url md5)
   SetupDownloadUrlCustom(${name} "${DOWNLOAD_URL}${url}" ${md5})
 endmacro()
 
+# custom dll's for Desura
 if(WIN32)
   SetupDownloadUrl(CEF_BIN "cef_bin_2.zip" ec737b15c3c90f5c43d26c4e22f5dfcc)
   SetupDownloadUrl(DESURA_EXTRA_BIN "desura_extra_bin_v3.zip" 79bd00407c682c6b1dab5c7fb65ba72e) 
 endif()
 
-SetupDownloadUrl(BOOST "boost_1_55_0.zip" 8aca361a4713a1f491b0a5e33fee0f1f)
+###### SetupDownloadUrl(BOOST "boost_1_55_0.zip" 8aca361a4713a1f491b0a5e33fee0f1f)
+SetupDownloadUrlCustom(BOOST "http://sourceforge.net/projects/boost/files/boost/1.55.0/boost_1_55_0.zip/download" 8aca361a4713a1f491b0a5e33fee0f1f)
+
+# live code
 SetupDownloadUrl(BREAKPAD "breakpad-850-r1.zip" b0061a854df1a0d285edc74c5ac37c42)
+
+# no longer available (too old)
 SetupDownloadUrl(CEF "cef-291.tar.gz" 97e925e33f2d48cd50172247dbe40f30)
+
+# 3 years out of date (chromium.org)  Also not clear how this is used.
 SetupDownloadUrl(CHROMIUM "chromium-15.0.876.0.tar.bz2" 22c8e1db4d1c4b474c600dffbb5fdd0c)
+
+# no longer available (too old, but 7.39 is available)
 SetupDownloadUrl(CURL "curl-7.32.0.tar.bz2" 30d04b0a8c43c6770039d1bf033dfe79)
+
+# (chromium depot tools, also OLD - source: http://src.chromium.org/svn/trunk/tools/depot_tools/ )
 SetupDownloadUrl(DEPOT_TOOLS "depot_tools-r1.zip" a27266b8d2388c4dc51645d1159dd0de)
-SetupDownloadUrl(GTEST "gtest-1.7.0.zip" 2d6ec8ccdf5c46b05ba54a9fd1d130d7)
-SetupDownloadUrl(GMOCK "gmock-1.7.0.zip" 073b984d8798ea1594f5e44d85b20d66)
+
+###### SetupDownloadUrl(GTEST "gtest-1.7.0.zip" 2d6ec8ccdf5c46b05ba54a9fd1d130d7)
+SetupDownloadUrlCustom(GTEST "https://googletest.googlecode.com/files/gtest-1.7.0.zip" 2d6ec8ccdf5c46b05ba54a9fd1d130d7)
+
+###### SetupDownloadUrl(GMOCK "gmock-1.7.0.zip" 073b984d8798ea1594f5e44d85b20d66)
+SetupDownloadUrlCustom(GMOCK "https://googlemock.googlecode.com/files/gmock-1.7.0.zip" 073b984d8798ea1594f5e44d85b20d66)
+
+# live code: https://code.google.com/p/v8/source/browse#svn%2Fbranches%2F3.18
 SetupDownloadUrl(V8 "v8-3.18.5.14.tar.bz2" 657802ea63c89190fd510ee1a2a719bf)
-SetupDownloadUrl(WXWIDGET "wxWidgets-3.0.0.tar.bz2" 241998efc12205172ed24c18788ea2cd)
+
+###### SetupDownloadUrl(WXWIDGET "wxWidgets-3.0.0.tar.bz2" 241998efc12205172ed24c18788ea2cd)
+SetupDownloadUrlCustom(WXWIDGET "http://sourceforge.net/projects/wxwindows/files/3.0.0/wxWidgets-3.0.0.tar.bz2/download" 241998efc12205172ed24c18788ea2cd)
 
 ###############################################################################
 # build some external projects
