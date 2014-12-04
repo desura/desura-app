@@ -61,6 +61,14 @@ elif [ -f /etc/arch-release ]; then # Arch Linux (not tested)
 elif [ -f /usr/bin/emerge ]; then # Gentoo
 	echo "\033[1;31mGentoo detected!\033[0m"
 	echo "Please copy the ebuild under gentoo/portage into a local overlay and emerge via emerge --onlydeps desura"
+elif [ -f /mach_kernel ]; then # MacOSX
+	echo "\033[1;31mMacOSX detected!\033[0m"
+	echo "Please make sure the following are installed, and (in the case of libraries and include files) accessible from '/usr/local/':"
+	DEPS="cmake boost glib2 pkg-config sqlite autoconf gtk+ gdk-pixbuf nss dbus-glib bison cups flex libjpeg-turbo alsa-lib bzip2 libxpm libx11 openssl scons gconf libnotify xdg-user-dirs v8 c-ares sed flac libpng speex zlib xdg-utils libevent libxslt yasm libxml2 libxxf86vm flashplugin libx11 libxt"
+	for PACK in ${DEPS}
+	do
+		echo ${PACK}
+	done	
 else # unknown system
 	echo "Unsupported operating system."
 fi
