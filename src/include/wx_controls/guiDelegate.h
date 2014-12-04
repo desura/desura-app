@@ -260,6 +260,7 @@ public:
 		: DelegateBase<Args...>(callback, compareHash)
 		, m_Mode(mode)
 		, m_pObj(pObj)
+		, m_bCanceled(false)
 #ifdef DEBUG
 		, m_szFile(szFile)
 		, m_nLine(nLine)
