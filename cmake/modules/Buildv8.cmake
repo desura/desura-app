@@ -13,6 +13,8 @@ if (WIN32 AND NOT MINGW)
 	set(V8_MSVS_VERSION 2013)
 	set(V8_PATCH_COMMAND ${PATCH_SCRIPT_PATH} ${CMAKE_PATCH_DIR}/v8_vc12.patch)
   endif()
+elseif(APPLE)
+  set(V8_PATCH_COMMAND ${PATCH_SCRIPT_PATH} ${CMAKE_PATCH_DIR}/v8_apple.patch)
 endif()
 
 if(UNIX)

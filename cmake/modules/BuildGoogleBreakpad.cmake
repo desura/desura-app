@@ -94,6 +94,17 @@ else()
       DEPENDERS configure
     )
   endif()
+  if(APPLE)
+      ExternalProject_Add_Step(
+      breakpad
+      chmod-files
+      COMMAND chmod +x <SOURCE_DIR>/autotools/install-sh
+      COMMENT "making install.sh executable on OSX"
+      WORKING_DIRECTORY <SOURCE_DIR>
+      DEPENDEES download
+      DEPENDERS configure
+    )
+  endif()
 endif()
 
 ExternalProject_Get_Property(
