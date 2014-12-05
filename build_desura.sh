@@ -45,7 +45,7 @@ pack() {
 		mkdir build_package
 	fi
 	cd build_package
-	cmake .. -DPACKAGE_TYPE=$PACKAGE -DINSTALL_DESKTOP_FILE=ON -DCMAKE_INSTALL_PREFIX="/opt/desura" -DDESKTOP_EXE="/opt/desura/desura" -DDESKTOP_ICON="/opt/desura/desura.png" || exit 1
+	cmake .. -DPACKAGE_TYPE=$PACKAGE -DINSTALL_DESKTOP_FILE=ON -DCMAKE_INSTALL_PREFIX="/opt/desura" -DDESKTOP_EXE="/opt/desura/desura" -DDESKTOP_ICON="/opt/desura/desura.png" -DOFFICIAL_BUILD=$OFFICIAL_BUILD || exit 1
 	NUM_PROC=`nproc`
 	echo "${NUM_PROC} processors detected"
 	make -j${NUM_PROM} package $@
