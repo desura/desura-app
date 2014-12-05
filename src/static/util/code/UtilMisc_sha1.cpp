@@ -28,7 +28,9 @@ $/LicenseInfo$
 
 #include<stdio.h>
 #include<string.h>
+#if !defined(MACOS)
 #include<malloc.h>
+#endif
 #include<math.h>
 #include<stdlib.h>
 

@@ -151,10 +151,14 @@ bool IsUIThread();
 		#ifndef MACOS
 			#define MACOS 1
 		#endif
+
+		#ifndef NIX
+			#define NIX 1
+		#endif	
 	
+		#define NIX64 1
 		#define fopen64 fopen
 	#endif
-
 
 	#ifdef WIN32
 		#define GCC_VERSION 0
@@ -268,7 +272,7 @@ bool IsUIThread();
 
 	#endif
 
-	#ifdef NIX // LINUX 
+	#if defined(NIX) || defined(MACOS) // LINUX or MAC
 		#define _LARGEFILE_SOURCE 1
 		#define _LARGEFILE64_SOURCE 1
 		#define _FILE_OFFSET_BITS   64
