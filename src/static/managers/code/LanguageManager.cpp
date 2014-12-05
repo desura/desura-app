@@ -103,7 +103,7 @@ bool LanguageManager::loadFromFile(const char* file)
 			this->addItem( temp );
 		}
 
-#ifdef DESURA_OFFICIAL_BUILD
+#if defined(DESURA_OFFICIAL_BUILD) && !defined(NIX)
 		temp->ustr = val;
 #else
 		std::vector<std::string> res;

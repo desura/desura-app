@@ -66,7 +66,7 @@ MiniDumpGenerator::MiniDumpGenerator()
 {
 	m_szUser = 0;
 	
-#ifndef DESURA_OFFICIAL_BUILD
+#if !defined(DESURA_OFFICIAL_BUILD) || defined(NIX)
 	m_bNoUpload = true;
 #else
 	m_bNoUpload = false;
