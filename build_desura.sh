@@ -9,6 +9,8 @@ clean() {
 	rm -rf build_cef
 	rm -rf install
 	rm -rf build_package
+	rm *.deb
+	rm *.rpm
 	echo 'Cleaned'
 }
 
@@ -44,7 +46,9 @@ pack() {
 	fi
 	cd build_package
 	cmake .. -DPACKAGE_TYPE=$PACKAGE -DINSTALL_DESKTOP_FILE=ON -DCMAKE_INSTALL_PREFIX="/opt/desura" -DDESKTOP_EXE="/opt/desura/desura" -DDESKTOP_ICON="/opt/desura/desura.png" || exit 1
-	make package $@
+	NUM_PROC=`nproc`
+	echo "${NUM_PROC} processors detected"
+	make -j${NUM_PROM} package $@
 	if [ $PACKAGE = "DEB" ]; then
 		mv Desura-*.deb ..
 	elif [ $PACKAGE = "RPM" ]; then
