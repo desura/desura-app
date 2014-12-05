@@ -82,10 +82,8 @@ namespace UserCore
 		volatile bool m_bForcePoll = false;
 
 #ifdef DESURA_OFFICIAL_BUILD
-#ifndef NIX
 		volatile bool m_bInternalTesting = false;
 		volatile bool m_bForceTestingUpdate = false;
-#endif
 #endif
 
 		gcRefPtr<UserCore::UserI> m_pUser;

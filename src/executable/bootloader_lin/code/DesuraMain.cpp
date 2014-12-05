@@ -45,11 +45,9 @@ $/LicenseInfo$
 #include <branding/branding.h>
 
 #ifdef DESURA_OFFICIAL_BUILD
-#ifndef NIX
 	int DownloadFilesForTest();
 	int InstallFilesForTest();
-	bool CheckForUpdate(bool force, bool skip);
-#endif
+	// bool CheckForUpdate(bool force, bool skip);
 #endif
 
 MainApp* g_pMainApp;
@@ -155,12 +153,10 @@ int MainApp::run()
 #endif
 
 #ifdef DESURA_OFFICIAL_BUILD
-#ifndef NIX
 	bool forceUpdate = false;
 	bool skipUpdate = false;
 	bool testDownload = false;
 	bool testInstall = false;
-#endif
 #endif
 
 	for (int x=0; x<m_Argc; x++)
@@ -177,7 +173,6 @@ int MainApp::run()
 #endif
 
 #ifdef DESURA_OFFICIAL_BUILD
-#ifndef NIX
 		if (strcasecmp(m_Argv[x], "-td") == 0 || strcasecmp(m_Argv[x], "--testdownload") == 0)
 			testDownload = true;
 
@@ -190,11 +185,9 @@ int MainApp::run()
 		if (strcasecmp(m_Argv[x], "-f") == 0 || strcasecmp(m_Argv[x], "--forceupdate") == 0)
 			forceUpdate = true;
 #endif
-#endif
 	}
 
 #ifdef DESURA_OFFICIAL_BUILD
-#ifndef NIX
 #ifdef WIN32
 	if (testInstall)
 		return InstallFilesForTest();
@@ -203,19 +196,16 @@ int MainApp::run()
 		return DownloadFilesForTest();
 #endif
 #endif
-#endif
 
 #ifndef DEBUG
 	std::string lockPath = UTIL::LIN::expandPath("$XDG_RUNTIME_DIR/desura/lock");
 
 	if (!FileExists(lockPath.c_str())) // if desura isn't already running - simple check
 	{
-#ifdef DESURA_OFFICIAL_BUILD
-#ifndef NIX
-		if (CheckForUpdate(forceUpdate, skipUpdate))
-			return 0;
-#endif
-#endif
+//#ifdef DESURA_OFFICIAL_BUILD
+//		if (CheckForUpdate(forceUpdate, skipUpdate))
+//			return 0;
+//#endif
 
 		checkUnityWhitelist();
 	}

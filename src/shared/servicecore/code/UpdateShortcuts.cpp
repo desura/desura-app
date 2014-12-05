@@ -67,13 +67,11 @@ void UpdateShortCuts()
 	}
 
 #ifdef DESURA_OFFICIAL_BUILD
-#ifndef NIX
 	if (UTIL::FS::isValidFile(spTwo) || force)
 	{
 		UTIL::FS::delFile(spTwo);
 		UTIL::WIN::createShortCut(gcWString(spTwo).c_str(), exe.c_str(), wd.c_str(), "-forceupdate", true);
 	}
-#endif
 #endif
 
 	if (UTIL::FS::isValidFile(spThree) || force)
