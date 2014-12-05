@@ -158,6 +158,8 @@ bool IsUIThread();
 	
 		#define NIX64 1
 		#define fopen64 fopen
+		#define fseeko64 fseeko
+		#define off64_t off_t
 	#endif
 
 	#ifdef WIN32
