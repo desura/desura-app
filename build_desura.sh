@@ -71,6 +71,13 @@ elif [ "$1" = "pack" ]; then
 	shift
 	clean
 	pack || exit 2
+elif [ "$1" = "release" ]; then
+	shift
+	PACKAGE="$1"
+	OFFICIAL_BUILD="ON"
+	shift
+	clean
+	pack || exit 2
 elif [ "$1" = "only_desura" ]; then
 	shift
 	clean

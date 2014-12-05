@@ -33,13 +33,8 @@ $/LicenseInfo$
 #include "AboutPageDev.h"
 
 
-#ifdef DESURA_OFFICIAL_BUILD
-	static const int ABOUT_FORM_WIDTH = 287;
-	static const int ABOUT_FORM_HEIGHT = 462;
-#else
-	static const int ABOUT_FORM_WIDTH = 287;
-	static const int ABOUT_FORM_HEIGHT = 462;
-#endif
+static const int ABOUT_FORM_WIDTH = 287;
+static const int ABOUT_FORM_HEIGHT = 462;
 
 	
 AboutForm::AboutForm(wxWindow* parent) 

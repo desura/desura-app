@@ -74,10 +74,12 @@ void UpdateThreadOld::onStop()
 void UpdateThreadOld::doRun()
 {
 #ifdef DESURA_OFFICIAL_BUILD
+#ifndef NIX
 	gcString test = m_pUser->getCVarValue("gc_qa_testing");
 	std::transform(begin(test), end(test), begin(test), ::tolower);
 
 	m_bInternalTesting = test == "true" || test == "1";
+#endif
 #endif
 
 	if (m_bLoadLoginItems)
@@ -158,6 +160,7 @@ void UpdateThreadOld::onForcePoll(std::tuple<gcOptional<bool>, gcOptional<bool>,
 	}
 		
 #ifdef DESURA_OFFICIAL_BUILD
+#ifndef NIX
 	if (second && m_bInternalTesting != *second)
 	{
 		if (*second)
@@ -175,6 +178,7 @@ void UpdateThreadOld::onForcePoll(std::tuple<gcOptional<bool>, gcOptional<bool>,
 		m_bForceTestingUpdate = true;
 		m_bForcePoll = true;
 	}
+#endif
 #else
 	//shouldn't be using these in non official builds
 	gcAssert(!second);
@@ -429,6 +433,7 @@ void UpdateThreadOld::checkAppUpdate(const XML::gcXMLElement &uNode, std::functi
 	bool bIsQa = false;
 
 #ifdef DESURA_OFFICIAL_BUILD
+#ifndef NIX
 	if (m_bInternalTesting)
 	{
 		Msg("Checking internal testing for app update...\n");
@@ -460,6 +465,7 @@ void UpdateThreadOld::checkAppUpdate(const XML::gcXMLElement &uNode, std::functi
 	{
 		return;
 	}
+#endif
 #else
 	if (!processAppVersion("app", appid, mcfversion))
 	{
@@ -496,7 +502,7 @@ void UpdateThreadOld::checkAppUpdate(const XML::gcXMLElement &uNode, std::functi
 }
 
 
-#ifdef DESURA_OFFICIAL_BUILD
+#if defined(DESURA_OFFICIAL_BUILD) && !defined(NIX)
 
 void UpdateThreadOld::checkAppUpdate(const XML::gcXMLElement &uNode)
 {
