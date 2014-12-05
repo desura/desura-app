@@ -53,7 +53,6 @@ AboutInfo_s g_AboutInfo[] =
 	{"Network Administrator",	"Greg Macsok",		"Destroyer of Sleep"},
 	{"Windows Game Guru",		"Dave Traeger",		""},
 	{"Linux Game Guru",			"Tim Jung",			""},
-
 };
 
 AboutDevPage::AboutDevPage(wxWindow* parent) : gcPanel(parent, wxID_ANY)
