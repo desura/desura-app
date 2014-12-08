@@ -49,11 +49,11 @@ ICheckProgressPage::ICheckProgressPage(wxWindow* parent) : BaseInstallPage(paren
 	fgSizer3->AddGrowableRow( 2 );
 	fgSizer3->SetFlexibleDirection( wxBOTH );
 	fgSizer3->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
-	
-	
+
+
 	m_labInfo = new gcStaticText( this, wxID_ANY, Managers::GetString(L"#INITIALIZING"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_labInfo->Wrap( -1 );
-	
+
 	m_pbProgress = new gcSpinningBar( this, wxID_ANY, wxDefaultPosition, wxSize( -1,22 ) );
 	m_butCancel = new gcButton( this, wxID_ANY, Managers::GetString(L"#CANCEL"), wxDefaultPosition, wxDefaultSize, 0 );
 
@@ -66,7 +66,7 @@ ICheckProgressPage::ICheckProgressPage(wxWindow* parent) : BaseInstallPage(paren
 	fgSizer3->Add( m_pbProgress, 0, wxEXPAND|wxALL, 5 );
 	fgSizer3->Add( 0, 0, 1, wxEXPAND, 5 );
 	fgSizer3->Add( bSizer2, 0, wxEXPAND, 5 );
-	
+
 	this->SetSizer( fgSizer3 );
 	this->Layout();
 

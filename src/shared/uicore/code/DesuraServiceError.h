@@ -55,7 +55,7 @@ protected:
 	gcButton* m_butLogout;
 
 	void onButtonClicked( wxCommandEvent& event );
-	
+
 	void onFinish();
 	void onError(gcException& e);
 

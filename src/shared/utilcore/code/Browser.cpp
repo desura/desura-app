@@ -34,7 +34,7 @@ bool InitWebControl()
 
 	if (!CEF_Init(true, "", "", ""))
 		return false;
-	
+
 	return true;
 }
 

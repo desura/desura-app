@@ -57,7 +57,7 @@ wxMenu* TBIModMenu::createMenu(uint32 &lastMenuId)
 			continue;
 
 		gcMenu* gameMenu = new gcMenu();
-		
+
 		std::sort(mList.begin(), mList.end(), [](gcRefPtr<UserCore::Item::ItemInfoI> left, gcRefPtr<UserCore::Item::ItemInfoI> right){
 			return strcmp(left->getName(), right->getName()) <= 0;
 		});

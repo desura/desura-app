@@ -55,7 +55,7 @@ public:
 
 	void setInfo(DesuraId id, gcRefPtr<UserCore::Item::ItemInfoI> pItemInfo, const char* path);
 	void run() override;
-		
+
 	void setPercent(uint32 per);
 	void finished();
 
@@ -65,10 +65,10 @@ protected:
 	gcStaticText* m_staticText3;
 	wxStaticText* m_labPercent;
 	gcSpinnerProgBar* m_pbProgress;
-	
+
 	gcButton* m_butPause;
 	gcButton* m_butCancel;
-	
+
 	void onComplete(gcString& path);
 	void onError(gcException& e);
 	void onProgress(MCFCore::Misc::ProgressInfo& info);

@@ -46,7 +46,7 @@ class InstallWaitPage : public BaseInstallPage
 public:
 	InstallWaitPage(wxWindow* parent);
 	~InstallWaitPage();
-	
+
 	void init();
 
 protected:
@@ -54,12 +54,12 @@ protected:
 	wxFlexGridSizer* m_pSWSizer;
 
 	wxStaticText* m_labInfo;
-	
-		
+
+
 	gcButton* m_butCancelAll;
 	gcButton* m_butForce;
 	gcButton* m_butHide;
-	
+
 	virtual void onProgressUpdate(uint32& progress);
 	virtual void onMcfProgress(MCFCore::Misc::ProgressInfo& info);
 

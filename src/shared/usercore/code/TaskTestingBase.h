@@ -79,7 +79,7 @@ namespace UnitTest
 			ON_CALL(m_McfHeader, getBranch()).WillByDefault(Return(m_Branch));
 			ON_CALL(m_McfHeader, getId()).WillByDefault(Return(m_Id.getItem()));
 			ON_CALL(m_McfHeader, getType()).WillByDefault(Return(m_Id.getType()));
-	
+
 			ON_CALL(m_ItemHandle, getInternal()).WillByDefault(Return(&m_ItemHandleInternal));
 			ON_CALL(m_ItemHandle, getItemInfo()).WillByDefault(Return(&m_ItemInfo));
 
@@ -123,7 +123,7 @@ namespace UnitTest
 		MCFHeaderMock m_McfHeader;
 
 		ItemInfo m_ItemInfo;
-		
+
 		ItemManagerMock m_ItemManager;
 		ItemHandleMock m_ItemHandle;
 		ItemHandleInternalMock m_ItemHandleInternal;

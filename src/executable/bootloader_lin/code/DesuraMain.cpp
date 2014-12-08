@@ -118,7 +118,7 @@ int main(int argc, char** argv)
 
 	MainApp app(argc, argv);
 	g_pMainApp = &app;
-	
+
 	if(!app.testDeps())
 		return 1;
 
@@ -129,7 +129,7 @@ MainApp::MainApp(int argc, char** argv)
 {
 	m_Argc = argc;
 	m_Argv = argv;
-	
+
 	m_pUICore = NULL;
 	strcpy(m_szUser, "linux_Unknown");
 }
@@ -303,7 +303,7 @@ void MainApp::shutdownUICore()
 {
 	if (m_pUICore)
 		m_pUICore->destroySingleInstanceCheck();
-	
+
 	m_pUICore = NULL;
 	g_UICoreDll.unload();
 	g_UICoreDll = SharedObjectLoader();
@@ -312,7 +312,7 @@ void MainApp::shutdownUICore()
 void MainApp::restartFromUICore(const char* args)
 {
 	ERROR_OUTPUT("######### RESTARTING ##########");
-	
+
 	if (execl("desura", "desura", args, NULL) == 0)
 	{
 		ERROR_OUTPUT("Call to execl() failed:");
@@ -402,7 +402,7 @@ bool MainApp::utf8Test()
 		hasUtf8 = true;
 		break;
 	}
-	
+
 	if (hasUtf8)
 		ShowHelpDialog(PRODUCT_NAME " currently doesnt support running from a directory with UTF8 characters. Please move " PRODUCT_NAME " to a normal directory.", NULL, "--error");
 
@@ -424,19 +424,19 @@ bool MainApp::loadCrashHelper()
 		fprintf(stderr, "Failed to find UploadCrash function.\n\t[%s]\n", dlerror());
 		return false;
 	}
-	
+
 	return true;
 }
 
 void MainApp::sendArgs()
 {
 	std::string args;
-	
+
 	for (int x=1; x<m_Argc; x++)
 	{
 		if (!m_Argv[x])
 			continue;
-		
+
 		if (args.size() != 0)
 			args += " "; 
 		args +=  "\"";
@@ -451,25 +451,25 @@ void MainApp::sendArgs()
 void MainApp::checkUnityWhitelist()
 {
 	int ret = system("which gsettings 2>/dev/null 1>/dev/null"); // check gsettings exists
-	
+
 	if (ret != 0) 
 		return;
-		
+
 	// if it does
 	ret = system("gsettings get com.canonical.Unity.Panel systray-whitelist 2>/dev/null 1>/dev/null"); // check that this schema exists
-	
+
 	if (ret != 0) 
 		return;
-		
+
 	// if it does
 	ret = system("gsettings get com.canonical.Unity.Panel systray-whitelist | grep desura 2>/dev/null 1>/dev/null"); // check for desura already being whitelisted
-	
+
 	if (ret == 0) 
 		return;
-		
+
 	// if it's not
 	ret = system("gsettings set com.canonical.Unity.Panel systray-whitelist \"`gsettings get com.canonical.Unity.Panel systray-whitelist | sed -e \"s/]/,\\ 'desura']/g\"`\" 2>/dev/null 1>/dev/null");
-	
+
 	if (ret == 0)
 		ShowHelpDialog(PRODUCT_NAME " has been added to the Unity panel whitelist. You should log out and back in for this to take effect or you may experience problems using " PRODUCT_NAME, NULL, "--info"); 
 }

@@ -42,7 +42,7 @@ public:
 
 	//! Sets the current percent to be the completed milestone
 	void setMileStone();
-	
+
 	//! Reverts back to the last completed milestone
 	void revertMileStone();
 

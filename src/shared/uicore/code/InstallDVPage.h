@@ -63,7 +63,7 @@ protected:
 	gcButton* m_butCancel;
 
 	void onButtonPressed(wxCommandEvent& event);
-	
+
 	void onComplete(uint32& itemId);
 	void onError(gcException& e);
 	virtual void onMcfProgress(MCFCore::Misc::ProgressInfo& info);

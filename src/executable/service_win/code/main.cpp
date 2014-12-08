@@ -159,7 +159,7 @@ void ControlHandler(DWORD request)
 		g_ServiceStatus.dwWin32ExitCode = 0; 
 		g_ServiceStatus.dwCurrentState  = SERVICE_STOPPED; 
 		break;
- 
+
 	case SERVICE_CONTROL_SHUTDOWN: 
 		g_ServiceStatus.dwWin32ExitCode = 0; 
 		g_ServiceStatus.dwCurrentState  = SERVICE_STOPPED;

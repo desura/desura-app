@@ -91,7 +91,7 @@ private:
 	wxColor m_colHover;
 	wxColor m_colNormal;
 	wxColor m_colFocus;
-	
+
 	wxString m_szLabel;
 };
 

@@ -71,32 +71,32 @@ DesuraServiceError::DesuraServiceError(wxWindow* parent)
 	SetTitle(Managers::GetString(L"#DS_TITLE"));
 
 	this->SetSizeHints( wxDefaultSize, wxDefaultSize );
-	
+
 	wxFlexGridSizer* fgSizer1;
 	fgSizer1 = new wxFlexGridSizer( 2, 1, 0, 0 );
 	fgSizer1->AddGrowableCol( 0 );
 	fgSizer1->AddGrowableRow( 0 );
 	fgSizer1->SetFlexibleDirection( wxBOTH );
 	fgSizer1->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
-	
+
 	m_labInfo = new wxStaticText( this, wxID_ANY, Managers::GetString(L"#DS_ERROR"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_labInfo->Wrap(360);
 	fgSizer1->Add( m_labInfo, 1, wxALL|wxEXPAND, 5 );
-	
+
 	wxBoxSizer* bSizer2;
 	bSizer2 = new wxBoxSizer( wxHORIZONTAL );
-	
-	
+
+
 	bSizer2->Add( 0, 0, 1, wxEXPAND, 5 );
-	
+
 	m_butReconnect = new gcButton( this, wxID_ANY, wxT("Reconnect"), wxDefaultPosition, wxDefaultSize, 0 );
 	bSizer2->Add( m_butReconnect, 0, wxTOP|wxBOTTOM|wxLEFT, 5 );
-	
+
 	m_butLogout = new gcButton( this, wxID_ANY, wxT("Logout"), wxDefaultPosition, wxDefaultSize, 0 );
 	bSizer2->Add( m_butLogout, 0, wxALL, 5 );
-	
+
 	fgSizer1->Add( bSizer2, 1, wxEXPAND, 5 );
-	
+
 	this->SetSizer( fgSizer1 );
 	this->Layout();
 

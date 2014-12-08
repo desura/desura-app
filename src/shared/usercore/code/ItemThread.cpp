@@ -181,7 +181,7 @@ bool ItemThread::performTask()
 
 	safe_delete(task);
 	setThreadName(m_szBaseName.c_str());
-	
+
 	return true;
 }
 
@@ -198,13 +198,13 @@ gcRefPtr<UserCore::ItemTask::BaseItemTask> ItemThread::getNewTask()
 	gcRefPtr<UserCore::ItemTask::BaseItemTask> task;
 
 	std::lock_guard<std::mutex> guard(m_TaskMutex);
-	
+
 	if (m_vTaskList.size() != 0)
 	{
 		task = m_vTaskList.front();
 		m_vTaskList.pop_front();
 	}
-	
+
 	return task;
 }
 

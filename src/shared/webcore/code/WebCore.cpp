@@ -283,11 +283,11 @@ gcString WebCoreClass::getUrl(WebCoreUrl id)
 	case Updates:
 		url += "/messages/updates";
 		break;
-		
+
 	case LinuxToolHelp:
 		url += "/tutorials/linux-tool-help";
 		break;
-	
+
 	case ListKeys:
 		url += "/collection";
 		break;

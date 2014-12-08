@@ -67,7 +67,7 @@ public:
 
 protected:
 	void showLoading(bool state);
-		
+
 	//html page progress update
 	void onPageStartLoading();
 	void onPageFinishLoading();

@@ -69,12 +69,12 @@ SearchControl::SearchControl(wxWindow* parent) : gcPanel(parent)
 	fgSizer1 = new wxFlexGridSizer( 2, 2, 0, 0 );
 	fgSizer1->SetFlexibleDirection( wxBOTH );
 	fgSizer1->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
-	
+
 	fgSizer1->Add(bg, 0, wxALL, 1);
-	
+
 	this->SetSizer( fgSizer1 );
 	this->Layout();
-	
+
 	Managers::LoadTheme(this, "searchBox");
 
 	m_DefaultCol = wxColor(GetThemeManager().getColor("formlogin", "tb-default-fg"));

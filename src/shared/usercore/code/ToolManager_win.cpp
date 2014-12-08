@@ -39,7 +39,7 @@ $/LicenseInfo$
 
 namespace UserCore
 {
-	
+
 void ToolManager::onSpecialCheck(WCSpecialInfo &info)
 {
 	if (info.name == "msicheck")
@@ -142,7 +142,7 @@ void ToolManager::onSpecialCheck(WCSpecialInfo &info)
 	{
 		UTIL::FS::Path path(m_pUser->getAppDataPath(), "", false);
 		path += "temp";
-		
+
 		time_t t = time(nullptr) + GetTickCount();
 		gcSleep(1000);
 		path += gcString("{0}", t);
@@ -153,7 +153,7 @@ void ToolManager::onSpecialCheck(WCSpecialInfo &info)
 		info.handled = true;
 	}
 }	
-	
+
 void ToolManager::onPipeDisconnect()
 {
 	m_bDeleteThread = true;

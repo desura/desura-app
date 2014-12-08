@@ -39,7 +39,7 @@ class gcDDEManager
 public:
 	gcDDEManager();
 	~gcDDEManager();
-		
+
 	void init();
 	void cleanUp();
 

@@ -63,7 +63,7 @@ bool is64OS()
 
 	BOOL bIsWow64 = FALSE;
 	fnIsWow64Process = (LPFN_ISWOW64PROCESS) GetProcAddress(GetModuleHandle(TEXT("kernel32")),"IsWow64Process");
-  
+
 	if (nullptr != fnIsWow64Process)
 	{
 		if (!fnIsWow64Process(GetCurrentProcess(),&bIsWow64))
@@ -329,7 +329,7 @@ bool delRegTree(const std::string &regIndex, bool use64bit)
 	for (size_t x=0; x<list.size(); x++)
 	{
 		std::string newReg = regIndex + "\\" + list[x];
-		
+
 		if (!delRegKey(newReg, use64bit))
 			return false;
 	}
@@ -426,8 +426,8 @@ uint64 getFreeSpace(const char* path)
 	GetDiskFreeSpaceExA(drive, nullptr, nullptr, (PULARGE_INTEGER)&i64FreeBytes);
 	return (uint64)i64FreeBytes;
 }
-  
-				  
+
+
 
 uint32 getHDDSerial()
 {
@@ -474,17 +474,17 @@ uint32 validateCert(const wchar_t* pwszSourceFile, char* message, size_t size)
 	/*
 	WVTPolicyGUID specifies the policy to apply on the file
 	WINTRUST_ACTION_GENERIC_VERIFY_V2 policy checks:
-	
+
 	1) The certificate used to sign the file chains up to a root 
 	certificate located in the trusted root certificate store. This 
 	implies that the identity of the publisher has been verified by 
 	a certification authority.
-	
+
 	2) In cases where user interface is displayed (which this example
 	does not do), WinVerifyTrust will check for whether the  
 	end entity certificate is stored in the trusted publisher store,  
 	implying that the user trusts content from this publisher.
-	
+
 	3) The end entity certificate has sufficient permission to sign 
 	code, as indicated by the presence of a code signing EKU or no 
 	EKU.
@@ -499,7 +499,7 @@ uint32 validateCert(const wchar_t* pwszSourceFile, char* message, size_t size)
 	memset(&WinTrustData, 0, sizeof(WinTrustData));
 
 	WinTrustData.cbStruct = sizeof(WinTrustData);
-	
+
 	// Use default code signing EKU.
 	WinTrustData.pPolicyCallbackData = nullptr;
 
@@ -547,7 +547,7 @@ uint32 validateCert(const wchar_t* pwszSourceFile, char* message, size_t size)
 		case ERROR_SUCCESS:
 			Safe::snprintf(message, size, "The file is signed and the signature was verified.");
 			break;
-		
+
 		case TRUST_E_NOSIGNATURE:
 			// The file was not signed or had a signature 
 			// that was not valid.
@@ -693,7 +693,7 @@ bool launchExe(const char* exe, const char* args, bool elevateIfNeeded, HWND ele
 		lastError = GetLastError();
 
 		SetErrorMode(oldErrMode);
-		
+
 		CloseHandle(pi.hProcess);
 		CloseHandle(pi.hThread);
 	}

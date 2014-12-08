@@ -134,7 +134,7 @@ protected:
 	//parsers a xml buffer
 	uint8 parseXml(char* buff, size_t buffLen);
 	uint8 parseXml(const XML::gcXMLElement &xmlElement);
-	
+
 	//parsers the update xml
 	void parseUpdateXml(const XML::gcXMLDocument &xmlDocument);
 
@@ -148,7 +148,7 @@ protected:
 	uint32 m_iAppId = 100;
 	uint32 m_iAppBuild = 0;
 	uint64 m_uiOffset = 0;
-	
+
 	std::wstring m_szFile;
 	std::string m_szUrl;
 

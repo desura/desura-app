@@ -72,12 +72,12 @@ public:
 		do
 		{
 			size *= 2;
-			
+
 			if (temp)
 				delete [] temp;
 
 			temp = new char[size];
-			
+
 #ifdef WIN32
 			res = vsnprintf_s(temp, size, _TRUNCATE, format, arglist);
 #else
@@ -89,7 +89,7 @@ public:
 #else
 		while ((size_t)res > size);
 #endif
-		
+
 		va_end( arglist );
 
 		try
@@ -241,7 +241,7 @@ bool UploadDump(const char* file, const char* user, int build, int branch, Deleg
 	time_t ltime; /* calendar time */
 	ltime=time(nullptr); /* get current cal time */
 
-	
+
 #if defined(WIN32) && !defined(__MINGW32__)
 	char buff[255] = {0};
 

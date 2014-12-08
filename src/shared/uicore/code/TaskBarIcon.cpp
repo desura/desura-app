@@ -60,7 +60,7 @@ CONCOMMAND(testapppopup, "testapppopup")
 	Msg("App update");
 	UserCore::Misc::UpdateInfo a(BUILDID_PUBLIC,2);
 	GetUserCore()->getAppUpdateEvent()(a);
-		
+
 
 	gcSleep(2000);
 
@@ -105,7 +105,7 @@ TaskBarIcon::TaskBarIcon(wxWindow *parent, gcRefPtr<UserCore::ItemManagerI> pIte
 
 	m_wxParent = parent;
 	m_szTooltip = PRODUCT_NAME;
-	
+
 #ifdef WIN32
 	m_wxIcon = wxIcon(wxICON(IDI_ICONSMALL));
 	SetIcon(m_wxIcon , m_szTooltip);
@@ -130,7 +130,7 @@ TaskBarIcon::TaskBarIcon(wxWindow *parent, gcRefPtr<UserCore::ItemManagerI> pIte
 
 	m_uiLastCount = -1;
 	m_uiLastProg = 0;
-	
+
 	m_imgCount = GetGCThemeManager()->getImageHandle("#count_background");
 	updateIcon();	
 

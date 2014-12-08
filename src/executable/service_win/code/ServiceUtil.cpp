@@ -81,7 +81,7 @@ bool FindWorkingDir(std::string &out)
 		}
 
 		CloseHandle(hProcess);
-		
+
 		if (found)
 			break;
 	}
@@ -110,7 +110,7 @@ bool SetDllPath(const char* wdir)
 		path = wdir;
 	else if (!FindWorkingDir(path))
 		return false;
-		
+
 	if (path.size() == 0)
 		return false;
 
@@ -139,17 +139,17 @@ uint32 ValidateCert(const wchar_t* pwszSourceFile, char* message, size_t size)
 	/*
 	WVTPolicyGUID specifies the policy to apply on the file
 	WINTRUST_ACTION_GENERIC_VERIFY_V2 policy checks:
-	
+
 	1) The certificate used to sign the file chains up to a root 
 	certificate located in the trusted root certificate store. This 
 	implies that the identity of the publisher has been verified by 
 	a certification authority.
-	
+
 	2) In cases where user interface is displayed (which this example
 	does not do), WinVerifyTrust will check for whether the  
 	end entity certificate is stored in the trusted publisher store,  
 	implying that the user trusts content from this publisher.
-	
+
 	3) The end entity certificate has sufficient permission to sign 
 	code, as indicated by the presence of a code signing EKU or no 
 	EKU.
@@ -164,7 +164,7 @@ uint32 ValidateCert(const wchar_t* pwszSourceFile, char* message, size_t size)
 	memset(&WinTrustData, 0, sizeof(WinTrustData));
 
 	WinTrustData.cbStruct = sizeof(WinTrustData);
-	
+
 	// Use default code signing EKU.
 	WinTrustData.pPolicyCallbackData = nullptr;
 
@@ -212,7 +212,7 @@ uint32 ValidateCert(const wchar_t* pwszSourceFile, char* message, size_t size)
 		case ERROR_SUCCESS:
 			Safe::snprintf(message, size, "The file is signed and the signature was verified.");
 			break;
-		
+
 		case TRUST_E_NOSIGNATURE:
 			// The file was not signed or had a signature 
 			// that was not valid.

@@ -100,7 +100,7 @@ uint8 UMcfHeader::readFromFile(FILE* hFile)
 	if (amount != size)
 		return UMcfHeader::ERR_PARTREAD;
 #endif
-		
+
 	strToHeader(szBuff.c_ptr());
 
 	if (isValid())
@@ -217,7 +217,7 @@ uint8 UMcfHeader::getSize() const
 	default:
 	case 1: 
 		return MCF_HEADERSIZE_V1;
-		
+
 	case 2: 
 		return MCF_HEADERSIZE_V2;
 	};

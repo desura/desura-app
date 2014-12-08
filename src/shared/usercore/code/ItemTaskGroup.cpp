@@ -163,7 +163,7 @@ bool ItemTaskGroup::removeItem(gcRefPtr<ItemHandleI> item)
 		handle->delHelper(this);
 		handle->setTaskGroup(nullptr);
 	}
-		
+
 
 	uint32 p=m_vWaitingList.size();
 

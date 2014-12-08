@@ -37,7 +37,7 @@ std::string GetAppPath(std::string extra)
 		ERROR_OUTPUT("Could not read /proc/self/exe!");
 		return "";
 	}
-	
+
 	std::string exePath(result);
 
 	// Cut off the filename.
@@ -59,13 +59,13 @@ std::string GetAppDataPath(std::string extra)
 
 	std::string appDataPath = GetAppPath();
 	appDataPath += STR_APPDATA;
-	
+
 	if (extra.size() > 0)
 	{
 		appDataPath += "/";
 		appDataPath += extra;
 	}
-	
+
 	return appDataPath;	
 }	
 
@@ -88,7 +88,7 @@ bool FileExists(const char* file)
 	char buffer[PATH_MAX];
 	snprintf(buffer, PATH_MAX, "%s (%s)", __func__, file);
 	ERROR_OUTPUT(buffer);
-	
+
 	if (!file)
 		return false;
 

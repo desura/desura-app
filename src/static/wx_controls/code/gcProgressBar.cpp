@@ -34,7 +34,7 @@ $/LicenseInfo$
 gcProgressBar::gcProgressBar( wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size) : gcPanel(parent, id, pos, size, wxSIMPLE_BORDER)
 {
 	SetBackgroundColour( wxColour( 125, 255, 125 ) );
- 
+
 	Connect(wxEVT_PAINT, wxPaintEventHandler(gcProgressBar::onPaint));
 	Connect(wxEVT_ERASE_BACKGROUND, wxEraseEventHandler( gcProgressBar::onEraseBg ) );
 
@@ -170,7 +170,7 @@ void gcProgressBar::doImgPaint(wxPaintDC& dc)
 	else
 	{
 		wxBitmap left(wp-neWidth, h);
-		
+
 		gcImage::tileImg(left, norm, &c);
 
 		tmpDC.DrawBitmap(left, 0, 0, true);

@@ -277,11 +277,11 @@ void MD5::finalize()
 {
 	if (m_Finalized)
 		return;
-	
+
 	unsigned char bits[8] = {0};
 	unsigned int index;
 	unsigned int padLen;
-	
+
 	// Save number of bits
 	encode(bits, m_Count, 8);
 

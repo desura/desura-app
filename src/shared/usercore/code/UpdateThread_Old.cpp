@@ -64,7 +64,7 @@ UpdateThreadOld::UpdateThreadOld(Event<std::tuple<gcOptional<bool>, gcOptional<b
 void UpdateThreadOld::onStop()
 {
 	m_WaitCond.notify();
-	
+
 	if (m_pOnForcePollEvent)
 		*m_pOnForcePollEvent -= delegate(this, &UpdateThreadOld::onForcePoll);
 
@@ -156,7 +156,7 @@ void UpdateThreadOld::onForcePoll(std::tuple<gcOptional<bool>, gcOptional<bool>,
 		Msg("\t-- Forcing update poll\n");
 		m_bForcePoll = true;
 	}
-		
+
 #ifdef DESURA_OFFICIAL_BUILD
 	if (second && m_bInternalTesting != *second)
 	{
@@ -277,7 +277,7 @@ void UpdateThreadOld::parseXML(const XML::gcXMLDocument &doc)
 	}
 
 	auto uNode = doc.GetRoot("updatepoll");
-	
+
 	if (!uNode.IsValid())
 		return;
 
@@ -636,7 +636,7 @@ namespace UnitTest
 
 
 
-	 
+
 	TEST_F(UpdateThreadOldFixture, newVersionSameApp_sameVersionSameAppPoll)
 	{
 		setAppVersion(1, 2);

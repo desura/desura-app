@@ -60,12 +60,12 @@ EULAForm::EULAForm(wxWindow* parent, gcRefPtr<UserCore::ItemManagerI> pItemManag
 	fgSizer2->AddGrowableRow( 1 );
 	fgSizer2->SetFlexibleDirection( wxBOTH );
 	fgSizer2->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
-	
-	
+
+
 	fgSizer2->Add( m_labInfo, 0, wxTOP|wxLEFT|wxRIGHT, 5 );
 	fgSizer2->Add( m_BrowserSizer, 1, wxALL|wxEXPAND, 5 );
 	fgSizer2->Add( bSizer2, 0, wxEXPAND, 5 );
-	
+
 
 	this->SetSizer( fgSizer2 );
 	this->Layout();

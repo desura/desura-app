@@ -28,7 +28,7 @@ $/LicenseInfo$
 
 AboutMainPage::AboutMainPage(wxWindow* parent) : gcPanel(parent, wxID_ANY)
 {
-	
+
 #ifndef DEBUG
 	std::string szAppid = UTIL::OS::getConfigValue(APPID);
 	std::string szAppBuild = UTIL::OS::getConfigValue(APPBUILD);
@@ -41,7 +41,7 @@ AboutMainPage::AboutMainPage(wxWindow* parent) : gcPanel(parent, wxID_ANY)
 	m_labBuild->Wrap( 270 );
 	m_labInfo = new wxStaticText( this, wxID_ANY, Managers::GetString(L"#AB_ABOUTINFO"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_labInfo->Wrap( 270 );
-	
+
 	gcWString copy("Desurium is open source software LGPL v2.1. \nGet source from: http://github.com/lindenlab/desura-app");
 
 	m_labCopyRight = new wxStaticText( this, wxID_ANY, copy.c_str(), wxDefaultPosition, wxSize(-1, 85), 0 );
@@ -58,7 +58,7 @@ AboutMainPage::AboutMainPage(wxWindow* parent) : gcPanel(parent, wxID_ANY)
 	fgSizer7->Add( m_labInfo, 0, wxLEFT|wxALIGN_CENTER_VERTICAL, 5 );
 	fgSizer7->Add(5,0,0,0,0);
 	fgSizer7->Add( m_labCopyRight, 0, wxLEFT|wxRIGHT|wxEXPAND, 5 );
-	
+
 	this->SetSizer( fgSizer7 );
 	this->Layout();
 

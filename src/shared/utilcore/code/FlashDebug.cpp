@@ -60,16 +60,16 @@ public:
 FlashDebug::FlashDebug(wxWindow* parent) : gcFrame(parent, wxID_ANY, "Flash Debug", wxDefaultPosition, wxSize( 700,468 ), wxDEFAULT_FRAME_STYLE|wxTAB_TRAVERSAL )
 {
 	this->SetSizeHints( wxDefaultSize, wxDefaultSize );
-	
+
 	wxGridSizer* gSizer1;
 	gSizer1 = new wxGridSizer( 2, 2, 0, 0 );
-	
+
 	wxButton* m_button1 = new wxButton( this, wxID_ANY, wxT("MyButton"), wxDefaultPosition, wxDefaultSize, 0 );
 	gSizer1->Add( m_button1, 0, wxALL, 5 );
-	
+
 	this->SetSizer( gSizer1 );
 	this->Layout();
-	
+
 	this->Centre( wxBOTH );
 
 	Bind(wxEVT_COMMAND_BUTTON_CLICKED, &FlashDebug::onButtonClicked, this);

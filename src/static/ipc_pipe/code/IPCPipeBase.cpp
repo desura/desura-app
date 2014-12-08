@@ -211,7 +211,7 @@ void PipeBase::processEvents()
 				printf("Disconnect pending!\n");
 				return;
 			}
-				
+
 			if (!data->sender)
 			{
 				data->size = cbRet;
@@ -283,7 +283,7 @@ bool PipeBase::performWrite(PipeData* data, IPCManager* mng)
 
 	if (!mng->getMessageToSend(data->buffer, BUFSIZE, data->size))
 		return true;
-	
+
 #ifdef IPC_DEBUG
 	if (fh)
 	{

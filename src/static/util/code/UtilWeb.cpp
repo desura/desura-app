@@ -95,7 +95,7 @@ public:
 	virtual void addPostFileAsBuff(const char* key, const char* fileName, const char* buffer, uint32 size);
 	virtual void addPostFile(const char* key, const char* filePath);
 	virtual void addCookie(const char* key, const char* value);
-	
+
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	// Setters
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -107,7 +107,7 @@ public:
 	virtual void setUserAgent(const char* useragent);
 	virtual void setOutFile(const char* file);
 	virtual void setUserPass(const char* user, const char* pass);
-	
+
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	// Getters
@@ -273,7 +273,7 @@ HttpHandleI* newHttpHandle(const char* url, bool usessl)
 {
 	if (url)
 		return new HttpHInternal(url, usessl);
-	
+
 	return new HttpHInternal(usessl);
 }
 
@@ -351,7 +351,7 @@ size_t HttpHInternal::write_cb(size_t size, size_t nmemb, void *data)
 		return 0;
 
 	size_t realsize = size * nmemb;
-	
+
 	m_pMemStruct->size += (uint32)realsize;
 
 	WriteMem_s wms;
@@ -461,7 +461,7 @@ void HttpHInternal::setUpProxy()
 	{
 		autoProxyOptions.dwFlags |= WINHTTP_AUTOPROXY_CONFIG_URL;
 		autoProxyOptions.lpszAutoConfigUrl = ieProxyConfig.lpszAutoConfigUrl;
-	
+
 		// basic flags you almost always want
 		autoProxyOptions.dwFlags = WINHTTP_AUTOPROXY_AUTO_DETECT;
 		autoProxyOptions.dwAutoDetectFlags = WINHTTP_AUTO_DETECT_TYPE_DHCP|WINHTTP_AUTO_DETECT_TYPE_DNS_A;
@@ -834,7 +834,7 @@ void HttpHInternal::cleanUp(bool delUrl)
 
 	  m_pMemStruct->size = 0;
   }
-  
+
 	if (delUrl)
 		m_szUrl = "";
 

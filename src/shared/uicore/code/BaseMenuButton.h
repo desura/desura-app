@@ -47,7 +47,7 @@ public:
 
 	virtual void setSelected(bool state){m_bSelected = state;onSelected();}
 	void setSelected(bool state, SIDE s){m_bRight = (s==RIGHT);setSelected(state);}
-	
+
 	bool isSelected(){return m_bSelected;}
 
 	//this is for the selected menu border images

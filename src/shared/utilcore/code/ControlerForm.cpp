@@ -77,7 +77,7 @@ bool ControllerForm::init(int argc, wxCmdLineArgsArray &argv)
 	for (int x=0; x<argc; x++)
 	{
 		formList[argv[x].c_str().operator const char *()] = true;
-		
+
 		if (argv[x].Find(".mcf") != -1)
 			mcf = gcString(argv[x].c_str().operator const char *());
 	}
@@ -185,7 +185,7 @@ bool ControllerForm::setUpUserCore()
 	{
 		m_pUser->logOut();
 		safe_delete(m_pUser);
-		
+
 		gcErrorBox(this, PRODUCT_NAME, "Failed to load item information!", e);
 		SetExitCode(-1);
 		return false;

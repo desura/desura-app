@@ -39,9 +39,9 @@ class IPCServerI
 {
 public:
 	virtual void sendMessage(const char* buffer, size_t size)=0;
-	
+
 	virtual void setSendCallback(void* obj, SendFn funct)=0;
-	
+
 	virtual void destroy()=0;
 };
 

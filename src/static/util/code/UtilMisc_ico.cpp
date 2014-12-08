@@ -123,7 +123,7 @@ bool loadImgLib()
 		g_FreeImageMutex.unlock();
 		return true;
 	}
-		
+
 	if (!g_ImgLib.load("FreeImage.dll"))
 	{
 		g_FreeImageMutex.unlock();

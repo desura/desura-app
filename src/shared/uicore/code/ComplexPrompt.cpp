@@ -34,38 +34,38 @@ END_EVENT_TABLE()
 ComplexPrompt::ComplexPrompt( wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos, const wxSize& size, long style ) : gcDialog( parent, id, title, pos, size, style )
 {
 	this->SetSizeHints( wxDefaultSize, wxDefaultSize );
-	
+
 	wxFlexGridSizer* fgSizer1;
 	fgSizer1 = new wxFlexGridSizer( 3, 1, 0, 0 );
 	fgSizer1->AddGrowableCol( 0 );
 	fgSizer1->AddGrowableRow( 0 );
 	fgSizer1->SetFlexibleDirection( wxBOTH );
 	fgSizer1->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
-	
+
 	m_labInfo = new wxStaticText( this, wxID_ANY, wxT(""), wxDefaultPosition, wxDefaultSize, 0 );
 	m_labInfo->Wrap( 350 );
 	fgSizer1->Add( m_labInfo, 0, wxALL, 5 );
-	
-	
+
+
 	fgSizer1->Add( 0, 0, 1, wxEXPAND, 5 );
-	
+
 	wxBoxSizer* bSizer1;
 	bSizer1 = new wxBoxSizer( wxHORIZONTAL );
-	
-	
+
+
 	bSizer1->Add( 0, 0, 1, wxEXPAND, 5 );
-	
+
 	m_butMoreInfo = new gcButton( this, wxID_ANY, Managers::GetString(L"#MOREINFO"), wxDefaultPosition, wxDefaultSize, 0 );
 	bSizer1->Add( m_butMoreInfo, 0, wxTOP|wxBOTTOM|wxLEFT, 5 );
-	
+
 	m_butOk = new gcButton( this, wxID_ANY, Managers::GetString(L"#CONTINUE"), wxDefaultPosition, wxDefaultSize, 0 );
 	bSizer1->Add( m_butOk, 0, wxTOP|wxBOTTOM|wxLEFT, 5 );
-	
+
 	m_butCancel = new gcButton( this, wxID_ANY, Managers::GetString(L"#CANCEL"), wxDefaultPosition, wxDefaultSize, 0 );
 	bSizer1->Add( m_butCancel, 0, wxALL, 5 );
-	
+
 	fgSizer1->Add( bSizer1, 1, wxEXPAND, 5 );
-	
+
 	this->SetSizer( fgSizer1 );
 	this->Layout();
 

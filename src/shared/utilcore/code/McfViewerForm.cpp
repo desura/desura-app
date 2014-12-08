@@ -39,7 +39,7 @@ McfViewerForm::McfViewerForm(wxWindow* parent, gcString mcf) : gcFrame(parent, w
 	Bind(wxEVT_CLOSE_WINDOW, &McfViewerForm::onClose, this);
 
 	this->SetSizeHints( wxSize( 370,400 ), wxDefaultSize );
-	
+
 	wxStaticText* m_staticText26 = new wxStaticText( this, wxID_ANY, wxT("Item Id"), wxDefaultPosition, wxDefaultSize, 0 );
 	wxStaticText* m_staticText27 = new wxStaticText( this, wxID_ANY, wxT(":"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_labId = new wxStaticText( this, wxID_ANY, wxT(""), wxDefaultPosition, wxDefaultSize, 0 );
@@ -67,27 +67,27 @@ McfViewerForm::McfViewerForm(wxWindow* parent, gcString mcf) : gcFrame(parent, w
 	fgSizer11 = new wxFlexGridSizer( 20, 3, 0, 0 );
 	fgSizer11->SetFlexibleDirection( wxBOTH );
 	fgSizer11->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
-	
+
 	fgSizer11->Add( m_staticText26, 0, 0, 5 );
 	fgSizer11->Add( m_staticText27, 0, 0, 5 );
 	fgSizer11->Add( m_labId, 0, wxLEFT, 5 );
-	
+
 	fgSizer11->Add( m_staticText14, 0, 0, 5 );
 	fgSizer11->Add( m_staticText15, 0, 0, 5 );
 	fgSizer11->Add( m_labVersion, 0, wxLEFT, 5 );
-	
+
 	fgSizer11->Add( m_staticText23, 0, 0, 5 );
 	fgSizer11->Add( m_staticText24, 0, 0, 5 );
 	fgSizer11->Add( m_labType, 0, wxLEFT, 5 );
-	
+
 	fgSizer11->Add( m_staticText16, 0, 0, 5 );
 	fgSizer11->Add( m_staticText17, 0, 0, 5 );
 	fgSizer11->Add( m_labMCFVers, 0, wxLEFT, 5 );
-	
+
 	fgSizer11->Add( m_staticText18, 0, 0, 5 );
 	fgSizer11->Add( m_staticText19, 0, 0, 5 );
 	fgSizer11->Add( m_labPatch, 0, wxLEFT, 5 );
-	
+
 	fgSizer11->Add( m_staticText20, 0, 0, 5 );
 	fgSizer11->Add( m_staticText21, 0, 0, 5 );
 	fgSizer11->Add( m_labBranch, 0, wxLEFT, 5 );
@@ -112,7 +112,7 @@ McfViewerForm::McfViewerForm(wxWindow* parent, gcString mcf) : gcFrame(parent, w
 
 	fgSizer10->Add( fgSizer12, 1, wxEXPAND|wxALL, 7 );
 	fgSizer10->Add( m_tcFileTree, 1, wxALL|wxEXPAND, 5 );
-	
+
 	this->SetSizer( fgSizer10 );
 	this->Layout();
 
@@ -137,7 +137,7 @@ void McfViewerForm::onButtonClicked(wxCommandEvent& event)
 	temp.ShowModal();
 
 	wxString path = temp.GetPath();
-	
+
 	if (!path.empty())
 	{
 		loadMcf(path.c_str());
@@ -172,7 +172,7 @@ void McfViewerForm::loadMcf(const char* path)
 	for (uint32 x=0; x<count; x++)
 	{
 		MCFCore::MCFFileI* m_pHandleFile = m_pHandle->getMCFFile(x);
-		
+
 		if (!m_pHandleFile)
 			continue;
 
@@ -184,7 +184,7 @@ void McfViewerForm::loadMcf(const char* path)
 		{
 			wxTreeItemId lastNode;
 			wxTreeItemId item;
-			
+
 			gcString path(m_pHandleFile->getPath());
 			gcWString wpath(path);
 
@@ -212,7 +212,7 @@ wxTreeItemId McfViewerForm::recCreateNodes(const wchar_t* path, size_t pathSize,
 	const wchar_t *nextPath = nullptr;
 
 	size_t x=0;
-		
+
 	if (path[0] == '\\' || path[0] == '/')
 		path++;
 
@@ -231,12 +231,12 @@ wxTreeItemId McfViewerForm::recCreateNodes(const wchar_t* path, size_t pathSize,
 	wchar_t *curFolder = new wchar_t[x+1];
 	wcsncpy(curFolder, path, x);
 	curFolder[x] = '\0';
-	
+
 	wxTreeItemId item;
 
 	if (search)
 		item = FindNode(curFolder, lastNode);
-	
+
 	if (!search || !item.IsOk())
 	{
 		lastNode = m_tcFileTree->AppendItem(lastNode, curFolder);

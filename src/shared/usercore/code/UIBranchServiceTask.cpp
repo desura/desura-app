@@ -69,7 +69,7 @@ bool UIBranchServiceTask::initService()
 	gcString newBranchMcf = getBranchMcf(getItemInfo()->getId(), getMcfBranch(), getMcfBuild());
 
 	m_pIPCIM = getServiceMain()->newUninstallBranch();
-			
+
 	if (!m_pIPCIM)
 	{
 		gcException eFailCrtBrnch(ERR_NULLHANDLE, "Failed to create uninstall branch mcf service!\n");

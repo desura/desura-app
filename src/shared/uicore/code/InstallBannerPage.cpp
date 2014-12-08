@@ -70,11 +70,11 @@ InstallBannerPage::InstallBannerPage(wxWindow* parent, bool useSpinnerFirst) : B
 	wxBoxSizer* bSizer17 = new wxBoxSizer( wxHORIZONTAL );
 	bSizer17->Add( m_labLabel, 0, wxLEFT|wxRIGHT|wxTOP, 5 );
 	bSizer17->Add( m_labInfo, 0, wxRIGHT|wxTOP, 5 );
-	
+
 	m_pButSizer = new wxBoxSizer( wxHORIZONTAL );
 	m_pButSizer->Add( 0, 0, 1, wxEXPAND, 5 );
 	m_pButSizer->Add( m_butCancel, 0, wxALL, 5 );
-	
+
 	wxFlexGridSizer* fgSizer1;
 	fgSizer1 = new wxFlexGridSizer( 6, 1, 0, 0 );
 	fgSizer1->AddGrowableCol( 0 );
@@ -88,7 +88,7 @@ InstallBannerPage::InstallBannerPage(wxWindow* parent, bool useSpinnerFirst) : B
 	fgSizer1->Add( m_pButSizer, 0, wxEXPAND, 5 );
 	fgSizer1->Add( m_labProv, 0, wxLEFT|wxEXPAND, 5 );
 	fgSizer1->Add( fgSizerImg, 1, wxALL|wxEXPAND, 5 );
-	
+
 	this->SetSizer( fgSizer1 );
 	this->Layout();
 

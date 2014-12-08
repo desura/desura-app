@@ -63,18 +63,18 @@ AboutDevPage::AboutDevPage(wxWindow* parent) : gcPanel(parent, wxID_ANY)
 
 	m_labInfo = new wxStaticText( this, wxID_ANY, wxT("Thanks to all the indies and mods for distracting us. Without you Desura would have been released years ago."), wxDefaultPosition, wxDefaultSize, wxALIGN_LEFT );
 	m_labInfo1 = new wxStaticText( this, wxID_ANY, wxT("And countless others who have provided feedback and lived to tell the tale. Not tested on animals, only gamers."), wxDefaultPosition, wxDefaultSize, wxALIGN_LEFT );
-	
+
 	m_labInfo->Wrap( 285 );
 	m_labInfo1->Wrap( 285 );
-	
+
 	m_labInfo->SetForegroundColour( colInfo );
 	m_labInfo1->SetForegroundColour( colInfo );
-	
+
 	wxFlexGridSizer* fgSizer4;
 	fgSizer4 = new wxFlexGridSizer( 7, 3, 0, 0 );
 	fgSizer4->SetFlexibleDirection( wxBOTH );
 	fgSizer4->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
-	
+
 	for (size_t x=0; x<7; x++)
 	{
 		wxStaticText* title = new wxStaticText( this, wxID_ANY, g_AboutInfo[x].title);
@@ -98,11 +98,11 @@ AboutDevPage::AboutDevPage(wxWindow* parent) : gcPanel(parent, wxID_ANY)
 	fgSizer8->AddGrowableRow( 1 );
 	fgSizer8->SetFlexibleDirection( wxBOTH );
 	fgSizer8->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
-	
+
 	fgSizer8->Add( m_labInfo, 1, wxEXPAND|wxLEFT|wxRIGHT|wxBOTTOM, 5 );
 	fgSizer8->Add( fgSizer4, 1, wxEXPAND|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL, 5 );
 	fgSizer8->Add( m_labInfo1, 0, wxALL, 5 );
-	
+
 	this->SetSizer( fgSizer8 );
 	this->Layout();
 }

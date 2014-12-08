@@ -42,7 +42,7 @@ InstallDVPage::InstallDVPage(wxWindow* parent) : BaseInstallPage(parent)
 {
 	this->SetSizeHints( wxDefaultSize, wxDefaultSize );
 	Bind(wxEVT_COMMAND_BUTTON_CLICKED, &InstallDVPage::onButtonPressed, this);
-	
+
 	wxFlexGridSizer* fgSizer1;
 	fgSizer1 = new wxFlexGridSizer( 4, 1, 0, 0 );
 	fgSizer1->AddGrowableCol( 0 );
@@ -59,12 +59,12 @@ InstallDVPage::InstallDVPage(wxWindow* parent) : BaseInstallPage(parent)
 	bSizer4->Add( 0, 0, 1, wxEXPAND, 5 );
 	bSizer4->Add( m_butHide, 0, wxLEFT|wxTOP|wxBOTTOM, 5 );
 	bSizer4->Add( m_butCancel, 0, wxALL, 5 );
-	
+
 	fgSizer1->Add( m_labInfo, 0, wxLEFT|wxRIGHT|wxTOP, 5 );
 	fgSizer1->Add( m_pbProgress, 1, wxEXPAND|wxALL, 5 );
 	fgSizer1->Add(0, 0, 0, wxEXPAND, 5);
 	fgSizer1->Add( bSizer4, 1, wxEXPAND, 5 );
-	
+
 	this->SetSizer( fgSizer1 );
 	this->Layout();
 	this->setParentSize(-1, 140);
@@ -148,7 +148,7 @@ void InstallDVPage::onMcfProgress(MCFCore::Misc::ProgressInfo& info)
 	if (info.totalAmmount != 0)
 	{
 		gcString label;
-		
+
 		if (stage == 4)
 			label = gcString(Managers::GetString("#PROGRESS_INFO"), UTIL::MISC::niceSizeStr(info.doneAmmount), UTIL::MISC::niceSizeStr(info.totalAmmount));
 		else

@@ -67,7 +67,7 @@ bool UIPatchServiceTask::initService()
 	gcString newBranchMcf = getBranchMcf(getItemInfo()->getId(), getMcfBranch(), getMcfBuild());
 
 	m_pIPCIM = getServiceMain()->newUninstallBranch();
-			
+
 	if (!m_pIPCIM)
 	{
 		gcException eFailUninstPatch(ERR_NULLHANDLE, "Failed to create uninstall patch mcf service!\n");

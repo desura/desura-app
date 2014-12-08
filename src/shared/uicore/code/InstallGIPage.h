@@ -62,7 +62,7 @@ protected:
 
 
 	void onButtonPressed(wxCommandEvent& event);
-	
+
 	void onItemUpdate(UserCore::Item::ItemInfoI::ItemInfo_s& info);
 	void onComplete(uint32& itemId);
 	void onError(gcException& e);

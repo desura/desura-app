@@ -52,7 +52,7 @@ DispLoading::DispLoading(wxWindow *parent, wxString text, const wxSize &size) : 
 
 DispLoading::~DispLoading()
 {
-	
+
 }
 
 void DispLoading::onIdle(wxIdleEvent& event)

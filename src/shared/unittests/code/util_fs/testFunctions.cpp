@@ -99,7 +99,7 @@ namespace UnitTest
 
 			std::vector<std::string> firstLevel;
 			firstLevel.push_back("0");
-			
+
 			std::vector<std::string> secondLevel;
 			secondLevel.push_back("0");
 			secondLevel.push_back("1.txt");

@@ -67,7 +67,7 @@ void DownloadToolTask::doRun()
 	tt->onCompleteEvent += delegate(this, &DownloadToolTask::onDLComplete);
 	tt->onErrorEvent += delegate(this, &DownloadToolTask::onDLError);
 	tt->onProgressEvent += delegate(this, &DownloadToolTask::onDLProgress);
-	
+
 	if (m_ToolTTID != UINT_MAX)
 	{
 		bool res = getUserCore()->getToolManager()->updateTransaction(m_ToolTTID, tt);

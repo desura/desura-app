@@ -45,7 +45,7 @@ REGISTER_JSEXTENDER(DesuraJSBranchInfo);
 DesuraJSBranchInfo::DesuraJSBranchInfo() : DesuraJSBase("branch", "native_binding_branchinfo.js")
 {
 	REG_SIMPLE_JS_OBJ_FUNCTION( isValidBranch, DesuraJSBranchInfo );
-	
+
 	REG_SIMPLE_JS_OBJ_FUNCTION( getItemId, DesuraJSBranchInfo );
 	REG_SIMPLE_JS_OBJ_FUNCTION( getBranchId, DesuraJSBranchInfo );
 	REG_SIMPLE_JS_OBJ_FUNCTION( getBranchFlags, DesuraJSBranchInfo );

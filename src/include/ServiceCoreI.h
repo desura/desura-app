@@ -43,11 +43,11 @@ public:
 	//! Set up da pipe to start communications from the client
 	//!
 	virtual void startPipe()=0;
-	
+
 	//! Stop da pipe
 	//!	
 	virtual void stopPipe()=0;
-	
+
 	//! Stop windows service
 	//!
 	virtual bool stopService(const char* serviceName)=0;
@@ -59,7 +59,7 @@ public:
 	//! Set the crash settings callback
 	//!
 	virtual void setCrashSettingCallback(CrashSettingFn crashSettingFn)=0;
-	
+
 	//! Set the disconnect callback
 	//!
 	virtual void setDisconnectCallback(DisconnectFn disconnectFn)=0;

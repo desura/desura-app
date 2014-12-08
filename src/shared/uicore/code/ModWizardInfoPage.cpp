@@ -52,14 +52,14 @@ MWInfoPage::MWInfoPage( wxWindow* parent, wxWindowID id, const wxPoint& pos, con
 
 	m_butStart = new gcButton( this, wxID_ANY, Managers::GetString(L"#START"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_butCancel = new gcButton( this, wxID_ANY, Managers::GetString(L"#CANCEL"), wxDefaultPosition, wxDefaultSize, 0 );
-	
+
 
 	wxBoxSizer* bSizer2;
 	bSizer2 = new wxBoxSizer( wxHORIZONTAL );
 	bSizer2->Add( 0, 0, 1, wxEXPAND, 5 );
 	bSizer2->Add( m_butStart, 0, wxALL, 5 );
 	bSizer2->Add( m_butCancel, 0, wxTOP|wxBOTTOM|wxRIGHT, 5 );
-	
+
 
 	wxFlexGridSizer* fgSizer1;
 	fgSizer1 = new wxFlexGridSizer( 5, 1, 0, 0 );
@@ -73,7 +73,7 @@ MWInfoPage::MWInfoPage( wxWindow* parent, wxWindowID id, const wxPoint& pos, con
 	fgSizer1->Add( m_cbAddAccount, 0, wxALL, 5 );
 	fgSizer1->Add( 0, 0, 0, 0, 5 );
 	fgSizer1->Add( bSizer2, 0, wxEXPAND, 5 );
-	
+
 	this->SetSizer( fgSizer1 );
 	this->Layout();
 }

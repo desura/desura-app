@@ -229,7 +229,7 @@ void GatherInfoTask::checkRequirements()
 	MCFBranch branch = getMcfBranch();
 
 	auto branchInfo = getItemHandle()->getItemInfo()->getBranchById(branch);
-	
+
 	if (!checkNullBranch(branchInfo))
 		return;
 
@@ -247,7 +247,7 @@ void GatherInfoTask::checkRequirements()
 	}
 
 	uint32 res = validate();
-	
+
 #ifdef NIX
 	UserCore::Item::Helper::TOOL tool = (UserCore::Item::Helper::TOOL)(res>>28);
 
@@ -257,10 +257,10 @@ void GatherInfoTask::checkRequirements()
 		completeStage();
 		return;				
 	}
-	
+
 	res = (res<<4)>>4;
 #endif
-	
+
 	if (res == 0)
 	{
 		getItemHandle()->getItemInfo()->addToAccount();
@@ -284,7 +284,7 @@ void GatherInfoTask::checkRequirements()
 			else
 			{
 				UserCore::Item::Helper::ACTION promptRes = UserCore::Item::Helper::C_NONE;
-				
+
 				if (!m_bCanceled && m_pGIHH)
 					promptRes = m_pGIHH->showInstallPrompt(getItemHandle()->getItemInfo()->getPath(getMcfBranch()));
 
@@ -399,26 +399,26 @@ uint32 GatherInfoTask::validate()
 
 #ifdef NIX
 	auto bi = pItemInfo->getBranchById(getMcfBranch());
-	
+
 	std::vector<DesuraId> toolList;
 	bi->getToolList(toolList);
 
 	uint32 res = getUserCore()->getToolManager()->hasNonInstallableTool(toolList);
-	
+
 	switch (res)
 	{
 	case 0:
 		isValid |= UserCore::Item::Helper::V_JAVA_SUN;
 		break;		
-		
+
 	case 1:
 		isValid |= UserCore::Item::Helper::V_JAVA;
 		break;		
-	
+
 	case 2:
 		isValid |= UserCore::Item::Helper::V_MONO;
 		break;
-		
+
 	case 3:
 		isValid |= UserCore::Item::Helper::V_AIR;
 		break;		

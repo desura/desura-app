@@ -39,7 +39,7 @@ XMLSaveAndCompress::XMLSaveAndCompress(UTIL::FS::FileHandle *fh, bool compress) 
 	m_uiLastWritePos = 0;
 	m_uiTotalSize = 0;
 	m_uiRawSize = 0;
-	
+
 	m_szWriteBuf = new char[BUFFSIZE+1];
 }
 

@@ -84,7 +84,7 @@ HRESULT SetPrivilege(HANDLE hToken, LPCTSTR lpszPrivilege, DWORD dwAttributes=SE
 	{
 		hr=HRESULT_FROM_WIN32(GetLastError());
 	}
-	
+
 	return hr;
 }
 
@@ -204,7 +204,7 @@ The parent of new process in taskmgr.exe, but not the current process.
 HRESULT CreateProcessWithExplorerIL(LPWSTR szProcessName, LPWSTR szCmdLine, LPWSTR szWorkingDir)
 {
 	HRESULT hr=S_OK;
-	
+
 	BOOL bRet;
 	HANDLE hToken;
 	HANDLE hNewToken;
@@ -227,7 +227,7 @@ HRESULT CreateProcessWithExplorerIL(LPWSTR szProcessName, LPWSTR szCmdLine, LPWS
 		HWND hwndShell=::FindWindowA("Progman", nullptr);
 		if(hwndShell)
 			GetWindowThreadProcessId(hwndShell, &dwExplorerID);
-		
+
 		hr=GetProcessIL(dwExplorerID, &dwExplorerIL);
 		if(SUCCEEDED(hr))
 			hr=GetProcessIL(GetCurrentProcessId(), &dwCurIL);

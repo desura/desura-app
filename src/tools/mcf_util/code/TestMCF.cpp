@@ -68,7 +68,7 @@ public:
 
 		mcfSrc->setFile(args[2].c_str());
 		mcfSrc->setWorkerCount(1);
-	
+
 		mcfSrc->dlHeaderFromHttp(args[0].c_str());
 
 		int res = mcfSrc->verifyInstall(args[1].c_str(), true);
@@ -131,7 +131,7 @@ public:
 		else if (m_pUMcf->isValidInstaller())
 		{
 			//deleteDumps();
-		
+
 			//m_pOldMcf = new umcf();
 			//m_pOldMcf->loadFromFile(UPDATEXML);
 
@@ -199,7 +199,7 @@ public:
 
 		mcfSrc->setFile(args[2].c_str());
 		mcfSrc->setWorkerCount(1);
-	
+
 		mcfSrc->dlHeaderFromHttp(args[0].c_str());
 		mcfSrc->verifyInstall(args[1].c_str(), true, true);
 

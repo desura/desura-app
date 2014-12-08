@@ -596,7 +596,7 @@ public:
 			gcAssert(false);
 			Warning("OnExceptionInMainLoop Unknown exception\n");
 		}
-		
+
 		return wxApp::OnExceptionInMainLoop();
 	}
 

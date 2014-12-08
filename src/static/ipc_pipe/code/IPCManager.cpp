@@ -247,7 +247,7 @@ IPCManager::IPCManager(LoopbackProcessor* loopbackProcessor, uint32 managerId, c
 		m_szThreadName += ":Server ";
 	else
 		m_szThreadName += ":Client ";
-	
+
 #ifdef WIN32
 	m_hEvent = INVALID_HANDLE_VALUE;
 #else
@@ -450,7 +450,7 @@ void IPCManager::joinPartMessages(std::vector<PipeMessage*> &vMessages)
 		vIPCMessages.push_back(pIPCM);
 		totSize += pIPCM->size;
 	}
-		
+
 	std::sort(begin(vIPCMessages), end(vIPCMessages), [](IPCMessage* a, IPCMessage* b){
 		return a->part < b->part;
 	});
@@ -560,7 +560,7 @@ void IPCManager::recvMessage(IPCMessage* msg)
 
 				m_pEventThread->newMessage(pClass, msg->type, &msg->data, msg->size);
 			}
-			
+
 			if (msg->type != MT_EVENTTRIGGER)
 			{
 				if (!m_pCallThread)
@@ -818,7 +818,7 @@ DesuraId IPCManager::setItemHashId(const char* itemHashId)
 	PipeItemAuth pia;
 	pia.hash = gcString(itemHashId);
 	pia.internId = 0;
-	
+
 	onNeedAuthEvent(pia);
 	m_uiItemId = pia.internId;
 

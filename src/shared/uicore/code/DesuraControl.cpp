@@ -48,7 +48,7 @@ class DesuraMenuFiller : public MenuFiller
 public:
 	DesuraMenuFiller(wxWindow *parent) : MenuFiller(parent, "#menu_bg", wxSize(25,38))
 	{
-		
+
 	}
 
 	void onActiveToggle(bool state)
@@ -75,7 +75,7 @@ DesuraControl::DesuraControl(gcFrame* parent, bool offline, const char* szProvid
 
 	this->SetBackgroundColour( wxColor(GetGCThemeManager()->getColor("headerbottomborder", "bg")));
 	this->SetSizeHints( wxDefaultSize, wxDefaultSize );
-	
+
 	auto userCore = GetUserCore();
 
 	if (userCore)
@@ -94,7 +94,7 @@ DesuraControl::DesuraControl(gcFrame* parent, bool offline, const char* szProvid
 
 	const char* szUsername = Managers::GetString("#MP_OFFLINE");
 	const char* szAvatar = nullptr;
-	
+
 	if (userCore)
 	{
 		szAvatar = GetUserCore()->getAvatar();
@@ -102,7 +102,7 @@ DesuraControl::DesuraControl(gcFrame* parent, bool offline, const char* szProvid
 		if (!offline)
 			szUsername = GetUserCore()->getUserName();
 	}
-		
+
 
 	if (szAvatar && UTIL::FS::isValidFile(UTIL::FS::PathWithFile(szAvatar)))
 	{
@@ -116,7 +116,7 @@ DesuraControl::DesuraControl(gcFrame* parent, bool offline, const char* szProvid
 
 	m_pFiller = new DesuraMenuFiller(this);
 	m_pFiller->SetMinSize( wxSize( 25,38 ) );
-	
+
 	m_pUsernameBox = new UsernameBox(this, szUsername);
 	m_pMenuStrip = new MenuStrip(this);
 
@@ -138,9 +138,9 @@ DesuraControl::DesuraControl(gcFrame* parent, bool offline, const char* szProvid
 	fgSizer3->Add( m_pMenuStrip, 1, wxEXPAND, 5 ); 	// main buttons across the top
 	fgSizer3->Add( m_pFiller, 1, wxEXPAND, 5 );
 
-	
+
 	m_sizerHeader = new wxBoxSizer( wxVERTICAL ); 
-	
+
 
 
 
@@ -187,7 +187,7 @@ DesuraControl::DesuraControl(gcFrame* parent, bool offline, const char* szProvid
 	wxFlexGridSizer* fgSizer5;
 	fgSizer5 = new wxFlexGridSizer( 3, 1, 0, 0 );
 	fgSizer5->AddGrowableCol( 0 );
-	
+
 	fgSizer5->SetFlexibleDirection( wxBOTH );
 	fgSizer5->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
 
@@ -212,7 +212,7 @@ DesuraControl::DesuraControl(gcFrame* parent, bool offline, const char* szProvid
 	}
 
 	fgSizer5->Add( m_sizerContent, 1, wxEXPAND, 5 );
-	
+
 	this->SetSizer( fgSizer5 );
 	this->Layout();
 
@@ -265,7 +265,7 @@ void DesuraControl::addPage(std::shared_ptr<BaseTabPage> page, const char* tabNa
 		return;
 
 	tabInfo_s temp;
-	
+
 	temp.page = page;
 	temp.header = page->getToolBarControl();
 	temp.id = m_pMenuStrip->addButton(tabName);
@@ -327,7 +327,7 @@ void DesuraControl::setActivePage(PAGE index, bool reset)
 
 	if (reset)
 		m_vTabInfo[index].page->reset();
-	
+
 	m_sizerContent->Add(m_vTabInfo[index].page.get(), 1, wxEXPAND | wxBOTTOM, 1);
 	m_sizerHeader->Add(m_vTabInfo[index].header.get(), 1, wxEXPAND | wxBOTTOM, 1);
 

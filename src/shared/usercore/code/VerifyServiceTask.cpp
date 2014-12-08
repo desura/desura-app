@@ -102,7 +102,7 @@ void VerifyServiceTask::finishVerify(UserCore::Misc::VerifyComplete::VSTATUS sta
 
 		if (status == UserCore::Misc::VerifyComplete::V_COMPLETE)
 			pItem->addSFlag(UserCore::Item::ItemInfoI::STATUS_READY);
-	
+
 		if (status == UserCore::Misc::VerifyComplete::V_RESET)
 		{
 			uint32 flags = UserCore::Item::ItemInfoI::STATUS_ONCOMPUTER|UserCore::Item::ItemInfoI::STATUS_DOWNLOADING|UserCore::Item::ItemInfoI::STATUS_INSTALLING|UserCore::Item::ItemInfoI::STATUS_UPDATING|UserCore::Item::ItemInfoI::STATUS_INSTALLED|UserCore::Item::ItemInfoI::STATUS_UPDATEAVAL;
@@ -169,7 +169,7 @@ void VerifyServiceTask::doRun()
 
 	if (m_bCheckFiles && !checkFiles())
 		return;
-	
+
 	//do hooks before tools as tools will change to the downloading tool stage
 	if (m_bCheckHooks)
 		checkHooks();
@@ -458,7 +458,7 @@ bool VerifyServiceTask::checkItem()
 {
 	gcException eBadItem(ERR_BADITEM);
 	gcException eBrchNull(ERR_BADITEM, "Item branch is null");
-	
+
 	auto pItem = getItemInfo();
 
 	if (!pItem)
@@ -490,7 +490,7 @@ bool VerifyServiceTask::checkBranch()
 {
 	auto pItem = getItemInfo();
 	auto pBranch = pItem->getCurrentBranch();
-	
+
 	if (!pBranch)
 		return false;
 
@@ -542,7 +542,7 @@ bool VerifyServiceTask::checkUnAuthed()
 
 	pItem->getInternal()->overideInstalledBuild(m_McfBuild);
 	pItem->delSFlag(UserCore::Item::ItemInfoI::STATUS_UNAUTHED);
-	
+
 	return false;
 }
 
@@ -590,7 +590,7 @@ void VerifyServiceTask::onProgress(MCFCore::Misc::ProgressInfo& prog)
 			p.flag = 4;
 			break;
 	}
-	
+
 	if (m_uiLastPercent != percent || p.doneAmmount > 0)
 	{
 		p.percent = percent;

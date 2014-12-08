@@ -124,7 +124,7 @@ void InstallProcess::run()
 		gcException e(ERR_HASHMISSMATCH);
 		onErrorEvent(e);
 	}
-	
+
 	onCompleteEvent();
 	onFinishEvent();
 }

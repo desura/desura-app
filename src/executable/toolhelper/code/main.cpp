@@ -124,7 +124,7 @@ void BootLoader::loadUICore()
 		::MessageBox(nullptr, "Failed to load utilcore.dll", PRODUCT_NAME ": ERROR!",  MB_OK);
 		exit(-200);
 	}
-	
+
 	UICoreFP UICoreGetInterface = m_hUICore.getFunction<UICoreFP>("GetInterface");
 
 	if (!UICoreGetInterface)

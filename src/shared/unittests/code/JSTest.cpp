@@ -152,7 +152,7 @@ namespace UnitTest
 			for (auto k : mItems)
 			{
 				std::string strKey = k.first;
-	
+
 				ON_CALL(*obj, getKey(Eq(x), _, _)).WillByDefault(Invoke([strKey](int index, char* buff, size_t buffsize){
 					Safe::strcpy(buff, buffsize, strKey.c_str());
 				}));

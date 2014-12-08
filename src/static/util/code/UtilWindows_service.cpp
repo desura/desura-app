@@ -172,7 +172,7 @@ void enableService(const char* szName)
 {
 	gcWString wName(szName);
 	SC_HANDLE scm, Service;
-	
+
 	//open connection to SCM
 	scm = OpenSCManager(nullptr, nullptr, SC_MANAGER_CONNECT);
 
@@ -228,7 +228,7 @@ void startService(const char* szName, std::vector<std::string> &args)
 	SC_HANDLE scm, Service;
 	SERVICE_STATUS ssStatus; 
 	DWORD dwWaitTime;
-	
+
 	//open connection to SCM
 	scm = OpenSCManager(nullptr, nullptr, SC_MANAGER_CONNECT);
 
@@ -280,7 +280,7 @@ void startService(const char* szName, std::vector<std::string> &args)
 		CloseServiceHandle(scm);
 		throw gcException(ERR_SERVICE, GetLastError(), gcString("Failed to Query service: {0}", szName));
 	}
-		
+
 	DWORD totalTime = 0;
 
 	while (ssStatus.dwCurrentState != SERVICE_RUNNING) 
@@ -314,7 +314,7 @@ void startService(const char* szName, std::vector<std::string> &args)
 			throw gcException(ERR_SERVICE, gcString("Service {0} Startup timed out after 30 seconds.", szName));
 		}
 	}
-		
+
 	// Check the status again. 
 	if (!QueryServiceStatus( Service, &ssStatus) )
 	{
@@ -337,7 +337,7 @@ void stopService(const char* szName)
 
 	SC_HANDLE scm, Service;
 	SERVICE_STATUS ssStatus; 
-	
+
 	//open connection to SCM
 	scm = OpenSCManager(nullptr, nullptr, SC_MANAGER_CONNECT);
 
@@ -448,7 +448,7 @@ void uninstallService(const char* szName)
 		CloseServiceHandle(scm);
 		throw gcException(ERR_SERVICE, GetLastError(), gcString("Failed to Query service: {0}", szName));
 	}
-	
+
 	//Stop service if necessary		
 	if (status.dwCurrentState != SERVICE_STOPPED)
 	{

@@ -52,16 +52,16 @@ public:
 
 	void setInfo(DesuraId id, gcRefPtr<UserCore::Item::ItemInfoI> pItemInfo) override;
 	void run() override {}
-	
+
 protected:
 	gcStaticText* m_labText;
 
 	wxTextCtrl* m_tbItemFiles = nullptr;
-	
+
 	gcButton* m_butCreate;
 	gcButton* m_butCancel;
 	gcButton* m_butFile;
-	
+
 	bool validatePath(wxTextCtrl* ctrl, bool type);
 
 	void onButtonClicked( wxCommandEvent& event );

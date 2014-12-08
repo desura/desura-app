@@ -198,7 +198,7 @@ bool WGTWorker::writeData(char* data, uint32 size)
 			m_pCurBlock->size -= block->size;
 
 		m_pCurBlock->m_Lock.unlock();
-		
+
 		writeData(data+ds, size-ds);
 	}
 	else
@@ -388,7 +388,7 @@ namespace UnitTest
 			, m_nMaxRequestSize(nMaxRequestSize)
 		{
 		}
-		
+
 		void connect(const MCFCore::Misc::DownloadProvider &provider, const MCFCore::Misc::GetFile_s& fileAuth) override
 		{
 		}
@@ -616,7 +616,7 @@ namespace UnitTest
 		std::shared_ptr<MCFCore::Misc::DownloadProvider> Provider;
 		std::shared_ptr<MCFCore::Misc::DownloadProvidersI> DownloadProviders;
 		MCFCore::Misc::ProviderManager ProviderManager;
-		
+
 		std::vector<std::shared_ptr<MCFCore::Thread::Misc::WGTBlock>> m_vBlocks;
         TestWGTWorker Worker;
 		StubWGTController Controller;

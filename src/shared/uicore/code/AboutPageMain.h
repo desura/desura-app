@@ -41,10 +41,10 @@ protected:
 	wxStaticText* m_labInfo;
 	wxStaticText* m_labCopyRight;
 	wxStaticText* m_labBuild;
-	
+
 private:
 
-	
+
 };
 
 #endif //DESURA_ABOUTPAGE_MAIN_H

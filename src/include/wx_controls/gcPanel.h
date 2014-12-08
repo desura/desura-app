@@ -37,9 +37,9 @@ class gcPanel : public wxGuiDelegateImplementation<wxPanel>
 {
 public:
 	gcPanel(wxWindow *parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize, long style = wxDEFAULT_FRAME_STYLE, bool loadTheme = true);
-	
+
 	virtual void applyTheme();
-	
+
 	//! Sets the parent frame to be this size which takes into consideration borders and such
 	//!
 	void setParentSize(int width, int height);

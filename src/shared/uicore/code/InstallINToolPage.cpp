@@ -48,7 +48,7 @@ InstallINToolPage::InstallINToolPage(wxWindow* parent, gcRefPtr<UserCore::ToolMa
 	wxBoxSizer* bSizer4 = new wxBoxSizer( wxHORIZONTAL );
 	bSizer4->Add( 0, 0, 1, wxEXPAND, 5 );
 	bSizer4->Add( m_butCancel, 0, wxALL, 5 );
-	
+
 	wxFlexGridSizer* fgSizer1;
 	fgSizer1 = new wxFlexGridSizer( 4, 1, 0, 0 );
 	fgSizer1->AddGrowableCol( 0 );

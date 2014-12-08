@@ -65,12 +65,12 @@ ButtonStrip::ButtonStrip(wxWindow *parent) : gcPanel(parent)
 	fgSizer1 = new wxFlexGridSizer( 1, 4, 0, 0 );
 	fgSizer1->SetFlexibleDirection( wxBOTH );
 	fgSizer1->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
-	
+
 	fgSizer1->Add( m_pPMsgButton, 0, 0, 5 );
 	fgSizer1->Add( m_pCartButton, 0, 0, 5 );
 	fgSizer1->Add( m_pUpdateButton, 0, 0, 5 );
 	fgSizer1->Add( m_pThreadButton, 0, 0, 5 );
-	
+
 	this->SetSizer( fgSizer1 );
 	this->Layout();
 

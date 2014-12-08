@@ -43,7 +43,7 @@ GameDiskForm::GameDiskForm(wxWindow* parent, const char* exe, bool cdkey)
 
 
 	wxBoxSizer* bSizer1 = new wxBoxSizer( wxHORIZONTAL );
-	
+
 	bSizer1->Add( m_cbReminder, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
 	bSizer1->Add( 0, 0, 1, wxEXPAND, 5 );
 	bSizer1->Add( m_butLaunch, 0, wxTOP|wxBOTTOM|wxLEFT, 5 );
@@ -56,15 +56,15 @@ GameDiskForm::GameDiskForm(wxWindow* parent, const char* exe, bool cdkey)
 	fgSizer1->AddGrowableRow( 1 );
 	fgSizer1->SetFlexibleDirection( wxBOTH );
 	fgSizer1->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
-	
+
 	fgSizer1->Add( m_labInfo, 0, wxALL, 5 );
 	fgSizer1->Add( 0, 0, 1, wxEXPAND, 5 );
 	fgSizer1->Add( bSizer1, 1, wxEXPAND, 5 );
-	
+
 
 	this->SetSizer( fgSizer1 );
 	this->Layout();
-	
+
 	this->Centre( wxBOTH );
 
 	Bind(wxEVT_COMMAND_BUTTON_CLICKED, &GameDiskForm::onButtonClick, this);
@@ -122,7 +122,7 @@ void GameDiskForm::onButtonClick(wxCommandEvent& event)
 
 		g_pMainApp->handleInternalLink(m_pItem->getId(), ACTION_LAUNCH, FormatArgs(m_szExe.size()?gcString("exe={0}", m_szExe):"", m_bHasSeenCDKey?"cdkey":"", "gamedisk"));
 	}
-	
+
 	Close();
 }
 

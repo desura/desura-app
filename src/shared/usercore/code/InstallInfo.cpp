@@ -61,7 +61,7 @@ void InstallInfo::loadXmlData(const XML::gcXMLElement &xmlNode, gcRefPtr<Wildcar
 
 	if (!icsNode.IsValid())
 		return;
-		
+
 	icsNode.for_each_child("installlocation", [&](const XML::gcXMLElement &xmlChild)
 	{
 		if (m_bInstalled)

@@ -144,7 +144,7 @@ void MCFServerCon::downloadRange(uint64 offset, uint32 size, OutBufferI* buff)
 
 		if (e.getSecErrId() == 18) //CURLE_PARTIAL_FILE
 			return;
-			
+
 		disconnect();
 		throw;
 	}

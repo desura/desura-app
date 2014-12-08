@@ -260,7 +260,7 @@ void MCF::parseXml(char* buff, uint32 buffLen)
 		return;
 
 	XML::gcXMLDocument doc(buff, buffLen);
-	
+
 	auto fNode = doc.GetRoot("files");
 
 	if (!fNode.IsValid())

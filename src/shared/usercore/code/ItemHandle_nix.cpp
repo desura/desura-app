@@ -42,11 +42,11 @@ void ItemHandle::doLaunch(gcRefPtr<Helper::ItemLaunchHelperI> helper)
 {
 	char magicBytes[5] = {0};
 	auto ei = getItemInfo()->getActiveExe();
-	
+
 	const char* exe = ei->getExe();
 	const char* args = getUserCore()->getCVarValue("gc_linux_launch_globalargs");
 	gcString globalExe = getUserCore()->getCVarValue("gc_linux_launch_globalbin");
-	
+
 	if (globalExe.size() > 0)
 	{
 		if (!UTIL::FS::isValidFile(globalExe.c_str()))
@@ -60,7 +60,7 @@ void ItemHandle::doLaunch(gcRefPtr<Helper::ItemLaunchHelperI> helper)
 			exe = globalExe.c_str();
 		}
 	}
-	
+
 	try
 	{
 		UTIL::FS::FileHandle fh(exe, UTIL::FS::FILE_READ);
@@ -75,7 +75,7 @@ void ItemHandle::doLaunch(gcRefPtr<Helper::ItemLaunchHelperI> helper)
 
 	if (type == UTIL::LIN::BT_WIN && helper)
 		helper->showWinLaunchDialog();
-	
+
 	//if we are not using globalExe set exe to Null so that we use the proper exe
 	if (globalExe.size() == 0 || type == UTIL::LIN::BT_UNKNOWN)
 		exe = NULL;
@@ -86,17 +86,17 @@ void ItemHandle::doLaunch(gcRefPtr<Helper::ItemLaunchHelperI> helper)
 void ItemHandle::doLaunch(bool useXdgOpen, const char* globalExe, const char* globalArgs)
 {
 	preLaunchCheck();
-	
+
 	auto ei = getItemInfo()->getActiveExe();
-	
+
 	gcString e(globalExe);
-	
+
 	gcString args;
 	gcString ea(ei->getExeArgs());
 	gcString ua(ei->getUserArgs());
 	gcString ga(globalArgs);
 	gcString wdp(ei->getExe());
-	
+
 	if (!useXdgOpen)
 	{
 		//if we have a valid global exe need to append the local exe as the first arg
@@ -105,24 +105,24 @@ void ItemHandle::doLaunch(bool useXdgOpen, const char* globalExe, const char* gl
 		else
 			globalExe = ei->getExe();
 	}
-	
+
 	auto AppendArgs = [&args](const std::string& a)
 	{
 		if (a.size() == 0)
 			return;
-		
+
 		if (args.size() > 0)
 			args += " ";
-			
+
 		args += a;
 	};
 
 	AppendArgs(ea);
 	AppendArgs(ua);
-	
+
 	if (!useXdgOpen)
 		AppendArgs(ga);
-	
+
 	bool res = false;
 
 	if (useXdgOpen && args.size() != 0)
@@ -136,27 +136,27 @@ void ItemHandle::doLaunch(bool useXdgOpen, const char* globalExe, const char* gl
 	{
 		#ifdef USE_BITTEST
 			int testRet = system("desura_bittest");
-			
+
 			if (testRet != 0)
 				throw gcException(ERR_NO32LIBS);
 		#else
 			throw gcException(ERR_NOBITTEST);
 		#endif
-		
+
 	}
 #endif
 
 	gcString libPathA;
 	gcString libPathB;
 	gcString libPath;
-	
+
 	if (branch)
 	{
 		libPathA = gcString("{0}/{1}/{2}/lib", UTIL::OS::getAppDataPath(), branch->getItemId().getFolderPathExtension(), (uint32)branch->getBranchId());
 		libPathB = gcString("{0}/lib{1}", getItemInfo()->getPath(), branch->is32Bit()?"32":"64");
 
 		libPath = libPathA;
-		
+
 		if (UTIL::FS::isValidFolder(libPathB.c_str()))
 		{
 			libPath += ":";
@@ -174,16 +174,16 @@ void ItemHandle::doLaunch(bool useXdgOpen, const char* globalExe, const char* gl
 		{
 			std::vector<DesuraId> toolList;
 			branch->getToolList(toolList);
-			
+
 			getUserCore()->getToolManager()->symLinkTools(toolList, libPathA.c_str());
 		}
-	
+
 		std::map<std::string, std::string> info;
-		
+
 		info["cla"] = args;
 		info["lp"] = libPath;
 		info["wd"] = UTIL::FS::PathWithFile(wdp.c_str()).getFolderPath();
-		
+
 		res = UTIL::LIN::launchProcess(globalExe, info);
 	}
 
@@ -197,21 +197,21 @@ void ItemHandle::doLaunch(bool useXdgOpen, const char* globalExe, const char* gl
 void ItemHandle::installLaunchScripts()
 {
 	auto item = getItemInfo();
-	
+
 	if (!item)
 		return;
-		
+
 	auto branch = item->getCurrentBranch();
-	
+
 	if (!branch)
 		return;
-		
+
 	std::vector<gcRefPtr<UserCore::Item::Misc::ExeInfoI>> exeList;
 	item->getExeList(exeList);
-	
+
 	char* scriptBin = NULL;
 	char* scriptXdg = NULL;
-	
+
 	try
 	{
 		UTIL::FS::readWholeFile(UTIL::STRING::toStr(
@@ -223,28 +223,28 @@ void ItemHandle::installLaunchScripts()
 	{
 		safe_delete(scriptBin);
 		safe_delete(scriptXdg);		
-		
+
 		Warning(gcString("Failed to read launch script template: {0}\n", e));
 		return;
 	}
-	
+
 	gcString globalArgs = getUserCore()->getCVarValue("gc_linux_launch_globalargs");
 	gcString globalExe = getUserCore()->getCVarValue("gc_linux_launch_globalbin");
-	
+
 	if (!UTIL::FS::isValidFile(globalExe.c_str()))
 		globalExe = "";
-	
+
 	for (size_t x=0; x<exeList.size(); x++)
 	{
 		auto exe = exeList[x];
-		
+
 		if (!exe || !UTIL::FS::isValidFile(exe->getExe()))
 			continue;
-			
+
 		gcString path("{0}/desura_launch_{1}.sh", item->getPath(), UTIL::LIN::sanitiseFileName(exe->getName()));
-			
+
 		char magicBytes[5] = {0};
-			
+
 		try
 		{
 			UTIL::FS::FileHandle fh(exe->getExe(), UTIL::FS::FILE_READ);
@@ -254,13 +254,13 @@ void ItemHandle::installLaunchScripts()
 		{
 			continue;
 		}
-		
+
 		UTIL::LIN::BinType type = UTIL::LIN::getFileType(magicBytes, 5);
-		
+
 		try
 		{
 			UTIL::FS::FileHandle fh(path.c_str(), UTIL::FS::FILE_WRITE);
-			
+
 			if (type == UTIL::LIN::BT_UNKNOWN)
 			{
 				gcString lcmd(scriptXdg, exe->getExe());
@@ -270,7 +270,7 @@ void ItemHandle::installLaunchScripts()
 			{
 				gcString libPath("\"{0}/{1}/{2}/lib\"", UTIL::OS::getAppDataPath(), branch->getItemId().getFolderPathExtension(), (uint32)branch->getBranchId());
 				gcString libPathB("{0}/lib{1}", item->getPath(), branch->is32Bit()?"32":"64");
-				
+
 				if (UTIL::FS::isValidFolder(libPathB.c_str()))
 				{
 					libPath += ":";
@@ -278,32 +278,32 @@ void ItemHandle::installLaunchScripts()
 				}
 
 				const char* exePath = exe->getExe();
-				
+
 				gcString args;
 				gcString ea(exe->getExeArgs());
-				
+
 				if (globalExe.size() > 0)
 				{
 					args += gcString(exePath);
 					exePath = globalExe.c_str();
 				}
-				
+
 				if (ea.size() > 0)
 				{
 					if (args.size() > 0)
 						args += " ";
-						
+
 					args += ea;
 				}
-				
+
 				if (globalArgs.size() > 0)
 				{
 					if (args.size() > 0)
 						args += " ";
-						
+
 					args += globalArgs;
 				}			
-					
+
 				gcString lcmd(scriptBin, exePath, args, libPath);
 				fh.write(lcmd.c_str(), lcmd.size());
 			}
@@ -311,10 +311,10 @@ void ItemHandle::installLaunchScripts()
 		catch (gcException &e)
 		{
 		}
-		
+
 		chmod(path.c_str(), S_IRWXU|S_IRGRP|S_IROTH);
 	}
-	
+
 	safe_delete(scriptBin);
 	safe_delete(scriptXdg);
 }

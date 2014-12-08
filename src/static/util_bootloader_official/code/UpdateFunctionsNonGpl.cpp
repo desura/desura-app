@@ -85,7 +85,7 @@ bool CheckCert()
 
 	bool allGood = true;
 	char msgMsg[1024];
-	
+
 	char* curPos = msgMsg;
 	size_t curSize = 1024;
 
@@ -127,7 +127,7 @@ bool CheckCert()
 
 	if (res == IDCANCEL)
 		exit(200);
-	
+
 	return (res == IDYES);
 }
 
@@ -197,7 +197,7 @@ public:
 	{
 		gcString strFullPath("{0}\\{1}", szPath, szFileName);
 		Log("Found bad file: %s\n", strFullPath.c_str());
-		
+
 		return false;
 	}
 };
@@ -206,7 +206,7 @@ public:
 bool CheckInstall()
 {
 	UMcf updateMcf;
-	
+
 	if (updateMcf.loadFromFile(UPDATEXML_W) != MCF_OK)
 		return false;
 
@@ -224,11 +224,11 @@ void FullUpdate()
 	DeleteFileW(updateFile.c_str());
 
 	int nRes = DisplayUpdateWindow(UPDATE_FILES);
-	
+
 	//Critical failure
 	if (nRes == -1)
 		exit(0);
-	
+
 	if (nRes == 2)
 		exit(0);
 
@@ -244,7 +244,7 @@ void FullUpdate()
 		char msg[255];
 		Safe::snprintf(msg, 255, "Failed to Update Desura: %s [%d.%d]", e.getErrMsg(), e.getErrId(), e.getSecErrId());
 		::MessageBox(NULL, msg, "Desura Critical Error", MB_OK);
-	
+
 		exit(-4);
 	}
 #endif
@@ -253,7 +253,7 @@ void FullUpdate()
 void McfUpdate()
 {
 	int nRes = DisplayUpdateWindow(UPDATE_MCF);
-	
+
 	//Critical failure
 	if (nRes == -1)
 		exit(0);

@@ -82,7 +82,7 @@ public:
 	{
 		gcPanel::AddPendingEvent(event);
 	}
-	
+
 	void PopupMenu(wxMenu* menu, int x, int y) override
 	{
 		gcPanel::PopupMenu(menu, x, y);
@@ -100,7 +100,7 @@ protected:
 	void onStartLoad();
 	void onPageLoad();
 	void handleKeyEvent(int eventCode) override;
-	
+
 	friend class EventHandler;
 
 private:

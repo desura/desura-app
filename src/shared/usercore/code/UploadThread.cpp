@@ -139,7 +139,7 @@ void UploadThread::doRun()
 		m_hHttpHandle->addPostText("sitearea", type.c_str());
 		m_hHttpHandle->addPostFileAsBuff("mcf", "upload.mcf", buffer, chunkSize);
 		m_hHttpHandle->addPostText("uploadsize", chunkSize);
-		
+
 		uint8 res = 0;
 
 		//need to check here a second time incase we where paused or by fluke missed the check the first time as m_hHttpHandle->CleanUp() removes the abort flag.
@@ -195,7 +195,7 @@ void UploadThread::doRun()
 				continue;
 			}
 		}
-		
+
 		sCode = status;
 
 		if (sCode == (int)MCFUploadStatus::Ok || sCode == (int)MCFUploadStatus::Finished)

@@ -39,35 +39,35 @@ std::string expandPath(const char* file)
 {
 	if (!file)
 		return "";
-	
+
 	std::string f;
 	size_t size = strlen(file);
-	
+
 	f.reserve(size);
-	
+
 	for (size_t x=0; x<size; x++)
 	{
 		if (file[x] == ' ')
 			f.push_back('\\');
-			
+
 		f.push_back(file[x]);
 	}
-	
+
 	wordexp_t exp_result;
 	memset(&exp_result, 0, sizeof(wordexp_t));
-	
+
 	int res = wordexp(f.c_str(), &exp_result, 0);
-	
+
 	if (res != 0)
 		return "";
-	
+
 	std::string r;
-	
+
 	if (exp_result.we_wordv[0])
 		r = exp_result.we_wordv[0];
-	
+
 	wordfree(&exp_result);
-	
+
 	return r;
 }
 
@@ -84,7 +84,7 @@ FileHandle& FileHandle::operator=(const FileHandle& handle)
 		m_hFileHandle = fdopen(dup(fileno(handle.getHandle())), handle.getMode());
 		m_bIsOpen = handle.isOpen();
 	}
-	
+
 	return *this;
 }
 
@@ -92,10 +92,10 @@ void FileHandle::open(const char* fileName, FILE_MODE mode, uint64 offset)
 {
 	if (m_bIsOpen)
 		close();
-		
+
 	if (!fileName)
 		throw gcException(ERR_BADPATH, "Cant open file with null path");
-		
+
 	std::string fullFile = expandPath(fileName);
 
 	if (fullFile == "")
@@ -129,7 +129,7 @@ void FileHandle::open(const char* fileName, FILE_MODE mode, uint64 offset)
 			fseek(fh, 0, SEEK_END);
 		else
 			fh = fopen64(fullFile.c_str(), "wb");
-			
+
 		break;
 
 	default:
@@ -142,7 +142,7 @@ void FileHandle::open(const char* fileName, FILE_MODE mode, uint64 offset)
 		printf("Error opening %s as %d: %d\n", fullFile.c_str(), mode, errno);
 		throw gcException(ERR_INVALIDFILE, gcString("Couldnt open the file [{0}] in mode {1}", fullFile.c_str(), mode));
 	}
-	
+
 	m_hFileHandle = fh;
 	m_bIsOpen = true;
 }

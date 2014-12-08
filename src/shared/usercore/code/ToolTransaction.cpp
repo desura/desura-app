@@ -54,7 +54,7 @@ ToolTransInfo::ToolTransInfo(bool download, gcRefPtr<ToolTransaction> transactio
 		tp.done= 0;
 		tp.percent = 0;
 		tp.total = 0;
-				
+
 		auto info = pToolManager->findItem(t.toInt64());
 
 		if (info)
@@ -165,7 +165,7 @@ ToolStartRes ToolTransInfo::startNextInstall(std::shared_ptr<IPCToolMain> pToolM
 		m_uiCompleteCount++;
 		return startNextInstall(pToolMain, toolId);
 	}
-		
+
 	if (info->isInstalled())
 	{
 		onINComplete();
@@ -200,7 +200,7 @@ ToolStartRes ToolTransInfo::startNextInstall(std::shared_ptr<IPCToolMain> pToolM
 
 		m_pTransaction->onProgressEvent(prog);
 	}
-	
+
 	return ToolStartRes::Success;
 }
 

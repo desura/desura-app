@@ -203,7 +203,7 @@ bool UMcfFile::verifyFile(FILEHANDLE hFile, uint64 baseOffset)
 #endif
 
 	std::string temp;
-	
+
 	if (getFlags() & UMCFF_FLAG_ZEROSIZE)
 		return true;
 
@@ -436,6 +436,6 @@ uint8 UMcfFile::readMCFAndSave(FILEHANDLE hFile, const wchar_t* dir, uint64 offs
 		printf("Hash failed on file: %ls\n", m_szName.c_str());
 		return MCFF_ERR_BADHASH;
 	}
-	
+
 	return res;
 }

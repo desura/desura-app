@@ -319,7 +319,7 @@ namespace Desurium
 
 	private:
 		static CDesuraDialog* gs_pCurrentDialog;
-		
+
 		int m_nResourceId;
 	};
 

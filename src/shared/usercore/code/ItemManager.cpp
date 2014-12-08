@@ -355,7 +355,7 @@ void ItemManager::updateItemIds()
 bool ItemManager::isInstalled(DesuraId id)
 {
 	auto temp = findItemInfoNorm(id);
-	
+
 	if (temp)
 		return temp->isInstalled();
 
@@ -386,10 +386,10 @@ void ItemManager::getAllItems(std::vector<gcRefPtr<UserCore::Item::ItemInfoI>> &
 	for (it = m_mItemMap.begin(); it != endit; ++it)
 	{
 		auto info = it->second->getItemInfoNorm();
-		
+
 		if (!info)
 			continue;
-		
+
 		aList.push_back(info);
 	}
 }
@@ -719,7 +719,7 @@ void ItemManager::retrieveItemInfo(DesuraId id, uint32 statusOveride, gcRefPtr<W
 				pi.pWildCard = pWildCard;
 			}
 		});
-		
+
 		processLeftOvers(maps, true);
 	}
 
@@ -752,12 +752,12 @@ void ItemManager::processLeftOvers(InfoMaps &maps, bool addMissing)
 			bool isDev = false;
 			return (infoNode.GetChild("devadmin", isDev) && isDev);
 		};
-		
+
 		bool isDevOfGame = isDev(infoNode);
 
 		if (!addMissing && !isDevOfGame)
 			return;
-		
+
 		pi.rootNode = infoNode;
 		info = createNewItem(pid, id, pi);
 
@@ -769,7 +769,7 @@ void ItemManager::processLeftOvers(InfoMaps &maps, bool addMissing)
 		{
 			DesuraId gid = p.second.second;
 			const XML::gcXMLElement &infoNode = p.second.first;
-			
+
 			if (id != gid)
 				return;
 
@@ -877,7 +877,7 @@ void ItemManager::saveDbItems(bool fullSave)
 	{
 		sqlite3x::sqlite3_connection db(szItemDb.c_str());
 		sqlite3x::sqlite3_transaction trans(db);
-	
+
 		for_each([&db](const gcRefPtr<UserCore::Item::ItemHandle> &handle){
 
 			if (handle && handle->getItemInfoNorm())
@@ -947,7 +947,7 @@ void ItemManager::parseItemUpdateXml(const char* area, const XML::gcXMLElement &
 			return;
 
 		auto item = findItemInfoNorm(id);
-				
+
 		if (!item)
 		{
 			retrieveItemInfoAsync(id, true);
@@ -957,7 +957,7 @@ void ItemManager::parseItemUpdateXml(const char* area, const XML::gcXMLElement &
 		if (item->isDeleted())
 		{
 			DesuraId currentID = item->getId();
-						
+
 			item->delSFlag(UserCore::Item::ItemInfoI::STATUS_DELETED);
 			item->addSFlag(UserCore::Item::ItemInfoI::STATUS_ONACCOUNT);
 			onNewItem(currentID);
@@ -990,19 +990,19 @@ void ItemManager::generateInfoMaps(const XML::gcXMLElement &gamesNode, InfoMaps*
 		InfoMaps* pMaps = maps;
 
 		const std::string szId = game.GetAtt("siteareaid");
-	
+
 		if (szId.empty())
 			return;
 
 		DesuraId pid = getParentId(game, game);
 		DesuraId gid(szId.c_str(), "games");
-		
+
 		maps->gameMap[gid] = std::pair<XML::gcXMLElement, DesuraId>(game, pid);
 
 		game.FirstChildElement("mods").for_each_child("mod", [&pMaps, gid](const XML::gcXMLElement &mod)
 		{
 			const std::string id = mod.GetAtt("siteareaid");
-	
+
 			if (id.empty())
 				return;
 
@@ -1084,7 +1084,7 @@ void ItemManager::parseLoginXml(const XML::gcXMLElement &gameNode, const XML::gc
 void ItemManager::parseLoginXml2(const XML::gcXMLElement &gamesNode, const XML::gcXMLElement &platformNodes)
 {
 	m_pUser->getToolManager()->initJSEngine();
-	
+
 	InfoMaps maps;
 	generateInfoMaps(gamesNode, &maps);
 
@@ -1119,7 +1119,7 @@ void ItemManager::parseGamesXml(ParseInfo& pi)
 	pi.rootNode.for_each_child("game", [&](const XML::gcXMLElement &game)
 	{
 		const std::string id = game.GetAtt("siteareaid");
-	
+
 		if (id.empty())
 			return;
 
@@ -1179,7 +1179,7 @@ void ItemManager::parseGameXml(DesuraId id, ParseInfo &pi)
 	{
 		//reset local wildcards
 		pi.pWildCard->updateInstallWildcard("INSTALL_PATH", "INSTALL_PATH");
-		
+
 		//map parent install path to normal install path incase we int the install from a child
 		pi.pWildCard->updateInstallWildcard("PARENT_INSTALL_PATH", "%INSTALL_PATH%");
 	}
@@ -1194,7 +1194,7 @@ void ItemManager::parseGameXml(DesuraId id, ParseInfo &pi)
 	}
 
 	auto temp = findItemInfoNorm(id);
-			
+
 	if (temp)
 	{
 		if (pid.isOk() && temp->getParentId() != pid)
@@ -1248,7 +1248,7 @@ void ItemManager::parseModsXml(gcRefPtr<UserCore::Item::ItemInfo> parent, ParseI
 
 		modPi.rootNode = mod;
 		modPi.infoNode = infoNode;
-		
+
 		parseModXml(parent, internId, modPi);
 	});
 }
@@ -1288,7 +1288,7 @@ void ItemManager::setFavorite(DesuraId id, bool fav)
 		sqlite3x::sqlite3_command cmd(db, szCmd.c_str());
 		cmd.bind(1, (long long int)id.toInt64());
 		cmd.bind(2, (int)m_pUser->getUserId());
-		
+
 		cmd.executenonquery(); 
 	}
 	catch (std::exception)
@@ -1561,7 +1561,7 @@ void ItemManager::parseKnownBranches(const XML::gcXMLElement &gamesNode)
 	gamesNode.for_each_child("game", [this, &parseBranch](const XML::gcXMLElement &game)
 	{
 		const std::string szId = game.GetAtt("siteareaid");
-	
+
 		if (!szId.empty())
 			return;
 
@@ -1577,7 +1577,7 @@ void ItemManager::parseKnownBranches(const XML::gcXMLElement &gamesNode)
 		game.FirstChildElement("mods").for_each_child("mod", [&parseBranchLocal](const XML::gcXMLElement &mod)
 		{
 			const std::string szId = mod.GetAtt("siteareaid");
-	
+
 			if (!szId.empty())
 				return;
 

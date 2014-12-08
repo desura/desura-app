@@ -35,7 +35,7 @@ InstallGIPage::InstallGIPage(wxWindow* parent) : BaseInstallPage(parent)
 {
 	this->SetSizeHints( wxDefaultSize, wxDefaultSize );
 	Bind(wxEVT_COMMAND_BUTTON_CLICKED, &InstallGIPage::onButtonPressed, this);
-	
+
 	wxFlexGridSizer* fgSizer1;
 	fgSizer1 = new wxFlexGridSizer( 4, 1, 0, 0 );
 	fgSizer1->AddGrowableCol( 0 );
@@ -50,12 +50,12 @@ InstallGIPage::InstallGIPage(wxWindow* parent) : BaseInstallPage(parent)
 	wxBoxSizer* bSizer4 = new wxBoxSizer( wxHORIZONTAL );
 	bSizer4->Add( 0, 0, 1, wxEXPAND, 5 );
 	bSizer4->Add( m_butCancel, 0, wxALL, 5 );
-	
+
 	fgSizer1->Add( m_labInfo, 0, wxLEFT|wxRIGHT|wxTOP, 5 );
 	fgSizer1->Add( m_pbProgress, 1, wxEXPAND|wxALL, 5 );
 	fgSizer1->Add(0, 0, 0, wxEXPAND, 5);
 	fgSizer1->Add( bSizer4, 1, wxEXPAND, 5 );
-	
+
 	this->SetSizer( fgSizer1 );
 	this->Layout();
 	this->setParentSize(-1, 140);
@@ -116,7 +116,7 @@ void InstallGIPage::onError(gcException& e)
 			name = item->getName();
 
 		gcString errMsg;
-		
+
 		if (e.getSecErrId() == 0)
 			errMsg = gcString(Managers::GetString("#IF_GERROR_PLATFORM"), name);
 		else

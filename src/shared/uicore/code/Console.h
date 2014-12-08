@@ -58,7 +58,7 @@ public:
 	WINDOW_UNREG();
 
 	void appendText(gcWString text, Color col = Color(0));
-	
+
 	void processCommand();
 	void conDump();
 	void applyTheme();
@@ -77,7 +77,7 @@ protected:
 	wxRichTextCtrl* m_rtDisplay;
 	gcComboBox* m_tbInfo;
 	gcButton* m_butSubmit;
-	
+
 	void onWindowClose( wxCloseEvent& event );
 	void onSubmitClicked( wxCommandEvent& event );
 	void onKeyDown( wxKeyEvent& event );	

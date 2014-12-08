@@ -76,9 +76,9 @@ void gcStaticText::SetLabel(const wxString& label)
 {
 	if (m_szLastLabel == label)
 		return;
-		
+
 	m_szLastLabel = label;
-	
+
 	gcFlickerFreePaint<wxStaticText>::SetLabel(label);
 	this->invalidatePaint();
 }

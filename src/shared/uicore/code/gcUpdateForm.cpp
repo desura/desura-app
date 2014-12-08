@@ -67,7 +67,7 @@ GCUpdateInfo::GCUpdateInfo(wxWindow* parent)
 	fgSizer1->Add( m_labInfo, 0, wxALIGN_CENTER_VERTICAL|wxTOP|wxRIGHT|wxLEFT, 5 );
 	fgSizer1->Add( m_ieBrowser, 1, wxEXPAND|wxTOP|wxRIGHT|wxLEFT, 5 );
 	fgSizer1->Add( bSizer1, 1, wxALIGN_CENTER_VERTICAL|wxALIGN_CENTER_HORIZONTAL|wxEXPAND, 5 );
-	
+
 	this->SetSizer( fgSizer1 );
 	this->Layout();
 
@@ -107,7 +107,7 @@ void GCUpdateInfo::onButClick(wxCommandEvent& event)
 void GCUpdateInfo::onPageLoad()
 {
 	ERROR_OUTPUT("Showing update form");
-	
+
 	Show(true);
 
 #ifdef WIN32

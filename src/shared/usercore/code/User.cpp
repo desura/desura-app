@@ -255,7 +255,7 @@ void User::appNeedUpdate(uint32 appver, uint32 appbuild, bool bForced)
 	{
 		if (szAppid.size() > 0)
 			m_uiLastUpdateVer = Safe::atoi(szAppid.c_str());
-		
+
 		if (m_uiLastUpdateVer == 0)
 			m_uiLastUpdateVer = 100;
 	}
@@ -302,7 +302,7 @@ const char* User::getCVarValue(const char* cvarName)
 {
 	if (!cvarName)
 		return nullptr;
-		
+
 	UserCore::Misc::CVar_s temp;
 	temp.name = cvarName;
 	temp.value = nullptr;
@@ -317,7 +317,7 @@ void User::onUpdateComplete(UserCore::Misc::update_s& info)
 
 	m_uiLastUpdateBuild = info.build;
 	m_bDownloadingUpdate = false;
-	
+
 	if (info.alert)
 	{
 		UserCore::Misc::UpdateInfo uLast(m_uiLastUpdateVer, m_uiLastUpdateBuild);
@@ -330,7 +330,7 @@ void User::onUpdateStart(UserCore::Misc::update_s& info)
 	gcTrace("");
 
 	m_uiLastUpdateBuild = info.build;
-	
+
 	if (info.alert)
 	{
 		UserCore::Misc::UpdateInfo uLast(m_uiLastUpdateVer, m_uiLastUpdateBuild);
@@ -440,7 +440,7 @@ void User::parseNewsAndGifts(const XML::gcXMLElement &xmlNode, const char* szChi
 
 		itemElem.GetChild("title", szTitle);
 		itemElem.GetChild("url", szUrl);
-			
+
 		if (szId.empty() || szTitle.empty() || szUrl.empty())
 			return;
 

@@ -68,10 +68,10 @@ protected:
 	wxCheckBox* m_cbRemoveCache;
 	wxCheckBox* m_cbRemoveSimple;
 	wxCheckBox* m_cbRemoveComplex;
-		
-	
+
+
 private:
-	
+
 };
 
 #endif //DESURA_UDFSETTINGSPANEL_H

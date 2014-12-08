@@ -75,7 +75,7 @@ void UninstallAllThread::run()
 		if (removeSimple && game->isInstalled())
 			uninstallList.push_back(m_pUser->getItemManager()->findItemHandle(game->getId()));
 	}
-	
+
 	{
 		gcString str("{0}\n", Managers::GetString("#DUN_THREAD_UNINSTALL"));
 		onLogEvent(str);
@@ -98,7 +98,7 @@ void UninstallAllThread::run()
 
 		gcString logStr("\t{0}\n", gcString(Managers::GetString("#DUN_THREAD_UNINSTALL_SUB"), itemHandle->getItemInfo()->getName()));
 		onLogEvent(logStr);
-	
+
 		itemHandle->addHelper(this);
 		itemHandle->uninstall(this, true, false);
 
@@ -297,7 +297,7 @@ void UninstallAllThread::removeDesuraSettings()
 
 	UTIL::FS::Path dbDir(UTIL::OS::getAppDataPath(), L"", false);
 	UTIL::FS::Path localAppDir(UTIL::OS::getLocalAppDataPath(), L"", false);
-	
+
 	std::vector<UTIL::FS::Path> fileList;
 	std::vector<UTIL::FS::Path> folderList;
 
@@ -306,7 +306,7 @@ void UninstallAllThread::removeDesuraSettings()
 
 	UTIL::FS::getAllFiles(localAppDir, fileList, nullptr);
 	UTIL::FS::getAllFolders(localAppDir, folderList);
-	
+
 	for (size_t x=0; x<fileList.size(); x++)
 	{
 		std::string fileName = fileList[x].getFile().getFile();

@@ -71,7 +71,7 @@ gcString WildcardManager::constructPath(const char* path, bool fixPath)
 	ret = szPathOut;
 	return ret;
 }
-	
+
 void WildcardManager::constructPath(const char* path, char **res, bool fixPath)
 {
 	if (!path)
@@ -117,7 +117,7 @@ void WildcardManager::constructPath(const char* path, char **res, uint8 *depth)
 			else if (start == -1)
 			{
 				start = (int32)x;
-		
+
 				char* temp = new char[start-stop+1];
 				for (int32 y=stop; y<=start; y++)
 					temp[y-stop] = path[y];
@@ -263,7 +263,7 @@ uint8 WildcardManager::parseXML(const XML::gcXMLElement &xmlElement)
 		const std::string name = xmlChild.GetAtt("name");
 		const std::string type = xmlChild.GetAtt("type");
 		const std::string string = xmlChild.GetText();
-			
+
 		if (!name.empty() && !type.empty() && !string.empty())
 		{
 			addItem(gcRefPtr<WildcardInfo>::create(name, string, type));
@@ -330,7 +330,7 @@ void WildcardManager::resolveWildCard(gcRefPtr<WildcardInfo> wcInfo)
 		{
 			WCSpecialInfo info;
 			info.name = wcInfo->m_szName;
-						
+
 			needSpecial(&info);
 
 			if (info.handled)

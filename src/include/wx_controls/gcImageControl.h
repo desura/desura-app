@@ -47,15 +47,15 @@ public:
 	//! Display the image in this propotion
 	//!
 	void setPropotional(uint32 x, uint32 y);
-	
+
 	//! Set if the background should be cleared before painting
 	//!
 	void setClearBG(bool state){m_bClearBG = state;}
-	
+
 	//! Set if the image should be tiled if it is too small
 	//!
 	void setTile(bool state){m_bTile = state;}
-	
+
 	//! Set if the image should be displayed with transperency enabled
 	//!
 	void setTrans(bool state){m_bTransEnabled = state;}

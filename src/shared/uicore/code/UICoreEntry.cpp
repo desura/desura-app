@@ -262,7 +262,7 @@ public:
 	bool singleInstantCheck(const char* args)
 	{
 		std::string path = UTIL::STRING::toStr(UTIL::OS::getCachePath());
-		
+
 		UTIL::FS::recMakeFolder(path.c_str());
 		m_pChecker = new wxSingleInstanceChecker("applock", path);
 
@@ -271,12 +271,12 @@ public:
 
 		return true;
 	}
-	
+
 	void destroySingleInstanceCheck()
 	{
 		safe_delete(m_pChecker);
 	}
-	
+
 	void disableSingleInstanceLock()
 	{
 		m_pChecker = nullptr;
@@ -363,7 +363,7 @@ bool setDumpLevel(const CVar* cvar, const char* value)
 
 	if (level != 0)
 		g_pUICore.setDumpLevel(level);
-	
+
 	return true;
 }
 

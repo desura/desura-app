@@ -212,7 +212,7 @@ bool SetShape(const wxRegion& region, wxWindow* frame)
     ::GetRegionData((HRGN)(region.GetHRGN()), noBytes, rgnData);
     HRGN hrgn = ::ExtCreateRegion(nullptr, noBytes, rgnData);
     delete[] (char*) rgnData;
-   
+
     RECT rect;
     DWORD dwStyle =   ::GetWindowLong((HWND)frame->GetHWND(), GWL_STYLE);
     DWORD dwExStyle = ::GetWindowLong((HWND)frame->GetHWND(), GWL_EXSTYLE);
@@ -226,7 +226,7 @@ bool SetShape(const wxRegion& region, wxWindow* frame)
         return false;
     }
     return true;
-    
+
 #elif defined(__WXMAC__)
 	if ( region.IsEmpty() )
     {
@@ -268,7 +268,7 @@ bool SetShape(const wxRegion& region, wxWindow* frame)
 	{
 		wxBitmap bmp = ConvertRegionToBitmap(region);
 		bmp.SetMask(new wxMask(bmp, *wxBLACK));
-		
+
 		GdkBitmap* mask = *bmp.GetMask();
 
 		if (m_wxwindow)

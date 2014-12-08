@@ -56,7 +56,7 @@ public:
 	{
 		m_pMcf = nullptr;
 		setHandle(handle.m_pMcf);
-		
+
 		handle.m_pMcf = nullptr;
 	}
 

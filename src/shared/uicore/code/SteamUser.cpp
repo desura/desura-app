@@ -138,7 +138,7 @@ SteamUserDialog::SteamUserDialog(wxWindow* parent)
 
 	fgSizer1->Add( m_labInfo, 0, wxALL, 5 );
 	fgSizer1->Add( bSizer2, 1, wxEXPAND|wxALL, 5 );
-	
+
 	this->SetSizer( fgSizer1 );
 	this->Layout();
 }

@@ -319,7 +319,7 @@ void ToolManager::parseXml(const XML::gcXMLElement &toolinfoNode)
 		if (bAdd)
 			this->addItem(tool);
 	});
-	
+
 	postParseXml();
 }
 
@@ -459,7 +459,7 @@ bool ToolManager::updateTransaction(ToolTransactionId ttid, gcRefPtr<Misc::ToolT
 
 	m_MapLock.lock();
 	std::map<ToolTransactionId, gcRefPtr<Misc::ToolTransInfo>>::iterator it = m_mTransactions.find(ttid);
-	
+
 	if (it != m_mTransactions.end())
 	{
 		it->second->updateTransaction(transaction);

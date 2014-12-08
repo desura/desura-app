@@ -31,7 +31,7 @@ $/LicenseInfo$
 ChangeLogForm::ChangeLogForm( wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos, const wxSize& size, long style ) : gcFrame( parent, id, title, pos, size, style )
 {
 	this->SetSizeHints( wxSize( 400,300 ), wxDefaultSize );
-	
+
 	wxBoxSizer* bSizer1 = new wxBoxSizer( wxVERTICAL );
 	wxBoxSizer* bSizer2 = new wxBoxSizer( wxHORIZONTAL );
 
@@ -44,7 +44,7 @@ ChangeLogForm::ChangeLogForm( wxWindow* parent, wxWindowID id, const wxString& t
 
 	bSizer1->Add( m_ieBrowser, 1, wxLEFT|wxRIGHT|wxTOP|wxEXPAND, 5 );
 	bSizer1->Add( bSizer2, 0, wxEXPAND, 5 );
-	
+
 	this->SetSizer( bSizer1 );
 	this->Layout();
 

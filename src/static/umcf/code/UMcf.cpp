@@ -76,7 +76,7 @@ public:
 	FileHandle(const char* path, uint64_t offset)
 	{
 		hFileSrc = fopen64(path, "rb");
-		
+
 		if (offset != 0)
 			fseek(hFileSrc, offset, SEEK_SET);
 	}
@@ -85,7 +85,7 @@ public:
 	{
 		gcString p(path);
 		hFileSrc = fopen64(p.c_str(), "rb");
-		
+
 		if (offset != 0)
 			fseek(hFileSrc, offset, SEEK_SET);
 	}
@@ -290,10 +290,10 @@ void UMcf::install(const wchar_t* path)
 #endif
 
 		uint8 res = m_pFileList[x]->readMCFAndSave(fh.hFileSrc, path?path:L".\\", m_uiOffset, delegate(this, &UMcf::onFileProgress));
-		
+
 		if (m_bCanceled)
 			throw gcException(ERR_USERCANCELED);
-			
+
 		if (res == MCFF_ERR_BADHASH)
 			throw gcException(ERR_CSUM_FAILED, gcString("Check sum failed on file {0}\\{1}", m_pFileList[x]->getPath(), m_pFileList[x]->getName()));
 
@@ -431,7 +431,7 @@ bool UMcf::isValidInstaller()
 			printf("Not valid: %s\n", gcString(m_pFileList[x]->getName()).c_str());
 			return false;
 		}
-		
+
 		count++;
 	}
 
@@ -561,7 +561,7 @@ bool UMcf::isUpdateNewer()
 
 	if (!fh)
 		return true;
-	
+
 	uint32 appid = -1;
 	uint32 build = -1;
 

@@ -57,7 +57,7 @@ protected:
 	gcStaticText* m_labLabel;
 	gcStaticText* m_labInfo;
 	gcSpinnerProgBar* m_pbProgress;
-	
+
 	gcButton* m_butPause;
 	gcButton* m_butHide;
 

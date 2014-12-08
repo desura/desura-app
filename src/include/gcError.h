@@ -248,7 +248,7 @@ public:
 	{
 		m_uiErrId = ERR_UNKNOWNERROR;
 		m_uiSecErrId = 0;
-		
+
 		assign(errMsg[ERR_UNKNOWNERROR]);
 	}
 
@@ -256,7 +256,7 @@ public:
 	{
 		m_uiErrId = e.getErrId();
 		m_uiSecErrId = e.getSecErrId();
-		
+
 		assign(e.getErrMsg());
 	}
 
@@ -310,7 +310,7 @@ public:
 	explicit gcException(uint64 vs)
 	{
 		gcException *gcE = (gcException*)vs;
-		
+
 		if (gcE)
 		{
 			m_uiErrId = gcE->getErrId();
@@ -326,7 +326,7 @@ public:
 
 	gcException(const gcException *gcE)
 	{
-		
+
 
 		if (gcE)
 		{

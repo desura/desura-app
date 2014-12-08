@@ -41,39 +41,39 @@ namespace MISC
 
 #define rotateleft(x,n) ((x<<n) | (x>>(32-n)))
 #define rotateright(x,n) ((x>>n) | (x<<(32-n)))
- 
+
 std::string SHA1(const unsigned char * str1, uint32 len)
 {
 	unsigned long int h0,h1,h2,h3,h4,a,b,c,d,e,f,k,temp;
- 
+
 	h0 = 0x67452301;
 	h1 = 0xEFCDAB89;
 	h2 = 0x98BADCFE;
 	h3 = 0x10325476;
 	h4 = 0xC3D2E1F0;
- 
+
 	unsigned char * str = new unsigned char[len+100];
 	UTIL::STRING::zeroBuffer((char*)str, len+100);
 
 	memcpy(str, str1, len);
 
- 
+
 	int current_length = len;
 	int original_length = current_length;
 	str[current_length] = 0x80;
 	str[current_length + 1] = '\0';
- 
+
 #ifdef WIN32 // doesn't seem to get used
 	char ic = str[current_length];
 #endif
 	current_length++;
- 
+
 	int ib = current_length % 64;
 	if(ib<56)
 		ib = 56-ib;
 	else
 		ib = 120 - ib;
- 
+
 	int i = 0;
 	for(i=0; i<ib; i++)
 	{
@@ -82,7 +82,7 @@ std::string SHA1(const unsigned char * str1, uint32 len)
 	}
 
 	str[current_length + 1]='\0';
- 
+
 	for(i=0; i<6; i++)
 	{
 		str[current_length]=0x0;
@@ -94,7 +94,7 @@ std::string SHA1(const unsigned char * str1, uint32 len)
 	str[current_length] = (original_length * 8) % 0x100;
 	current_length++;
 	str[current_length+i]='\0';
- 
+
 	int number_of_chunks = current_length/64;
 	unsigned long int word[80];
 
@@ -108,13 +108,13 @@ std::string SHA1(const unsigned char * str1, uint32 len)
 		{
 			word[j] = rotateleft((word[j-3] ^ word[j-8] ^ word[j-14] ^ word[j-16]),1);
 		}
- 
+
 		a = h0;
 		b = h1;
 		c = h2;
 		d = h3;
 		e = h4;
- 
+
 		for(int m=0; m<80; m++)
 		{
 			if(m<=19)
@@ -137,26 +137,26 @@ std::string SHA1(const unsigned char * str1, uint32 len)
 				f = b ^ c ^ d;
 				k = 0xCA62C1D6; 
 			}
- 
+
 			temp = (rotateleft(a,5) + f + e + k + word[m]) & 0xFFFFFFFF;
 			e = d;
 			d = c;
 			c = rotateleft(b,30);
 			b = a;
 			a = temp;
- 
+
 		}
- 
+
 		h0 = h0 + a;
 		h1 = h1 + b;
 		h2 = h2 + c;
 		h3 = h3 + d;
 		h4 = h4 + e;
- 
+
 	}
 
 	safe_delete(str);
- 
+
 	return gcString("{0,8:x0}{1,8:x0}{2,8:x0}{3,8:x0}{4,8:x0}", h0, h1, h2, h3, h4);
 }
 

@@ -46,7 +46,7 @@ UninstallProgressPage::UninstallProgressPage(wxWindow* parent, wxString label) :
 	wxBoxSizer* bSizer2 = new wxBoxSizer( wxHORIZONTAL );
 	bSizer2->Add( 0, 0, 1, wxEXPAND, 5 );
 	bSizer2->Add( m_butClose, 0, wxALL, 5 );
-	
+
 
 	wxFlexGridSizer* fgSizer3;
 	fgSizer3 = new wxFlexGridSizer( 4, 1, 0, 0 );

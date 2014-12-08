@@ -127,7 +127,7 @@ namespace XML
 				return false;
 
 			auto child = m_pConstElement->FirstChildElement(name);
-	
+
 			if (child)
 				(*obj.*func)(child->GetText());
 
@@ -192,7 +192,7 @@ namespace XML
 
 			safe_delete(str);
 			str = new char[string.length()+1];
-		
+
 		#ifdef WIN32
 			strcpy_s(str, string.length()+1, string.c_str());
 		#else
@@ -452,7 +452,7 @@ namespace XML
 
 			if (!statStr)
 				throw gcException(ERR_BADXML, "No status code");
-		
+
 			status = Safe::atoi(statStr);
 
 			if (status != 0)

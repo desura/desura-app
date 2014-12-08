@@ -247,7 +247,7 @@ void MCFManager::getAllMcfPaths(DesuraId id, std::vector<McfPathData> &vList)
 
 		sqlite3x::sqlite3_command cmd(db, "SELECT path, mcfbuild, branch FROM mcfitem WHERE internalid=?");
 		cmd.bind(1, (long long int)id.toInt64());
-		
+
 		sqlite3x::sqlite3_reader reader = cmd.executereader();
 
 		while (reader.read())

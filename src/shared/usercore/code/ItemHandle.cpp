@@ -428,7 +428,7 @@ void ItemHandle::goToStageInstallTools(bool launch)
 void ItemHandle::goToStageGatherInfo(MCFBranch branch, MCFBuild build, UserCore::ItemTask::GI_FLAGS flags)
 {
 	gcRefPtr<Helper::GatherInfoHandlerHelperI> helper;
-	
+
 	if (m_pFactory)
 		helper = m_pFactory->getGatherInfoHelper();
 
@@ -483,7 +483,7 @@ void ItemHandle::goToStageUninstall(bool complete, bool account)
 		if (m_pThread)
 			m_pThread->purge();
 	}
-	
+
 
 	if (HasAllFlags(getItemInfo()->getStatus(), UserCore::Item::ItemInfoI::STATUS_INSTALLCOMPLEX))
 	{
@@ -547,12 +547,12 @@ bool ItemHandle::getComplexLock()
 
 	gcException eItem(ERR_INVALID, "Failed to get lock. Another task is using this item. Please stop that task and try again.");
 	gcException eGame(ERR_INVALID, "Failed to get lock. Another task is using the parent game-> Please stop that task and try again.");
-	
+
 	if (obj != parentHandle)
 		onErrorEvent(eItem);
 	else
 		onErrorEvent(eGame);
-	
+
 	completeStage(true);
 	return false;
 }
@@ -576,7 +576,7 @@ void ItemHandle::goToStageUninstallPatch(MCFBranch branch, MCFBuild build)
 
 		if (isParentComplex)
 			parentItem = getItemInfo();
-		
+
 		//need to uninstall complex mods otherwise the backup file will be wrong
 		if (parentItem->getInstalledModId().isOk())
 		{
@@ -719,7 +719,7 @@ void ItemHandle::registerTask(gcRefPtr<UserCore::ItemTask::BaseItemTask> task)
 
 		m_bStopped = false;
 	}
-	
+
 	m_pThread->queueTask(task);
 }
 
@@ -941,7 +941,7 @@ bool ItemHandle::cleanComplexMods()
 	if (getItemInfo()->getInstalledModId().isOk())
 	{
 		auto mod = m_pUserCore->getItemManager()->findItemInfo(getItemInfo()->getInstalledModId());
-			
+
 		if (mod && HasAllFlags(mod->getStatus(), UserCore::Item::ItemInfoI::STATUS_INSTALLCOMPLEX))
 		{
 			if (!getComplexLock())
@@ -967,7 +967,7 @@ void ItemHandle::preLaunchCheck()
 
 	if (!ei)
 		throw gcException(ERR_LAUNCH, gcString("Failed to launch item {0}, No executable info available.", getItemInfo()->getName()));
-	
+
 	UTIL::FS::Path path = UTIL::FS::PathWithFile(ei->getExe());
 
 	if (!UTIL::FS::isValidFile(path))
@@ -1430,7 +1430,7 @@ bool ItemHandle::setTaskGroup(gcRefPtr<ItemTaskGroup> group, bool force)
 		if (getStage() == UserCore::Item::ITEM_STAGE::STAGE_WAIT)
 			cancelCurrentStage();
 	}
-	
+
 	return true;
 }
 
@@ -1658,7 +1658,7 @@ namespace UnitTest
 			"INSERT INTO installinfoex VALUES(4294967328,100,'C:\\Program Files (x86)\\charlie\\Charlie.exe');",
 			"INSERT INTO branchinfo VALUES(1, 4294967328, 'test', 256, 'http://eula.com', 0, 0, '', '', 0, 1, 100);",
 			"INSERT INTO iteminfo VALUES(4294967328,0,0,32798,0,'dev-02','Charlie','charlie','','','','','','','dev-02','',1,1);",
-			
+
 			"INSERT INTO exe VALUES(8589934608,100,'Play','C:\\Program Files (x86)\\charlie\\Charlie.exe','','',0);",
 			"INSERT INTO installinfo VALUES(8589934608,100,'C:\\Program Files (x86)\\charlie','C:\\Program Files (x86)\\charlie\\Charlie.exe','',0,0,0);",
 			"INSERT INTO installinfoex VALUES(8589934608,100,'C:\\Program Files (x86)\\charlie\\Charlie.exe');",

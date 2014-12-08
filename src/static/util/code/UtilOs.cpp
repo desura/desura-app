@@ -75,7 +75,7 @@ std::string getOSString()
 #ifdef WIN32
 	char buff[255] = {0};
 	UTIL::WIN::getOSString(buff, 255);
- 
+
 	return std::string(buff, 255);
 #endif
 
@@ -163,10 +163,10 @@ std::wstring getCachePath(std::wstring extra)
 	#elif defined(USE_PORTABLE_DIR)
 		std::string cachePath = UTIL::STRING::toStr(getCurrentDir(L"cache"));
 	#endif
-	
+
 	if (extra.size() > 0)
 		extra.insert(0, DIRS_WSTR);
-	
+
 	return UTIL::STRING::toWStr(cachePath) + extra;
 #else
 	return getAppDataPath(std::wstring(L"cache\\") + extra);
@@ -194,10 +194,10 @@ std::wstring getAppInstallPath(std::wstring extra)
 	#elif defined(USE_PORTABLE_DIR)
 		std::string installPath = UTIL::STRING::toStr(getCurrentDir(L"games"));
 	#endif
-	
+
 	if (extra.size() > 0)
 		extra.insert(0, DIRS_WSTR);
-	
+
 	return UTIL::STRING::toWStr(installPath) + extra;
 #else
 	return UTIL::OS::getCurrentDir(DIR_WCOMMON);
@@ -216,10 +216,10 @@ std::wstring getAppDataPath(std::wstring extra)
 	#elif defined(USE_PORTABLE_DIR)
 		std::string configPath = UTIL::STRING::toStr(getCurrentDir(L"config"));
 	#endif
-	
+
 	if (extra.size() > 0)
 		extra.insert(0, DIRS_WSTR);
-	
+
 	return UTIL::STRING::toWStr(configPath) + extra;
 #else
 	wchar_t path[MAX_PATH];
@@ -245,7 +245,7 @@ std::wstring getLocalAppDataPath(std::wstring extra)
 #ifdef WIN32
 	wchar_t path[MAX_PATH];
 	getSystemPath(CSIDL_LOCAL_APPDATA, path);
-	
+
 	std::wstring out(path);
 
 	out += L"\\";
@@ -268,7 +268,7 @@ std::wstring getTempInternetPath(std::wstring extra)
 #ifdef WIN32
 	wchar_t path[MAX_PATH];
 	getSystemPath(CSIDL_INTERNET_CACHE, path);
-	
+
 	std::wstring out(path);
 
 	out += L"\\";
@@ -293,7 +293,7 @@ std::wstring getCommonProgramFilesPath(std::wstring extra)
 #ifdef WIN32
 	wchar_t path[MAX_PATH];
 	getSystemPath(CSIDL_PROGRAM_FILES_COMMON, path);
-	
+
 	std::wstring out(path);
 
 	out += L"\\Desura";
@@ -315,7 +315,7 @@ std::wstring getStartMenuProgramsPath(std::wstring extra)
 #ifdef WIN32
 	wchar_t path[MAX_PATH];
 	getSystemPath(CSIDL_COMMON_PROGRAMS, path);
-	
+
 	std::wstring out(path);
 
 	if (extra.size() > 0)
@@ -335,7 +335,7 @@ std::wstring getDesktopPath(std::wstring extra)
 #ifdef WIN32
 	wchar_t path[MAX_PATH];
 	getSystemPath(CSIDL_DESKTOP, path);
-	
+
 	std::wstring out(path);
 
 	if (extra.size() > 0)
@@ -368,22 +368,22 @@ gcString getAbsPath(const gcString& path)
 {
 	if (path.size() == 0 || path[0] == '/')
 		return path;
-	
+
 	gcString wd = UTIL::LIN::getAppPath(L"");
-	
+
 	if (path.find(wd) == std::string::npos)
 		return wd + "/" + path;
-	
+
 	return path;	
 }
 
 gcString getRelativePath(const gcString &path)
 {
 	gcString wd = UTIL::LIN::getAppPath(L"");
-	
+
 	if (path.find(wd) == 0)
 		return path.substr(wd.size()+1, std::string::npos);
-	
+
 	return path;
 }
 

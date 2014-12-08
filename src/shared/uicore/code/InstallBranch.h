@@ -53,7 +53,7 @@ public:
 protected:
 	wxStaticText* m_labInfo;
 	wxChoice* m_cbBranchList;
-	
+
 	gcButton* m_butInfo;
 	gcButton* m_butInstall;
 	gcButton* m_butCancel;

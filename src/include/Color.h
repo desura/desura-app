@@ -131,7 +131,7 @@ public:
 		else
 		{
 			red = Safe::atoi(text);
-	
+
 			char textcpy[255] = {0};
 #ifdef WIN32
 			strcpy_s(textcpy, 255, text);

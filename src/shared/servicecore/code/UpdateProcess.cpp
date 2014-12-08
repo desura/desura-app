@@ -112,9 +112,9 @@ void GCUpdateProcess::install()
 
 		if (!m_bTestMode)
 			deleteDumps();
-		
+
 		m_pOldMcf = new UMcf();
-		
+
 		if (m_pOldMcf->loadFromFile(xmlPath.c_str()) != MCF_OK)
 			throw gcException(ERR_INVALID, "Failed to load xml file");
 
@@ -130,7 +130,7 @@ void GCUpdateProcess::install()
 			gcString szIPath(m_szIPath);
 
 			m_pUMcf->setRegValues(szIPath.c_str());
-			
+
 			if (!updateService(szIPath.c_str()))
 				throw gcException(ERR_INVALID, "Failed to move service to common files.");
 		}
