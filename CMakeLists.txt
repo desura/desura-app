@@ -285,10 +285,12 @@ SetupDownloadUrlCustom(WXWIDGET "http://sourceforge.net/projects/wxwindows/files
 if(NOT BUILD_ONLY_CEF)
   if(NOT wxWidgets_FOUND)
     include(BuildwxWidgets)
+    add_dependencies(desura wxWidgets)
   endif()
 
   if(NOT Boost_FOUND)
     include(BuildBoost)
+    add_dependencies(desura boost)
   endif()
 
   if(NOT BREAKPAD_EXCEPTION_HANDLER_FOUND)
