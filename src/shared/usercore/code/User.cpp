@@ -182,12 +182,10 @@ void User::cleanUp()
 #endif
 	safe_delete(m_pCIPManager);
 
-	if (m_pItemManager.getRefCt() > 1)
+	if (m_pItemManager.getRefCt() <= 1)
 	{
-		delete m_pItemManager.get();
-	}
-	else
 		safe_delete(m_pItemManager);
+	}
 
 	safe_delete(m_pToolManager);
 	safe_delete(m_pPipeClient);

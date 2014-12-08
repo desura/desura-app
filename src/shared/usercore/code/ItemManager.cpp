@@ -95,6 +95,7 @@ public:
 ItemManager::ItemManager(gcRefPtr<User> user) 
 	: BaseManager()
 	, m_pUser(user)
+	, m_Cleaned( false )
 {
 	m_bEnableSave = false;
 	m_bFirstLogin = false;
@@ -129,18 +130,23 @@ ItemManager::~ItemManager()
 
 void ItemManager::cleanup()
 {
-	saveDbItems(true);
+	if ( ! m_Cleaned )
+	{
+		m_Cleaned = true;
 
-	onUpdateEvent.reset();
-	onFavoriteUpdateEvent.reset();
-	onRecentUpdateEvent.reset();
+		saveDbItems(true);
 
-	auto list = dumpAndClear();
+		onUpdateEvent.reset();
+		onFavoriteUpdateEvent.reset();
+		onRecentUpdateEvent.reset();
 
-	for (const auto & i : list)
-		i->cleanup();
+		auto list = dumpAndClear();
 
-	safe_delete(list);
+		for (const auto & i : list)
+			i->cleanup();
+
+		safe_delete(list);
+	}
 }
 
 void ItemManager::migrateOldItemInfo(const char* olddb, const char* newdb)
