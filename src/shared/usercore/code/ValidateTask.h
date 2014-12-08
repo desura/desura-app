@@ -88,7 +88,7 @@ namespace UserCore
 			gcString m_szInstallPath;
 
 			ACTION m_Action = ACTION::CHECK_LOCALFILES;
-	
+
 			std::vector<uint32> m_vMcfFileCountList;
 
 			uint32 m_CurMcfIndex = 0;

@@ -143,11 +143,11 @@ gcMessageDialog::gcMessageDialog(wxWindow* parent, const wxString& message, cons
 	fgSizer2->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
 	fgSizer2->Add( m_imgIcon, 0, wxALL, 10 );
 	fgSizer2->Add( m_labInfo, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
-	
+
 
 	m_bsButtonSizer = new wxBoxSizer( wxHORIZONTAL );
 	m_bsButtonSizer->Add( 0, 0, 1, wxEXPAND, 5 );
-	
+
 	for (size_t x=0; x<m_bButtonList.size(); x++)
 		m_bsButtonSizer->Add(m_bButtonList[x], 0, wxTOP|wxBOTTOM|wxRIGHT, 5 );
 
@@ -173,7 +173,7 @@ gcMessageDialog::gcMessageDialog(wxWindow* parent, const wxString& message, cons
 	this->Layout();
 
 	centerOnParent(parent);
-	
+
 #ifdef NIX
 	this->Raise();
 #endif
@@ -247,7 +247,7 @@ void gcMessageDialog::addHelper(HelperButtonsI* helper)
 
 	for (size_t x=0; x<m_bButtonList.size(); x++)
 		m_bsButtonSizer->Add(m_bButtonList[x], 0, wxTOP|wxBOTTOM|wxRIGHT, 5 );
-		
+
 	this->Layout();
 }
 
@@ -264,7 +264,7 @@ wxSize gcMessageDialog::getBestTextSize()
 
 	txtSize.SetWidth(370);
 	txtSize.SetHeight( lableSize + buttonSize + 40);
-	
+
 	if (txtSize.GetHeight() < 120)
 		txtSize.SetHeight(120);
 
@@ -301,6 +301,6 @@ void gcMessageDialog::onChar(wxKeyEvent& event)
 			wxTheClipboard->Close();
 		}
 	}
-	
+
 	event.Skip();
 }

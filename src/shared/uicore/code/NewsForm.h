@@ -48,7 +48,7 @@ public:
 
 protected:
 	NewsBrowser* m_ieBrowser;
-	
+
 	gcButton* m_butPrev;
 	gcButton* m_butNext;
 	gcButton* m_butClose;
@@ -59,7 +59,7 @@ protected:
 
 private:
 	uint32 m_uiSelected;
-	
+
 	gcWString m_szTitle;
 	gcWString m_szLoadingUrl;
 

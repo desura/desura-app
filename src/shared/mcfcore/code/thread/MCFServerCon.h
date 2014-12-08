@@ -111,7 +111,7 @@ public:
 
 protected:
 	void doDownloadRange(uint64 offset, uint32 size);
-	
+
 	void onProgress(Prog_s &prog);
 	void onWrite(WriteMem_s &mem);
 

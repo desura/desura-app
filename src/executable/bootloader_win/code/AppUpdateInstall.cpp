@@ -61,7 +61,7 @@ AppUpdateInstall::AppUpdateInstall(ProgressReportI* progressReport, bool testMod
 	GetCurrentDirectory(255, temp);
 
 	m_pPrivates->m_szInsPath = temp;
-	
+
 	if (m_pPrivates->m_bTestMode)
 		m_pPrivates->m_szMcfPath = "desura_update.mcf";
 	else

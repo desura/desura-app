@@ -47,7 +47,7 @@ public:
 
 	virtual bool preExecuteValidation(const char* function, uint32 functionHash, JSObjHandle object, size_t argc, JSObjHandle* argv);
 
-	
+
 private:
 	gcString getItemId(gcRefPtr<UserCore::Item::ItemInfoI> item);
 	gcString getItemParentId(gcRefPtr<UserCore::Item::ItemInfoI> item);

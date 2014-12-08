@@ -264,7 +264,7 @@ void ToolManager::findJSTools(gcRefPtr<UserCore::Item::ItemInfoI> item)
 		return;
 
 	m_ScriptLock.lock();
-	
+
 	if (!m_pFactory)
 	{
 		Warning("Failed to load scriptcore for find JS Tools\n");

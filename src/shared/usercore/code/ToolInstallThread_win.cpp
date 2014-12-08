@@ -67,7 +67,7 @@ bool ToolInstallThread::preInstallStart()
 		onFailedToRunEvent();
 		return false;
 	}
-	
+
 	return true;
 }
 
@@ -75,7 +75,7 @@ void ToolInstallThread::onPipeDisconnect()
 {
 	gcTrace("");
 	m_MapLock.lock();
-	
+
 	gcException e(ERR_PIPE, "Pipe to Tool Install Helper Disconnected. Failed to install tools.");
 
 	std::for_each(m_mTransactions.begin(), m_mTransactions.end(), [&e](std::pair<ToolTransactionId, gcRefPtr<Misc::ToolTransInfo>> t){
@@ -108,7 +108,7 @@ void ToolInstallThread::startIPC()
 
 	m_MapLock.lock();
 	auto it = m_mTransactions.find(m_CurrentInstall);
-	
+
 	if (it != m_mTransactions.end())
 		it->second->startingIPC();
 

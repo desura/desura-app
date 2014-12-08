@@ -57,9 +57,9 @@ protected:
 	gcStaticText* m_labTitle;
 	gcStaticText* m_labInfo;
 	gcSpinnerProgBar* m_pbProgress;
-	
+
 	gcButton* m_butCancel;
-	
+
 	void onComplete(uint32&);
 	void onError(gcException& e);
 	void onProgress(MCFCore::Misc::ProgressInfo& info);

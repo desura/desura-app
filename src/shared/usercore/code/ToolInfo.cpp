@@ -194,7 +194,7 @@ void ToolInfo::parseXml(const XML::gcXMLElement &toolInfoNode, WildcardManager* 
 			if (res && UTIL::FS::isValidFile(res))
 			{
 				m_uiFlags |= TF_INSTALLED;
-					
+
 #ifdef NIX
 				overridePath(res);
 #endif	
@@ -383,7 +383,7 @@ bool ToolInfo::checkExePath(const char* path, bool quick)
 
 	if (!res)
 		UTIL::FS::delFile(path);
-	
+
 	return res;
 }
 
@@ -416,7 +416,7 @@ bool ToolInfo::processResultString()
 	while (it != m_szResult.end())
 	{
 		char c = *it;
-		
+
 		if (c == ' ')
 		{
 		}
@@ -444,14 +444,14 @@ bool ToolInfo::processResultString()
 		else if (isdigit(c))
 		{
 			int val = c - 48;
-			
+
 			if (lastWasDigit && !lastWasNeg)
 			{
 				if (valStack.back() > 0)
 					val = valStack.back() * 10 + val;
 				else
 					val = valStack.back() * 10 - val;
-				
+
 				valStack.pop_back();
 			}
 			else if (lastWasNeg)
@@ -489,7 +489,7 @@ bool ToolInfo::processResultString()
 				if (!processStack(m_vRPN, valStack, opStack))
 					return false;
 			}
-			
+
 			opStack.push_back(val);
 		}
 

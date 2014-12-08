@@ -69,8 +69,8 @@ CreateProgPage::CreateProgPage(wxWindow* parent)
 	wxBoxSizer* bSizer5 = new wxBoxSizer( wxHORIZONTAL );
 	bSizer5->Add( m_staticText3, 0, wxTOP|wxLEFT, 5 );
 	bSizer5->Add( m_labPercent, 0, wxTOP|wxRIGHT|wxLEFT, 5 );
-	
-	
+
+
 	wxBoxSizer* bSizer4 = new wxBoxSizer( wxHORIZONTAL );
 	bSizer4->Add( 0, 0, 1, wxEXPAND, 5 );
 	bSizer4->Add( m_butPause, 0, wxTOP|wxBOTTOM|wxLEFT, 5 );
@@ -82,7 +82,7 @@ CreateProgPage::CreateProgPage(wxWindow* parent)
 	fgSizer1->Add( m_pbProgress, 0, wxALL|wxEXPAND, 5 );
 	fgSizer1->Add( 0, 0, 0, wxEXPAND, 5 );
 	fgSizer1->Add( bSizer4, 0, wxEXPAND, 5 );
-	
+
 	this->SetSizer( fgSizer1 );
 	this->Layout();
 
@@ -155,14 +155,14 @@ void CreateProgPage::onButtonClick( wxCommandEvent& event )
 				par->setProgressState(gcFrame::P_PAUSED);
 		}
 
-		
+
 		if (m_pThread)
 		{
 			if (m_bThreadPaused)
 				m_pThread->unpause();
 			else
 				m_pThread->pause();
-			
+
 			m_bThreadPaused = !m_bThreadPaused;
 		}
 	}
@@ -222,7 +222,7 @@ void CreateProgPage::onComplete(gcString& path)
 	gcTrace("Path: {0}", path);
 
 	gcFrame* par = dynamic_cast<gcFrame*>(GetParent());
-	
+
 	if (par)
 		par->setProgressState(gcFrame::P_NONE);
 

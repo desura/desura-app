@@ -132,7 +132,7 @@ bool ItemJSBinding::addExtender(ChromiumDLL::JavaScriptExtenderI* extender)
 JSObjHandle ItemJSBinding::execute(ChromiumDLL::JavaScriptFunctionArgs* args)
 {
 	JSObjHandle ret =  DesuraJSBase<ItemJSBinding>::execute(args);
-	
+
 	if (!ret->isException() || g_vExtenderList.size() == 0)
 		return ret;
 

@@ -38,7 +38,7 @@ namespace ItemFormPage
 PreloadPage::PreloadPage(wxWindow* parent, const char* action, const char* id) : BaseInstallPage(parent)
 {
 	this->SetSizeHints( wxDefaultSize, wxDefaultSize );
-	
+
 	gcWString lab;
 
 	if (!action || !id)
@@ -59,7 +59,7 @@ PreloadPage::PreloadPage(wxWindow* parent, const char* action, const char* id) :
 	fgSizer1->Add( labInfo, 0, wxLEFT|wxRIGHT|wxTOP, 5 );
 	fgSizer1->Add( pbProgress, 1, wxEXPAND|wxALL, 5 );
 	fgSizer1->Add(0, 0, 0, wxEXPAND, 5);
-	
+
 	this->SetSizer( fgSizer1 );
 	this->Layout();
 	this->setParentSize(-1, 140);

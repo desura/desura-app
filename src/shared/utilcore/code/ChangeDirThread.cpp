@@ -69,7 +69,7 @@ void ChangeDirThread::run()
 
 	updateDb(vFileList);
 	copyFiles(vFileList);
-	
+
 	if (!m_bStopped)
 	{
 		m_bCompleted = true;
@@ -104,7 +104,7 @@ void ChangeDirThread::copyFiles(FileList &list)
 	{
 		uint32 prog = x*100/list.size();
 		onProgressEvent(prog);
-		
+
 		UTIL::FS::recMakeFolder(list[x].second);
 		UTIL::FS::moveFile(list[x].first, list[x].second);
 

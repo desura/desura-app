@@ -105,7 +105,7 @@ void UpdateProgThread::calcResults()
 		for (size_t x=0; x<m_vProgInfo.size(); x++)
 			done += m_vProgInfo[x];
 	}
-	
+
 
 	if (done == 0)
 		return;
@@ -129,7 +129,7 @@ void UpdateProgThread::calcResults()
 
 		double avgRate	= done / (double)total.seconds();
 		uint64 pred		= (uint64)((m_uiTotalSize - done - m_uiDoneSize) / avgRate);
-		
+
 		auto predTime = gcDuration(std::chrono::seconds((long)pred));
 
 		temp.hour	= (uint8)predTime.hours();

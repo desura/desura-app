@@ -86,42 +86,42 @@ void on_response(GtkDialog *dialog, gint response, gpointer data)
 	{
 		std::map<std::string, std::string> info;
 		info["cla"] = "--forceupdate";
-		
+
 		UTIL::LIN::launchProcess("desura", info);		
 	}
-	
+
 	gtk_main_quit();
 }
 
 int main(int argc, char** argv)
 {
 	gtk_init(&argc, &argv);
-	
+
 	const char* text =  "An error has occured that is preventing Desura from running correctly. "
 						"Restarting Desura should allow you to continue, otherwise you can clean "
 						"your Desura install by forcing an update.";
-	
+
 	if (!ChangeToAppDir())
 		return 1;
-	
+
 	GtkWidget* dialog = gtk_message_dialog_new(NULL, GTK_DIALOG_MODAL, GTK_MESSAGE_ERROR, GTK_BUTTONS_NONE, "%s", text);
-	
+
 	gtk_window_set_title(GTK_WINDOW(dialog), "Desura Error");
 
 	gtk_dialog_add_button(GTK_DIALOG(dialog), "Restart Desura", 1);
 	gtk_dialog_add_button(GTK_DIALOG(dialog), "Force Update", 2);
 	gtk_dialog_add_button(GTK_DIALOG(dialog), "Exit", 3);
-	
+
 	g_signal_connect(G_OBJECT(dialog), "delete-event", G_CALLBACK(gtk_main_quit), NULL);
 	g_signal_connect(G_OBJECT(dialog), "response", G_CALLBACK(on_response), NULL);
-	
+
 	gtk_window_set_keep_above(GTK_WINDOW(dialog), TRUE);
 	gtk_window_set_position(GTK_WINDOW(dialog), GTK_WIN_POS_CENTER);
 
 	gtk_widget_show_all(dialog);
-	
+
 	gtk_main();
-	
+
 	return 0;
 }
 

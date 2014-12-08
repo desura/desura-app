@@ -84,7 +84,7 @@ public:
 
 	//! Sets the value back to the default value
 	void setDefault();
-	
+
 	//! Gets the default value
 	const char* getDefault() const;
 

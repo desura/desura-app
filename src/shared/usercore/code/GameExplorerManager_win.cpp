@@ -63,7 +63,7 @@ void GameExplorerManager::addItem(DesuraId item)
 
 	if (!item.isOk())
 		return;
-	
+
 	auto gei = BaseManager::findItem(item.toInt64());
 
 	if (!gei)

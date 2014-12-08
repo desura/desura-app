@@ -240,7 +240,7 @@ void MCF::doDlHeaderFromWeb(MCFCore::Misc::MCFServerCon &msc)
 		throw lastE;
 
 	uint32 bz2BuffLen = getHeader()->getXmlSize()*25;
-	
+
 
 	if ( isCompressed() )
 	{
@@ -488,7 +488,7 @@ void MCF::runThread(MCFCore::Thread::BaseMCFThread* pThread)
 		safe_delete(m_pTHandle);
 		return;
 	}
-		
+
 	try
 	{
 		pThread->start();

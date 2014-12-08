@@ -29,7 +29,7 @@ $/LicenseInfo$
 #include "CDOverView.h"
 #include "CrashDumpThread.h"
 #include "CrashDumpUploadThread.h"
-	
+
 CDProcess::CDProcess(wxWindow* parent) : gcPanel(parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL)
 {
 	setParentSize(370, 130);
@@ -49,11 +49,11 @@ CDProcess::CDProcess(wxWindow* parent) : gcPanel(parent, wxID_ANY, wxDefaultPosi
 	fgSizer6->AddGrowableCol( 0 );
 	fgSizer6->SetFlexibleDirection( wxBOTH );
 	fgSizer6->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
-	
+
 	fgSizer6->Add( 0, 5, 1, wxEXPAND, 5 );
 	fgSizer6->Add(m_labStatus, 0, wxLEFT|wxTOP, 5 );
 	fgSizer6->Add(m_pbProgress, 0, wxEXPAND|wxALL, 5);
-	
+
 
 	wxFlexGridSizer* fgSizer5;
 	fgSizer5 = new wxFlexGridSizer( 2, 1, 0, 0 );
@@ -64,7 +64,7 @@ CDProcess::CDProcess(wxWindow* parent) : gcPanel(parent, wxID_ANY, wxDefaultPosi
 
 	fgSizer5->Add( fgSizer6, 1, wxEXPAND, 5 );
 	fgSizer5->Add( bSizer3, 1, wxEXPAND, 5 );
-	
+
 	this->SetSizer( fgSizer5 );
 	this->Layout();
 

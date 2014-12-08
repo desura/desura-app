@@ -78,7 +78,7 @@ protected:
 	void uninstallMCF(DesuraId id);
 
 	void updateItem(DesuraId id, LinkArgs args);
-	
+
 	void showEULA(DesuraId id);
 	void showUpdateLog(DesuraId id);
 	void showUpdateLogApp(uint32 version);

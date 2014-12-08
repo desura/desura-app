@@ -77,7 +77,7 @@ bool UIServiceTask::initService()
 	gcString insPath = getItemInfo()->getPath();
 	gcString mcfPath = getBranchMcf(getItemInfo()->getId(), getItemInfo()->getInstalledBranch(), getItemInfo()->getInstalledBuild());
 	m_pIPCUI = getServiceMain()->newUninstallMcf();
-			
+
 	if (!m_pIPCUI)
 	{
 		onErrorEvent(eFailCrtSvr);

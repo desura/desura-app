@@ -36,7 +36,7 @@ $/LicenseInfo$
 static const int ABOUT_FORM_WIDTH = 287;
 static const int ABOUT_FORM_HEIGHT = 462;
 
-	
+
 AboutForm::AboutForm(wxWindow* parent) 
 	: gcDialog(parent, wxID_ANY, "About " PRODUCT_NAME, wxDefaultPosition, wxSize(ABOUT_FORM_WIDTH,ABOUT_FORM_HEIGHT), wxDEFAULT_DIALOG_STYLE)
 {
@@ -44,20 +44,20 @@ AboutForm::AboutForm(wxWindow* parent)
 	Bind(wxEVT_CLOSE_WINDOW, &AboutForm::onFormClose, this);
 
 	this->SetSizeHints( wxDefaultSize, wxDefaultSize );
-	
+
 	wxFlexGridSizer* fgSizer6;
 	fgSizer6 = new wxFlexGridSizer( 3, 1, 0, 0 );
 	fgSizer6->AddGrowableCol( 0 );
 	fgSizer6->AddGrowableRow( 1 );
 	fgSizer6->SetFlexibleDirection( wxBOTH );
 	fgSizer6->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
-	
+
 	m_imgLogo = new gcImageControl( this, wxID_ANY, wxDefaultPosition, wxSize( 291,200 ), 0 );
 	m_imgLogo->setImage("#about_logo");
 	m_imgLogo->setTile(true);
 
 	fgSizer6->Add( m_imgLogo, 0, wxEXPAND, 5 );
-	
+
 	m_pMainPage = new AboutMainPage(this);
 
 	m_pDevPage = new AboutDevPage(this);
@@ -65,22 +65,22 @@ AboutForm::AboutForm(wxWindow* parent)
 
 	m_SizePanel = new wxBoxSizer( wxVERTICAL );
 	m_SizePanel->Add( m_pMainPage, 1, wxEXPAND, 5 );
-	
+
 	fgSizer6->Add( m_SizePanel, 1, wxEXPAND, 5 );
 
 	wxBoxSizer* bSizer2;
 	bSizer2 = new wxBoxSizer( wxHORIZONTAL );
-	
+
 	m_butCredits = new gcButton( this, wxID_ANY, Managers::GetString(L"#AB_CREDITS"), wxDefaultPosition, wxDefaultSize, 0 );
 	bSizer2->Add( m_butCredits, 0, wxLEFT|wxBOTTOM|wxTOP, 5 );
-	
+
 	bSizer2->Add( 0, 0, 1, wxEXPAND, 5 );
 
 	m_butClose = new gcButton( this, wxID_ANY, Managers::GetString(L"#OK"), wxDefaultPosition, wxDefaultSize, 0 );
 	bSizer2->Add( m_butClose, 0, wxALL, 5 );
-	
+
 	fgSizer6->Add( bSizer2, 1, wxEXPAND, 15 );
-	
+
 	this->SetSizer( fgSizer6 );
 	this->Layout();
 

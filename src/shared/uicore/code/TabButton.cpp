@@ -42,22 +42,22 @@ END_EVENT_TABLE()
 tabButton::tabButton( wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style ) : wxPanel( parent, id, pos, size, style )
 {
 	this->SetBackgroundColour( NORMAL );
-	
+
 	wxBoxSizer* bSizer4;
 	bSizer4 = new wxBoxSizer( wxHORIZONTAL );
-	
+
 	bSizer4->Add( 0, 30, 1, wxEXPAND, 5 );
 
 	m_labTitle = new wxStaticText( this, wxID_ANY, wxT("Text"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_labTitle->Wrap( -1 );
 
 	m_labTitle->SetForegroundColour( wxColour( 255, 255, 255 ) );
-	
+
 	bSizer4->Add( m_labTitle, 0, wxALL|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL, 5 );
-	
-	
+
+
 	bSizer4->Add( 0, 0, 1, wxEXPAND, 5 );
-	
+
 
 	Connect( wxEVT_LEFT_DOWN, wxMouseEventHandler( tabButton::onMouseDown ) );
 	Connect( wxEVT_MOTION, wxMouseEventHandler( tabButton::onMouseEvent ));
@@ -66,7 +66,7 @@ tabButton::tabButton( wxWindow* parent, wxWindowID id, const wxPoint& pos, const
 	m_labTitle->Connect( wxEVT_ENTER_WINDOW, wxMouseEventHandler( tabButton::onMouseOver ), nullptr, this );
 	m_labTitle->Connect( wxEVT_LEAVE_WINDOW, wxMouseEventHandler( tabButton::onMouseOut ), nullptr, this );
 	m_labTitle->Connect( wxEVT_LEFT_DOWN, wxMouseEventHandler( tabButton::onMouseDown ), nullptr, this );
-	
+
 	parent->Connect( wxEVT_MOTION, wxMouseEventHandler( tabButton::onMouseEvent ), nullptr, this);
 
 	this->SetSizer( bSizer4 );
@@ -134,7 +134,7 @@ void tabButton::updateMouse(wxMouseEvent& event)
 	{
 		this->SetBackgroundColour( NORMAL );
 	}
-		
+
 	this->Refresh();
 }
 

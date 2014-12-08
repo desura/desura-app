@@ -58,15 +58,15 @@ void CDKeyManager::getCDKeyForCurrentBranch(DesuraId id, gcRefPtr<UserCore::Misc
 	try
 	{
 		info = m_pUser->getItemManager()->findItemInfo(id);
-	
+
 		if (!info)
 			throw gcException(ERR_CDKEY, 110, "Item can not be found");
-	
+
 		binfo = gcRefPtr<UserCore::Item::BranchInfo>(dynamic_cast<UserCore::Item::BranchInfo*>(info->getCurrentBranch().get()));
 
 		if (!binfo)
 			throw gcException(ERR_CDKEY, 110, "Item has no currently installed branches");
-	
+
 		if (!hasCDKeyForCurrentBranch(id))
 			throw gcException(ERR_CDKEY, 117, "No CDKey required for item");
 	}
@@ -122,7 +122,7 @@ void CDKeyManager::cancelRequest(DesuraId id, gcRefPtr<UserCore::Misc::CDKeyCall
 bool CDKeyManager::hasCDKeyForCurrentBranch(DesuraId id)
 {
 	auto info = m_pUser->getItemManager()->findItemInfo(id);
-	
+
 	if (!info)
 		return false;
 
@@ -140,7 +140,7 @@ void CDKeyManager::onCDKeyComplete(UserCore::Task::CDKeyEventInfo<gcString> &inf
 	gcRefPtr<UserCore::Item::BranchInfo> binfo;
 
 	iinfo = m_pUser->getItemManager()->findItemInfo(info.id);
-	
+
 	if (iinfo)
 	{
 		binfo = gcRefPtr<UserCore::Item::BranchInfo>(dynamic_cast<UserCore::Item::BranchInfo*>(iinfo->getCurrentBranch().get()));
@@ -148,7 +148,7 @@ void CDKeyManager::onCDKeyComplete(UserCore::Task::CDKeyEventInfo<gcString> &inf
 		if (binfo)
 			binfo->setCDKey(info.t);
 	}
-	
+
 
 	{
 		std::lock_guard<std::mutex> guard(m_TaskListLock);

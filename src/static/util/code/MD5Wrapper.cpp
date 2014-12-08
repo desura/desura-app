@@ -68,7 +68,7 @@ std::string getHashFromFile(FILE* file, uint64 size)
 {
 	if (!file)
 		return "-1";
- 
+
 	MD5 md5;
   	unsigned char buffer[BUFSIZE];
 
@@ -97,7 +97,7 @@ std::string getHashFromFile(FILE* file, uint64 size)
 		md5.update(buffer, buffSize);
 		done += buffSize;
 	}
-	
+
 	md5.finalize();
 	return md5.getMd5();
 }

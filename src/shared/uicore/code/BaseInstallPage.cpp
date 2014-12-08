@@ -137,7 +137,7 @@ typedef void (BaseInstallPage::*onCompleteStrFn)(gcString&);
 	 deregisterHandle();
 	 m_pItemHandle = nullptr;
  }
- 
+
  void BaseInstallPage::setInfo(DesuraId id, gcRefPtr<UserCore::Item::ItemInfoI> pItemInfo)
 {
 	setInfo(GetUserCore()->getItemManager()->findItemHandle(id));
@@ -151,7 +151,7 @@ typedef void (BaseInstallPage::*onCompleteStrFn)(gcString&);
 
 	m_pItemHandle = pItemHandle;
 	BasePage::setInfo(pItemHandle->getItemInfo()->getId(), pItemHandle->getItemInfo());
-	
+
 	init();
 	registerHandle();
 }

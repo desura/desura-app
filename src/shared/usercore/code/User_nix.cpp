@@ -48,10 +48,10 @@ void User::saveLoginInfo()
 
 	size_t base = passhash.size() + username.size() + 2;
 	size_t round = (base & (~63)) + 64;
-	
+
 	gcString buff("00{0}{1}", username, passhash);
 	buff.resize(round, 0);
-	
+
 	buff[0]=username.size();
 	buff[1]=passhash.size();
 
@@ -81,19 +81,19 @@ void User::getLoginInfo(char** username, char** passhash)
 	gcString oldPath = UTIL::LIN::expandPath("~/.desura_autologin");
 	gcString oldPath2 = UTIL::LIN::expandPath("~/.desura/.autologin");
 	gcString path = UTIL::OS::getAppDataPath(L"autologin");
-	
+
 	if (UTIL::FS::isValidFile(oldPath.c_str()))
 	{
 		UTIL::FS::recMakeFolder(UTIL::FS::PathWithFile(path.c_str()));
 		UTIL::FS::moveFile(oldPath.c_str(), path.c_str());
 	}
-	
+
 	if (UTIL::FS::isValidFile(oldPath2.c_str()))
 	{
 		UTIL::FS::recMakeFolder(UTIL::FS::PathWithFile(path.c_str()));
 		UTIL::FS::moveFile(oldPath2.c_str(), path.c_str());
 	}
-	
+
 	if (!UTIL::FS::isValidFile(path.c_str()))
 		throw gcException(ERR_BADPATH, "Unable to open password store.");
 
@@ -106,7 +106,7 @@ void User::getLoginInfo(char** username, char** passhash)
 	size_t round = (readSize & (~63)) + 64;
 
 	char *fileText = new char[round+1];
-	
+
 	memset(fileText, 0, round+1);
 	fh.read(fileText, readSize);
 
@@ -118,13 +118,13 @@ void User::getLoginInfo(char** username, char** passhash)
 
 	*username = new char[uLen+1];
 	*passhash = new char[pLen+1];
-	
+
 	Safe::strncpy(*username, uLen+1, fileText+2, uLen);
 	Safe::strncpy(*passhash, pLen+1, fileText+2+uLen, pLen);
-	
+
 	(*username)[uLen] = '\0';
 	(*passhash)[pLen] = '\0';
-	
+
 	safe_delete(fileText);
 }
 

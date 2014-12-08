@@ -78,7 +78,7 @@ void DownloadToolTask::doTask()
 void DownloadToolTask::onStop()
 {
 	m_bStopped = true;
-	
+
 	if (m_pHttpHandle)
 		m_pHttpHandle->abortTransfer();
 }
@@ -93,7 +93,7 @@ void DownloadToolTask::downloadTool()
 
 	hh->getProgressEvent() += delegate(this, &DownloadToolTask::onProgress);
 	hh->getWriteEvent() += delegate(this, &DownloadToolTask::onWrite);
-	
+
 	hh->setUserAgent(getUserCore()->getWebCore()->getUserAgent());
 	hh->getWeb();
 

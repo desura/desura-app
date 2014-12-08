@@ -276,7 +276,7 @@ ItemTabPage::~ItemTabPage()
 	if (userCore)
 	{
 		auto itemManager = userCore->getItemManager();
-	
+
 		if (itemManager)
 		{
 			std::vector<gcRefPtr<UserCore::Item::ItemInfoI>> aList;
@@ -405,7 +405,7 @@ void ItemTabPage::onButtonClicked(int32& id)
 	case BUTTON_GAME:
 		postEvent("onTabClicked", "game");
 		break;
-		
+
 	case BUTTON_FAV:
 		postEvent("onTabClicked", "fav");
 		break;
@@ -543,7 +543,7 @@ void ItemTabPage::onLowDiskSpace(std::pair<bool,char> &info)
 
 #ifdef WIN32
 	gcString text;
-	
+
 	if (info.first)
 		text = gcString(Managers::GetString("#IF_LOWSPACE_SYS"), info.second);
 	else
@@ -564,7 +564,7 @@ void ItemTabPage::onPingTimer(wxTimerEvent&)
 	{
 		postEvent("onPing");
 	}
-		
+
 	m_bPingBack = false;
 }
 

@@ -156,7 +156,7 @@ std::string Path::getFolderPath() const
 	for (size_t x=0; x<m_vPath.size(); x++)
 	{
 		out += m_vPath[x];
-		
+
 		if (x+1 < m_vPath.size())
 			out += GetDirSeperator();
 	}
@@ -316,7 +316,7 @@ bool Path::operator!=(const Path &other) const
 std::string Path::getShortPath(size_t idealLen, bool withFile) const
 {
 	std::string fullPath;
-	
+
 	if (withFile)
 		fullPath = getFullPath();
 	else

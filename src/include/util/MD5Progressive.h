@@ -38,7 +38,7 @@ public:
 	~MD5Progressive();
 
 	void update(const char* buff, uint32 size);
-	
+
 	std::string finish();
 
 private:

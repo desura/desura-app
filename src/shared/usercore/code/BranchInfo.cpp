@@ -241,7 +241,7 @@ void BranchInfo::loadDb(sqlite3x::sqlite3_connection* db)
 	cmd.bind(2, (long long int)m_ItemId.toInt64());
 
 	sqlite3x::sqlite3_reader reader = cmd.executereader();
-	
+
 	reader.read();
 
 	m_szName		= gcString(reader.getstring(2));		//name
@@ -260,7 +260,7 @@ void BranchInfo::loadDb(sqlite3x::sqlite3_connection* db)
 		sqlite3x::sqlite3_command cmd(*db, "SELECT * FROM tools WHERE branchid=?;");
 		cmd.bind(1, (int)m_uiBranchId);
 		sqlite3x::sqlite3_reader reader = cmd.executereader();
-	
+
 		while (reader.read())
 			m_vToolList.push_back(DesuraId(reader.getint64(1)));
 	}
@@ -280,7 +280,7 @@ void BranchInfo::loadDb(sqlite3x::sqlite3_connection* db)
 			if (!key.empty())
 				m_vCDKeyList.push_back(key);
 		}
-			
+
 	}
 }
 
@@ -473,7 +473,7 @@ gcString BranchInfo::decodeCDKey(const gcString& strEncodedKey)
 {
 	if (strEncodedKey.empty())
 		return "";
-	
+
 #ifdef WIN32
 	std::string reg = UTIL::OS::getConfigValue("HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Cryptography\\MachineGuid", true);
 	gcString key("{0}_{1}", reg, m_ItemId.toInt64());

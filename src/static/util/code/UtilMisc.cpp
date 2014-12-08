@@ -282,7 +282,7 @@ bool isWebURL(const char* str)
 
 IMAGE_TYPES isValidImage(const unsigned char h[5])
 {
-	
+
 	//GIF8
 	if (h[0] == 71 && h[1] == 73 && h[2] == 70 && h[3] == 56)
 	{
@@ -294,7 +294,7 @@ IMAGE_TYPES isValidImage(const unsigned char h[5])
 	{
 		return IMAGE_PNG;
 	}
-	
+
 	//FFD8
 	if (h[0] == 255 && h[1] == 216)
 	{
@@ -374,7 +374,7 @@ const std::string dateTimeToDisplay(const char* dateTime)
 
 	char szOut[255];
 	auto size = strftime(szOut, 255, "%x", std::localtime(&t2));
-	
+
 	return std::string(szOut, size);
 }
 
@@ -586,7 +586,7 @@ Buffer::~Buffer()
 {
 	safe_delete(m_pData);
 }
-		
+
 void Buffer::resize(size_t newSize)
 {
 	m_pData->data = (char*)realloc(m_pData->data, newSize);
@@ -742,7 +742,7 @@ void CMDArgs::process()
 
 		if (i+1 < nArgs)
 			narg = std::string(m_pInternal->m_vArgList[i+1]);
-		
+
 		if (arg[0] == '-')
 		{
 			while (arg[0] == '-')
@@ -783,7 +783,7 @@ int CMDArgs::getInt(const char* name)
 
 	if (hasValue(name))
 		res = Safe::atoi(m_pInternal->m_mArgv[name].c_str());
-	
+
 	return res;
 }
 

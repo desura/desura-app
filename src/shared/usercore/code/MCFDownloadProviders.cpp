@@ -88,7 +88,7 @@ void MCFDownloadProviders::forceLoad(MCFCore::MCFI* pMcf)
 
 	auto header = pMcf->getHeader();
 	gcAssert(header);
-	
+
 	header->setBuild(m_Build);
 	header->setBranch(m_Branch);
 }

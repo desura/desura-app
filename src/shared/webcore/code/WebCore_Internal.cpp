@@ -95,7 +95,7 @@ const XML::gcXMLElement WebCoreClass::postToServer(std::string url, std::string 
 		}
 
 		hh->postWeb();
-	
+
 		if (hh->getDataSize() == 0)
 			throw gcException(ERR_BADRESPONSE, "Data size was zero");
 
@@ -281,7 +281,7 @@ void WebCoreClass::newUpload(DesuraId id, const char* hash, uint64 fileSize, cha
 
 	auto uNode = postToServer(getMcfUploadUrl(), "itemupload", post, doc);
 	auto iNode = uNode.FirstChildElement("mcf");
-	
+
 	if (!iNode.IsValid())
 		throw gcException(ERR_BADXML);	
 
@@ -356,7 +356,7 @@ gcString WebCoreClass::getCDKey(DesuraId id, MCFBranch branch)
 	post["siteareaid"] = id.getItem();
 	post["sitearea"] = id.getTypeString();
 	post["branch"] = (size_t)branch;
-	
+
 #ifdef WIN32
 	post["token"] =  UTIL::WIN::getRegValue("HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Cryptography\\MachineGuid", true);
 #else
@@ -384,7 +384,7 @@ void WebCoreClass::logIn(const char* user, const char* pass, XML::gcXMLDocument 
 
 	auto uNode = loginToServer(getLoginUrl(), "memberlogin", post, xmlDocument);
 	auto memNode = uNode.FirstChildElement("member");
-	
+
 	if (!memNode.IsValid())
 		throw gcException(ERR_BADXML);
 

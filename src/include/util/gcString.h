@@ -763,7 +763,7 @@ std::basic_string<CT> FormatArg(const T& t, FormatTypes type, size_t len, size_t
 		case BOOL_STRING:
 			oss << std::boolalpha;
 			break;
-		
+
 		case NONE:
 			break;
 		}
@@ -828,7 +828,7 @@ public:
 	}
 
 	const T &m_t;
-	
+
 #ifdef DEBUG
 	bool m_bUsed;
 #endif
@@ -982,7 +982,7 @@ std::basic_string<CT> FormatString(const CT* format, std::vector<FormatArgI<CT>*
 			CT num[2] = {0};
 			num[0] = temp[0];
 
-			
+
 
 			size_t arg = atoi(num);
 

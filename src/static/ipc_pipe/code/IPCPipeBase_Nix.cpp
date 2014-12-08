@@ -98,7 +98,7 @@ void PipeBase::run()
 	{ 
 		processEvents();
 		processLoopback();
-		
+
 		if (itemsWaiting() == false)
 			m_WaitCond.wait();
 	} 
@@ -127,28 +127,28 @@ void PipeBase::processLoopback()
 void PipeBase::processEvents()
 {
 	IPCManager* mng = getManager(0);	//TODO: Fix for multi instances
-	
+
 	PipeData* data = NULL;
-	
+
 	m_RecvLock.lock();
-	
+
 	if (m_vRecvBuffer.size() > 0)
 	{
 		data = m_vRecvBuffer.front();
 		m_vRecvBuffer.pop_front();
 	}
-	
+
 	m_RecvLock.unlock();
-	
-	
+
+
 	if (data)
 	{
 		mng->recvMessage(data->buffer, data->size);
 		safe_delete(data);
 	}
-	
+
 	PipeData toSend;
-	
+
 	if (mng->getMessageToSend(toSend.buffer, BUFSIZE, toSend.size))
 	{
 		sendMsg(m_pSendObj, toSend.buffer, toSend.size);
@@ -158,32 +158,32 @@ void PipeBase::processEvents()
 bool PipeBase::itemsWaiting()
 {
 	IPCManager* mng = getManager(0);	//TODO: Fix for multi instances
-	
+
 	uint32 num = 0;
-	
+
 	m_RecvLock.lock();
 	num = m_vRecvBuffer.size();
 	m_RecvLock.unlock();
-	
+
 	num += mng->getNumSendEvents();
-	
+
 	return num != 0;
 }
 
 void PipeBase::recvMessage(const char* buffer, size_t size)
 {
 	PipeData *data = new PipeData();
-	
+
 	data->size = size;
 	memcpy(data->buffer, buffer, size);
-	
+
 	m_RecvLock.lock();
 	m_vRecvBuffer.push_back(data);
 	m_RecvLock.unlock();
-	
+
 	m_WaitCond.notify();
 }
-	
+
 void PipeBase::setSendCallback(void* obj, SendFn funct)
 {
 	m_pSendObj = obj;

@@ -180,7 +180,7 @@ bool CheckNetfxVersionUsingMscoree(const char *pszNetfxVersionToCheck)
 	if (!sol.load("mscoree.dll"))
 		return false;
 
-	
+
 	GETCORVERSION pfnGETCORVERSION = sol.getFunction<GETCORVERSION>("GetCORVersion");
 
 
@@ -238,7 +238,7 @@ bool CheckNetfxVersionUsingMscoree(const char *pszNetfxVersionToCheck)
 		if (SUCCEEDED(hr))
 			return true;
 	}
-	
+
 	return false;
 }
 
@@ -610,7 +610,7 @@ bool RegistryGetValue(HKEY hk, const char * pszKey, const char * pszValue, DWORD
 		RegCloseKey(hkOpened);
 		return false;
 	}
-	
+
 	// Clean up
 	RegCloseKey(hkOpened);
 

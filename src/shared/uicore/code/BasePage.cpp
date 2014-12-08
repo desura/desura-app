@@ -56,7 +56,7 @@ void BasePage::setInfo(DesuraId id, gcRefPtr<UserCore::Item::ItemInfoI> pItemInf
 	if (pItemInfo && pItemInfo->getIcon() && UTIL::FS::isValidFile(UTIL::FS::PathWithFile(pItemInfo->getIcon())))
 	{
 		gcFrame *frame = dynamic_cast<gcFrame*>(GetParent());
-		
+
 		if (frame)
 			frame->setIcon(pItemInfo->getIcon());
 	}

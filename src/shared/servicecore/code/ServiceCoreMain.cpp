@@ -40,12 +40,12 @@ public:
 	{
 		start();
 	}
-	
+
 	virtual void sendMessage(const char* buffer, size_t size)
 	{
 		recvMessage(buffer, size);
 	}
-	
+
 	virtual void destroy()
 	{
 		delete this;

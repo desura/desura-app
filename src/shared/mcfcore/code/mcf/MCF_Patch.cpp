@@ -529,7 +529,7 @@ void MCF::getPatchStats(MCFI* inMcf, uint64* dlSize, uint32* fileCount)
 
 	if (!temp)
 		return;
-	
+
 	uint64 sameSize = 0;
 
 	std::vector<mcfDif_s> vSame;
@@ -571,7 +571,7 @@ void MCF::findSameHashFile(MCF* newFile, std::vector<mcfDif_s> &vSame, std::vect
 	for (size_t x=0; x<vThisFileList.size(); x++)
 	{
 		bool found = false;
-		
+
 		for (size_t y=0; y<vNewFileList.size(); y++)
 		{
 			auto a = vThisFileList[x];
@@ -587,11 +587,11 @@ void MCF::findSameHashFile(MCF* newFile, std::vector<mcfDif_s> &vSame, std::vect
 				t.thisMcf = x;
 
 				vSame.push_back(t);
-				
+
 				found = true;
 			}
 		}
-		
+
 		if (!found)
 			vOther.push_back(x);
 	}
@@ -740,7 +740,7 @@ void MCF::createCourgetteDiffs(MCFI* oldMcf, const char* outPath)
 		uint32 index = FullFile.findFileIndexByHash(newMCFFile->getHash());
 
 		auto copyMCFFile = FullFile.getFile(index);
-			
+
 		UTIL::MISC::Buffer oldBuff(0);
 		UTIL::MISC::Buffer newBuff(0);
 
@@ -749,7 +749,7 @@ void MCF::createCourgetteDiffs(MCFI* oldMcf, const char* outPath)
 
 		printf("Creating courgette diff for: %s\n", newMCFFile->getName());
 		createCourgetteDiff(&ci, oldBuff, newBuff, oldMCFFile->getCsum(), copyMCFFile, hFileDest);
-			
+
 		copyMCFFile->setDiffOffset(lastOffset);
 		lastOffset += copyMCFFile->getDiffSize();
 	}
@@ -798,7 +798,7 @@ void MCF::createCourgetteDiff(CourgetteInstance* ci, UTIL::MISC::Buffer &oldBuff
 
 	worker.read(buff, tot);
 	dest.write(buff, tot);
-	
+
 	std::string diffHash = md5.finish();
 
 	file->addFlag(MCFCore::MCFFileI::FLAG_HASDIFF);

@@ -49,7 +49,7 @@ namespace IPC
 		bool wait(int sec, int milli);
 
 		void timedWait();
-		
+
 		void trigger(IPCParameterI* pParameter);
 		IPCParameterI* popResult();
 

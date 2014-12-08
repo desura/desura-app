@@ -143,7 +143,7 @@ void CreateMCFThread::compareBranches(std::vector<gcRefPtr<UserCore::Item::Branc
 		McfHandle tempMcf;
 		tempMcf->setHeader(getItemId(), bi->getBranchId(), MCFBuild());
 		tempMcf->getErrorEvent() += delegate(&onErrorEvent);
-	
+
 		try
 		{
 			auto dp = std::make_shared<MCFDownloadProviders>(getWebCore(), getUserCore()->getUserId());
@@ -269,7 +269,7 @@ void CreateMCFThread::processGames(std::vector<gcRefPtr<UserCore::Item::BranchIn
 
 		if (gid == this->getItemId())
 			this->processBranches(outList, game);
-	
+
 		if (this->getItemId().getType() != DesuraId::TYPE_MOD)
 			return;
 

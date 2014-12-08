@@ -89,7 +89,7 @@ void gcButton::init(const wxSize& size, const wxString &text)
 #endif
 
 	m_szCurImage = nullptr;
-		
+
 	m_bHovering = false;
 	m_bDepressed = false;
 	m_bFocus = false;
@@ -104,7 +104,7 @@ void gcButton::init(const wxSize& size, const wxString &text)
 
 	Bind(wxEVT_LEFT_UP, &gcButton::onMouseUp, this);
 	Bind(wxEVT_LEFT_DOWN, &gcButton::onMouseDown, this);
-	
+
 	Bind(wxEVT_KILL_FOCUS, &gcButton::onBlur, this);
 	Bind(wxEVT_SET_FOCUS, &gcButton::onFocus, this);
 
@@ -160,12 +160,12 @@ wxSize gcButton::DoGetBestSize() const
 	wxClientDC dc(wxConstCast(this, gcButton));
 	wxCoord width, height;
 	dc.GetMultiLineTextExtent(GetLabel(), &width, &height);
-	
+
 	if ( (width + 15) < MIN_WIDTH )
 		width = MIN_WIDTH;
 	else
 		width += 15; //get text of button image 
-	
+
 	return wxSize(width, height);
 }
 #endif

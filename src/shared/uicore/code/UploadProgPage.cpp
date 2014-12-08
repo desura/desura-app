@@ -55,15 +55,15 @@ UploadProgPage::UploadProgPage(wxWindow* parent)
 
 	wxBoxSizer* bSizer5;
 	bSizer5 = new wxBoxSizer( wxHORIZONTAL );
-	
+
 	m_staticText3 = new gcStaticText( this, wxID_ANY, Managers::GetString(L"#UDF_ETIME"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_staticText3->Wrap( -1 );
 	bSizer5->Add( m_staticText3, 0, wxALIGN_BOTTOM|wxTOP|wxRIGHT|wxLEFT, 5 );
-	
+
 	m_labTimeLeft = new gcStaticText( this, wxID_ANY, Managers::GetString(L"#UDF_NOTSTARTED"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_labTimeLeft->Wrap( -1 );
 	bSizer5->Add( m_labTimeLeft, 0, wxALIGN_BOTTOM|wxTOP|wxRIGHT, 5 );
-	
+
 
 	m_pbProgress = new gcULProgressBar( this, wxID_ANY );
 
@@ -73,18 +73,18 @@ UploadProgPage::UploadProgPage(wxWindow* parent)
 	m_cbDeleteMcf->SetToolTip( Managers::GetString(L"#UDF_DELETE_TOOLTIP") );
 
 
-	
+
 	wxBoxSizer* bSizer4;
 	bSizer4 = new wxBoxSizer( wxHORIZONTAL );
-	
+
 	bSizer4->Add( 0, 0, 1, wxEXPAND, 5 );
-	
+
 	m_butPause = new gcButton( this, wxID_ANY, Managers::GetString(L"#PAUSE"), wxDefaultPosition, wxDefaultSize, 0 );
 	bSizer4->Add( m_butPause, 0, wxTOP|wxBOTTOM|wxLEFT, 5 );
-	
+
 	m_butCancel = new gcButton( this, wxID_ANY, Managers::GetString(L"#CANCEL"), wxDefaultPosition, wxDefaultSize, 0 );
 	bSizer4->Add( m_butCancel, 0, wxALL, 5 );
-	
+
 
 
 	fgSizer1->Add( bSizer5, 1, wxEXPAND, 5 );
@@ -92,7 +92,7 @@ UploadProgPage::UploadProgPage(wxWindow* parent)
 	fgSizer1->Add( m_cbDeleteMcf, 0, wxLEFT|wxEXPAND, 5);
 	fgSizer1->Add( 0, 0, 1, wxEXPAND, 5 );
 	fgSizer1->Add( bSizer4, 1, wxEXPAND, 5 );
-	
+
 	this->SetSizer( fgSizer1 );
 	this->Layout();
 

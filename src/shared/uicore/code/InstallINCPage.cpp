@@ -57,7 +57,7 @@ void InstallINCPage::onMcfProgress(MCFCore::Misc::ProgressInfo& info)
 
 		if (oFlag == 1)
 			format = "#IF_COMPLEXLABEL_INIT";
-			
+
 		m_labInfo->SetLabel(gcString(Managers::GetString(format), Managers::GetString(label)));
 		m_uiLastFlag = info.flag;
 	}

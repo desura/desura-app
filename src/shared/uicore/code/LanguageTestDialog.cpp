@@ -272,7 +272,7 @@ public:
 	bool initJSEngine() override { return true; }
 	void destroyJSEngine() override { }
 	void invalidateTools(std::vector<DesuraId> &list) override { }
-		
+
 #ifdef NIX
 	void symLinkTools(std::vector<DesuraId> &list, const char* path) override { }
 	int hasNonInstallableTool(std::vector<DesuraId> &list) override { return 0; }
@@ -345,7 +345,7 @@ public:
 	void installLaunchScripts() override { }
 #endif
 
-	
+
 	gcRefPtr<ItemHandleInternalI> getInternal() override { return nullptr; }
 
 	//Item Group
@@ -684,14 +684,14 @@ LanguageTestDialog::LanguageTestDialog()
 
 	m_scrolledWindow1 = new wxScrolledWindow( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxHSCROLL|wxVSCROLL );
 	m_scrolledWindow1->SetScrollRate( 5, 5 );
-	
+
 	wxBoxSizer* bSizer3;
 	bSizer3 = new wxBoxSizer( wxVERTICAL );
 	bSizer3->Fit( m_scrolledWindow1 );
 
 	m_scrolledWindow1->SetSizer( bSizer3 );
 	m_scrolledWindow1->Layout();
-	
+
 	wxFlexGridSizer* gSizer1;
 	gSizer1 = new wxFlexGridSizer( 2, 1, 0, 0 );
 	gSizer1->AddGrowableRow( 1 );
@@ -730,7 +730,7 @@ LanguageTestDialog::LanguageTestDialog()
 
 		return nullptr;
 	});
-	
+
 	addButton("Login Error Empty Username", [this](){
 		LoginForm af(this);
 		af.doLogin("", "abc");
@@ -893,7 +893,7 @@ LanguageTestDialog::LanguageTestDialog()
 		return form;
 	});
 
-	
+
 	addButton("New Account", [this](){
 		auto form = new NewAccountDialog(this);
 		form->Show();
@@ -941,7 +941,7 @@ LanguageTestDialog::LanguageTestDialog()
 		form->Show();
 		return form;
 	});
-	
+
 
 	auto setupAction = [this](INSTALL_ACTION action)
 	{
@@ -966,7 +966,7 @@ LanguageTestDialog::LanguageTestDialog()
 		auto itemMang = new LangStubItemManager();
 		auto form = new ItemForm(this);
 		form->init(action, MCFBranch(), MCFBuild(), true, &itemMang->m_ItemHandle);
-		
+
 		itemMang->m_ItemHandle.m_ChangeStageEvent(stage);
 		form->Show();
 		return form;
@@ -981,7 +981,7 @@ LanguageTestDialog::LanguageTestDialog()
 		form->m_pToolManager = toolMang;
 
 		form->init(action, MCFBranch(), MCFBuild(), true, &itemMang->m_ItemHandle);
-		
+
 		itemMang->m_ItemHandle.m_ChangeStageEvent(stage);
 		form->Show();
 
@@ -1032,7 +1032,7 @@ LanguageTestDialog::LanguageTestDialog()
 
 		return ret;
 	});
-	
+
 
 	addButton("Uninstall - Error", [this, setupActionWithStageAndHelper](){
 		gcRefPtr<Helper::ItemHandleHelperI> pHelper;
@@ -1043,7 +1043,7 @@ LanguageTestDialog::LanguageTestDialog()
 
 		return ret;
 	});
-	
+
 
 
 	addButton("Verify - Info", [this, setupAction](){
@@ -1312,11 +1312,11 @@ LanguageTestDialog::LanguageTestDialog()
 		auto itemMang = new LangStubItemManager();
 		auto form = new ItemForm(this);
 		form->init(INSTALL_ACTION::IA_INSTALL, MCFBranch(), MCFBuild(), true, &itemMang->m_ItemHandle);
-		
+
 		auto stage = ITEM_STAGE::STAGE_INSTALL;
 		itemMang->m_ItemHandle.m_ChangeStageEvent(stage);
 		form->Show();
-		
+
 		itemMang->m_Item.m_Branch.m_bIsPreOrder = true;
 
 		auto pHelper = itemMang->m_ItemHandle.m_pHelper;
@@ -1398,11 +1398,11 @@ LanguageTestDialog::LanguageTestDialog()
 		auto itemMang = new LangStubItemManager();
 		auto form = new ItemForm(this);
 		form->init(INSTALL_ACTION::IA_INSTALL, MCFBranch(), MCFBuild(), true, &itemMang->m_ItemHandle);
-		
+
 		auto stage = ITEM_STAGE::STAGE_INSTALL_CHECK;
 		itemMang->m_ItemHandle.m_ChangeStageEvent(stage);
 		form->Show();
-		
+
 		itemMang->m_Item.m_bIsInstalled = true;
 		auto pHelper = itemMang->m_ItemHandle.m_pHelper;
 
@@ -1891,7 +1891,7 @@ LanguageTestDialog::LanguageTestDialog()
 
 		return nullptr;
 	});
-	
+
 
 	//Service Error
 	addButton("Service Disconnect", [this](){
@@ -1948,7 +1948,7 @@ LanguageTestDialog::LanguageTestDialog()
 		form->Show();
 		return form;
 	});
-	
+
 	addButton("Play Page", [this](){
 
 		DesuraJSBinding::gs_pItemManager = new LangPlayItemManager();
@@ -1960,7 +1960,7 @@ LanguageTestDialog::LanguageTestDialog()
 
 	this->SetSizer( gSizer1 );
 	this->Layout();
-	
+
 	this->Centre( wxBOTH );
 }
 
@@ -2016,7 +2016,7 @@ void LanguageTestDialog::onButtonClicked(wxCommandEvent& event)
 void LanguageTestDialog::onChoice(wxCommandEvent& event)
 {
 	auto strVal = m_choice1->GetStringSelection();
-	
+
 	GetLanguageManager().unloadAll();
 
 	for (auto l : m_vLanguages)

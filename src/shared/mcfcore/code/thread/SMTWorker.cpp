@@ -211,7 +211,7 @@ void SMTWorker::writeFile(const char* buff, uint32 buffSize, bool endFile)
 void SMTWorker::finishTask()
 {
 	m_hFhSource.close();
-	
+
 	if (m_pCRC)
 		m_pCurFile->setCRC(m_pCRC->getVector());
 
@@ -258,7 +258,7 @@ bool SMTWorker::newTask()
 
 	m_pMD5Norm = new MD5Progressive();
 	m_pCRC = new MCFCore::Misc::ProgressiveCRC(m_pCurFile->getBlockSize());
-	
+
 	if (m_pCurFile->isCompressed())
 	{
 		m_pMD5Comp = new MD5Progressive();

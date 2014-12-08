@@ -76,6 +76,6 @@ CDesuraWinApp& CDesuraWinApp::GetApp()
 		assert(false);
 		abort();
 	}
-		
+
 	return *gs_pWinApp;
 }

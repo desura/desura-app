@@ -46,13 +46,13 @@ UDFProgressPanel::UDFProgressPanel(wxWindow* parent, gcRefPtr<UserCore::UserI> u
 	fgSizer7->AddGrowableRow( 4 );
 	fgSizer7->SetFlexibleDirection( wxBOTH );
 	fgSizer7->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
-	
+
 	fgSizer7->Add( m_labTotal, 0, wxTOP|wxRIGHT|wxLEFT, 5 );
 	fgSizer7->Add( m_pbTotal, 0, wxBOTTOM|wxRIGHT|wxLEFT|wxEXPAND, 5 );
 	fgSizer7->Add( m_labCurrent, 0, wxTOP|wxRIGHT|wxLEFT, 5 );
 	fgSizer7->Add( m_pbCurrent, 0, wxBOTTOM|wxRIGHT|wxLEFT|wxEXPAND, 5 );
 	fgSizer7->Add( m_tbInfo, 0, wxEXPAND, 5 );
-	
+
 	this->SetSizer( fgSizer7 );
 	this->Layout();
 

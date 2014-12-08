@@ -95,7 +95,7 @@ const char* UploadManager::findUpload(const char* key)
 
 	if (temp && !temp->isDeleted())
 		return temp->getFile();
-	
+
 	return nullptr;
 }
 

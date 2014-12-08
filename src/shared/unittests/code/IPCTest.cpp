@@ -223,7 +223,7 @@ public:
 	{
 		registerEvent(IPC::IPCEventHandle(&uint32EventCB), "uint32Event"); //REG_EVENT(uint32Event);
 		registerEvent(new IPC::IPCEventV(&voidEventCB), "voidEvent"); //REG_EVENT_VOID(voidEvent);
-		
+
 		LINK_EVENT(uint32Event, uint32);
 		LINK_EVENT_VOID(voidEvent);
 
@@ -342,7 +342,7 @@ namespace
 		{
 			ASSERT_EQ(p.second, val[p.first]);
 		}
-		
+
 		ASSERT_EQ(param.size(), val.size());
 	}
 }

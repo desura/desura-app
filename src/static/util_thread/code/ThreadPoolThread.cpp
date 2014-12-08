@@ -82,14 +82,14 @@ bool ThreadPoolThread::doTask()
 		std::lock_guard<std::mutex> guard(m_TaskLock);
 		m_pTask = task;
 	}
-	
+
 	task->doTask();
 
 	{
 		std::lock_guard<std::mutex> guard(m_TaskLock);
 		m_pTask = nullptr;
 	}
-	
+
 	onCompleteEvent();
 	return true;
 }

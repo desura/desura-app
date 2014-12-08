@@ -81,7 +81,7 @@ void UninstallBranchProcess::run()
 	catch (gcException &)
 	{
 	}
-	
+
 	onCompleteEvent();
 	onFinishEvent();
 }

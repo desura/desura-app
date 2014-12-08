@@ -47,7 +47,7 @@ protected:
 
 	gcProgressBar* m_pbProgress;
 	gcButton* m_butClose;
-	
+
 	void onError(gcException& e);
 	void onComplete();
 	void onProgress(uint8 &prog);

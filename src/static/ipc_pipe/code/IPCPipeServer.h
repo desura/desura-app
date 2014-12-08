@@ -85,7 +85,7 @@ protected:
 	//! @param data Pipe Data
 	//!
 	void connectNamedPipe(uint32 index, PipeData* data);
-	
+
 #endif
 	//inherited from IPCPipeBase
 	void setUpPipes();
@@ -96,7 +96,7 @@ protected:
 	PipeData* getData(uint32 index);	
 	void createAccessRights(PACL pNewAcl, SECURITY_ATTRIBUTES &sa, SECURITY_DESCRIPTOR &sd);
 #endif
-	
+
 private:
 #ifdef WIN32
 	bool m_bChangeAccess;

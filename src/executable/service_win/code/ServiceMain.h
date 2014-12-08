@@ -42,7 +42,7 @@ public:
 
 	bool start(int argc, char** argv);
 	void stop();
- 
+
 	void setCrashSettings(const wchar_t* user, bool upload);
 	void onDisconnect();
 

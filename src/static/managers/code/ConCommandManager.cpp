@@ -53,7 +53,7 @@ ConsoleCommandManager::~ConsoleCommandManager()
 bool ConsoleCommandManager::RegCCom(const gcRefPtr<ConCommand> &var)
 {
 	auto temp = findItem(var->getName());
-	
+
 	if (temp)
 		return false;
 

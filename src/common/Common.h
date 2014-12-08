@@ -141,7 +141,7 @@ bool IsUIThread();
 		#ifndef NIX
 			#define NIX 1
 		#endif
-	
+
 		#if defined __x86_64 || defined __amd64 || defined __x86_64__
 			#define NIX64 1
 		#endif
@@ -151,7 +151,7 @@ bool IsUIThread();
 		#ifndef MACOS
 			#define MACOS 1
 		#endif
-	
+
 		#define fopen64 fopen
 	#endif
 
@@ -200,7 +200,7 @@ bool IsUIThread();
 		#else
 			#include <afx.h>
 		#endif
-	
+
 		#include <sys/stat.h>
 
 		#define vsnwprintf _vsnwprintf
@@ -220,24 +220,24 @@ bool IsUIThread();
 		#define DIRS_CHAR '\\'
 		#define DIRS_WSTR L"\\"
 		#define DIRS_WCHAR L'\\'
-	
+
 		#define DIR_COMMON "Common"
 		#define DIR_WCOMMON L"Common"
 
 		#define CEXPORT __declspec(dllexport)
 		#define CIMPORT __declspec(dllimport)
-	
+
 		#define BUILDID_INTERNAL 500
 		#define BUILDID_BETA 300
 		#define BUILDID_PUBLIC 100
-	
+
 		void inline gcSleep(uint32 miliSecs) { Sleep(miliSecs); }
-	
+
 		// mingw needs some imports
 		#ifdef __MINGW32__
 			#include <limits.h>
 			#include <algorithm>
-		
+
 			// this is missing in the mingw headers
 			// shellapi.h:
 			#ifndef SEE_MASK_DEFAULT
@@ -249,7 +249,7 @@ bool IsUIThread();
 				#define NOTIFYICONDATAW_V3_SIZE sizeof(NOTIFYICONDATAW)
 				#define NOTIFYICONDATA_V3_SIZE __MINGW_NAME_AW_EXT(NOTIFYICONDATA,_V3_SIZE)
 			#endif
-		
+
 			// mscoree.h:
 			#ifndef STARTUP_LOADER_OPTIMIZATION_MULTI_DOMAIN_HOST
 				#define STARTUP_LOADER_OPTIMIZATION_MULTI_DOMAIN_HOST 0x3<<1
@@ -273,7 +273,7 @@ bool IsUIThread();
 		#define _LARGEFILE64_SOURCE 1
 		#define _FILE_OFFSET_BITS   64
 		#define __USE_LARGEFILE64 1
-	
+
 		#include <sys/types.h>
 		#include <sys/stat.h>
 		#include <sys/wait.h>
@@ -301,7 +301,7 @@ bool IsUIThread();
 		#define DIRS_CHAR '/'
 		#define DIRS_WSTR L"/"
 		#define DIRS_WCHAR L'/'
-	
+
 		#define DIR_COMMON "common"
 		#define DIR_WCOMMON L"common"
 

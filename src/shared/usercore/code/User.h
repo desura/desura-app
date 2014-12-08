@@ -211,7 +211,7 @@ namespace UserCore
 
 		const char* getCVarValue(const char* cvarName) override;
 		gcRefPtr<::Thread::ThreadPoolI> getThreadPool() override;
-		
+
 		gcRefPtr<WebCore::WebCoreI> getWebCore() override;
 		gcRefPtr<UserCore::UserThreadManagerI> getThreadManager() override;
 		gcRefPtr<UserCore::UploadManagerI> getUploadManager() override;

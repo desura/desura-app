@@ -143,7 +143,7 @@ namespace MCFCore
 
 			::Thread::WaitCondition m_WaitCondition;
 
-			
+
 			std::mutex m_McfLock;
 			MCFCore::MCF* m_pCurMcf = nullptr;
 

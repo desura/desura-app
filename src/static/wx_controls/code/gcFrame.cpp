@@ -102,7 +102,7 @@ public:
 	void setupPositionSave(const char* name, bool saveMax, int defW, int defH)
 	{
 		m_bSaveMax = saveMax;
-	
+
 		m_pFormWidth	= getCVar(gcString("gc_{0}_w", name), gcString("{0}", defW));
 		m_pFormHeight	= getCVar(gcString("gc_{0}_h", name), gcString("{0}", defH));
 		m_pFormXPos		= getCVar(gcString("gc_{0}_x", name), "-1");
@@ -158,11 +158,11 @@ void gcFrame::initGCFrame(bool delayLoad, long style)
 void gcFrame::setIdealSize(int width, int height)
 {	
 	SetSize(width, height);
-	
+
 #ifdef NIX
 	if (width == -1)
 		width = GetSize().GetWidth();
-		
+
 	if (height == -1)
 		height = GetSize().GetHeight();
 #endif
@@ -219,7 +219,7 @@ void gcFrame::setupPositionSave(const char* name, bool saveMax, int defWidth, in
 
 	if (defHeight == -1)
 		defHeight = GetDefaultSize().GetHeight();
-		
+
 	m_pCVarInfo = new CVarInfo();
 	m_pCVarInfo->setupPositionSave(name, saveMax, defWidth, defHeight);
 
@@ -290,7 +290,7 @@ void gcFrame::onResize(wxSizeEvent &event)
 {
 	if (m_pCVarInfo && !IsMaximized())
 		m_pCVarInfo->onResize(GetSize().GetWidth(), GetSize().GetHeight());
-	
+
 	event.Skip();
 }
 
@@ -317,7 +317,7 @@ bool gcFrame::setMessageBox(wxWindow *pDialog)
 		gcAssert(false); 
 		return false;
 	}
-		
+
 	m_pMessageBox = pDialog;
 
 	if (!pDialog && m_bPendingClose)

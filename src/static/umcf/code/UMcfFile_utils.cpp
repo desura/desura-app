@@ -59,10 +59,10 @@ void FileClose(FILEHANDLE fh)
 uint64 FileSize(FILEHANDLE fh)
 {
 	uint64 pos = ftell(fh);
-	
+
 	fseek(fh, 0, SEEK_END);
 	uint64 size = ftell(fh);
-	
+
 	fseek(fh, pos, SEEK_SET);
 	return size;
 }

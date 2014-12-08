@@ -92,37 +92,37 @@ UploadInfoPage::UploadInfoPage( wxWindow* parent, wxWindowID id, const wxPoint& 
 	fgSizer1->AddGrowableRow( 2 );
 	fgSizer1->SetFlexibleDirection( wxBOTH );
 	fgSizer1->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
-	
-	
-	
+
+
+
 	wxBoxSizer* bSizer5 = new wxBoxSizer( wxHORIZONTAL );
-	
+
 	m_labText = new gcStaticText( this, wxID_ANY, Managers::GetString(L"#UDF_PROMPT"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_labText->Wrap( -1 );
 	bSizer5->Add( m_labText, 0, wxALIGN_BOTTOM|wxALL, 5 );
-	
-	
+
+
 
 	wxBoxSizer* bSizer8  = new wxBoxSizer( wxHORIZONTAL );
-	
+
 	m_tbItemFile = new wxTextCtrl( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
 	bSizer8->Add( m_tbItemFile, 1, wxBOTTOM|wxLEFT, 5 );
-	
+
 	m_butFile = new gcButton(this, wxID_ANY, Managers::GetString(L"#BROWSE"));
 	bSizer8->Add( m_butFile, 0, wxALIGN_CENTER_VERTICAL|wxBOTTOM|wxRIGHT|wxLEFT, 5 );
-	
 
-	
+
+
 	wxBoxSizer* bSizer2 = new wxBoxSizer( wxHORIZONTAL );
-	
+
 	bSizer2->Add( 0, 0, 1, wxEXPAND, 5 );
-	
+
 	m_butUpload = new gcButton( this, wxID_ANY, Managers::GetString(L"#OK"), wxDefaultPosition, wxDefaultSize, 0 );
 	bSizer2->Add( m_butUpload, 0, wxTOP|wxBOTTOM|wxLEFT, 5 );
-	
+
 	m_butCancel = new gcButton( this, wxID_ANY, Managers::GetString(L"#CANCEL"), wxDefaultPosition, wxDefaultSize, 0 );
 	bSizer2->Add( m_butCancel, 0, wxALL, 5 );
-	
+
 
 
 	fgSizer1->Add( bSizer5, 1, wxEXPAND, 5 );
@@ -132,7 +132,7 @@ UploadInfoPage::UploadInfoPage( wxWindow* parent, wxWindowID id, const wxPoint& 
 
 	this->SetSizer( fgSizer1 );
 	this->Layout();
-	
+
 	m_pPrepThread = nullptr;
 	m_pUpInfo = nullptr;
 
@@ -245,7 +245,7 @@ void UploadInfoPage::resetAllValues()
 
 	gcString filePath;
 	gcString cachePath;
-	
+
 	auto userCore = GetUserCore();
 
 	if (userCore)

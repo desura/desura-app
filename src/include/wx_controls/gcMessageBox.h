@@ -50,15 +50,15 @@ public:
 	//! Get number of extra buttons
 	//!
 	virtual uint32 getCount()=0;
-	
+
 	//! Get the label for button at index
 	//!
 	virtual const wchar_t* getLabel(uint32 index)=0;
-	
+
 	//! Get the tool tip for button at index. Can be nullptr
 	//!
 	virtual const wchar_t* getToolTip(uint32 index)=0;
-	
+
 	//! Perform action for button at index
 	//!
 	virtual void performAction(uint32 index)=0;

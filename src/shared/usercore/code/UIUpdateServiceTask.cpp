@@ -60,7 +60,7 @@ bool UIUpdateServiceTask::initService()
 	gcString oldBranchMcf = getBranchMcf(getItemInfo()->getId(), getItemInfo()->getInstalledBranch(), getMcfBuild());
 
 	m_pIPCIM = getServiceMain()->newUninstallBranch();
-			
+
 	if (!m_pIPCIM)
 	{
 		gcException eFailCrtBrnch(ERR_NULLHANDLE, "Failed to create uninstall update mcf service!\n");

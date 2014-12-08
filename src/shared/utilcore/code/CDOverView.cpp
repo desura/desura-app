@@ -37,7 +37,7 @@ CDOverView::CDOverView(wxWindow* parent) : gcPanel(parent, wxID_ANY, wxDefaultPo
 
 	m_labGenerate = new wxStaticText(this, wxID_ANY, Managers::GetString(L"#CRASH_LABGENERATE"));
 	m_labUpload = new wxStaticText(this, wxID_ANY, Managers::GetString(L"#CRASH_LABUPLOAD"));
-	
+
 	m_labGenerate->Wrap( 175 );
 	m_labUpload->Wrap( 175 );
 
@@ -46,7 +46,7 @@ CDOverView::CDOverView(wxWindow* parent) : gcPanel(parent, wxID_ANY, wxDefaultPo
 	fgSizer2 = new wxFlexGridSizer( 3, 2, 0, 0 );
 	fgSizer2->SetFlexibleDirection( wxBOTH );
 	fgSizer2->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
-	
+
 	fgSizer2->Add( m_butGenerate, 0, wxALIGN_CENTER_VERTICAL|wxALL, 10 );
 	fgSizer2->Add( m_labGenerate, 0, wxALL|wxALIGN_CENTER_VERTICAL|wxALIGN_CENTER_HORIZONTAL, 5 );
 	fgSizer2->Add( 0, 15, 1, wxEXPAND, 5 );
@@ -67,12 +67,12 @@ CDOverView::CDOverView(wxWindow* parent) : gcPanel(parent, wxID_ANY, wxDefaultPo
 	fgSizer3->AddGrowableRow( 2 );
 	fgSizer3->SetFlexibleDirection( wxBOTH );
 	fgSizer3->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
-	
+
 	fgSizer3->Add( 0, 0, 1, wxEXPAND, 5 );
 	fgSizer3->Add( fgSizer2, 1, wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL|wxEXPAND, 5 );
 	fgSizer3->Add( 0, 0, 1, wxEXPAND, 5 );
 	fgSizer3->Add( bSizer2, 1, wxEXPAND, 5 );
-	
+
 	this->SetSizer( fgSizer3 );
 	this->Layout();
 }

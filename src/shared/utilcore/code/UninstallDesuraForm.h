@@ -66,7 +66,7 @@ protected:
 	wxStaticText* m_labTitleInfo;
 	wxStaticBitmap* m_imgLogo;
 	wxStaticLine* m_staticline1;
-		
+
 	wxButton* m_butRepair;
 	wxButton* m_butUninstall;
 	wxButton* m_butCancel;	

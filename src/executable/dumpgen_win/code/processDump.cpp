@@ -84,7 +84,7 @@ void TerminateDesura()
 
 		if (GetModuleBaseName(hProcess, 0, buffer, 50) > 0 && strcmp("desura.exe", buffer) == 0)
 			TerminateProcess(hProcess, 0);
-		
+
 		CloseHandle(hProcess);
 	}
 }

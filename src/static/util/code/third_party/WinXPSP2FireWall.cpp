@@ -172,7 +172,7 @@ FW_ERROR_CODE WinXPSP2FireWall::IsAppEnabled( const wchar_t* lpszProcessImageFil
 	VARIANT_BOOL bFWEnabled;
 	INetFwAuthorizedApplication* pFWApp = nullptr;
 	INetFwAuthorizedApplications* pFWApps = nullptr;
-	
+
 	bEnable = FALSE;
 	try
 	{
@@ -209,7 +209,7 @@ FW_ERROR_CODE WinXPSP2FireWall::IsAppEnabled( const wchar_t* lpszProcessImageFil
 	{
 		ret = nError;
 	}
-	
+
 	// Free the BSTR
 	SysFreeString( bstrFWProcessImageFileName );
 
@@ -275,7 +275,7 @@ FW_ERROR_CODE WinXPSP2FireWall::AddApplication( const wchar_t* lpszProcessImageF
 			hr = pFWApp->put_Name( bstrRegisterName );
 			if( FAILED( hr ))
 				throw FW_ERR_PUT_REGISTER_NAME;
-			
+
 			// Add the application to the collection
 			hr = pFWApps->Add( pFWApp );
 			if( FAILED( hr ))
@@ -432,7 +432,7 @@ FW_ERROR_CODE WinXPSP2FireWall::AddPort( LONG lPortNumber, NET_FW_IP_PROTOCOL ip
 			bstrRegisterName = SysAllocString( lpszRegisterName );
 			if( SysStringLen( bstrRegisterName ) == 0)
 				throw FW_ERR_SYS_ALLOC_STRING;
-		
+
 			// Set the registered name
 			hr = pFWOpenPort->put_Name( bstrRegisterName );
 			if( FAILED( hr ))
@@ -512,10 +512,10 @@ FW_ERROR_CODE WinXPSP2FireWall::IsExceptionNotAllowed( BOOL& bNotAllowed )
 		VARIANT_BOOL bExNotAllowed;
 
 		HRESULT hr = m_pFireWallProfile->get_ExceptionsNotAllowed( &bExNotAllowed );
-		
+
 		if( FAILED( hr ))
 			throw FW_ERR_EXCEPTION_NOT_ALLOWED;
-		
+
 		if( bExNotAllowed == VARIANT_TRUE )
 			bNotAllowed = TRUE;
 		else
@@ -564,7 +564,7 @@ FW_ERROR_CODE WinXPSP2FireWall::IsNotificationDiabled( BOOL& bDisabled )
 		HRESULT hr = m_pFireWallProfile->get_NotificationsDisabled( &bNotifyDisable );
 		if( FAILED( hr ))
 			throw FW_ERR_NOTIFICATION_DISABLED;
-		
+
 		if( bNotifyDisable == VARIANT_TRUE )
 			bDisabled = TRUE;
 		else

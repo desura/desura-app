@@ -52,7 +52,7 @@ void gcWebFakeBrowser::onPaint()
 	dc.SetTextBackground(*wxBLACK);
 
 	wxSize s = m_pParent->GetSize();
-	
+
 	dc.SetBackground(wxBrush(*wxBLACK));
 	dc.Clear();
 

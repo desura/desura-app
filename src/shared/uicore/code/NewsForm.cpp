@@ -45,13 +45,13 @@ NewsForm::NewsForm(wxWindow* parent)
 	m_butNext = new gcButton(this, wxID_ANY, Managers::GetString(L"#NF_NEXT"));
 	m_butClose = new gcButton(this, wxID_ANY, Managers::GetString(L"#CLOSE"));
 
-	
+
 	wxBoxSizer* bSizer4 = new wxBoxSizer( wxHORIZONTAL );
 	bSizer4->Add( m_butClose, 0, wxALL, 5 );
 	bSizer4->Add( 0, 0, 1, wxEXPAND, 5 );
 	bSizer4->Add( m_butPrev, 0, wxTOP|wxBOTTOM|wxLEFT, 5 );
 	bSizer4->Add( m_butNext, 0, wxALL, 5 );
-	
+
 	wxFlexGridSizer* fgSizer2;
 	fgSizer2 = new wxFlexGridSizer( 2, 1, 0, 0 );
 	fgSizer2->AddGrowableCol( 0 );
@@ -60,7 +60,7 @@ NewsForm::NewsForm(wxWindow* parent)
 	fgSizer2->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
 	fgSizer2->Add( m_ieBrowser, 1, wxEXPAND|wxTOP|wxRIGHT|wxLEFT, 5 );
 	fgSizer2->Add( bSizer4, 1, wxEXPAND, 5 );
-	
+
 	this->SetSizer( fgSizer2 );
 	this->Layout();
 
@@ -122,7 +122,7 @@ void NewsForm::loadSelection()
 
 	gcWString url(L"{0}?url={1}", m_szLoadingUrl, UTIL::STRING::urlEncode(m_vItemList[m_uiSelected]->szUrl));
 	m_ieBrowser->loadUrl(url.c_str());
-	
+
 	Layout();
 
 	if (m_vItemList.size() > 1)

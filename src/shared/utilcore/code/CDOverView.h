@@ -53,7 +53,7 @@ protected:
 	wxStaticText* m_labUpload;
 
 private:
-	
+
 };
 
 #endif //DESURA_CDOVERVIEW_H

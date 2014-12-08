@@ -207,7 +207,7 @@ namespace UserCore
 			void goToStageDownloadTools(ToolTransactionId ttid, const char* downloadPath, MCFBranch branch, MCFBuild build) override;
 			void goToStageDownloadTools(bool launch, ToolTransactionId ttid = -1) override;
 			void goToStageInstallTools(bool launch) override;
-			
+
 			bool install(MCFBranch branch, MCFBuild build, UserCore::ItemTask::GI_FLAGS flags);
 
 			uint64 getHash(){return getItemInfo()->getId().toInt64();}
@@ -248,7 +248,7 @@ namespace UserCore
 			void stopThread();
 
 			void preLaunchCheck();
-	
+
 			void doLaunch(gcRefPtr<Helper::ItemLaunchHelperI> helper);
 		#ifdef NIX
 			void doLaunch(bool useXdgOpen, const char* globalExe, const char* globalArgs);

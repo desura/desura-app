@@ -42,7 +42,7 @@ END_EVENT_TABLE()
 InstallPrompt::InstallPrompt( wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos, const wxSize& size, long style ) : gcDialog( parent, id, title, pos, size, style )
 {
 	this->SetSizeHints( wxDefaultSize, wxDefaultSize );
-	
+
 
 	m_labQuestion = new wxStaticText( this, wxID_ANY, Managers::GetString(L"#IF_CONFLICT"), wxDefaultPosition, wxSize(-1,30), 0 );
 	m_labQuestion->Wrap( 250 );
@@ -122,7 +122,7 @@ InstallPrompt::InstallPrompt( wxWindow* parent, wxWindowID id, const wxString& t
 	textC->Connect( wxEVT_LEFT_DOWN, wxMouseEventHandler( InstallPrompt::onMouseDown ), nullptr, this );
 #endif
 
-	
+
 
 	centerOnParent();
 }
@@ -147,7 +147,7 @@ void InstallPrompt::onCheckBoxSelect(wxCommandEvent &event)
 	m_rbInstallRemove->SetValue(false);
 	m_rbInstallLeave->SetValue(false);
 	m_rbInstallVerify->SetValue(false);
-	
+
 	if (event.GetId() == m_rbInstallRemove->GetId())
 	{
 		m_rbInstallRemove->SetValue(true);

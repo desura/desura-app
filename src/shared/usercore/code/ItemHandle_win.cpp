@@ -40,7 +40,7 @@ using namespace UserCore::Item;
 void ItemHandle::doLaunch(gcRefPtr<Helper::ItemLaunchHelperI> helper)
 {
 	preLaunchCheck();
-	
+
 	bool needElevation = false;
 
 	size_t x=0;
@@ -54,13 +54,13 @@ void ItemHandle::doLaunch(gcRefPtr<Helper::ItemLaunchHelperI> helper)
 
 		x++;
 	}
-	
+
 	auto ei = getItemInfo()->getActiveExe();
 
 	gcString args;
 	gcString ea(ei->getExeArgs());
 	gcString ua(ei->getUserArgs());
-	
+
 	if (ea.size() > 0)
 		args += " " + ea;
 

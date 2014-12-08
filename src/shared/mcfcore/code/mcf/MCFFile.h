@@ -167,7 +167,7 @@ public:
 	//! @param flag Flag to remove
 	//!
 	void delFlag(uint16 flag);
-	
+
 
 	//! Checks to see if a file has started to download
 	//!

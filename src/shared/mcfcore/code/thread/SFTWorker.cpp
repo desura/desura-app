@@ -138,7 +138,7 @@ void SFTWorker::finishFile()
 
 #ifdef NIX
 	bool isWinExe = false;
-	
+
 	if (file.size() > 4)
 	{
 		std::string lastFour(file.end() - 4, file.end());
@@ -146,9 +146,9 @@ void SFTWorker::finishFile()
 		if (lastFour == ".EXE")
 			isWinExe = true;
 	}
-	
+
 	//( && stat(file.c_str(), &s) == 0) 
-	
+
 	bool isExecutable = HasAnyFlags(m_pCurFile->getFlags(), MCFCore::MCFFileI::FLAG_XECUTABLE);
 
 	if (isExecutable || isWinExe)

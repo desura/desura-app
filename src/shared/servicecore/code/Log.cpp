@@ -49,7 +49,7 @@ void InitLogging(RegDLLCB_MCF cb)
 
 		return;
 	}
-		
+
 
 	LogCallback::MessageFn messageFn = [](MSG_TYPE type, const char* msg, Color* col, std::map<std::string, std::string> *mpArgs)
 	{

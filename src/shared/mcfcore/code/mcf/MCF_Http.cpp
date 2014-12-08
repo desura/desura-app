@@ -58,7 +58,7 @@ void MCF::dlHeaderFromHttp(const char* url)
 
 	MCFCore::MCFHeader webHeader(wc->getData());
 	setHeader(&webHeader);
-	
+
 	if (!webHeader.isValid())
 		throw gcException(ERR_BADHEADER);
 

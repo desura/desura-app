@@ -51,7 +51,7 @@ public:
 protected:
 	virtual void onComplete();
 	virtual void onStop();
-	
+
 	gcString getBranchMcf(DesuraId id, MCFBranch branch, MCFBuild build);
 	bool checkPath(const char* path, MCFBranch branch, MCFBuild build);
 

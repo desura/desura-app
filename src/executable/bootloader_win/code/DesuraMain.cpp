@@ -30,12 +30,12 @@ $/LicenseInfo$
 
 #ifdef DESURA_OFFICIAL_BUILD
 	#include "AppUpdateInstall.h"
-	
+
 	extern UINT DownloadFilesForTest();
 	extern UINT InstallFilesForTest();
-	
+
 	extern INT_PTR DisplayUpdateWindow(int updateType);
-	
+
 	extern bool CheckCert();
 	extern void CheckForBadUninstaller();
 #endif
@@ -161,7 +161,7 @@ BootLoader::BootLoader()
 	_set_error_mode(_OUT_TO_MSGBOX);
 
 	m_MDumpHandle.showMessageBox(true);
-	
+
 	//AfxEnableMemoryTracking(FALSE);
 	InitCommonControls();
 
@@ -183,7 +183,7 @@ void BootLoader::InitInstance()
 	m_MDumpHandle.setTracerSharedMemoryName(g_Tracer.getSharedMemName());
 
 	UTIL::MISC::CMDArgs args(m_lpCmdLine);
-	
+
 	if (args.hasArg("waitfordebugger"))
 		BootLoaderUtil::WaitForDebugger();
 
@@ -501,7 +501,7 @@ void BootLoader::loadUICore()
 		::MessageBox(nullptr, "Failed to load uicore.dll", PRODUCT_NAME ": ERROR!",  MB_OK);
 		exit(-200);
 	}
-	
+
 	UICoreFP UICoreGetInterface = m_hUICore.getFunction<UICoreFP>("GetInterface");
 
 	if (!UICoreGetInterface)

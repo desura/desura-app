@@ -69,13 +69,13 @@ gboolean onTimeout(gpointer data)
 		m_timeoutSource = 0;
 		return false;
 	}
-	
+
 	g_pChromiumController->DoMsgLoop();
-	
+
 	//if we dont do this here we could end up starving the pending que due to g_pChromiumController->DoMsgLoop() taking to long.
 	if (wxTheApp)
 		wxTheApp->ProcessPendingEvents();
-	
+
 	return true;
 }
 
@@ -83,7 +83,7 @@ void RestartTimer(uint timeout)
 {
 	if (! g_bLoaded)
 		return;
-	
+
 	if (m_timeoutSource != 0)
 		g_source_remove(m_timeoutSource);
 	m_timeoutSource = g_timeout_add(timeout, onTimeout, nullptr);
@@ -95,10 +95,10 @@ bool RestartTimerCB(const CVar* hook, const char* newval)
 		return false;
 
 	RestartTimer(Safe::atoi(newval));
-	
+
 	return true;
 }
-	
+
 CVar gc_cef_timeout("gc_cef_timeout", "75", 0, &RestartTimerCB);
 #endif
 
@@ -176,7 +176,7 @@ bool InitWebControl()
 #ifdef NIX
 	m_timeoutSource = g_timeout_add(50, onTimeout, nullptr);
 #endif
-	
+
 	g_bLoaded = true;
 	SetCookies();
 	return true;
@@ -306,7 +306,7 @@ void RegisterJSBindings()
 
 	for (size_t x=0; x<g_vJSExtenderList->size(); x++)
 		g_pChromiumController->RegisterJSExtender((*g_vJSExtenderList)[x]);
-	
+
 	g_vJSExtenderList->clear();
 	safe_delete(g_vJSExtenderList);
 }
@@ -330,7 +330,7 @@ void RegisterSchemes()
 
 	for (size_t x=0; x<g_vSchemeList->size(); x++)
 		g_pChromiumController->RegisterSchemeExtender((*g_vSchemeList)[x]);
-	
+
 	g_vSchemeList->clear();
 	safe_delete(g_vSchemeList);
 }

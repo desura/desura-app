@@ -187,7 +187,7 @@ public:
 	virtual int performAction(std::vector<std::string> &args)
 	{
 		MCFCore::MCFI* mcfSrc = mcfFactory();
-		
+
 		printf("Parsing MCF: %s\n", args[0].c_str());
 		mcfSrc->setFile(args[0].c_str());
 		mcfSrc->parseMCF();
