@@ -38,7 +38,7 @@ class gcStaticLine : public gcPanel
 public:
 	gcStaticLine(wxWindow *parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize, long style = 0);
 	~gcStaticLine();
-	
+
 	void applyTheme();
 
 protected:

@@ -73,11 +73,11 @@ bool IsExeRunning(char* pName)
 		char buffer[50] = {0};
 		GetModuleBaseName(hProcess, 0, buffer, 50);
 		CloseHandle(hProcess);
-		
+
 		if(strcmp(pName, buffer)==0)
 			return true;
 	}
-	
+
 	return false;
 }
 
@@ -149,7 +149,7 @@ bool RestartAsAdmin(const char* args)
 	GetModuleFileName(nullptr, name, 255);
 
 	char restartArgs[255];
-	
+
 	if (args)
 		strncpy_s(restartArgs, 255, args, 255);
 	else
@@ -233,7 +233,7 @@ void WaitForDebugger()
 	if (kernel32_dll != nullptr)
 	{
 		WaitForDebuggerFunc waitfor_debugger = (WaitForDebuggerFunc)GetProcAddress(kernel32_dll, "IsDebuggerPresent");
-	
+
 		if (waitfor_debugger != nullptr) 
 		{
 			while( !waitfor_debugger() )
@@ -258,7 +258,7 @@ bool SetDllDir(const char* dir)
 	if (sol.load("kernel32.dll"))
 	{
 		SetDllDirectoryFunc set_dll_directory = sol.getFunction<SetDllDirectoryFunc>("SetDllDirectoryA");
-	
+
 		if (set_dll_directory && set_dll_directory(dir)) 
 			return true;
 	}
@@ -362,18 +362,18 @@ void PreReadImage(const char* file_path)
 			return;
 
 		base::win::PEImage pe_image(dll_module);
-	
+
 		PIMAGE_NT_HEADERS nt_headers = pe_image.GetNTHeaders();
 		size_t actual_size_to_read = nt_headers->OptionalHeader.SizeOfImage;
 		volatile uint8* touch = reinterpret_cast<uint8*>(dll_module);
-	
+
 		size_t offset = 0;
 		while (offset < actual_size_to_read) 
 		{
 			uint8 unused = *(touch + offset);
 			offset += actual_step_size;
 		}
-	
+
 		FreeLibrary(dll_module);
 	}
 }

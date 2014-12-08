@@ -168,7 +168,7 @@ namespace STRING
 		UTIL::CB::TemplateCallback<const T> c(callback);
 		base64_decodeCB(encoded_string, &c);
 	}
-	
+
 	template <typename T>
 	void base64_decode(const std::string &encoded_string, T& callback)
 	{

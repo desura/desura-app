@@ -147,7 +147,7 @@ DesuraId UploadInfoThread::getItemId()
 {
 	return m_pUploadThreadInfo->itemId;
 }
-	
+
 //Overrides
 void UploadInfoThread::setStart(uint32 start) 
 {
@@ -201,7 +201,7 @@ bool UploadInfoThread::isPaused()
 
 	return false;
 }
-	
+
 const char* UploadInfoThread::getFile()
 {
 	return m_pUploadThreadInfo->szFile.c_str(); 

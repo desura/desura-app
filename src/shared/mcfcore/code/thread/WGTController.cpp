@@ -77,7 +77,7 @@ namespace MCFCore
 
 			const uint32 id;
 			uint64 ammountDone = 0;
-					
+
 			void setCurrentBlock(std::shared_ptr<Misc::WGTSuperBlock> pBlock)
 			{
 				std::lock_guard<std::mutex> guard(mutex);
@@ -796,7 +796,7 @@ bool WGTController::newTask(uint32 id, MCFThreadStatus &status, std::shared_ptr<
 		return true;
 
 	auto bNoMoreWork = false;
-	
+
 	{
 		std::lock_guard<std::mutex> guard(m_pFileMutex);
 		size_t listSize = m_vSuperBlockList.size();

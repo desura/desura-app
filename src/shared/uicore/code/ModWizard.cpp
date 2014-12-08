@@ -41,7 +41,7 @@ ModWizardForm::ModWizardForm(wxWindow* parent)
 
 	m_pPage = new MWInfoPage( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
 	m_bsSizer->Add( m_pPage, 1, wxEXPAND, 0 );
-	
+
 	this->SetSizer( m_bsSizer );
 	this->Layout();
 

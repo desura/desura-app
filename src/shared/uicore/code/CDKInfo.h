@@ -47,14 +47,14 @@ public:
 
 protected:
 	gcTextCtrl* m_tbCdKey;
-		
+
 	gcImageButton* m_imgCopyPart;
 	gcImageButton* m_imgCopyAll;
 
 	gcButton* m_butClose;
 	gcButton* m_butLaunch;
 	gcButton* m_butActivate;
-	
+
 	wxStaticText* m_labInfo;
 
 	void tokenizeKey(const char* key);

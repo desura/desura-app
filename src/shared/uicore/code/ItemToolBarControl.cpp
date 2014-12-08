@@ -56,7 +56,7 @@ public:
 		m_colSelected =  wxColor(GetGCThemeManager()->getColor("itemToolBar", "selected"));
 
 		refreshImage(true);
-		
+
 #ifdef NIX
 		//LINUX TODO: Work out best size
 		wxFont f = GetFont();
@@ -228,7 +228,7 @@ ItemToolBarControl::ItemToolBarControl(wxWindow* parent) : BaseToolBarControl(pa
 	fgSizer1->Add( m_pFGContentSizer, 0, 0, 4 );
 	fgSizer1->Add( 3, 0, 1, 0, 4 );
 	fgSizer1->Add( m_butExpand, 0, wxTOP|wxBOTTOM, 4 );
-	
+
 
 #ifdef ENABLE_SEARCH
 	fgSizer1->Add( m_butContract, 0, wxTOP|wxBOTTOM, 4 );
@@ -329,10 +329,10 @@ void ItemToolBarControl::createButtons()
 
 	m_vButtonList.push_back(new ItemButton(this, BUTTON_GAME, Managers::GetString(L"#PLAY_GAMES"), LEFT));
 	m_vButtonList.push_back(new ItemButton(this, BUTTON_FAV, Managers::GetString(L"#PLAY_FAVORITES"), fPos));
-	
+
 	if (dev)
 		m_vButtonList.push_back(new ItemButton(this, BUTTON_DEV, Managers::GetString(L"#PLAY_DEVELOPMENT"), dPos));
-	
+
 	for (size_t x=0; x<m_vButtonList.size(); x++)
 		m_pFGContentSizer->Add( m_vButtonList[x], 0, wxTOP|wxBOTTOM, 4 );
 

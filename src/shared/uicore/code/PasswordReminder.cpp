@@ -92,11 +92,11 @@ PasswordReminder::PasswordReminder(wxWindow* parent) : gcDialog(parent, wxID_ANY
 	fgSizer2->AddGrowableRow( 1 );
 	fgSizer2->SetFlexibleDirection( wxBOTH );
 	fgSizer2->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
-	
+
 	fgSizer2->Add( m_staticText1, 0, wxALL, 5 );
 	fgSizer2->Add( bSizer2, 1, wxEXPAND|wxALIGN_CENTER_VERTICAL, 5 );
 	fgSizer2->Add( bSizer3, 1, wxEXPAND, 5 );
-	
+
 	this->SetSizer( fgSizer2 );
 	this->Layout();
 

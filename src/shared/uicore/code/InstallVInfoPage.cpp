@@ -57,7 +57,7 @@ InstallVerifyInfoPage::InstallVerifyInfoPage(wxWindow* parent) : BaseInstallPage
 	bSizer4->Add( 0, 0, 1, wxEXPAND, 5 );
 	bSizer4->Add( m_butVerify, 0, wxTOP|wxBOTTOM|wxLEFT, 5 );
 	bSizer4->Add( m_butCancel, 0, wxALL, 5 );
-	
+
 	wxFlexGridSizer* fgSizer2;
 	fgSizer2 = new wxFlexGridSizer( 6, 1, 0, 0 );
 	fgSizer2->AddGrowableCol( 0 );

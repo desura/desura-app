@@ -187,7 +187,7 @@ void SFTController::fillFileList()
 				{
 					uint64 size = UTIL::FS::getFileSize(path);
 					UTIL::FS::FileHandle fh(path.getFullPath().c_str(), UTIL::FS::FILE_READ);
-	
+
 					std::string md5 = UTIL::MISC::hashFile(fh.getHandle(), size);
 					std::string fileMd5 = m_rvFileList[x]->getCsum();
 

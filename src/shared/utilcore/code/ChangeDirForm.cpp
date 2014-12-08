@@ -44,13 +44,13 @@ ChangeDirForm::ChangeDirForm(wxWindow* parent)
 	fgSizer1->AddGrowableCol( 0 );
 	fgSizer1->SetFlexibleDirection( wxBOTH );
 	fgSizer1->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
-	
+
 	fgSizer1->Add( m_labInfo, 1, wxEXPAND, 5 );
 	fgSizer1->Add( m_pbProgress, 0, wxALL|wxEXPAND, 5 );
-	
+
 	this->SetSizer( fgSizer1 );
 	this->Layout();
-	
+
 	this->Centre( wxBOTH );
 }
 

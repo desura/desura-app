@@ -287,12 +287,12 @@ bool OnLinuxBinChange(CVar* var, const char* val)
 {
 	//force the value to be set
 	var->setValue(val);
-	
+
 	auto userCore = GetUserCore();
 
 	if (userCore)
 		userCore->getItemManager()->regenLaunchScripts();
-		
+
 	return true;
 }
 
@@ -300,19 +300,19 @@ bool OnLinuxArgsChange(CVar* var, const char* val)
 {
 	//force the value to be set
 	var->setValue(val);
-	
+
 	auto userCore = GetUserCore();
 
 	if (userCore)
 		userCore->getItemManager()->regenLaunchScripts();
-		
+
 	return true;
 }
 
 bool forceShortcutChange(CVar* var, const char* val)
 {
 	gcString v(val);
-	
+
 	if (v == "true" || v == "1")
 	{
 		try
@@ -398,7 +398,7 @@ bool corecountChange(CVar* var, const char* val)
 		gc_corecount.setValue(coreCount);
 		return false;
 	}
-	
+
 	return true;
 }
 
@@ -457,15 +457,15 @@ public:
 	SpinnerTest() : wxFrame(nullptr, wxID_ANY, "Test Spinner", wxDefaultPosition, wxSize(200,200))
 	{
 		this->SetSizeHints( wxDefaultSize, wxDefaultSize );
-		
+
 		wxBoxSizer* bSizer1 = new wxBoxSizer( wxVERTICAL );
 		gcSpinnerProgBar* m_pbProgress = new gcSpinnerProgBar(this, wxID_ANY, wxDefaultPosition, wxSize(-1,22 ));
-		
+
 		bSizer1->Add( m_pbProgress, 0, wxALL|wxEXPAND, 5 );
-		
+
 		this->SetSizer( bSizer1 );
 		this->Layout();
-		
+
 		this->Centre( wxBOTH );
 	}
 };

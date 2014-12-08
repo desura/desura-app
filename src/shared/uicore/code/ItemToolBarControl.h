@@ -50,7 +50,7 @@ class ItemToolBarControl: public BaseToolBarControl
 public:
 	ItemToolBarControl(wxWindow* parent);
 	~ItemToolBarControl();
-	
+
 	virtual void onActiveToggle(bool state);
 
 	void focusSearch();

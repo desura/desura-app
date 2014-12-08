@@ -39,7 +39,7 @@ class PasswordReminder : public gcDialog
 public:
 	PasswordReminder(wxWindow* parent);
 	~PasswordReminder();
-	
+
 #ifdef NIX
 	bool Show(const bool show = true);
 #endif
@@ -59,7 +59,7 @@ private:
 	wxStaticText* m_staticText2;
 
 	gcTextCtrl* m_tbEmail;
-	
+
 	gcButton* m_butSend;
 	gcButton* m_butCancel;
 

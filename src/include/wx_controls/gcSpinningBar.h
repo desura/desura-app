@@ -65,7 +65,7 @@ private:
 
 	uint32 m_uiOffset;
 	TimerId m_tId;
-	
+
 	volatile bool m_bNotifyRedraw;
 };
 

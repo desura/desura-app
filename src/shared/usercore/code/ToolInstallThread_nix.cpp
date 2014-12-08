@@ -32,39 +32,39 @@ gcException IPCToolMain::installTool(gcRefPtr<UserCore::ToolInfo> info)
 {
 	gcString exe(info->getExe());
 	gcString args(info->getArgs());
-	
+
 	if (!UTIL::FS::isValidFile(exe.c_str()))
 		return gcException(ERR_INVALIDFILE);
-	
+
 	if (exe.size() > 0 && args == "GAME_LIBRARY")
 	{
 		size_t pos = exe.find_last_of(".bz2");
-		
+
 		if (pos == (exe.size()-1))
 		{
 			UTIL::FS::Path pd(exe.c_str(), "", true);
 			pd += UTIL::FS::File(info->getName());
-			
+
 			gcString dest = pd.getFullPath();
 			uint64 size = UTIL::FS::getFileSize(exe.c_str());
-			
+
 			try
 			{
 				UTIL::FS::FileHandle srcFh(exe.c_str(), UTIL::FS::FILE_READ);
 				UTIL::FS::FileHandle destFh(dest.c_str(), UTIL::FS::FILE_WRITE);
-				
+
 				UTIL::MISC::BZ2Worker bz2(UTIL::MISC::BZ2_DECOMPRESS);
-			
+
 				srcFh.read(size, [&bz2, &destFh](const unsigned char* buff, uint32 size) -> bool
 				{
 					UTIL::FS::FileHandle *pDest = &destFh;
-					
+
 					bz2.write((const char*)buff, size, [&pDest](const unsigned char* buff, uint32 size) -> bool
 					{
 						pDest->write((const char*)buff, size);
 						return false;
 					});
-					
+
 					return false;
 				});
 			}
@@ -72,7 +72,7 @@ gcException IPCToolMain::installTool(gcRefPtr<UserCore::ToolInfo> info)
 			{
 				return e;
 			}
-			
+
 			info->overridePath(dest.c_str());
 			UTIL::FS::delFile(exe.c_str());	
 		}
@@ -106,7 +106,7 @@ ToolInstallThread::ToolInstallThread(gcRefPtr<ToolManager> toolManager, std::mut
 {
 	m_CurrentInstall = -1;
 	m_bStillInstalling = false;
-	
+
     m_pToolMain = std::make_shared<IPCToolMain>();
 	m_pToolMain->onCompleteEvent += delegate(this, &ToolInstallThread::onINComplete);
 }

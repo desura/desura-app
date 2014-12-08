@@ -125,7 +125,7 @@ namespace WebCore
 		//! @return Session cookie
 		//!
 		virtual const char* getSessCookie()=0;
-	
+
 		//! Gets the user agent for use in browsers and http connections
 		//!
 		//! @return Useragent string

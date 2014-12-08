@@ -54,11 +54,11 @@ public:
 
 protected:
 	wxStaticText* m_labQuestion;
-	
+
 	gcButton* m_butExplorer;
 	gcButton* m_butOk;
 	gcButton* m_butCancel;
-	
+
 #ifdef WIN32
 	gcStaticText *textA;
 	gcStaticText *textB;

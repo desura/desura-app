@@ -98,8 +98,10 @@ Download and install:
 
  * Svn http://www.sliksvn.com/en/download or http://tortoisesvn.net/downloads.html
  * Msvc 2013 or higher (as C++11 features are in use)
+ * Insure that NMAKE.EXE (from MSVS) is available on your PATH (C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin)
  * Python 2.7 x86 http://www.python.org/getit/
- * CMake 2.8 http://www.cmake.org/
+ * CMake 2.8 http://www.cmake.org/ (DO NOT let cmake installer change your PATH, do it manually otherwise you will lose your existing PATH).)
+ * Install latest Curl http://curl.haxx.se/
  * Patch either from msysGit or git bash
  * (Optional) Windows DirectX 9 SDK for the CEF build https://www.microsoft.com/en-us/download/details.aspx?id=6812
 
@@ -120,14 +122,31 @@ Open a 32bit cmd.exe with env vars set up by vc or other scripts (so we have a f
 
     ./build_desura_vis.bat
 	
-* Set BUILD_ALL as startup project
-* In properties for BUILD_ALL set debugging options:
- * Command to source code dir + "\build_vis\Debug_Out\desura.exe"
- * Working Directory to source code dir + "\build_vis\Debug_Out"
-* Build ThirdParty folder first (race condition some times if you dont)
-* Build BUILD_ALL
- 
-Should be able to run and debug Desura now.
+* Set BUILD_ALL as startup project (should already be set)
+* Confirm that you are set to build either Debug or Release
+* Select Properties for "ALL_BUILD"
+* Change to editing "All Configurations"
+* Under "Configuration Properties", select "General"
+* Set "Output Directory" to "$(SolutionDir)$(Configuration)_Out\"
+* Set "Target Name" to "desura"
+* Set "Target Extension" to ".exe"
+* Select "Debugging"
+* Set "Command" to "$(SolutionDir)$(Configuration)_Out\desura.exe"
+* Set "Working Directory" to "$(SolutionDir)$(Configuration)_Out\"
+* Select "OK"
+
+To Rebuild under Visual Studio:
+* Clean Solution under ALL_BUILD
+* Build "ThirdParty/boost" FIRST and by itself.
+* Build "ThirdParty"
+* Build "ALL_BUILD"
+
+To debug/execute under Visual Studio under Windows 7 (further details: http://msdn.microsoft.com/en-us/library/jj662724.aspx):
+* Under "Start Menu", find link that launches Visual Studio
+* Select "Properties", then "Shortcut", then "Advanced"
+* Choose "Run as administrator"
+* "OK", "OK"
+
 
 Special notes for advanced users
 =====================

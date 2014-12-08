@@ -94,7 +94,7 @@ void IPCComplexLaunch::startRemove(const char* modMcfPath, const char* backupMcf
 	safe_delete(m_pThread);
 
 	m_pThread = new ComplexLaunchProcess();
-	
+
 	m_pThread->setRemove(modMcfPath, backupMcfPath, installPath, installScript);
 	m_pThread->onErrorEvent += delegate(&onErrorEvent);
 	m_pThread->onCompleteEvent += delegate(&onCompleteEvent);
@@ -108,7 +108,7 @@ void IPCComplexLaunch::startInstall(const char* mcfPath, const char* installPath
 	safe_delete(m_pThread);
 
 	m_pThread = new ComplexLaunchProcess();
-	
+
 	m_pThread->setInstall(mcfPath, installPath, installScript);
 	m_pThread->onErrorEvent += delegate(&onErrorEvent);
 	m_pThread->onCompleteEvent += delegate(&onCompleteEvent);

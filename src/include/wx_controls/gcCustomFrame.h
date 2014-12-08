@@ -50,7 +50,7 @@ public:
 		, m_uiTitleHeight(0)
 	{	
 		this->Create(parent, id, title, pos, size + wxSize(16, 38), style);
-		
+
 #ifdef WIN32
 		SetIcon(wxIcon(wxICON(IDI_ICONNORMAL)));
 		m_FrameIcon = wxIcon("IDI_ICONNORMAL",wxBITMAP_TYPE_ICO_RESOURCE,16,16);
@@ -95,11 +95,11 @@ public:
 	virtual void DoGetSize(int *width, int *height) const
 	{
 		T::DoGetSize(width, height);
-		
+
 		if (height)
 		{
 			*height -= m_uiTitleHeight;
-			
+
 			if (*height < 0)
 				*height = 0;
 		}
@@ -132,7 +132,7 @@ public:
 		FrameIcon.CopyFromBitmap(wxBitmap(img));
 		SetIcon(FrameIcon);
 	}
-	
+
 	virtual void SetIcon(const wxIcon& icon)
 	{
 		T::SetIcon(icon);

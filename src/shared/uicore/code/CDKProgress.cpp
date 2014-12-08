@@ -91,7 +91,7 @@ CDKProgress::CDKProgress(wxWindow* parent, bool launch)
 	fgSizer2->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
 	fgSizer2->Add( m_labInfo, 0, wxTOP|wxRIGHT|wxLEFT, 5 );
 	fgSizer2->Add( m_pbProgress, 0, wxEXPAND|wxALL, 5 );
-	
+
 
 	wxFlexGridSizer* fgSizer1 = new wxFlexGridSizer( 2, 1, 0, 0 );
 	fgSizer1->AddGrowableCol( 0 );
@@ -100,7 +100,7 @@ CDKProgress::CDKProgress(wxWindow* parent, bool launch)
 	fgSizer1->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
 	fgSizer1->Add( fgSizer2, 1, wxALIGN_CENTER_VERTICAL|wxALIGN_CENTER_HORIZONTAL|wxEXPAND, 5 );
 	fgSizer1->Add( bSizer1, 1, wxEXPAND, 5 );
-	
+
 	this->SetSizer( fgSizer1 );
 	this->Layout();
 

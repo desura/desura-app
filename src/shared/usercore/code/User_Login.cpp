@@ -174,7 +174,7 @@ void User::doLogIn(const char* user, const char* pass, bool bTestOnly)
 	m_bDelayLoading = (version >= 3);
 
 	auto memNode = uNode.FirstChildElement("member");
-	
+
 	if (memNode.IsValid())
 	{
 		m_iUserId = 0;

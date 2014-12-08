@@ -53,13 +53,13 @@ UninstallInfoPage::UninstallInfoPage(wxWindow* parent)
 {
 	Bind(wxEVT_COMMAND_BUTTON_CLICKED, &UninstallInfoPage::onButtonClicked, this);
 
-	
+
 	m_labInfo = new wxStaticText( this, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(-1,-1), 0 );
-	
+
 	wxFont font = m_labInfo->GetFont();
 	font.SetPointSize(10);
 	m_labInfo->SetFont(font);
-	
+
 #ifdef NIX
 	m_labInfo->Wrap( 385 );
 #else
@@ -77,12 +77,12 @@ UninstallInfoPage::UninstallInfoPage(wxWindow* parent)
 	m_butCancel = new gcButton( this, wxID_ANY, Managers::GetString(L"#CANCEL"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_butUninstall = new gcButton( this, wxID_ANY, Managers::GetString(L"#UNINSTALL"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_butUninstall->SetDefault(); 
-	
+
 	wxBoxSizer* bSizer4 = new wxBoxSizer( wxHORIZONTAL );
 	bSizer4->Add( 0, 0, 1, wxEXPAND, 5 );
 	bSizer4->Add( m_butUninstall, 0, wxTOP|wxBOTTOM|wxLEFT, 5 );
 	bSizer4->Add( m_butCancel, 0, wxALL, 5 );
-	
+
 	wxFlexGridSizer* fgSizer2;
 	fgSizer2 = new wxFlexGridSizer( 5, 1, 0, 0 );
 	fgSizer2->AddGrowableCol( 0 );

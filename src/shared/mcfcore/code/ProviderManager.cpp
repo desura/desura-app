@@ -179,7 +179,7 @@ std::shared_ptr<const MCFCore::Misc::DownloadProvider> ProviderManager::getUrl(u
 			if (!getValidFreeProviders(vValidProviders))
 				return pProvider;
 		}
-			
+
 		//always take from the top of the list as they are preferred servers
 		auto first = *vValidProviders.begin();
 
@@ -234,7 +234,7 @@ void ProviderManager::removeAgent(uint32 id, bool setTimeOut)
 
 			if (setTimeOut)
 				p.setTimeOut();
-			
+
 			p.setOwner(-1);
 			pProvider = p.getProvider();
 			break;
@@ -387,7 +387,7 @@ namespace UnitTest
 	TEST(ProviderManager, ProvExpire)
 	{
 		auto pc = std::make_shared<const DownloadProvider>("a1", "a2", "a3", "a4");
-		
+
 		DownloadProvider *p = const_cast<DownloadProvider*>(&*pc);
 		p->setType(DownloadProviderType::Cdn);
 		p->setExpireTime(gcTime() + std::chrono::minutes(1));
@@ -395,7 +395,7 @@ namespace UnitTest
 		auto dp = std::make_shared<TestDownloadProvidersPM>();
 		dp->m_vDownloadProviders.push_back(pc);
 		dp->m_vDownloadProviders.push_back(std::make_shared<const DownloadProvider>("b1", "b2", "b3", "b4"));
-		
+
 
 		ProviderManager pm(dp);
 

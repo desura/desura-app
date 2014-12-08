@@ -44,8 +44,8 @@ MWFinishPage::MWFinishPage( wxWindow* parent, wxWindowID id, const wxPoint& pos,
 	m_labInfo = new wxStaticText( this, wxID_ANY, Managers::GetString(L"#MW_FINISH"), wxDefaultPosition, wxSize( -1,-1 ), 0 );
 	m_labInfo->Wrap( 360 );
 	Managers::LoadTheme(m_labInfo, "label");
-	
-	
+
+
 	wxBoxSizer* bSizer2;
 	bSizer2 = new wxBoxSizer( wxHORIZONTAL );
 	bSizer2->Add( 0, 0, 1, wxEXPAND, 5 );
@@ -63,7 +63,7 @@ MWFinishPage::MWFinishPage( wxWindow* parent, wxWindowID id, const wxPoint& pos,
 	fgSizer1->Add( m_labInfo, 0, wxALL|wxEXPAND, 5 );
 	fgSizer1->Add( 0, 0, 0, 0, 5 );
 	fgSizer1->Add( bSizer2, 0, wxEXPAND, 5 );
-	
+
 	this->SetSizer( fgSizer1 );
 	this->Layout();
 

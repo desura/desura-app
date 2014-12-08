@@ -43,7 +43,7 @@ public:
 	~ChangeDirThread();
 
 	Event<gcException> onErrorEvent;
-	
+
 	Event<uint32> onProgressEvent;
 	Event<uint32> onStageEvent;
 

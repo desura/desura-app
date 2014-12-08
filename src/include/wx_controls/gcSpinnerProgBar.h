@@ -44,7 +44,7 @@ public:
 
 	void setProgress(uint8 prog);
 	uint8 getProgress();
-	
+
 	//! Set the text that shows in the middle of the progress bar
 	//!
 	void setCaption(const gcString& string);

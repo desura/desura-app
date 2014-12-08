@@ -72,7 +72,7 @@ public:
 		while (!m_bDone)
 			m_WaitCond.wait(0, 500);
 	}
-	
+
 	bool isDone() const
 	{
 		return m_bDone;

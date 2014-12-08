@@ -60,7 +60,7 @@ DesuraJSUploadInfo::DesuraJSUploadInfo() : DesuraJSBase("uploads", "native_bindi
 	REG_SIMPLE_JS_OBJ_VOIDFUNCTION( setDeleteMcf, DesuraJSUploadInfo );
 	REG_SIMPLE_JS_OBJ_FUNCTION( getItem, DesuraJSUploadInfo );
 	REG_SIMPLE_JS_OBJ_FUNCTION( getItemId, DesuraJSUploadInfo );
-	
+
 	REG_SIMPLE_JS_OBJ_VOIDFUNCTION( remove, DesuraJSUploadInfo );
 	REG_SIMPLE_JS_OBJ_VOIDFUNCTION( pause, DesuraJSUploadInfo );
 	REG_SIMPLE_JS_OBJ_VOIDFUNCTION( unpause, DesuraJSUploadInfo );

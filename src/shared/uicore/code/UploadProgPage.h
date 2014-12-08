@@ -70,7 +70,7 @@ protected:
 	gcStaticText* m_labTimeLeft;
 
 	gcULProgressBar* m_pbProgress;
-	
+
 	gcButton* m_butPause;
 	gcButton* m_butCancel;
 

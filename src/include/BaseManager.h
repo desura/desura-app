@@ -82,7 +82,7 @@ public:
 		for (const auto &p : m_mItemMap)
 			f(p.second);
 	}
-	
+
 	template <typename F>
 	void for_each(const F &f)
 	{

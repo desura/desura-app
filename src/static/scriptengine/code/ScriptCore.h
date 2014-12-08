@@ -62,7 +62,7 @@ protected:
 	void runTask(ScriptTask* task);
 
 private:
-	
+
 	uint32 m_uiItemId;
 
 	ScriptCoreInternal* m_pInternal;

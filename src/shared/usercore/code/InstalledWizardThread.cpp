@@ -74,13 +74,13 @@ void InstalledWizardThread::doRun()
 	auto wMng = gcRefPtr<WildcardManager>::create();
 	wMng->onNeedSpecialEvent += delegate(&onNeedWCEvent);
 	wMng->onNeedSpecialEvent += delegate(&getUserCore()->getNeedWildCardEvent());
-	
+
 
 	if (isStopped())
 		return;
 
 	parseItemsQuick(infoNode);
-	
+
 	MCFCore::Misc::ProgressInfo pi = MCFCore::Misc::ProgressInfo();
 	pi.percent = 0;
 	onMcfProgressEvent(pi);
@@ -233,7 +233,7 @@ bool InstalledWizardThread::selectBranch(gcRefPtr<UserCore::Item::ItemInfoI> &it
 
 	if (vBranchIdList.size() == 0)
 		return false;
-	
+
 	//select the first free branch
 	item->setInstalledMcf(MCFBranch::BranchFromInt(vBranchIdList[0]));
 	return true;
@@ -309,7 +309,7 @@ void InstalledWizardThread::parseGame(DesuraId id, const XML::gcXMLElement &game
 
 	if (name == "" && info.IsValid())
 		name = info.GetChild("name");
-	
+
 	if (name == "")
 		return;
 
@@ -333,7 +333,7 @@ void InstalledWizardThread::parseGame(DesuraId id, const XML::gcXMLElement &game
 		Warning("ItemWizard: Error in xml parsing (installed wizard, games): {0}\n", except);
 		return;
 	}
-		
+
 	if (m_bTriggerNewEvent)
 		onGameFound(temp);
 	else
@@ -375,7 +375,7 @@ void InstalledWizardThread::parseMod(DesuraId parId, DesuraId id, const XML::gcX
 
 	if (name == "" && info.IsValid())
 		name = info.GetChild("name");
-	
+
 	if (name == "")
 		return;
 

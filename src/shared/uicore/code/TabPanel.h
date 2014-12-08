@@ -83,7 +83,7 @@ public:
 			m_pTabHandler->onKeyDown(this, event);
 		event.Skip();
 	}
-	
+
 	virtual void onLeftDown( wxMouseEvent& event )
 	{
 		SetFocus();

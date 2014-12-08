@@ -51,7 +51,7 @@ CreateInfoPage::CreateInfoPage(wxWindow* parent)
 	m_butFile = new gcButton(this, wxID_ANY, Managers::GetString(L"#BROWSE"));
 	m_butCreate = new gcButton(this, wxID_ANY, Managers::GetString(L"#OK"), wxDefaultPosition, wxDefaultSize, 0);
 	m_butCancel = new gcButton(this, wxID_ANY, Managers::GetString(L"#CANCEL"), wxDefaultPosition, wxDefaultSize, 0);
-	
+
 	wxBoxSizer* bSizer5 = new wxBoxSizer( wxHORIZONTAL );
 	bSizer5->Add( m_labText, 0, wxALIGN_BOTTOM|wxALL, 5 );
 
@@ -63,7 +63,7 @@ CreateInfoPage::CreateInfoPage(wxWindow* parent)
 	bSizer2->Add( 0, 0, 1, wxEXPAND, 5 );
 	bSizer2->Add( m_butCreate, 0, wxTOP|wxBOTTOM|wxLEFT, 5 );
 	bSizer2->Add( m_butCancel, 0, wxALL, 5 );
-	
+
 	wxFlexGridSizer* fgSizer1;
 	fgSizer1 = new wxFlexGridSizer(4, 1, 0, 0);
 	fgSizer1->AddGrowableCol(0);

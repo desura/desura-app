@@ -142,7 +142,7 @@ void MainForm::initPages(bool offline)
 		for (size_t x=GAMES; x<END_PAGE; x++)
 		{
 			gcWString url;
-			
+
 			if (GetWebCore())
 				url = GetWebCore()->getUrl(g_uiUrlList[x]);
 

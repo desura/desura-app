@@ -85,7 +85,7 @@ public:
 
 	std::condition_variable m_WaitCond;
 	std::mutex m_WaitMutex;
-	
+
 private:
 	std::mutex m_NotifyLock;
 	volatile bool m_bNotify = false;
@@ -407,7 +407,7 @@ void BaseThread::setThreadName(const char* nameOveride)
 #else
 	char name[16];
 	strncpy(name, nameOveride, 15);
-		
+
 	name[15] = '\0'; 
 	prctl(PR_SET_NAME, name, 0, 0, 0);
 #endif

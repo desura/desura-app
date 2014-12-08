@@ -62,18 +62,18 @@ public:
 	//! @return true if successful
 	//! 
 	virtual bool initWxWidgets(HINSTANCE hInst, int cmdShow, int argc, char** argv)=0;
-	
+
 	//! On idle callback
 	//!
 	virtual BOOL onIdle()=0;
-	
+
 	//! Translates a windows msg and handles it if it can
 	//!
 	//! @param msg Windows msg
 	//! @return true if handle
 	//!
 	virtual bool preTranslateMessage(MSG *msg)=0;
-	
+
 	//! Get handle of main window
 	//!
 	virtual HWND getHWND()=0;	
@@ -85,17 +85,17 @@ public:
 	//! @return true if successful
 	//!
 	virtual bool initWxWidgets(int argc, char** argv)=0;
-	
+
 	//! Check to see if any other instances are running
 	//!
 	//! @return true if no other instances are running
 	//!
 	virtual bool singleInstantCheck(const char* args = nullptr)=0;
-	
+
 	//! Kills single instance check
 	//!
 	virtual void destroySingleInstanceCheck()=0;
-	
+
 	//! Disables single instance check and stops it been deleted in this process
 	//!
 	virtual void disableSingleInstanceLock()=0;
@@ -104,7 +104,7 @@ public:
 	//! Closes the main window causing the end of the application
 	//!	
 	virtual void closeMainWindow()=0;
-	
+
 	//! Sets the bootloader version
 	//!	
 	virtual void setDesuraVersion(const char* version)=0;
@@ -114,15 +114,15 @@ public:
 	//! @param result variable to save return code into
 	//!
 	virtual void exitApp(int* result)=0;
-	
+
 	//! Sets the restart function callback
 	//!
 	virtual void setRestartFunction(RestartFP rfp)=0;
-	
+
 	//! Sets the crash dump settings callback
 	//!	
 	virtual void setCrashDumpSettings(DumpSettingsFP dsfp)=0;
-	
+
 	//! Sets the crash dump level callback
 	//!	
 	virtual void setCrashDumpLevel(DumpLevelFP dlfp)=0;

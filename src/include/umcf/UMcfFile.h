@@ -175,7 +175,7 @@ private:
 	gcWString m_szPath;
 	gcString m_szCsum;
 	gcString m_szCCsum;
-	
+
 	uint16 m_uiFlags;
 	uint32 m_uiHash;
 

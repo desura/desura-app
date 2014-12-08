@@ -59,7 +59,7 @@ NewAccountDialog::NewAccountDialog(wxWindow* parent, const char* szProviderUrl)
 	bSizer5->Add( m_butBack, 0, wxTOP|wxBOTTOM|wxLEFT, 5 );
 	bSizer5->Add( m_butAgree, 0, wxTOP|wxBOTTOM|wxLEFT, 5 );
 	bSizer5->Add( m_butCancel, 0, wxALL, 5 );
-	
+
 	wxFlexGridSizer* fgSizer2 = new wxFlexGridSizer( 2, 1, 0, 0 );
 	fgSizer2->AddGrowableCol( 0 );
 	fgSizer2->AddGrowableRow( 0 );
@@ -68,7 +68,7 @@ NewAccountDialog::NewAccountDialog(wxWindow* parent, const char* szProviderUrl)
 
 	fgSizer2->Add( m_pBrowser, 1, wxEXPAND|wxTOP|wxRIGHT|wxLEFT, 5 );
 	fgSizer2->Add( bSizer5, 1, wxEXPAND, 5 );
-	
+
 	this->SetSizer( fgSizer2 );
 	this->Layout();
 
@@ -84,7 +84,7 @@ void NewAccountDialog::onNewURL(newURL_s &nu)
 
 	if (url.find("file://") == 0)
 		return;
-	
+
 	if (url == GetTermsUrl() || url == GetRegisterUrl())
 		return;
 
@@ -142,7 +142,7 @@ bool NewAccountDialog::Show(const bool show)
 	bool ret = gcDialog::Show(show);
 	if (ret)
 		this->Raise();
-		
+
 	return ret;
 }
 #endif

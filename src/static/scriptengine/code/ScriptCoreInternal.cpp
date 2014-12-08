@@ -75,7 +75,7 @@ void ScriptCoreInternal::init()
 			v8::V8::SetFatalErrorHandler(&ScriptCoreInternal::OnFatalError);
 		}
 	}
-	
+
 	v8::HandleScope handle_scope;
 	v8::Handle<v8::ObjectTemplate> global = v8::ObjectTemplate::New();
 

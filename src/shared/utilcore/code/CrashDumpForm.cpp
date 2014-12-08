@@ -47,7 +47,7 @@ CrashDumpForm::CrashDumpForm(wxWindow* parent) : gcFrame(parent, wxID_ANY, PRODU
 
 	wxBoxSizer* bSizer4 = new wxBoxSizer(wxVERTICAL);
 	bSizer4->Add(m_pPanel, 1, wxEXPAND, 5);
-	
+
 	this->SetSizer(bSizer4);
 	this->Layout();
 }
@@ -82,7 +82,7 @@ void CrashDumpForm::onButtonClicked(wxCommandEvent &event)
 
 		wxBoxSizer* bSizer4 = new wxBoxSizer(wxVERTICAL);
 		bSizer4->Add(m_pPanel, 1, wxEXPAND, 5);
-	
+
 		this->SetSizer(bSizer4);
 		this->Layout();
 

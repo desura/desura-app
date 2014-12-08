@@ -34,7 +34,7 @@ namespace UTIL
 namespace MISC
 {
 
-	
+
 class BZ2WorkerData
 {
 public:
@@ -236,7 +236,7 @@ protected:
 			{
 				if (m_bWriteEnd && m_DataInStream.size() == 0 && strm.total_out_hi32 == 0 && strm.total_out_lo32 == 0)
 					m_iLastError = BZ_STREAM_END;
-				
+
 				m_DataInStream.erase(m_DataInStream.begin(), m_DataInStream.end()-strm.avail_in);
 				size_t x=buffsize - strm.avail_out;
 

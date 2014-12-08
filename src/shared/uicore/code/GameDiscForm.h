@@ -56,7 +56,7 @@ protected:
 
 	gcButton* m_butLaunch;
 	gcButton* m_butCancel;
-	
+
 
 	void onFormClose(wxCloseEvent& event);
 	void onButtonClick(wxCommandEvent& event);

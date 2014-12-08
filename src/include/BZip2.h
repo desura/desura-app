@@ -79,7 +79,7 @@ namespace UTIL
 				throw gcException(ERR_BZ2DFAIL, res, gcString("Failed to decompress, Bzip2 Library error: {0}", res));
 			}
 		}
-	
+
 		return dest;
 	}
 
@@ -114,7 +114,7 @@ namespace UTIL
 				throw gcException(ERR_BZ2DFAIL, res, gcString("Failed to compress, Bzip2 Library error: {0}", res));
 			}
 		}
-	
+
 		return dest;
 	}
 

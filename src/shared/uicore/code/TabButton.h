@@ -52,14 +52,14 @@ public:
 
 	void setText(const char* text);
 	void setSelected(bool state);
-	
+
 	void setPageId(int32 id){m_iId = id;}
 	int32 getPageId(){return m_iId;}
 
 protected:
-	
+
 	wxStaticText* m_labTitle;
-	
+
 	// Virtual event handlers, overide them in your derived class
 	virtual void onMouseOver( wxMouseEvent& event );
 	virtual void onMouseOut( wxMouseEvent& event );
@@ -73,7 +73,7 @@ private:
 	bool m_bSelected;
 
 DECLARE_EVENT_TABLE()
-	
+
 };
 
 

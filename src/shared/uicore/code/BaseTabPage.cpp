@@ -31,7 +31,7 @@ $/LicenseInfo$
 BaseTabPage::BaseTabPage( wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style ) : gcPanel( parent, id, pos, size, style )
 {
 	SetBackgroundColour( wxColor(GetGCThemeManager()->getColor("tabpage","bg")) );
-	
+
 	m_iProgress = 0;
 	m_bShowProg = false;
 }

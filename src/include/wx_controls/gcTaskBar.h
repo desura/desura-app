@@ -59,7 +59,7 @@ public:
 
 	virtual wxEvtHandler* GetEventHandler();
 	virtual int GetId();
-	
+
 protected:
 	wxWindow* m_pEvents;
 };

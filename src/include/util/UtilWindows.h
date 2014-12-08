@@ -276,7 +276,7 @@ namespace WIN
 		UTIL::CB::TemplateCallback<const T> c(callback);
 		extractIconCB(exe, &c);
 	}
-	
+
 	template <typename T>
 	void extractIcon(const char* exe, T &callback)
 	{
@@ -285,7 +285,7 @@ namespace WIN
 	}	
 
 	void extractIconCB(const char* exe, UTIL::CB::CallbackI* callback);
-	
+
 	gcString getAbsPath(const gcString& path);
 	gcString getRelativePath(const gcString &path);
 

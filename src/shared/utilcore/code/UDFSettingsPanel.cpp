@@ -80,7 +80,7 @@ UDFSettingsPanel::UDFSettingsPanel(wxWindow* parent) : wxPanel(parent, wxID_ANY,
 	wxFlexGridSizer* fgSizer4 = new wxFlexGridSizer( 1, 4, 0, 0 );
 	fgSizer4->SetFlexibleDirection( wxBOTH );
 	fgSizer4->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
-	
+
 	fgSizer4->Add( 20, 0, 1, wxEXPAND, 5 );
 	fgSizer4->Add( bSizer4, 1, wxEXPAND, 5 );
 	fgSizer4->Add( 20, 0, 1, wxEXPAND, 5 );
@@ -92,17 +92,17 @@ UDFSettingsPanel::UDFSettingsPanel(wxWindow* parent) : wxPanel(parent, wxID_ANY,
 	fgSizer6->SetFlexibleDirection( wxBOTH );
 	fgSizer6->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
 	fgSizer6->AddGrowableCol( 0 );
-	
+
 	fgSizer6->Add( 0, 10, 1, wxEXPAND, 5 );
 	fgSizer6->Add( m_labUninstallInfo, 0, wxALL, 5 );
 	fgSizer6->Add( 0, 10, 1, wxEXPAND, 5 );
 	fgSizer6->Add( m_labUninstallTitle, 0, wxRIGHT|wxLEFT, 5 );
-	
+
 	fgSizer6->Add( fgSizer4, 1, wxEXPAND, 5 );
 	fgSizer6->Add( 0, 10, 1, wxEXPAND, 5 );
 	fgSizer6->Add( m_labULocTitle, 0, wxTOP|wxRIGHT|wxLEFT, 5 );
 	fgSizer6->Add( m_tbUninstallLoc, 1, wxEXPAND|wxBOTTOM|wxRIGHT|wxLEFT, 5 );
-	
+
 
 	this->SetSizer( fgSizer6 );
 	this->Layout();

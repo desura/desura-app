@@ -33,16 +33,16 @@ set(CPACK_SOURCE_PACKAGE_FILE_NAME "${PROJECT_NAME}-${CPACK_PACKAGE_VERSION}")
 # deb specific values
 ###############################################################################
 
-set(CPACK_DEBIAN_PACKAGE_NAME "desurium")
+set(CPACK_DEBIAN_PACKAGE_NAME "desura")
 set(CPACK_DEBIAN_PACKAGE_VERSION "${CPACK_PACKAGE_VERSION}")
 if(64BIT)
   set(CPACK_DEBIAN_PACKAGE_ARCHITECTURE "amd64")
 else(64BIT)
   set(CPACK_DEBIAN_PACKAGE_ARCHITECTURE "i386")
 endif(64BIT)
-set(CPACK_DEBIAN_PACKAGE_MAINTAINER "Tomasz Makarewicz <makson96@gmail.com>")
+set(CPACK_DEBIAN_PACKAGE_MAINTAINER "Bad Juju Games, Inc. <support@desura.com>")
 set(CPACK_DEBIAN_PACKAGE_DESCRIPTION "${CPACK_PACKAGE_DESCRIPTION_SUMMARY}")
-set(CPACK_DEBIAN_PACKAGE_DEPENDS "libcurl3 libevent-dev libjpeg8 libtinyxml-dev libboost-filesystem-dev libnss3 libnotify4 libxt6 libwxgtk3.0-0")
+set(CPACK_DEBIAN_PACKAGE_DEPENDS "libcurl3, libevent-dev, libjpeg8, libtinyxml-dev, libboost-filesystem-dev, libnss3, libnotify4, libxt6, libwxgtk3.0-0")
 set(CPACK_DEBIAN_PACKAGE_SECTION "games")
 set(CPACK_DEBIAN_PACKAGE_PRIORITY "extra")
 

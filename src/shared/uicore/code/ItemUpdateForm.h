@@ -43,12 +43,12 @@ public:
 	DesuraId getItemId(){return m_uiInternId;}
 
 protected:
-	
+
 	wxStaticText* m_labInfo;
 	gcMiscWebControl* m_ieBrowser;
-	
+
 	gcCheckBox* m_cbReminder;
-	
+
 	gcButton* m_butUpdate;
 	gcButton* m_butLaunch;
 	gcButton* nm_butCancel;

@@ -49,27 +49,27 @@ static ChromiumDLL::ChromiumBrowserI* CreateBrowser(gcWebControl *pControl, cons
 {
 	GtkWidget* gtkParent = pControl->GetConnectWidget();
 	GtkWidget* vbox = gtk_vbox_new(FALSE, 0);
-	
+
 	if (!gtkParent)
 		return nullptr;
-	
+
 	GdkColor blackCol;
 	gdk_color_parse("black", &blackCol);
-	
+
 	gtk_widget_modify_bg(GTK_WIDGET(vbox), GTK_STATE_NORMAL, &blackCol);
 	gtk_widget_modify_bg(GTK_WIDGET(vbox), GTK_STATE_ACTIVE, &blackCol);
 	gtk_widget_modify_bg(GTK_WIDGET(vbox), GTK_STATE_PRELIGHT, &blackCol);
 	gtk_widget_modify_bg(GTK_WIDGET(vbox), GTK_STATE_SELECTED, &blackCol);
 	gtk_widget_modify_bg(GTK_WIDGET(vbox), GTK_STATE_INSENSITIVE, &blackCol);
-	
+
 	gtk_widget_modify_bg(GTK_WIDGET(vbox), GTK_STATE_NORMAL, &blackCol);
 	gtk_widget_modify_bg(GTK_WIDGET(vbox), GTK_STATE_ACTIVE, &blackCol);
 	gtk_widget_modify_bg(GTK_WIDGET(vbox), GTK_STATE_PRELIGHT, &blackCol);
 	gtk_widget_modify_bg(GTK_WIDGET(vbox), GTK_STATE_SELECTED, &blackCol);
 	gtk_widget_modify_bg(GTK_WIDGET(vbox), GTK_STATE_INSENSITIVE, &blackCol);
-	
+
 	gtk_container_add(GTK_CONTAINER(gtkParent), vbox);
-	
+
 	return NewChromiumBrowser((int*)vbox, PRODUCT_NAME, loadUrl);
 }
 #endif
@@ -90,7 +90,7 @@ gcWebControl::gcWebControl(wxWindow* parent, const char* defaultUrl, CreateBrows
 	Bind(wxEVT_MOUSEWHEEL, &gcWebControl::onMouseScroll, this);
 	Bind(wxEVT_SIZE, &gcWebControl::onResize, this);
 	Bind(wxEVT_COMMAND_MENU_SELECTED, &gcWebControl::onMenuClicked, this);
-	
+
 	Bind(wxEVT_ERASE_BACKGROUND, &gcWebControl::onPaintBg, this);
 	Bind(wxEVT_PAINT, &gcWebControl::onPaint, this);
 	Bind(wxEVT_SET_FOCUS, &gcWebControl::onFocus, this);	
@@ -177,7 +177,7 @@ void gcWebControl::onMouseScroll(wxMouseEvent& event)
 void gcWebControl::onMenuClicked(wxCommandEvent& event)
 {
 	wxMenu* menu = dynamic_cast<wxMenu*>(event.GetEventObject());
-	
+
 	if (menu)
 	{
 		ContextClientDataI* ccd = dynamic_cast<ContextClientDataI*>(menu->GetClientObject());

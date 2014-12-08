@@ -45,7 +45,7 @@ protected:
 	void onPaint( wxPaintEvent& event );
 	void onEraseBG( wxEraseEvent& event );
 	void onIdle(wxIdleEvent& event);
-	
+
 };
 
 #endif //DESURA_DISPLOADING_H

@@ -57,19 +57,19 @@ public:
 	//! Enables/Disable showing of a message box on crash
 	//!
 	void showMessageBox(bool state);
-	
+
 	//! Set the desura user name of the current user
 	//!	
 	void setUser(const CHAR_T* user);
-	
+
 	//! Set if the crash should be auto uploaded once saved
 	//!
 	void setUpload(bool state);
-	
+
 	//! Sets the level of detail for crash dump. 0 to 4
 	//!
 	void setDumpLevel(unsigned char level);
-	
+
 	//! Sets a callback function when a crash occurs
 	//!
 	void setCrashCallback(CrashCallbackFn callback);

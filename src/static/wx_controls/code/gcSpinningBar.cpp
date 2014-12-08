@@ -49,7 +49,7 @@ static VOID CALLBACK TimerProc(HWND hwnd, UINT uMsg, UINT_PTR idEvent, DWORD dwT
 	if (uMsg == WM_TIMER)
 	{
 		g_TimerLock.lock();
-	
+
 		std::map<int32, gcSpinningBar*>::iterator it = g_SpinnerMap.find(idEvent);
 
 		if (it != g_SpinnerMap.end() && it->second)
@@ -63,7 +63,7 @@ static gboolean TimerProc(gcSpinningBar *bar)
 {
 	if (bar)
 		bar->notify();
-		
+
 	return TRUE;
 }
 
@@ -78,7 +78,7 @@ gcSpinningBar::gcSpinningBar( wxWindow* parent, wxWindowID id, const wxPoint& po
 #endif
 
 	SetBackgroundColour( wxColour( 125, 255, 125 ) );
- 
+
 	Bind(wxEVT_PAINT, &gcSpinningBar::onPaint, this);
 	Bind(wxEVT_ERASE_BACKGROUND, &gcSpinningBar::onEraseBg, this);
 
@@ -99,7 +99,7 @@ gcSpinningBar::~gcSpinningBar()
 {
 #ifdef WIN32
 	g_TimerLock.lock();
-	
+
 	std::map<int32, gcSpinningBar*>::iterator it = g_SpinnerMap.find(GetId());
 
 	if (it != g_SpinnerMap.end())

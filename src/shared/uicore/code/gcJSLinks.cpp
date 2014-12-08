@@ -52,10 +52,10 @@ void DesuraJSLinks::loadUrl(int32 tabId, gcString url)
 {
 	if (tabId == -1)
 		return;
-	
+
 	if (tabId >= END_PAGE || tabId != ITEMS)
 		return;
-	
+
 	if (url.size() == 0)
 		return;
 

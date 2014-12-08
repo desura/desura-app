@@ -121,7 +121,7 @@ gcTaskBarIcon::gcTaskBarIcon() : wxTaskBarIcon()
 
 		s_registered = true;
 	}
-	
+
 	m_pEvents = m_win;
 #else
 	m_pEvents = new gcFrame(nullptr, wxID_ANY);
@@ -141,7 +141,7 @@ gcTaskBarIcon::~gcTaskBarIcon()
 		m_pEvents->Unbind(wxEVT_CLOSE_WINDOW, &gcTaskBarIcon::onEventClose, this);
 		m_pEvents->Close();
 	}
-	
+
 	notify_uninit();
 #endif
 }
@@ -162,7 +162,7 @@ long gcTaskBarIcon::DefaultWindowProc(WXUINT msg, WXWPARAM wParam, WXLPARAM lPar
 void gcTaskBarIcon::onEventClose(wxCloseEvent& event)
 {
 	wxGuiDelegateImplementation<wxFrame>* frame = dynamic_cast<wxGuiDelegateImplementation<wxFrame>*>(m_pEvents);
-	
+
 	if (frame)
 		frame->cleanUpEvents();
 
@@ -303,22 +303,22 @@ bool gcTaskBarIcon::ShowBalloon(const wxString& title, const wxString& text, uns
 	return ok;
 #elif defined(NIX)
 	const char* icon = nullptr;
-	
+
 	if ( flags & wxICON_INFORMATION )
 		icon = "dialog-information";
 	else if ( flags & wxICON_WARNING )
 		icon = "dialog-warning";
 	else if ( flags & wxICON_ERROR )
 		icon = "dialog-error";
-	
+
 	NotifyNotification* notification =
 		notify_notification_new(
 			title.c_str(),
 			text.c_str(),
 			icon);
-	
+
 	notify_notification_show(notification, nullptr);
-	
+
 	return true;
 #else
 	return false;

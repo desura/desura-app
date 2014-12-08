@@ -45,7 +45,7 @@ public:
 #ifdef NIX
 	typedef void (*SendFn)(void* obj, const char* buff, size_t size);
 #endif
-	
+
 //! Base Class for pipe server and pipe client
 //!
 class PipeBase : public Thread::BaseThread, public LoopbackProcessor
@@ -110,7 +110,7 @@ protected:
 	//!
 	virtual IPCManager* getManager(uint32 index)=0;
 
-	
+
 #ifdef WIN32
 	//! Get the pipe data for a pipe instance
 	//!
@@ -142,29 +142,29 @@ protected:
 	//!
 	virtual void onStop();
 #endif
-	
+
 
 #ifdef WIN32
 	gcString m_szRecvName;	//!< Pipe Recever name
 	gcString m_szSendName;	//!< Pipe Sender name
 
 	HANDLE m_hEventsArr[512];  //!< Event array
-	
+
 #else
-	
+
 	void* m_pSendObj;
 	SendFn sendMsg;
-	
-	
+
+
 	std::mutex m_RecvLock;
 	std::deque<PipeData*> m_vRecvBuffer;
-	
+
 	::Thread::WaitCondition m_WaitCond;
-	
+
 #endif
-	
+
 	std::mutex m_LoopbackLock;
-	
+
 	class LoopbackInfo
 	{
 	public:

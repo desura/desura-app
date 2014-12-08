@@ -226,7 +226,7 @@ void EventHandler::displayMenu(ChromiumDLL::ChromiumMenuInfoI* menuInfo, gcMenu 
 	setupLastMenuUrl(menuInfo);
 
 	int res = 0;
-		
+
 	{
 		HookHwnd hook((HWND)menuInfo->getHWND());
 		res = TrackPopupMenu((HMENU)menu->GetHMenu(), TPM_LEFTALIGN|TPM_RIGHTBUTTON|TPM_RETURNCMD|TPM_RECURSE|TPM_NONOTIFY, x, y, 0, (HWND)menuInfo->getHWND(), nullptr);

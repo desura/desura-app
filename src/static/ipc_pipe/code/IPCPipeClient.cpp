@@ -105,7 +105,7 @@ void PipeClient::setUpPipes()
 
 	if (rRes == 0)
 		throw gcException(ERR_PIPE, GetLastError(), "Failed to create PipeClient (Receive PipeClient is busy).");
-		
+
 
 	//as this is the client connect to opposite server pipes
 	m_pdSend.hPipe = CreateFile(m_szRecvName.c_str(), GENERIC_READ|GENERIC_WRITE, 0, nullptr, OPEN_EXISTING, FILE_FLAG_OVERLAPPED, nullptr);

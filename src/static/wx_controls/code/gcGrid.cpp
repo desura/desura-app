@@ -120,6 +120,6 @@ void gcGrid::showToolTip(int32 col, int32 row)
 			this->GetGridWindow()->SetToolTip(nullptr);
 		}
 
-		
+
 	}
 }

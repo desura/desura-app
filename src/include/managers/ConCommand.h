@@ -54,14 +54,14 @@ public:
 
 	//! Same as Call
 	void operator() (std::vector<gcString> &vArgList);
-	
+
 	//! Same as Call with empty list
 	void operator() ();
 
 private:
 	//! Callback function
 	ConCommandCallBackFn m_pCallBack;
-	
+
 	//! Has this ConCommand been registered with the manager
 	bool m_bReg;
 };

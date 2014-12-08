@@ -41,7 +41,7 @@ public:
 
 protected:
 	void onClick( wxCommandEvent& event );
-		
+
 private:
 	wxTextCtrl* m_tbName;
 	wxTextCtrl* m_tbValue;

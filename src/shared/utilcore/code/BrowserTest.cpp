@@ -32,34 +32,34 @@ BrowserTest::BrowserTest(wxWindow* parent) : gcFrame(parent, wxID_ANY, "Browser 
 	InitWebControl();
 
 	this->SetSizeHints( wxDefaultSize, wxDefaultSize );
-	
+
 	wxFlexGridSizer* fgSizer1;
 	fgSizer1 = new wxFlexGridSizer( 2, 1, 0, 0 );
 	fgSizer1->AddGrowableCol( 0 );
 	fgSizer1->AddGrowableRow( 1 );
 	fgSizer1->SetFlexibleDirection( wxBOTH );
 	fgSizer1->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
-	
+
 	wxBoxSizer* bSizer1;
 	bSizer1 = new wxBoxSizer( wxHORIZONTAL );
-	
+
 	m_tbName = new wxTextCtrl( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
 	bSizer1->Add( m_tbName, 1, wxTOP|wxBOTTOM|wxLEFT, 5 );
-	
+
 	m_tbValue = new wxTextCtrl( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
 	bSizer1->Add( m_tbValue, 1, wxTOP|wxBOTTOM|wxLEFT, 5 );
-	
+
 	m_butAdd = new wxButton( this, wxID_ANY, wxT("Add Cookie"), wxDefaultPosition, wxDefaultSize, 0 );
 	bSizer1->Add( m_butAdd, 0, wxALL, 5 );
-	
+
 	fgSizer1->Add( bSizer1, 1, wxEXPAND, 5 );
-	
+
 	m_panel1 = new Browser(this);
 	fgSizer1->Add(m_panel1, 1, wxEXPAND|wxBOTTOM|wxRIGHT|wxLEFT, 5);
-	
+
 	this->SetSizer( fgSizer1 );
 	this->Layout();
-	
+
 	// Connect Events
 	m_butAdd->Bind(wxEVT_COMMAND_BUTTON_CLICKED, &BrowserTest::onClick, this);
 }

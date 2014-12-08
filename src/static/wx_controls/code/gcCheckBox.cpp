@@ -161,7 +161,7 @@ bool gcCheckBox::MSWOnDraw(WXDRAWITEMSTRUCT *item)
         wxLogLastError(_T("DrawText()"));
     }
 
-	
+
 
     //// finally draw the focus
     if ( isFocused )

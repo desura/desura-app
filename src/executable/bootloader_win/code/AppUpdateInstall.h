@@ -58,7 +58,7 @@ protected:
 
 	void startService();
 	void stopService();
-		
+
 	void onIPCDisconnect();
 
 	HANDLE m_pEvent;

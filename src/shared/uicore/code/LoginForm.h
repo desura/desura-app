@@ -47,7 +47,7 @@ class LoginForm : public gcFrame
 public:
 	LoginForm(wxWindow* parent);
 	~LoginForm();
-	
+
 	void autoLogin();
 
 	EventV onLoginEvent;

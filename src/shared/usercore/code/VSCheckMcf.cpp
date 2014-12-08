@@ -104,7 +104,7 @@ gcString VSCheckMcf::downloadMCFHeader()
 		path = mm->newMcfPath(getItemId(), getMcfBranch(), getMcfBuild());
 
 	m_hTempMcf->setHeader(getItemId(), getMcfBranch(), getMcfBuild());
-	
+
 	try
 	{
 		auto dp = std::make_shared<MCFDownloadProviders>(getWebCore(), getUserCore()->getUserId());
@@ -140,7 +140,7 @@ bool VSCheckMcf::checkMcf(gcString path)
 
 	//read file to make sure it is what it says it is
 	m_hTempMcf->setFile(path.c_str());
-		
+
 	try
 	{
 		m_hTempMcf->parseMCF();

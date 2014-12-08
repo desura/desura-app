@@ -290,7 +290,7 @@ namespace UserCore
 			//! @param option Option flag
 			//!
 			virtual void delOFlag(uint8 option)=0;
-	
+
 
 			//! Get the item rating
 			//!
@@ -413,7 +413,7 @@ namespace UserCore
 			//! @return Info change event
 			//!
 			virtual Event<ItemInfo_s>& getInfoChangeEvent()=0;
-	
+
 			//! Get the total number of branches for this item
 			//!
 			//! @return Number of branches

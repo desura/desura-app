@@ -78,7 +78,7 @@ bool ComplexLaunchServiceTask::initService()
 {
 	gcException eBadItem(ERR_BADITEM);
 	gcException eFailCrtInstSvc(ERR_NULLHANDLE, "Failed to create install mcf service!\n");
-	
+
 	auto pItem = getItemInfo();
 
 	if (!pItem)
@@ -101,7 +101,7 @@ bool ComplexLaunchServiceTask::initService()
 	m_pIPCIM->onCompleteEvent += delegate(this, &ComplexLaunchServiceTask::onComplete);
 	m_pIPCIM->onProgressEvent += delegate(this, &ComplexLaunchServiceTask::onProgress);
 	m_pIPCIM->onErrorEvent += delegate(this, &ComplexLaunchServiceTask::onError);
-	
+
 	if (pItem->getId().getType() == DesuraId::TYPE_GAME)
 	{
 		//if this is the game and no complex mods are installed just launch
@@ -264,7 +264,7 @@ void ComplexLaunchServiceTask::onMcfError(gcException &e)
 gcString ComplexLaunchServiceTask::getFullMcf()
 {
 	auto mm = getUserCore()->getInternal()->getMCFManager();
-	
+
 	gcString path = mm->getMcfPath(getItemInfo());
 
 	if (path == "")
@@ -294,7 +294,7 @@ RemoveResult ComplexLaunchServiceTask::remove()
 	getUserCore()->getItemManager()->killAllProcesses(m_iRemoveId);
 
 	auto item = getUserCore()->getItemManager()->findItemInfo(m_iRemoveId);
-	
+
 	if (!item)
 	{
 		onError(eItemNull);
@@ -349,7 +349,7 @@ bool ComplexLaunchServiceTask::removeAndInstall()
 		waitForFinish();
 
 	completeRemove();
-	
+
 	if (!install())
 		return false;
 

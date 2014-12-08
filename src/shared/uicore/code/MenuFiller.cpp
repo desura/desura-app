@@ -60,7 +60,7 @@ void MenuFiller::doPaint(wxDC* dc)
 
 	wxBitmap temp(w, h);
 	gcImage::tileImg(temp, wxBitmap(*m_imgHandle.getImg()));
-	
+
 	memDC.SelectObject(temp);
 
 	dc->Blit(0, 0,			// Draw at (100, 100)

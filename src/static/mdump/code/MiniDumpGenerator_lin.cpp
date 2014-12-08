@@ -120,7 +120,7 @@ bool MiniDumpGenerator::dumpreport(const char* file)
 {
 	if (m_pCrashCallback)
 		return m_pCrashCallback(file);
-		
+
 	return false;
 }
 

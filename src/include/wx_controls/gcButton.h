@@ -78,10 +78,10 @@ protected:
 	virtual void doPaint(wxDC* dc);
 
 	void refreshImage(bool force = false);
-	
+
 	virtual STATE getState();
 	virtual void setImage();
-	
+
 	void onMouseDown(wxMouseEvent& event);
 	void onMouseUp(wxMouseEvent& event);
 	void onMouseEvent(wxMouseEvent& event);

@@ -41,7 +41,7 @@ void InitCVarManger()
 		g_pCVarMang = new CVarManager();
 		g_pCVarRegTarget = g_pCVarMang;
 	}
-		
+
 	g_pCVarMang->loadNormal();
 	g_pCVarMang->loadWinUser();
 }
@@ -106,7 +106,7 @@ CVarManager::~CVarManager()
 bool CVarManager::RegCVar(const gcRefPtr<CVar> &var)
 {
 	auto temp = findItem(var->getName());
-	
+
 	if (temp)
 		return false;
 
@@ -152,7 +152,7 @@ void CVarManager::loadCVarFromDb(CVar *var, const char* szSql, gcString strExtra
 		sqlite3x::sqlite3_command cmd(db, szSql);
 		cmd.bind(1, var->getName());
 		cmd.bind(2, strExtra);
-		
+
 		sqlite3x::sqlite3_reader reader = cmd.executereader();
 
 		if (reader.read())

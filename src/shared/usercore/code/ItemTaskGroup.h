@@ -144,7 +144,7 @@ namespace UserCore
 
 			uint8 m_iActiveCount;
 			uint32 m_uiId = 0;
-	
+
 			uint32 m_uiLastActive = -1;
 			uint32 m_uiActiveItem = -1;
 

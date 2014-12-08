@@ -80,11 +80,11 @@ bool LangChanged(CVar* var, const char* val)
 {
 	gcString lan("{0}{1}.xml", LANGFOLDER, val);
 	gcString extra("{0}{1}_utility.xml", LANGFOLDER, val);
-	
+
 	if (GetLanguageManager().loadFromFile(lan.c_str()))
 	{
 		GetLanguageManager().loadFromFile(extra.c_str());
-		
+
 		Msg(gcString("Loaded Language file: {0}\n", val));
 		return true;
 	}
@@ -171,7 +171,7 @@ public:
 	int OnExit()
 	{
 		DestroyLogging();
-		
+
 		wxWindow::MSWUnregisterMessageHandler(WM_ENDSESSION, &WindowsShutdown);
 		wxWindow::MSWUnregisterMessageHandler(WM_QUERYENDSESSION, &WindowsShutdown);
 

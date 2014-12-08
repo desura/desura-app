@@ -48,18 +48,18 @@ public:
 	void run() override {}
 
 protected:
-	
+
 	gcStaticText* m_labInfo;
 	gcStaticText* m_labName;
 	gcStaticText* m_labSize;
 	gcStaticText* m_labPath;
 
 	gcGrid* m_gInfo;
-	
+
 	gcButton* m_butUpload;
 	gcButton* m_butClose;
 	gcButton* m_butViewFile;
-	
+
 
 	void onButtonClick( wxCommandEvent& event );
 	void onMouseDown( wxMouseEvent& event );

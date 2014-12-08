@@ -140,7 +140,7 @@ void IPCServiceMain::registerFunctions()
 	REG_FUNCTION_VOID( IPCServiceMain, updateBinaryRegKeyBlob);
 
 	REG_FUNCTION_VOID( IPCServiceMain, dispVersion );
-	
+
 	REG_FUNCTION_VOID( IPCServiceMain, setAppDataPath );
 	REG_FUNCTION_VOID( IPCServiceMain, setCrashSettings );
 

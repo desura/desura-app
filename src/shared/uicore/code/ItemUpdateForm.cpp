@@ -35,21 +35,21 @@ END_EVENT_TABLE()
 UpdateInfoForm::UpdateInfoForm(wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos, const wxSize& size, long style) : gcFrame( parent, id, title, pos, size, style )
 {
 	this->SetSizeHints( wxSize( 400,250 ), wxDefaultSize );
-	
+
 	wxFlexGridSizer* fgSizer2;
 	fgSizer2 = new wxFlexGridSizer( 4, 1, 0, 0 );
 	fgSizer2->AddGrowableCol( 0 );
 	fgSizer2->AddGrowableRow( 1 );
 	fgSizer2->SetFlexibleDirection( wxBOTH );
 	fgSizer2->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
-	
+
 	m_labInfo = new wxStaticText( this, wxID_ANY, Managers::GetString(L"#UI_LABEL"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_labInfo->Wrap( -1 );
 	fgSizer2->Add( m_labInfo, 0, wxTOP|wxLEFT|wxRIGHT, 5 );
-	
+
 	m_ieBrowser = new gcMiscWebControl( this, "about:blank", "UpdateInfoForm");
 	fgSizer2->Add( m_ieBrowser, 1, wxALL|wxEXPAND, 5 );
-	
+
 
 	m_cbReminder = new gcCheckBox( this, wxID_ANY, Managers::GetString(L"#UI_NO_REMINDER"), wxDefaultPosition, wxDefaultSize, 0 );
 	fgSizer2->Add( m_cbReminder, 0, wxBOTTOM|wxRIGHT|wxLEFT, 5 );
@@ -61,14 +61,14 @@ UpdateInfoForm::UpdateInfoForm(wxWindow* parent, wxWindowID id, const wxString& 
 
 
 	wxBoxSizer* bSizer2 = new wxBoxSizer( wxHORIZONTAL );
-	
+
 	bSizer2->Add( 0, 0, 1, wxEXPAND, 5 );
 	bSizer2->Add( m_butUpdate, 0, wxTOP|wxBOTTOM|wxLEFT, 5 );
 	bSizer2->Add( m_butLaunch, 0, wxTOP|wxBOTTOM|wxLEFT, 5 );
 	bSizer2->Add( nm_butCancel, 0, wxALL, 5 );
-	
+
 	fgSizer2->Add( bSizer2, 0, wxEXPAND, 5 );
-	
+
 
 	this->SetSizer( fgSizer2 );
 	this->Layout();
@@ -81,7 +81,7 @@ UpdateInfoForm::UpdateInfoForm(wxWindow* parent, wxWindowID id, const wxString& 
 
 UpdateInfoForm::~UpdateInfoForm()
 {
-	
+
 
 }
 
@@ -99,7 +99,7 @@ void UpdateInfoForm::setInfo(DesuraId id, bool launch, const LinkArgs &args)
 	m_cbReminder->Enable(m_bLaunch);
 	m_cbReminder->Show(m_bLaunch);
 
-	
+
 
 	gcRefPtr<UserCore::Item::ItemInfoI> item = GetUserCore()->getItemManager()->findItemInfo( id );
 

@@ -111,7 +111,7 @@ void PipeServer::setUpPipes()
 void PipeServer::createAccessRights(PACL pNewAcl, SECURITY_ATTRIBUTES &sa, SECURITY_DESCRIPTOR &sd)
 {
 	EXPLICIT_ACCESS ea;
-	
+
 	DWORD SidSize;
 	PSID TheSID;
 

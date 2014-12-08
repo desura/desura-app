@@ -301,7 +301,7 @@ void DisplayContextMenu(gcWebControlI* m_pParent, ContextClientDataI* ccd, gcMen
 void EventHandler::HandleJSBinding(ChromiumDLL::JavaScriptObjectI* jsObject, ChromiumDLL::JavaScriptFactoryI* factory)
 {
 	ChromiumDLL::JSObjHandle dObj = jsObject->getValue("desura");
-	
+
 	if (!dObj.get())
 	{
 		dObj = factory->CreateObject(new ObjectExtender("desura"));
@@ -309,7 +309,7 @@ void EventHandler::HandleJSBinding(ChromiumDLL::JavaScriptObjectI* jsObject, Chr
 	}
 
 	ChromiumDLL::JSObjHandle cObj = dObj->getValue("crumbs");
-		
+
 	if (!cObj.get())
 	{
 		cObj = factory->CreateObject(new ObjectExtender("crumbs"));
@@ -321,7 +321,7 @@ void EventHandler::HandleJSBinding(ChromiumDLL::JavaScriptObjectI* jsObject, Chr
 
 
 	ChromiumDLL::JSObjHandle uObj = dObj->getValue("utils");
-		
+
 	if (!uObj.get())
 	{
 		uObj = factory->CreateObject(new ObjectExtender("utils"));

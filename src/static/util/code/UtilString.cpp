@@ -423,7 +423,7 @@ void base64_decodeCB(const std::string &encoded_string, UTIL::CB::CallbackI* cal
 	int i = 0;
 	int in_ = 0;
 	unsigned char char_array_4[4];
-  
+
 	unsigned char buff[512];
 	size_t pos = 0;
 

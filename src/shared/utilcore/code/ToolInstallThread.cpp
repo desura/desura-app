@@ -111,7 +111,7 @@ void ToolInstallThread::doInstall()
 		exe = gcString("{0}", m_szExe);
 		params = gcString("{0} {1}", path.getFile().getFile(), m_szArgs);
 	}
-	
+
 
 	memset(&siStartupInfo, 0, sizeof(siStartupInfo)); 
 	memset(&piProcessInfo, 0, sizeof(piProcessInfo)); 
@@ -158,7 +158,7 @@ void ToolInstallThread::killProcess()
 
 	::PostThreadMessage(piProcessInfo.dwThreadId, WM_CLOSE, 0, 0);
 	::WaitForSingleObject(piProcessInfo.hProcess, 1000);
-	  
+
 	// Check exit code
 	DWORD dwExitCode = 0;
 	::GetExitCodeProcess(piProcessInfo.hProcess, &dwExitCode);

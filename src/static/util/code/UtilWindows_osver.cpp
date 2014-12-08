@@ -203,7 +203,7 @@ namespace UTIL
 
 				winVer += gcString(" (build {0})", osvi.dwBuildNumber);
 			}
-		
+
 			Safe::strcpy(dest, destSize, winVer.c_str());
 		}
 	}

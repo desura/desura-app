@@ -59,9 +59,9 @@ public:
 protected:
 	gcStaticText* m_labTitle;
 	gcImageControl* m_imgSortDir;
-	
+
 	void OnMouseClick( wxMouseEvent& event );
-	
+
 private:
 	uint8 m_iSortMode;
 	bool m_bSelected;

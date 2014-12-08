@@ -105,7 +105,7 @@ void bz2CompressFile(const char* src, const char* dest)
 	char *outBuff = new char[buffSize];
 
 	bool endFile = false;
-	
+
 
 	do
 	{
@@ -124,7 +124,7 @@ void bz2CompressFile(const char* src, const char* dest)
 
 		srcFH.read(inBuff, readSize);
 		tot += readSize;
-		
+
 		int32 res = BZ_OK;
 
 		do

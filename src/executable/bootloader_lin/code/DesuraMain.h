@@ -60,42 +60,42 @@ class MainApp
 public:
 	MainApp(int argc, char** argv);
 	~MainApp();
-	
+
 	int run();
 	bool testDeps();
-	
+
 protected:
 	bool loadUICore();
 	void shutdownUICore();
-	
+
 	bool loadDumpUploader();
-	
+
 	void restartReal(const char* args);
 	void restartShib(const char* args);
 	static void restart(const char* args, bool real = false);
 	static void restartFromUICore(const char* args);
-	
+
 	void onCrashShib(const char* path);
 	static bool onCrash(const char* path);
-	
+
 	void processCrash();
 	void setUser(const char* user);
-	
+
 	static void setCrashSettings(const char* user, bool upload);
-	
+
 	friend bool RestartBootloader(const char* args);
-	
+
 	bool utf8Test();
 
 	bool loadCrashHelper();
 	void sendArgs();
-	
+
 	void checkUnityWhitelist();
 	void setupSharedMem();
-	
+
 	int runParent(int pid);
 	int runChild(bool usingGDB);
-	
+
 private:
 	int m_Argc;
 	char** m_Argv;
@@ -103,7 +103,7 @@ private:
 	int m_RestartMem;
 	UICoreI* m_pUICore;
 	CrashArg_s* m_pCrashArgs;
-	
+
 	SharedObjectLoader g_UICoreDll;
 	char m_szUser[255];
 };

@@ -53,7 +53,7 @@ void WebCoreClass::sendPassReminder(const char* email)
 	HttpHandle hh(getPassWordReminderUrl().c_str());
 
 	gcString useragent = genUserAgent();
-	
+
 	if (useragent.size() > 0)
 		hh->setUserAgent(useragent.c_str());
 
@@ -72,7 +72,7 @@ void WebCoreClass::getInstalledItemList(XML::gcXMLDocument &xmlDocument)
 	HttpHandle hh(getInstalledWizardUrl().c_str());
 	setWCCookies(hh);
 	hh->getWeb();
-	
+
 	if (hh->getDataSize() == 0)
 		throw gcException(ERR_BADRESPONSE);
 
@@ -131,7 +131,7 @@ void WebCoreClass::downloadImage(WebCore::Misc::DownloadImageInfo *dii, std::ato
 	hh->getProgressEvent() += extraDelegate(this, &WebCoreClass::onHttpProg, &stop);
 
 	hh->getWeb();
-		
+
 	if (hh->getDataSize() == 0)
 		throw gcException(ERR_BADRESPONSE);
 
@@ -144,7 +144,7 @@ void WebCoreClass::downloadImage(WebCore::Misc::DownloadImageInfo *dii, std::ato
 	UTIL::FS::FileHandle fh(path, UTIL::FS::FILE_WRITE);
 
 	fh.write(hh->getData(), hh->getDataSize());
-			
+
 	dii->outPath = path.getFullPath();
 	m_ImageCache.updateImagePath(dii->outPath.c_str(), hash);
 }

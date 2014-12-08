@@ -277,7 +277,7 @@ void GameExplorerInfo::generateDll()
 	UTIL::FS::recMakeFolder(UTIL::FS::PathWithFile(tempIco));
 
 	gcWString xmlData = generateXml();
-	
+
 	if (!UTIL::MISC::convertToIco(iconPath, tempIco))
 	{
 		int a=1;
@@ -326,7 +326,7 @@ void GameExplorerInfo::translateIco(HANDLE handle, const char* icoPath)
 {
 	char* buff = nullptr;
 	uint32 size = UTIL::FS::readWholeFile(icoPath, &buff);
-	
+
 	if (size == 0)
 	{
 		safe_delete(buff);
@@ -414,7 +414,7 @@ gcWString GameExplorerInfo::generateXml()
 	gcString szVerifyLink("desura://verify/{0}/{1}", m_Id.getTypeString(), m_pItemInfo->getShortName());
 
 	gcString szGenere(m_pItemInfo->getGenre());
-	
+
 	std::vector<gcRefPtr<UserCore::Item::Misc::ExeInfoI>> vExeList;
 	m_pItemInfo->getExeList(vExeList);
 
@@ -442,7 +442,7 @@ gcWString GameExplorerInfo::generateXml()
 
 	auto genres = gameDef.NewElement("Genres");
 	genres.WriteChild("Genre", szGenere);
-		
+
 	WriteChildWithChildAndAtt("Version", "VersionNumber", "versionNumber", szVersion.c_str(), gameDef);
 
 	auto dev = gameDef.NewElement("Developers").NewElement("Developer");
@@ -454,7 +454,7 @@ gcWString GameExplorerInfo::generateXml()
 	publisher.SetAttribute("URI", szPubUrl.c_str());
 	publisher.SetText(szPub.c_str());
 
-	
+
 	if (vExeList.size() > 0)
 	{
 		auto gameExecutables = gameDef.NewElement("GameExecutables");
@@ -499,13 +499,13 @@ gcWString GameExplorerInfo::generateXml()
 		changeLog.SetAttribute("name", "View Update History");
 		i++;
 	}
-		
-		
+
+
 	auto profile = WriteChildWithChildAndAtt("Task", "URLTask", "Link", szProfileLink.c_str(), playTask);
 	profile.SetAttribute("index", i);
 	profile.SetAttribute("name", "View Profile");
 	i++;
-		
+
 
 	uint32 count = 0;
 	for (uint32 x=0; x<m_pItemInfo->getBranchCount(); x++)
@@ -530,7 +530,7 @@ gcWString GameExplorerInfo::generateXml()
 		auto branch = WriteChildWithChildAndAtt("Task", "URLTask", "Link", link.c_str(), playTask);
 		branch.SetAttribute("index", x+i);
 		branch.SetAttribute("name", name.c_str());
-			
+
 	}
 
 

@@ -91,7 +91,7 @@ HtmlToolBarControl::HtmlToolBarControl(wxWindow* parent)
 	fgSizer1->Add( m_dispLoading, 1, wxTOP|wxBOTTOM, 4 );
 	fgSizer1->Add( m_butStop, 1, wxTOP|wxBOTTOM, 4 );
 	fgSizer1->Add( m_butRefresh, 0, wxTOP|wxBOTTOM, 4 );
-	
+
 #ifdef ENABLE_SEARCH	
 	fgSizer1->Add( m_butLaunch, 0, wxTOP|wxBOTTOM, 4 );
 	fgSizer1->Add( m_pSearch, 0, wxTOP|wxBOTTOM, 4);

@@ -50,16 +50,16 @@ ExeSelectForm::ExeSelectForm(wxWindow* parent, bool hasSeenCDKey, gcRefPtr<UserC
 	fgSizer1->AddGrowableRow( 4 );
 	fgSizer1->SetFlexibleDirection( wxBOTH );
 	fgSizer1->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
-	
+
 	fgSizer1->Add( 0, 5, 1, wxEXPAND, 5 );
 	fgSizer1->Add( m_labInfo, 0, wxALL, 5 );
 	fgSizer1->Add( 0, 0, 1, wxEXPAND, 5 );
 	fgSizer1->Add( m_pButtonSizer, 1, wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL, 0 );
 	fgSizer1->Add( 0, 0, 1, wxEXPAND, 5 );
-	
+
 	this->SetSizer( fgSizer1 );
 	this->Layout();
-	
+
 	centerOnParent();
 
 	Bind(wxEVT_COMMAND_BUTTON_CLICKED, &ExeSelectForm::onButtonClick, this);

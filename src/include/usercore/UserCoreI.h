@@ -238,7 +238,7 @@ namespace UserCore
 		//! @return User name id
 		//!
 		virtual const char* getUserNameId()=0;
-	
+
 		//! Get user login name
 		//!
 		//! @return User login name
@@ -473,7 +473,7 @@ namespace UserCore
 
 		//! Logs in with out starting all the extra stuff
 		virtual void logInTool(const char* user, const char* pass)=0;
-	
+
 		virtual void init(const char* appDataPath, const char* szProviderUrl)=0;
 
 		//! Set the avatar url

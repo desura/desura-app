@@ -294,13 +294,13 @@ T popAndConvert(JSObjHandle* argv, size_t &x, bool bFirstIsObj)
 	{
 		FromJSObject(t, argv[x]);
 	}
-	
+
 #ifdef __clang__
 	++x;
 #else
 	--x;
 #endif	
-	
+
 	return t;
 }
 

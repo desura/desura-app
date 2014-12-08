@@ -60,7 +60,7 @@ private:
 
 	bool isWindows(gcRefPtr<UserCore::Item::BranchInfoI> branch);
 	bool isLinux(gcRefPtr<UserCore::Item::BranchInfoI> branch);
-	
+
 	bool is32Bit(gcRefPtr<UserCore::Item::BranchInfoI> branch);
 	bool is64Bit(gcRefPtr<UserCore::Item::BranchInfoI> branch);
 

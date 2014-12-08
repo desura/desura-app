@@ -53,7 +53,7 @@ StripMenuButton::StripMenuButton(wxWindow *parent, wxString text, const wxSize &
 	m_colHover = wxColor(GetGCThemeManager()->getColor("hyperlinkmenu", "hov-fg"));
 	m_colNormal = wxColor(GetGCThemeManager()->getColor("hyperlinkmenu", "fg"));
 	SetForegroundColour( m_colNormal );
-	
+
 	m_szLabel = text;
 }
 
@@ -148,7 +148,7 @@ void StripMenuButton::paintBGImage(wxDC* dc)
 		dc->SetBrush(wxBrush(GetBackgroundColour()));
 
 		wxBitmap temp(m_imgOverlay->Scale(w, h));
-		
+
 		memDC.SelectObject(temp);
 
 		dc->Blit(0, 0,			// Draw at (100, 100)
@@ -166,7 +166,7 @@ void StripMenuButton::paintLabel(wxDC* dc)
 {
 	wxSize sz = GetSize();
 	wxSize txtExt = dc->GetTextExtent(GetLabel());
-	
+
 	int width = sz.GetWidth() - txtExt.GetWidth();
 	int height = sz.GetHeight() - txtExt.GetHeight();
 
@@ -185,7 +185,7 @@ void StripMenuButton::paintLabel(wxDC* dc)
 		x = m_uiOffset + width - focOffset;
 	else if (style & wxALIGN_CENTER)
 		x = m_uiOffset + width/2;
-	
+
 	dc->DrawText(this->GetLabel(), x, y);
 
 	if (m_bHasFocus)

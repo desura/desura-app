@@ -54,7 +54,7 @@ protected:
 	gcStaticText* m_labInfo;
 	gcSpinnerProgBar* m_pbProgress;
 	gcButton* m_butClose;
-	
+
 	virtual void onComplete(uint32&);
 	virtual void onError(gcException& e);
 	virtual void onMcfProgress(MCFCore::Misc::ProgressInfo& info);
