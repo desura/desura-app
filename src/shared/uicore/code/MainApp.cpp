@@ -267,7 +267,12 @@ MainApp::~MainApp()
 	safe_delete(m_wxTBIcon);
 
 	DestroyManagers();
-	DestroyLogging();	
+	DestroyLogging();
+
+#if WIN32
+	// Temporary resolve
+	PostQuitMessage(0);
+#endif // WIN32
 }
 
 gcFrame* MainApp::getMainWindow()
