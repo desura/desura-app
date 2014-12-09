@@ -79,7 +79,7 @@ bool VSBaseTask::loadMcf(gcString mcfPath)
 {
 	//read file to make sure it is what it says it is
 	m_hMcf->setFile(mcfPath.c_str());
-		
+
 	try
 	{
 		m_hMcf->parseMCF();

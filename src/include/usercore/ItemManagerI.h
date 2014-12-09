@@ -180,7 +180,7 @@ namespace UserCore
 		//! @param tList Item vector. Do not delete the items on the list
 		//!
 		virtual void getNewItems(std::vector<gcRefPtr<UserCore::Item::ItemInfoI>> &tList) = 0;
-	
+
 
 		//! Call this when an item (i.e. mod) needs to update
 		//!
@@ -217,7 +217,7 @@ namespace UserCore
 		//! Is this a fav item
 		//!
 		virtual bool isItemFavorite(DesuraId id)=0;
-	
+
 		//! Linux only
 		virtual void regenLaunchScripts()=0;
 

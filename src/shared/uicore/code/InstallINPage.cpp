@@ -44,12 +44,12 @@ InstallINPage::InstallINPage(wxWindow* parent) : BaseInstallPage(parent)
 	wxBoxSizer* bSizer17 = new wxBoxSizer( wxHORIZONTAL );
 	bSizer17->Add( m_labLabel, 0, wxLEFT|wxRIGHT|wxTOP, 5 );
 	bSizer17->Add( m_labInfo, 0, wxRIGHT|wxTOP, 5 );
-	
+
 	wxBoxSizer* bSizer4 = new wxBoxSizer( wxHORIZONTAL );
 	bSizer4->Add( 0, 0, 1, wxEXPAND, 5 );
 	bSizer4->Add( m_butHide, 0, wxTOP|wxBOTTOM|wxLEFT, 5 );
 	bSizer4->Add( m_butPause, 0, wxALL, 5 );
-	
+
 	wxFlexGridSizer* fgSizer1;
 	fgSizer1 = new wxFlexGridSizer( 4, 1, 0, 0 );
 	fgSizer1->AddGrowableCol( 0 );
@@ -114,7 +114,7 @@ void InstallINPage::onComplete(uint32& res)
 
 	m_pbProgress->setProgress(100);
 	m_butHide->SetLabel(Managers::GetString(L"#CLOSE"));
-	
+
 	auto bi = getItemInfo()->getCurrentBranch();
 
 	m_butPause->Enable(true);

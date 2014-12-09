@@ -250,7 +250,7 @@ void gcMenu::layoutMenu()
 		for (size_t x=0; x<list.size(); x++)
 		{
 			gcMenuItem *item = dynamic_cast<gcMenuItem*>(list[x]);
-				
+
 			if (item)
 				item->setExtended();
 		}

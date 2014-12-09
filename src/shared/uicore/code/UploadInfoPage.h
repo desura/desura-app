@@ -79,11 +79,11 @@ protected:
 
 	wxTextCtrl* m_tbItemFile;
 	//wxFilePickerCtrl* m_dpFile;
-	
+
 	gcButton* m_butUpload;
 	gcButton* m_butCancel;
 	gcButton* m_butFile;
-	
+
 	void initUpload(const char* path, uint64 start);
 	void initUpload(const char* path);
 

@@ -48,7 +48,7 @@ protected:
 	void onMouseMotion( wxMouseEvent &event);
 
 	void showToolTip(int32 col, int32 row);
-		
+
 private:
 	int32 m_iLastCol;
 	int32 m_iLastRow;

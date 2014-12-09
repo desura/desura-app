@@ -143,7 +143,7 @@ void ItemInfo::saveDb(sqlite3x::sqlite3_connection* db)
 	cmd.bind(1, (long long int)m_iId.toInt64());
 
 	int count = cmd.executeint();
-		
+
 	if (count == 0)
 	{
 		saveDbFull(db);
@@ -159,12 +159,12 @@ void ItemInfo::saveDb(sqlite3x::sqlite3_connection* db)
 											"logourl=?,"
 											"ibranch=?,"
 											"lastbranch=? WHERE internalid=?;");
-		
+
 		uint32 status = m_iStatus&(~ItemInfoI::STATUS_DEVELOPER);
 
 		cmd.bind(1, (int)status); //status
 		cmd.bind(2, (int)m_iPercent); //percent
-		
+
 		cmd.bind(3, UTIL::OS::getRelativePath(m_szIcon)); //icon
 		cmd.bind(4, UTIL::OS::getRelativePath(m_szLogo)); //logo
 		cmd.bind(5, m_szIconUrl); //icon
@@ -247,7 +247,7 @@ void ItemInfo::loadDb(sqlite3x::sqlite3_connection* db)
 	sqlite3x::sqlite3_command cmd(*db, "SELECT * FROM iteminfo WHERE internalid=?;");
 	cmd.bind(1, (long long int)m_iId.toInt64());
 	sqlite3x::sqlite3_reader reader = cmd.executereader();
-	
+
 	reader.read();
 
 	// reader.getint(0); //internal id
@@ -289,7 +289,7 @@ void ItemInfo::loadDb(sqlite3x::sqlite3_connection* db)
 		sqlite3x::sqlite3_command cmd(*db, "SELECT biid FROM installinfo WHERE itemid=?;");
 		cmd.bind(1, (long long int)m_iId.toInt64());
 		sqlite3x::sqlite3_reader reader = cmd.executereader();
-	
+
 		while (reader.read())
 		{
 			vIdList.push_back(reader.getint(0));
@@ -319,7 +319,7 @@ void ItemInfo::loadDb(sqlite3x::sqlite3_connection* db)
 		sqlite3x::sqlite3_command cmd(*db, "SELECT branchid, biid FROM branchinfo WHERE internalid=?;");
 		cmd.bind(1, (long long int)m_iId.toInt64());
 		sqlite3x::sqlite3_reader reader = cmd.executereader();
-	
+
 		while (reader.read())
 		{
 			vIdList.push_back(std::pair<uint32, uint32>(reader.getint(0), reader.getint(1)));
@@ -495,7 +495,7 @@ void ItemInfo::loadXmlData(uint32 platform, const XML::gcXMLElement &xmlNode, ui
 
 	addSFlag(statusOveride);
 	delSFlag(ItemInfoI::STATUS_INSTALLED);	//need this otherwise installpath and install check dont get set
-	
+
 	processInfo(xmlNode);
 
 	xmlNode.FirstChildElement("branches").for_each_child("branch", [this](const XML::gcXMLElement &branch)
@@ -684,7 +684,7 @@ void ItemInfo::processSettings(uint32 platform, const XML::gcXMLElement &setNode
 
 	if (installComplex)
 		addSFlag(ItemInfoI::STATUS_INSTALLCOMPLEX);
-	
+
 	auto it = m_mBranchInstallInfo.find(platform);
 
 	if (it == m_mBranchInstallInfo.end() && !isDownloadable())
@@ -714,7 +714,7 @@ void ItemInfo::processSettings(uint32 platform, const XML::gcXMLElement &setNode
 				flags |= ItemInfoI::STATUS_INSTALLED;
 				setInstalledMcf(MCFBranch::BranchFromInt(0), MCFBuild::BuildFromInt(0));
 			}
-				
+
 			if (!isDownloadable() || pr.notFirst)
 				flags |= ItemInfoI::STATUS_LINK;
 
@@ -837,7 +837,7 @@ void ItemInfo::triggerCallBack()
 
 	if (HasAnyFlags(m_iChangedFlags, CHANGED_STATUS) || !getUserCore()->isDelayLoading())
 		onInfoChangeEvent(i);
-	
+
 	m_iChangedFlags = 0;
 }
 
@@ -883,7 +883,7 @@ void ItemInfo::addSFlag(uint32 flags)
 		uint32 num = 1;
 		getUserCore()->getItemsAddedEvent()(num);
 	}
-	
+
 	onInfoChange();
 }
 
@@ -1081,7 +1081,7 @@ void ItemInfo::broughtCheck()
 
 		bool onAccount = HasAnyFlags(bi->getFlags(), BranchInfoI::BF_ONACCOUNT);
 		bool isDemo = HasAnyFlags(bi->getFlags(), BranchInfoI::BF_DEMO|BranchInfoI::BF_TEST);
-		
+
 		if (onAccount && !isDemo)
 		{
 			brought = true;
@@ -1164,7 +1164,7 @@ bool ItemInfo::setInstalledMcf(MCFBranch branch, MCFBuild build)
 
 			m_LastBranch = m_INBranch;
 			m_INBranch = branch;
-			
+
 			if (build == 0)
 				build = m_vBranchList[x]->getLatestBuild();
 
@@ -1376,10 +1376,10 @@ MCFBranch ItemInfo::selectBestBranch(const std::vector<gcRefPtr<BranchInfo>> &li
 
 			if (!onAccount && (locked || !free))
 				continue;
-		
+
 			bool isDemo = HasAnyFlags(flags, UserCore::Item::BranchInfoI::BF_DEMO);
 			bool test = HasAnyFlags(flags, UserCore::Item::BranchInfoI::BF_TEST);
-		
+
 			if ((!ignoreDemo && isDemo) || test)
 				continue;
 
@@ -1420,11 +1420,11 @@ MCFBranch ItemInfo::selectBestBranch(const std::vector<gcRefPtr<BranchInfo>> &li
 			if (t[x]->is64Bit())
 				shortList.push_back(t[x]);
 		}
-		
+
 		if (shortList.size() == 0) //filtered all :(
 			shortList = t;
 	}
-	
+
 	if (shortList.size() == 1)
 		return shortList[0]->getBranchId();
 
@@ -1731,7 +1731,7 @@ namespace UnitTest
 	TEST_F(ItemInfoThirdPartyFixture, ThirdPartyLoad)
 	{
 		sqlite3x::sqlite3_connection db(":memory:");
-		
+
 		setUpDb(db, vSqlCommands);
 		i->loadDb(&db);
 
@@ -1769,7 +1769,7 @@ namespace UnitTest
 		"		<wcard name=\"GAME_EXE\" type=\"exe\">%INSTALL_PATH%\\Charlie.exe</wcard>"
 		"	</wcards>"
 		"</game>";
-			 
+
 
 	TEST_F(ItemInfoThirdPartyFixture, ThirdPartyDeleteAndAdd)
 	{

@@ -53,7 +53,7 @@ protected:
 	gcCheckBox* m_cbFiles;
 	gcCheckBox* m_cbTools;
 	gcCheckBox* m_cbInstallHook;
-	
+
 	gcButton* m_butVerify;
 	gcButton* m_butCancel;
 

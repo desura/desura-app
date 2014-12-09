@@ -48,7 +48,7 @@ protected:
 	wxStaticText* m_labInfo;
 	gcChoice* m_cbSteamUser;
 	gcButton* m_butOk;
-	
+
 	void onButClick( wxCommandEvent& event );
 	void saveSteamUser();
 

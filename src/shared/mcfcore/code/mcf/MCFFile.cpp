@@ -89,7 +89,7 @@ namespace
 		do
 		{
 			pos = str.find(searchStr, pos);
-		
+
 			if (pos == std::string::npos)
 				break;
 
@@ -398,11 +398,11 @@ void MCFFile::genXml(XMLSaveAndCompress *sac)
 	sac->save("<name>", 6);
 	SaveToSac(sac, m_szName);
 	sac->save("</name>", 7);
-	
+
 	sac->save("<path>", 6);
 	SaveToSac(sac, m_szPath);
 	sac->save("</path>", 7);
-	
+
 	sac->save("<flags>", 7);
 	SaveToSac(sac, (uint32)m_uiFlags);
 	sac->save("</flags>", 8);
@@ -819,7 +819,7 @@ void MCFFile::delFlag(uint16 flag)
 {
 	m_uiFlags &= ~flag;
 }
-	
+
 bool MCFFile::hasStartedDL()
 {
 	return HasAnyFlags(m_uiFlags, FLAG_STARTEDDL|FLAG_COMPLETE);

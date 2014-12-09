@@ -196,6 +196,8 @@ namespace UserCore
 
 		std::mutex m_FavLock;
 		std::vector<DesuraId> m_vFavList;
+
+		bool m_Cleaned;
 	};
 
 

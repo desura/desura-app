@@ -101,7 +101,7 @@ std::vector<MapElementI*> DesuraJSSettings::getThemes()
 	{
 		UTIL::FS::Path file(UTIL::OS::getDataPath(L"themes"), L"", false);
 		UTIL::FS::Path themePath = UTIL::FS::PathWithFile(m_vThemes[x]->getPreview());
-		
+
 		file += themePath;
 		file += themePath.getFile();
 
@@ -119,7 +119,7 @@ std::vector<MapElementI*> DesuraJSSettings::getThemes()
 		map["tooltip"] = m_vThemes[x]->getPrintName();
 		map["author"] = m_vThemes[x]->getAuthor();
 		map["version"] = m_vThemes[x]->getVersion();
-	
+
 		ret.push_back(new MapElement<std::map<gcString, gcString>>(map));
 	}
 
@@ -138,13 +138,13 @@ std::vector<std::map<gcString, gcString>> GetLanguages()
 
 	UTIL::FS::getAllFiles(UTIL::FS::Path(UTIL::OS::getDataPath(L"language"),
 		L"", false), fileList, &filter);
-	
+
 	std::map<gcString, uint32> mSeenBefore;
 
 	for (size_t x=0; x<fileList.size(); x++)
 	{
 		XML::gcXMLDocument doc(fileList[x].getFullPath().c_str());
-				
+
 		auto uNode = doc.GetRoot("lang");
 
 		if (!uNode.IsValid())
@@ -174,7 +174,7 @@ std::vector<std::map<gcString, gcString>> GetLanguages()
 
 		map["file"] = file;
 		map["name"] = name;
-	
+
 		ret.push_back(map);
 	}
 
@@ -184,7 +184,7 @@ std::vector<std::map<gcString, gcString>> GetLanguages()
 std::vector<MapElementI*> DesuraJSSettings::getLanguages()
 {
 	std::vector<MapElementI*> ret;
-	
+
 	for (auto lang : GetLanguages())
 		ret.push_back(new MapElement<std::map<gcString, gcString>>(lang));
 

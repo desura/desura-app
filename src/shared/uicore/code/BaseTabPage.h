@@ -44,7 +44,7 @@ public:
 	Event<uint32> progressUpdateEvent;
 
 	int32 getProg(){return m_iProgress;}
-	
+
 	bool showProg(){return m_bShowProg;}
 
 	virtual void setSelected(bool state);

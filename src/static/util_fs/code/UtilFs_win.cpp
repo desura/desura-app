@@ -48,7 +48,7 @@ FileHandle& FileHandle::operator=(const FileHandle& handle)
 		DuplicateHandle( GetCurrentProcess(), handle.getHandle(), GetCurrentProcess(), &m_hFileHandle, 0, TRUE, DUPLICATE_SAME_ACCESS );
 		m_bIsOpen = handle.isOpen();
 	}
-	
+
 	return *this;
 }
 

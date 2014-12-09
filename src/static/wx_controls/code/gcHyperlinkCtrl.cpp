@@ -76,7 +76,7 @@ void gcHyperlinkCtrl::onPaint(wxPaintEvent& WXUNUSED(event))
 {
 	wxRect rect = GetLabelRect();
 	rect.Offset(1,0);
-	
+
 
 	wxPaintDC dc(this);
 

@@ -53,26 +53,26 @@ public:
 #ifdef WIN32
 	void setUpPipes();
 #endif
-	
+
 protected:
 	IPCManager* getManager(uint32 index);
-	
+
 	//inherited from IPCPipeBase
 	void disconnectAndReconnect(uint32 i);
 
 #ifdef WIN32
 	uint32 getNumEvents(){return 2;}
-	
+
 	PipeData* getData(uint32 index);
-	
+
 	void cleanUp();
 #endif
-	
+
 
 private:
 #ifdef WIN32
 	bool m_bSetUped;	
-	
+
 	PipeData m_pdSend;
 	PipeData m_pdRecv;
 #endif

@@ -41,7 +41,7 @@ class ChangeLogForm : public gcFrame
 public:
 	ChangeLogForm( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = wxT("[Item Name]: Change Log"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 382,336 ), long style = wxDEFAULT_FRAME_STYLE|wxTAB_TRAVERSAL );
 	~ChangeLogForm();
-	
+
 	DesuraId getItemId(){return m_uiItemId;}
 
 	void setInfo(gcRefPtr<UserCore::Item::ItemInfoI> item);	//used for items

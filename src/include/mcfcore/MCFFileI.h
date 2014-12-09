@@ -179,7 +179,7 @@ public:
 	//! @return md5 hash
 	//!
 	virtual const char* getDiffHash()=0;
-	
+
 	//! Gets the original file hash the diff was made against
 	//!
 	//! @return md5 hash

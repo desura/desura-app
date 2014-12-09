@@ -35,7 +35,7 @@ CONCOMMAND(cmdlist, "cmdlist")
 {
 	std::vector<gcRefPtr<ConCommand>> vList;
 	GetCCommandManager()->getConCommandList(vList);
-	
+
 	std::sort(begin(vList), end(vList), [](const gcRefPtr<ConCommand> &pA, const gcRefPtr<ConCommand> &pB)
 	{
 		return std::string(pA->getName()) < std::string(pB->getName());
@@ -153,10 +153,10 @@ Console::Console(wxWindow* parent)
 	m_tbInfo->Bind(wxEVT_KEY_DOWN, &Console::onKeyDown, this);
 
 	m_butSubmit = 0;
-	
+
 	m_pSizer = new wxBoxSizer( wxHORIZONTAL );
 	m_pSizer->Add( m_tbInfo, 1, wxALIGN_CENTER_VERTICAL|wxTOP|wxBOTTOM|wxLEFT, 5 );
-	
+
 
 	wxFlexGridSizer* fgSizer14;
 	fgSizer14 = new wxFlexGridSizer( 3, 1, 0, 0 );
@@ -168,13 +168,13 @@ Console::Console(wxWindow* parent)
 	fgSizer14->Add( 0, 5, 1, wxEXPAND, 5 );
 	fgSizer14->Add( m_rtDisplay, 1, wxEXPAND | wxRIGHT|wxLEFT, 5 );
 	fgSizer14->Add( m_pSizer, 1, wxEXPAND|wxALIGN_CENTER_HORIZONTAL, 5 );
-	
+
 	this->SetSizer( fgSizer14 );
 	this->Layout();
-	
+
 	m_tbInfo->SetFocus();
 	setupAutoComplete();
-	
+
 	showEvent += guiDelegate(this, &Console::onShow);
 
 	wxLog *old_log = wxLog::SetActiveTarget( new wxLogRichTextCtrl( this ) );
@@ -260,7 +260,7 @@ void Console::setSize()
 {
 	if (loadSavedWindowPos() == false)
 		m_bCenterOnParent = true;
-	
+
 	enablePositionSave();
 }
 
@@ -432,7 +432,7 @@ void Console::processCommand()
 
 	if (temp.size() == 0)
 		return;
-	
+
 	const char* cString = temp.c_str().AsChar();
 	std::vector<gcString> vArgList;
 
@@ -440,7 +440,7 @@ void Console::processCommand()
 	if (argLen > 0)
 	{
 		char quote = 0;
-	
+
 		size_t lastIndex = 0;
 		size_t remove = 0;
 		for (size_t x=0; x<=argLen; x++)

@@ -78,7 +78,7 @@ void InstallDLPage::onButtonPressed(wxCommandEvent& event)
 
 	if (event.GetId() == m_butCancel->GetId())
 		g_pMainApp->handleInternalLink(getItemId(), ACTION_UNINSTALL);
-	
+
 }
 
 void InstallDLPage::onPause(bool &state)

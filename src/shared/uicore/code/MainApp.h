@@ -163,7 +163,7 @@ protected:
 
 	void createTaskBarIcon();
 	void onClose(wxCloseEvent& event);
-	
+
 	void changeAccountState(DesuraId id);
 
 	void loadUrl(const char* url, PAGE page);
@@ -177,7 +177,7 @@ protected:
 	void getSteamUser(WCSpecialInfo *info, wxWindow *parent);
 
 	void onNewsUpdate(std::vector<gcRefPtr<UserCore::Misc::NewsItem>>& itemList);
-	
+
 	void onNeedCvar(UserCore::Misc::CVar_s& info);
 
 	void onAppUpdateProg(uint32& prog);

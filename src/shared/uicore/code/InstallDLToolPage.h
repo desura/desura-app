@@ -55,7 +55,7 @@ protected:
 
 	gcStaticText* m_labLabel;
 	gcProgressBar* m_pbProgress;
-	
+
 	gcButton* m_butCancel;
 
 private:

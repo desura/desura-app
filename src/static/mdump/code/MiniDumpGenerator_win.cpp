@@ -65,7 +65,7 @@ bool CompleteCallback(const wchar_t* dump_path, const wchar_t* minidump_id, void
 MiniDumpGenerator::MiniDumpGenerator()
 {
 	m_szUser = 0;
-	
+
 #ifndef DESURA_OFFICIAL_BUILD
 	m_bNoUpload = true;
 #else
@@ -76,11 +76,11 @@ MiniDumpGenerator::MiniDumpGenerator()
 
 	if (s_pExceptionHandler)
 		return;
-		
+
 	setDumpLevel(3);
 	m_pCrashCallback = nullptr;
 	m_bCreatedHandle = true;
-	
+
 	wchar_t szDumpPath[MAX_PATH];
 	getDumpPath(szDumpPath, MAX_PATH);
 
@@ -384,64 +384,64 @@ wstring GUIDString::GUIDToSymbolServerWString(GUID *guid) {
 /*
 MiniDumpNormal                         = 0x00000000,
 	stack traces
-	
+
 MiniDumpWithDataSegs                   = 0x00000001,
 	global vars
-	
+
 MiniDumpWithFullMemory                 = 0x00000002,
 	all memory
-	
+
 MiniDumpWithHandleData                 = 0x00000004,
 	handle list
-	
+
 MiniDumpFilterMemory                   = 0x00000008,
 	removes stack variables and zeros them
-	
+
 MiniDumpScanMemory                     = 0x00000010,
 	remove modules
-	
+
 MiniDumpWithUnloadedModules            = 0x00000020,
 	saves unloaded modules
-	
+
 MiniDumpWithIndirectlyReferencedMemory = 0x00000040,
 	pointers are resolved upto 1k
-	
+
 MiniDumpFilterModulePaths              = 0x00000080,
 	remove module paths
-	
+
 MiniDumpWithProcessThreadData          = 0x00000100,
 	private process and thread data
 
 MiniDumpWithPrivateReadWriteMemory     = 0x00000200,
 	include all private memory
-	
+
 MiniDumpWithoutOptionalData            = 0x00000400,
 	removes memory data
-	
+
 MiniDumpWithFullMemoryInfo             = 0x00000800,
 	layout of memory
-	
+
 MiniDumpWithThreadInfo                 = 0x00001000,
 	extra thread info
-	
+
 MiniDumpWithCodeSegs                   = 0x00002000,
 	code segments
-	
+
 MiniDumpWithoutAuxiliaryState          = 0x00004000,
-	
-	
+
+
 MiniDumpWithFullAuxiliaryState         = 0x00008000,
-	
-	
+
+
 MiniDumpWithPrivateWriteCopyMemory     = 0x00010000,
-	
-	
+
+
 MiniDumpIgnoreInaccessibleMemory       = 0x00020000,
-	
-	
+
+
 MiniDumpWithTokenInformation           = 0x00040000,
-	
-	
+
+
 MiniDumpValidTypeFlags                 = 0x0007ffff,
-	
+
 */

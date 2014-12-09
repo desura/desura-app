@@ -229,7 +229,7 @@ ChromiumDLL::ChromiumControllerI* CEF_Init_Legacy(SharedObjectLoader &hCefDll, b
 
 	if (g_pLegacyController->Load(hCefDll) && g_pLegacyController->Init(threaded, cachePath, logPath, userAgent))
 		return g_pLegacyController;
-	
+
 	delete g_pLegacyController;
 	g_pLegacyController = nullptr;
 

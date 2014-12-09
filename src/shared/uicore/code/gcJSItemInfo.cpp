@@ -288,24 +288,24 @@ gcString DesuraJSItemInfo::getItemInsPrimary(gcRefPtr<UserCore::Item::ItemInfoI>
 gcString DesuraJSItemInfo::getItemIcon(gcRefPtr<UserCore::Item::ItemInfoI> item)
 {
 	gcString icon(item->getIcon());
-	
+
 #ifdef NIX
 	if (icon.size() > 0 && icon[0] != '/')
 		icon = gcString("{0}/{1}", UTIL::OS::getCurrentDir(), icon);
 #endif
-	
+
 	return icon;
 }
 
 gcString DesuraJSItemInfo::getItemLogo(gcRefPtr<UserCore::Item::ItemInfoI> item)
 {
 	gcString logo = item->getLogo();
-	
+
 #ifdef NIX
 	if (logo.size() > 0 && logo[0] != '/')
 		logo = gcString("{0}/{1}", UTIL::OS::getCurrentDir(), logo);
 #endif	
-	
+
 	return logo;
 }
 

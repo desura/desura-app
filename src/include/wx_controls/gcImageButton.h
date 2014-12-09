@@ -41,21 +41,21 @@ public:
 	//! Sets the normal button state image path
 	//!
 	void setDefaultImage(const char* img);
-	
+
 	//! Sets the mouse hover button state image path
 	//!	
 	void setHoverImage(const char* img);
-	
+
 	//! Sets the focused button state image path
 	//!	
 	void setFocusImage(const char* img);
-	
+
 	//! Sets the disabled button state image path
 	//!	
 	void setDisabledImage(const char* img);
 
 	bool Enable(bool enable = true);
-	
+
 	void setImage(const char* image);
 
 	bool isHovering(){return m_bHovering;}

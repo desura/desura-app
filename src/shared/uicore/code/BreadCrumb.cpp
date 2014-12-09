@@ -72,7 +72,7 @@ int BreadCrump::addItem(const char* text, uint32 id)
 		m_vButtons.push_back(new MenuSeperator(this, "#breadcrumb_separator", wxSize(7, 19)));
 
 	m_vButtons.push_back(temp);
-	
+
 	m_sizerMenu->Clear();
 	m_sizerMenu->Add(m_pStart, 0, 0, 3);
 	m_pStart->Show(true);
@@ -100,7 +100,7 @@ void BreadCrump::clear()
 		m_sizerMenu->RemoveGrowableCol(m_vButtons.size() + 1);
 
 	m_sizerMenu->Clear();
-	
+
 	for (size_t x=0; x<m_vButtons.size(); x++)
 	{
 		m_vButtons[x]->getButton()->Destroy();

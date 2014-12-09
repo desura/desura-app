@@ -67,7 +67,7 @@ void UninstallForm::setInfo(DesuraId id)
 {
 	m_uiInternId = id;
 	UserCore::Item::ItemInfoI *item = GetUserCore()->getItemManager()->findItemInfo(id);
-	
+
 	if (!item)
 	{
 		Warning("Item was null for uninstall!");

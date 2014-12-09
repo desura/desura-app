@@ -59,12 +59,12 @@ public:
 	void reset()
 	{
 		size = 0;	
-		
+
 #ifdef WIN32
 		pendingConnection = true;
 
 		fPendingIO = FALSE;
-		
+
 		oOverlap.Internal = 0;
 		oOverlap.InternalHigh = 0;
 		oOverlap.Offset = 0;
@@ -72,7 +72,7 @@ public:
 		oOverlap.hEvent = INVALID_HANDLE_VALUE;
 #endif
 	}
-	
+
 #ifdef WIN32
 	OVERLAPPED oOverlap; 
 	HANDLE hPipe;
@@ -82,7 +82,7 @@ public:
 	bool pendingConnection;
 	bool sender;	
 #endif
-	
+
 	char buffer[BUFSIZE]; 
 	uint32 size;
 };
@@ -114,7 +114,7 @@ public:
 #ifdef WIN32
 	PipeData *pipes[2];
 #endif
-	
+
 	IPCManager* pIPC;
 
 	void disconnect()

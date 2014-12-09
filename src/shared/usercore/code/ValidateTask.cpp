@@ -85,7 +85,7 @@ void ValidateTask::doRun()
 		throw gcException(ERR_NULLHANDLE, "Current branch is nullptr");
 
 	gcString savePath = mm->getMcfPath(getItemId(), curBranch->getBranchId(), build, m_bUnAuthed);
-		
+
 	if (savePath == "")
 		savePath = mm->newMcfPath(getItemId(), curBranch->getBranchId(), build, m_bUnAuthed);
 
@@ -126,7 +126,7 @@ void ValidateTask::doRun()
 				m_hMCFile->getErrorEvent().reset();
 				m_hMCFile->getProgEvent().reset();
 
-				
+
 				m_hMCFile->getErrorEvent() += delegate(&onErrorEvent);
 				m_hMCFile->getProgEvent() += delegate(this, &ValidateTask::onProgress);
 
@@ -422,7 +422,7 @@ void ValidateTask::copyLocalFiles()
 		m_CurMcfIndex = 2;
 		m_TotalFileCount = 0;
 		m_hMCFile->getPatchStats(curMcf.handle(), nullptr, &m_TotalFileCount);
-		
+
 		if (m_TotalFileCount != m_hMCFile->getFileCount())
 		{
 			curMcf->markFiles(m_hMCFile.handle(), true, false, false, false);

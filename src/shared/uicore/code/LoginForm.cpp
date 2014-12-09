@@ -138,7 +138,7 @@ public:
 		setColors(linkColor, hoverColor);
 		showFocusBox(hoverColor);
 		init(nullptr);
-	
+
 		Bind(wxEVT_CHAR, &LoginLink::onChar, this);
 	}
 
@@ -294,7 +294,7 @@ LoginForm::LoginForm(wxWindow* parent)
 	fgSizer4->Add( m_butSignin, 0, wxTOP|wxBOTTOM|wxLEFT, 5 );
 	fgSizer4->Add( m_butCancel, 0, wxTOP|wxBOTTOM|wxLEFT, 5 );
 
-	
+
 	wxFlexGridSizer* fgSizer5 = new wxFlexGridSizer( 1, 3, 0, 0 );
 	fgSizer5->AddGrowableCol( 0 );
 	fgSizer5->AddGrowableCol( 1 );
@@ -305,7 +305,7 @@ LoginForm::LoginForm(wxWindow* parent)
 	fgSizer5->Add( m_linkOffline, 0, wxTOP|wxBOTTOM|wxRIGHT, 5 );
 	fgSizer5->Add( m_linkNewAccount, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, 5 );
 	fgSizer5->Add( m_linkLostPassword, 0, wxALIGN_RIGHT|wxTOP|wxBOTTOM|wxLEFT, 5 );
-	
+
 
 	wxFlexGridSizer* fgSizer6 = new wxFlexGridSizer( 4, 1, 0, 0 );
 	fgSizer6->AddGrowableCol( 0 );
@@ -493,7 +493,7 @@ wxRect LoginForm::getWindowsBorderRect() const
 #else
 	return wxRect(wxPoint(0,0), wxSize(800, 600));
 #endif // LINUX TODO
-	
+
 }
 
 void LoginForm::setFrameRegion()
@@ -501,7 +501,7 @@ void LoginForm::setFrameRegion()
 #ifdef WIN32
 	wxRect wbr = getWindowsBorderRect();
 	wxPoint br = wbr.GetBottomRight();
-	
+
 	br.x += 2;
 	br.y += 2;
 
@@ -849,7 +849,7 @@ void LoginForm::onStartLogin(std::pair<gcString, gcString> &l)
 		int nSelection = m_comboProvider->GetSelection();
 		bAltProvider = nSelection != 0;
 	}
-		
+
 	m_pLogThread = new LoginThread(user.c_str(), pass.c_str(), bAltProvider, this);
 	m_pLogThread->start();
 }
@@ -869,7 +869,7 @@ void LoginForm::onLogin()
 	}
 
 	SaveCVars();
-	
+
 	if (m_comboProvider)
 		gc_login_stage_last.setValue(m_comboProvider->GetStringSelection().ToUTF8());
 

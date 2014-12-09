@@ -82,12 +82,12 @@ void gcULProgressBar::doExtraImgPaint(wxBitmap &img, int w, int h)
 
 	uint32 wm = w*m_uiLastMS/100;
 	uint32 wp = 0;
-	
+
 	uint32 t = w*getProgress()/100;
 
 	if (t > wm)
 		wp = t - wm;
-	
+
 	if (wp == 0)
 		return;
 

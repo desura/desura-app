@@ -98,7 +98,7 @@ static int GetServiceStatus()
 
 	Safe::snprintf(regname,	255, "HKEY_LOCAL_MACHINE\\SYSTEM\\CurrentControlSet\\services\\%s\\ImagePath", SERVICE_NAME);
 	gcWString regValue = UTIL::WIN::getRegValue(regname);
-	
+
 	bool regMatchesPath = (regValue == servicePath);
 	bool regMatchesLocal = (regValue == localPath);
 
@@ -191,7 +191,7 @@ void InstallService()
 
 		char regname[255];
 		Safe::snprintf(regname, 255, "HKEY_LOCAL_MACHINE\\SYSTEM\\CurrentControlSet\\Services\\%s\\ImagePath", SERVICE_NAME);
-		
+
 		//update its path to the new location
 		UTIL::WIN::setRegValue(regname, servicePath, false, true);
 	}

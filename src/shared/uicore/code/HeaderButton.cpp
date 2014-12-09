@@ -50,9 +50,9 @@ headerButton::headerButton( wxWindow* parent, wxWindowID id, const wxPoint& pos,
 	fgSizer1->AddGrowableRow( 0 );
 	fgSizer1->SetFlexibleDirection( wxBOTH );
 	fgSizer1->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
-	
+
 	fgSizer1->Add( 5, 0, 1, 0, 5 );
-	
+
 	wxFlexGridSizer* fgSizer2;
 	fgSizer2 = new wxFlexGridSizer( 2, 2, 0, 0 );
 	fgSizer2->SetFlexibleDirection( wxBOTH );
@@ -60,9 +60,9 @@ headerButton::headerButton( wxWindow* parent, wxWindowID id, const wxPoint& pos,
 
 	fgSizer2->Add( m_labTitle, 0, wxALIGN_CENTER_VERTICAL, 5 );
 	fgSizer2->Add( m_imgSortDir, 0, wxALIGN_CENTER_VERTICAL, 5 );
-	
+
 	fgSizer1->Add( fgSizer2, 0, wxALIGN_CENTER_VERTICAL, 5 );
-	
+
 	this->SetSizer( fgSizer1 );
 	this->Layout();
 
@@ -100,7 +100,7 @@ void headerButton::setText(const char* text)
 void headerButton::setSelected(bool state)
 {
 	m_bSelected = state;
-		
+
 	if (m_bSelected)
 	{
 		if (m_iSortMode & 0x1)

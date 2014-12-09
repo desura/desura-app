@@ -78,7 +78,7 @@ public:
 	{
 		return &value();
 	}
-	
+
 	operator bool() const
 	{
 		return m_bIsSet;

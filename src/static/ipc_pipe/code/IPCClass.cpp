@@ -162,7 +162,7 @@ IPCParameterI* IPCClass::callFunction(const char* name, bool async, std::vector<
 	fch->functionHash = UTIL::MISC::RSHash_CSTR(name);
 	fch->numP = pList.size();
 	memcpy(&fch->data, data, tsize );
-	
+
 	safe_delete(data);
 
 	IPCParameterI* ret = nullptr;
@@ -235,7 +235,7 @@ IPCParameterI* IPCClass::callLoopback(const char* name, bool async, std::vector<
 	fch->functionHash = UTIL::MISC::RSHash_CSTR(name);
 	fch->numP = pList.size();
 	memcpy(&fch->data, data, tsize );
-	
+
 	safe_delete(data);
 
 	IPCParameterI* ret = nullptr;

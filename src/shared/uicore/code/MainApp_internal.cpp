@@ -159,7 +159,7 @@ void MainApp::loadUrl(const char* url, PAGE page)
 		gcLaunchDefaultBrowser(url);
 		return;
 	}
-	
+
 	if (m_wxMainForm->IsIconized())
 		m_wxMainForm->Iconize(false);
 
@@ -181,7 +181,7 @@ void MainApp::showProfile(DesuraId id, const LinkArgs &args)
 			url = gcString("{0}{1}", item->getProfile(), args.first());
 
 		PAGE page = GAMES;
-			
+
 #ifndef UI_HIDE_MODS
 		if (id.getType() != DesuraId::TYPE_GAME)
 			page = MODS;

@@ -58,7 +58,7 @@ public:
 	//! Sets the progress state in the taskbar for windows. Linux this is a noop
 	//!
 	void setProgressState(PROGSTATE state);
-	
+
 	//! Sets the progress percent in the taskbar for windows. Linux this is a noop
 	//!	
 	void setProgress(uint8 prog);
@@ -72,11 +72,11 @@ public:
 	//! Enables saving of window position in the CVar db
 	//!
 	void setupPositionSave(const char* name, bool saveMax = true, int defWidth = -1, int defHeight = -1);
-	
+
 	//! Starts the recording of windows position
 	//!
 	void enablePositionSave(bool state = true);
-	
+
 	//! Loads the last saved window position
 	//!
 	bool loadSavedWindowPos();

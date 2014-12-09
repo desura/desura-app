@@ -157,7 +157,7 @@ void BranchInstallInfo::loadDb(sqlite3x::sqlite3_connection* db)
 		sqlite3x::sqlite3_command cmd(*db, "SELECT * FROM installinfo WHERE itemid=? AND biid=?;");
 		cmd.bind(1, (long long int)m_ItemId.toInt64());
 		cmd.bind(2, (int)m_BiId);
-	
+
 		sqlite3x::sqlite3_reader reader = cmd.executereader();
 		reader.read();
 
@@ -177,7 +177,7 @@ void BranchInstallInfo::loadDb(sqlite3x::sqlite3_connection* db)
 		cmd.bind(2, (int)m_BiId);
 
 		sqlite3x::sqlite3_reader reader = cmd.executereader();
-	
+
 		while (reader.read())
 		{
 			m_vInstallChecks.push_back(reader.getstring(0));
@@ -202,7 +202,7 @@ void BranchInstallInfo::loadDb(sqlite3x::sqlite3_connection* db)
 		cmd.bind(2, (int)m_BiId);
 
 		sqlite3x::sqlite3_reader reader = cmd.executereader();
-	
+
 		while (reader.read())
 		{
 			gcString name = reader.getstring(2);
@@ -335,7 +335,7 @@ ProcessResult BranchInstallInfo::processSettings(const XML::gcXMLElement &setNod
 	pr.notFirst = false;
 
 	auto icsNode = setNode.FirstChildElement("installlocations");
-	
+
 	if (!isInstalled())
 		m_vInstallChecks.clear();
 
@@ -345,7 +345,7 @@ ProcessResult BranchInstallInfo::processSettings(const XML::gcXMLElement &setNod
 
 		extractInstallChecks(icsNode, pWildCard, vInsChecks);
 		UpdateInstallCheckList(vInsChecks, pWildCard);
-	
+
 		size_t size = vInsChecks.size();
 
 		//only care about the first item for bought items when we are not already installed
@@ -401,7 +401,7 @@ ProcessResult BranchInstallInfo::processSettings(const XML::gcXMLElement &setNod
 		char *iPathRes = nullptr;
 		char* insPrim = nullptr;
 		char* insPrimRes = nullptr;
-		
+
 		setNode.GetChild("installprimary", insPrim);
 
 		try
@@ -586,7 +586,7 @@ void BranchInstallInfo::setInsCheck(const char* path)
 		//should not change dir when updating install check when installed
 		bCheckFailed = p1.getFolderPath() == p2.getFolderPath();
 	}
-		
+
 	//should never set path when installed
 	VERIFY_OR_RETURN(!bCheckFailed, );
 
@@ -745,7 +745,7 @@ bool BranchInstallInfo::processUpdateXml(const XML::gcXMLElement &branch)
 	if (mcfEl.IsValid())
 	{
 		const std::string id = mcfEl.GetAtt("id");
-					
+
 		if (!id.empty())
 		{
 			uint32 build = -1;
@@ -831,7 +831,7 @@ namespace UnitTest
 			for (auto &strFileIt : m_vValidFiles)
 			{
 				UTIL::FS::Path b(UTIL::FS::PathWithFile(strFileIt));
-				
+
 				if (a == b)
 					return true;
 			}
@@ -897,7 +897,7 @@ namespace UnitTest
 				else
 					ASSERT_EQ(nValidFileCount, m_BranchInstallInfo->m_vInstallChecks.size());
 			}
-				
+
 		}
 
 		bool updateInstallCheck(gcString &strCheckRes, const gcString &strPath)
@@ -1056,7 +1056,7 @@ namespace UnitTest
 		setInstallInfo("D:\\test", "D:\\test\\oldcheck.txt", "insprim");
 
 		gcString strPath("C:\\abc\\def\\check.txt");
-		
+
 		ASSERT_TRUE(updateInstallCheck(strPath, "C:\\abc"));
 		ASSERT_FILEEQ("D:\\test\\def\\check.txt", strPath.c_str());
 	}
@@ -1067,7 +1067,7 @@ namespace UnitTest
 		setInstallInfo("D:\\test", "D:\\test\\oldcheck.txt", "insprim");
 
 		gcString strPath("C:\\abc\\def\\check.txt");
-		
+
 		ASSERT_FALSE(updateInstallCheck(strPath, "C:\\123"));
 		ASSERT_FILEEQ("C:\\abc\\def\\check.txt", strPath.c_str());
 	}
@@ -1078,7 +1078,7 @@ namespace UnitTest
 		setInstallInfo("D:\\test", "D:\\test\\oldcheck.txt", "insprim");
 
 		gcString strPath("C:\\abc\\def\\check.txt");
-		
+
 		ASSERT_FALSE(updateInstallCheck(strPath, "D:\\abc"));
 		ASSERT_FILEEQ("C:\\abc\\def\\check.txt", strPath.c_str());
 	}

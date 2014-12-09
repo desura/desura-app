@@ -50,7 +50,7 @@ public:
 		fgSizer3->AddGrowableCol( 1 );
 		fgSizer3->SetFlexibleDirection( wxBOTH );
 		fgSizer3->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
-	
+
 		uint32 flags = wxLEFT|wxRIGHT|wxTOP;
 
 		if (last)
@@ -59,7 +59,7 @@ public:
 		fgSizer3->Add( m_imgIcon, 0, flags, 5 );
 		fgSizer3->Add( m_labTitle, 0, wxLEFT|wxALIGN_CENTER_VERTICAL, 5 );
 		fgSizer3->Add( m_pbProgress, 0, wxRIGHT|wxALIGN_CENTER_VERTICAL, 5 );
-	
+
 
 		Managers::LoadTheme(this, "formlogin");
 
@@ -95,7 +95,7 @@ namespace ItemFormPage
 InstallWaitPage::InstallWaitPage(wxWindow* parent) : BaseInstallPage(parent)
 {
 	this->SetSizeHints( wxDefaultSize, wxDefaultSize );
-	
+
 	m_labInfo = new wxStaticText( this, wxID_ANY, "", wxDefaultPosition, wxDefaultSize, 0 );
 
 	m_swItemList = new wxScrolledWindow( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxHSCROLL|wxVSCROLL );
@@ -119,7 +119,7 @@ InstallWaitPage::InstallWaitPage(wxWindow* parent) : BaseInstallPage(parent)
 
 
 	wxBoxSizer* bSizer1 = new wxBoxSizer( wxHORIZONTAL );
-	
+
 	bSizer1->Add( m_butCancelAll, 0, wxTOP|wxBOTTOM|wxLEFT, 5 );
 	bSizer1->Add( 0, 0, 1, wxEXPAND, 5 );
 	bSizer1->Add( m_butForce, 0, wxTOP|wxBOTTOM|wxLEFT, 5 );
@@ -132,11 +132,11 @@ InstallWaitPage::InstallWaitPage(wxWindow* parent) : BaseInstallPage(parent)
 	fgSizer1->AddGrowableRow( 1 );
 	fgSizer1->SetFlexibleDirection( wxBOTH );
 	fgSizer1->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
-	
+
 	fgSizer1->Add( m_labInfo, 0, wxALL, 5 );
 	fgSizer1->Add( m_swItemList, 1, wxEXPAND|wxALL, 5 );
 	fgSizer1->Add( bSizer1, 1, wxEXPAND, 5 );
-	
+
 	this->SetSizer( fgSizer1 );
 	this->Layout();
 	this->Centre(wxBOTH);

@@ -124,7 +124,7 @@ void InternalLink::closeAll()
 
 		if (t1)
 			t1->setTrueClose();
-		
+
 		m_vSubForms[0]->Show(false);
 		m_vSubForms[0]->Close(true);
 
@@ -141,7 +141,7 @@ void InternalLink::handleInternalLink(const char* link)
 	bool badLink = false;
 
 	g_pMainApp->showMainWindow(true);
-	
+
 	if (strncmp("desura://", link, 9) == 0)
 	{
 		char* str = nullptr;
@@ -274,7 +274,7 @@ bool InternalLink::switchTab(bool &badLink, std::vector<gcString> &list, const c
 		if (!url.empty())
 		{
 			std::transform(begin(url), end(url), begin(url), ::tolower);
-			
+
 			if (url.find("http://") == 0 || url.find("https://") == 0)
 				g_pMainApp->loadUrl(url.c_str(), page);
 		}
@@ -531,7 +531,7 @@ public:
 		for (size_t x=0; x<item->getBranchCount(); x++)
 		{
 			uint32 flags = item->getBranch(x)->getFlags();
-			
+
 			if (HasAllFlags(flags, UserCore::Item::BranchInfoI::BF_NORELEASES))
 				continue;
 
@@ -735,7 +735,7 @@ UI::Forms::ItemForm* InternalLink::showItemForm(DesuraId id, UI::Forms::INSTALL_
 		return nullptr;
 
 	UI::Forms::ItemForm *form = findForm<UI::Forms::ItemForm>(id, m_vSubForms);
-	
+
 	if (!form)
 	{
 		form = new UI::Forms::ItemForm(m_pParent);
@@ -829,7 +829,7 @@ void InternalLink::installItem(DesuraId id, LinkArgs args)
 
 	if (iBranch == 0 && !args.containsArg("skippreorder") && checkForPreorder(id))
 		return;
-	
+
 	UI::Forms::ItemForm* form = showItemForm(id, UI::Forms::INSTALL_ACTION::IA_INSTALL, iBranch);
 
 	if (!form)
@@ -1153,7 +1153,7 @@ void InternalLink::showUpdateForm(DesuraId id, LinkArgs args)
 
 	if (!HasAllFlags(item->getStatus(), UserCore::Item::ItemInfoI::STATUS_UPDATEAVAL))
 		return;
-	
+
 	std::string reminder = args.getArgValue("reminder");
 
 	//create new gather info form from
@@ -1264,7 +1264,7 @@ void InternalLink::resumeUploadMCF(DesuraId id, LinkArgs args)
 		pForm->Raise();
 		return;
 	}
-		
+
 	gcRefPtr<UserCore::Item::ItemInfoI> item = GetUserCore()->getItemManager()->findItemInfo( id );
 	if (!item && !GetUserCore()->isAdmin())
 	{
@@ -1312,7 +1312,7 @@ void InternalLink::createMCF(DesuraId id)
 	form->Show(true);	
 	form->Raise();
 	form->run();
-	
+
 #ifdef NIX
 	form->Raise();
 #endif

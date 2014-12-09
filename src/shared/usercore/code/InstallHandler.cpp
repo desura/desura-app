@@ -30,7 +30,7 @@ $/LicenseInfo$
 InstallHandler::InstallHandler(UserCore::Item::ItemHandle* handle, const char* path) : BaseHandler(handle)
 {
 	m_szPath = path;
-	
+
 }
 
 InstallHandler::~InstallHandler()

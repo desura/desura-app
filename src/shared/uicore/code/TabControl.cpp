@@ -38,7 +38,7 @@ TabControl::TabControl( wxWindow* parent, wxWindowID id, const wxPoint& pos, con
 	fgSizer3->AddGrowableRow( 1 );
 	fgSizer3->SetFlexibleDirection( wxBOTH );
 	fgSizer3->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
-	
+
 	bSizerTabButtons = new wxBoxSizer( wxHORIZONTAL );
 
 	fgSizer3->Add( bSizerTabButtons, 1, wxEXPAND, 5 );
@@ -121,7 +121,7 @@ void TabControl::setActivePage(uint32 index)
 	{
 		if (!m_vTabInfo[x])
 			continue;
-		
+
 		int style = wxTOP|wxEXPAND;
 
 		if (x != 0)

@@ -370,7 +370,7 @@ public:
 	virtual int performAction(std::vector<std::string> &args)
 	{
 		HttpHandle wc;
-		
+
 		if (args[5] == "True" || args[5] == "1" || args[5] == "true")
 			wc = HttpHandle(GCUPLOAD_URL_PROD);
 		else

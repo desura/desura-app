@@ -111,7 +111,7 @@ namespace UserCore
 			gc_IMPLEMENT_REFCOUNTING(ToolTransaction)
 		};
 	}
-	
+
 	namespace Item
 	{
 		class ItemInfoI;
@@ -184,12 +184,12 @@ namespace UserCore
 		//! Marks all tools as not installed
 		//!
 		virtual void invalidateTools(std::vector<DesuraId> &list)=0;
-		
+
 	#ifdef NIX
 		//! Sym link all the tools to the item lib folder
 		//!
 		virtual void symLinkTools(std::vector<DesuraId> &list, const char* path)=0;
-		
+
 		//! Does this group have a speacial non installable tool
 		//!
 		virtual int hasNonInstallableTool(std::vector<DesuraId> &list)=0;

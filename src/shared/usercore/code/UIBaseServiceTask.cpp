@@ -154,7 +154,7 @@ void UIBaseServiceTask::completeUninstall(bool removeAll, bool removeAccount)
 #ifdef NIX
 	removeScripts();
 #endif
-	
+
 	MCFCore::Misc::ProgressInfo prog;
 	prog.percent = 100;
 	onMcfProgressEvent(prog);
@@ -196,28 +196,28 @@ void UIBaseServiceTask::onComplete()
 void UIBaseServiceTask::removeScripts()
 {
 	auto item = getItemInfo();
-	
+
 	if (!item)
 		return;
-	
+
 	const char* insPath = item->getPath();
-	
+
 	if (!insPath)
 		return;
-	
+
 	UTIL::FS::Path path(insPath, "", false);
 	std::vector<std::string> filter;
 	filter.push_back("sh");
-	
+
 	std::vector<UTIL::FS::Path> out;
 	UTIL::FS::getAllFiles(path, out, &filter);
-	
+
 	for (size_t x=0; x<out.size(); x++)
 	{
 		if (out[x].getFile().getFile().find("desura_launch") == 0)
 			UTIL::FS::delFile(out[x]);
 	}
-	
+
 	UTIL::FS::delEmptyFolders(path);
 }
 #endif

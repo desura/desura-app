@@ -117,7 +117,7 @@ bool InstallServiceTask::initService()
 	m_pIPCIM->onFinishEvent += delegate(this, &InstallServiceTask::onFinish);
 
 	uint8 workers = 1;
-		
+
 	if (val)
 		workers = atoi(val);
 
@@ -151,7 +151,7 @@ void InstallServiceTask::onComplete()
 
 	pItem->delSFlag(UserCore::Item::ItemInfoI::STATUS_INSTALLING|UserCore::Item::ItemInfoI::STATUS_UPDATING|UserCore::Item::ItemInfoI::STATUS_DOWNLOADING);
 	pItem->addSFlag(UserCore::Item::ItemInfoI::STATUS_INSTALLED|UserCore::Item::ItemInfoI::STATUS_READY);
-	
+
 	if (pItem->isUpdating())
 		pItem->addSFlag(UserCore::Item::ItemInfoI::STATUS_NEEDCLEANUP);
 

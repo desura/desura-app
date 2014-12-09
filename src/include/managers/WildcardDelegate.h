@@ -69,7 +69,7 @@ public:
 
 		wxGuiDelegateEvent event(invoker, m_pObj->GetId());
 		m_pObj->GetEventHandler()->AddPendingEvent(event);
-		
+
 		std::shared_ptr<Invoker> empty;
 
 		setInvoker(invoker);

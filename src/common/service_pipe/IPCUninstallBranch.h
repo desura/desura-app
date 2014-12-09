@@ -41,7 +41,7 @@ public:
 	~IPCUninstallBranch();
 
 	void start(const char* oldBranchMcf, const char* newBranchMcf, const char* inspath, const char* isntallScript);
-	
+
 	void pause();
 	void unpause();
 	void stop();

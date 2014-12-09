@@ -41,7 +41,7 @@ public:
 	EventV onCompleteEvent;
 	Event<gcString> onLogEvent;
 	Event<std::pair<uint32, uint32> > onProgressEvent;
-	
+
 	gc_IMPLEMENT_REFCOUNTING(UninstallAllThread);
 
 protected:

@@ -45,7 +45,7 @@ namespace LIN
 		BT_SCRIPT,	// Launch using xdg-open
 		BT_UNKNOWN,	// Error
 	};
-	
+
 	//! Returns a std::string of the path expanded
 	//!
 	//! @param file string to file to expand
@@ -60,7 +60,7 @@ namespace LIN
 	//! @return Bin type if known or BT_UNKNOWN if not
 	//!
 	BinType getFileType(const char* buff, size_t buffSize);
-	
+
 	//! Gets the exectuables directory
 	//!
 	//! @param optional extra string to append to path
@@ -88,7 +88,7 @@ namespace LIN
 	//! @return config key value
 	//!
 	std::string getConfigValue(const std::string &configKey);
-	
+
 	//! Gets the ammount of free space on a drive
 	//!
 	//! @param path Drive to analize
@@ -120,18 +120,18 @@ namespace LIN
 	//! @note Throws exceptions if can't run command
 	//!
 	std::string getCmdStdout(const char* command, int stdErrDest = 0);
-	
+
 	//! Checks if a file exists
 	//!
 	//! @param file The file to stat (check existance of)
 	//! @return if file exists
 	//!
 	bool fileExists(const char* file);
-	
+
 	bool is64OS();
-	
+
 	std::string sanitiseFileName(const char* name);
-	
+
 	//! Sets up XDG environmental variables.
 	void setupXDGVars();
 

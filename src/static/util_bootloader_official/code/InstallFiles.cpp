@@ -168,7 +168,7 @@ UINT InstallFilesForTest()
 	try
 	{
 		updateMcf.setFile(UPDATEFILE_W);
-		
+
 		if (updateMcf.parseMCF() != 0)
 			return -1;
 

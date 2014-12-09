@@ -168,7 +168,7 @@ public:
 		UTIL::FS::FileHandle mcf("temp.mcf", UTIL::FS::FILE_READ);
 		fh.write((char*)(&ep), sizeof(ExePackerHeader));
 
-	
+
 		while (size > 0)
 		{
 			uint32 read = 10*1024;
@@ -237,7 +237,7 @@ public:
 		iph.installMcf.offset = exeHeadSize + sizeof(InstallerPackerHeader);
 		iph.installMcf.size = UTIL::FS::getFileSize(args[0].c_str());
 		iph.installMcf.crc = UTIL::FS::CRC32(args[0].c_str());
-		
+
 		iph.contentMcf.offset = iph.installMcf.size + iph.installMcf.offset;
 		iph.contentMcf.size = UTIL::FS::getFileSize(args[1].c_str());
 		iph.contentMcf.crc = UTIL::FS::CRC32(args[1].c_str());
@@ -353,15 +353,15 @@ uint32 GetExeSize(const char* filename)
 	HANDLE hFileMapping;
 	LPVOID lpFileBase;
 	PIMAGE_DOS_HEADER dosHeader;
-	
+
 	hFile = CreateFile(filename, GENERIC_READ, FILE_SHARE_READ, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, 0);
-					
+
 	if ( hFile == INVALID_HANDLE_VALUE )
 	{   
 		printf("Couldn't open file with CreateFile()\n");
 		return 0; 
 	}
-	
+
 	hFileMapping = CreateFileMapping(hFile, NULL, PAGE_READONLY, 0, 0, NULL);
 
 	if ( hFileMapping == 0 )
@@ -370,7 +370,7 @@ uint32 GetExeSize(const char* filename)
 		printf("Couldn't open file mapping with CreateFileMapping()\n");
 		return 0; 
 	}
-	
+
 	lpFileBase = MapViewOfFile(hFileMapping, FILE_MAP_READ, 0, 0, 0);
 
 	if (lpFileBase == 0)
@@ -382,7 +382,7 @@ uint32 GetExeSize(const char* filename)
 	}
 
 	printf("Dump of file %s\n\n", filename);
-	
+
 	dosHeader = (PIMAGE_DOS_HEADER)lpFileBase;
 
 	if (dosHeader->e_magic == IMAGE_DOS_SIGNATURE)

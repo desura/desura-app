@@ -37,7 +37,7 @@ END_EVENT_TABLE()
 LaunchItemDialog::LaunchItemDialog( wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos, const wxSize& size, long style ) : gcFrame( parent, id, title, pos, size, style )
 {
 	this->SetSizeHints( wxDefaultSize, wxDefaultSize );
-	
+
 	m_labItemName = new wxStaticText( this, wxID_ANY, wxT("The [item], [name],"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_butLaunch = new gcButton( this, wxID_ANY, Managers::GetString(L"#LAUNCH"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_butCancel = new gcButton( this, wxID_ANY, Managers::GetString(L"#CANCEL"), wxDefaultPosition, wxDefaultSize, 0 );
@@ -48,22 +48,22 @@ LaunchItemDialog::LaunchItemDialog( wxWindow* parent, wxWindowID id, const wxStr
 	fgSizer1->AddGrowableRow( 0 );
 	fgSizer1->SetFlexibleDirection( wxBOTH );
 	fgSizer1->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
-	
+
 	wxBoxSizer* bSizer3 = new wxBoxSizer( wxHORIZONTAL );
-	
+
 	bSizer3->Add( m_labItemName, 0, wxTOP|wxBOTTOM|wxLEFT, 5 );
 
-	
-	
+
+
 	wxBoxSizer* bSizer2 = new wxBoxSizer( wxHORIZONTAL );
-	
+
 	bSizer2->Add( 0, 0, 1, wxEXPAND, 5 );
 	bSizer2->Add( m_butLaunch, 0, wxTOP|wxBOTTOM|wxLEFT, 5 );
 	bSizer2->Add( m_butCancel, 0, wxALL, 5 );
-	
+
 	fgSizer1->Add( bSizer3, 1, wxEXPAND, 5 );
 	fgSizer1->Add( bSizer2, 1, wxEXPAND, 5 );
-	
+
 	this->SetSizer( fgSizer1 );
 	this->Layout();
 

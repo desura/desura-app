@@ -214,12 +214,12 @@ void DownloadAvatarTask::doTask()
 		{
 			HttpHandle wc(m_szUrl.c_str());
 			wc->getWeb();
-			
+
 			if (wc->getDataSize() != 0)
 			{
 				if (UTIL::MISC::isValidImage((const unsigned char*)wc->getData()) == IMAGE_VOID)
 					throw gcException(ERR_INVALIDDATA, gcString("The url [{0}] is not an image format", m_szUrl));
-				
+
 				UTIL::FS::Path urlPath(m_szUrl, "", true);
 				UTIL::FS::Path path(getUserCore()->getAppDataPath(), "", false);
 
@@ -438,14 +438,14 @@ RegenLaunchScriptsTask::RegenLaunchScriptsTask(gcRefPtr<UserCore::UserI> user)
 void RegenLaunchScriptsTask::doTask()
 {
 	std::vector<gcRefPtr<UserCore::Item::ItemHandleI>> itemList;
-	
+
 	auto im = getUserCore()->getItemManager();
-	
+
 	for (size_t x=0; x<im->getCount(); x++)
 	{
 		itemList.push_back(im->getItemHandle(x));
 	}
-	
+
 	for (size_t x=0; x<itemList.size(); x++)
 	{
 		if (!itemList[x] || !itemList[x]->getItemInfo()->isInstalled())

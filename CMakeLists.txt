@@ -121,6 +121,10 @@ else()
   endif()
 endif()
 
+if(OFFICIAL_DEBUG_BUILD)
+  set(CMAKE_BUILD_TYPE Debug)
+endif()
+
 ###############################################################################
 # some includes
 ###############################################################################
@@ -285,10 +289,16 @@ SetupDownloadUrlCustom(WXWIDGET "http://sourceforge.net/projects/wxwindows/files
 if(NOT BUILD_ONLY_CEF)
   if(NOT wxWidgets_FOUND)
     include(BuildwxWidgets)
+    if(NOT WIN32)
+      add_dependencies(desura wxWidgets)
+    endif()
   endif()
 
   if(NOT Boost_FOUND)
     include(BuildBoost)
+    if(NOT WIN32)
+      add_dependencies(desura boost)
+    endif()
   endif()
 
   if(NOT BREAKPAD_EXCEPTION_HANDLER_FOUND)

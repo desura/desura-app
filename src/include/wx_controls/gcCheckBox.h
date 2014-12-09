@@ -37,9 +37,9 @@ class gcCheckBox : public wxCheckBox
 {
 public:
 	gcCheckBox(wxWindow *parent, wxWindowID id = wxID_ANY, const wxString& label = wxEmptyString, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize, long style = 0);
-	
+
 	void applyTheme();
-	
+
 #ifdef WIN32
 	bool MSWOnDraw(WXDRAWITEMSTRUCT *item);
 #endif

@@ -70,7 +70,7 @@ bool VSInstallMissing::doTask()
 	}
 
 	uint8 workers = 1;
-		
+
 	if (val)
 		workers = atoi(val);
 
@@ -83,7 +83,7 @@ bool VSInstallMissing::doTask()
 	m_pIPCIM->start(m_hMcf->getFile(), getItemInfo()->getPath(), getItemInfo()->getInstallScriptPath(), workers);
 
 	m_WaitCond.wait();
-	
+
 	m_bFinished = true;
 
 	return isStopped() == false;

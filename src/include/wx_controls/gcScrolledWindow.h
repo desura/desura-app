@@ -37,7 +37,7 @@ class gcScrolledWindow : public wxGuiDelegateImplementation<wxScrolledWindow>
 {
 public:
 	gcScrolledWindow(wxWindow *parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize, long style = wxDEFAULT_FRAME_STYLE);
-	
+
 	virtual void applyTheme();
 };
 

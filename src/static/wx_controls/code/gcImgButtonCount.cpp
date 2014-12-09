@@ -65,7 +65,7 @@ void gcImgButtonCount::doPaint(wxDC* dc)
 		dc->SetTextForeground(wxColor(GetGCThemeManager()->getColor("countbubble", "hov-fg")));
 	else
 		dc->SetTextForeground(wxColor(GetGCThemeManager()->getColor("countbubble", "fg")));
-	
+
 
 	wxSize sz = GetSize();
 
@@ -79,7 +79,7 @@ void gcImgButtonCount::doPaint(wxDC* dc)
 	int ty = y+(h - dc->GetTextExtent(text).GetHeight())/2;
 
 	wxBitmap temp(m_imgCount->Copy());
-		
+
 	wxMemoryDC memDC(temp);
 
 	dc->Blit(x, y,			// Draw at (100, 100)

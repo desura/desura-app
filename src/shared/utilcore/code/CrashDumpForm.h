@@ -61,12 +61,12 @@ protected:
 	void onError(gcException& e);
 	void onComplete(gcString& path);
 
-	
+
 
 private:
 	bool m_bComplete;
 	gcString m_szPath;
-	
+
 };
 
 

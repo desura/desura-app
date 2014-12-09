@@ -248,7 +248,7 @@ void TaskBarIcon::onItemChanged(UserCore::Item::ItemInfoI::ItemInfo_s& info)
 	if (info.changeFlags & UserCore::Item::ItemInfoI::CHANGED_STATUS)
 	{
 		gcRefPtr<UserCore::Item::ItemInfoI> item = GetUserCore()->getItemManager()->findItemInfo(info.id);
-	
+
 		if (!item)
 			return;
 

@@ -50,7 +50,7 @@ LanguageManager::~LanguageManager()
 const char* LanguageManager::getString(const char* name)
 {
 	auto temp = findItem(name);
-		
+
 	if (temp)
 	{
 		if (temp->str.size() == 0 && temp->ustr.size() > 0)
@@ -67,10 +67,10 @@ const wchar_t* LanguageManager::getString(const wchar_t* name)
 	gcString n(name);
 
 	auto temp = findItem(n.c_str());
-		
+
 	if (temp)
 		return temp->ustr.c_str();
-	
+
 	return name;
 }
 

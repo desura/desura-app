@@ -107,13 +107,13 @@ public:
 	{
 		m_pUser = user;
 	}
-	
+
 	void run() override
 	{
 		if (m_pUser)
 			m_pUser->destroy();
 	}
-	
+
 	gcRefPtr<UserCore::UserI> m_pUser;
 };
 
@@ -177,7 +177,7 @@ static bool isSafeUrl(const char* url, MainAppProviderI* pMainApp)
 
 		x++;
 	}
-	
+
 	if (pMainApp && pMainApp->getProvider())
 	{
 		wxString cusProvider(pMainApp->getProvider());
@@ -207,7 +207,7 @@ wxWindow* GetMainWindow(wxWindow* p)
 {
 	if (!p || p == g_pMainApp)
 		return g_pMainApp->getTopLevelWindow();
-	
+
 	return p;
 }
 
@@ -249,13 +249,13 @@ MainApp::~MainApp()
 	//delete user first so threads will not die when they try to access webcore
 	//should be deleted on logout but just to make sure
 	std::lock_guard<std::mutex> a(m_UserLock);
-	
+
 	if (m_wxTBIcon)
 		m_wxTBIcon->deregEvents();
 
 	safe_delete(g_pDeleteThread);
 	g_pDeleteThread = new DeleteUserThread(g_pUserHandle);
-	
+
 #ifdef NIX
 	g_pDeleteThread->start();
 #else
@@ -267,7 +267,12 @@ MainApp::~MainApp()
 	safe_delete(m_wxTBIcon);
 
 	DestroyManagers();
-	DestroyLogging();	
+	DestroyLogging();
+
+#if WIN32
+	// Temporary resolve
+	PostQuitMessage(0);
+#endif // WIN32
 }
 
 gcFrame* MainApp::getMainWindow()
@@ -497,7 +502,7 @@ void MainApp::offlineMode()
 		std::lock_guard<std::mutex> a(m_UserLock);
 
 		gcString path = UTIL::OS::getAppDataPath();
-		
+
 		if (g_pUserHandle)
 			g_pUserHandle->destroy();
 
@@ -613,14 +618,14 @@ void MainApp::onLoginAcceptedCB(std::pair<bool,bool> &loginInfo)
 	GetWebCore()->getCookieUpdateEvent() += guiDelegate(this, &MainApp::onCookieUpdate);
 	GetWebCore()->getLoggedOutEvent() += delegate(&onLoggedOutEvent);
 	GetUserCore()->getPipeDisconnectEvent() += guiDelegate(this, &MainApp::onPipeDisconnect);
-	
+
 	//trigger this so it sets cookies first time around
 	onCookieUpdate();
 
 
 	admin_developer.setValue(GetUserCore()->isAdmin());
 	GetCVarManager()->loadUser(GetUserCore()->getUserId());
-	
+
 	gcWString userName(GetUserCore()->getUserName());
 	SetCrashDumpSettings(userName.c_str(), gc_uploaddumps.getBool());
 
@@ -655,7 +660,7 @@ void MainApp::toggleCurrentForm()
 {
 	if (!m_wxMainForm && !m_wxLoginForm)
 		return;
-		
+
 	if (m_wxMainForm)
 	{
 		if (m_wxMainForm->IsShown())

@@ -39,7 +39,7 @@ class NewAccountDialog : public gcDialog
 {
 public:
 	NewAccountDialog(wxWindow* parent, const char* szProviderUrl = nullptr);
-	
+
 #ifdef NIX
 	bool Show(const bool show = true);
 #endif

@@ -227,7 +227,7 @@ void CVar::parseCommand(std::vector<gcString> &vArgList)
 		Msg(gcString("  Old Value: {0}\n", m_szData));
 		setValue(vArgList[1].c_str());
 		Msg(gcString("  New Value: {0}\n", m_szData));
-			
+
 		if (m_iFlags & CFLAG_SAVEONEXIT)
 			Msg("  Note: Restart needed be for value is applied.\n");
 

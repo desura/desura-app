@@ -90,7 +90,7 @@ void UMcfEx::downloadMcf()
 	wc->setUserAgent(USERAGENT_UPDATE);
 	wc->setOutFile(gcString(m_szFile).c_str());
 	wc->getProgressEvent() += delegate((UMcf*)this, &UMcf::updateAllCB);
-	
+
 	try
 	{
 		wc->getWebToFile();
@@ -170,7 +170,7 @@ bool UMcfEx::checkMcf()
 		wc->getWeb();
 
 		const char* title =strstr(wc->getData(), "<title>");
-		
+
 		if (title)
 		{
 			const char *start = title+7;

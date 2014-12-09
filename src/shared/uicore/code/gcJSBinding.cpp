@@ -112,7 +112,7 @@ gcRefPtr<UserCore::ItemManagerI> DesuraJSBinding::getItemManager()
 		if (uc)
 			gs_pItemManager = uc->getItemManager();
 	}
-		
+
 	return gs_pItemManager;
 }
 
@@ -132,7 +132,7 @@ JSObjHandle DesuraJSBinding::getLocalString(ChromiumDLL::JavaScriptFactoryI *m_p
 {
 	if (!m_pFactory)
 		return nullptr;
-	
+
 	gcString buff;
 	FromJSObject(buff, args[0]);
 

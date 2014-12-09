@@ -32,7 +32,7 @@ gcSpinnerProgBar::gcSpinnerProgBar(wxWindow* parent, wxWindowID id,const wxPoint
 {
 	m_sbSpinner = new gcSpinningBar(this, wxID_ANY, wxDefaultPosition, size);
 	m_pbProgress = new gcProgressBar(this, wxID_ANY, wxDefaultPosition, size);
-	
+
 	m_pProgSizer = new wxBoxSizer(wxHORIZONTAL);
 	m_pProgSizer->Add(m_sbSpinner, 1, wxEXPAND, 5);
 
@@ -46,7 +46,7 @@ gcSpinnerProgBar::gcSpinnerProgBar(wxWindow* parent, wxWindowID id,const wxPoint
 void gcSpinnerProgBar::swap()
 {
 	m_bSwapped = true;
-		
+
 	m_pbProgress->Show(true);
 	m_sbSpinner->Show(false);
 

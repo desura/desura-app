@@ -146,7 +146,7 @@ void ToolInstallThread::doNextInstall()
 
 	std::lock_guard<std::mutex> guard(m_MapLock);
 	auto it = m_mTransactions.find(m_CurrentInstall);
-	
+
 	if (it != m_mTransactions.end() && hasToolMain())
 	{
 		it->second->onINComplete();
@@ -207,7 +207,7 @@ void ToolInstallThread::onINError(gcException &error)
 
 	std::lock_guard<std::mutex> guard(m_MapLock);
 	auto it = m_mTransactions.find(m_CurrentInstall);
-	
+
 	if (it != m_mTransactions.end())
 		it->second->onINError(error);
 

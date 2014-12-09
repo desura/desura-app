@@ -43,7 +43,7 @@ class CDKeyForm : public gcFrame
 public:
 	CDKeyForm(wxWindow* parent, const char* exe, bool launch = false, gcRefPtr<UserCore::ItemManagerI> pItemManager = gcRefPtr<UserCore::ItemManagerI>());
 	~CDKeyForm();
-	
+
 	void setInfo(DesuraId id);
 	void finish(const char* cdKey);
 

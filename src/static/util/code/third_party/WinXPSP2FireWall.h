@@ -55,7 +55,7 @@ public:
 	FW_ERROR_CODE Uninitialize();
 
 	FW_ERROR_CODE IsWindowsFirewallOn( BOOL& bOn );
-	
+
 	FW_ERROR_CODE TurnOnWindowsFirewall();
 	FW_ERROR_CODE TurnOffWindowsFirewall();
 

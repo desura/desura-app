@@ -60,7 +60,7 @@ void InstallToolTask::doRun()
 
 	if (!getUserCore()->getToolManager()->areAllToolsValid(toolList))
 		throw gcException(ERR_INVALID, "Tool IDs cannot be resolved into tools.");
-	
+
 	if (!getUserCore()->getToolManager()->areAllToolsInstalled(toolList))
 	{
 		UserCore::Misc::ToolTransaction* tt = new UserCore::Misc::ToolTransaction(toolList);

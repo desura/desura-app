@@ -64,11 +64,11 @@ $/LicenseInfo$
 
 #include <functional>
 #include <mutex>
- 
+
 class VoidEventArg
 {
 };
- 
+
 template <typename ... Args>
 class DelegateI
 {
@@ -157,7 +157,7 @@ public:
 			m_pCurDelegate = d;
 			m_pCurDelegate->operator()(a);
 			m_pCurDelegate = nullptr;
-	
+
 			if (m_bCancel)
 				break;
 		}
@@ -249,7 +249,7 @@ public:
 			std::lock_guard<std::recursive_mutex> guard(m_PendingLock);
 			m_vPendingDelegates.push_back(std::pair<bool, TDel*>(true, d->clone()));
 		}
-		
+
 		d->destroy();
 
 		std::unique_lock<std::recursive_mutex> uLock(m_Lock, std::defer_lock);
@@ -300,7 +300,7 @@ public:
 		}
 
 		m_vDelegates.clear();
-	
+
 		{
 			std::lock_guard<std::recursive_mutex> guard(m_PendingLock);
 			for (auto p : m_vPendingDelegates)
@@ -387,7 +387,7 @@ private:
 
 	std::vector<TDel*> m_vDelegates;
 	std::vector<std::pair<bool, TDel*> > m_vPendingDelegates;
-	
+
 	bool m_bCancel = false;
 	TDel* m_pCurDelegate = nullptr;
 };

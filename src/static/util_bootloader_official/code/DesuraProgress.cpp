@@ -220,7 +220,7 @@ void DesuraProgress::OnPaint()
 	int w = size.right-size.left;
 	int h = size.bottom-size.top;
 
-	
+
 	CBitmap bmp;
 	bmp.CreateCompatibleBitmap(dc, w, h);
 
@@ -228,7 +228,7 @@ void DesuraProgress::OnPaint()
 	memDC.CreateCompatibleDC(&dc);
 	HGDIOBJ pOldBitmap = memDC.SelectObject(&bmp);
 	//memDC.FillSolidRect(0,0,w, h, RGB(34,34,34));
-	
+
 	{
 		CDC cdc;
 		BITMAP bmap;
@@ -270,7 +270,7 @@ void DesuraProgress::OnPaint()
 	memDC.SetBkMode(TRANSPARENT); 
 	memDC.SetTextColor(clr);
 
-	
+
 	int tx = 430;
 	int ty = 10;
 	char progress[255] = {0};
@@ -308,7 +308,7 @@ void DesuraProgress::OnPaint()
 
 	if (m_bMouseOver)
 		memDC.SetTextColor(RGB(33,138,244));
-	
+
 
 	tx = 307 + (75-csize.cx)/2;
 	ty = 171 + (21-csize.cy)/2;

@@ -123,9 +123,9 @@ bool gcImageButton::mouseOverButton( wxMouseEvent& event)
 
 	//need to reset the pos as it might be offseted from parent
 	rect.SetPosition(wxPoint(0,0));
-	
+
 	wxPoint realPos = pos - rect.GetPosition();
-	
+
 	return rect.Contains(pos) && (!m_bTransEnabled || !m_Region.IsOk() || m_Region.Contains(realPos));
 }
 

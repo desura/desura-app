@@ -52,7 +52,7 @@ MWProgressPage::MWProgressPage( wxWindow* parent, wxWindowID id, const wxPoint& 
 	m_pbProgress = new gcSpinnerProgBar( this, wxID_ANY, wxDefaultPosition, wxSize( -1,22 ) );
 	m_butCancel = new gcButton( this, wxID_ANY, Managers::GetString(L"#CANCEL"), wxDefaultPosition, wxDefaultSize, 0 );
 
-	
+
 	wxBoxSizer* bSizer1 = new wxBoxSizer( wxHORIZONTAL );
 	bSizer1->Add( m_labTitle, 0, wxTOP|wxLEFT, 5 );
 	bSizer1->Add( m_labInfo, 0, wxTOP|wxRIGHT|wxLEFT, 5 );
@@ -60,7 +60,7 @@ MWProgressPage::MWProgressPage( wxWindow* parent, wxWindowID id, const wxPoint& 
 	wxBoxSizer* bSizer2 = new wxBoxSizer( wxHORIZONTAL );
 	bSizer2->Add( 0, 0, 1, wxEXPAND, 5 );
 	bSizer2->Add( m_butCancel, 0, wxALL, 5 );
-	
+
 
 	wxFlexGridSizer* fgSizer3;
 	fgSizer3 = new wxFlexGridSizer( 4, 1, 0, 0 );

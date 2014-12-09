@@ -137,7 +137,7 @@ static gcUnitTestWatcher* SetupTestWatcher()
 
 	TestEventListeners& listeners = ::testing::UnitTest::GetInstance()->listeners();
 	listeners.Append(pWatcher);
-	
+
 #ifdef WIN32
 	UTIL::MISC::CMDArgs args(GetCommandLineA());
 #else
@@ -163,7 +163,7 @@ static gcUnitTestWatcher* SetupTestWatcher()
 #else
 	InitGoogleTest(&argc, const_cast<char**>(args.getArgv()));
 #endif
-	
+
 	if (args.hasArg("unittests"))
 		pWatcher->disableAssertOnFailure();
 
@@ -202,7 +202,7 @@ gcUnitTestForm::gcUnitTestForm(wxWindow* parent)
 	m_cbRunOnStartup->SetValue(true);
 	bSizer2->Add(m_cbRunOnStartup, 0, wxALL, 5);
 
-	
+
 
 
 
@@ -305,7 +305,7 @@ void gcUnitTestForm::onButtonClicked(wxCommandEvent& event)
 void gcUnitTestForm::runTests()
 {
 	m_butRun->Enable(false);
-	
+
 	if (m_pThread)
 		m_pThread->stop();
 

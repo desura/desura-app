@@ -151,7 +151,7 @@ void Theme::LoadSprites(const XML::gcXMLElement &xmlEl)
 	xmlEl.for_each_child("sprite", [this](const XML::gcXMLElement &xmlChild)
 	{
 		const std::string name = xmlChild.GetAtt("name");
-			
+
 		if (name.empty())
 			return;
 
@@ -183,7 +183,7 @@ void Theme::LoadSprites(const XML::gcXMLElement &xmlEl)
 				return;
 
 			auto rect = sprite->findItem(rName.c_str());
-		
+
 			if (!rect)
 			{
 				rect = gcRefPtr<SpriteRect>::create(rName.c_str());
@@ -206,7 +206,7 @@ void Theme::LoadControls(const XML::gcXMLElement &xmlEl)
 
 		if (name.empty())
 			return;
-		
+
 		auto control = ControlList::findItem(name.c_str());
 
 		if (!control)

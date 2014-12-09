@@ -109,7 +109,7 @@ CDKInfo::CDKInfo(wxWindow* parent, const char* exe, bool launch, gcRefPtr<UserCo
 	fgSizer1->Add(fgSizer2, 1, wxEXPAND, 5 );
 	fgSizer1->Add(0, 0, 0, wxEXPAND, 5);
 	fgSizer1->Add(m_pButtonSizer, 1, wxEXPAND, 5);
-	
+
 	this->SetSizer( fgSizer1 );
 	this->Layout();
 
@@ -218,7 +218,7 @@ void CDKInfo::onButtonClicked(wxCommandEvent& event)
 
 		if (m_uiCurIndex >= m_vSplitKey.size())
 			m_uiCurIndex = 0;
-		
+
 		if (wxTheClipboard->Open())
 		{
 			wxTheClipboard->SetData(new wxTextDataObject(info->text));

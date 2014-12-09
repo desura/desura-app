@@ -39,10 +39,10 @@ $/LicenseInfo$
 bool CheckSunJava()
 {
 	std::string res = UTIL::LIN::getCmdStdout("which java");
-	
+
 	if (res.size() == 0)
 		return false;
-		
+
 	res = UTIL::LIN::getCmdStdout("java -version 2>&1 | grep \"HotSpot\"");
 	return (res.size() != 0);
 }
@@ -62,7 +62,7 @@ bool CheckMono()
 bool CheckAir()
 {
 	return UTIL::FS::isValidFile("/opt/Adobe AIR/Versions/1.0/Adobe AIR Application Installer");
-	
+
 }
 
 typedef bool (*CheckFn)();
@@ -93,12 +93,12 @@ void ToolManager::onSpecialCheck(WCSpecialInfo &info)
 
 		std::vector<std::string> out;
 		UTIL::STRING::tokenize(info.result, out, " ");
-		
+
 		info.result = "!! Not Installed !!";
-		
+
 		if (out.size() < 2)
 			return;
-		
+
 		bool is64 = (out[0] == "64");
 
 		gcString cmd("findlib.sh {0} {1}", out[1], is64?"64":"32");
@@ -119,7 +119,7 @@ void ToolManager::onSpecialCheck(WCSpecialInfo &info)
 		std::string full = filePath.getFullPath();
 
 		int symres = symlink(res.c_str(), full.c_str());
-		
+
 		if (symres != 0)
 			return;
 
@@ -131,9 +131,9 @@ void ToolManager::symLinkTools(std::vector<DesuraId> &list, const char* path)
 {
 	if (!path)
 		return;
-	
+
 	UTIL::FS::recMakeFolder(path);
-	
+
 	for (size_t x=0; x<list.size(); x++)
 	{
 		auto info = findItem(list[x].toInt64());
@@ -148,12 +148,12 @@ void ToolManager::symLinkTools(std::vector<DesuraId> &list, const char* path)
 
 		UTIL::FS::Path dp(path, "", false);
 		dp += fp.getFile();
-		
+
 		std::string src = fp.getFullPath();
 		std::string dest = dp.getFullPath();
 
 		int res = symlink(src.c_str(), dest.c_str());
-		
+
 		if (res != 0)
 			Debug(gcString("Failed to sym link: [{0}] to [{1}]\n", src, dest));
 	}
@@ -167,9 +167,9 @@ int ToolManager::hasNonInstallableTool(std::vector<DesuraId> &list)
 
 		if (!info)
 			continue;
-		
+
 		size_t y=0;
-		
+
 		while (g_NonInstallInfo[y].funct)
 		{
 			if (g_NonInstallInfo[y].name == info->getArgs())
@@ -177,11 +177,11 @@ int ToolManager::hasNonInstallableTool(std::vector<DesuraId> &list)
 				if (!g_NonInstallInfo[y].funct())
 					return y;
 			}
-			
+
 			y++;
 		}
 	}	
-	
+
 	return -1;
 }
 
@@ -190,7 +190,7 @@ void ToolManager::postParseXml()
 	BaseManager<ToolInfo>::for_each([](gcRefPtr<ToolInfo> info)
 	{
 		size_t y=0;
-		
+
 		while (g_NonInstallInfo[y].funct)
 		{
 			if (g_NonInstallInfo[y].name == info->getArgs())
@@ -198,7 +198,7 @@ void ToolManager::postParseXml()
 				info->setInstalled(true);
 				break;
 			}
-			
+
 			y++;
 		}
 	});

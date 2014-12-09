@@ -87,7 +87,7 @@ void gcThemeManager::desposeImgHandle(uint32 hash)
 	if (h)
 	{
 		h->defRef();
-		
+
 		if (h->isEmpty())
 		{
 			removeItem(h->getName());

@@ -35,7 +35,7 @@ AltLoginDialog::AltLoginDialog(wxWindow* parent, const char* szProvider, const c
 	GetWebCore();
 
 	gcString strUrl;
-	
+
 	if (!gcString(szApiUrl).empty())
 		strUrl = gcString("http://www.{0}/members/loginext/{1}", szApiUrl, szProvider);
 	else

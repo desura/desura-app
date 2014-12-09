@@ -110,7 +110,7 @@ UserIPCPipeClient::~UserIPCPipeClient()
 
 	void UserIPCPipeClient::startService()
 	{
-	
+
 	#ifdef DEBUG
 	#if 0
 		//service started via debugger
@@ -160,17 +160,17 @@ UserIPCPipeClient::~UserIPCPipeClient()
 	{
 		if (!m_hServiceDll.load("libservicecore.so"))
 			throw gcException(ERR_INVALID, gcString("Failed to load service core: {0}", dlerror()));
-	
+
 		FactoryFn factory = m_hServiceDll.getFunction<FactoryFn>("FactoryBuilderSC");
-	
+
 		if (!factory)
 			throw gcException(ERR_INVALID, "Failed to get factory function");
-	
+
 		m_pServer = (IPCServerI*)factory(IPC_SERVER);
-	
+
 		if (!factory)
 			throw gcException(ERR_INVALID, "Failed to create server");
-	
+
 		m_pServer->setSendCallback((void*)this, &UserIPCPipeClient::recvMessage);
 		setSendCallback((void*)this, &UserIPCPipeClient::sendMessage);
 

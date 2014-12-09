@@ -47,7 +47,7 @@ ICheckFinishPage::ICheckFinishPage(wxWindow* parent) : BaseInstallPage(parent)
 	fgSizer3->AddGrowableRow( 0 );
 	fgSizer3->SetFlexibleDirection( wxBOTH );
 	fgSizer3->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
-	
+
 	m_labInfo = new wxStaticText( this, wxID_ANY, Managers::GetString(L"#IF_CHECK_FOUND"), wxDefaultPosition, wxDefaultSize, 0 );
 
 	m_butCIP	= new gcButton( this, wxID_ANY, Managers::GetString(L"#IF_CHECK_CIP"), wxDefaultPosition, wxDefaultSize, 0 );
@@ -65,7 +65,7 @@ ICheckFinishPage::ICheckFinishPage(wxWindow* parent) : BaseInstallPage(parent)
 
 	fgSizer3->Add( m_labInfo, 0, wxALL|wxEXPAND, 5 );	
 	fgSizer3->Add( bSizer2, 0, wxEXPAND, 5 );
-	
+
 	this->SetSizer( fgSizer3 );
 	this->Layout();
 

@@ -34,7 +34,7 @@ MenuStrip::MenuStrip(wxWindow* parent) : gcPanel(parent)
 	m_sizerMenu->AddGrowableRow( 0 );
 	m_sizerMenu->SetFlexibleDirection( wxBOTH );
 	m_sizerMenu->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
-	
+
 	this->SetSizer( m_sizerMenu );
 	this->Layout();
 }
@@ -62,7 +62,7 @@ void MenuStrip::onActiveToggle(bool state)
 void MenuStrip::setSelected(uint32 count)
 {
 	uint32 index = count*2 + 1;
-	
+
 	for (size_t x=0; x<m_vButtons.size(); x++)
 	{
 		m_vButtons[x]->setSelected(false);

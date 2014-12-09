@@ -64,7 +64,7 @@ class gcMenu : public wxMenu
 {
 public:
 	gcMenu(bool autoDel=false);
-	
+
    // append any kind of item (normal/check/radio/separator)
 	wxMenuItem* Append(int itemid, const wxString& text = wxEmptyString, const wxString& help = wxEmptyString, wxItemKind kind = wxITEM_NORMAL)
 	{

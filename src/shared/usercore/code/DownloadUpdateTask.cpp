@@ -76,7 +76,7 @@ void DownloadUpdateTask::onStop()
 
 	if (m_hMcfHandle.handle())
 		m_hMcfHandle->stop();
-	
+
 	//if we didnt finish delete the incomplete file
 	if (!m_bCompleted)
 		UTIL::FS::delFile(UTIL::FS::PathWithFile(m_szPath));
@@ -107,7 +107,7 @@ void DownloadUpdateTask::downloadUpdate()
 
 	m_hMcfHandle->setFile(m_szPath.c_str());
 	m_hMcfHandle->setWorkerCount(1);
-	
+
 	try
 	{
 		m_hMcfHandle->dlHeaderFromHttp(url.c_str());
@@ -171,10 +171,10 @@ void DownloadUpdateTask::downloadUpdate()
 void DownloadUpdateTask::onDownloadProgress(MCFCore::Misc::ProgressInfo& p)
 {
 	uint32 prog = p.percent;
-	
+
 	if (m_uiLastPercent == prog)
 		return;
-		
+
 	m_uiLastPercent = prog;
 	onDownloadProgressEvent(prog);
 }

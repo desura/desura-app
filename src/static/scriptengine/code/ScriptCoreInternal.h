@@ -37,7 +37,7 @@ class ScriptCoreInternal
 public:
 	void init();
 	void del();
-	
+
 	void runScript(const char* file, const char* buff, uint32 size);
 	void runString(const char* string);
 
@@ -47,7 +47,7 @@ protected:
 
 private:
 	friend bool IsV8Init();
-	
+
 	static std::mutex s_InitLock;
 	static bool s_IsInit;
 	static bool s_Disabled;
