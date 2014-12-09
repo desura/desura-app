@@ -420,7 +420,7 @@ void ItemManager::getGameList(std::vector<gcRefPtr<UserCore::Item::ItemInfoI>> &
 
 void ItemManager::getModList(DesuraId gameId, std::vector<gcRefPtr<UserCore::Item::ItemInfoI>> &mList, bool includeDeleted)
 {
-	for_each([&mList, includeDeleted, gameId](const gcRefPtr<UserCore::Item::ItemHandle> &handle)
+	std::for_each([&mList, includeDeleted, gameId](const gcRefPtr<UserCore::Item::ItemHandle> &handle)
 	{
 		auto& info = handle->getItemInfo();
 
@@ -872,7 +872,7 @@ void ItemManager::saveDbItems(bool fullSave)
 		sqlite3x::sqlite3_connection db(szItemDb.c_str());
 		sqlite3x::sqlite3_transaction trans(db);
 	
-		for_each([&db](const gcRefPtr<UserCore::Item::ItemHandle> &handle){
+		std::for_each([&db](const gcRefPtr<UserCore::Item::ItemHandle> &handle){
 
 			if (handle && handle->getItemInfoNorm())
 				handle->getItemInfoNorm()->saveDbFull(&db);
@@ -964,7 +964,7 @@ void ItemManager::parseItemUpdateXml(const char* area, const XML::gcXMLElement &
 
 void ItemManager::postParseLoginXml()
 {
-	for_each([this](const gcRefPtr<UserCore::Item::ItemHandle> &handle){
+	std::for_each([this](const gcRefPtr<UserCore::Item::ItemHandle> &handle){
 
 		auto info = handle->getItemInfoNorm();
 

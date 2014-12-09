@@ -218,7 +218,7 @@ extern "C"
 
 gcMenu::gcMenu(bool autoDel)
 {
-#ifdef NIX
+#if defined(NIX) && !defined(MACOS)
 	if (autoDel)
 		g_signal_connect(m_menu, "selection-done", G_CALLBACK(deactivate_menu), this);
 #endif

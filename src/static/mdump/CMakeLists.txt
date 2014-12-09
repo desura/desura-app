@@ -7,6 +7,8 @@ include_directories(
 if(WIN32)
   file(GLOB Sources code/MiniDumpGenerator_win.cpp)
   set(WINDOWS_LIBS Psapi)
+elseif(APPLE)
+  file(GLOB Sources code/MiniDumpGenerator_mac.cpp)
 else()
   file(GLOB Sources code/MiniDumpGenerator_lin.cpp)
 endif()

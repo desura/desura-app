@@ -37,7 +37,7 @@ $/LicenseInfo$
 #endif
 
 #ifdef __WXMAC__
-	#include "wx/mac/private.h"
+	#include "wx/osx/private.h"
 #endif
 
 #include <wx/dcbuffer.h>
@@ -228,6 +228,9 @@ bool SetShape(const wxRegion& region, wxWindow* frame)
     return true;
     
 #elif defined(__WXMAC__)
+
+    // no mac support for npwrapper currenltly
+    #if 0
 	if ( region.IsEmpty() )
     {
         wxSize sz = T->GetClientSize();
@@ -250,6 +253,9 @@ bool SetShape(const wxRegion& region, wxWindow* frame)
     // Tell the window manager that the window has changed shape
     ReshapeCustomWindow((WindowRef)GetHandle());
     return true;
+    #else
+    return false;
+    #endif
 
 #elif defined(__WXGTK__)
 
