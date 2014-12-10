@@ -426,7 +426,7 @@ void ItemManager::getGameList(std::vector<gcRefPtr<UserCore::Item::ItemInfoI>> &
 
 void ItemManager::getModList(DesuraId gameId, std::vector<gcRefPtr<UserCore::Item::ItemInfoI>> &mList, bool includeDeleted)
 {
-	std::for_each([&mList, includeDeleted, gameId](const gcRefPtr<UserCore::Item::ItemHandle> &handle)
+	for_each([&mList, includeDeleted, gameId](const gcRefPtr<UserCore::Item::ItemHandle> &handle)
 	{
 		auto& info = handle->getItemInfo();
 
@@ -970,7 +970,7 @@ void ItemManager::parseItemUpdateXml(const char* area, const XML::gcXMLElement &
 
 void ItemManager::postParseLoginXml()
 {
-	std::for_each([this](const gcRefPtr<UserCore::Item::ItemHandle> &handle){
+	for_each([this](const gcRefPtr<UserCore::Item::ItemHandle> &handle){
 
 		auto info = handle->getItemInfoNorm();
 
