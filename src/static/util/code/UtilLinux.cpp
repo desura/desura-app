@@ -131,11 +131,8 @@ static void dbCreateTables()
 		return gcString("{0}", appid);
 	}
 #else
-extern std::string GetAppBuild() {
-}
-
-extern std::string GetAppBranch() {
-}
+extern std::string GetAppBuild();
+extern std::string GetAppBranch();
 #endif
 
 static void SetAppBuild(const std::string &val)
