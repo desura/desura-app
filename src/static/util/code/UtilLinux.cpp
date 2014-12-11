@@ -42,10 +42,6 @@ $/LicenseInfo$
 #include <utime.h>
 #include <errno.h>
 
-#ifndef _WIN32
-#include <unistd.h>
-#endif
-
 inline const wchar_t* CONFIG_DB(void)
 {
 	return UTIL::OS::getAppDataPath(L"linux_registry.sqlite").c_str();
