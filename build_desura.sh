@@ -2,7 +2,7 @@
 echo 'Make sure to run \033[1;31msudo ./install_deps.sh\033[0m before compiling!\n'
 
 PREFIX="../install"
-OFFICIAL_BUILD=OFF
+OFFICIAL_BUILD=ON
 
 clean() {
 	rm -rf build
