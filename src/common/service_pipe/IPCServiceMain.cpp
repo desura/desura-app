@@ -144,9 +144,9 @@ void IPCServiceMain::registerFunctions()
 	REG_FUNCTION_VOID( IPCServiceMain, setAppDataPath );
 	REG_FUNCTION_VOID( IPCServiceMain, setCrashSettings );
 
+	REG_FUNCTION_VOID( IPCServiceMain, setUninstallRegKey);
 #ifdef WIN32
 	REG_FUNCTION_VOID( IPCServiceMain, removeUninstallRegKey);
-	REG_FUNCTION_VOID( IPCServiceMain, setUninstallRegKey);
 	REG_FUNCTION_VOID( IPCServiceMain, addDesuraToGameExplorer);
 	REG_FUNCTION_VOID( IPCServiceMain, addItemGameToGameExplorer);
 	REG_FUNCTION_VOID( IPCServiceMain, removeGameFromGameExplorer);
@@ -270,15 +270,15 @@ void IPCServiceMain::setCrashSettings(const char* user, bool upload)
 	IPC::functionCallAsync(this, "setCrashSettings", user, upload);
 }
 
+void IPCServiceMain::setUninstallRegKey(uint64 id, uint64 installSize)
+{
+	IPC::functionCallAsync(this, "setUninstallRegKey", id, installSize);
+}
+
 #ifdef WIN32
 void IPCServiceMain::removeUninstallRegKey(uint64 id)
 {
 	IPC::functionCallAsync(this, "removeUninstallRegKey", id);
-}
-
-void IPCServiceMain::setUninstallRegKey(uint64 id, uint64 installSize)
-{
-	IPC::functionCallAsync(this, "setUninstallRegKey", id, installSize);
 }
 
 void IPCServiceMain::addDesuraToGameExplorer()
@@ -390,9 +390,33 @@ void IPCServiceMain::fixFolderPermissions(const char* dir)
 
 void UpdateShortCuts();
 
+bool SetUninstallRegKey(DesuraId id, uint64 installSize);
+
+class SetUninstallTask : public TaskI
+{
+public:
+	SetUninstallTask(uint64 id, uint64 installSize)
+	{
+		this->id = id;
+		this->installSize = installSize;
+	}
+
+	void doTask()
+	{
+		SetUninstallRegKey(DesuraId(id), installSize);
+	}
+
+	void destroy()
+	{
+		delete this;
+	}
+
+	uint64 id;
+	uint64 installSize;
+};
+
 #ifdef WIN32
 void RemoveUninstallRegKey(DesuraId id);
-bool SetUninstallRegKey(DesuraId id, uint64 installSize);
 
 void AddDesuraToWIndowsGameExplorer();
 void AddGameToWindowsGameExplorer(const char* name, const char* dllPath);
@@ -417,29 +441,6 @@ public:
 	}
 
 	uint64 id;
-};
-
-class SetUninstallTask : public TaskI
-{
-public:
-	SetUninstallTask(uint64 id, uint64 installSize)
-	{
-		this->id = id;
-		this->installSize = installSize;
-	}
-
-	void doTask()
-	{
-		SetUninstallRegKey(DesuraId(id), installSize);
-	}
-
-	void destroy()
-	{
-		delete this;
-	}
-
-	uint64 id;
-	uint64 installSize;
 };
 
 class AddDesuraToWGETask : public TaskI
@@ -552,17 +553,17 @@ void IPCServiceMain::updateBinaryRegKeyBlob(const char* key, IPC::PBlob blob)
 	}
 }
 
+void IPCServiceMain::setUninstallRegKey(uint64 id, uint64 installSize)
+{
+	startThread();
+	m_pServiceThread->addTask(new SetUninstallTask(id, installSize));	
+}
+
 #ifdef WIN32
 void IPCServiceMain::removeUninstallRegKey(uint64 id)
 {
 	startThread();
 	m_pServiceThread->addTask(new RemoveUninstallTask(id));
-}
-
-void IPCServiceMain::setUninstallRegKey(uint64 id, uint64 installSize)
-{
-	startThread();
-	m_pServiceThread->addTask(new SetUninstallTask(id, installSize));	
 }
 
 void IPCServiceMain::addDesuraToGameExplorer()
