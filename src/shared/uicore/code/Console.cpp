@@ -126,7 +126,11 @@ private:
 };
 
 
-std::atomic<std::thread::id> Console::s_IgnoredThread = {std::thread::id()};
+#if defined(MACOS)
+	std::atomic<std::thread::id> Console::s_IgnoredThread; // I can't figure out how to set this to a default thread id -- maybe consider just making module scope variable?
+#else
+	std::atomic<std::thread::id> Console::s_IgnoredThread = {std::thread::id()};
+#endif
 
 
 ///////////////////////////////////////////////////////////////////////////////
