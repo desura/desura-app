@@ -56,9 +56,10 @@ public:
 	void updateBinaryRegKeyBlob(const char* key, IPC::PBlob blob);
 #endif
 
+	void setUninstallRegKey(uint64 id, uint64 installSize) override;
+
 #ifdef WIN32
 	void removeUninstallRegKey(uint64 id) override;
-	void setUninstallRegKey(uint64 id, uint64 installSize) override;
 
 	void addDesuraToGameExplorer() override;
 	void addItemGameToGameExplorer(const char* name, const char* dllPath) override;

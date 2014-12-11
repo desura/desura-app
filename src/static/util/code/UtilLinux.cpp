@@ -42,6 +42,10 @@ $/LicenseInfo$
 #include <utime.h>
 #include <errno.h>
 
+#ifndef _WIN32
+#include <unistd.h>
+#endif
+
 inline const wchar_t* CONFIG_DB(void)
 {
 	return UTIL::OS::getAppDataPath(L"linux_registry.sqlite").c_str();
@@ -95,8 +99,12 @@ static void dbCreateTables()
 	{
 		FILE* fh = fopen("version", "r");
 
-		if (!fh)
-			return "";
+		if (!fh) {
+			fh = fopen("../version", "r");
+				if (!fh) {
+				return "";
+			}
+		}
 
 		int appid = 0;
 		int build = 0;
@@ -111,8 +119,12 @@ static void dbCreateTables()
 	{
 		FILE* fh = fopen("version", "r");
 
-		if (!fh)
-			return "";
+		if (!fh) {
+			fh = fopen("../version", "r");
+			if (!fh) {
+				return "";
+			}
+		}
 
 		int appid = 0;
 		int build = 0;
@@ -123,8 +135,11 @@ static void dbCreateTables()
 		return gcString("{0}", appid);
 	}
 #else
-std::string GetAppBuild();
-std::string GetAppBranch();
+extern std::string GetAppBuild() {
+}
+
+extern std::string GetAppBranch() {
+}
 #endif
 
 static void SetAppBuild(const std::string &val)

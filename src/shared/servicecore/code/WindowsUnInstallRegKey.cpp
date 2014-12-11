@@ -52,6 +52,7 @@ public:
 	uint32 branch;
 };
 
+#ifdef _WIN32
 void CreateIco(DesuraId id, std::string &icon)
 {
 	std::string desuraInstallPath = UTIL::OS::getConfigValue("HKEY_LOCAL_MACHINE\\SOFTWARE\\Desura\\DesuraApp\\InstallPath");
@@ -69,6 +70,7 @@ void CreateIco(DesuraId id, std::string &icon)
 	if (UTIL::MISC::convertToIco(icon, path.getFullPath()))
 		icon = path.getFullPath();
 }
+#endif
 
 
 bool DoGetUninstallInfo(DesuraId id, UninstallInfo &info)
@@ -116,8 +118,10 @@ bool DoGetUninstallInfo(DesuraId id, UninstallInfo &info)
 	if (info.branch == 0 || info.build == 0)
 		return false;
 
+#ifdef _WIN32
 	if (UTIL::FS::isValidFile(info.icon))
 		CreateIco(id, info.icon);
+#endif
 
 	{
 		sqlite3x::sqlite3_command cmd(db, "SELECT name FROM branchinfo WHERE branchid=? AND internalid=?;");
@@ -183,15 +187,6 @@ void SetUninstallRegKey(UninstallInfo &info, uint64 installSize)
 
 	gcString company	= base + "RegCompany";
 	gcString icon		= base + "DisplayIcon";
-	gcString date		= base + "InstallDate";
-
-	time_t rawtime;
-	struct tm timeinfo;
-
-	time(&rawtime);
-	localtime_s(&timeinfo, &rawtime);
-
-	gcString today("{0}{1}{2}", (1900 + timeinfo.tm_year), timeinfo.tm_mon+1, timeinfo.tm_mday);
 
 	std::string desuraExe = UTIL::OS::getConfigValue("HKEY_LOCAL_MACHINE\\SOFTWARE\\Desura\\DesuraApp\\InstallPath") + "\\desura.exe";
 
@@ -222,13 +217,27 @@ void SetUninstallRegKey(UninstallInfo &info, uint64 installSize)
 	UTIL::OS::setConfigValue(company, info.developer);
 	UTIL::OS::setConfigValue(icon, info.icon);
 
+#ifdef _WIN32
+	gcString date = base + "InstallDate";
+	time_t rawtime;
+	struct tm timeinfo;
+
+	time(&rawtime);
+
+	localtime_s(&timeinfo, &rawtime);
+
+	gcString today("{0}{1}{2}", (1900 + timeinfo.tm_year), timeinfo.tm_mon+1, timeinfo.tm_mday);
+
 	UTIL::OS::setConfigValue(date, today);
+#endif
 }
 
 void RemoveUninstallRegKey(DesuraId id)
 {
+#ifdef _WIN32
 	gcString regKey("HKEY_LOCAL_MACHINE\\Software\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\Desura_{0}", id.toInt64());
 	UTIL::WIN::delRegTree(regKey.c_str());
+#endif
 }
 
 bool SetUninstallRegKey(DesuraId id, uint64 installSize)
