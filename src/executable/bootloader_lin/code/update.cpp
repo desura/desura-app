@@ -22,6 +22,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>
 #include "UtilFile.h"
 #include "umcf/UMcf.h"
 #include "UpdateForm.h"
+#include "Common.h"
 
 #define UPDATE_LOCK ".update_lock.txt"
 
@@ -41,7 +42,7 @@ const char* g_UpdateReasons[] =
 	NULL
 };
 
-#ifdef DESURA_NONGPL_BUILD
+#ifdef DESURA_OFFICIAL_BUILD
 bool CheckForUpdates()
 {
 	ERROR_OUTPUT(__func__);
@@ -163,21 +164,25 @@ bool CheckInstall()
 
 bool CheckForUpdates()
 {
+	ERROR_OUTPUT("UNOFFICIAL BUILD: NOT CHECKING FOR UPDATES");
 	return false;
 }
 
 int NeedUpdate()
 {
+	ERROR_OUTPUT("UNOFFICIAL BUILD: NOT CHECKING FOR UPDATES");
 	return UPDATE_NONE;
 }
 
 bool CheckUpdate(const char* path)
 {
+	ERROR_OUTPUT("UNOFFICIAL BUILD: NOT CHECKING FOR UPDATES");
 	return false;
 }
 
 bool CheckInstall()
 {
+	ERROR_OUTPUT("UNOFFICIAL BUILD: NOT CHECKING FOR UPDATES");
 	return true;
 }
 
