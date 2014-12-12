@@ -4,24 +4,27 @@ Content
  * Desura
  * Build Desura on Linux
  * Build Desura on Windows
- * Special notes for advanced users
+ * Build Desura on Mac
+ * Special Notes for Advanced Users
  * Closing Remarks
 
 Desura
 ===================
 
-Desura is a gaming client that allows users to one click download and install games and game modification.
-For more information, visit http://github.com/lindenlab/desura-app/wiki/
+What is Desura? Desura is a gaming client application that allows users single-click access to download and install games from http://www.desura.com/. For more information, visit http://github.com/desura/desura-app/wiki/
 
-This Desura project is the open source from which the commercial
-Desura product client is built. It can also be built as "Desurium" for
-private use and experimentation with new features and fixes. For
-information on the licensing of the project, see the LICENSE.md file.
+This is the OFFICIAL Desura project, which is the open source project that the commercially maintained Desura Client Application product is built and distributed from. If you have followed the history of the Desura Client App project, there is also "Desurium" which can be built for private use and experimentation with new features and/or fixes that you may want to contribute at some point. 
 
-Build Desura on Linux
+While the Desura App has undergone many iterations presently the project is being managed by the Desura operators at Bad Juju Games, Inc. This project hasn't had as much attention as it requires on a frequent basis and therefore it is undergoing a major development overhaul. Accordingly, there are a lot of "open" issues that need to be addressed and will be notated and updated here frequently.
+
+For more information regarding licensing of the project, please refer to the LICENSE.md file.  However, if you aren't going to read the file; DesuraApp is now officially licensed under the GPL v3 license.
+
+
+
+Build Desura on Linux  (TODO: Revise Linux Build Instructions)
 ===================
 
-Note: Due to not being able to use all commits from the GPL3 version, linux builds are not currently working.
+Note: Linux builds are HEAVILY under development, but now that the project is once again GPL v3, we are looking at various parts of the Desurium project for integration into this officially maintained release.  Over time, it is expected that all the better parts of Desurium will be entirely integrated into this release and officially sunset (to avoid any continuing confusion between the projects).
 
 Dependencies
 ------------
@@ -91,14 +94,16 @@ For informations on advanced arguments of the build script, run:
 
     ./build_desura.sh help
 
-Build Desura on Windows
+
+
+Build Desura on Windows  (TODO: Check for Accuracy)
 =====================
 
 Download and install:
 
  * Svn http://www.sliksvn.com/en/download or http://tortoisesvn.net/downloads.html
- * Msvc 2013 or higher (as C++11 features are in use)
- * Insure that NMAKE.EXE (from MSVS) is available on your PATH (C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin)
+ * MSVC 2013 or higher (as C++ 11 features are in use)
+ * Ensure that NMAKE.EXE (from MSVS) is available on your PATH (C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin)
  * Python 2.7 x86 http://www.python.org/getit/
  * CMake 2.8 http://www.cmake.org/ (DO NOT let cmake installer change your PATH, do it manually otherwise you will lose your existing PATH).)
  * Install latest Curl http://curl.haxx.se/
@@ -107,16 +112,16 @@ Download and install:
 
 Note: Make sure you add svn and python to your environment PATH
 
-## Command line build:
+## Command Line Build:
 
 Open a 32bit cmd.exe with env vars set up by vc or other scripts (so we have a full build environment) and run:
 
     ./build_desura.bat
 
-wait
+Wait
 
 
-## Visual studio build:
+## Visual Studio Build:
 
 Open a 32bit cmd.exe with env vars set up by vc or other scripts (so we have a full build environment) and run:
 
@@ -148,13 +153,32 @@ To debug/execute under Visual Studio under Windows 7 (further details: http://ms
 * "OK", "OK"
 
 
-Special notes for advanced users
+
+
+Build Desura on Mac  (TODO: Actually Make this Work!)
+===================
+
+Note: Mac is currently not a supported platform for the Desura App, but is also under Heavy development. As soon as we have a viable candidate to build and share the Mac Client App Dependencies and Instructions will be posted here to 
+
+Dependencies
+------------
+
+(Coming Soon)
+
+Installation
+------------
+
+(Coming Soon)
+
+
+
+Special Notes for Advanced Users
 =====================
 
-Desura is using the cmake build system for configuration on prject files for several build systems (make, VS, nmake, ...).
+Desura is using the cmake build system for configuration on project files for several build systems (make, VS, nmake, ...).
 At the top of CMakeFile.txt is a documented list of options
 
-a "normal" way to configure cmake would be something like this:
+A "normal" way to configure cmake would be something like this:
 
   * UNIX-based systems:
     1. mkdir build
@@ -169,7 +193,9 @@ a "normal" way to configure cmake would be something like this:
     3. cmake ..
     4. open project files and compile them
 
+
+
 Closing Remarks
 =====================
 
-If you need help, want to give some suggestions or just want to talk, feel free to join our IRC channel #desura on irc.freenode.net.
+If you need help, want to give some suggestions or just want to talk, feel free to join our IRC channel #desura on irc.freenode.net. Alternatively, you can always send an email to: devsupport@desura.com
