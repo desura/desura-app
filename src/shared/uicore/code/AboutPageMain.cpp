@@ -42,7 +42,7 @@ AboutMainPage::AboutMainPage(wxWindow* parent) : gcPanel(parent, wxID_ANY)
 	m_labInfo = new wxStaticText( this, wxID_ANY, Managers::GetString(L"#AB_ABOUTINFO"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_labInfo->Wrap( 270 );
 
-	gcWString copy("Desurium is open source software LGPL v2.1. \nGet source from: http://github.com/lindenlab/desura-app");
+	gcWString copy("Desura is open source software GPL v3.\nGet source from: https://github.com/desura/desura-app");
 
 	m_labCopyRight = new wxStaticText( this, wxID_ANY, copy.c_str(), wxDefaultPosition, wxSize(-1, 85), 0 );
 	m_labCopyRight->Wrap( 270 );
