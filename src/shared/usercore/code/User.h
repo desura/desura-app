@@ -1,34 +1,23 @@
 /*
-$LicenseInfo:firstyear=2014&license=lgpl$
-Copyright (C) 2014, Linden Research, Inc.
+Copyright (C) 2010 Mark Chandler (Desura Net Pty Ltd)
+Copyright (C) 2014 Bad Juju Games, Inc.
 
-This library is free software; you can redistribute it and/or
-modify it under the terms of the GNU Lesser General Public
-License as published by the Free Software Foundation;
-version 2.1 of the License only.
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
 
-This library is distributed in the hope that it will be useful,
+This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-Lesser General Public License for more details.
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
 
-You should have received a copy of the GNU Lesser General Public
-License along with this library; if not, see <http://www.gnu.org/licenses/>
-or write to the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+You should have received a copy of the GNU General Public License
+along with this program; if not, write to the Free Software Foundation,
+Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA.
 
-Linden Research, Inc., 945 Battery Street, San Francisco, CA  94111  USA
-$/LicenseInfo$
+Contact us at legal@badjuju.com.
 */
-////////////// Copyright 2010 Desura Pty Ltd. All rights reserved.  /////////////
-//
-//   Project     : UserCore::Usercore
-//   File        : UserCore::User.h
-//   Description :
-//      [Write the purpose of UserCore::User.h.]
-//
-//   Created On: 9/23/2008 5:00:03 PM
-//   Created By: Mark Chandler <mailto:mark@moddb.com>
-////////////////////////////////////////////////////////////////////////////
 
 #ifndef DESURA_USER_H
 #define DESURA_USER_H
@@ -310,7 +299,7 @@ namespace UserCore
 
 
 		//! Should this platform be filtered out.
-		//! 
+		//!
 		//! @param platform Platform node form xml
 		//! @param type Type of item applying the filter for
 		//! @return true to filter, false to inclue
@@ -339,13 +328,13 @@ namespace UserCore
 		Event<std::pair<bool, char> > onLowSpaceEvent;
 
 		//! Update has finished downloading
-		//! 
+		//!
 		//! @param info Update info
 		//!
 		void onUpdateComplete(UserCore::Misc::update_s& info);
 
 		//! Update has started downloading
-		//! 
+		//!
 		//! @param info Update info
 		//!
 		void onUpdateStart(UserCore::Misc::update_s& info);

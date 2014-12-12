@@ -1,26 +1,23 @@
 /*
-Desura is the leading indie game distribution platform
 Copyright (C) 2011 Mark Chandler (Desura Net Pty Ltd)
+Copyright (C) 2014 Bad Juju Games, Inc.
 
-$LicenseInfo:firstyear=2014&license=lgpl$
-Copyright (C) 2014, Linden Research, Inc.
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
 
-This library is free software; you can redistribute it and/or
-modify it under the terms of the GNU Lesser General Public
-License as published by the Free Software Foundation;
-version 2.1 of the License only.
-
-This library is distributed in the hope that it will be useful,
+This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-Lesser General Public License for more details.
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
 
-You should have received a copy of the GNU Lesser General Public
-License along with this library; if not, see <http://www.gnu.org/licenses/>
-or write to the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+You should have received a copy of the GNU General Public License
+along with this program; if not, write to the Free Software Foundation,
+Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA.
 
-Linden Research, Inc., 945 Battery Street, San Francisco, CA  94111  USA
-$/LicenseInfo$
+Contact us at legal@badjuju.com.
+
 */
 
 #include <sys/types.h>
@@ -245,7 +242,7 @@ int MainApp::run()
 	{
 		MiniDumpGenerator m_MDumpHandle;
 		m_MDumpHandle.showMessageBox(true);
-		m_MDumpHandle.setCrashCallback(&MainApp::onCrash);	
+		m_MDumpHandle.setCrashCallback(&MainApp::onCrash);
 	}
 
 	return m_pUICore->initWxWidgets(m_Argc, m_Argv);
@@ -438,10 +435,10 @@ void MainApp::sendArgs()
 			continue;
 
 		if (args.size() != 0)
-			args += " "; 
+			args += " ";
 		args +=  "\"";
 		args += m_Argv[x];
-		args += "\"";	
+		args += "\"";
 	}
 
 	SendMessage(args.c_str());
@@ -452,24 +449,24 @@ void MainApp::checkUnityWhitelist()
 {
 	int ret = system("which gsettings 2>/dev/null 1>/dev/null"); // check gsettings exists
 
-	if (ret != 0) 
+	if (ret != 0)
 		return;
 
 	// if it does
 	ret = system("gsettings get com.canonical.Unity.Panel systray-whitelist 2>/dev/null 1>/dev/null"); // check that this schema exists
 
-	if (ret != 0) 
+	if (ret != 0)
 		return;
 
 	// if it does
 	ret = system("gsettings get com.canonical.Unity.Panel systray-whitelist | grep desura 2>/dev/null 1>/dev/null"); // check for desura already being whitelisted
 
-	if (ret == 0) 
+	if (ret == 0)
 		return;
 
 	// if it's not
 	ret = system("gsettings set com.canonical.Unity.Panel systray-whitelist \"`gsettings get com.canonical.Unity.Panel systray-whitelist | sed -e \"s/]/,\\ 'desura']/g\"`\" 2>/dev/null 1>/dev/null");
 
 	if (ret == 0)
-		ShowHelpDialog(PRODUCT_NAME " has been added to the Unity panel whitelist. You should log out and back in for this to take effect or you may experience problems using " PRODUCT_NAME, NULL, "--info"); 
+		ShowHelpDialog(PRODUCT_NAME " has been added to the Unity panel whitelist. You should log out and back in for this to take effect or you may experience problems using " PRODUCT_NAME, NULL, "--info");
 }

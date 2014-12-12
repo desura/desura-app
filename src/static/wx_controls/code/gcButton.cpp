@@ -1,26 +1,23 @@
 /*
-Desura is the leading indie game distribution platform
 Copyright (C) 2011 Mark Chandler (Desura Net Pty Ltd)
+Copyright (C) 2014 Bad Juju Games, Inc.
 
-$LicenseInfo:firstyear=2014&license=lgpl$
-Copyright (C) 2014, Linden Research, Inc.
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
 
-This library is free software; you can redistribute it and/or
-modify it under the terms of the GNU Lesser General Public
-License as published by the Free Software Foundation;
-version 2.1 of the License only.
-
-This library is distributed in the hope that it will be useful,
+This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-Lesser General Public License for more details.
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
 
-You should have received a copy of the GNU Lesser General Public
-License along with this library; if not, see <http://www.gnu.org/licenses/>
-or write to the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+You should have received a copy of the GNU General Public License
+along with this program; if not, write to the Free Software Foundation,
+Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA.
 
-Linden Research, Inc., 945 Battery Street, San Francisco, CA  94111  USA
-$/LicenseInfo$
+Contact us at legal@badjuju.com.
+
 */
 
 #include "Common.h"
@@ -30,7 +27,7 @@ $/LicenseInfo$
 
 #define MIN_WIDTH 78
 
-gcButton::gcButton(wxWindow* parent, wxWindowID id, const wxString& text, const wxPoint& pos, const wxSize& size, long style ) 
+gcButton::gcButton(wxWindow* parent, wxWindowID id, const wxString& text, const wxPoint& pos, const wxSize& size, long style )
 #ifdef WIN32
 	: gcFlickerFreePaint<wxButton>(parent, id, text, pos, size, style)
 #else
@@ -44,7 +41,7 @@ gcButton::gcButton(wxWindow* parent, wxWindowID id, const wxString& text, const 
 #endif
 }
 
-gcButton::gcButton() 
+gcButton::gcButton()
 #ifdef WIN32
 	: gcFlickerFreePaint<wxButton>()
 #else
@@ -164,7 +161,7 @@ wxSize gcButton::DoGetBestSize() const
 	if ( (width + 15) < MIN_WIDTH )
 		width = MIN_WIDTH;
 	else
-		width += 15; //get text of button image 
+		width += 15; //get text of button image
 
 	return wxSize(width, height);
 }
@@ -182,7 +179,7 @@ void gcButton::setImage(const char* image)
 STATE gcButton::getState()
 {
 	if (m_bEnabled)
-	{	
+	{
 		if (m_bShowDepressed)
 			return BS_DEPRESSED;
 		else if (m_bHovering)
@@ -258,7 +255,7 @@ bool gcButton::Enable(bool enable)
 
 bool gcButton::isMouseWithinButton()
 {
-	wxRect panelRec = GetScreenRect(); 
+	wxRect panelRec = GetScreenRect();
 	wxPoint mousePoint = wxGetMousePosition();
 
 	return panelRec.Contains(mousePoint);
@@ -443,7 +440,7 @@ void gcButton::doPaint(wxDC* dc)
 }
 
 void gcButton::onChar(wxKeyEvent& event)
-{ 
+{
 	if (event.m_keyCode == WXK_RETURN)
 	{
 		TraceT("gcButton::onEnter", this, "");

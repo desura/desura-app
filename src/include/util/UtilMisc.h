@@ -1,26 +1,22 @@
 /*
-Desura is the leading indie game distribution platform
 Copyright (C) 2011 Mark Chandler (Desura Net Pty Ltd)
+Copyright (C) 2014 Bad Juju Games, Inc.
 
-$LicenseInfo:firstyear=2014&license=lgpl$
-Copyright (C) 2014, Linden Research, Inc.
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
 
-This library is free software; you can redistribute it and/or
-modify it under the terms of the GNU Lesser General Public
-License as published by the Free Software Foundation;
-version 2.1 of the License only.
-
-This library is distributed in the hope that it will be useful,
+This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-Lesser General Public License for more details.
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
 
-You should have received a copy of the GNU Lesser General Public
-License along with this library; if not, see <http://www.gnu.org/licenses/>
-or write to the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+You should have received a copy of the GNU General Public License
+along with this program; if not, write to the Free Software Foundation,
+Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA.
 
-Linden Research, Inc., 945 Battery Street, San Francisco, CA  94111  USA
-$/LicenseInfo$
+Contact us at legal@badjuju.com.
 */
 
 #ifndef DESURA_UTIL_MISC_H
@@ -56,7 +52,7 @@ namespace MISC
 	//!
 	//! @param header First 5 chars of the file header
 	//! @return Type of image or void if not an image
-	//! 
+	//!
 	IMAGE_TYPES isValidImage(const unsigned char header[5]);
 
 	//! Get core count (not working!)
@@ -83,14 +79,14 @@ namespace MISC
 
 
 	//! Convert one char from hex to dec
-	//! 
+	//!
 	//! @param c Input hex char (0-9 A-F)
 	//! @return Value of c
 	//!
 	uint32 xtod(char c);
 
 	//! Convert a string from hex to dec
-	//! 
+	//!
 	//! @param hex Input hex string (0-9 A-F)
 	//! @return Value of string
 	//!
@@ -125,7 +121,7 @@ namespace MISC
 	bool isValidEmail(const char* email);
 
 	//! Checks that a Desura date/time is a valid ISO 8601 date/time and fixes if not
-	//! 
+	//!
 	//! @param date/time desura date/time string
 	//! return fixed date/time string (same as original if all okay)
 	//!
@@ -133,14 +129,14 @@ namespace MISC
 
 	//! Converts a Desura date/time string to a locale specific format for display
 	//! E.G.  20131205T123456 -> 12/05/13 in US
-	//! 
+	//!
 	//! @param dateTime date/time string
 	//! return locale formatted string
 	//!
 	const std::string dateTimeToDisplay(const char* dateTime);
 
 	//! Gets the diff between 2 date/times
-	//! 
+	//!
 	//! @param dateTimeFirst date time input in the format YYYYMMDDHHMMSS
 	//! @param dateTimeLast date time input in the format YYYYMMDDHHMMSS
 	//! @param days out number of days between
@@ -150,7 +146,7 @@ namespace MISC
 	void getTimeDiff(const char* dateTimeFirst, const char* dateTimeLast, uint32 &days, uint32 &hours);
 
 	//! Gets the time diff from the input datetime to now
-	//! 
+	//!
 	//! @param dateTime date time input in the format YYYYMMDDHHMMSS
 	//! @param days out number of days between
 	//! @param hours out number of hours between
@@ -158,7 +154,7 @@ namespace MISC
 	//!
 	void getTimeDiffFromNow(const char* dateTime, uint32 &days, uint32 &hours);
 
-	//! Hashes a buffer using md5. 
+	//! Hashes a buffer using md5.
 	//!
 	//! @param buffer Input buffer
 	//! @param size Buffer size
@@ -166,7 +162,7 @@ namespace MISC
 	//!
 	void hashString(const char* str, uint32 size, char out[16]);
 
-	//! Hashes a buffer using md5. 
+	//! Hashes a buffer using md5.
 	//!
 	//! @param buffer Input buffer
 	//! @param size Buffer size
@@ -174,14 +170,14 @@ namespace MISC
 	//!
 	std::string hashString(const char* str, uint32 size);
 
-	//! Hashes a file using md5. 
+	//! Hashes a file using md5.
 	//!
 	//! @param file Path to file
 	//! @return MD5 hash.
 	//!
 	std::string hashFile(const std::string file);
 
-	//! Hashes a file using md5. 
+	//! Hashes a file using md5.
 	//!
 	//! @param file File native handle
 	//! @param size Size of file to hash
@@ -222,7 +218,7 @@ namespace MISC
 
 #ifdef WIN32
 	//! Converts an image to an ico file
-	//! 
+	//!
 	//! @param imgPath Image path
 	//! @param icoPath Icon save path
 	//! @return True if succeceded

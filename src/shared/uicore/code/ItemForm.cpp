@@ -1,26 +1,23 @@
 /*
-Desura is the leading indie game distribution platform
 Copyright (C) 2011 Mark Chandler (Desura Net Pty Ltd)
+Copyright (C) 2014 Bad Juju Games, Inc.
 
-$LicenseInfo:firstyear=2014&license=lgpl$
-Copyright (C) 2014, Linden Research, Inc.
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
 
-This library is free software; you can redistribute it and/or
-modify it under the terms of the GNU Lesser General Public
-License as published by the Free Software Foundation;
-version 2.1 of the License only.
-
-This library is distributed in the hope that it will be useful,
+This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-Lesser General Public License for more details.
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
 
-You should have received a copy of the GNU Lesser General Public
-License along with this library; if not, see <http://www.gnu.org/licenses/>
-or write to the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+You should have received a copy of the GNU General Public License
+along with this program; if not, write to the Free Software Foundation,
+Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA.
 
-Linden Research, Inc., 945 Battery Street, San Francisco, CA  94111  USA
-$/LicenseInfo$
+Contact us at legal@badjuju.com.
+
 */
 
 #include "Common.h"
@@ -382,7 +379,7 @@ private:
 using namespace UI::Forms;
 
 
-ItemForm::ItemForm(wxWindow* parent, const char* action, const char* id) 
+ItemForm::ItemForm(wxWindow* parent, const char* action, const char* id)
 	: gcFrame( parent, wxID_ANY, L"[Install Form]", wxDefaultPosition, wxSize( 370,280 ), wxCAPTION|wxCLOSE_BOX|wxFRAME_FLOAT_ON_PARENT|wxSYSTEM_MENU|wxTAB_TRAVERSAL|wxMINIMIZE_BOX )
 	, m_pProxy(gcRefPtr<ItemFormProxy>::create(this))
 {
@@ -408,9 +405,9 @@ ItemForm::ItemForm(wxWindow* parent, const char* action, const char* id)
 
 	onVerifyAfterHashFailEvent += guiDelegate(this, &ItemForm::verifyAfterHashFail, MODE_PENDING_WAIT);
 
-#ifdef NIX 
-	onShowWinLaunchDialogEvent += guiDelegate(this, &ItemForm::onShowWinLaunchDialog, MODE_PENDING_WAIT); 
-#endif 
+#ifdef NIX
+	onShowWinLaunchDialogEvent += guiDelegate(this, &ItemForm::onShowWinLaunchDialog, MODE_PENDING_WAIT);
+#endif
 
 	m_bIsInit = false;
 	m_pDialog = nullptr;
@@ -421,7 +418,7 @@ ItemForm::~ItemForm()
 	m_pProxy->nullPtr();
 
 	if (m_pDialog)
-		m_pDialog->EndModal(wxCANCEL);	
+		m_pDialog->EndModal(wxCANCEL);
 
 	safe_delete(m_pGIThread);
 	cleanUpCallbacks();
@@ -457,7 +454,7 @@ void ItemForm::cleanUpCallbacks()
 			m_pItemHandle->getErrorEvent() -= guiDelegate(this, &ItemForm::onError);
 			m_pItemHandle->setFactory(nullptr);
 		}
-	}	
+	}
 }
 
 bool ItemForm::isStopped()
@@ -702,7 +699,7 @@ bool ItemForm::launchItem()
 	}
 	else
 	{
-		bool ignoreUpdate = HasAnyFlags(m_pItemHandle->getItemInfo()->getOptions(), UserCore::Item::ItemInfoI::OPTION_NOTREMINDUPDATE | UserCore::Item::ItemInfoI::OPTION_NOTREMINDUPDATE_ONETIME);	
+		bool ignoreUpdate = HasAnyFlags(m_pItemHandle->getItemInfo()->getOptions(), UserCore::Item::ItemInfoI::OPTION_NOTREMINDUPDATE | UserCore::Item::ItemInfoI::OPTION_NOTREMINDUPDATE_ONETIME);
 		m_pItemHandle->getItemInfo()->delOFlag(UserCore::Item::ItemInfoI::OPTION_NOTREMINDUPDATE_ONETIME);
 
 		res = m_pItemHandle->launch(m_pProxy, offLine, ignoreUpdate);
@@ -1127,11 +1124,11 @@ void ItemForm::showWinLaunchDialog()
 	onShowWinLaunchDialogEvent();
 }
 
-void ItemForm::onShowWinLaunchDialog() 
+void ItemForm::onShowWinLaunchDialog()
 {
 	if (! gc_linux_disable_windows_warning.getBool())
-		gcMessageBox(this, Managers::GetString(L"#IF_WINDOWS_LAUNCH_WARNING")); 
-} 
+		gcMessageBox(this, Managers::GetString(L"#IF_WINDOWS_LAUNCH_WARNING"));
+}
 #endif
 
 void ItemForm::showParentNoRunPrompt(DesuraId id)
@@ -1393,7 +1390,7 @@ void ItemForm::onShowToolPrompt(std::pair<bool, uint32> &args)
 	gcString name("Unknown Item ({0}: {0})", getItemId().getTypeString(), getItemId().getItem());
 
 	if (item)
-		name = item->getName();	
+		name = item->getName();
 
 
 	const char* tool = nullptr;
@@ -1423,7 +1420,7 @@ void ItemForm::onShowToolPrompt(std::pair<bool, uint32> &args)
 	gcString errMsg(Managers::GetString("#IF_GERROR_TOOL"), tool, name);
 
 	errMsg += "\n\n";
-	errMsg += Managers::GetString("#IF_GERROR_TOOL_Q");	
+	errMsg += Managers::GetString("#IF_GERROR_TOOL_Q");
 
 	ShowToolPromptHelper helper;
 	int answer = gcMessageBox(this, errMsg.c_str(), Managers::GetString("#IF_GERRTITLE"), wxICON_QUESTION|wxYES|wxNO, &helper);
@@ -1441,7 +1438,7 @@ void ItemForm::onGatherInfoComplete()
 		if (m_pItemHandle->getItemInfo()->isInstalled())
 			msg = gcWString(L"{0} {1}", name, Managers::GetString(L"#IF_CHECK_FOUND"));
 		else
-			msg = gcWString(L"{0} {1}", name, Managers::GetString(L"#IF_CHECK_NOTFOUND"));	
+			msg = gcWString(L"{0} {1}", name, Managers::GetString(L"#IF_CHECK_NOTFOUND"));
 
 		gcMessageBox(this, msg, Managers::GetString(L"#IF_INSTALL_CHECK") );
 	}

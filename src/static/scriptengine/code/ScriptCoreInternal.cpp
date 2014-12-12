@@ -1,26 +1,23 @@
 /*
-Desura is the leading indie game distribution platform
 Copyright (C) 2011 Mark Chandler (Desura Net Pty Ltd)
+Copyright (C) 2014 Bad Juju Games, Inc.
 
-$LicenseInfo:firstyear=2014&license=lgpl$
-Copyright (C) 2014, Linden Research, Inc.
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
 
-This library is free software; you can redistribute it and/or
-modify it under the terms of the GNU Lesser General Public
-License as published by the Free Software Foundation;
-version 2.1 of the License only.
-
-This library is distributed in the hope that it will be useful,
+This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-Lesser General Public License for more details.
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
 
-You should have received a copy of the GNU Lesser General Public
-License along with this library; if not, see <http://www.gnu.org/licenses/>
-or write to the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+You should have received a copy of the GNU General Public License
+along with this program; if not, write to the Free Software Foundation,
+Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA.
 
-Linden Research, Inc., 945 Battery Street, San Francisco, CA  94111  USA
-$/LicenseInfo$
+Contact us at legal@badjuju.com.
+
 */
 
 
@@ -47,7 +44,7 @@ void MessageCallback(v8::Handle<v8::Message> message, v8::Handle<v8::Value> data
 extern v8::ExtensionConfiguration* RegisterJSBindings();
 
 
-const char* ToCString(const v8::String::Utf8Value& value) 
+const char* ToCString(const v8::String::Utf8Value& value)
 {
 	return *value ? *value : "<string conversion failed>";
 }
@@ -83,7 +80,7 @@ void ScriptCoreInternal::init()
 	global->Set(v8::String::New("Debug"), v8::FunctionTemplate::New(JSDebug));
 
 	v8::Persistent<v8::Context> context = v8::Context::New(RegisterJSBindings(), global);
-	m_v8Context = context;		
+	m_v8Context = context;
 }
 
 void ScriptCoreInternal::del()
@@ -108,15 +105,15 @@ void ScriptCoreInternal::runString(const char* string)
 	v8::TryCatch try_catch;
 	v8::Handle<v8::Script> script = v8::Script::Compile(v8::String::New(string), v8::String::New("StringExe"));
 
-	if (script.IsEmpty()) 
+	if (script.IsEmpty())
 	{
 		throw gcException(ERR_V8, gcString("V8 Err: {0}", reportException(&try_catch)));
-	} 
-	else 
+	}
+	else
 	{
 		v8::Handle<v8::Value> result = script->Run();
 
-		if (result.IsEmpty()) 
+		if (result.IsEmpty())
 			throw gcException(ERR_V8, gcString("V8 Err: {0}", reportException(&try_catch)));
 	}
 }
@@ -126,14 +123,14 @@ void ScriptCoreInternal::runScript(const char* file, const char* buff, uint32 si
 	if (s_Disabled)
 		throw gcException(ERR_V8, "V8 Internal error");
 
-	// Create a stack-allocated handle scope. 
+	// Create a stack-allocated handle scope.
 	v8::HandleScope handle_scope;
 
-	// Enter the created context for compiling and 
+	// Enter the created context for compiling and
 	// running the hello world script.
 	v8::Context::Scope context_scope(m_v8Context);
 
-	// Compile the source code. 
+	// Compile the source code.
 	v8::Handle<v8::Script> script = v8::Script::Compile(v8::String::New(buff, size), v8::String::New(file));
 
 	if (script.IsEmpty())
@@ -146,18 +143,18 @@ void ScriptCoreInternal::doRunScript(v8::Handle<v8::Script> script)
 {
 	v8::TryCatch trycatch;
 
-	// Run the script to get the result. 
+	// Run the script to get the result.
 	v8::Handle<v8::Value> result = script->Run();
 
-	if (result.IsEmpty()) 
-	{  
+	if (result.IsEmpty())
+	{
 		v8::Handle<v8::Value> exception = trycatch.Exception();
 		v8::String::AsciiValue exception_str(exception);
 		throw gcException(ERR_INVALID, gcString("v8 had exception: {0}", *exception_str));
 	}
 }
 
-gcString ScriptCoreInternal::reportException(v8::TryCatch* try_catch) 
+gcString ScriptCoreInternal::reportException(v8::TryCatch* try_catch)
 {
 	gcString out;
 
@@ -167,13 +164,13 @@ gcString ScriptCoreInternal::reportException(v8::TryCatch* try_catch)
 	const char* exception_string = ToCString(exception);
 	v8::Handle<v8::Message> message = try_catch->Message();
 
-	if (message.IsEmpty()) 
+	if (message.IsEmpty())
 	{
 		// V8 didn't provide any extra information about this error; just
 		// print the exception.
 		out += gcString("{0}\n", exception_string);
-	} 
-	else 
+	}
+	else
 	{
 		// Print (filename):(line number): (message).
 		v8::String::Utf8Value filename(message->GetScriptResourceName());
@@ -191,13 +188,13 @@ gcString ScriptCoreInternal::reportException(v8::TryCatch* try_catch)
 
 		// Print wavy underline (GetUnderline is deprecated).
 		int start = message->GetStartColumn();
-		for (int i = 0; i < start; i++) 
+		for (int i = 0; i < start; i++)
 		{
 			out += " ";
 		}
 
 		int end = message->GetEndColumn();
-		for (int i = start; i < end; i++) 
+		for (int i = start; i < end; i++)
 		{
 			out += "^";
 		}
@@ -205,7 +202,7 @@ gcString ScriptCoreInternal::reportException(v8::TryCatch* try_catch)
 		out += "\n";
 		v8::String::Utf8Value stack_trace(try_catch->StackTrace());
 
-		if (stack_trace.length() > 0) 
+		if (stack_trace.length() > 0)
 		{
 			const char* stack_trace_string = ToCString(stack_trace);
 			out += gcString("{0}\n", stack_trace_string);
