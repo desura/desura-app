@@ -96,7 +96,7 @@ endif()
 # some global variables
 ###############################################################################
 
-set(CEF_EXTERNAL_PATH "" CACHE STRING "External path to cef if building seperatly to desura")
+set(CEF_EXTERNAL_PATH "" CACHE STRING "External path to cef if building separately to desura")
 
 set(CMAKE_OUTPUT "${CMAKE_SOURCE_DIR}/build_out")
 set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake/modules")
@@ -265,7 +265,8 @@ SetupDownloadUrl(CEF "cef-291.tar.gz" 97e925e33f2d48cd50172247dbe40f30)
 SetupDownloadUrl(CHROMIUM "chromium-15.0.876.0.tar.bz2" 22c8e1db4d1c4b474c600dffbb5fdd0c)
 
 # no longer available (too old, but 7.39 is available)
-SetupDownloadUrl(CURL "curl-7.32.0.tar.bz2" 30d04b0a8c43c6770039d1bf033dfe79)
+#SetupDownloadUrl(CURL "curl-7.32.0.tar.bz2" 30d04b0a8c43c6770039d1bf033dfe79)
+SetupDownloadUrlCustom(CURL "http://curl.haxx.se/download/curl-7.39.0.tar.gz" 88c5650122873712296d4b1db3f12e6c)
 
 # (chromium depot tools, also OLD - source: http://src.chromium.org/svn/trunk/tools/depot_tools/ )
 SetupDownloadUrl(DEPOT_TOOLS "depot_tools-r1.zip" a27266b8d2388c4dc51645d1159dd0de)
