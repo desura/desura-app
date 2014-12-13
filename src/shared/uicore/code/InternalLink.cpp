@@ -1,26 +1,23 @@
 /*
-Desura is the leading indie game distribution platform
 Copyright (C) 2011 Mark Chandler (Desura Net Pty Ltd)
+Copyright (C) 2014 Bad Juju Games, Inc.
 
-$LicenseInfo:firstyear=2014&license=lgpl$
-Copyright (C) 2014, Linden Research, Inc.
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
 
-This library is free software; you can redistribute it and/or
-modify it under the terms of the GNU Lesser General Public
-License as published by the Free Software Foundation;
-version 2.1 of the License only.
-
-This library is distributed in the hope that it will be useful,
+This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-Lesser General Public License for more details.
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
 
-You should have received a copy of the GNU Lesser General Public
-License along with this library; if not, see <http://www.gnu.org/licenses/>
-or write to the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+You should have received a copy of the GNU General Public License
+along with this program; if not, write to the Free Software Foundation,
+Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA.
 
-Linden Research, Inc., 945 Battery Street, San Francisco, CA  94111  USA
-$/LicenseInfo$
+Contact us at legal@badjuju.com.
+
 */
 
 #include "Common.h"
@@ -160,7 +157,7 @@ void InternalLink::handleInternalLink(const char* link)
 		safe_delete(str);
 	}
 	else
-	{	
+	{
 		badLink = true;
 	}
 
@@ -193,8 +190,8 @@ void InternalLink::handleInternalLink(const char* link)
 			{
 				handleInternalLink(0, ACTION_INSTALLEDW);
 			}
-			else 
-#endif	
+			else
+#endif
 			if (list[0] == "refresh")
 			{
 				GetUserCore()->forceUpdatePoll();
@@ -364,12 +361,12 @@ bool InternalLink::processItemLink(bool &badLink, std::vector<gcString> &list, c
 			if (branch.size() > 0)
 			{
 				argList.push_back(std::string("global=") + branch);
-				handleInternalLink(id, ACTION_INSTALL, argList);	
+				handleInternalLink(id, ACTION_INSTALL, argList);
 			}
 			else
 			{
 				bool isInstall = (list[0] == "install");
-				handleInternalLink(id, isInstall?ACTION_INSTALL:ACTION_LAUNCH, argList);	
+				handleInternalLink(id, isInstall?ACTION_INSTALL:ACTION_LAUNCH, argList);
 			}
 		}
 		else if (list[0] == "uninstall" || list[0] == "remove")
@@ -451,7 +448,7 @@ void InternalLink::handleInternalLink(DesuraId id, uint8 action, const LinkArgs 
 	case ACTION_UPDATELOG	: showUpdateLog(id);					break;
 	case ACTION_DISPCDKEY	: showCDKey(id, args);					break;
 
-	default: 
+	default:
 		handled = false;
 		break;
 	}
@@ -471,8 +468,8 @@ void InternalLink::handleInternalLink(DesuraId id, uint8 action, const LinkArgs 
 	case ACTION_SWITCHBRANCH: switchBranch(id, args);				break;
 	case ACTION_CLEANCOMPLEXMOD: cleanComplexMod(id);				break;
 
-	default: 
-		Warning("Unknown internal link {0} for item {1}\n.", (uint32)action, id.toInt64());	
+	default:
+		Warning("Unknown internal link {0} for item {1}\n.", (uint32)action, id.toInt64());
 		break;
 	}
 }
@@ -719,7 +716,7 @@ void InternalLink::showPreorderPrompt(DesuraId id, bool isPreload)
 	else
 	{
 		gcMessageBox(g_pMainApp->getMainWindow(), msg, title, wxICON_EXCLAMATION | wxCLOSE, &pobh);
-	}	
+	}
 }
 
 UI::Forms::ItemForm* InternalLink::showItemForm(DesuraId id, UI::Forms::INSTALL_ACTION action, bool showForm, LinkArgs args)
@@ -794,7 +791,7 @@ bool InternalLink::checkForPreorder(DesuraId id)
 	{
 		if (item->getBranch(x)->isPreOrderAndNotPreload())
 			return true;
-	}		
+	}
 
 	return false;
 }
@@ -833,10 +830,10 @@ void InternalLink::installItem(DesuraId id, LinkArgs args)
 	UI::Forms::ItemForm* form = showItemForm(id, UI::Forms::INSTALL_ACTION::IA_INSTALL, iBranch);
 
 	if (!form)
-		Warning("Cant find item (or item not ready) for install [{0}].\n", id.toInt64());	
+		Warning("Cant find item (or item not ready) for install [{0}].\n", id.toInt64());
 }
 
-DesuraId g_GameDiskList[] = 
+DesuraId g_GameDiskList[] =
 {
 	DesuraId(49, DesuraId::TYPE_GAME),
 	DesuraId(184, DesuraId::TYPE_GAME),
@@ -898,7 +895,7 @@ void InternalLink::launchItem(DesuraId id, LinkArgs args)
 
 	if (args.containsArg("gamedisk") == false && HasAnyFlags(item->getOptions(), UserCore::Item::ItemInfoI::OPTION_DONTPROMPTGAMEDISK) == false)
 	{
-		size_t x=0; 
+		size_t x=0;
 		while (g_GameDiskList[x].isOk())
 		{
 			if (item->getId() == g_GameDiskList[x] || item->getParentId() == g_GameDiskList[x])
@@ -959,7 +956,7 @@ void InternalLink::installTestMCF(DesuraId id, LinkArgs args)
 
 
 void InternalLink::uninstallMCF(DesuraId id)
-{	
+{
 	UI::Forms::ItemForm* form = showItemForm(id, UI::Forms::INSTALL_ACTION::IA_UNINSTALL);
 
 	if (form)
@@ -1010,7 +1007,7 @@ void InternalLink::showEULA(DesuraId id)
 
 	if (form->setInfo(id))
 	{
-		form->Show(true);	
+		form->Show(true);
 		form->Raise();
 	}
 }
@@ -1079,7 +1076,7 @@ void InternalLink::showUpdateLog(DesuraId id)
 	regForm(id, form);
 
 	form->setInfo(item);
-	form->Show(true);	
+	form->Show(true);
 	form->Raise();
 }
 
@@ -1242,7 +1239,7 @@ void InternalLink::uploadMCF(DesuraId id)
 	//create new create from
 	UploadMCFForm* form = new UploadMCFForm(m_pParent);
 	form->setInfo(id);
-	form->Show(true);	
+	form->Show(true);
 	form->Raise();
 	form->run();
 
@@ -1283,7 +1280,7 @@ void InternalLink::resumeUploadMCF(DesuraId id, LinkArgs args)
 	else
 		form->setInfo(id);
 
-	form->Show(true);	
+	form->Show(true);
 	form->Raise();
 	form->run();
 
@@ -1309,7 +1306,7 @@ void InternalLink::createMCF(DesuraId id)
 	CreateMCFForm* form = new CreateMCFForm(m_pParent);
 	form->setInfo(id);
 	form->onUploadTriggerEvent += delegate(this, &InternalLink::onUploadTrigger);
-	form->Show(true);	
+	form->Show(true);
 	form->Raise();
 	form->run();
 
@@ -1353,7 +1350,7 @@ void InternalLink::onUploadTrigger(ut& info)
 		form->SetPosition(pos);
 	}
 
-	form->Show(true);	
+	form->Show(true);
 	form->Raise();
 	form->run();
 
@@ -1394,7 +1391,7 @@ void InternalLink::showUpdateLogApp(uint32 version)
 
 	ChangeLogForm* form = new ChangeLogForm(m_pParent);
 	form->setInfo(iAppId);
-	form->Show(true);	
+	form->Show(true);
 	form->Raise();
 
 	m_vSubForms.push_back(form);
@@ -1487,8 +1484,8 @@ void InternalLink::showNews(const std::vector<gcRefPtr<UserCore::Misc::NewsItem>
 
 void InternalLink::showAppUpdate(uint32 version)
 {
-	for (size_t x=0; x<m_vSubForms.size(); x++)	
-	{															
+	for (size_t x=0; x<m_vSubForms.size(); x++)
+	{
 		GCUpdateInfo *temp = dynamic_cast< GCUpdateInfo *>(m_vSubForms[x]);
 
 		if (!temp)

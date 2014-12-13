@@ -1,26 +1,23 @@
 /*
-Desura is the leading indie game distribution platform
 Copyright (C) 2011 Mark Chandler (Desura Net Pty Ltd)
+Copyright (C) 2014 Bad Juju Games, Inc.
 
-$LicenseInfo:firstyear=2014&license=lgpl$
-Copyright (C) 2014, Linden Research, Inc.
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
 
-This library is free software; you can redistribute it and/or
-modify it under the terms of the GNU Lesser General Public
-License as published by the Free Software Foundation;
-version 2.1 of the License only.
-
-This library is distributed in the hope that it will be useful,
+This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-Lesser General Public License for more details.
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
 
-You should have received a copy of the GNU Lesser General Public
-License along with this library; if not, see <http://www.gnu.org/licenses/>
-or write to the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+You should have received a copy of the GNU General Public License
+along with this program; if not, write to the Free Software Foundation,
+Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA.
 
-Linden Research, Inc., 945 Battery Street, San Francisco, CA  94111  USA
-$/LicenseInfo$
+Contact us at legal@badjuju.com.
+
 */
 
 #include "Common.h"
@@ -52,7 +49,7 @@ uint8 getCoreCount()
 	uint8 numCPU = 1;
 
 	nt mib[4];
-	size_t len; 
+	size_t len;
 
 	/* set the mib for hw.ncpu */
 	mib[0] = CTL_HW;
@@ -61,7 +58,7 @@ uint8 getCoreCount()
 	/* get the number of CPUs from the system */
 	sysctl(mib, 2, &numCPU, &len, nullptr, 0);
 
-	if( numCPU < 1 ) 
+	if( numCPU < 1 )
 	{
 		 mib[1] = HW_NCPU;
 		 sysctl( mib, 2, &numCPU, &len, nullptr, 0 );
@@ -74,7 +71,7 @@ uint8 getCoreCount()
 	return numCPU;
 #endif
 
-#ifdef __linux 
+#ifdef __linux
 	return (uint8)sysconf( _SC_NPROCESSORS_ONLN );
 #endif
 }
@@ -344,7 +341,7 @@ const std::string fixDateTimeString(const char* dateTime)
 		date_str = date_str.substr(0,8);
 		date_str += "T";
 
-		// add back in the time 
+		// add back in the time
 		date_str += time_part;
 	}
 
@@ -733,7 +730,7 @@ void CMDArgs::addValue(const char* name, const char* value)
 void CMDArgs::process()
 {
 	size_t nArgs = m_pInternal->m_vArgList.size();
-	size_t i=0; 
+	size_t i=0;
 
 	while (i<nArgs)
 	{

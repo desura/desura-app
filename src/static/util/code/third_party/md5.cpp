@@ -1,14 +1,14 @@
-// MD5.CC - source code for the C++/object oriented translation and 
+// MD5.CC - source code for the C++/object oriented translation and
 //          modification of MD5.
 
-// Translation and modification (c) 1995 by Mordechai T. Abzug 
+// Translation and modification (c) 1995 by Mordechai T. Abzug
 
-// This translation/ modification is provided "as is," without express or 
+// This translation/ modification is provided "as is," without express or
 // implied warranty of any kind.
 
-// The translator/ modifier does not claim (1) that MD5 will do what you think 
-// it does; (2) that this translation/ modification is accurate; or (3) that 
-// this software is "merchantible."  (Language for this disclaimer partially 
+// The translator/ modifier does not claim (1) that MD5 will do what you think
+// it does; (2) that this translation/ modification is accurate; or (3) that
+// this software is "merchantible."  (Language for this disclaimer partially
 // copied from the disclaimer below).
 
 /* based on:
@@ -49,9 +49,9 @@ documentation and/or software.
 
 // Encodes input (unsigned int) into output (unsigned char). Assumes len is
 // a multiple of 4.
-void encode(unsigned char *output, unsigned int *input, size_t len) 
+void encode(unsigned char *output, unsigned int *input, size_t len)
 {
-	for (size_t i = 0, j = 0; j < len; i++, j += 4) 
+	for (size_t i = 0, j = 0; j < len; i++, j += 4)
 	{
 		output[j]   = (unsigned char)(input[i] & 0xff);
 		output[j+1] = (unsigned char)((input[i] >> 8) & 0xff);
@@ -205,7 +205,7 @@ MD5::MD5()
 // MD5 block update operation. Continues an MD5 message-m_Digest
 // operation, processing another message block, and updating the
 // context.
-void MD5::update(const unsigned char *input, size_t input_length) 
+void MD5::update(const unsigned char *input, size_t input_length)
 {
 	if (m_Finalized)
 		return;
@@ -226,8 +226,8 @@ void MD5::update(const unsigned char *input, size_t input_length)
 	buffSpace = 64 - index;  // how much space is left in m_Buffer
 
 	// Transform as many times as possible.
-	if (input_length >= buffSpace) 
-	{ 
+	if (input_length >= buffSpace)
+	{
 		// ie. we have enough to fill the m_Buffer
 		// fill the rest of the m_Buffer and transform
 		memcpy(m_Buffer + index, input, buffSpace);

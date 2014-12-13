@@ -1,26 +1,23 @@
 /*
-Desura is the leading indie game distribution platform
 Copyright (C) 2011 Mark Chandler (Desura Net Pty Ltd)
+Copyright (C) 2014 Bad Juju Games, Inc.
 
-$LicenseInfo:firstyear=2014&license=lgpl$
-Copyright (C) 2014, Linden Research, Inc.
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
 
-This library is free software; you can redistribute it and/or
-modify it under the terms of the GNU Lesser General Public
-License as published by the Free Software Foundation;
-version 2.1 of the License only.
-
-This library is distributed in the hope that it will be useful,
+This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-Lesser General Public License for more details.
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
 
-You should have received a copy of the GNU Lesser General Public
-License along with this library; if not, see <http://www.gnu.org/licenses/>
-or write to the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+You should have received a copy of the GNU General Public License
+along with this program; if not, write to the Free Software Foundation,
+Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA.
 
-Linden Research, Inc., 945 Battery Street, San Francisco, CA  94111  USA
-$/LicenseInfo$
+Contact us at legal@badjuju.com.
+
 */
 
 #include <sys/statvfs.h>
@@ -287,7 +284,7 @@ void setConfigValue(const std::string &configKey, const std::string &value)
 	else if (configKey == APPID)
 	{
 		SetAppBranch(value);
-		return;	
+		return;
 	}
 
 	dbCreateTables();
@@ -348,7 +345,7 @@ std::string getConfigValue(const std::string &configKey)
 	try
 	{
 		dbCreateTables();
-		sqlite3x::sqlite3_connection db(CONFIG_DB());	
+		sqlite3x::sqlite3_connection db(CONFIG_DB());
 
 		sqlite3x::sqlite3_command cmd(db, "SELECT value FROM config_string WHERE key=?;");
 		cmd.bind(1, configKey);
@@ -390,7 +387,7 @@ uint64 getFreeSpace(const char* path)
 		if(statvfs(szPath.c_str(), &fsinfo) != 0)
 			continue;
 
-		return (fsinfo.f_bsize * fsinfo.f_bavail); 
+		return (fsinfo.f_bsize * fsinfo.f_bavail);
 	}
 
 	char buffer[1024];
@@ -542,7 +539,7 @@ bool launchProcess(const char* exe, const std::map<std::string, std::string> &in
 	std::string fullExe = expandPath(exe);
 
 	if (!fileExists(fullExe.c_str()))
-		return false;	
+		return false;
 
 	//we double fork so that the new process is not a child of this process
 	pid_t pid = fork();
@@ -563,7 +560,7 @@ bool launchProcess(const char* exe, const std::map<std::string, std::string> &in
 	std::string workingDir;
 	std::string libPath;
 	std::string args;
-	std::string e = path.getFullPath();	
+	std::string e = path.getFullPath();
 
 	typedef const std::map<std::string, std::string>::const_iterator MapIterator;
 
@@ -647,7 +644,7 @@ static std::string getDescFromLSB(std::string &input)
 
 
 std::string getOSString()
-{	
+{
 	std::string distro, arch;
 
 #ifdef DEBUG
@@ -702,7 +699,7 @@ std::string getCmdStdout(const char* command, int stdErrDest)
 		output.append(buffer);
 
 	pclose(fd);
-	return trim(output); 
+	return trim(output);
 }
 
 std::wstring getDesktopPath(std::wstring extra)
@@ -732,7 +729,7 @@ std::wstring getApplicationsPath(std::wstring extra)
 	return data_home;
 }
 
-bool fileExists(const char* file) 
+bool fileExists(const char* file)
 {
 	char buffer[PATH_MAX];
 	snprintf(buffer, PATH_MAX, "%s (%s)", __func__, file);
@@ -746,16 +743,16 @@ bool fileExists(const char* file)
 	// Attempt to get the file attributes
 	intStat = stat(fullFile.c_str(), &stFileInfo);
 
-	if (intStat == 0) 
+	if (intStat == 0)
 		return true;
-	else 
+	else
 		return false;
 }
 
 BinType getFileType(const char* buff, size_t buffSize)
 {
 	if (buffSize < 2)
-		return BT_UNKNOWN;	
+		return BT_UNKNOWN;
 
 	if (strncmp(buff, "#!", 2) == 0)
 		return BT_SCRIPT;
@@ -775,7 +772,7 @@ BinType getFileType(const char* buff, size_t buffSize)
 			return BT_ELF64;
 	}
 
-	return BT_UNKNOWN;	
+	return BT_UNKNOWN;
 }
 
 
