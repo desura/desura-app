@@ -34,6 +34,8 @@
 #include "rpc.h"
 
 #ifndef TEST_UTILS
+#define XP_UNIX 1
+#define MOZ_X11 1
 #include <npapi.h>
 #endif
 

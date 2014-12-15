@@ -90,7 +90,7 @@ public:
 protected:
 	void init()
 	{
-#if defined(NIX) && !defined(MACOS)
+#ifdef NIX
 		if(T::m_widget == nullptr)
 			return;
 #endif

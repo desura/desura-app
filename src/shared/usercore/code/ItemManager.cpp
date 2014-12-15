@@ -45,7 +45,7 @@ namespace UM = UserCore::Item;
 class CompairDesuraIds
 {
 public:
-	bool operator()(const DesuraId a, const DesuraId b) const
+	bool operator()(const DesuraId a, const DesuraId b)
 	{
 		return (a.toInt64() < b.toInt64());
 	}
