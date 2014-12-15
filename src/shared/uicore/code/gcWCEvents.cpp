@@ -28,7 +28,7 @@ Contact us at legal@badjuju.com.
 	#include "wx/msw/dc.h"
 #endif
 
-#ifdef NIX
+#if defined(NIX) && !defined(MACOS)
 	#include <linux/input.h>
 #endif
 
@@ -71,7 +71,7 @@ typedef struct
 	uint32 modifiers;
 } ShortCut_s;
 
-#ifdef WIN32
+#if defined(WIN32)
 
 const uint32 g_uiMaxKeys = 24;
 
@@ -105,7 +105,90 @@ const ShortCut_s g_ShortCutList[] =
 	{'F',			IDC_FIND,						ControlKey},
 };
 
+#elif defined(MACOS)
+
+// FIXME: 'Can't find a (convenient) headerfile for this, so just placing inlne for now.
+enum {
+  kVK_Return                    = 0x24,
+  kVK_Tab                       = 0x30,
+  kVK_Space                     = 0x31,
+  kVK_Delete                    = 0x33,
+  kVK_Escape                    = 0x35,
+  kVK_Command                   = 0x37,
+  kVK_Shift                     = 0x38,
+  kVK_CapsLock                  = 0x39,
+  kVK_Option                    = 0x3A,
+  kVK_Control                   = 0x3B,
+  kVK_RightShift                = 0x3C,
+  kVK_RightOption               = 0x3D,
+  kVK_RightControl              = 0x3E,
+  kVK_Function                  = 0x3F,
+  kVK_F17                       = 0x40,
+  kVK_VolumeUp                  = 0x48,
+  kVK_VolumeDown                = 0x49,
+  kVK_Mute                      = 0x4A,
+  kVK_F18                       = 0x4F,
+  kVK_F19                       = 0x50,
+  kVK_F20                       = 0x5A,
+  kVK_F5                        = 0x60,
+  kVK_F6                        = 0x61,
+  kVK_F7                        = 0x62,
+  kVK_F3                        = 0x63,
+  kVK_F8                        = 0x64,
+  kVK_F9                        = 0x65,
+  kVK_F11                       = 0x67,
+  kVK_F13                       = 0x69,
+  kVK_F16                       = 0x6A,
+  kVK_F14                       = 0x6B,
+  kVK_F10                       = 0x6D,
+  kVK_F12                       = 0x6F,
+  kVK_F15                       = 0x71,
+  kVK_Help                      = 0x72,
+  kVK_Home                      = 0x73,
+  kVK_PageUp                    = 0x74,
+  kVK_ForwardDelete             = 0x75,
+  kVK_F4                        = 0x76,
+  kVK_End                       = 0x77,
+  kVK_F2                        = 0x78,
+  kVK_PageDown                  = 0x79,
+  kVK_F1                        = 0x7A,
+  kVK_LeftArrow                 = 0x7B,
+  kVK_RightArrow                = 0x7C,
+  kVK_DownArrow                 = 0x7D,
+  kVK_UpArrow                   = 0x7E
+};
+
+const uint32 g_uiMaxKeys = 20;
+
+const ShortCut_s g_ShortCutList[] = 
+{
+	{kVK_LeftArrow,		IDC_BACK,						AltKey},
+	//{kVK_PageUp,	IDC_BACK,						0},			//re enable when i find out how to find what thing has focus
+	{kVK_RightArrow,	IDC_FORWARD,					AltKey},
+	//{kVK_PageUp,	IDC_FORWARD,					ShiftKey},
+	{kVK_PageUp,		IDC_BACK,						0},
+	{kVK_PageDown,	IDC_FORWARD,					0},
+	{'I',			IDC_DEV_TOOLS,					ShiftKey|ControlKey},
+	{'J',			IDC_DEV_TOOLS_CONSOLE,			ShiftKey|ControlKey},
+//	{'P',			IDC_PRINT,						ControlKey}, // printing disabled on Linux
+	{'R',			IDC_RELOAD,						ControlKey},
+	{'R',			IDC_RELOAD_IGNORING_CACHE,		ShiftKey|ControlKey},
+	{kVK_F5,		IDC_RELOAD,						0},
+	{kVK_F5,		IDC_RELOAD_IGNORING_CACHE,		ControlKey},
+	{kVK_F5,		IDC_RELOAD_IGNORING_CACHE,		ShiftKey},
+	{kVK_Home,		IDC_HOME,						AltKey},
+	{kVK_Escape,	IDC_STOP,						0},
+	{'U',			IDC_VIEW_SOURCE,				ControlKey},
+	{'-',			IDC_ZOOM_MINUS,					ControlKey},
+	{'-',			IDC_ZOOM_MINUS,					0},
+	{'0',			IDC_ZOOM_NORMAL,				ControlKey},
+	{'=',			IDC_ZOOM_MINUS,					ControlKey},
+	{'+',			IDC_ZOOM_MINUS,					ControlKey},
+	{'F',			IDC_FIND,						ControlKey},
+};
+
 #else
+
 const uint32 g_uiMaxKeys = 23;
 
 const ShortCut_s g_ShortCutList[] =

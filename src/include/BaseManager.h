@@ -71,7 +71,7 @@ public:
 		removeAll();
 	}
 
-#if defined WIN32 || GCC_VERSION > 40500 || ( __clang_major__ > 2 && __clang_minor__ > 0 )
+#if defined WIN32 || MACOS || GCC_VERSION > 40500 || ( __clang_major__ > 2 && __clang_minor__ > 0 )
 	template <typename F>
 	void for_each(F &f)
 	{

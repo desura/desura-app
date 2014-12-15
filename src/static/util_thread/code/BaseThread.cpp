@@ -32,9 +32,13 @@ Contact us at legal@badjuju.com.
 
 #define MS_VC_EXCEPTION 0x406D1388
 
-#ifdef NIX
+#if defined(MACOS)
+	#include <pthread.h>
+#elif defined(NIX)
 	#include <sys/prctl.h>
 #endif
+
+
 
 using namespace Thread;
 
@@ -401,6 +405,8 @@ void BaseThread::setThreadName(const char* nameOveride)
 	OutputDebugStringA(strThreadName.c_str());
 
 	ThrowException(info);
+#elif defined(MACOS)
+	pthread_setname_np(nameOveride);
 #else
 	char name[16];
 	strncpy(name, nameOveride, 15);

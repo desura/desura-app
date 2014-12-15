@@ -26,8 +26,6 @@
 #include "rpc.h"
 #include "npw-rpc.h"
 
-#define XP_UNIX 1
-#define MOZ_X11 1
 #include <npapi.h>
 #include <npfunctions.h>
 #include <npruntime.h>

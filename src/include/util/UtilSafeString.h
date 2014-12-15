@@ -195,8 +195,11 @@ namespace Safe
 	{
 		if (!szString)
 			return 0;
-
+#if defined(__APPLE__)
+		return strtoull(szString, nullptr, 0);
+#else
 		return std::strtoull(szString, nullptr, 0);
+#endif		
 	}
 
 	//Make sure we handle the last bit correctly by using 64bit then down cast to 32bit
@@ -205,7 +208,11 @@ namespace Safe
 		if (!szString)
 			return 0;
 
+#if defined(__APPLE__)
+		return (uint32)strtoull(szString, nullptr, 0);
+#else
 		return (uint32)std::strtoull(szString, nullptr, 0);
+#endif		
 	}
 }
 
