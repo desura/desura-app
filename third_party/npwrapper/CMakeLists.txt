@@ -27,10 +27,6 @@ if(UNIX)
   set(PLATFORM_LIBS dl)
 endif()
 
-if(NOT APPLE)
-  add_definitions(-DXP_UNIX=1, -DMOZ_X11=1)
-endif()
-
 if(64BIT)
   add_definitions(-DNIX64)
 else()

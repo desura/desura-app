@@ -95,7 +95,7 @@ if(LIBNOTIFY_FOUND)
     #include <libnotify/notify.h>
     
     int main() {
-        notify_notification_new(\"nothing\", \"nothing\", \"nothing\", \"nothing\");
+        notify_notification_new('nothing', 'nothing', 'nothing', 'nothing');
     }
     " LIBNOTIFY_VERSION_04)
     
@@ -103,7 +103,7 @@ if(LIBNOTIFY_FOUND)
     #include <libnotify/notify.h>
     
     int main() {
-        notify_notification_new(\"nothing\", \"nothing\", \"nothing\");
+        notify_notification_new('nothing', 'nothing', 'nothing');
     }
     " LIBNOTIFY_VERSION_07)
     

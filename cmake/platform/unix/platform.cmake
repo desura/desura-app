@@ -36,8 +36,6 @@ endif()
 # wxWidgets config
 if(MINGW)
   add_definitions(-D__WXMSW__)
-elseif(APPLE)
-  add_definitions(-D__WXMAC__ -D__WXOSX_COCOA__)
 else()
   add_definitions(-D__WXGTK__)
 endif()
