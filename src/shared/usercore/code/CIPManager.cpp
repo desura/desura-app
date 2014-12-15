@@ -1,26 +1,23 @@
 /*
-Desura is the leading indie game distribution platform
 Copyright (C) 2011 Mark Chandler (Desura Net Pty Ltd)
+Copyright (C) 2014 Bad Juju Games, Inc.
 
-$LicenseInfo:firstyear=2014&license=lgpl$
-Copyright (C) 2014, Linden Research, Inc.
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
 
-This library is free software; you can redistribute it and/or
-modify it under the terms of the GNU Lesser General Public
-License as published by the Free Software Foundation;
-version 2.1 of the License only.
-
-This library is distributed in the hope that it will be useful,
+This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-Lesser General Public License for more details.
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
 
-You should have received a copy of the GNU Lesser General Public
-License along with this library; if not, see <http://www.gnu.org/licenses/>
-or write to the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+You should have received a copy of the GNU General Public License
+along with this program; if not, write to the Free Software Foundation,
+Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA.
 
-Linden Research, Inc., 945 Battery Street, San Francisco, CA  94111  USA
-$/LicenseInfo$
+Contact us at legal@badjuju.com.
+
 */
 
 #include "Common.h"
@@ -49,13 +46,13 @@ CIPManager::~CIPManager()
 
 void CIPManager::getCIPList(std::vector<UserCore::Misc::CIPItem> &list)
 {
-	try 
+	try
 	{
 		sqlite3x::sqlite3_connection db(m_szDBName.c_str());
 		sqlite3x::sqlite3_command cmd(db, "SELECT c.internalid, c.path, i.name FROM cip as c INNER JOIN cipiteminfo as i USING(internalid);");
 		sqlite3x::sqlite3_reader reader = cmd.executereader();
 
-		while (reader.read()) 
+		while (reader.read())
 		{
 			UserCore::Misc::CIPItem cip;
 
@@ -69,7 +66,7 @@ void CIPManager::getCIPList(std::vector<UserCore::Misc::CIPItem> &list)
 			list.push_back(cip);
 		}
 	}
-	catch(std::exception &ex) 
+	catch(std::exception &ex)
 	{
 		Warning("Failed to update cip (loadItems) {0}\n", ex.what());
 	}
@@ -77,13 +74,13 @@ void CIPManager::getCIPList(std::vector<UserCore::Misc::CIPItem> &list)
 
 void CIPManager::getItemList(std::vector<UserCore::Misc::CIPItem> &list)
 {
-	try 
+	try
 	{
 		sqlite3x::sqlite3_connection db(m_szDBName.c_str());
 		sqlite3x::sqlite3_command cmd(db, "select * from cipiteminfo;");
 		sqlite3x::sqlite3_reader reader = cmd.executereader();
 
-		while (reader.read()) 
+		while (reader.read())
 		{
 			UserCore::Misc::CIPItem cip;
 
@@ -93,7 +90,7 @@ void CIPManager::getItemList(std::vector<UserCore::Misc::CIPItem> &list)
 			list.push_back(cip);
 		}
 	}
-	catch(std::exception &ex) 
+	catch(std::exception &ex)
 	{
 		Warning("Failed to update cip (loadItems) {0}\n", ex.what());
 	}
@@ -140,7 +137,7 @@ void CIPManager::updateItem(DesuraId id, gcString path)
 		sqlite3x::sqlite3_command cmd(db, "REPLACE INTO cip (internalid, path) VALUES (?,?);");
 
 		cmd.bind(1, (long long int)id.toInt64());
-		cmd.bind(2, path); 
+		cmd.bind(2, path);
 		cmd.executenonquery();
 	}
 	catch (std::exception &e)
@@ -201,7 +198,7 @@ void CIPManager::onRefreshError(gcException& e)
 
 bool CIPManager::getCIP(UserCore::Misc::CIPItem& info)
 {
-	try 
+	try
 	{
 		sqlite3x::sqlite3_connection db(m_szDBName.c_str());
 
@@ -214,7 +211,7 @@ bool CIPManager::getCIP(UserCore::Misc::CIPItem& info)
 			return true;
 		}
 	}
-	catch(std::exception &) 
+	catch(std::exception &)
 	{
 	}
 

@@ -6,10 +6,16 @@ function(add_copy_target_file_step target target_loc)
       add_custom_command(TARGET ${target} POST_BUILD COMMAND ${CMAKE_COMMAND} -E make_directory "${CMAKE_BINARY_DIR}/${BINDIR}")
       add_custom_command(TARGET ${target} POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy_if_different "${target_loc}" "${CMAKE_BINARY_DIR}/${BINDIR}/${target_name}")
     endif()
-  elseif(${target_name} MATCHES ".*\\.dll" OR ${target_name} MATCHES ".*\\.so" OR ${target_name} MATCHES ".*\\.dylib" OR ${target_name} MATCHES ".*\\.sh")
+  elseif(${target_name} MATCHES ".*\\.dll" OR ${target_name} MATCHES ".*\\.so.*" OR ${target_name} MATCHES ".*\\.dylib" OR ${target_name} MATCHES ".*\\.sh")
     if(NOT IS_ABSOLUTE ${RUNTIME_LIBDIR})
       add_custom_command(TARGET ${target} POST_BUILD COMMAND ${CMAKE_COMMAND} -E make_directory "${CMAKE_BINARY_DIR}/${RUNTIME_LIBDIR}")
-      add_custom_command(TARGET ${target} POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy_if_different "${target_loc}" "${CMAKE_BINARY_DIR}/${RUNTIME_LIBDIR}/${target_name}")
+
+      if(WIN32)
+        add_custom_command(TARGET ${target} POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy_if_different "${target_loc}" "${CMAKE_BINARY_DIR}/${RUNTIME_LIBDIR}/${target_name}")
+      else()
+        add_custom_command(TARGET ${target} POST_BUILD file(COPY "${target_loc}" "${CMAKE_BINARY_DIR}/${RUNTIME_LIBDIR}/${target_name}" USE_SOURCE_PERMISSIONS))
+      endif()
+
     endif()
   elseif(${target_name} MATCHES ".*\\.lib" OR ${target_name} MATCHES ".*\\.a")
     # this is a placeholder for desurium API and import libs, also the static preloader for games

@@ -1,26 +1,23 @@
 /*
-Desura is the leading indie game distribution platform
 Copyright (C) 2011 Mark Chandler (Desura Net Pty Ltd)
+Copyright (C) 2014 Bad Juju Games, Inc.
 
-$LicenseInfo:firstyear=2014&license=lgpl$
-Copyright (C) 2014, Linden Research, Inc.
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
 
-This library is free software; you can redistribute it and/or
-modify it under the terms of the GNU Lesser General Public
-License as published by the Free Software Foundation;
-version 2.1 of the License only.
-
-This library is distributed in the hope that it will be useful,
+This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-Lesser General Public License for more details.
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
 
-You should have received a copy of the GNU Lesser General Public
-License along with this library; if not, see <http://www.gnu.org/licenses/>
-or write to the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+You should have received a copy of the GNU General Public License
+along with this program; if not, write to the Free Software Foundation,
+Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA.
 
-Linden Research, Inc., 945 Battery Street, San Francisco, CA  94111  USA
-$/LicenseInfo$
+Contact us at legal@badjuju.com.
+
 */
 #include "Common.h"
 #include "IPCServiceMain.h"
@@ -144,9 +141,9 @@ void IPCServiceMain::registerFunctions()
 	REG_FUNCTION_VOID( IPCServiceMain, setAppDataPath );
 	REG_FUNCTION_VOID( IPCServiceMain, setCrashSettings );
 
+	REG_FUNCTION_VOID( IPCServiceMain, setUninstallRegKey);
 #ifdef WIN32
 	REG_FUNCTION_VOID( IPCServiceMain, removeUninstallRegKey);
-	REG_FUNCTION_VOID( IPCServiceMain, setUninstallRegKey);
 	REG_FUNCTION_VOID( IPCServiceMain, addDesuraToGameExplorer);
 	REG_FUNCTION_VOID( IPCServiceMain, addItemGameToGameExplorer);
 	REG_FUNCTION_VOID( IPCServiceMain, removeGameFromGameExplorer);
@@ -270,15 +267,15 @@ void IPCServiceMain::setCrashSettings(const char* user, bool upload)
 	IPC::functionCallAsync(this, "setCrashSettings", user, upload);
 }
 
+void IPCServiceMain::setUninstallRegKey(uint64 id, uint64 installSize)
+{
+	IPC::functionCallAsync(this, "setUninstallRegKey", id, installSize);
+}
+
 #ifdef WIN32
 void IPCServiceMain::removeUninstallRegKey(uint64 id)
 {
 	IPC::functionCallAsync(this, "removeUninstallRegKey", id);
-}
-
-void IPCServiceMain::setUninstallRegKey(uint64 id, uint64 installSize)
-{
-	IPC::functionCallAsync(this, "setUninstallRegKey", id, installSize);
 }
 
 void IPCServiceMain::addDesuraToGameExplorer()
@@ -390,9 +387,33 @@ void IPCServiceMain::fixFolderPermissions(const char* dir)
 
 void UpdateShortCuts();
 
+bool SetUninstallRegKey(DesuraId id, uint64 installSize);
+
+class SetUninstallTask : public TaskI
+{
+public:
+	SetUninstallTask(uint64 id, uint64 installSize)
+	{
+		this->id = id;
+		this->installSize = installSize;
+	}
+
+	void doTask()
+	{
+		SetUninstallRegKey(DesuraId(id), installSize);
+	}
+
+	void destroy()
+	{
+		delete this;
+	}
+
+	uint64 id;
+	uint64 installSize;
+};
+
 #ifdef WIN32
 void RemoveUninstallRegKey(DesuraId id);
-bool SetUninstallRegKey(DesuraId id, uint64 installSize);
 
 void AddDesuraToWIndowsGameExplorer();
 void AddGameToWindowsGameExplorer(const char* name, const char* dllPath);
@@ -417,29 +438,6 @@ public:
 	}
 
 	uint64 id;
-};
-
-class SetUninstallTask : public TaskI
-{
-public:
-	SetUninstallTask(uint64 id, uint64 installSize)
-	{
-		this->id = id;
-		this->installSize = installSize;
-	}
-
-	void doTask()
-	{
-		SetUninstallRegKey(DesuraId(id), installSize);
-	}
-
-	void destroy()
-	{
-		delete this;
-	}
-
-	uint64 id;
-	uint64 installSize;
 };
 
 class AddDesuraToWGETask : public TaskI
@@ -552,6 +550,12 @@ void IPCServiceMain::updateBinaryRegKeyBlob(const char* key, IPC::PBlob blob)
 	}
 }
 
+void IPCServiceMain::setUninstallRegKey(uint64 id, uint64 installSize)
+{
+	startThread();
+	m_pServiceThread->addTask(new SetUninstallTask(id, installSize));
+}
+
 #ifdef WIN32
 void IPCServiceMain::removeUninstallRegKey(uint64 id)
 {
@@ -559,28 +563,22 @@ void IPCServiceMain::removeUninstallRegKey(uint64 id)
 	m_pServiceThread->addTask(new RemoveUninstallTask(id));
 }
 
-void IPCServiceMain::setUninstallRegKey(uint64 id, uint64 installSize)
-{
-	startThread();
-	m_pServiceThread->addTask(new SetUninstallTask(id, installSize));	
-}
-
 void IPCServiceMain::addDesuraToGameExplorer()
 {
 	startThread();
-	m_pServiceThread->addTask(new AddDesuraToWGETask());	
+	m_pServiceThread->addTask(new AddDesuraToWGETask());
 }
 
 void IPCServiceMain::addItemGameToGameExplorer(const char* name, const char* dllPath)
 {
 	startThread();
-	m_pServiceThread->addTask(new AddToWGETask(name, dllPath));		
+	m_pServiceThread->addTask(new AddToWGETask(name, dllPath));
 }
 
 void IPCServiceMain::removeGameFromGameExplorer(const char* dllPath, bool deleteDll)
 {
 	startThread();
-	m_pServiceThread->addTask(new RemoveFromWGETask(dllPath, deleteDll));		
+	m_pServiceThread->addTask(new RemoveFromWGETask(dllPath, deleteDll));
 }
 
 #endif
@@ -589,7 +587,7 @@ void IPCServiceMain::removeGameFromGameExplorer(const char* dllPath, bool delete
 void IPCServiceMain::updateShortCuts()
 {
 	startThread();
-	m_pServiceThread->addTask(new UpdateShortcutTask());	
+	m_pServiceThread->addTask(new UpdateShortcutTask());
 }
 
 void IPCServiceMain::runInstallScript(const char* file, const char* installpath, const char* function)

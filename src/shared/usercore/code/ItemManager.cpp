@@ -1,26 +1,23 @@
 /*
-Desura is the leading indie game distribution platform
 Copyright (C) 2011 Mark Chandler (Desura Net Pty Ltd)
+Copyright (C) 2014 Bad Juju Games, Inc.
 
-$LicenseInfo:firstyear=2014&license=lgpl$
-Copyright (C) 2014, Linden Research, Inc.
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
 
-This library is free software; you can redistribute it and/or
-modify it under the terms of the GNU Lesser General Public
-License as published by the Free Software Foundation;
-version 2.1 of the License only.
-
-This library is distributed in the hope that it will be useful,
+This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-Lesser General Public License for more details.
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
 
-You should have received a copy of the GNU Lesser General Public
-License along with this library; if not, see <http://www.gnu.org/licenses/>
-or write to the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+You should have received a copy of the GNU General Public License
+along with this program; if not, write to the Free Software Foundation,
+Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA.
 
-Linden Research, Inc., 945 Battery Street, San Francisco, CA  94111  USA
-$/LicenseInfo$
+Contact us at legal@badjuju.com.
+
 */
 
 #include "Common.h"
@@ -92,7 +89,7 @@ public:
 	bool reset;
 };
 
-ItemManager::ItemManager(gcRefPtr<User> user) 
+ItemManager::ItemManager(gcRefPtr<User> user)
 	: BaseManager()
 	, m_pUser(user)
 	, m_Cleaned( false )
@@ -431,7 +428,7 @@ void ItemManager::getModList(DesuraId gameId, std::vector<gcRefPtr<UserCore::Ite
 		auto& info = handle->getItemInfo();
 
 		if (info->getId().getType() != DesuraId::TYPE_MOD || info->getParentId() != gameId)
-			return;		
+			return;
 
 		if (!includeDeleted && (info->getStatus() & UM::ItemInfoI::STATUS_DELETED))
 			return;
@@ -617,7 +614,7 @@ void ItemManager::removeItem(DesuraId id)
 	if (mList.size() > 0)
 		return;
 
-	//we add a flag instead of deleting the item to save headaches arising from other areas 
+	//we add a flag instead of deleting the item to save headaches arising from other areas
 	//caching the pointer to this item. Thus they can check the flag before doing work
 	item->softDelete();
 
@@ -834,7 +831,7 @@ void ItemManager::loadDbItems()
 			sqlite3x::sqlite3_command cmd(db, "SELECT internalid, parentid FROM iteminfo;");
 			sqlite3x::sqlite3_reader reader = cmd.executereader();
 
-			while(reader.read()) 
+			while(reader.read())
 			{
 				DesuraId id(reader.getint64(0));
 				DesuraId pid(reader.getint64(1));
@@ -1243,7 +1240,7 @@ void ItemManager::parseModsXml(gcRefPtr<UserCore::Item::ItemInfo> parent, ParseI
 			{
 				infoNode = it->second.first;
 				pi.maps->modMap.erase(it);
-			}			
+			}
 		}
 
 		modPi.rootNode = mod;
@@ -1289,7 +1286,7 @@ void ItemManager::setFavorite(DesuraId id, bool fav)
 		cmd.bind(1, (long long int)id.toInt64());
 		cmd.bind(2, (int)m_pUser->getUserId());
 
-		cmd.executenonquery(); 
+		cmd.executenonquery();
 	}
 	catch (std::exception)
 	{
@@ -1480,7 +1477,7 @@ void ItemManager::checkItems()
 			group = newTaskGroup(UserCore::Item::ItemTaskGroupI::A_VERIFY);
 
 		group->addItem(item->getItemInfo());
-	}	
+	}
 
 	if (!group)
 		return;
@@ -1491,7 +1488,7 @@ void ItemManager::checkItems()
 		bool bp = HasAnyFlags(b->getItemInfo()->getStatus(), (UserCore::Item::ItemInfoI::STATUS_DOWNLOADING|UserCore::Item::ItemInfoI::STATUS_INSTALLING));
 
 		if ( (ap^bp) == false )
-			return (a->getItemInfo()->getId().toInt64() < b->getItemInfo()->getId().toInt64()); 
+			return (a->getItemInfo()->getId().toInt64() < b->getItemInfo()->getId().toInt64());
 
 		return ap;
 	});
@@ -1679,8 +1676,8 @@ void ItemManager::enableSave()
 	if (m_bEnableSave)
 		return;
 
-	m_bEnableSave = true; 
-	saveItems(); 
+	m_bEnableSave = true;
+	saveItems();
 }
 
 void ItemManager::killAllProcesses(DesuraId itemId)
