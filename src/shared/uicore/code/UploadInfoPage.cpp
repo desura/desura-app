@@ -153,7 +153,12 @@ void UploadInfoPage::dispose()
 
 	safe_delete(m_pUpInfo);
 	safe_delete(m_pVFThread);
-	safe_delete(m_pPrepThread);
+
+	if ( m_pPrepThread.getRefCt() <= 1 )
+	{
+		safe_delete(m_pPrepThread);
+	}
+
 	safe_delete(m_pResumeThread);
 	safe_delete(m_pUpInfo);
 }
