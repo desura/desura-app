@@ -269,9 +269,11 @@ void SetCookies()
 	cookie->destroy();
 }
 
-#ifdef WIN32
+#if defined(WIN32)
 //ChromiumDLL::ChromiumBrowserI* NewChromiumBrowser(HWND hwnd, const char* name, const char* loadUrl)
 ChromiumDLL::ChromiumBrowserI* NewChromiumBrowser(HWND hwnd, const char* name, const char* loadUrl)
+#elif defined(MACOS)
+ChromiumDLL::ChromiumBrowserI* NewChromiumBrowser(void* hwnd, const char* name, const char* loadUrl)
 #else
 ChromiumDLL::ChromiumBrowserI* NewChromiumBrowser(int* hwnd, const char* name, const char* loadUrl)
 #endif
