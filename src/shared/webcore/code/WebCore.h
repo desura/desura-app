@@ -176,6 +176,7 @@ namespace WebCore
 
 		gcString m_szUserAgent;
 		gcString m_szIdCookie;
+		gcString m_AWSELBCookie;
 		std::array<char, 4096> m_szSessCookie;
 		gcString m_szAppDataPath;
 
@@ -196,7 +197,12 @@ namespace WebCore
 	{
 		return m_szIdCookie.c_str();
 	}
-
+	/*
+	inline const char* WebCoreClass::getAWSELB()
+	{
+		return m_AWSELBCookie.c_str();
+	}
+	*/
 	inline const char* WebCoreClass::getSessCookie()
 	{
 		std::lock_guard<std::mutex> l(m_mSessLock);

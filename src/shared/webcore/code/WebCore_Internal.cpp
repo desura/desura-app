@@ -413,6 +413,7 @@ void WebCoreClass::logOut()
 
 	m_bUserAuth = false;
 	m_szIdCookie = gcString("");
+	m_AWSELBCookie = gcString("");
 	m_szSessCookie[0] = '\0';
 }
 

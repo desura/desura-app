@@ -190,6 +190,7 @@ void WebCoreClass::setCookies(gcRefPtr<CookieCallbackI> pCallback)
 
 	(*pCallback.get())(strRoot.c_str(), "freeman", m_szIdCookie.c_str());
 	(*pCallback.get())(strRoot.c_str(), "masterchief", gcString(m_szSessCookie).c_str());
+	(*pCallback.get())(strRoot.c_str(), "AWSELB", gcString(m_AWSELBCookie).c_str());
 }
 
 void WebCoreClass::setWCCookies(HttpHandle& hh)
@@ -198,6 +199,8 @@ void WebCoreClass::setWCCookies(HttpHandle& hh)
 
 	hh->addCookie("freeman", m_szIdCookie.c_str());
 	hh->addCookie("masterchief", gcString(m_szSessCookie).c_str());
+	hh->addCookie("AWSELB", gcString(m_AWSELBCookie).c_str());
+
 	hh->setUserAgent(getUserAgent());
 }
 
