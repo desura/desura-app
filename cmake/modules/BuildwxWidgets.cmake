@@ -57,7 +57,7 @@ else()
   else()
     if(APPLE)
       set(WX_SETUP_INCLUDE_SUB "osx_cocoa-unicode-3.0-desura")
-      set(WX_LIB_NAME "libwx_osx_cocoau_desura-3.0.dylib")
+      set(WX_LIB_NAME "libwx_osx_cocoau_desura-3.0.0.0.0.dylib")
     else()
       set(WX_SETUP_INCLUDE_SUB "gtk2-unicode-3.0-desura")
       set(WX_LIB_NAME "libwx_gtk2u_desura-3.0.so")
@@ -70,6 +70,8 @@ else()
   
   if(MINGW)
     set(WX_PATCH_COMMAND "${PATCH_SCRIPT_PATH}" "${CMAKE_SOURCE_DIR}/cmake/patches/wxWidgets.patch")
+  elseif(APPLE)
+    set(WX_PATCH_COMMAND "${PATCH_SCRIPT_PATH}" "${CMAKE_SOURCE_DIR}/cmake/patches/wxWidgets_apple.patch")
   endif()
 
   ExternalProject_Add(
