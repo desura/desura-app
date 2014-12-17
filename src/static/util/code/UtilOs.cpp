@@ -1,26 +1,23 @@
 /*
-Desura is the leading indie game distribution platform
 Copyright (C) 2011 Mark Chandler (Desura Net Pty Ltd)
+Copyright (C) 2014 Bad Juju Games, Inc.
 
-$LicenseInfo:firstyear=2014&license=lgpl$
-Copyright (C) 2014, Linden Research, Inc.
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
 
-This library is free software; you can redistribute it and/or
-modify it under the terms of the GNU Lesser General Public
-License as published by the Free Software Foundation;
-version 2.1 of the License only.
-
-This library is distributed in the hope that it will be useful,
+This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-Lesser General Public License for more details.
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
 
-You should have received a copy of the GNU Lesser General Public
-License along with this library; if not, see <http://www.gnu.org/licenses/>
-or write to the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+You should have received a copy of the GNU General Public License
+along with this program; if not, write to the Free Software Foundation,
+Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA.
 
-Linden Research, Inc., 945 Battery Street, San Francisco, CA  94111  USA
-$/LicenseInfo$
+Contact us at legal@badjuju.com.
+
 */
 #include "Common.h"
 #include "util/UtilOs.h"
@@ -75,7 +72,7 @@ std::string getOSString()
 #ifdef WIN32
 	char buff[255] = {0};
 	UTIL::WIN::getOSString(buff, 255);
- 
+
 	return std::string(buff, 255);
 #endif
 
@@ -163,10 +160,10 @@ std::wstring getCachePath(std::wstring extra)
 	#elif defined(USE_PORTABLE_DIR)
 		std::string cachePath = UTIL::STRING::toStr(getCurrentDir(L"cache"));
 	#endif
-	
+
 	if (extra.size() > 0)
 		extra.insert(0, DIRS_WSTR);
-	
+
 	return UTIL::STRING::toWStr(cachePath) + extra;
 #else
 	return getAppDataPath(std::wstring(L"cache\\") + extra);
@@ -194,10 +191,10 @@ std::wstring getAppInstallPath(std::wstring extra)
 	#elif defined(USE_PORTABLE_DIR)
 		std::string installPath = UTIL::STRING::toStr(getCurrentDir(L"games"));
 	#endif
-	
+
 	if (extra.size() > 0)
 		extra.insert(0, DIRS_WSTR);
-	
+
 	return UTIL::STRING::toWStr(installPath) + extra;
 #else
 	return UTIL::OS::getCurrentDir(DIR_WCOMMON);
@@ -216,10 +213,10 @@ std::wstring getAppDataPath(std::wstring extra)
 	#elif defined(USE_PORTABLE_DIR)
 		std::string configPath = UTIL::STRING::toStr(getCurrentDir(L"config"));
 	#endif
-	
+
 	if (extra.size() > 0)
 		extra.insert(0, DIRS_WSTR);
-	
+
 	return UTIL::STRING::toWStr(configPath) + extra;
 #else
 	wchar_t path[MAX_PATH];
@@ -245,7 +242,7 @@ std::wstring getLocalAppDataPath(std::wstring extra)
 #ifdef WIN32
 	wchar_t path[MAX_PATH];
 	getSystemPath(CSIDL_LOCAL_APPDATA, path);
-	
+
 	std::wstring out(path);
 
 	out += L"\\";
@@ -268,7 +265,7 @@ std::wstring getTempInternetPath(std::wstring extra)
 #ifdef WIN32
 	wchar_t path[MAX_PATH];
 	getSystemPath(CSIDL_INTERNET_CACHE, path);
-	
+
 	std::wstring out(path);
 
 	out += L"\\";
@@ -293,7 +290,7 @@ std::wstring getCommonProgramFilesPath(std::wstring extra)
 #ifdef WIN32
 	wchar_t path[MAX_PATH];
 	getSystemPath(CSIDL_PROGRAM_FILES_COMMON, path);
-	
+
 	std::wstring out(path);
 
 	out += L"\\Desura";
@@ -315,7 +312,7 @@ std::wstring getStartMenuProgramsPath(std::wstring extra)
 #ifdef WIN32
 	wchar_t path[MAX_PATH];
 	getSystemPath(CSIDL_COMMON_PROGRAMS, path);
-	
+
 	std::wstring out(path);
 
 	if (extra.size() > 0)
@@ -335,7 +332,7 @@ std::wstring getDesktopPath(std::wstring extra)
 #ifdef WIN32
 	wchar_t path[MAX_PATH];
 	getSystemPath(CSIDL_DESKTOP, path);
-	
+
 	std::wstring out(path);
 
 	if (extra.size() > 0)
@@ -368,22 +365,22 @@ gcString getAbsPath(const gcString& path)
 {
 	if (path.size() == 0 || path[0] == '/')
 		return path;
-	
+
 	gcString wd = UTIL::LIN::getAppPath(L"");
-	
+
 	if (path.find(wd) == std::string::npos)
 		return wd + "/" + path;
-	
-	return path;	
+
+	return path;
 }
 
 gcString getRelativePath(const gcString &path)
 {
 	gcString wd = UTIL::LIN::getAppPath(L"");
-	
+
 	if (path.find(wd) == 0)
 		return path.substr(wd.size()+1, std::string::npos);
-	
+
 	return path;
 }
 

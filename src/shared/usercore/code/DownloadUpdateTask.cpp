@@ -1,26 +1,23 @@
 /*
-Desura is the leading indie game distribution platform
 Copyright (C) 2011 Mark Chandler (Desura Net Pty Ltd)
+Copyright (C) 2014 Bad Juju Games, Inc.
 
-$LicenseInfo:firstyear=2014&license=lgpl$
-Copyright (C) 2014, Linden Research, Inc.
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
 
-This library is free software; you can redistribute it and/or
-modify it under the terms of the GNU Lesser General Public
-License as published by the Free Software Foundation;
-version 2.1 of the License only.
-
-This library is distributed in the hope that it will be useful,
+This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-Lesser General Public License for more details.
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
 
-You should have received a copy of the GNU Lesser General Public
-License along with this library; if not, see <http://www.gnu.org/licenses/>
-or write to the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+You should have received a copy of the GNU General Public License
+along with this program; if not, write to the Free Software Foundation,
+Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA.
 
-Linden Research, Inc., 945 Battery Street, San Francisco, CA  94111  USA
-$/LicenseInfo$
+Contact us at legal@badjuju.com.
+
 */
 
 #include "Common.h"
@@ -39,7 +36,7 @@ $/LicenseInfo$
 using namespace UserCore::Task;
 
 
-DownloadUpdateTask::DownloadUpdateTask(gcRefPtr<UserCore::UserI> user, uint32 appver, uint32 build, bool bForced) 
+DownloadUpdateTask::DownloadUpdateTask(gcRefPtr<UserCore::UserI> user, uint32 appver, uint32 build, bool bForced)
 	: UserTask(user)
 	, m_uiAppVer(appver)
 	, m_uiAppBuild(build)
@@ -62,7 +59,7 @@ void DownloadUpdateTask::doTask()
 	if (!m_bStopped)
 	{
 		uint32 prog = 0;
-		onDownloadProgressEvent(prog);		
+		onDownloadProgressEvent(prog);
 	}
 
 	onDownloadCompleteEvent.reset();
@@ -76,7 +73,7 @@ void DownloadUpdateTask::onStop()
 
 	if (m_hMcfHandle.handle())
 		m_hMcfHandle->stop();
-	
+
 	//if we didnt finish delete the incomplete file
 	if (!m_bCompleted)
 		UTIL::FS::delFile(UTIL::FS::PathWithFile(m_szPath));
@@ -107,7 +104,7 @@ void DownloadUpdateTask::downloadUpdate()
 
 	m_hMcfHandle->setFile(m_szPath.c_str());
 	m_hMcfHandle->setWorkerCount(1);
-	
+
 	try
 	{
 		m_hMcfHandle->dlHeaderFromHttp(url.c_str());
@@ -171,10 +168,10 @@ void DownloadUpdateTask::downloadUpdate()
 void DownloadUpdateTask::onDownloadProgress(MCFCore::Misc::ProgressInfo& p)
 {
 	uint32 prog = p.percent;
-	
+
 	if (m_uiLastPercent == prog)
 		return;
-		
+
 	m_uiLastPercent = prog;
 	onDownloadProgressEvent(prog);
 }

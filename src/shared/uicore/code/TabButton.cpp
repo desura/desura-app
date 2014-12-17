@@ -1,26 +1,23 @@
 /*
-Desura is the leading indie game distribution platform
 Copyright (C) 2011 Mark Chandler (Desura Net Pty Ltd)
+Copyright (C) 2014 Bad Juju Games, Inc.
 
-$LicenseInfo:firstyear=2014&license=lgpl$
-Copyright (C) 2014, Linden Research, Inc.
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
 
-This library is free software; you can redistribute it and/or
-modify it under the terms of the GNU Lesser General Public
-License as published by the Free Software Foundation;
-version 2.1 of the License only.
-
-This library is distributed in the hope that it will be useful,
+This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-Lesser General Public License for more details.
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
 
-You should have received a copy of the GNU Lesser General Public
-License along with this library; if not, see <http://www.gnu.org/licenses/>
-or write to the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+You should have received a copy of the GNU General Public License
+along with this program; if not, write to the Free Software Foundation,
+Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA.
 
-Linden Research, Inc., 945 Battery Street, San Francisco, CA  94111  USA
-$/LicenseInfo$
+Contact us at legal@badjuju.com.
+
 */
 
 #include "Common.h"
@@ -37,27 +34,27 @@ END_EVENT_TABLE()
 
 #define SELECTED	wxColor(GetGCThemeManager()->getColor("tabbutton", "selected-bg"))
 #define NORMAL		wxColor(GetGCThemeManager()->getColor("tabbutton", "bg"))
-#define MOUSEOVER	wxColor(GetGCThemeManager()->getColor("tabbutton", "selected-bg")) 
+#define MOUSEOVER	wxColor(GetGCThemeManager()->getColor("tabbutton", "selected-bg"))
 
 tabButton::tabButton( wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style ) : wxPanel( parent, id, pos, size, style )
 {
 	this->SetBackgroundColour( NORMAL );
-	
+
 	wxBoxSizer* bSizer4;
 	bSizer4 = new wxBoxSizer( wxHORIZONTAL );
-	
+
 	bSizer4->Add( 0, 30, 1, wxEXPAND, 5 );
 
 	m_labTitle = new wxStaticText( this, wxID_ANY, wxT("Text"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_labTitle->Wrap( -1 );
 
 	m_labTitle->SetForegroundColour( wxColour( 255, 255, 255 ) );
-	
+
 	bSizer4->Add( m_labTitle, 0, wxALL|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL, 5 );
-	
-	
+
+
 	bSizer4->Add( 0, 0, 1, wxEXPAND, 5 );
-	
+
 
 	Connect( wxEVT_LEFT_DOWN, wxMouseEventHandler( tabButton::onMouseDown ) );
 	Connect( wxEVT_MOTION, wxMouseEventHandler( tabButton::onMouseEvent ));
@@ -66,7 +63,7 @@ tabButton::tabButton( wxWindow* parent, wxWindowID id, const wxPoint& pos, const
 	m_labTitle->Connect( wxEVT_ENTER_WINDOW, wxMouseEventHandler( tabButton::onMouseOver ), nullptr, this );
 	m_labTitle->Connect( wxEVT_LEAVE_WINDOW, wxMouseEventHandler( tabButton::onMouseOut ), nullptr, this );
 	m_labTitle->Connect( wxEVT_LEFT_DOWN, wxMouseEventHandler( tabButton::onMouseDown ), nullptr, this );
-	
+
 	parent->Connect( wxEVT_MOTION, wxMouseEventHandler( tabButton::onMouseEvent ), nullptr, this);
 
 	this->SetSizer( bSizer4 );
@@ -113,7 +110,7 @@ void tabButton::updateMouse(wxMouseEvent& event)
 	if (m_bSelected)
 		return;
 
-	wxRect panelRec = GetScreenRect(); 
+	wxRect panelRec = GetScreenRect();
 	panelRec.x += 2;
 	panelRec.y += 2;
 	panelRec.width -= 4;
@@ -134,7 +131,7 @@ void tabButton::updateMouse(wxMouseEvent& event)
 	{
 		this->SetBackgroundColour( NORMAL );
 	}
-		
+
 	this->Refresh();
 }
 

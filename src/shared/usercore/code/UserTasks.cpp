@@ -1,26 +1,23 @@
 /*
-Desura is the leading indie game distribution platform
 Copyright (C) 2011 Mark Chandler (Desura Net Pty Ltd)
+Copyright (C) 2014 Bad Juju Games, Inc.
 
-$LicenseInfo:firstyear=2014&license=lgpl$
-Copyright (C) 2014, Linden Research, Inc.
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
 
-This library is free software; you can redistribute it and/or
-modify it under the terms of the GNU Lesser General Public
-License as published by the Free Software Foundation;
-version 2.1 of the License only.
-
-This library is distributed in the hope that it will be useful,
+This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-Lesser General Public License for more details.
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
 
-You should have received a copy of the GNU Lesser General Public
-License along with this library; if not, see <http://www.gnu.org/licenses/>
-or write to the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+You should have received a copy of the GNU General Public License
+along with this program; if not, write to the Free Software Foundation,
+Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA.
 
-Linden Research, Inc., 945 Battery Street, San Francisco, CA  94111  USA
-$/LicenseInfo$
+Contact us at legal@badjuju.com.
+
 */
 
 #include "Common.h"
@@ -69,7 +66,7 @@ void DeleteThread::doTask()
 ////////////////////////////////////////////////////////////////////////////
 
 
-DownloadImgTask::DownloadImgTask(gcRefPtr<UserCore::UserI> user, gcRefPtr<UserCore::Item::ItemInfo> itemInfo, uint8 image) 
+DownloadImgTask::DownloadImgTask(gcRefPtr<UserCore::UserI> user, gcRefPtr<UserCore::Item::ItemInfo> itemInfo, uint8 image)
 	: UserTask(user)
 {
 	m_Image = image;
@@ -159,7 +156,7 @@ void ChangeAccountTask::doTask()
 ////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////
 
-DownloadBannerTask::DownloadBannerTask(gcRefPtr<UserCore::UserI> user, const MCFCore::Misc::DownloadProvider& dp) 
+DownloadBannerTask::DownloadBannerTask(gcRefPtr<UserCore::UserI> user, const MCFCore::Misc::DownloadProvider& dp)
 	: UserTask(user)
 	, m_DownloadProvider(dp)
 {
@@ -214,12 +211,12 @@ void DownloadAvatarTask::doTask()
 		{
 			HttpHandle wc(m_szUrl.c_str());
 			wc->getWeb();
-			
+
 			if (wc->getDataSize() != 0)
 			{
 				if (UTIL::MISC::isValidImage((const unsigned char*)wc->getData()) == IMAGE_VOID)
 					throw gcException(ERR_INVALIDDATA, gcString("The url [{0}] is not an image format", m_szUrl));
-				
+
 				UTIL::FS::Path urlPath(m_szUrl, "", true);
 				UTIL::FS::Path path(getUserCore()->getAppDataPath(), "", false);
 
@@ -296,7 +293,7 @@ void GatherInfoTask::doTask()
 ////////////////////////////////////////////////////////////////////////////
 
 
-CDKeyTask::CDKeyTask(gcRefPtr<UserCore::UserI> user, DesuraId id) 
+CDKeyTask::CDKeyTask(gcRefPtr<UserCore::UserI> user, DesuraId id)
 	: UserTask(user, id)
 {
 }
@@ -360,7 +357,7 @@ public:
 };
 
 
-MigrateStandaloneTask::MigrateStandaloneTask(gcRefPtr<UserCore::UserI> user, const std::vector<UTIL::FS::Path> &fileList) 
+MigrateStandaloneTask::MigrateStandaloneTask(gcRefPtr<UserCore::UserI> user, const std::vector<UTIL::FS::Path> &fileList)
 	: UserTask(user, DesuraId())
 {
 	m_vFileList = fileList;
@@ -430,7 +427,7 @@ void MigrateStandaloneTask::doTask()
 ////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////
 
-RegenLaunchScriptsTask::RegenLaunchScriptsTask(gcRefPtr<UserCore::UserI> user) 
+RegenLaunchScriptsTask::RegenLaunchScriptsTask(gcRefPtr<UserCore::UserI> user)
 	: UserTask(user, DesuraId())
 {
 }
@@ -438,14 +435,14 @@ RegenLaunchScriptsTask::RegenLaunchScriptsTask(gcRefPtr<UserCore::UserI> user)
 void RegenLaunchScriptsTask::doTask()
 {
 	std::vector<gcRefPtr<UserCore::Item::ItemHandleI>> itemList;
-	
+
 	auto im = getUserCore()->getItemManager();
-	
+
 	for (size_t x=0; x<im->getCount(); x++)
 	{
 		itemList.push_back(im->getItemHandle(x));
 	}
-	
+
 	for (size_t x=0; x<itemList.size(); x++)
 	{
 		if (!itemList[x] || !itemList[x]->getItemInfo()->isInstalled())

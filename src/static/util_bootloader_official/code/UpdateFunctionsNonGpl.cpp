@@ -1,26 +1,23 @@
 /*
-Desura is the leading indie game distribution platform
 Copyright (C) 2011 Mark Chandler (Desura Net Pty Ltd)
+Copyright (C) 2014 Bad Juju Games, Inc.
 
-$LicenseInfo:firstyear=2014&license=lgpl$
-Copyright (C) 2014, Linden Research, Inc.
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
 
-This library is free software; you can redistribute it and/or
-modify it under the terms of the GNU Lesser General Public
-License as published by the Free Software Foundation;
-version 2.1 of the License only.
-
-This library is distributed in the hope that it will be useful,
+This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-Lesser General Public License for more details.
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
 
-You should have received a copy of the GNU Lesser General Public
-License along with this library; if not, see <http://www.gnu.org/licenses/>
-or write to the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+You should have received a copy of the GNU General Public License
+along with this program; if not, write to the Free Software Foundation,
+Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA.
 
-Linden Research, Inc., 945 Battery Street, San Francisco, CA  94111  USA
-$/LicenseInfo$
+Contact us at legal@badjuju.com.
+
 */
 
 
@@ -61,7 +58,7 @@ bool CheckCert()
 			exePath[x] = '\0';
 	}
 
-	wchar_t *modules[] = 
+	static wchar_t *modules[] =
 	{
 		L"desura.exe",
 		L"desura_service.exe",
@@ -72,7 +69,7 @@ bool CheckCert()
 		L"bin\\servicecore.dll",
 	};
 
-	char *moduleName[] = 
+	static char *moduleName[] =
 	{
 		"desura.exe",
 		"desura_service.exe",
@@ -85,21 +82,23 @@ bool CheckCert()
 
 	bool allGood = true;
 	char msgMsg[1024];
-	
+
 	char* curPos = msgMsg;
 	size_t curSize = 1024;
 
-	Safe::snprintf(curPos, curSize, "There has been an error validating the Digital Signature for:\n"); 
+	Safe::snprintf(curPos, curSize, "There has been an error validating the Digital Signature for:\n");
 
 	curPos+= 62;
-	curSize+= 62;
+	curSize-= 62;
+
+	wchar_t path[255];
 
 	for (size_t x=0; x<6; x++)
 	{
-		wchar_t path[255];
+		path[ 0 ] = 0;
 
-		gcString mod(modules[x]);
-		Safe::snwprintf(path, 255, L"%s\\%s", exePath, modules[x]);
+		gcString mod = modules[x];
+		Safe::snwprintf(path, 255, L"%s%s", exePath, modules[x]);
 
 		uint32 res = UTIL::WIN::validateCert(path);
 
@@ -127,7 +126,7 @@ bool CheckCert()
 
 	if (res == IDCANCEL)
 		exit(200);
-	
+
 	return (res == IDYES);
 }
 
@@ -197,7 +196,7 @@ public:
 	{
 		gcString strFullPath("{0}\\{1}", szPath, szFileName);
 		Log("Found bad file: %s\n", strFullPath.c_str());
-		
+
 		return false;
 	}
 };
@@ -206,7 +205,7 @@ public:
 bool CheckInstall()
 {
 	UMcf updateMcf;
-	
+
 	if (updateMcf.loadFromFile(UPDATEXML_W) != MCF_OK)
 		return false;
 
@@ -224,11 +223,11 @@ void FullUpdate()
 	DeleteFileW(updateFile.c_str());
 
 	int nRes = DisplayUpdateWindow(UPDATE_FILES);
-	
+
 	//Critical failure
 	if (nRes == -1)
 		exit(0);
-	
+
 	if (nRes == 2)
 		exit(0);
 
@@ -244,7 +243,7 @@ void FullUpdate()
 		char msg[255];
 		Safe::snprintf(msg, 255, "Failed to Update Desura: %s [%d.%d]", e.getErrMsg(), e.getErrId(), e.getSecErrId());
 		::MessageBox(NULL, msg, "Desura Critical Error", MB_OK);
-	
+
 		exit(-4);
 	}
 #endif
@@ -253,7 +252,7 @@ void FullUpdate()
 void McfUpdate()
 {
 	int nRes = DisplayUpdateWindow(UPDATE_MCF);
-	
+
 	//Critical failure
 	if (nRes == -1)
 		exit(0);
@@ -286,7 +285,7 @@ void CheckForBadUninstaller()
 			folder = &exePath[x+1];
 			break;
 		}
-	}	
+	}
 
 	if (strcmp(folder, "Desura") != 0)
 		DeleteFile("Desura_Uninstall.exe");

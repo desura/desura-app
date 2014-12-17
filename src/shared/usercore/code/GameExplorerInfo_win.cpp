@@ -1,26 +1,23 @@
 /*
-Desura is the leading indie game distribution platform
 Copyright (C) 2011 Mark Chandler (Desura Net Pty Ltd)
+Copyright (C) 2014 Bad Juju Games, Inc.
 
-$LicenseInfo:firstyear=2014&license=lgpl$
-Copyright (C) 2014, Linden Research, Inc.
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
 
-This library is free software; you can redistribute it and/or
-modify it under the terms of the GNU Lesser General Public
-License as published by the Free Software Foundation;
-version 2.1 of the License only.
-
-This library is distributed in the hope that it will be useful,
+This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-Lesser General Public License for more details.
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
 
-You should have received a copy of the GNU Lesser General Public
-License along with this library; if not, see <http://www.gnu.org/licenses/>
-or write to the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+You should have received a copy of the GNU General Public License
+along with this program; if not, write to the Free Software Foundation,
+Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA.
 
-Linden Research, Inc., 945 Battery Street, San Francisco, CA  94111  USA
-$/LicenseInfo$
+Contact us at legal@badjuju.com.
+
 */
 
 #include "Common.h"
@@ -41,7 +38,7 @@ $/LicenseInfo$
 #pragma pack(push)
 #pragma pack(2)
 
-typedef struct 
+typedef struct
 {
 	BYTE bWidth;		// Width, in pixels, of the image
 	BYTE bHeight;		// Height, in pixels, of the image
@@ -51,19 +48,19 @@ typedef struct
 	WORD wBitCount;		// Bits per pixel
 	DWORD dwBytesInRes; // how many bytes in this resource?
 	DWORD dwImageOffeset; // the ID
-} 
+}
 ICONDIRENTRY;
 
-typedef struct 
+typedef struct
 {
 	WORD idReserved;	// Reserved (must be 0)
 	WORD idType;		// Resource type (1 for icons)
 	WORD idCount;		// How many images?
 	ICONDIRENTRY idEntries[1]; // The entries for each image
-} 
+}
 ICONDIR;
 
-typedef struct 
+typedef struct
 {
 	BYTE bWidth;		// Width, in pixels, of the image
 	BYTE bHeight;		// Height, in pixels, of the image
@@ -73,16 +70,16 @@ typedef struct
 	WORD wBitCount;		// Bits per pixel
 	DWORD dwBytesInRes; // how many bytes in this resource?
 	WORD nID;			// the ID
-} 
+}
 GRPICONDIRENTRY, *LPGRPICONDIRENTRY;
 
-typedef struct 
+typedef struct
 {
 	WORD idReserved;	// Reserved (must be 0)
 	WORD idType;		// Resource type (1 for icons)
 	WORD idCount;		// How many images?
 	GRPICONDIRENTRY idEntries[1]; // The entries for each image
-} 
+}
 GRPICONDIR, *LPGRPICONDIR;
 
 
@@ -103,7 +100,7 @@ namespace
 		auto node = root.NewElement(nodeName);
 		WriteChildWithChildAndAtt(node, childName, attName, attValue);
 		return node;
-	}	
+	}
 }
 
 
@@ -277,7 +274,7 @@ void GameExplorerInfo::generateDll()
 	UTIL::FS::recMakeFolder(UTIL::FS::PathWithFile(tempIco));
 
 	gcWString xmlData = generateXml();
-	
+
 	if (!UTIL::MISC::convertToIco(iconPath, tempIco))
 	{
 		int a=1;
@@ -326,7 +323,7 @@ void GameExplorerInfo::translateIco(HANDLE handle, const char* icoPath)
 {
 	char* buff = nullptr;
 	uint32 size = UTIL::FS::readWholeFile(icoPath, &buff);
-	
+
 	if (size == 0)
 	{
 		safe_delete(buff);
@@ -414,7 +411,7 @@ gcWString GameExplorerInfo::generateXml()
 	gcString szVerifyLink("desura://verify/{0}/{1}", m_Id.getTypeString(), m_pItemInfo->getShortName());
 
 	gcString szGenere(m_pItemInfo->getGenre());
-	
+
 	std::vector<gcRefPtr<UserCore::Item::Misc::ExeInfoI>> vExeList;
 	m_pItemInfo->getExeList(vExeList);
 
@@ -442,7 +439,7 @@ gcWString GameExplorerInfo::generateXml()
 
 	auto genres = gameDef.NewElement("Genres");
 	genres.WriteChild("Genre", szGenere);
-		
+
 	WriteChildWithChildAndAtt("Version", "VersionNumber", "versionNumber", szVersion.c_str(), gameDef);
 
 	auto dev = gameDef.NewElement("Developers").NewElement("Developer");
@@ -454,7 +451,7 @@ gcWString GameExplorerInfo::generateXml()
 	publisher.SetAttribute("URI", szPubUrl.c_str());
 	publisher.SetText(szPub.c_str());
 
-	
+
 	if (vExeList.size() > 0)
 	{
 		auto gameExecutables = gameDef.NewElement("GameExecutables");
@@ -499,13 +496,13 @@ gcWString GameExplorerInfo::generateXml()
 		changeLog.SetAttribute("name", "View Update History");
 		i++;
 	}
-		
-		
+
+
 	auto profile = WriteChildWithChildAndAtt("Task", "URLTask", "Link", szProfileLink.c_str(), playTask);
 	profile.SetAttribute("index", i);
 	profile.SetAttribute("name", "View Profile");
 	i++;
-		
+
 
 	uint32 count = 0;
 	for (uint32 x=0; x<m_pItemInfo->getBranchCount(); x++)
@@ -530,7 +527,7 @@ gcWString GameExplorerInfo::generateXml()
 		auto branch = WriteChildWithChildAndAtt("Task", "URLTask", "Link", link.c_str(), playTask);
 		branch.SetAttribute("index", x+i);
 		branch.SetAttribute("name", name.c_str());
-			
+
 	}
 
 

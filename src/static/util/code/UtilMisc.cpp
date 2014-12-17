@@ -1,26 +1,23 @@
 /*
-Desura is the leading indie game distribution platform
 Copyright (C) 2011 Mark Chandler (Desura Net Pty Ltd)
+Copyright (C) 2014 Bad Juju Games, Inc.
 
-$LicenseInfo:firstyear=2014&license=lgpl$
-Copyright (C) 2014, Linden Research, Inc.
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
 
-This library is free software; you can redistribute it and/or
-modify it under the terms of the GNU Lesser General Public
-License as published by the Free Software Foundation;
-version 2.1 of the License only.
-
-This library is distributed in the hope that it will be useful,
+This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-Lesser General Public License for more details.
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
 
-You should have received a copy of the GNU Lesser General Public
-License along with this library; if not, see <http://www.gnu.org/licenses/>
-or write to the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+You should have received a copy of the GNU General Public License
+along with this program; if not, write to the Free Software Foundation,
+Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA.
 
-Linden Research, Inc., 945 Battery Street, San Francisco, CA  94111  USA
-$/LicenseInfo$
+Contact us at legal@badjuju.com.
+
 */
 
 #include "Common.h"
@@ -52,7 +49,7 @@ uint8 getCoreCount()
 	uint8 numCPU = 1;
 
 	nt mib[4];
-	size_t len; 
+	size_t len;
 
 	/* set the mib for hw.ncpu */
 	mib[0] = CTL_HW;
@@ -61,7 +58,7 @@ uint8 getCoreCount()
 	/* get the number of CPUs from the system */
 	sysctl(mib, 2, &numCPU, &len, nullptr, 0);
 
-	if( numCPU < 1 ) 
+	if( numCPU < 1 )
 	{
 		 mib[1] = HW_NCPU;
 		 sysctl( mib, 2, &numCPU, &len, nullptr, 0 );
@@ -74,7 +71,7 @@ uint8 getCoreCount()
 	return numCPU;
 #endif
 
-#ifdef __linux 
+#ifdef __linux
 	return (uint8)sysconf( _SC_NPROCESSORS_ONLN );
 #endif
 }
@@ -282,7 +279,7 @@ bool isWebURL(const char* str)
 
 IMAGE_TYPES isValidImage(const unsigned char h[5])
 {
-	
+
 	//GIF8
 	if (h[0] == 71 && h[1] == 73 && h[2] == 70 && h[3] == 56)
 	{
@@ -294,7 +291,7 @@ IMAGE_TYPES isValidImage(const unsigned char h[5])
 	{
 		return IMAGE_PNG;
 	}
-	
+
 	//FFD8
 	if (h[0] == 255 && h[1] == 216)
 	{
@@ -344,7 +341,7 @@ const std::string fixDateTimeString(const char* dateTime)
 		date_str = date_str.substr(0,8);
 		date_str += "T";
 
-		// add back in the time 
+		// add back in the time
 		date_str += time_part;
 	}
 
@@ -374,7 +371,7 @@ const std::string dateTimeToDisplay(const char* dateTime)
 
 	char szOut[255];
 	auto size = strftime(szOut, 255, "%x", std::localtime(&t2));
-	
+
 	return std::string(szOut, size);
 }
 
@@ -586,7 +583,7 @@ Buffer::~Buffer()
 {
 	safe_delete(m_pData);
 }
-		
+
 void Buffer::resize(size_t newSize)
 {
 	m_pData->data = (char*)realloc(m_pData->data, newSize);
@@ -733,7 +730,7 @@ void CMDArgs::addValue(const char* name, const char* value)
 void CMDArgs::process()
 {
 	size_t nArgs = m_pInternal->m_vArgList.size();
-	size_t i=0; 
+	size_t i=0;
 
 	while (i<nArgs)
 	{
@@ -742,7 +739,7 @@ void CMDArgs::process()
 
 		if (i+1 < nArgs)
 			narg = std::string(m_pInternal->m_vArgList[i+1]);
-		
+
 		if (arg[0] == '-')
 		{
 			while (arg[0] == '-')
@@ -783,7 +780,7 @@ int CMDArgs::getInt(const char* name)
 
 	if (hasValue(name))
 		res = Safe::atoi(m_pInternal->m_mArgv[name].c_str());
-	
+
 	return res;
 }
 

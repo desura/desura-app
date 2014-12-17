@@ -1,26 +1,23 @@
 /*
-Desura is the leading indie game distribution platform
 Copyright (C) 2011 Mark Chandler (Desura Net Pty Ltd)
+Copyright (C) 2014 Bad Juju Games, Inc.
 
-$LicenseInfo:firstyear=2014&license=lgpl$
-Copyright (C) 2014, Linden Research, Inc.
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
 
-This library is free software; you can redistribute it and/or
-modify it under the terms of the GNU Lesser General Public
-License as published by the Free Software Foundation;
-version 2.1 of the License only.
-
-This library is distributed in the hope that it will be useful,
+This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-Lesser General Public License for more details.
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
 
-You should have received a copy of the GNU Lesser General Public
-License along with this library; if not, see <http://www.gnu.org/licenses/>
-or write to the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+You should have received a copy of the GNU General Public License
+along with this program; if not, write to the Free Software Foundation,
+Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA.
 
-Linden Research, Inc., 945 Battery Street, San Francisco, CA  94111  USA
-$/LicenseInfo$
+Contact us at legal@badjuju.com.
+
 */
 
 #include "Common.h"
@@ -89,7 +86,7 @@ void changeServiceAccess(const char* szName)
 			throw gcException(ERR_SERVICE, gcString("Failed heap allocation for service service: {0}", szName));
 
 		// Get the DACL.
-		if (!GetSecurityDescriptorDacl(psd, &bDaclPresent, &pacl, &bDaclDefaulted))		
+		if (!GetSecurityDescriptorDacl(psd, &bDaclPresent, &pacl, &bDaclDefaulted))
 			throw gcException(ERR_SERVICE, GetLastError(), gcString("GetSecurityDescriptorDacl failed for service: {0}", szName));
 
 
@@ -99,7 +96,7 @@ void changeServiceAccess(const char* szName)
 		SidSize = SECURITY_MAX_SID_SIZE;
 		// Allocate enough memory for the largest possible SID.
 		if(!(TheSID = LocalAlloc(LMEM_FIXED, SidSize)))
-		{    
+		{
 			LocalFree(TheSID);
 			throw gcException(ERR_SERVICE, GetLastError(), gcString("LocalAlloc failed for  service: {0}", szName));
 		}
@@ -133,15 +130,15 @@ void changeServiceAccess(const char* szName)
 		}
 
 		// Initialize a NEW Security Descriptor.
-		if (!InitializeSecurityDescriptor(&sd, SECURITY_DESCRIPTOR_REVISION))			
+		if (!InitializeSecurityDescriptor(&sd, SECURITY_DESCRIPTOR_REVISION))
 			throw gcException(ERR_SERVICE, GetLastError(), gcString("InitializeSecurityDescriptor failed for  service: {0}", szName));
 
 		// Set the new DACL in the Security Descriptor.
-		if (!SetSecurityDescriptorDacl(&sd, TRUE, pNewAcl, FALSE))						
+		if (!SetSecurityDescriptorDacl(&sd, TRUE, pNewAcl, FALSE))
 			throw gcException(ERR_SERVICE, GetLastError(), gcString("SetSecurityDescriptorDacl failed for  service: {0}", szName));
 
 		// Set the new DACL for the service object.
-		if (!SetServiceObjectSecurity(Service, DACL_SECURITY_INFORMATION, &sd))		
+		if (!SetServiceObjectSecurity(Service, DACL_SECURITY_INFORMATION, &sd))
 			throw gcException(ERR_SERVICE, GetLastError(), gcString("SetServiceObjectSecurity failed for  service: {0}", szName));
 
 	}
@@ -172,7 +169,7 @@ void enableService(const char* szName)
 {
 	gcWString wName(szName);
 	SC_HANDLE scm, Service;
-	
+
 	//open connection to SCM
 	scm = OpenSCManager(nullptr, nullptr, SC_MANAGER_CONNECT);
 
@@ -190,10 +187,10 @@ void enableService(const char* szName)
 	BOOL res = ChangeServiceConfig(Service, SERVICE_NO_CHANGE, SERVICE_DEMAND_START, SERVICE_NO_CHANGE, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr);
 
 	CloseServiceHandle(scm);
-	CloseServiceHandle(Service); 
+	CloseServiceHandle(Service);
 
 	if (!res)
-		throw gcException(ERR_SERVICE, GetLastError(), gcString("Failed to to renable service: {0}", szName)); 
+		throw gcException(ERR_SERVICE, GetLastError(), gcString("Failed to to renable service: {0}", szName));
 }
 
 BOOL doStartService(SC_HANDLE Service, const char* szName, std::vector<std::string> &args)
@@ -226,9 +223,9 @@ void startService(const char* szName, std::vector<std::string> &args)
 	gcWString wName(szName);
 
 	SC_HANDLE scm, Service;
-	SERVICE_STATUS ssStatus; 
+	SERVICE_STATUS ssStatus;
 	DWORD dwWaitTime;
-	
+
 	//open connection to SCM
 	scm = OpenSCManager(nullptr, nullptr, SC_MANAGER_CONNECT);
 
@@ -243,7 +240,7 @@ void startService(const char* szName, std::vector<std::string> &args)
 		throw gcException(ERR_NULLSERVICE, GetLastError(), gcString("Failed to open service: {0}", szName));
 	}
 
-	// Check the status until the service is no longer start pending. 
+	// Check the status until the service is no longer start pending.
 	if (!QueryServiceStatus( Service, &ssStatus) )
 	{
 		CloseServiceHandle(Service);
@@ -256,7 +253,7 @@ void startService(const char* szName, std::vector<std::string> &args)
 		gcSleep(1000);
 	}
 
-	if (ssStatus.dwCurrentState != SERVICE_STOPPED) 
+	if (ssStatus.dwCurrentState != SERVICE_STOPPED)
 	{
 		CloseServiceHandle(Service);
 		CloseServiceHandle(scm);
@@ -273,18 +270,18 @@ void startService(const char* szName, std::vector<std::string> &args)
 		throw gcException(ERR_SERVICE, GetLastError(), gcString("Failed to start service: {0}", szName));
 	}
 
-	// Check the status until the service is no longer start pending. 
+	// Check the status until the service is no longer start pending.
 	if (!QueryServiceStatus( Service, &ssStatus) )
 	{
 		CloseServiceHandle(Service);
 		CloseServiceHandle(scm);
 		throw gcException(ERR_SERVICE, GetLastError(), gcString("Failed to Query service: {0}", szName));
 	}
-		
+
 	DWORD totalTime = 0;
 
-	while (ssStatus.dwCurrentState != SERVICE_RUNNING) 
-	{ 
+	while (ssStatus.dwCurrentState != SERVICE_RUNNING)
+	{
 		if (ssStatus.dwCurrentState == SERVICE_STOPPED)
 		{
 			//start service
@@ -299,7 +296,7 @@ void startService(const char* szName, std::vector<std::string> &args)
 
 		gcSleep( dwWaitTime );
 
-		// Check the status again. 
+		// Check the status again.
 		if (!QueryServiceStatus( Service, &ssStatus) )
 		{
 			CloseServiceHandle(Service);
@@ -314,8 +311,8 @@ void startService(const char* szName, std::vector<std::string> &args)
 			throw gcException(ERR_SERVICE, gcString("Service {0} Startup timed out after 30 seconds.", szName));
 		}
 	}
-		
-	// Check the status again. 
+
+	// Check the status again.
 	if (!QueryServiceStatus( Service, &ssStatus) )
 	{
 		CloseServiceHandle(Service);
@@ -324,9 +321,9 @@ void startService(const char* szName, std::vector<std::string> &args)
 	}
 
 	CloseServiceHandle(scm);
-	CloseServiceHandle(Service); 
+	CloseServiceHandle(Service);
 
-	if (ssStatus.dwCurrentState != SERVICE_RUNNING) 
+	if (ssStatus.dwCurrentState != SERVICE_RUNNING)
 		throw gcException(ERR_SERVICE, gcString("Failed to start service: {0} [{1}]", szName, ssStatus.dwCurrentState));
 }
 
@@ -336,8 +333,8 @@ void stopService(const char* szName)
 	gcWString wName(szName);
 
 	SC_HANDLE scm, Service;
-	SERVICE_STATUS ssStatus; 
-	
+	SERVICE_STATUS ssStatus;
+
 	//open connection to SCM
 	scm = OpenSCManager(nullptr, nullptr, SC_MANAGER_CONNECT);
 
@@ -352,7 +349,7 @@ void stopService(const char* szName)
 		throw gcException(ERR_NULLSERVICE, GetLastError(), gcString("Failed to open service: {0}", szName));
 	}
 
-	// Check the status until the service is no longer start pending. 
+	// Check the status until the service is no longer start pending.
 	if (!QueryServiceStatus( Service, &ssStatus) )
 	{
 		CloseServiceHandle(Service);
@@ -383,7 +380,7 @@ void installService(const char* szName, const char* szPath, const char* szDispNa
 	gcWString wDispName(szDispName?szDispName:szName);
 
 	SC_HANDLE newService;
-	SC_HANDLE scm; 
+	SC_HANDLE scm;
 
 	//open connection to SCM
 	scm = OpenSCManager(nullptr, nullptr, SC_MANAGER_CREATE_SERVICE);
@@ -401,9 +398,9 @@ void installService(const char* szName, const char* szPath, const char* szDispNa
 		SERVICE_DEMAND_START,		//service start type
 		SERVICE_ERROR_NORMAL,		//error control type
 		wPath.c_str(),				//service path
-		nullptr,						//no load ordering group 
+		nullptr,						//no load ordering group
 		nullptr,						//no tag identifier
-		nullptr,						//no dependencies	
+		nullptr,						//no dependencies
 		nullptr,						//LocalSystem account
 		nullptr);						//no password
 
@@ -448,8 +445,8 @@ void uninstallService(const char* szName)
 		CloseServiceHandle(scm);
 		throw gcException(ERR_SERVICE, GetLastError(), gcString("Failed to Query service: {0}", szName));
 	}
-	
-	//Stop service if necessary		
+
+	//Stop service if necessary
 	if (status.dwCurrentState != SERVICE_STOPPED)
 	{
 		SUCCESS = ControlService(service, SERVICE_CONTROL_STOP, &status);

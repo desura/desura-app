@@ -1,26 +1,23 @@
 /*
-Desura is the leading indie game distribution platform
 Copyright (C) 2011 Mark Chandler (Desura Net Pty Ltd)
+Copyright (C) 2014 Bad Juju Games, Inc.
 
-$LicenseInfo:firstyear=2014&license=lgpl$
-Copyright (C) 2014, Linden Research, Inc.
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
 
-This library is free software; you can redistribute it and/or
-modify it under the terms of the GNU Lesser General Public
-License as published by the Free Software Foundation;
-version 2.1 of the License only.
-
-This library is distributed in the hope that it will be useful,
+This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-Lesser General Public License for more details.
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
 
-You should have received a copy of the GNU Lesser General Public
-License along with this library; if not, see <http://www.gnu.org/licenses/>
-or write to the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+You should have received a copy of the GNU General Public License
+along with this program; if not, write to the Free Software Foundation,
+Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA.
 
-Linden Research, Inc., 945 Battery Street, San Francisco, CA  94111  USA
-$/LicenseInfo$
+Contact us at legal@badjuju.com.
+
 */
 
 #include <wordexp.h>
@@ -39,35 +36,35 @@ std::string expandPath(const char* file)
 {
 	if (!file)
 		return "";
-	
+
 	std::string f;
 	size_t size = strlen(file);
-	
+
 	f.reserve(size);
-	
+
 	for (size_t x=0; x<size; x++)
 	{
 		if (file[x] == ' ')
 			f.push_back('\\');
-			
+
 		f.push_back(file[x]);
 	}
-	
+
 	wordexp_t exp_result;
 	memset(&exp_result, 0, sizeof(wordexp_t));
-	
+
 	int res = wordexp(f.c_str(), &exp_result, 0);
-	
+
 	if (res != 0)
 		return "";
-	
+
 	std::string r;
-	
+
 	if (exp_result.we_wordv[0])
 		r = exp_result.we_wordv[0];
-	
+
 	wordfree(&exp_result);
-	
+
 	return r;
 }
 
@@ -84,7 +81,7 @@ FileHandle& FileHandle::operator=(const FileHandle& handle)
 		m_hFileHandle = fdopen(dup(fileno(handle.getHandle())), handle.getMode());
 		m_bIsOpen = handle.isOpen();
 	}
-	
+
 	return *this;
 }
 
@@ -92,10 +89,10 @@ void FileHandle::open(const char* fileName, FILE_MODE mode, uint64 offset)
 {
 	if (m_bIsOpen)
 		close();
-		
+
 	if (!fileName)
 		throw gcException(ERR_BADPATH, "Cant open file with null path");
-		
+
 	std::string fullFile = expandPath(fileName);
 
 	if (fullFile == "")
@@ -129,7 +126,7 @@ void FileHandle::open(const char* fileName, FILE_MODE mode, uint64 offset)
 			fseek(fh, 0, SEEK_END);
 		else
 			fh = fopen64(fullFile.c_str(), "wb");
-			
+
 		break;
 
 	default:
@@ -142,7 +139,7 @@ void FileHandle::open(const char* fileName, FILE_MODE mode, uint64 offset)
 		printf("Error opening %s as %d: %d\n", fullFile.c_str(), mode, errno);
 		throw gcException(ERR_INVALIDFILE, gcString("Couldnt open the file [{0}] in mode {1}", fullFile.c_str(), mode));
 	}
-	
+
 	m_hFileHandle = fh;
 	m_bIsOpen = true;
 }

@@ -20,12 +20,12 @@ file(GLOB Sources code/ComplexLaunchProcess.cpp
                   code/UnInstallProcess.cpp
                   code/UpdateProcess.cpp
                   code/UpdateShortcuts.cpp
+		  code/WindowsUnInstallRegKey.cpp
 )
 
 if(WIN32)
   file(GLOB PlattformSources
                   code/WindowsGameExplorer.cpp
-				  code/WindowsUnInstallRegKey.cpp
   )
   set(PLATFORM_LIBRARIES msi Wintrust)
 #  add_linker_flags(/NOD:LIBCMT)

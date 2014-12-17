@@ -1,26 +1,23 @@
 /*
-Desura is the leading indie game distribution platform
 Copyright (C) 2011 Mark Chandler (Desura Net Pty Ltd)
+Copyright (C) 2014 Bad Juju Games, Inc.
 
-$LicenseInfo:firstyear=2014&license=lgpl$
-Copyright (C) 2014, Linden Research, Inc.
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
 
-This library is free software; you can redistribute it and/or
-modify it under the terms of the GNU Lesser General Public
-License as published by the Free Software Foundation;
-version 2.1 of the License only.
-
-This library is distributed in the hope that it will be useful,
+This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-Lesser General Public License for more details.
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
 
-You should have received a copy of the GNU Lesser General Public
-License along with this library; if not, see <http://www.gnu.org/licenses/>
-or write to the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+You should have received a copy of the GNU General Public License
+along with this program; if not, write to the Free Software Foundation,
+Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA.
 
-Linden Research, Inc., 945 Battery Street, San Francisco, CA  94111  USA
-$/LicenseInfo$
+Contact us at legal@badjuju.com.
+
 */
 
 #include "Common.h"
@@ -92,37 +89,37 @@ UploadInfoPage::UploadInfoPage( wxWindow* parent, wxWindowID id, const wxPoint& 
 	fgSizer1->AddGrowableRow( 2 );
 	fgSizer1->SetFlexibleDirection( wxBOTH );
 	fgSizer1->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
-	
-	
-	
+
+
+
 	wxBoxSizer* bSizer5 = new wxBoxSizer( wxHORIZONTAL );
-	
+
 	m_labText = new gcStaticText( this, wxID_ANY, Managers::GetString(L"#UDF_PROMPT"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_labText->Wrap( -1 );
 	bSizer5->Add( m_labText, 0, wxALIGN_BOTTOM|wxALL, 5 );
-	
-	
+
+
 
 	wxBoxSizer* bSizer8  = new wxBoxSizer( wxHORIZONTAL );
-	
+
 	m_tbItemFile = new wxTextCtrl( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
 	bSizer8->Add( m_tbItemFile, 1, wxBOTTOM|wxLEFT, 5 );
-	
+
 	m_butFile = new gcButton(this, wxID_ANY, Managers::GetString(L"#BROWSE"));
 	bSizer8->Add( m_butFile, 0, wxALIGN_CENTER_VERTICAL|wxBOTTOM|wxRIGHT|wxLEFT, 5 );
-	
 
-	
+
+
 	wxBoxSizer* bSizer2 = new wxBoxSizer( wxHORIZONTAL );
-	
+
 	bSizer2->Add( 0, 0, 1, wxEXPAND, 5 );
-	
+
 	m_butUpload = new gcButton( this, wxID_ANY, Managers::GetString(L"#OK"), wxDefaultPosition, wxDefaultSize, 0 );
 	bSizer2->Add( m_butUpload, 0, wxTOP|wxBOTTOM|wxLEFT, 5 );
-	
+
 	m_butCancel = new gcButton( this, wxID_ANY, Managers::GetString(L"#CANCEL"), wxDefaultPosition, wxDefaultSize, 0 );
 	bSizer2->Add( m_butCancel, 0, wxALL, 5 );
-	
+
 
 
 	fgSizer1->Add( bSizer5, 1, wxEXPAND, 5 );
@@ -132,7 +129,7 @@ UploadInfoPage::UploadInfoPage( wxWindow* parent, wxWindowID id, const wxPoint& 
 
 	this->SetSizer( fgSizer1 );
 	this->Layout();
-	
+
 	m_pPrepThread = nullptr;
 	m_pUpInfo = nullptr;
 
@@ -156,7 +153,12 @@ void UploadInfoPage::dispose()
 
 	safe_delete(m_pUpInfo);
 	safe_delete(m_pVFThread);
-	safe_delete(m_pPrepThread);
+
+	if ( m_pPrepThread.getRefCt() <= 1 )
+	{
+		safe_delete(m_pPrepThread);
+	}
+
 	safe_delete(m_pResumeThread);
 	safe_delete(m_pUpInfo);
 }
@@ -245,7 +247,7 @@ void UploadInfoPage::resetAllValues()
 
 	gcString filePath;
 	gcString cachePath;
-	
+
 	auto userCore = GetUserCore();
 
 	if (userCore)
@@ -263,7 +265,7 @@ void UploadInfoPage::resetAllValues()
 void UploadInfoPage::setInfo(DesuraId id, gcRefPtr<UserCore::Item::ItemInfoI> pItemInfo)
 {
 	if (!pItemInfo && GetUserCore() && !GetUserCore()->isAdmin())
-	{	
+	{
 		Close();
 		return;
 	}
@@ -308,7 +310,7 @@ void UploadInfoPage::setInfo_path(DesuraId id, gcRefPtr<UserCore::Item::ItemInfo
 void UploadInfoPage::onResume()
 {
 	if (!m_pItemInfo && GetUserCore() && !GetUserCore()->isAdmin())
-	{	
+	{
 		Close();
 		return;
 	}

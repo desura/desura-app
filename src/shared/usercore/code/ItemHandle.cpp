@@ -1,26 +1,23 @@
 /*
-Desura is the leading indie game distribution platform
 Copyright (C) 2011 Mark Chandler (Desura Net Pty Ltd)
+Copyright (C) 2014 Bad Juju Games, Inc.
 
-$LicenseInfo:firstyear=2014&license=lgpl$
-Copyright (C) 2014, Linden Research, Inc.
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
 
-This library is free software; you can redistribute it and/or
-modify it under the terms of the GNU Lesser General Public
-License as published by the Free Software Foundation;
-version 2.1 of the License only.
-
-This library is distributed in the hope that it will be useful,
+This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-Lesser General Public License for more details.
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
 
-You should have received a copy of the GNU Lesser General Public
-License along with this library; if not, see <http://www.gnu.org/licenses/>
-or write to the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+You should have received a copy of the GNU General Public License
+along with this program; if not, write to the Free Software Foundation,
+Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA.
 
-Linden Research, Inc., 945 Battery Street, San Francisco, CA  94111  USA
-$/LicenseInfo$
+Contact us at legal@badjuju.com.
+
 */
 
 #include "Common.h"
@@ -428,7 +425,7 @@ void ItemHandle::goToStageInstallTools(bool launch)
 void ItemHandle::goToStageGatherInfo(MCFBranch branch, MCFBuild build, UserCore::ItemTask::GI_FLAGS flags)
 {
 	gcRefPtr<Helper::GatherInfoHandlerHelperI> helper;
-	
+
 	if (m_pFactory)
 		helper = m_pFactory->getGatherInfoHelper();
 
@@ -483,7 +480,7 @@ void ItemHandle::goToStageUninstall(bool complete, bool account)
 		if (m_pThread)
 			m_pThread->purge();
 	}
-	
+
 
 	if (HasAllFlags(getItemInfo()->getStatus(), UserCore::Item::ItemInfoI::STATUS_INSTALLCOMPLEX))
 	{
@@ -547,12 +544,12 @@ bool ItemHandle::getComplexLock()
 
 	gcException eItem(ERR_INVALID, "Failed to get lock. Another task is using this item. Please stop that task and try again.");
 	gcException eGame(ERR_INVALID, "Failed to get lock. Another task is using the parent game-> Please stop that task and try again.");
-	
+
 	if (obj != parentHandle)
 		onErrorEvent(eItem);
 	else
 		onErrorEvent(eGame);
-	
+
 	completeStage(true);
 	return false;
 }
@@ -576,7 +573,7 @@ void ItemHandle::goToStageUninstallPatch(MCFBranch branch, MCFBuild build)
 
 		if (isParentComplex)
 			parentItem = getItemInfo();
-		
+
 		//need to uninstall complex mods otherwise the backup file will be wrong
 		if (parentItem->getInstalledModId().isOk())
 		{
@@ -719,7 +716,7 @@ void ItemHandle::registerTask(gcRefPtr<UserCore::ItemTask::BaseItemTask> task)
 
 		m_bStopped = false;
 	}
-	
+
 	m_pThread->queueTask(task);
 }
 
@@ -941,7 +938,7 @@ bool ItemHandle::cleanComplexMods()
 	if (getItemInfo()->getInstalledModId().isOk())
 	{
 		auto mod = m_pUserCore->getItemManager()->findItemInfo(getItemInfo()->getInstalledModId());
-			
+
 		if (mod && HasAllFlags(mod->getStatus(), UserCore::Item::ItemInfoI::STATUS_INSTALLCOMPLEX))
 		{
 			if (!getComplexLock())
@@ -950,7 +947,7 @@ bool ItemHandle::cleanComplexMods()
 			auto uibst = gcRefPtr<UserCore::ItemTask::UIComplexModServiceTask>::create(this, getItemInfo()->getInstalledBranch(), getItemInfo()->getInstalledBuild());
 			uibst->setEndStage();
 			registerTask(uibst);
-			return true;				
+			return true;
 		}
 	}
 
@@ -967,7 +964,7 @@ void ItemHandle::preLaunchCheck()
 
 	if (!ei)
 		throw gcException(ERR_LAUNCH, gcString("Failed to launch item {0}, No executable info available.", getItemInfo()->getName()));
-	
+
 	UTIL::FS::Path path = UTIL::FS::PathWithFile(ei->getExe());
 
 	if (!UTIL::FS::isValidFile(path))
@@ -1347,7 +1344,7 @@ void ItemHandle::getStatusStr_s(gcRefPtr<UserCore::Item::ItemHandleI> pItemHandl
 		{
 			stateMsg = "#IS_INSTALLING";
 		}
-		else 
+		else
 		{
 			bool hasPreorder = false;
 
@@ -1430,7 +1427,7 @@ bool ItemHandle::setTaskGroup(gcRefPtr<ItemTaskGroup> group, bool force)
 		if (getStage() == UserCore::Item::ITEM_STAGE::STAGE_WAIT)
 			cancelCurrentStage();
 	}
-	
+
 	return true;
 }
 
@@ -1658,7 +1655,7 @@ namespace UnitTest
 			"INSERT INTO installinfoex VALUES(4294967328,100,'C:\\Program Files (x86)\\charlie\\Charlie.exe');",
 			"INSERT INTO branchinfo VALUES(1, 4294967328, 'test', 256, 'http://eula.com', 0, 0, '', '', 0, 1, 100);",
 			"INSERT INTO iteminfo VALUES(4294967328,0,0,32798,0,'dev-02','Charlie','charlie','','','','','','','dev-02','',1,1);",
-			
+
 			"INSERT INTO exe VALUES(8589934608,100,'Play','C:\\Program Files (x86)\\charlie\\Charlie.exe','','',0);",
 			"INSERT INTO installinfo VALUES(8589934608,100,'C:\\Program Files (x86)\\charlie','C:\\Program Files (x86)\\charlie\\Charlie.exe','',0,0,0);",
 			"INSERT INTO installinfoex VALUES(8589934608,100,'C:\\Program Files (x86)\\charlie\\Charlie.exe');",

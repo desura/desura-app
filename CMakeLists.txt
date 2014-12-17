@@ -96,7 +96,7 @@ endif()
 # some global variables
 ###############################################################################
 
-set(CEF_EXTERNAL_PATH "" CACHE STRING "External path to cef if building seperatly to desura")
+set(CEF_EXTERNAL_PATH "" CACHE STRING "External path to cef if building separately to desura")
 
 set(CMAKE_OUTPUT "${CMAKE_SOURCE_DIR}/build_out")
 set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake/modules")
@@ -119,6 +119,10 @@ else()
   else()
     set(CMAKE_BUILD_TYPE Release)
   endif()
+endif()
+
+if(OFFICIAL_DEBUG_BUILD)
+  set(CMAKE_BUILD_TYPE Debug)
 endif()
 
 ###############################################################################
@@ -226,7 +230,7 @@ endif()
 # SVN, HTTP stuff
 ###############################################################################
 
-set(DOWNLOAD_URL "https://s3-us-west-2.amazonaws.com/lecs.desura.lindenlab.com/" CACHE STRING "Download mirror for third party source code and binaries")
+set(DOWNLOAD_URL "http://s3.desura.com.s3-website-us-west-2.amazonaws.com/build/" CACHE STRING "Download mirror for third party source code and binaries")
 
 macro(SetupDownloadUrlCustom name url md5)
   set(${name}_URL_DEFAULT "${url}")
@@ -268,7 +272,8 @@ SetupDownloadUrlCustom(CEF "file://C:/Work/cef_3.1750.1738_desura.zip" d4925ced4
 #SetupDownloadUrl(CHROMIUM "chromium-15.0.876.0.tar.bz2" 22c8e1db4d1c4b474c600dffbb5fdd0c)
 
 # no longer available (too old, but 7.39 is available)
-SetupDownloadUrl(CURL "curl-7.32.0.tar.bz2" 30d04b0a8c43c6770039d1bf033dfe79)
+#SetupDownloadUrl(CURL "curl-7.32.0.tar.bz2" 30d04b0a8c43c6770039d1bf033dfe79)
+SetupDownloadUrlCustom(CURL "http://curl.haxx.se/download/curl-7.39.0.tar.gz" 88c5650122873712296d4b1db3f12e6c)
 
 # (chromium depot tools, also OLD - source: http://src.chromium.org/svn/trunk/tools/depot_tools/ )
 SetupDownloadUrl(DEPOT_TOOLS "depot_tools-r1.zip" a27266b8d2388c4dc51645d1159dd0de)
@@ -292,10 +297,16 @@ SetupDownloadUrlCustom(WXWIDGET "http://sourceforge.net/projects/wxwindows/files
 if(NOT BUILD_ONLY_CEF)
   if(NOT wxWidgets_FOUND)
     include(BuildwxWidgets)
+    if(NOT WIN32)
+      add_dependencies(desura wxWidgets)
+    endif()
   endif()
 
   if(NOT Boost_FOUND)
     include(BuildBoost)
+    if(NOT WIN32)
+      add_dependencies(desura boost)
+    endif()
   endif()
 
   if(NOT BREAKPAD_EXCEPTION_HANDLER_FOUND)

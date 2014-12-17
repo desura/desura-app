@@ -1,26 +1,22 @@
 /*
-Desura is the leading indie game distribution platform
 Copyright (C) 2011 Mark Chandler (Desura Net Pty Ltd)
+Copyright (C) 2014 Bad Juju Games, Inc.
 
-$LicenseInfo:firstyear=2014&license=lgpl$
-Copyright (C) 2014, Linden Research, Inc.
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
 
-This library is free software; you can redistribute it and/or
-modify it under the terms of the GNU Lesser General Public
-License as published by the Free Software Foundation;
-version 2.1 of the License only.
-
-This library is distributed in the hope that it will be useful,
+This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-Lesser General Public License for more details.
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
 
-You should have received a copy of the GNU Lesser General Public
-License along with this library; if not, see <http://www.gnu.org/licenses/>
-or write to the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+You should have received a copy of the GNU General Public License
+along with this program; if not, write to the Free Software Foundation,
+Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA.
 
-Linden Research, Inc., 945 Battery Street, San Francisco, CA  94111  USA
-$/LicenseInfo$
+Contact us at legal@badjuju.com.
 */
 
 #ifndef DESURA_MCF_I_H
@@ -39,7 +35,7 @@ $/LicenseInfo$
 namespace MCFCore
 {
 	namespace Misc
-	{ 
+	{
 		class DownloadProvidersI;
 		class DownloadProvider;
 
@@ -64,7 +60,7 @@ namespace MCFCore
 		};
 	}
 
-	//! MCFI is the interface file for MCF's. A MCF stores content for the desura application and allows part downloads 
+	//! MCFI is the interface file for MCF's. A MCF stores content for the desura application and allows part downloads
 	//! and patching to be more efferent than normal http downloads.
 	//!
 	class MCFI
@@ -78,7 +74,7 @@ namespace MCFCore
 		/////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 		//! Gets the header of this class.
-		//! 
+		//!
 		//! @return Header object
 		//!
 		virtual MCFHeaderI* getHeader()=0;
@@ -95,7 +91,7 @@ namespace MCFCore
 		//!
 		virtual uint64 getINSize()=0;
 
-		//! Gets the sum of all file sizes saved in the MCF 
+		//! Gets the sum of all file sizes saved in the MCF
 		//!
 		//! @return Total size
 		//!
@@ -183,7 +179,7 @@ namespace MCFCore
 		//! @param brach Mcf branch
 		//! @param build Mcf content version
 		//!
-		virtual void setHeader(DesuraId id, MCFBranch branch, MCFBuild build)=0;	
+		virtual void setHeader(DesuraId id, MCFBranch branch, MCFBuild build)=0;
 
 		//! Sets the path and file name of the MCF for save and load
 		//!
@@ -192,7 +188,7 @@ namespace MCFCore
 		virtual void setFile(const char* file)=0;
 
 		//! Overides the default worker count of 1 per core
-		//! 
+		//!
 		//!  @param count Number of worker threads
 		//!
 		virtual void setWorkerCount(uint16 count)=0;
@@ -214,17 +210,17 @@ namespace MCFCore
 		virtual void parseFolder(const char *path, bool hashFile = false, bool reportProgress = false)=0;
 
 		//! Parsers a MCF to get file info
-		//! 
+		//!
 		virtual void parseMCF()=0;
 
 		//! Saves the MCF to disk. Note: Must of run parseFolder before
 		//!
-		//! @param oldFolderPath Folder to use to create diffs from. 
+		//! @param oldFolderPath Folder to use to create diffs from.
 		//!
 		virtual void saveMCF()=0;
 
 		//! Saves the files to disk.
-		//! 
+		//!
 		//! @param path Path to save files to
 		//!
 		virtual void saveFiles(const char* path)=0;
@@ -270,7 +266,7 @@ namespace MCFCore
 		virtual void removeIncompleteFiles()=0;
 
 		//! Saves the xml portion of the MCF to a file
-		//! 
+		//!
 		//! @param file File to save xml to
 		//!
 		virtual void saveXml(const char* file)=0;
@@ -294,7 +290,7 @@ namespace MCFCore
 		virtual void dlHeaderFromWeb()=0;
 
 		//! Downloads all files from web using MCF service
-		//! 
+		//!
 		virtual void dlFilesFromWeb()=0;
 
 		//! Downloads header and file list from web using http
@@ -353,13 +349,13 @@ namespace MCFCore
 
 		//! This copys a patch MCF into this and saves the full version at path
 		//!
-		//! @param inMcf Patch MCF 
+		//! @param inMcf Patch MCF
 		//! @param path path to save result MCF
 		//!
 		virtual void makeFullFile(MCFI* inMcf, const char* path)=0;
 
 		//! This makes a backwards patch from two full MCF files.
-		//! 
+		//!
 		//! @param inMcf Mcf file to compair against this one
 		//! @param path Path to save result MCF
 		//!
@@ -368,7 +364,7 @@ namespace MCFCore
 		//! This makes sure all the files in the MCF are good
 		//!
 		//! @return True if good, false if not
-		//! 
+		//!
 		virtual bool verifyMCF()=0;
 
 		//! Copys missing files from the source to the current MCF
@@ -406,8 +402,8 @@ namespace MCFCore
 		virtual void resetSavedFiles()=0;
 
 		//! Verifys the mcf and verifys all files inside it. Prints errors to console.
-		//! 
-		//! @return Returns 0 if completed correctly. -x where x is number of files that failed. 1 if mcf header is invalid. 
+		//!
+		//! @return Returns 0 if completed correctly. -x where x is number of files that failed. 1 if mcf header is invalid.
 		//!
 		virtual int32 verifyAll(const char* tempPath)=0;
 

@@ -70,7 +70,7 @@ int main(int argc, char** argv)
 	args += "\"";
 
 	fprintf(stdout, "Launching: %s %s\n", javaPath.c_str(), args.c_str());
-	
+
 	if (UTIL::WIN::launchExe(javaPath.c_str(), args.c_str()))
 		return 0;
 

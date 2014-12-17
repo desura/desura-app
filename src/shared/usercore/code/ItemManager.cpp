@@ -1,26 +1,23 @@
 /*
-Desura is the leading indie game distribution platform
 Copyright (C) 2011 Mark Chandler (Desura Net Pty Ltd)
+Copyright (C) 2014 Bad Juju Games, Inc.
 
-$LicenseInfo:firstyear=2014&license=lgpl$
-Copyright (C) 2014, Linden Research, Inc.
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
 
-This library is free software; you can redistribute it and/or
-modify it under the terms of the GNU Lesser General Public
-License as published by the Free Software Foundation;
-version 2.1 of the License only.
-
-This library is distributed in the hope that it will be useful,
+This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-Lesser General Public License for more details.
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
 
-You should have received a copy of the GNU Lesser General Public
-License along with this library; if not, see <http://www.gnu.org/licenses/>
-or write to the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+You should have received a copy of the GNU General Public License
+along with this program; if not, write to the Free Software Foundation,
+Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA.
 
-Linden Research, Inc., 945 Battery Street, San Francisco, CA  94111  USA
-$/LicenseInfo$
+Contact us at legal@badjuju.com.
+
 */
 
 #include "Common.h"
@@ -92,9 +89,10 @@ public:
 	bool reset;
 };
 
-ItemManager::ItemManager(gcRefPtr<User> user) 
+ItemManager::ItemManager(gcRefPtr<User> user)
 	: BaseManager()
 	, m_pUser(user)
+	, m_Cleaned( false )
 {
 	m_bEnableSave = false;
 	m_bFirstLogin = false;
@@ -129,18 +127,23 @@ ItemManager::~ItemManager()
 
 void ItemManager::cleanup()
 {
-	saveDbItems(true);
+	if ( ! m_Cleaned )
+	{
+		m_Cleaned = true;
 
-	onUpdateEvent.reset();
-	onFavoriteUpdateEvent.reset();
-	onRecentUpdateEvent.reset();
+		saveDbItems(true);
 
-	auto list = dumpAndClear();
+		onUpdateEvent.reset();
+		onFavoriteUpdateEvent.reset();
+		onRecentUpdateEvent.reset();
 
-	for (const auto & i : list)
-		i->cleanup();
+		auto list = dumpAndClear();
 
-	safe_delete(list);
+		for (const auto & i : list)
+			i->cleanup();
+
+		safe_delete(list);
+	}
 }
 
 void ItemManager::migrateOldItemInfo(const char* olddb, const char* newdb)
@@ -349,7 +352,7 @@ void ItemManager::updateItemIds()
 bool ItemManager::isInstalled(DesuraId id)
 {
 	auto temp = findItemInfoNorm(id);
-	
+
 	if (temp)
 		return temp->isInstalled();
 
@@ -380,10 +383,10 @@ void ItemManager::getAllItems(std::vector<gcRefPtr<UserCore::Item::ItemInfoI>> &
 	for (it = m_mItemMap.begin(); it != endit; ++it)
 	{
 		auto info = it->second->getItemInfoNorm();
-		
+
 		if (!info)
 			continue;
-		
+
 		aList.push_back(info);
 	}
 }
@@ -425,7 +428,7 @@ void ItemManager::getModList(DesuraId gameId, std::vector<gcRefPtr<UserCore::Ite
 		auto& info = handle->getItemInfo();
 
 		if (info->getId().getType() != DesuraId::TYPE_MOD || info->getParentId() != gameId)
-			return;		
+			return;
 
 		if (!includeDeleted && (info->getStatus() & UM::ItemInfoI::STATUS_DELETED))
 			return;
@@ -611,7 +614,7 @@ void ItemManager::removeItem(DesuraId id)
 	if (mList.size() > 0)
 		return;
 
-	//we add a flag instead of deleting the item to save headaches arising from other areas 
+	//we add a flag instead of deleting the item to save headaches arising from other areas
 	//caching the pointer to this item. Thus they can check the flag before doing work
 	item->softDelete();
 
@@ -713,7 +716,7 @@ void ItemManager::retrieveItemInfo(DesuraId id, uint32 statusOveride, gcRefPtr<W
 				pi.pWildCard = pWildCard;
 			}
 		});
-		
+
 		processLeftOvers(maps, true);
 	}
 
@@ -746,12 +749,12 @@ void ItemManager::processLeftOvers(InfoMaps &maps, bool addMissing)
 			bool isDev = false;
 			return (infoNode.GetChild("devadmin", isDev) && isDev);
 		};
-		
+
 		bool isDevOfGame = isDev(infoNode);
 
 		if (!addMissing && !isDevOfGame)
 			return;
-		
+
 		pi.rootNode = infoNode;
 		info = createNewItem(pid, id, pi);
 
@@ -763,7 +766,7 @@ void ItemManager::processLeftOvers(InfoMaps &maps, bool addMissing)
 		{
 			DesuraId gid = p.second.second;
 			const XML::gcXMLElement &infoNode = p.second.first;
-			
+
 			if (id != gid)
 				return;
 
@@ -828,7 +831,7 @@ void ItemManager::loadDbItems()
 			sqlite3x::sqlite3_command cmd(db, "SELECT internalid, parentid FROM iteminfo;");
 			sqlite3x::sqlite3_reader reader = cmd.executereader();
 
-			while(reader.read()) 
+			while(reader.read())
 			{
 				DesuraId id(reader.getint64(0));
 				DesuraId pid(reader.getint64(1));
@@ -871,7 +874,7 @@ void ItemManager::saveDbItems(bool fullSave)
 	{
 		sqlite3x::sqlite3_connection db(szItemDb.c_str());
 		sqlite3x::sqlite3_transaction trans(db);
-	
+
 		for_each([&db](const gcRefPtr<UserCore::Item::ItemHandle> &handle){
 
 			if (handle && handle->getItemInfoNorm())
@@ -941,7 +944,7 @@ void ItemManager::parseItemUpdateXml(const char* area, const XML::gcXMLElement &
 			return;
 
 		auto item = findItemInfoNorm(id);
-				
+
 		if (!item)
 		{
 			retrieveItemInfoAsync(id, true);
@@ -951,7 +954,7 @@ void ItemManager::parseItemUpdateXml(const char* area, const XML::gcXMLElement &
 		if (item->isDeleted())
 		{
 			DesuraId currentID = item->getId();
-						
+
 			item->delSFlag(UserCore::Item::ItemInfoI::STATUS_DELETED);
 			item->addSFlag(UserCore::Item::ItemInfoI::STATUS_ONACCOUNT);
 			onNewItem(currentID);
@@ -984,19 +987,19 @@ void ItemManager::generateInfoMaps(const XML::gcXMLElement &gamesNode, InfoMaps*
 		InfoMaps* pMaps = maps;
 
 		const std::string szId = game.GetAtt("siteareaid");
-	
+
 		if (szId.empty())
 			return;
 
 		DesuraId pid = getParentId(game, game);
 		DesuraId gid(szId.c_str(), "games");
-		
+
 		maps->gameMap[gid] = std::pair<XML::gcXMLElement, DesuraId>(game, pid);
 
 		game.FirstChildElement("mods").for_each_child("mod", [&pMaps, gid](const XML::gcXMLElement &mod)
 		{
 			const std::string id = mod.GetAtt("siteareaid");
-	
+
 			if (id.empty())
 				return;
 
@@ -1078,7 +1081,7 @@ void ItemManager::parseLoginXml(const XML::gcXMLElement &gameNode, const XML::gc
 void ItemManager::parseLoginXml2(const XML::gcXMLElement &gamesNode, const XML::gcXMLElement &platformNodes)
 {
 	m_pUser->getToolManager()->initJSEngine();
-	
+
 	InfoMaps maps;
 	generateInfoMaps(gamesNode, &maps);
 
@@ -1113,7 +1116,7 @@ void ItemManager::parseGamesXml(ParseInfo& pi)
 	pi.rootNode.for_each_child("game", [&](const XML::gcXMLElement &game)
 	{
 		const std::string id = game.GetAtt("siteareaid");
-	
+
 		if (id.empty())
 			return;
 
@@ -1173,7 +1176,7 @@ void ItemManager::parseGameXml(DesuraId id, ParseInfo &pi)
 	{
 		//reset local wildcards
 		pi.pWildCard->updateInstallWildcard("INSTALL_PATH", "INSTALL_PATH");
-		
+
 		//map parent install path to normal install path incase we int the install from a child
 		pi.pWildCard->updateInstallWildcard("PARENT_INSTALL_PATH", "%INSTALL_PATH%");
 	}
@@ -1188,7 +1191,7 @@ void ItemManager::parseGameXml(DesuraId id, ParseInfo &pi)
 	}
 
 	auto temp = findItemInfoNorm(id);
-			
+
 	if (temp)
 	{
 		if (pid.isOk() && temp->getParentId() != pid)
@@ -1237,12 +1240,12 @@ void ItemManager::parseModsXml(gcRefPtr<UserCore::Item::ItemInfo> parent, ParseI
 			{
 				infoNode = it->second.first;
 				pi.maps->modMap.erase(it);
-			}			
+			}
 		}
 
 		modPi.rootNode = mod;
 		modPi.infoNode = infoNode;
-		
+
 		parseModXml(parent, internId, modPi);
 	});
 }
@@ -1282,8 +1285,8 @@ void ItemManager::setFavorite(DesuraId id, bool fav)
 		sqlite3x::sqlite3_command cmd(db, szCmd.c_str());
 		cmd.bind(1, (long long int)id.toInt64());
 		cmd.bind(2, (int)m_pUser->getUserId());
-		
-		cmd.executenonquery(); 
+
+		cmd.executenonquery();
 	}
 	catch (std::exception)
 	{
@@ -1474,7 +1477,7 @@ void ItemManager::checkItems()
 			group = newTaskGroup(UserCore::Item::ItemTaskGroupI::A_VERIFY);
 
 		group->addItem(item->getItemInfo());
-	}	
+	}
 
 	if (!group)
 		return;
@@ -1485,7 +1488,7 @@ void ItemManager::checkItems()
 		bool bp = HasAnyFlags(b->getItemInfo()->getStatus(), (UserCore::Item::ItemInfoI::STATUS_DOWNLOADING|UserCore::Item::ItemInfoI::STATUS_INSTALLING));
 
 		if ( (ap^bp) == false )
-			return (a->getItemInfo()->getId().toInt64() < b->getItemInfo()->getId().toInt64()); 
+			return (a->getItemInfo()->getId().toInt64() < b->getItemInfo()->getId().toInt64());
 
 		return ap;
 	});
@@ -1555,7 +1558,7 @@ void ItemManager::parseKnownBranches(const XML::gcXMLElement &gamesNode)
 	gamesNode.for_each_child("game", [this, &parseBranch](const XML::gcXMLElement &game)
 	{
 		const std::string szId = game.GetAtt("siteareaid");
-	
+
 		if (!szId.empty())
 			return;
 
@@ -1571,7 +1574,7 @@ void ItemManager::parseKnownBranches(const XML::gcXMLElement &gamesNode)
 		game.FirstChildElement("mods").for_each_child("mod", [&parseBranchLocal](const XML::gcXMLElement &mod)
 		{
 			const std::string szId = mod.GetAtt("siteareaid");
-	
+
 			if (!szId.empty())
 				return;
 
@@ -1673,8 +1676,8 @@ void ItemManager::enableSave()
 	if (m_bEnableSave)
 		return;
 
-	m_bEnableSave = true; 
-	saveItems(); 
+	m_bEnableSave = true;
+	saveItems();
 }
 
 void ItemManager::killAllProcesses(DesuraId itemId)

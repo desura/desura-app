@@ -1,26 +1,23 @@
 /*
-Desura is the leading indie game distribution platform
 Copyright (C) 2011 Mark Chandler (Desura Net Pty Ltd)
+Copyright (C) 2014 Bad Juju Games, Inc.
 
-$LicenseInfo:firstyear=2014&license=lgpl$
-Copyright (C) 2014, Linden Research, Inc.
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
 
-This library is free software; you can redistribute it and/or
-modify it under the terms of the GNU Lesser General Public
-License as published by the Free Software Foundation;
-version 2.1 of the License only.
-
-This library is distributed in the hope that it will be useful,
+This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-Lesser General Public License for more details.
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
 
-You should have received a copy of the GNU Lesser General Public
-License along with this library; if not, see <http://www.gnu.org/licenses/>
-or write to the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+You should have received a copy of the GNU General Public License
+along with this program; if not, write to the Free Software Foundation,
+Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA.
 
-Linden Research, Inc., 945 Battery Street, San Francisco, CA  94111  USA
-$/LicenseInfo$
+Contact us at legal@badjuju.com.
+
 */
 
 #include "Common.h"
@@ -143,7 +140,7 @@ void ItemInfo::saveDb(sqlite3x::sqlite3_connection* db)
 	cmd.bind(1, (long long int)m_iId.toInt64());
 
 	int count = cmd.executeint();
-		
+
 	if (count == 0)
 	{
 		saveDbFull(db);
@@ -159,12 +156,12 @@ void ItemInfo::saveDb(sqlite3x::sqlite3_connection* db)
 											"logourl=?,"
 											"ibranch=?,"
 											"lastbranch=? WHERE internalid=?;");
-		
+
 		uint32 status = m_iStatus&(~ItemInfoI::STATUS_DEVELOPER);
 
 		cmd.bind(1, (int)status); //status
 		cmd.bind(2, (int)m_iPercent); //percent
-		
+
 		cmd.bind(3, UTIL::OS::getRelativePath(m_szIcon)); //icon
 		cmd.bind(4, UTIL::OS::getRelativePath(m_szLogo)); //logo
 		cmd.bind(5, m_szIconUrl); //icon
@@ -247,7 +244,7 @@ void ItemInfo::loadDb(sqlite3x::sqlite3_connection* db)
 	sqlite3x::sqlite3_command cmd(*db, "SELECT * FROM iteminfo WHERE internalid=?;");
 	cmd.bind(1, (long long int)m_iId.toInt64());
 	sqlite3x::sqlite3_reader reader = cmd.executereader();
-	
+
 	reader.read();
 
 	// reader.getint(0); //internal id
@@ -289,7 +286,7 @@ void ItemInfo::loadDb(sqlite3x::sqlite3_connection* db)
 		sqlite3x::sqlite3_command cmd(*db, "SELECT biid FROM installinfo WHERE itemid=?;");
 		cmd.bind(1, (long long int)m_iId.toInt64());
 		sqlite3x::sqlite3_reader reader = cmd.executereader();
-	
+
 		while (reader.read())
 		{
 			vIdList.push_back(reader.getint(0));
@@ -319,7 +316,7 @@ void ItemInfo::loadDb(sqlite3x::sqlite3_connection* db)
 		sqlite3x::sqlite3_command cmd(*db, "SELECT branchid, biid FROM branchinfo WHERE internalid=?;");
 		cmd.bind(1, (long long int)m_iId.toInt64());
 		sqlite3x::sqlite3_reader reader = cmd.executereader();
-	
+
 		while (reader.read())
 		{
 			vIdList.push_back(std::pair<uint32, uint32>(reader.getint(0), reader.getint(1)));
@@ -434,7 +431,7 @@ void ItemInfo::loadBranchXmlData(const XML::gcXMLElement &branch)
 			{
 				gcTrace("Changing Current Branch");
 				m_INBranchIndex = x;
-			}		
+			}
 
 			bi = m_vBranchList[x];
 			found = true;
@@ -466,7 +463,7 @@ void ItemInfo::loadBranchXmlData(const XML::gcXMLElement &branch)
 		{
 			gcTrace("Changing Current Branch");
 			m_INBranchIndex = x;
-		}	
+		}
 	}
 }
 
@@ -495,7 +492,7 @@ void ItemInfo::loadXmlData(uint32 platform, const XML::gcXMLElement &xmlNode, ui
 
 	addSFlag(statusOveride);
 	delSFlag(ItemInfoI::STATUS_INSTALLED);	//need this otherwise installpath and install check dont get set
-	
+
 	processInfo(xmlNode);
 
 	xmlNode.FirstChildElement("branches").for_each_child("branch", [this](const XML::gcXMLElement &branch)
@@ -684,7 +681,7 @@ void ItemInfo::processSettings(uint32 platform, const XML::gcXMLElement &setNode
 
 	if (installComplex)
 		addSFlag(ItemInfoI::STATUS_INSTALLCOMPLEX);
-	
+
 	auto it = m_mBranchInstallInfo.find(platform);
 
 	if (it == m_mBranchInstallInfo.end() && !isDownloadable())
@@ -714,7 +711,7 @@ void ItemInfo::processSettings(uint32 platform, const XML::gcXMLElement &setNode
 				flags |= ItemInfoI::STATUS_INSTALLED;
 				setInstalledMcf(MCFBranch::BranchFromInt(0), MCFBuild::BuildFromInt(0));
 			}
-				
+
 			if (!isDownloadable() || pr.notFirst)
 				flags |= ItemInfoI::STATUS_LINK;
 
@@ -735,7 +732,7 @@ void ItemInfo::processSettings(uint32 platform, const XML::gcXMLElement &setNode
 	}
 }
 
-void ItemInfo::setIcon(const char* icon)		
+void ItemInfo::setIcon(const char* icon)
 {
 	if (!m_pFileSystem->isValidFile(m_szIcon))
 		m_szIcon = "";
@@ -751,7 +748,7 @@ void ItemInfo::setIcon(const char* icon)
 	onInfoChange();
 }
 
-void ItemInfo::setLogo(const char* logo)		
+void ItemInfo::setLogo(const char* logo)
 {
 	if (!m_pFileSystem->isValidFile(m_szLogo))
 		m_szLogo = "";
@@ -769,7 +766,7 @@ void ItemInfo::setLogo(const char* logo)
 	onInfoChange();
 }
 
-void ItemInfo::setIconUrl(const char* url)		
+void ItemInfo::setIconUrl(const char* url)
 {
 	if (!url)
 		return;
@@ -783,7 +780,7 @@ void ItemInfo::setIconUrl(const char* url)
 		getUserCore()->getInternal()->downloadImage(this, UserCore::Task::DownloadImgTask::ICON);
 }
 
-void ItemInfo::setLogoUrl(const char* url)		
+void ItemInfo::setLogoUrl(const char* url)
 {
 	if (!url)
 		return;
@@ -837,7 +834,7 @@ void ItemInfo::triggerCallBack()
 
 	if (HasAnyFlags(m_iChangedFlags, CHANGED_STATUS) || !getUserCore()->isDelayLoading())
 		onInfoChangeEvent(i);
-	
+
 	m_iChangedFlags = 0;
 }
 
@@ -883,7 +880,7 @@ void ItemInfo::addSFlag(uint32 flags)
 		uint32 num = 1;
 		getUserCore()->getItemsAddedEvent()(num);
 	}
-	
+
 	onInfoChange();
 }
 
@@ -1011,7 +1008,7 @@ bool ItemInfo::compare(const char* filter)
 	if (strstr(genre.c_str(), f.c_str())!=nullptr)
 		return true;
 
-	return false;	
+	return false;
 }
 
 
@@ -1061,7 +1058,7 @@ void ItemInfo::processUpdateXml(const XML::gcXMLElement &node)
 		{
 			if (bi->getInstallInfo()->processUpdateXml(branch))
 				addSFlag(ItemInfoI::STATUS_UPDATEAVAL);
-		}	
+		}
 
 	});
 
@@ -1081,7 +1078,7 @@ void ItemInfo::broughtCheck()
 
 		bool onAccount = HasAnyFlags(bi->getFlags(), BranchInfoI::BF_ONACCOUNT);
 		bool isDemo = HasAnyFlags(bi->getFlags(), BranchInfoI::BF_DEMO|BranchInfoI::BF_TEST);
-		
+
 		if (onAccount && !isDemo)
 		{
 			brought = true;
@@ -1110,7 +1107,7 @@ void ItemInfo::broughtCheck()
 			return;
 	}
 
-	uint32 delFlags = 
+	uint32 delFlags =
 		ItemInfoI::STATUS_LINK|
 		ItemInfoI::STATUS_READY|
 		ItemInfoI::STATUS_INSTALLED|
@@ -1164,7 +1161,7 @@ bool ItemInfo::setInstalledMcf(MCFBranch branch, MCFBuild build)
 
 			m_LastBranch = m_INBranch;
 			m_INBranch = branch;
-			
+
 			if (build == 0)
 				build = m_vBranchList[x]->getLatestBuild();
 
@@ -1197,7 +1194,7 @@ bool ItemInfo::hasAcceptedEula()
 	return branch->hasAcceptedEula();
 }
 
-const char* ItemInfo::getEulaUrl()	
+const char* ItemInfo::getEulaUrl()
 {
 	auto branch = getCurrentBranch();
 
@@ -1376,10 +1373,10 @@ MCFBranch ItemInfo::selectBestBranch(const std::vector<gcRefPtr<BranchInfo>> &li
 
 			if (!onAccount && (locked || !free))
 				continue;
-		
+
 			bool isDemo = HasAnyFlags(flags, UserCore::Item::BranchInfoI::BF_DEMO);
 			bool test = HasAnyFlags(flags, UserCore::Item::BranchInfoI::BF_TEST);
-		
+
 			if ((!ignoreDemo && isDemo) || test)
 				continue;
 
@@ -1420,11 +1417,11 @@ MCFBranch ItemInfo::selectBestBranch(const std::vector<gcRefPtr<BranchInfo>> &li
 			if (t[x]->is64Bit())
 				shortList.push_back(t[x]);
 		}
-		
+
 		if (shortList.size() == 0) //filtered all :(
 			shortList = t;
 	}
-	
+
 	if (shortList.size() == 1)
 		return shortList[0]->getBranchId();
 
@@ -1493,7 +1490,7 @@ gcRefPtr<BranchInstallInfo> ItemInfo::getBranchOrCurrent(MCFBranch branch)
 	return bi->getInstallInfo();
 }
 
-const char* ItemInfo::getPath(MCFBranch branch)		
+const char* ItemInfo::getPath(MCFBranch branch)
 {
 	auto bi = getBranchOrCurrent(branch);
 
@@ -1503,7 +1500,7 @@ const char* ItemInfo::getPath(MCFBranch branch)
 	return bi->getPath();
 }
 
-const char* ItemInfo::getInsPrimary(MCFBranch branch)		
+const char* ItemInfo::getInsPrimary(MCFBranch branch)
 {
 	auto bi = getBranchOrCurrent(branch);
 
@@ -1523,7 +1520,7 @@ void ItemInfo::setInstalledModId(DesuraId id, MCFBranch branch)
 	bi->setInstalledModId(id);
 }
 
-const char* ItemInfo::getInstalledVersion(MCFBranch branch)	
+const char* ItemInfo::getInstalledVersion(MCFBranch branch)
 {
 	auto bi = getBranchOrCurrent(branch);
 
@@ -1731,7 +1728,7 @@ namespace UnitTest
 	TEST_F(ItemInfoThirdPartyFixture, ThirdPartyLoad)
 	{
 		sqlite3x::sqlite3_connection db(":memory:");
-		
+
 		setUpDb(db, vSqlCommands);
 		i->loadDb(&db);
 
@@ -1769,7 +1766,7 @@ namespace UnitTest
 		"		<wcard name=\"GAME_EXE\" type=\"exe\">%INSTALL_PATH%\\Charlie.exe</wcard>"
 		"	</wcards>"
 		"</game>";
-			 
+
 
 	TEST_F(ItemInfoThirdPartyFixture, ThirdPartyDeleteAndAdd)
 	{

@@ -1,26 +1,23 @@
 /*
-Desura is the leading indie game distribution platform
 Copyright (C) 2011 Mark Chandler (Desura Net Pty Ltd)
+Copyright (C) 2014 Bad Juju Games, Inc.
 
-$LicenseInfo:firstyear=2014&license=lgpl$
-Copyright (C) 2014, Linden Research, Inc.
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
 
-This library is free software; you can redistribute it and/or
-modify it under the terms of the GNU Lesser General Public
-License as published by the Free Software Foundation;
-version 2.1 of the License only.
-
-This library is distributed in the hope that it will be useful,
+This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-Lesser General Public License for more details.
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
 
-You should have received a copy of the GNU Lesser General Public
-License along with this library; if not, see <http://www.gnu.org/licenses/>
-or write to the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+You should have received a copy of the GNU General Public License
+along with this program; if not, write to the Free Software Foundation,
+Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA.
 
-Linden Research, Inc., 945 Battery Street, San Francisco, CA  94111  USA
-$/LicenseInfo$
+Contact us at legal@badjuju.com.
+
 */
 
 #include "Common.h"
@@ -142,7 +139,7 @@ IPCParameterI* IPCClass::callFunction(const char* name, bool async, IPCParameter
 
 IPCParameterI* IPCClass::callFunction(const char* name, bool async, std::vector<IPCParameterI*> &pList)
 {
-	static gcString s_strMessage("message"); 
+	static gcString s_strMessage("message");
 
 	if (s_strMessage != name)
 	{
@@ -162,7 +159,7 @@ IPCParameterI* IPCClass::callFunction(const char* name, bool async, std::vector<
 	fch->functionHash = UTIL::MISC::RSHash_CSTR(name);
 	fch->numP = pList.size();
 	memcpy(&fch->data, data, tsize );
-	
+
 	safe_delete(data);
 
 	IPCParameterI* ret = nullptr;
@@ -176,7 +173,7 @@ IPCParameterI* IPCClass::callFunction(const char* name, bool async, std::vector<
 		ret = new PVoid();
 	}
 	else
-	{	
+	{
 		IPCScopedLock<IPCClass> lock(this, newLock());
 
 		fch->id = lock->id;
@@ -235,7 +232,7 @@ IPCParameterI* IPCClass::callLoopback(const char* name, bool async, std::vector<
 	fch->functionHash = UTIL::MISC::RSHash_CSTR(name);
 	fch->numP = pList.size();
 	memcpy(&fch->data, data, tsize );
-	
+
 	safe_delete(data);
 
 	IPCParameterI* ret = nullptr;
@@ -249,7 +246,7 @@ IPCParameterI* IPCClass::callLoopback(const char* name, bool async, std::vector<
 		ret = new PVoid();
 	}
 	else
-	{	
+	{
 		IPCScopedLock<IPCClass> lock(this, newLock());
 
 		fch->id = lock->id;
@@ -278,7 +275,7 @@ void IPCClass::registerFunction(NetworkFunctionI* funct, const char* name)
 	else
 	{
 		safe_delete(funct);
-	}	
+	}
 }
 
 
@@ -295,7 +292,7 @@ void IPCClass::registerEvent(IPCEventI* e, const char* name)
 	else
 	{
 		safe_delete(e);
-	}	
+	}
 }
 
 void IPCClass::messageRecived(uint8 type, const char* buff, uint32 size)
@@ -324,7 +321,7 @@ void IPCClass::messageRecived(uint8 type, const char* buff, uint32 size)
 		{
 			sendMessage(MT_KILL_COMPLETE, nullptr, 0);
 			m_pManager->destroyClass(this);
-		}		
+		}
 	}
 	else if (type == MT_KILL_COMPLETE)
 	{

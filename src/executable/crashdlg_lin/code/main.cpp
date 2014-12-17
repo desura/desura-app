@@ -1,26 +1,23 @@
 /*
-Desura is the leading indie game distribution platform
 Copyright (C) 2011 Mark Chandler (Desura Net Pty Ltd)
+Copyright (C) 2014 Bad Juju Games, Inc.
 
-$LicenseInfo:firstyear=2014&license=lgpl$
-Copyright (C) 2014, Linden Research, Inc.
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
 
-This library is free software; you can redistribute it and/or
-modify it under the terms of the GNU Lesser General Public
-License as published by the Free Software Foundation;
-version 2.1 of the License only.
-
-This library is distributed in the hope that it will be useful,
+This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-Lesser General Public License for more details.
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
 
-You should have received a copy of the GNU Lesser General Public
-License along with this library; if not, see <http://www.gnu.org/licenses/>
-or write to the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+You should have received a copy of the GNU General Public License
+along with this program; if not, write to the Free Software Foundation,
+Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA.
 
-Linden Research, Inc., 945 Battery Street, San Francisco, CA  94111  USA
-$/LicenseInfo$
+Contact us at legal@badjuju.com.
+
 */
 
 
@@ -86,42 +83,42 @@ void on_response(GtkDialog *dialog, gint response, gpointer data)
 	{
 		std::map<std::string, std::string> info;
 		info["cla"] = "--forceupdate";
-		
-		UTIL::LIN::launchProcess("desura", info);		
+
+		UTIL::LIN::launchProcess("desura", info);
 	}
-	
+
 	gtk_main_quit();
 }
 
 int main(int argc, char** argv)
 {
 	gtk_init(&argc, &argv);
-	
+
 	const char* text =  "An error has occured that is preventing Desura from running correctly. "
 						"Restarting Desura should allow you to continue, otherwise you can clean "
 						"your Desura install by forcing an update.";
-	
+
 	if (!ChangeToAppDir())
 		return 1;
-	
+
 	GtkWidget* dialog = gtk_message_dialog_new(NULL, GTK_DIALOG_MODAL, GTK_MESSAGE_ERROR, GTK_BUTTONS_NONE, "%s", text);
-	
+
 	gtk_window_set_title(GTK_WINDOW(dialog), "Desura Error");
 
 	gtk_dialog_add_button(GTK_DIALOG(dialog), "Restart Desura", 1);
 	gtk_dialog_add_button(GTK_DIALOG(dialog), "Force Update", 2);
 	gtk_dialog_add_button(GTK_DIALOG(dialog), "Exit", 3);
-	
+
 	g_signal_connect(G_OBJECT(dialog), "delete-event", G_CALLBACK(gtk_main_quit), NULL);
 	g_signal_connect(G_OBJECT(dialog), "response", G_CALLBACK(on_response), NULL);
-	
+
 	gtk_window_set_keep_above(GTK_WINDOW(dialog), TRUE);
 	gtk_window_set_position(GTK_WINDOW(dialog), GTK_WIN_POS_CENTER);
 
 	gtk_widget_show_all(dialog);
-	
+
 	gtk_main();
-	
+
 	return 0;
 }
 

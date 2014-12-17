@@ -1,26 +1,23 @@
 /*
-Desura is the leading indie game distribution platform
 Copyright (C) 2011 Mark Chandler (Desura Net Pty Ltd)
+Copyright (C) 2014 Bad Juju Games, Inc.
 
-$LicenseInfo:firstyear=2014&license=lgpl$
-Copyright (C) 2014, Linden Research, Inc.
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
 
-This library is free software; you can redistribute it and/or
-modify it under the terms of the GNU Lesser General Public
-License as published by the Free Software Foundation;
-version 2.1 of the License only.
-
-This library is distributed in the hope that it will be useful,
+This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-Lesser General Public License for more details.
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
 
-You should have received a copy of the GNU Lesser General Public
-License along with this library; if not, see <http://www.gnu.org/licenses/>
-or write to the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+You should have received a copy of the GNU General Public License
+along with this program; if not, write to the Free Software Foundation,
+Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA.
 
-Linden Research, Inc., 945 Battery Street, San Francisco, CA  94111  USA
-$/LicenseInfo$
+Contact us at legal@badjuju.com.
+
 */
 
 #include "Common.h"
@@ -28,7 +25,7 @@ $/LicenseInfo$
 #include "MainApp.h"
 #include "InternalLink.h"
 
-GameDiskForm::GameDiskForm(wxWindow* parent, const char* exe, bool cdkey) 
+GameDiskForm::GameDiskForm(wxWindow* parent, const char* exe, bool cdkey)
 	: gcFrame(parent, wxID_ANY, wxT("{0}: Need Game Disk"), wxDefaultPosition, wxSize( 370,145 ), wxDEFAULT_FRAME_STYLE|wxTAB_TRAVERSAL)
 {
 	this->SetSizeHints( wxDefaultSize, wxDefaultSize );
@@ -43,7 +40,7 @@ GameDiskForm::GameDiskForm(wxWindow* parent, const char* exe, bool cdkey)
 
 
 	wxBoxSizer* bSizer1 = new wxBoxSizer( wxHORIZONTAL );
-	
+
 	bSizer1->Add( m_cbReminder, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
 	bSizer1->Add( 0, 0, 1, wxEXPAND, 5 );
 	bSizer1->Add( m_butLaunch, 0, wxTOP|wxBOTTOM|wxLEFT, 5 );
@@ -56,15 +53,15 @@ GameDiskForm::GameDiskForm(wxWindow* parent, const char* exe, bool cdkey)
 	fgSizer1->AddGrowableRow( 1 );
 	fgSizer1->SetFlexibleDirection( wxBOTH );
 	fgSizer1->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
-	
+
 	fgSizer1->Add( m_labInfo, 0, wxALL, 5 );
 	fgSizer1->Add( 0, 0, 1, wxEXPAND, 5 );
 	fgSizer1->Add( bSizer1, 1, wxEXPAND, 5 );
-	
+
 
 	this->SetSizer( fgSizer1 );
 	this->Layout();
-	
+
 	this->Centre( wxBOTH );
 
 	Bind(wxEVT_COMMAND_BUTTON_CLICKED, &GameDiskForm::onButtonClick, this);
@@ -122,7 +119,7 @@ void GameDiskForm::onButtonClick(wxCommandEvent& event)
 
 		g_pMainApp->handleInternalLink(m_pItem->getId(), ACTION_LAUNCH, FormatArgs(m_szExe.size()?gcString("exe={0}", m_szExe):"", m_bHasSeenCDKey?"cdkey":"", "gamedisk"));
 	}
-	
+
 	Close();
 }
 

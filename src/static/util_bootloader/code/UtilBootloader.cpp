@@ -1,26 +1,23 @@
 /*
-Desura is the leading indie game distribution platform
 Copyright (C) 2011 Mark Chandler (Desura Net Pty Ltd)
+Copyright (C) 2014 Bad Juju Games, Inc.
 
-$LicenseInfo:firstyear=2014&license=lgpl$
-Copyright (C) 2014, Linden Research, Inc.
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
 
-This library is free software; you can redistribute it and/or
-modify it under the terms of the GNU Lesser General Public
-License as published by the Free Software Foundation;
-version 2.1 of the License only.
-
-This library is distributed in the hope that it will be useful,
+This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-Lesser General Public License for more details.
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
 
-You should have received a copy of the GNU Lesser General Public
-License along with this library; if not, see <http://www.gnu.org/licenses/>
-or write to the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+You should have received a copy of the GNU General Public License
+along with this program; if not, write to the Free Software Foundation,
+Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA.
 
-Linden Research, Inc., 945 Battery Street, San Francisco, CA  94111  USA
-$/LicenseInfo$
+Contact us at legal@badjuju.com.
+
 */
 
 #include "Common.h"
@@ -73,11 +70,11 @@ bool IsExeRunning(char* pName)
 		char buffer[50] = {0};
 		GetModuleBaseName(hProcess, 0, buffer, 50);
 		CloseHandle(hProcess);
-		
+
 		if(strcmp(pName, buffer)==0)
 			return true;
 	}
-	
+
 	return false;
 }
 
@@ -149,7 +146,7 @@ bool RestartAsAdmin(const char* args)
 	GetModuleFileName(nullptr, name, 255);
 
 	char restartArgs[255];
-	
+
 	if (args)
 		strncpy_s(restartArgs, 255, args, 255);
 	else
@@ -233,8 +230,8 @@ void WaitForDebugger()
 	if (kernel32_dll != nullptr)
 	{
 		WaitForDebuggerFunc waitfor_debugger = (WaitForDebuggerFunc)GetProcAddress(kernel32_dll, "IsDebuggerPresent");
-	
-		if (waitfor_debugger != nullptr) 
+
+		if (waitfor_debugger != nullptr)
 		{
 			while( !waitfor_debugger() )
 				Sleep( 500 );
@@ -258,8 +255,8 @@ bool SetDllDir(const char* dir)
 	if (sol.load("kernel32.dll"))
 	{
 		SetDllDirectoryFunc set_dll_directory = sol.getFunction<SetDllDirectoryFunc>("SetDllDirectoryA");
-	
-		if (set_dll_directory && set_dll_directory(dir)) 
+
+		if (set_dll_directory && set_dll_directory(dir))
 			return true;
 	}
 
@@ -321,7 +318,7 @@ void PreReadImage(const char* file_path)
 	unsigned int win = GetOSId();
 	const DWORD actual_step_size = static_cast<DWORD>(1024*1024);
 
-	if (win > WINDOWS_VISTA) 
+	if (win > WINDOWS_VISTA)
 	{
 		// Vista+ branch. On these OSes, the forced reads through the DLL actually
 		// slows warm starts. The solution is to sequentially read file contents
@@ -343,15 +340,15 @@ void PreReadImage(const char* file_path)
 		DWORD len;
 		size_t total_read = 0;
 
-		while (::ReadFile(file, buffer, actual_step_size, &len, nullptr) && len > 0) 
+		while (::ReadFile(file, buffer, actual_step_size, &len, nullptr) && len > 0)
 		{
 			total_read += static_cast<size_t>(len);
 		}
 
 		::VirtualFree(buffer, 0, MEM_RELEASE);
 		CloseHandle(file);
-	} 
-	else 
+	}
+	else
 	{
 		// WinXP branch. Here, reading the DLL from disk doesn't do
 		// what we want so instead we pull the pages into memory by loading
@@ -362,18 +359,18 @@ void PreReadImage(const char* file_path)
 			return;
 
 		base::win::PEImage pe_image(dll_module);
-	
+
 		PIMAGE_NT_HEADERS nt_headers = pe_image.GetNTHeaders();
 		size_t actual_size_to_read = nt_headers->OptionalHeader.SizeOfImage;
 		volatile uint8* touch = reinterpret_cast<uint8*>(dll_module);
-	
+
 		size_t offset = 0;
-		while (offset < actual_size_to_read) 
+		while (offset < actual_size_to_read)
 		{
 			uint8 unused = *(touch + offset);
 			offset += actual_step_size;
 		}
-	
+
 		FreeLibrary(dll_module);
 	}
 }

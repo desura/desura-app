@@ -1,26 +1,23 @@
 /*
-Desura is the leading indie game distribution platform
 Copyright (C) 2011 Mark Chandler (Desura Net Pty Ltd)
+Copyright (C) 2014 Bad Juju Games, Inc.
 
-$LicenseInfo:firstyear=2014&license=lgpl$
-Copyright (C) 2014, Linden Research, Inc.
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
 
-This library is free software; you can redistribute it and/or
-modify it under the terms of the GNU Lesser General Public
-License as published by the Free Software Foundation;
-version 2.1 of the License only.
-
-This library is distributed in the hope that it will be useful,
+This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-Lesser General Public License for more details.
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
 
-You should have received a copy of the GNU Lesser General Public
-License along with this library; if not, see <http://www.gnu.org/licenses/>
-or write to the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+You should have received a copy of the GNU General Public License
+along with this program; if not, write to the Free Software Foundation,
+Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA.
 
-Linden Research, Inc., 945 Battery Street, San Francisco, CA  94111  USA
-$/LicenseInfo$
+Contact us at legal@badjuju.com.
+
 */
 
 #include "Common.h"
@@ -30,12 +27,12 @@ $/LicenseInfo$
 
 #ifdef DESURA_OFFICIAL_BUILD
 	#include "AppUpdateInstall.h"
-	
+
 	extern UINT DownloadFilesForTest();
 	extern UINT InstallFilesForTest();
-	
+
 	extern INT_PTR DisplayUpdateWindow(int updateType);
-	
+
 	extern bool CheckCert();
 	extern void CheckForBadUninstaller();
 #endif
@@ -161,7 +158,7 @@ BootLoader::BootLoader()
 	_set_error_mode(_OUT_TO_MSGBOX);
 
 	m_MDumpHandle.showMessageBox(true);
-	
+
 	//AfxEnableMemoryTracking(FALSE);
 	InitCommonControls();
 
@@ -183,7 +180,7 @@ void BootLoader::InitInstance()
 	m_MDumpHandle.setTracerSharedMemoryName(g_Tracer.getSharedMemName());
 
 	UTIL::MISC::CMDArgs args(m_lpCmdLine);
-	
+
 	if (args.hasArg("waitfordebugger"))
 		BootLoaderUtil::WaitForDebugger();
 
@@ -488,7 +485,7 @@ void BootLoader::loadUICore()
 	if (!BootLoaderUtil::SetDllDir(".\\bin"))
 	{
 		::MessageBox(nullptr, "Failed to set the DLL path to the bin folder.", PRODUCT_NAME ": ERROR!",  MB_OK);
-		exit(-100);			
+		exit(-100);
 	}
 
 	preReadImages();
@@ -501,14 +498,14 @@ void BootLoader::loadUICore()
 		::MessageBox(nullptr, "Failed to load uicore.dll", PRODUCT_NAME ": ERROR!",  MB_OK);
 		exit(-200);
 	}
-	
+
 	UICoreFP UICoreGetInterface = m_hUICore.getFunction<UICoreFP>("GetInterface");
 
 	if (!UICoreGetInterface)
 	{
 		::MessageBox(nullptr, "Failed to load wxWidgets mappings in uicore.dll", PRODUCT_NAME ": ERROR!", MB_OK);
 		exit(-500);
-	} 
+	}
 
 	m_pUICore = UICoreGetInterface();
 

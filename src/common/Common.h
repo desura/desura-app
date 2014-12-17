@@ -1,26 +1,22 @@
 /*
-Desura is the leading indie game distribution platform
 Copyright (C) 2011 Mark Chandler (Desura Net Pty Ltd)
+Copyright (C) 2014 Bad Juju Games, Inc.
 
-$LicenseInfo:firstyear=2014&license=lgpl$
-Copyright (C) 2014, Linden Research, Inc.
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
 
-This library is free software; you can redistribute it and/or
-modify it under the terms of the GNU Lesser General Public
-License as published by the Free Software Foundation;
-version 2.1 of the License only.
-
-This library is distributed in the hope that it will be useful,
+This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-Lesser General Public License for more details.
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
 
-You should have received a copy of the GNU Lesser General Public
-License along with this library; if not, see <http://www.gnu.org/licenses/>
-or write to the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+You should have received a copy of the GNU General Public License
+along with this program; if not, write to the Free Software Foundation,
+Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA.
 
-Linden Research, Inc., 945 Battery Street, San Francisco, CA  94111  USA
-$/LicenseInfo$
+Contact us at legal@badjuju.com.
 */
 
 #ifdef DESURA_EXE
@@ -31,7 +27,7 @@ $/LicenseInfo$
 	#define COMMON_H
 
 #ifdef WIN32
-#pragma warning( push ) 
+#pragma warning( push )
 #pragma warning( disable : 4251)
 #pragma warning( disable : 4275)
 #endif
@@ -90,7 +86,7 @@ bool IsUIThread();
 #define ASSERT_UITHREAD() gcAssert(IsUIThread())
 
 	#define BOOST_ENABLE_ASSERT_HANDLER 1
-	namespace 
+	namespace
 	{
 		class BoostException : public std::exception
 		{
@@ -141,7 +137,7 @@ bool IsUIThread();
 		#ifndef NIX
 			#define NIX 1
 		#endif
-	
+
 		#if defined __x86_64 || defined __amd64 || defined __x86_64__
 			#define NIX64 1
 		#endif
@@ -151,7 +147,7 @@ bool IsUIThread();
 		#ifndef MACOS
 			#define MACOS 1
 		#endif
-	
+
 		#define fopen64 fopen
 	#endif
 
@@ -200,7 +196,7 @@ bool IsUIThread();
 		#else
 			#include <afx.h>
 		#endif
-	
+
 		#include <sys/stat.h>
 
 		#define vsnwprintf _vsnwprintf
@@ -220,24 +216,24 @@ bool IsUIThread();
 		#define DIRS_CHAR '\\'
 		#define DIRS_WSTR L"\\"
 		#define DIRS_WCHAR L'\\'
-	
+
 		#define DIR_COMMON "Common"
 		#define DIR_WCOMMON L"Common"
 
 		#define CEXPORT __declspec(dllexport)
 		#define CIMPORT __declspec(dllimport)
-	
+
 		#define BUILDID_INTERNAL 500
 		#define BUILDID_BETA 300
 		#define BUILDID_PUBLIC 100
-	
+
 		void inline gcSleep(uint32 miliSecs) { Sleep(miliSecs); }
-	
+
 		// mingw needs some imports
 		#ifdef __MINGW32__
 			#include <limits.h>
 			#include <algorithm>
-		
+
 			// this is missing in the mingw headers
 			// shellapi.h:
 			#ifndef SEE_MASK_DEFAULT
@@ -249,7 +245,7 @@ bool IsUIThread();
 				#define NOTIFYICONDATAW_V3_SIZE sizeof(NOTIFYICONDATAW)
 				#define NOTIFYICONDATA_V3_SIZE __MINGW_NAME_AW_EXT(NOTIFYICONDATA,_V3_SIZE)
 			#endif
-		
+
 			// mscoree.h:
 			#ifndef STARTUP_LOADER_OPTIMIZATION_MULTI_DOMAIN_HOST
 				#define STARTUP_LOADER_OPTIMIZATION_MULTI_DOMAIN_HOST 0x3<<1
@@ -268,12 +264,12 @@ bool IsUIThread();
 
 	#endif
 
-	#ifdef NIX // LINUX 
+	#ifdef NIX // LINUX
 		#define _LARGEFILE_SOURCE 1
 		#define _LARGEFILE64_SOURCE 1
 		#define _FILE_OFFSET_BITS   64
 		#define __USE_LARGEFILE64 1
-	
+
 		#include <sys/types.h>
 		#include <sys/stat.h>
 		#include <sys/wait.h>
@@ -301,7 +297,7 @@ bool IsUIThread();
 		#define DIRS_CHAR '/'
 		#define DIRS_WSTR L"/"
 		#define DIRS_WCHAR L'/'
-	
+
 		#define DIR_COMMON "common"
 		#define DIR_WCOMMON L"common"
 
@@ -482,7 +478,7 @@ bool IsUIThread();
 			std::basic_string<charT> formatString = Template::converToStringType<charT>("{0} [{1}.{2}]");
 			std::basic_string<charT> res = Template::Format(formatString.c_str(), t.getErrMsg(), t.getErrId(), t.getSecErrId());
 
-			strm << res.c_str();	
+			strm << res.c_str();
 			return strm;
 		}
 	#endif

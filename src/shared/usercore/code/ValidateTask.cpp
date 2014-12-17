@@ -1,26 +1,23 @@
 /*
-Desura is the leading indie game distribution platform
 Copyright (C) 2011 Mark Chandler (Desura Net Pty Ltd)
+Copyright (C) 2014 Bad Juju Games, Inc.
 
-$LicenseInfo:firstyear=2014&license=lgpl$
-Copyright (C) 2014, Linden Research, Inc.
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
 
-This library is free software; you can redistribute it and/or
-modify it under the terms of the GNU Lesser General Public
-License as published by the Free Software Foundation;
-version 2.1 of the License only.
-
-This library is distributed in the hope that it will be useful,
+This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-Lesser General Public License for more details.
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
 
-You should have received a copy of the GNU Lesser General Public
-License along with this library; if not, see <http://www.gnu.org/licenses/>
-or write to the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+You should have received a copy of the GNU General Public License
+along with this program; if not, write to the Free Software Foundation,
+Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA.
 
-Linden Research, Inc., 945 Battery Street, San Francisco, CA  94111  USA
-$/LicenseInfo$
+Contact us at legal@badjuju.com.
+
 */
 
 #include "Common.h"
@@ -85,7 +82,7 @@ void ValidateTask::doRun()
 		throw gcException(ERR_NULLHANDLE, "Current branch is nullptr");
 
 	gcString savePath = mm->getMcfPath(getItemId(), curBranch->getBranchId(), build, m_bUnAuthed);
-		
+
 	if (savePath == "")
 		savePath = mm->newMcfPath(getItemId(), curBranch->getBranchId(), build, m_bUnAuthed);
 
@@ -126,7 +123,7 @@ void ValidateTask::doRun()
 				m_hMCFile->getErrorEvent().reset();
 				m_hMCFile->getProgEvent().reset();
 
-				
+
 				m_hMCFile->getErrorEvent() += delegate(&onErrorEvent);
 				m_hMCFile->getProgEvent() += delegate(this, &ValidateTask::onProgress);
 
@@ -422,7 +419,7 @@ void ValidateTask::copyLocalFiles()
 		m_CurMcfIndex = 2;
 		m_TotalFileCount = 0;
 		m_hMCFile->getPatchStats(curMcf.handle(), nullptr, &m_TotalFileCount);
-		
+
 		if (m_TotalFileCount != m_hMCFile->getFileCount())
 		{
 			curMcf->markFiles(m_hMCFile.handle(), true, false, false, false);

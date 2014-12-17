@@ -1,26 +1,23 @@
 /*
-Desura is the leading indie game distribution platform
 Copyright (C) 2011 Mark Chandler (Desura Net Pty Ltd)
+Copyright (C) 2014 Bad Juju Games, Inc.
 
-$LicenseInfo:firstyear=2014&license=lgpl$
-Copyright (C) 2014, Linden Research, Inc.
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
 
-This library is free software; you can redistribute it and/or
-modify it under the terms of the GNU Lesser General Public
-License as published by the Free Software Foundation;
-version 2.1 of the License only.
-
-This library is distributed in the hope that it will be useful,
+This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-Lesser General Public License for more details.
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
 
-You should have received a copy of the GNU Lesser General Public
-License along with this library; if not, see <http://www.gnu.org/licenses/>
-or write to the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+You should have received a copy of the GNU General Public License
+along with this program; if not, write to the Free Software Foundation,
+Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA.
 
-Linden Research, Inc., 945 Battery Street, San Francisco, CA  94111  USA
-$/LicenseInfo$
+Contact us at legal@badjuju.com.
+
 */
 
 #include "Common.h"
@@ -49,7 +46,7 @@ static VOID CALLBACK TimerProc(HWND hwnd, UINT uMsg, UINT_PTR idEvent, DWORD dwT
 	if (uMsg == WM_TIMER)
 	{
 		g_TimerLock.lock();
-	
+
 		std::map<int32, gcSpinningBar*>::iterator it = g_SpinnerMap.find(idEvent);
 
 		if (it != g_SpinnerMap.end() && it->second)
@@ -63,7 +60,7 @@ static gboolean TimerProc(gcSpinningBar *bar)
 {
 	if (bar)
 		bar->notify();
-		
+
 	return TRUE;
 }
 
@@ -78,7 +75,7 @@ gcSpinningBar::gcSpinningBar( wxWindow* parent, wxWindowID id, const wxPoint& po
 #endif
 
 	SetBackgroundColour( wxColour( 125, 255, 125 ) );
- 
+
 	Bind(wxEVT_PAINT, &gcSpinningBar::onPaint, this);
 	Bind(wxEVT_ERASE_BACKGROUND, &gcSpinningBar::onEraseBg, this);
 
@@ -99,7 +96,7 @@ gcSpinningBar::~gcSpinningBar()
 {
 #ifdef WIN32
 	g_TimerLock.lock();
-	
+
 	std::map<int32, gcSpinningBar*>::iterator it = g_SpinnerMap.find(GetId());
 
 	if (it != g_SpinnerMap.end())

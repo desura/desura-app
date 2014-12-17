@@ -1,26 +1,23 @@
 /*
-Desura is the leading indie game distribution platform
 Copyright (C) 2011 Mark Chandler (Desura Net Pty Ltd)
+Copyright (C) 2014 Bad Juju Games, Inc.
 
-$LicenseInfo:firstyear=2014&license=lgpl$
-Copyright (C) 2014, Linden Research, Inc.
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
 
-This library is free software; you can redistribute it and/or
-modify it under the terms of the GNU Lesser General Public
-License as published by the Free Software Foundation;
-version 2.1 of the License only.
-
-This library is distributed in the hope that it will be useful,
+This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-Lesser General Public License for more details.
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
 
-You should have received a copy of the GNU Lesser General Public
-License along with this library; if not, see <http://www.gnu.org/licenses/>
-or write to the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+You should have received a copy of the GNU General Public License
+along with this program; if not, write to the Free Software Foundation,
+Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA.
 
-Linden Research, Inc., 945 Battery Street, San Francisco, CA  94111  USA
-$/LicenseInfo$
+Contact us at legal@badjuju.com.
+
 */
 
 #include "Common.h"
@@ -59,13 +56,13 @@ bool CompleteCallback(const wchar_t* dump_path, const wchar_t* minidump_id, void
 	fw.assertion = assertion;
 
 	MiniDumpGenerator* mdg = (MiniDumpGenerator*)context;
-	return mdg->complete(dump_path, minidump_id, &fw, succeeded);	
+	return mdg->complete(dump_path, minidump_id, &fw, succeeded);
 }
 
 MiniDumpGenerator::MiniDumpGenerator()
 {
 	m_szUser = 0;
-	
+
 #ifndef DESURA_OFFICIAL_BUILD
 	m_bNoUpload = true;
 #else
@@ -76,11 +73,11 @@ MiniDumpGenerator::MiniDumpGenerator()
 
 	if (s_pExceptionHandler)
 		return;
-		
+
 	setDumpLevel(3);
 	m_pCrashCallback = nullptr;
 	m_bCreatedHandle = true;
-	
+
 	wchar_t szDumpPath[MAX_PATH];
 	getDumpPath(szDumpPath, MAX_PATH);
 
@@ -158,25 +155,25 @@ void MiniDumpGenerator::setDumpLevel(unsigned char level)
 	if (!s_pExceptionHandler)
 		return;
 
-	MINIDUMP_TYPE level4 = (MINIDUMP_TYPE)(MiniDumpWithPrivateReadWriteMemory | 
-												MiniDumpWithDataSegs | 
+	MINIDUMP_TYPE level4 = (MINIDUMP_TYPE)(MiniDumpWithPrivateReadWriteMemory |
+												MiniDumpWithDataSegs |
 												MiniDumpWithHandleData |
-												MiniDumpWithFullMemoryInfo | 
-												MiniDumpWithThreadInfo | 
+												MiniDumpWithFullMemoryInfo |
+												MiniDumpWithThreadInfo |
 												MiniDumpWithProcessThreadData |
 												MiniDumpWithUnloadedModules|
-												MiniDumpScanMemory ); 
+												MiniDumpScanMemory );
 
-	MINIDUMP_TYPE level3 = (MINIDUMP_TYPE)(		MiniDumpWithDataSegs | 
+	MINIDUMP_TYPE level3 = (MINIDUMP_TYPE)(		MiniDumpWithDataSegs |
 												MiniDumpWithHandleData |
 												MiniDumpScanMemory|
 												MiniDumpWithIndirectlyReferencedMemory|
-												MiniDumpWithDataSegs); 
+												MiniDumpWithDataSegs);
 
-	MINIDUMP_TYPE level2 = (MINIDUMP_TYPE)(		MiniDumpNormal | 
+	MINIDUMP_TYPE level2 = (MINIDUMP_TYPE)(		MiniDumpNormal |
 												MiniDumpWithHandleData |
 												MiniDumpScanMemory |
-												MiniDumpWithIndirectlyReferencedMemory ); 
+												MiniDumpWithIndirectlyReferencedMemory );
 
 	switch (level)
 	{
@@ -384,64 +381,64 @@ wstring GUIDString::GUIDToSymbolServerWString(GUID *guid) {
 /*
 MiniDumpNormal                         = 0x00000000,
 	stack traces
-	
+
 MiniDumpWithDataSegs                   = 0x00000001,
 	global vars
-	
+
 MiniDumpWithFullMemory                 = 0x00000002,
 	all memory
-	
+
 MiniDumpWithHandleData                 = 0x00000004,
 	handle list
-	
+
 MiniDumpFilterMemory                   = 0x00000008,
 	removes stack variables and zeros them
-	
+
 MiniDumpScanMemory                     = 0x00000010,
 	remove modules
-	
+
 MiniDumpWithUnloadedModules            = 0x00000020,
 	saves unloaded modules
-	
+
 MiniDumpWithIndirectlyReferencedMemory = 0x00000040,
 	pointers are resolved upto 1k
-	
+
 MiniDumpFilterModulePaths              = 0x00000080,
 	remove module paths
-	
+
 MiniDumpWithProcessThreadData          = 0x00000100,
 	private process and thread data
 
 MiniDumpWithPrivateReadWriteMemory     = 0x00000200,
 	include all private memory
-	
+
 MiniDumpWithoutOptionalData            = 0x00000400,
 	removes memory data
-	
+
 MiniDumpWithFullMemoryInfo             = 0x00000800,
 	layout of memory
-	
+
 MiniDumpWithThreadInfo                 = 0x00001000,
 	extra thread info
-	
+
 MiniDumpWithCodeSegs                   = 0x00002000,
 	code segments
-	
+
 MiniDumpWithoutAuxiliaryState          = 0x00004000,
-	
-	
+
+
 MiniDumpWithFullAuxiliaryState         = 0x00008000,
-	
-	
+
+
 MiniDumpWithPrivateWriteCopyMemory     = 0x00010000,
-	
-	
+
+
 MiniDumpIgnoreInaccessibleMemory       = 0x00020000,
-	
-	
+
+
 MiniDumpWithTokenInformation           = 0x00040000,
-	
-	
+
+
 MiniDumpValidTypeFlags                 = 0x0007ffff,
-	
+
 */

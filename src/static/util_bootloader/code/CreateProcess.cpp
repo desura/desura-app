@@ -1,26 +1,23 @@
 /*
-Desura is the leading indie game distribution platform
 Copyright (C) 2011 Mark Chandler (Desura Net Pty Ltd)
+Copyright (C) 2014 Bad Juju Games, Inc.
 
-$LicenseInfo:firstyear=2014&license=lgpl$
-Copyright (C) 2014, Linden Research, Inc.
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
 
-This library is free software; you can redistribute it and/or
-modify it under the terms of the GNU Lesser General Public
-License as published by the Free Software Foundation;
-version 2.1 of the License only.
-
-This library is distributed in the hope that it will be useful,
+This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-Lesser General Public License for more details.
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
 
-You should have received a copy of the GNU Lesser General Public
-License along with this library; if not, see <http://www.gnu.org/licenses/>
-or write to the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+You should have received a copy of the GNU General Public License
+along with this program; if not, write to the Free Software Foundation,
+Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA.
 
-Linden Research, Inc., 945 Battery Street, San Francisco, CA  94111  USA
-$/LicenseInfo$
+Contact us at legal@badjuju.com.
+
 */
 
 #include "Common.h"
@@ -36,12 +33,12 @@ $/LicenseInfo$
 #define SECURITY_MANDATORY_SYSTEM_RID               (0x00004000L)
 #define SECURITY_MANDATORY_PROTECTED_PROCESS_RID    (0x00005000L)
 
-typedef struct _TOKEN_MANDATORY_LABEL 
+typedef struct _TOKEN_MANDATORY_LABEL
 {
 	SID_AND_ATTRIBUTES Label;
 } TOKEN_MANDATORY_LABEL, *PTOKEN_MANDATORY_LABEL;
 
-typedef enum _MANDATORY_LEVEL 
+typedef enum _MANDATORY_LEVEL
 {
 	MandatoryLevelUntrusted = 0,
 	MandatoryLevelLow,
@@ -63,7 +60,7 @@ typedef enum _MANDATORY_LEVEL
 //! @param dwAttributes - (SE_PRIVILEGE_ENABLED) to enable or (0) disable or (SE_PRIVILEGE_REMOVED) to remove privilege
 //! @return HRESULT code
 
-HRESULT SetPrivilege(HANDLE hToken, LPCTSTR lpszPrivilege, DWORD dwAttributes=SE_PRIVILEGE_ENABLED) 
+HRESULT SetPrivilege(HANDLE hToken, LPCTSTR lpszPrivilege, DWORD dwAttributes=SE_PRIVILEGE_ENABLED)
 {
 	HRESULT hr=S_OK;
 	LUID luid;
@@ -84,7 +81,7 @@ HRESULT SetPrivilege(HANDLE hToken, LPCTSTR lpszPrivilege, DWORD dwAttributes=SE
 	{
 		hr=HRESULT_FROM_WIN32(GetLastError());
 	}
-	
+
 	return hr;
 }
 
@@ -92,7 +89,7 @@ HRESULT SetPrivilege(HANDLE hToken, LPCTSTR lpszPrivilege, DWORD dwAttributes=SE
 Function removes the priveleges which are not associated by default with explorer.exe at Medium Integration Level in Vista
 @returns HRESULT of the operation on SE_CREATE_GLOBAL_NAME (="SeCreateGlobalPrivilege")
 */
-inline HRESULT ReducePrivilegesForMediumIL(HANDLE hToken) 
+inline HRESULT ReducePrivilegesForMediumIL(HANDLE hToken)
 {
 	HRESULT hr=S_OK;
 	hr=SetPrivilege(hToken, SE_CREATE_GLOBAL_NAME, SE_PRIVILEGE_REMOVED);
@@ -121,16 +118,16 @@ inline HRESULT ReducePrivilegesForMediumIL(HANDLE hToken)
 #define TraceLN(Function, Line) OutputDebugStringA(Function " line:" #Line "\n")
 
 /*!
-@brief Gets Integration level of the given process in Vista. 
+@brief Gets Integration level of the given process in Vista.
 In the older OS assumes the integration level is equal to SECURITY_MANDATORY_HIGH_RID
 
-The function opens the process for all access and opens its token for all access. 
+The function opens the process for all access and opens its token for all access.
 Then it extracts token information and closes the handles.
 @param[in] dwProcessId ID of the process to operate
 @param[out] pdwProcessIL pointer to write the value
 @return HRESULT
 @retval <return value> { description }
-@remarks Function check for OS version by querying the presence of Kernel32.GetProductInfo function. 
+@remarks Function check for OS version by querying the presence of Kernel32.GetProductInfo function.
 This way is used due to the function is called from InstallShield12 script, so GetVersionEx returns incorrect value.
 @todo restrict access rights when quering for tokens
 */
@@ -161,7 +158,7 @@ inline HRESULT GetProcessIL(DWORD dwProcessId, LPDWORD pdwProcessIL)
 				{
 					PTOKEN_MANDATORY_LABEL pTIL=nullptr;
 					DWORD dwSize=0;
-					if (!GetTokenInformation(hToken, TokenIntegrityLevel, nullptr, 0, &dwSize) 
+					if (!GetTokenInformation(hToken, TokenIntegrityLevel, nullptr, 0, &dwSize)
 						&& ERROR_INSUFFICIENT_BUFFER==GetLastError() && dwSize)
 						pTIL=(PTOKEN_MANDATORY_LABEL)HeapAlloc(GetProcessHeap(), 0, dwSize);
 
@@ -190,21 +187,21 @@ inline HRESULT GetProcessIL(DWORD dwProcessId, LPDWORD pdwProcessIL)
 @brief Function launches process with the integration level of Explorer on Vista. On the previous OS, simply creates the process.
 
 Function gets the integration level of the current process and Explorer, then launches the new process.
-If the integration levels are equal, CreateProcess is called. 
-If Explorer has Medium IL, and the current process has High IL, new token is created, its rights are adjusted 
-and CreateProcessWithTokenW is called. 
+If the integration levels are equal, CreateProcess is called.
+If Explorer has Medium IL, and the current process has High IL, new token is created, its rights are adjusted
+and CreateProcessWithTokenW is called.
 If Explorer has Medium IL, and the current process has High IL, error is returned.
-@param[in] szProcessName - the name of exe file (see CreatePorcess()) 
+@param[in] szProcessName - the name of exe file (see CreatePorcess())
 @param[in] szCmdLine - the name of exe file (see CreatePorcess())
 @return HRESULT code
-@note The function cannot be used in services, due to if uses USER32.FindWindow() to get the proper instance of Explorer. 
+@note The function cannot be used in services, due to if uses USER32.FindWindow() to get the proper instance of Explorer.
 The parent of new process in taskmgr.exe, but not the current process.
 @sa ReducePrivilegesForMediumIL()
 */
 HRESULT CreateProcessWithExplorerIL(LPWSTR szProcessName, LPWSTR szCmdLine, LPWSTR szWorkingDir)
 {
 	HRESULT hr=S_OK;
-	
+
 	BOOL bRet;
 	HANDLE hToken;
 	HANDLE hNewToken;
@@ -221,13 +218,13 @@ HRESULT CreateProcessWithExplorerIL(LPWSTR szProcessName, LPWSTR szCmdLine, LPWS
 
 	if(bVista)
 	{
-		DWORD dwCurIL=SECURITY_MANDATORY_HIGH_RID; 
+		DWORD dwCurIL=SECURITY_MANDATORY_HIGH_RID;
 		DWORD dwExplorerID=0, dwExplorerIL=SECURITY_MANDATORY_HIGH_RID;
 
 		HWND hwndShell=::FindWindowA("Progman", nullptr);
 		if(hwndShell)
 			GetWindowThreadProcessId(hwndShell, &dwExplorerID);
-		
+
 		hr=GetProcessIL(dwExplorerID, &dwExplorerIL);
 		if(SUCCEEDED(hr))
 			hr=GetProcessIL(GetCurrentProcessId(), &dwCurIL);

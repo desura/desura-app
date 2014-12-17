@@ -121,6 +121,12 @@ if(BUILD_CEF OR BUILD_ONLY_CEF)
     set(CEF_LIBRARIES "${CEF_LIB_DIR}/libcef_desura.so")
     set(CEF_FFMPEG_LIB "${CEF_FFMPEG_LIB_DIR}/libffmpegsumo.so")
     set(CEF_MEDIA_DIR "${LIB_INSTALL_DIR}/cefmedia")
+
+    add_dependencies(cef ${CEF_LIB_DIR})
+    add_dependencies(cef ${CEF_FFMPEG_LIB_DIR})
+    add_dependencies(cef ${CEF_LIBRARIES})
+    add_dependencies(cef ${CEF_FFMPEG_LIB})
+    add_dependencies(cef ${CEF_MEDIA_DIR})
     
     set(ENV{CFLAGS.host} "$ENV{CFLAGS}")
     set(ENV{CXXFLAGS.host} "$ENV{CXXFLAGS}")

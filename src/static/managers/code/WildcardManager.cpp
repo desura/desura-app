@@ -1,26 +1,23 @@
 /*
-Desura is the leading indie game distribution platform
 Copyright (C) 2011 Mark Chandler (Desura Net Pty Ltd)
+Copyright (C) 2014 Bad Juju Games, Inc.
 
-$LicenseInfo:firstyear=2014&license=lgpl$
-Copyright (C) 2014, Linden Research, Inc.
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
 
-This library is free software; you can redistribute it and/or
-modify it under the terms of the GNU Lesser General Public
-License as published by the Free Software Foundation;
-version 2.1 of the License only.
-
-This library is distributed in the hope that it will be useful,
+This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-Lesser General Public License for more details.
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
 
-You should have received a copy of the GNU Lesser General Public
-License along with this library; if not, see <http://www.gnu.org/licenses/>
-or write to the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+You should have received a copy of the GNU General Public License
+along with this program; if not, write to the Free Software Foundation,
+Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA.
 
-Linden Research, Inc., 945 Battery Street, San Francisco, CA  94111  USA
-$/LicenseInfo$
+Contact us at legal@badjuju.com.
+
 */
 
 #include "Common.h"
@@ -32,7 +29,7 @@ $/LicenseInfo$
 
 static std::mutex m_WCMutex;
 
-WildcardManager::WildcardManager() 
+WildcardManager::WildcardManager()
 	: BaseManager()
 {
 	m_uiDepth = 0;
@@ -71,7 +68,7 @@ gcString WildcardManager::constructPath(const char* path, bool fixPath)
 	ret = szPathOut;
 	return ret;
 }
-	
+
 void WildcardManager::constructPath(const char* path, char **res, bool fixPath)
 {
 	if (!path)
@@ -117,7 +114,7 @@ void WildcardManager::constructPath(const char* path, char **res, uint8 *depth)
 			else if (start == -1)
 			{
 				start = (int32)x;
-		
+
 				char* temp = new char[start-stop+1];
 				for (int32 y=stop; y<=start; y++)
 					temp[y-stop] = path[y];
@@ -263,7 +260,7 @@ uint8 WildcardManager::parseXML(const XML::gcXMLElement &xmlElement)
 		const std::string name = xmlChild.GetAtt("name");
 		const std::string type = xmlChild.GetAtt("type");
 		const std::string string = xmlChild.GetText();
-			
+
 		if (!name.empty() && !type.empty() && !string.empty())
 		{
 			addItem(gcRefPtr<WildcardInfo>::create(name, string, type));
@@ -330,7 +327,7 @@ void WildcardManager::resolveWildCard(gcRefPtr<WildcardInfo> wcInfo)
 		{
 			WCSpecialInfo info;
 			info.name = wcInfo->m_szName;
-						
+
 			needSpecial(&info);
 
 			if (info.handled)

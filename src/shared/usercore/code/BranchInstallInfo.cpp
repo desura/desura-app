@@ -1,26 +1,23 @@
 /*
-Desura is the leading indie game distribution platform
 Copyright (C) 2011 Mark Chandler (Desura Net Pty Ltd)
+Copyright (C) 2014 Bad Juju Games, Inc.
 
-$LicenseInfo:firstyear=2014&license=lgpl$
-Copyright (C) 2014, Linden Research, Inc.
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
 
-This library is free software; you can redistribute it and/or
-modify it under the terms of the GNU Lesser General Public
-License as published by the Free Software Foundation;
-version 2.1 of the License only.
-
-This library is distributed in the hope that it will be useful,
+This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-Lesser General Public License for more details.
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
 
-You should have received a copy of the GNU Lesser General Public
-License along with this library; if not, see <http://www.gnu.org/licenses/>
-or write to the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+You should have received a copy of the GNU General Public License
+along with this program; if not, write to the Free Software Foundation,
+Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA.
 
-Linden Research, Inc., 945 Battery Street, San Francisco, CA  94111  USA
-$/LicenseInfo$
+Contact us at legal@badjuju.com.
+
 */
 
 
@@ -157,7 +154,7 @@ void BranchInstallInfo::loadDb(sqlite3x::sqlite3_connection* db)
 		sqlite3x::sqlite3_command cmd(*db, "SELECT * FROM installinfo WHERE itemid=? AND biid=?;");
 		cmd.bind(1, (long long int)m_ItemId.toInt64());
 		cmd.bind(2, (int)m_BiId);
-	
+
 		sqlite3x::sqlite3_reader reader = cmd.executereader();
 		reader.read();
 
@@ -177,7 +174,7 @@ void BranchInstallInfo::loadDb(sqlite3x::sqlite3_connection* db)
 		cmd.bind(2, (int)m_BiId);
 
 		sqlite3x::sqlite3_reader reader = cmd.executereader();
-	
+
 		while (reader.read())
 		{
 			m_vInstallChecks.push_back(reader.getstring(0));
@@ -202,7 +199,7 @@ void BranchInstallInfo::loadDb(sqlite3x::sqlite3_connection* db)
 		cmd.bind(2, (int)m_BiId);
 
 		sqlite3x::sqlite3_reader reader = cmd.executereader();
-	
+
 		while (reader.read())
 		{
 			gcString name = reader.getstring(2);
@@ -335,7 +332,7 @@ ProcessResult BranchInstallInfo::processSettings(const XML::gcXMLElement &setNod
 	pr.notFirst = false;
 
 	auto icsNode = setNode.FirstChildElement("installlocations");
-	
+
 	if (!isInstalled())
 		m_vInstallChecks.clear();
 
@@ -345,7 +342,7 @@ ProcessResult BranchInstallInfo::processSettings(const XML::gcXMLElement &setNod
 
 		extractInstallChecks(icsNode, pWildCard, vInsChecks);
 		UpdateInstallCheckList(vInsChecks, pWildCard);
-	
+
 		size_t size = vInsChecks.size();
 
 		//only care about the first item for bought items when we are not already installed
@@ -364,7 +361,7 @@ ProcessResult BranchInstallInfo::processSettings(const XML::gcXMLElement &setNod
 					pWildCard->updateInstallWildcard("INSTALL_PATH", vInsChecks[x].path.c_str());
 
 				pr.found = true;
-				pr.notFirst = (x != 0);	
+				pr.notFirst = (x != 0);
 				break;
 			}
 		}
@@ -401,7 +398,7 @@ ProcessResult BranchInstallInfo::processSettings(const XML::gcXMLElement &setNod
 		char *iPathRes = nullptr;
 		char* insPrim = nullptr;
 		char* insPrimRes = nullptr;
-		
+
 		setNode.GetChild("installprimary", insPrim);
 
 		try
@@ -542,7 +539,7 @@ bool BranchInstallInfo::isInstalled()
 	return (m_pItem->getStatus() & UM::ItemInfoI::STATUS_INSTALLED) == UM::ItemInfoI::STATUS_INSTALLED;
 }
 
-void BranchInstallInfo::setPath(const char *path)		
+void BranchInstallInfo::setPath(const char *path)
 {
 	if (m_szPath == path)
 		return;
@@ -571,7 +568,7 @@ void BranchInstallInfo::setInsPrimary(const char* path)
 }
 
 //only can change this if it is not installed
-void BranchInstallInfo::setInsCheck(const char* path)	
+void BranchInstallInfo::setInsCheck(const char* path)
 {
 	if (m_szInsCheck == path)
 		return;
@@ -586,7 +583,7 @@ void BranchInstallInfo::setInsCheck(const char* path)
 		//should not change dir when updating install check when installed
 		bCheckFailed = p1.getFolderPath() == p2.getFolderPath();
 	}
-		
+
 	//should never set path when installed
 	VERIFY_OR_RETURN(!bCheckFailed, );
 
@@ -616,7 +613,7 @@ void BranchInstallInfo::launchExeHack()
 					if (ei->m_szName == "Play")
 						ei->m_szExeArgs = gcString("-applaunch 6910");
 					else
-						ei->m_szExeArgs += gcString("-applaunch 6910");		
+						ei->m_szExeArgs += gcString("-applaunch 6910");
 				}
 			}
 		}
@@ -745,7 +742,7 @@ bool BranchInstallInfo::processUpdateXml(const XML::gcXMLElement &branch)
 	if (mcfEl.IsValid())
 	{
 		const std::string id = mcfEl.GetAtt("id");
-					
+
 		if (!id.empty())
 		{
 			uint32 build = -1;
@@ -756,7 +753,7 @@ bool BranchInstallInfo::processUpdateXml(const XML::gcXMLElement &branch)
 			else
 				m_NextBuild = m_INBuild;
 		}
-	}					
+	}
 
 	return (m_NextBuild > m_INBuild);
 }
@@ -831,7 +828,7 @@ namespace UnitTest
 			for (auto &strFileIt : m_vValidFiles)
 			{
 				UTIL::FS::Path b(UTIL::FS::PathWithFile(strFileIt));
-				
+
 				if (a == b)
 					return true;
 			}
@@ -897,7 +894,7 @@ namespace UnitTest
 				else
 					ASSERT_EQ(nValidFileCount, m_BranchInstallInfo->m_vInstallChecks.size());
 			}
-				
+
 		}
 
 		bool updateInstallCheck(gcString &strCheckRes, const gcString &strPath)
@@ -949,7 +946,7 @@ namespace UnitTest
 	}
 
 
-	static const char* gs_szSettingsXml = 
+	static const char* gs_szSettingsXml =
 			"<branch>"
 				"<installprimary>insprim</installprimary>"
 				"<installlocations>"
@@ -962,7 +959,7 @@ namespace UnitTest
 				"</executes>"
 			"</branch>";
 
-	static const char* gs_szInstallLocationsXml = 
+	static const char* gs_szInstallLocationsXml =
 				"<installlocations>"
 					"<installlocation><check>%WILDCARD_A%\\%WILDCARD_B%\\a.txt</check><path>%WILDCARD_A%\\%WILDCARD_B%</path></installlocation>"
 					"<installlocation><check>relativepath\\b.txt</check><path>relativepath</path></installlocation>"
@@ -1056,7 +1053,7 @@ namespace UnitTest
 		setInstallInfo("D:\\test", "D:\\test\\oldcheck.txt", "insprim");
 
 		gcString strPath("C:\\abc\\def\\check.txt");
-		
+
 		ASSERT_TRUE(updateInstallCheck(strPath, "C:\\abc"));
 		ASSERT_FILEEQ("D:\\test\\def\\check.txt", strPath.c_str());
 	}
@@ -1067,7 +1064,7 @@ namespace UnitTest
 		setInstallInfo("D:\\test", "D:\\test\\oldcheck.txt", "insprim");
 
 		gcString strPath("C:\\abc\\def\\check.txt");
-		
+
 		ASSERT_FALSE(updateInstallCheck(strPath, "C:\\123"));
 		ASSERT_FILEEQ("C:\\abc\\def\\check.txt", strPath.c_str());
 	}
@@ -1078,7 +1075,7 @@ namespace UnitTest
 		setInstallInfo("D:\\test", "D:\\test\\oldcheck.txt", "insprim");
 
 		gcString strPath("C:\\abc\\def\\check.txt");
-		
+
 		ASSERT_FALSE(updateInstallCheck(strPath, "D:\\abc"));
 		ASSERT_FILEEQ("C:\\abc\\def\\check.txt", strPath.c_str());
 	}

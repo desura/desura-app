@@ -1,26 +1,23 @@
 /*
-Desura is the leading indie game distribution platform
 Copyright (C) 2011 Mark Chandler (Desura Net Pty Ltd)
+Copyright (C) 2014 Bad Juju Games, Inc.
 
-$LicenseInfo:firstyear=2014&license=lgpl$
-Copyright (C) 2014, Linden Research, Inc.
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
 
-This library is free software; you can redistribute it and/or
-modify it under the terms of the GNU Lesser General Public
-License as published by the Free Software Foundation;
-version 2.1 of the License only.
-
-This library is distributed in the hope that it will be useful,
+This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-Lesser General Public License for more details.
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
 
-You should have received a copy of the GNU Lesser General Public
-License along with this library; if not, see <http://www.gnu.org/licenses/>
-or write to the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+You should have received a copy of the GNU General Public License
+along with this program; if not, write to the Free Software Foundation,
+Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA.
 
-Linden Research, Inc., 945 Battery Street, San Francisco, CA  94111  USA
-$/LicenseInfo$
+Contact us at legal@badjuju.com.
+
 */
 
 #include "Common.h"
@@ -48,7 +45,7 @@ class DesuraMenuFiller : public MenuFiller
 public:
 	DesuraMenuFiller(wxWindow *parent) : MenuFiller(parent, "#menu_bg", wxSize(25,38))
 	{
-		
+
 	}
 
 	void onActiveToggle(bool state)
@@ -66,7 +63,7 @@ END_EVENT_TABLE()
 
 ///////////////////////////////////////////////////////////////////////////
 
-DesuraControl::DesuraControl(gcFrame* parent, bool offline, const char* szProvider) 
+DesuraControl::DesuraControl(gcFrame* parent, bool offline, const char* szProvider)
 	: gcPanel(parent)
 {
 	m_iIndex = -1;
@@ -75,7 +72,7 @@ DesuraControl::DesuraControl(gcFrame* parent, bool offline, const char* szProvid
 
 	this->SetBackgroundColour( wxColor(GetGCThemeManager()->getColor("headerbottomborder", "bg")));
 	this->SetSizeHints( wxDefaultSize, wxDefaultSize );
-	
+
 	auto userCore = GetUserCore();
 
 	if (userCore)
@@ -94,7 +91,7 @@ DesuraControl::DesuraControl(gcFrame* parent, bool offline, const char* szProvid
 
 	const char* szUsername = Managers::GetString("#MP_OFFLINE");
 	const char* szAvatar = nullptr;
-	
+
 	if (userCore)
 	{
 		szAvatar = GetUserCore()->getAvatar();
@@ -102,7 +99,7 @@ DesuraControl::DesuraControl(gcFrame* parent, bool offline, const char* szProvid
 		if (!offline)
 			szUsername = GetUserCore()->getUserName();
 	}
-		
+
 
 	if (szAvatar && UTIL::FS::isValidFile(UTIL::FS::PathWithFile(szAvatar)))
 	{
@@ -116,7 +113,7 @@ DesuraControl::DesuraControl(gcFrame* parent, bool offline, const char* szProvid
 
 	m_pFiller = new DesuraMenuFiller(this);
 	m_pFiller->SetMinSize( wxSize( 25,38 ) );
-	
+
 	m_pUsernameBox = new UsernameBox(this, szUsername);
 	m_pMenuStrip = new MenuStrip(this);
 
@@ -138,9 +135,9 @@ DesuraControl::DesuraControl(gcFrame* parent, bool offline, const char* szProvid
 	fgSizer3->Add( m_pMenuStrip, 1, wxEXPAND, 5 ); 	// main buttons across the top
 	fgSizer3->Add( m_pFiller, 1, wxEXPAND, 5 );
 
-	
-	m_sizerHeader = new wxBoxSizer( wxVERTICAL ); 
-	
+
+	m_sizerHeader = new wxBoxSizer( wxVERTICAL );
+
 
 
 
@@ -187,7 +184,7 @@ DesuraControl::DesuraControl(gcFrame* parent, bool offline, const char* szProvid
 	wxFlexGridSizer* fgSizer5;
 	fgSizer5 = new wxFlexGridSizer( 3, 1, 0, 0 );
 	fgSizer5->AddGrowableCol( 0 );
-	
+
 	fgSizer5->SetFlexibleDirection( wxBOTH );
 	fgSizer5->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
 
@@ -212,7 +209,7 @@ DesuraControl::DesuraControl(gcFrame* parent, bool offline, const char* szProvid
 	}
 
 	fgSizer5->Add( m_sizerContent, 1, wxEXPAND, 5 );
-	
+
 	this->SetSizer( fgSizer5 );
 	this->Layout();
 
@@ -250,7 +247,7 @@ void DesuraControl::onActiveToggle(bool &state)
 	m_pMenuStrip->onActiveToggle(state);
 
 	if (m_iIndex != UNKNOWN_ITEM && m_iIndex < m_vTabInfo.size())
-	{	
+	{
 		if (m_vTabInfo[m_iIndex].header)
 			m_vTabInfo[m_iIndex].header->onActiveToggle(state);
 	}
@@ -265,7 +262,7 @@ void DesuraControl::addPage(std::shared_ptr<BaseTabPage> page, const char* tabNa
 		return;
 
 	tabInfo_s temp;
-	
+
 	temp.page = page;
 	temp.header = page->getToolBarControl();
 	temp.id = m_pMenuStrip->addButton(tabName);
@@ -327,7 +324,7 @@ void DesuraControl::setActivePage(PAGE index, bool reset)
 
 	if (reset)
 		m_vTabInfo[index].page->reset();
-	
+
 	m_sizerContent->Add(m_vTabInfo[index].page.get(), 1, wxEXPAND | wxBOTTOM, 1);
 	m_sizerHeader->Add(m_vTabInfo[index].header.get(), 1, wxEXPAND | wxBOTTOM, 1);
 
@@ -335,7 +332,7 @@ void DesuraControl::setActivePage(PAGE index, bool reset)
 	this->Layout();
 
 	m_iIndex = index;
-}	
+}
 
 void DesuraControl::showLeftBorder(bool state)
 {
@@ -367,7 +364,7 @@ void DesuraControl::onButtonClicked( wxCommandEvent& event )
 			g_pMainApp->loadUrl(GetUserCore()->getProfileEditUrl(), COMMUNITY);
 	}
 	else if (event.GetId() == m_pUsernameBox->GetId())
-	{	
+	{
 		if (userCore)
 			g_pMainApp->loadUrl(GetUserCore()->getProfileUrl(), COMMUNITY);
 	}

@@ -1,26 +1,23 @@
 /*
-Desura is the leading indie game distribution platform
 Copyright (C) 2011 Mark Chandler (Desura Net Pty Ltd)
+Copyright (C) 2014 Bad Juju Games, Inc.
 
-$LicenseInfo:firstyear=2014&license=lgpl$
-Copyright (C) 2014, Linden Research, Inc.
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
 
-This library is free software; you can redistribute it and/or
-modify it under the terms of the GNU Lesser General Public
-License as published by the Free Software Foundation;
-version 2.1 of the License only.
-
-This library is distributed in the hope that it will be useful,
+This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-Lesser General Public License for more details.
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
 
-You should have received a copy of the GNU Lesser General Public
-License along with this library; if not, see <http://www.gnu.org/licenses/>
-or write to the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+You should have received a copy of the GNU General Public License
+along with this program; if not, write to the Free Software Foundation,
+Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA.
 
-Linden Research, Inc., 945 Battery Street, San Francisco, CA  94111  USA
-$/LicenseInfo$
+Contact us at legal@badjuju.com.
+
 */
 
 #include "Common.h"
@@ -117,11 +114,11 @@ void PipeBase::run()
 {
 	gcTrace("");
 
-	while (!isStopped()) 
-	{ 
+	while (!isStopped())
+	{
 		processEvents();
 		processLoopback();
-	} 
+	}
 }
 
 void PipeBase::processLoopback()
@@ -160,11 +157,11 @@ void PipeBase::processEvents()
 		return;
 	}
 
-	// dwWait shows which pipe completed the operation. 
-	size_t i = dwWait - WAIT_OBJECT_0;  // determines which pipe 
-	if (i < 0 || i > (getNumEvents() - 1)) 
+	// dwWait shows which pipe completed the operation.
+	size_t i = dwWait - WAIT_OBJECT_0;  // determines which pipe
+	if (i < 0 || i > (getNumEvents() - 1))
 	{
-		printf("Index out of range.\n"); 
+		printf("Index out of range.\n");
 		return;
 	}
 
@@ -181,8 +178,8 @@ void PipeBase::processEvents()
 	//printf("Event %d, P: %d\n", i, data->fPendingIO);
 
 
-	// Get the result if the operation was pending. 
-	if (data->fPendingIO) 
+	// Get the result if the operation was pending.
+	if (data->fPendingIO)
 	{
 		BOOL fSuccess = GetOverlappedResult(data->hPipe, &data->oOverlap, &cbRet, FALSE);
 
@@ -190,14 +187,14 @@ void PipeBase::processEvents()
 
 		if (data->pendingConnection)
 		{
-			if (!fSuccess) 
+			if (!fSuccess)
 				throw gcException(ERR_PIPE, GetLastError(), gcString("Error {0}.\n", GetLastError()));
 
-			data->pendingConnection = false; 
+			data->pendingConnection = false;
 			data->fPendingIO = FALSE;
 		}
 		else
-		{	
+		{
 			DWORD err = GetLastError();
 
 			//Buffer is full. Wait for space
@@ -211,7 +208,7 @@ void PipeBase::processEvents()
 				printf("Disconnect pending!\n");
 				return;
 			}
-				
+
 			if (!data->sender)
 			{
 				data->size = cbRet;
@@ -222,8 +219,8 @@ void PipeBase::processEvents()
 
 	bool res = false;
 
-	// The pipe state determines which operation to do next. 
-	if (data->sender) 
+	// The pipe state determines which operation to do next.
+	if (data->sender)
 		res = performWrite(data, getManager(i));
 	else
 		res = performRead(data, getManager(i));
@@ -247,7 +244,7 @@ void PipeBase::finishRead(PipeData* data, IPCManager* mng)
 
 	mng->recvMessage(data->buffer, data->size);
 	data->size = 0;
-	data->fPendingIO = FALSE; 
+	data->fPendingIO = FALSE;
 }
 
 
@@ -257,15 +254,15 @@ bool PipeBase::performRead(PipeData* data, IPCManager* mng)
 		return true;
 
 	DWORD read;
-	BOOL fSuccess = ReadFile(data->hPipe, data->buffer, BUFSIZE, &read, &data->oOverlap); 
+	BOOL fSuccess = ReadFile(data->hPipe, data->buffer, BUFSIZE, &read, &data->oOverlap);
 
-	if (fSuccess) 
+	if (fSuccess)
 	{
 		data->size = read;
 		finishRead(data, mng);
-	} 
-	else if (!fSuccess && (GetLastError() == ERROR_IO_PENDING)) 
-	{ 
+	}
+	else if (!fSuccess && (GetLastError() == ERROR_IO_PENDING))
+	{
 		data->fPendingIO = TRUE;
 	}
 	else
@@ -283,7 +280,7 @@ bool PipeBase::performWrite(PipeData* data, IPCManager* mng)
 
 	if (!mng->getMessageToSend(data->buffer, BUFSIZE, data->size))
 		return true;
-	
+
 #ifdef IPC_DEBUG
 	if (fh)
 	{
@@ -294,17 +291,17 @@ bool PipeBase::performWrite(PipeData* data, IPCManager* mng)
 	}
 #endif
 
-	BOOL fSuccess = WriteFile( data->hPipe, data->buffer, data->size, nullptr, &data->oOverlap); 
+	BOOL fSuccess = WriteFile( data->hPipe, data->buffer, data->size, nullptr, &data->oOverlap);
 
-	if (fSuccess) 
-	{ 
+	if (fSuccess)
+	{
 		data->size = 0;
-		data->fPendingIO = FALSE; 
-	} 
-	else if (!fSuccess && (GetLastError() == ERROR_IO_PENDING)) 
-	{ 
+		data->fPendingIO = FALSE;
+	}
+	else if (!fSuccess && (GetLastError() == ERROR_IO_PENDING))
+	{
 		data->fPendingIO = TRUE;
-	} 
+	}
 	else
 	{
 		gcAssert(false);

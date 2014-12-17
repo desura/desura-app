@@ -1,26 +1,23 @@
 /*
-Desura is the leading indie game distribution platform
 Copyright (C) 2011 Mark Chandler (Desura Net Pty Ltd)
+Copyright (C) 2014 Bad Juju Games, Inc.
 
-$LicenseInfo:firstyear=2014&license=lgpl$
-Copyright (C) 2014, Linden Research, Inc.
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
 
-This library is free software; you can redistribute it and/or
-modify it under the terms of the GNU Lesser General Public
-License as published by the Free Software Foundation;
-version 2.1 of the License only.
-
-This library is distributed in the hope that it will be useful,
+This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-Lesser General Public License for more details.
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
 
-You should have received a copy of the GNU Lesser General Public
-License along with this library; if not, see <http://www.gnu.org/licenses/>
-or write to the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+You should have received a copy of the GNU General Public License
+along with this program; if not, write to the Free Software Foundation,
+Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA.
 
-Linden Research, Inc., 945 Battery Street, San Francisco, CA  94111  USA
-$/LicenseInfo$
+Contact us at legal@badjuju.com.
+
 */
 
 #include "Common.h"
@@ -63,7 +60,7 @@ User::User()
 	onLoginItemsLoadedEvent += delegate(this, &User::onLoginItemsLoaded);
 }
 
-User::~User() 
+User::~User()
 {
 	gcTrace("");
 	destroy();
@@ -181,7 +178,12 @@ void User::cleanUp()
 	safe_delete(m_pGameExplorerManager);
 #endif
 	safe_delete(m_pCIPManager);
-	safe_delete(m_pItemManager);
+
+	if (m_pItemManager.getRefCt() <= 1)
+	{
+		safe_delete(m_pItemManager);
+	}
+
 	safe_delete(m_pToolManager);
 	safe_delete(m_pPipeClient);
 	safe_delete(m_pCDKeyManager);
@@ -250,7 +252,7 @@ void User::appNeedUpdate(uint32 appver, uint32 appbuild, bool bForced)
 	{
 		if (szAppid.size() > 0)
 			m_uiLastUpdateVer = Safe::atoi(szAppid.c_str());
-		
+
 		if (m_uiLastUpdateVer == 0)
 			m_uiLastUpdateVer = 100;
 	}
@@ -262,7 +264,7 @@ void User::appNeedUpdate(uint32 appver, uint32 appbuild, bool bForced)
 		if (szAppBuild.size() > 0)
 			m_uiLastUpdateBuild = Safe::atoi(szAppBuild.c_str());
 
-		if (m_uiLastUpdateBuild == 0) 
+		if (m_uiLastUpdateBuild == 0)
 			m_uiLastUpdateBuild = 0;
 	}
 
@@ -280,7 +282,7 @@ void User::appNeedUpdate(uint32 appver, uint32 appbuild, bool bForced)
 
 	if (appver != 0)
 	{
-		m_uiLastUpdateVer = appver;	
+		m_uiLastUpdateVer = appver;
 		m_uiLastUpdateBuild = appbuild;
 	}
 
@@ -297,7 +299,7 @@ const char* User::getCVarValue(const char* cvarName)
 {
 	if (!cvarName)
 		return nullptr;
-		
+
 	UserCore::Misc::CVar_s temp;
 	temp.name = cvarName;
 	temp.value = nullptr;
@@ -312,7 +314,7 @@ void User::onUpdateComplete(UserCore::Misc::update_s& info)
 
 	m_uiLastUpdateBuild = info.build;
 	m_bDownloadingUpdate = false;
-	
+
 	if (info.alert)
 	{
 		UserCore::Misc::UpdateInfo uLast(m_uiLastUpdateVer, m_uiLastUpdateBuild);
@@ -325,7 +327,7 @@ void User::onUpdateStart(UserCore::Misc::update_s& info)
 	gcTrace("");
 
 	m_uiLastUpdateBuild = info.build;
-	
+
 	if (info.alert)
 	{
 		UserCore::Misc::UpdateInfo uLast(m_uiLastUpdateVer, m_uiLastUpdateBuild);
@@ -435,7 +437,7 @@ void User::parseNewsAndGifts(const XML::gcXMLElement &xmlNode, const char* szChi
 
 		itemElem.GetChild("title", szTitle);
 		itemElem.GetChild("url", szUrl);
-			
+
 		if (szId.empty() || szTitle.empty() || szUrl.empty())
 			return;
 
@@ -568,7 +570,7 @@ bool User::platformFilter(const XML::gcXMLElement &platform, PlatformType type)
 		return false;
 #endif
 	//linux will have windows and nix
-	return (id != 110); //id != 100 && 
+	return (id != 110); //id != 100 &&
 #else
 	return true;
 #endif

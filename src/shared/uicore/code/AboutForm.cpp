@@ -1,26 +1,23 @@
 /*
-Desura is the leading indie game distribution platform
 Copyright (C) 2011 Mark Chandler (Desura Net Pty Ltd)
+Copyright (C) 2014 Bad Juju Games, Inc.
 
-$LicenseInfo:firstyear=2014&license=lgpl$
-Copyright (C) 2014, Linden Research, Inc.
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
 
-This library is free software; you can redistribute it and/or
-modify it under the terms of the GNU Lesser General Public
-License as published by the Free Software Foundation;
-version 2.1 of the License only.
-
-This library is distributed in the hope that it will be useful,
+This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-Lesser General Public License for more details.
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
 
-You should have received a copy of the GNU Lesser General Public
-License along with this library; if not, see <http://www.gnu.org/licenses/>
-or write to the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+You should have received a copy of the GNU General Public License
+along with this program; if not, write to the Free Software Foundation,
+Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA.
 
-Linden Research, Inc., 945 Battery Street, San Francisco, CA  94111  USA
-$/LicenseInfo$
+Contact us at legal@badjuju.com.
+
 */
 
 
@@ -33,36 +30,31 @@ $/LicenseInfo$
 #include "AboutPageDev.h"
 
 
-#ifdef DESURA_OFFICIAL_BUILD
-	static const int ABOUT_FORM_WIDTH = 287;
-	static const int ABOUT_FORM_HEIGHT = 462;
-#else
-	static const int ABOUT_FORM_WIDTH = 287;
-	static const int ABOUT_FORM_HEIGHT = 462;
-#endif
+static const int ABOUT_FORM_WIDTH = 287;
+static const int ABOUT_FORM_HEIGHT = 462;
 
-	
-AboutForm::AboutForm(wxWindow* parent) 
+
+AboutForm::AboutForm(wxWindow* parent)
 	: gcDialog(parent, wxID_ANY, "About " PRODUCT_NAME, wxDefaultPosition, wxSize(ABOUT_FORM_WIDTH,ABOUT_FORM_HEIGHT), wxDEFAULT_DIALOG_STYLE)
 {
 	Bind(wxEVT_COMMAND_BUTTON_CLICKED, &AboutForm::onButtonClicked, this);
 	Bind(wxEVT_CLOSE_WINDOW, &AboutForm::onFormClose, this);
 
 	this->SetSizeHints( wxDefaultSize, wxDefaultSize );
-	
+
 	wxFlexGridSizer* fgSizer6;
 	fgSizer6 = new wxFlexGridSizer( 3, 1, 0, 0 );
 	fgSizer6->AddGrowableCol( 0 );
 	fgSizer6->AddGrowableRow( 1 );
 	fgSizer6->SetFlexibleDirection( wxBOTH );
 	fgSizer6->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
-	
+
 	m_imgLogo = new gcImageControl( this, wxID_ANY, wxDefaultPosition, wxSize( 291,200 ), 0 );
 	m_imgLogo->setImage("#about_logo");
 	m_imgLogo->setTile(true);
 
 	fgSizer6->Add( m_imgLogo, 0, wxEXPAND, 5 );
-	
+
 	m_pMainPage = new AboutMainPage(this);
 
 	m_pDevPage = new AboutDevPage(this);
@@ -70,22 +62,22 @@ AboutForm::AboutForm(wxWindow* parent)
 
 	m_SizePanel = new wxBoxSizer( wxVERTICAL );
 	m_SizePanel->Add( m_pMainPage, 1, wxEXPAND, 5 );
-	
+
 	fgSizer6->Add( m_SizePanel, 1, wxEXPAND, 5 );
 
 	wxBoxSizer* bSizer2;
 	bSizer2 = new wxBoxSizer( wxHORIZONTAL );
-	
+
 	m_butCredits = new gcButton( this, wxID_ANY, Managers::GetString(L"#AB_CREDITS"), wxDefaultPosition, wxDefaultSize, 0 );
 	bSizer2->Add( m_butCredits, 0, wxLEFT|wxBOTTOM|wxTOP, 5 );
-	
+
 	bSizer2->Add( 0, 0, 1, wxEXPAND, 5 );
 
 	m_butClose = new gcButton( this, wxID_ANY, Managers::GetString(L"#OK"), wxDefaultPosition, wxDefaultSize, 0 );
 	bSizer2->Add( m_butClose, 0, wxALL, 5 );
-	
+
 	fgSizer6->Add( bSizer2, 1, wxEXPAND, 15 );
-	
+
 	this->SetSizer( fgSizer6 );
 	this->Layout();
 

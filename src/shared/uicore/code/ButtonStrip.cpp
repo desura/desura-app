@@ -1,26 +1,23 @@
 /*
-Desura is the leading indie game distribution platform
 Copyright (C) 2011 Mark Chandler (Desura Net Pty Ltd)
+Copyright (C) 2014 Bad Juju Games, Inc.
 
-$LicenseInfo:firstyear=2014&license=lgpl$
-Copyright (C) 2014, Linden Research, Inc.
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
 
-This library is free software; you can redistribute it and/or
-modify it under the terms of the GNU Lesser General Public
-License as published by the Free Software Foundation;
-version 2.1 of the License only.
-
-This library is distributed in the hope that it will be useful,
+This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-Lesser General Public License for more details.
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
 
-You should have received a copy of the GNU Lesser General Public
-License along with this library; if not, see <http://www.gnu.org/licenses/>
-or write to the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+You should have received a copy of the GNU General Public License
+along with this program; if not, write to the Free Software Foundation,
+Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA.
 
-Linden Research, Inc., 945 Battery Street, San Francisco, CA  94111  USA
-$/LicenseInfo$
+Contact us at legal@badjuju.com.
+
 */
 
 #include "Common.h"
@@ -65,12 +62,12 @@ ButtonStrip::ButtonStrip(wxWindow *parent) : gcPanel(parent)
 	fgSizer1 = new wxFlexGridSizer( 1, 4, 0, 0 );
 	fgSizer1->SetFlexibleDirection( wxBOTH );
 	fgSizer1->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
-	
+
 	fgSizer1->Add( m_pPMsgButton, 0, 0, 5 );
 	fgSizer1->Add( m_pCartButton, 0, 0, 5 );
 	fgSizer1->Add( m_pUpdateButton, 0, 0, 5 );
 	fgSizer1->Add( m_pThreadButton, 0, 0, 5 );
-	
+
 	this->SetSizer( fgSizer1 );
 	this->Layout();
 
@@ -99,19 +96,19 @@ ButtonStrip::~ButtonStrip()
 void ButtonStrip::onButtonClicked(wxCommandEvent& event)
 {
 	if (event.GetId() == m_pThreadButton->GetId())
-	{	
+	{
 		g_pMainApp->loadUrl(GetWebCore()->getUrl(WebCore::ThreadWatch).c_str(), COMMUNITY);
 	}
 	else if (event.GetId() == m_pPMsgButton->GetId())
-	{	
+	{
 		g_pMainApp->loadUrl(GetWebCore()->getUrl(WebCore::Inbox).c_str(), COMMUNITY);
 	}
 	else if (event.GetId() == m_pUpdateButton->GetId())
-	{	
+	{
 		g_pMainApp->loadUrl(GetWebCore()->getUrl(WebCore::Updates).c_str(), COMMUNITY);
 	}
 	else if (event.GetId() == m_pCartButton->GetId())
-	{	
+	{
 		g_pMainApp->loadUrl(GetWebCore()->getUrl(WebCore::Cart).c_str(), COMMUNITY);
 	}
 }

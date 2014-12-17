@@ -1,26 +1,23 @@
 /*
-Desura is the leading indie game distribution platform
 Copyright (C) 2011 Mark Chandler (Desura Net Pty Ltd)
+Copyright (C) 2014 Bad Juju Games, Inc.
 
-$LicenseInfo:firstyear=2014&license=lgpl$
-Copyright (C) 2014, Linden Research, Inc.
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
 
-This library is free software; you can redistribute it and/or
-modify it under the terms of the GNU Lesser General Public
-License as published by the Free Software Foundation;
-version 2.1 of the License only.
-
-This library is distributed in the hope that it will be useful,
+This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-Lesser General Public License for more details.
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
 
-You should have received a copy of the GNU Lesser General Public
-License along with this library; if not, see <http://www.gnu.org/licenses/>
-or write to the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+You should have received a copy of the GNU General Public License
+along with this program; if not, write to the Free Software Foundation,
+Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA.
 
-Linden Research, Inc., 945 Battery Street, San Francisco, CA  94111  USA
-$/LicenseInfo$
+Contact us at legal@badjuju.com.
+
 */
 
 #include "Common.h"
@@ -281,13 +278,13 @@ public:
 		onShowPlatformErrorEvent(res);
 		return res;
 	}
-	
+
 #ifdef NIX
 	virtual bool showToolPrompt(UserCore::Item::Helper::TOOL tool)
 	{
 		std::pair<bool, uint32> res(true, tool);
 		onShowToolPromptEvent(res);
-		
+
 		return res.first;
 	}
 #endif
@@ -320,7 +317,7 @@ public:
 
 	Event<SIPArg> onshowInstallPromptEvent;
 	Event<bool> onShowComplexPromptEvent;
-	
+
 	Event<std::pair<bool, uint8> > onShowErrorEvent;
 	Event<std::pair<bool, MCFBranch> > onSelectBranchEvent;
 	Event<bool> onShowPlatformErrorEvent;
@@ -382,7 +379,7 @@ private:
 using namespace UI::Forms;
 
 
-ItemForm::ItemForm(wxWindow* parent, const char* action, const char* id) 
+ItemForm::ItemForm(wxWindow* parent, const char* action, const char* id)
 	: gcFrame( parent, wxID_ANY, L"[Install Form]", wxDefaultPosition, wxSize( 370,280 ), wxCAPTION|wxCLOSE_BOX|wxFRAME_FLOAT_ON_PARENT|wxSYSTEM_MENU|wxTAB_TRAVERSAL|wxMINIMIZE_BOX )
 	, m_pProxy(gcRefPtr<ItemFormProxy>::create(this))
 {
@@ -407,11 +404,11 @@ ItemForm::ItemForm(wxWindow* parent, const char* action, const char* id)
 	m_pGIThread = nullptr;
 
 	onVerifyAfterHashFailEvent += guiDelegate(this, &ItemForm::verifyAfterHashFail, MODE_PENDING_WAIT);
-	
-#ifdef NIX 
-	onShowWinLaunchDialogEvent += guiDelegate(this, &ItemForm::onShowWinLaunchDialog, MODE_PENDING_WAIT); 
-#endif 
-	
+
+#ifdef NIX
+	onShowWinLaunchDialogEvent += guiDelegate(this, &ItemForm::onShowWinLaunchDialog, MODE_PENDING_WAIT);
+#endif
+
 	m_bIsInit = false;
 	m_pDialog = nullptr;
 }
@@ -421,8 +418,8 @@ ItemForm::~ItemForm()
 	m_pProxy->nullPtr();
 
 	if (m_pDialog)
-		m_pDialog->EndModal(wxCANCEL);	
-	
+		m_pDialog->EndModal(wxCANCEL);
+
 	safe_delete(m_pGIThread);
 	cleanUpCallbacks();
 }
@@ -457,7 +454,7 @@ void ItemForm::cleanUpCallbacks()
 			m_pItemHandle->getErrorEvent() -= guiDelegate(this, &ItemForm::onError);
 			m_pItemHandle->setFactory(nullptr);
 		}
-	}	
+	}
 }
 
 bool ItemForm::isStopped()
@@ -619,11 +616,11 @@ void ItemForm::init(INSTALL_ACTION action, MCFBranch branch, MCFBuild build, boo
 			case INSTALL_ACTION::IA_INSTALL_CHECK:
 				res = m_pItemHandle->installCheck();
 				break;
-				
+
 			case INSTALL_ACTION::IA_NONE:
 				break;
 		};
-		
+
 		if (res == false)
 		{
 			Close();
@@ -633,7 +630,7 @@ void ItemForm::init(INSTALL_ACTION action, MCFBranch branch, MCFBuild build, boo
 			m_pItemHandle->setPauseOnError(false);
 
 			Show();
-			
+
 #ifdef WIN32
 			//some reason on gtk this can cause the title bars around the form to disapear
 			Raise();
@@ -702,7 +699,7 @@ bool ItemForm::launchItem()
 	}
 	else
 	{
-		bool ignoreUpdate = HasAnyFlags(m_pItemHandle->getItemInfo()->getOptions(), UserCore::Item::ItemInfoI::OPTION_NOTREMINDUPDATE | UserCore::Item::ItemInfoI::OPTION_NOTREMINDUPDATE_ONETIME);	
+		bool ignoreUpdate = HasAnyFlags(m_pItemHandle->getItemInfo()->getOptions(), UserCore::Item::ItemInfoI::OPTION_NOTREMINDUPDATE | UserCore::Item::ItemInfoI::OPTION_NOTREMINDUPDATE_ONETIME);
 		m_pItemHandle->getItemInfo()->delOFlag(UserCore::Item::ItemInfoI::OPTION_NOTREMINDUPDATE_ONETIME);
 
 		res = m_pItemHandle->launch(m_pProxy, offLine, ignoreUpdate);
@@ -776,7 +773,7 @@ void ItemForm::uninstall()
 
 		m_pPage->Show(false);
 	}
-		
+
 	m_bsSizer->Clear(false);
 
 	m_bInitUninstall = true;
@@ -1033,10 +1030,10 @@ void ItemForm::onFormClose(wxCloseEvent& event)
 
 	if (m_pDialog && m_pDialog->IsModal())
 		m_pDialog->EndModal(wxCANCEL);
-	
+
 	Show(false);
 	cleanUpCallbacks();
-	
+
 	g_pMainApp->closeForm(this->GetId());
 	cleanUpPages();
 
@@ -1127,11 +1124,11 @@ void ItemForm::showWinLaunchDialog()
 	onShowWinLaunchDialogEvent();
 }
 
-void ItemForm::onShowWinLaunchDialog() 
+void ItemForm::onShowWinLaunchDialog()
 {
 	if (! gc_linux_disable_windows_warning.getBool())
-		gcMessageBox(this, Managers::GetString(L"#IF_WINDOWS_LAUNCH_WARNING")); 
-} 
+		gcMessageBox(this, Managers::GetString(L"#IF_WINDOWS_LAUNCH_WARNING"));
+}
 #endif
 
 void ItemForm::showParentNoRunPrompt(DesuraId id)
@@ -1260,11 +1257,11 @@ void ItemForm::onSelectBranch(std::pair<bool, MCFBranch> &info)
 
 	InstallBranch *prompt = new InstallBranch(this);
 	prompt->Bind(wxEVT_CLOSE_WINDOW, &ItemForm::onModalClose, this);
-	
+
 	m_pDialog = prompt;
-	
+
 	int res = prompt->setInfo(m_pItemHandle->getItemInfo()->getId(), true);
-		
+
 	if (res == 1 || (prompt->ShowModal() == wxID_OK && m_pDialog))
 	{
 		info.second = prompt->getGlobal();
@@ -1275,7 +1272,7 @@ void ItemForm::onSelectBranch(std::pair<bool, MCFBranch> &info)
 
 	if (info.second == 0)
 		info.first = false;
-		
+
 	if (m_pDialog)
 	{
 		m_pDialog = nullptr;
@@ -1287,12 +1284,12 @@ void ItemForm::onShowComplexPrompt(bool &shouldContinue)
 {
 	ComplexPrompt *prompt = new ComplexPrompt(this);
 	prompt->Bind(wxEVT_CLOSE_WINDOW, &ItemForm::onModalClose, this);
-	
+
 	m_pDialog = prompt;
-	
+
 	prompt->setInfo(m_pItemHandle->getItemInfo()->getId());
 	shouldContinue = (prompt->ShowModal() == wxID_OK);
-	
+
 	if (m_pDialog)
 	{
 		m_pDialog = nullptr;
@@ -1304,9 +1301,9 @@ void ItemForm::onShowInstallPrompt(SIPArg &args)
 {
 	InstallPrompt *prompt = new InstallPrompt(this);
 	prompt->Bind(wxEVT_CLOSE_WINDOW, &ItemForm::onModalClose, this);
-	
+
 	m_pDialog = prompt;
-	
+
 	prompt->setInfo(m_pItemHandle->getItemInfo()->getId(), args.second.c_str());
 
 	UserCore::Item::Helper::ACTION action = UserCore::Item::Helper::C_NONE;
@@ -1330,7 +1327,7 @@ void ItemForm::onShowInstallPrompt(SIPArg &args)
 	}
 
 	args.first = action;
-	
+
 	if (m_pDialog)
 	{
 		m_pDialog = nullptr;
@@ -1368,17 +1365,17 @@ public:
 	{
 		return 1;
 	}
-	
+
 	virtual const wchar_t* getLabel(uint32 index)
 	{
 		return Managers::GetString(L"#HELP");
 	}
-	
+
 	virtual const wchar_t* getToolTip(uint32 index)
 	{
 		return nullptr;
 	}
-	
+
 	virtual void performAction(uint32 index)
 	{
 		g_pMainApp->loadUrl(GetWebCore()->getUrl(WebCore::LinuxToolHelp).c_str(), SUPPORT);
@@ -1393,37 +1390,37 @@ void ItemForm::onShowToolPrompt(std::pair<bool, uint32> &args)
 	gcString name("Unknown Item ({0}: {0})", getItemId().getTypeString(), getItemId().getItem());
 
 	if (item)
-		name = item->getName();	
+		name = item->getName();
 
 
 	const char* tool = nullptr;
-	
+
 	switch (args.second)
 	{
 		case UserCore::Item::Helper::JAVA_SUN:
 			tool = "Java (Sun)";
 			break;
-			
+
 		case UserCore::Item::Helper::JAVA:
 			tool = "Java (Any)";
 			break;
-			
+
 		case UserCore::Item::Helper::MONO:
 			tool = "Mono";
 			break;
-			
+
 		case UserCore::Item::Helper::AIR:
 			tool = "Adobe Air";
 			break;
-		
+
 		default:
 			return;
 	}
-	
+
 	gcString errMsg(Managers::GetString("#IF_GERROR_TOOL"), tool, name);
 
 	errMsg += "\n\n";
-	errMsg += Managers::GetString("#IF_GERROR_TOOL_Q");	
+	errMsg += Managers::GetString("#IF_GERROR_TOOL_Q");
 
 	ShowToolPromptHelper helper;
 	int answer = gcMessageBox(this, errMsg.c_str(), Managers::GetString("#IF_GERRTITLE"), wxICON_QUESTION|wxYES|wxNO, &helper);
@@ -1441,7 +1438,7 @@ void ItemForm::onGatherInfoComplete()
 		if (m_pItemHandle->getItemInfo()->isInstalled())
 			msg = gcWString(L"{0} {1}", name, Managers::GetString(L"#IF_CHECK_FOUND"));
 		else
-			msg = gcWString(L"{0} {1}", name, Managers::GetString(L"#IF_CHECK_NOTFOUND"));	
+			msg = gcWString(L"{0} {1}", name, Managers::GetString(L"#IF_CHECK_NOTFOUND"));
 
 		gcMessageBox(this, msg, Managers::GetString(L"#IF_INSTALL_CHECK") );
 	}
@@ -1455,7 +1452,7 @@ void ItemForm::onShowError(std::pair<bool, uint8> &args)
 	{
 		InstallBranch prompt(this);
 		int res = prompt.setInfo(m_pItemHandle->getItemInfo()->getId(), false);
-		
+
 		gcAssert(!m_pDialog);
 		m_pDialog = &prompt;
 

@@ -1,26 +1,23 @@
 /*
-Desura is the leading indie game distribution platform
 Copyright (C) 2011 Mark Chandler (Desura Net Pty Ltd)
+Copyright (C) 2014 Bad Juju Games, Inc.
 
-$LicenseInfo:firstyear=2014&license=lgpl$
-Copyright (C) 2014, Linden Research, Inc.
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
 
-This library is free software; you can redistribute it and/or
-modify it under the terms of the GNU Lesser General Public
-License as published by the Free Software Foundation;
-version 2.1 of the License only.
-
-This library is distributed in the hope that it will be useful,
+This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-Lesser General Public License for more details.
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
 
-You should have received a copy of the GNU Lesser General Public
-License along with this library; if not, see <http://www.gnu.org/licenses/>
-or write to the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+You should have received a copy of the GNU General Public License
+along with this program; if not, write to the Free Software Foundation,
+Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA.
 
-Linden Research, Inc., 945 Battery Street, San Francisco, CA  94111  USA
-$/LicenseInfo$
+Contact us at legal@badjuju.com.
+
 */
 
 #include "Common.h"
@@ -87,7 +84,7 @@ void gtkMessageBox(const char* text, const char* title)
 
 	gtk_dialog_run(GTK_DIALOG(dialog));
 	gtk_widget_destroy(dialog);
-} 
+}
 #endif
 
 static void gcAssertHandler(const wxString &file, int line, const wxString &func, const wxString &cond, const wxString &msg)
@@ -262,7 +259,7 @@ public:
 	bool singleInstantCheck(const char* args)
 	{
 		std::string path = UTIL::STRING::toStr(UTIL::OS::getCachePath());
-		
+
 		UTIL::FS::recMakeFolder(path.c_str());
 		m_pChecker = new wxSingleInstanceChecker("applock", path);
 
@@ -271,12 +268,12 @@ public:
 
 		return true;
 	}
-	
+
 	void destroySingleInstanceCheck()
 	{
 		safe_delete(m_pChecker);
 	}
-	
+
 	void disableSingleInstanceLock()
 	{
 		m_pChecker = nullptr;
@@ -363,7 +360,7 @@ bool setDumpLevel(const CVar* cvar, const char* value)
 
 	if (level != 0)
 		g_pUICore.setDumpLevel(level);
-	
+
 	return true;
 }
 

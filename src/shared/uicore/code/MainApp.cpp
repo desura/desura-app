@@ -1,26 +1,23 @@
 /*
-Desura is the leading indie game distribution platform
 Copyright (C) 2011 Mark Chandler (Desura Net Pty Ltd)
+Copyright (C) 2014 Bad Juju Games, Inc.
 
-$LicenseInfo:firstyear=2014&license=lgpl$
-Copyright (C) 2014, Linden Research, Inc.
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
 
-This library is free software; you can redistribute it and/or
-modify it under the terms of the GNU Lesser General Public
-License as published by the Free Software Foundation;
-version 2.1 of the License only.
-
-This library is distributed in the hope that it will be useful,
+This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-Lesser General Public License for more details.
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
 
-You should have received a copy of the GNU Lesser General Public
-License along with this library; if not, see <http://www.gnu.org/licenses/>
-or write to the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+You should have received a copy of the GNU General Public License
+along with this program; if not, write to the Free Software Foundation,
+Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA.
 
-Linden Research, Inc., 945 Battery Street, San Francisco, CA  94111  USA
-$/LicenseInfo$
+Contact us at legal@badjuju.com.
+
 */
 
 
@@ -107,13 +104,13 @@ public:
 	{
 		m_pUser = user;
 	}
-	
+
 	void run() override
 	{
 		if (m_pUser)
 			m_pUser->destroy();
 	}
-	
+
 	gcRefPtr<UserCore::UserI> m_pUser;
 };
 
@@ -130,7 +127,7 @@ public:
 
 AutoDelDeleteThread addt;
 
-static const std::vector<wxString> g_szSafeList = 
+static const std::vector<wxString> g_szSafeList =
 {
 	".desura.com",
 	"desura.com",
@@ -177,7 +174,7 @@ static bool isSafeUrl(const char* url, MainAppProviderI* pMainApp)
 
 		x++;
 	}
-	
+
 	if (pMainApp && pMainApp->getProvider())
 	{
 		wxString cusProvider(pMainApp->getProvider());
@@ -207,7 +204,7 @@ wxWindow* GetMainWindow(wxWindow* p)
 {
 	if (!p || p == g_pMainApp)
 		return g_pMainApp->getTopLevelWindow();
-	
+
 	return p;
 }
 
@@ -249,13 +246,13 @@ MainApp::~MainApp()
 	//delete user first so threads will not die when they try to access webcore
 	//should be deleted on logout but just to make sure
 	std::lock_guard<std::mutex> a(m_UserLock);
-	
+
 	if (m_wxTBIcon)
 		m_wxTBIcon->deregEvents();
 
 	safe_delete(g_pDeleteThread);
 	g_pDeleteThread = new DeleteUserThread(g_pUserHandle);
-	
+
 #ifdef NIX
 	g_pDeleteThread->start();
 #else
@@ -267,7 +264,12 @@ MainApp::~MainApp()
 	safe_delete(m_wxTBIcon);
 
 	DestroyManagers();
-	DestroyLogging();	
+	DestroyLogging();
+
+#if WIN32
+	// Temporary resolve
+	PostQuitMessage(0);
+#endif // WIN32
 }
 
 gcFrame* MainApp::getMainWindow()
@@ -325,8 +327,11 @@ void MainApp::Init(int argc, wxCmdLineArgsArray &argv)
 	LoggingapplyTheme();
 	loadFrame(wxDEFAULT_FRAME_STYLE);
 
+#ifndef NIX
 	if (!m_bQuiteMode)
 		m_wxTBIcon = new TaskBarIcon(this);
+#endif
+	m_wxTBIcon = nullptr;
 
 	std::string szAppid = UTIL::OS::getConfigValue(APPID);
 
@@ -346,11 +351,13 @@ void MainApp::run()
 
 void MainApp::disableQuietMode()
 {
+#ifndef NIX
 	if (!m_wxTBIcon)
 	{
 		m_wxTBIcon = new TaskBarIcon(this);
 		m_wxTBIcon->regEvents();
 	}
+#endif
 
 	m_bQuiteMode = false;
 }
@@ -492,7 +499,7 @@ void MainApp::offlineMode()
 		std::lock_guard<std::mutex> a(m_UserLock);
 
 		gcString path = UTIL::OS::getAppDataPath();
-		
+
 		if (g_pUserHandle)
 			g_pUserHandle->destroy();
 
@@ -608,14 +615,14 @@ void MainApp::onLoginAcceptedCB(std::pair<bool,bool> &loginInfo)
 	GetWebCore()->getCookieUpdateEvent() += guiDelegate(this, &MainApp::onCookieUpdate);
 	GetWebCore()->getLoggedOutEvent() += delegate(&onLoggedOutEvent);
 	GetUserCore()->getPipeDisconnectEvent() += guiDelegate(this, &MainApp::onPipeDisconnect);
-	
+
 	//trigger this so it sets cookies first time around
 	onCookieUpdate();
 
 
 	admin_developer.setValue(GetUserCore()->isAdmin());
 	GetCVarManager()->loadUser(GetUserCore()->getUserId());
-	
+
 	gcWString userName(GetUserCore()->getUserName());
 	SetCrashDumpSettings(userName.c_str(), gc_uploaddumps.getBool());
 
@@ -650,7 +657,7 @@ void MainApp::toggleCurrentForm()
 {
 	if (!m_wxMainForm && !m_wxLoginForm)
 		return;
-		
+
 	if (m_wxMainForm)
 	{
 		if (m_wxMainForm->IsShown())

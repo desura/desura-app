@@ -1,34 +1,24 @@
 /*
-$LicenseInfo:firstyear=2014&license=lgpl$
-Copyright (C) 2014, Linden Research, Inc.
+Copyright (C) 2010 DesuraNet
+Copyright (C) 2014 Bad Juju Games, Inc.
 
-This library is free software; you can redistribute it and/or
-modify it under the terms of the GNU Lesser General Public
-License as published by the Free Software Foundation;
-version 2.1 of the License only.
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
 
-This library is distributed in the hope that it will be useful,
+This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-Lesser General Public License for more details.
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
 
-You should have received a copy of the GNU Lesser General Public
-License along with this library; if not, see <http://www.gnu.org/licenses/>
-or write to the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+You should have received a copy of the GNU General Public License
+along with this program; if not, write to the Free Software Foundation,
+Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA.
 
-Linden Research, Inc., 945 Battery Street, San Francisco, CA  94111  USA
-$/LicenseInfo$
+Contact us at legal@badjuju.com.
+
 */
-///////////// Copyright 2010 DesuraNet. All rights reserved. /////////////
-//
-//   Project     : mcf_util
-//   File        : CreateInstaller.cpp
-//   Description :
-//      [TODO: Write the purpose of CreateInstaller.cpp.]
-//
-//   Created On: 4/5/2011 4:21:42 PM
-//   Created By:  <mailto:>
-////////////////////////////////////////////////////////////////////////////
 
 #include "Common.h"
 #include "UtilFunction.h"
@@ -168,7 +158,7 @@ public:
 		UTIL::FS::FileHandle mcf("temp.mcf", UTIL::FS::FILE_READ);
 		fh.write((char*)(&ep), sizeof(ExePackerHeader));
 
-	
+
 		while (size > 0)
 		{
 			uint32 read = 10*1024;
@@ -237,7 +227,7 @@ public:
 		iph.installMcf.offset = exeHeadSize + sizeof(InstallerPackerHeader);
 		iph.installMcf.size = UTIL::FS::getFileSize(args[0].c_str());
 		iph.installMcf.crc = UTIL::FS::CRC32(args[0].c_str());
-		
+
 		iph.contentMcf.offset = iph.installMcf.size + iph.installMcf.offset;
 		iph.contentMcf.size = UTIL::FS::getFileSize(args[1].c_str());
 		iph.contentMcf.crc = UTIL::FS::CRC32(args[1].c_str());
@@ -353,24 +343,24 @@ uint32 GetExeSize(const char* filename)
 	HANDLE hFileMapping;
 	LPVOID lpFileBase;
 	PIMAGE_DOS_HEADER dosHeader;
-	
+
 	hFile = CreateFile(filename, GENERIC_READ, FILE_SHARE_READ, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, 0);
-					
+
 	if ( hFile == INVALID_HANDLE_VALUE )
-	{   
+	{
 		printf("Couldn't open file with CreateFile()\n");
-		return 0; 
+		return 0;
 	}
-	
+
 	hFileMapping = CreateFileMapping(hFile, NULL, PAGE_READONLY, 0, 0, NULL);
 
 	if ( hFileMapping == 0 )
-	{   
+	{
 		CloseHandle(hFile);
 		printf("Couldn't open file mapping with CreateFileMapping()\n");
-		return 0; 
+		return 0;
 	}
-	
+
 	lpFileBase = MapViewOfFile(hFileMapping, FILE_MAP_READ, 0, 0, 0);
 
 	if (lpFileBase == 0)
@@ -382,7 +372,7 @@ uint32 GetExeSize(const char* filename)
 	}
 
 	printf("Dump of file %s\n\n", filename);
-	
+
 	dosHeader = (PIMAGE_DOS_HEADER)lpFileBase;
 
 	if (dosHeader->e_magic == IMAGE_DOS_SIGNATURE)

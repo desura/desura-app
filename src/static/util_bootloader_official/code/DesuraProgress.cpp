@@ -1,26 +1,23 @@
 /*
-Desura is the leading indie game distribution platform
 Copyright (C) 2011 Mark Chandler (Desura Net Pty Ltd)
+Copyright (C) 2014 Bad Juju Games, Inc.
 
-$LicenseInfo:firstyear=2014&license=lgpl$
-Copyright (C) 2014, Linden Research, Inc.
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
 
-This library is free software; you can redistribute it and/or
-modify it under the terms of the GNU Lesser General Public
-License as published by the Free Software Foundation;
-version 2.1 of the License only.
-
-This library is distributed in the hope that it will be useful,
+This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-Lesser General Public License for more details.
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
 
-You should have received a copy of the GNU Lesser General Public
-License along with this library; if not, see <http://www.gnu.org/licenses/>
-or write to the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+You should have received a copy of the GNU General Public License
+along with this program; if not, write to the Free Software Foundation,
+Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA.
 
-Linden Research, Inc., 945 Battery Street, San Francisco, CA  94111  USA
-$/LicenseInfo$
+Contact us at legal@badjuju.com.
+
 */
 
 // DesuraProgress.cpp : implementation file
@@ -162,7 +159,7 @@ void DesuraProgress::OnLButtonUp(UINT nFlags, CPoint point)
 	ReleaseCapture();
 }
 
-void DesuraProgress::OnLButtonDown(UINT nFlags, CPoint point) 
+void DesuraProgress::OnLButtonDown(UINT nFlags, CPoint point)
 {
 	CRect rect = getCancelRect();
 	if (rect.PtInRect(point))
@@ -185,7 +182,7 @@ void DesuraProgress::OnMouseLeave()
 		this->refresh();
 }
 
-void DesuraProgress::OnMouseMove(UINT nFlags, CPoint point) 
+void DesuraProgress::OnMouseMove(UINT nFlags, CPoint point)
 {
 	bool old = m_bMouseOver;
 
@@ -210,7 +207,7 @@ CRect DesuraProgress::getCancelRect()
 }
 
 
-void DesuraProgress::OnPaint() 
+void DesuraProgress::OnPaint()
 {
 	CPaintDC dc(this);
 
@@ -220,7 +217,7 @@ void DesuraProgress::OnPaint()
 	int w = size.right-size.left;
 	int h = size.bottom-size.top;
 
-	
+
 	CBitmap bmp;
 	bmp.CreateCompatibleBitmap(dc, w, h);
 
@@ -228,7 +225,7 @@ void DesuraProgress::OnPaint()
 	memDC.CreateCompatibleDC(&dc);
 	HGDIOBJ pOldBitmap = memDC.SelectObject(&bmp);
 	//memDC.FillSolidRect(0,0,w, h, RGB(34,34,34));
-	
+
 	{
 		CDC cdc;
 		BITMAP bmap;
@@ -267,10 +264,10 @@ void DesuraProgress::OnPaint()
 	Font2.CreatePointFont(16, "MS Shell Dlg");
 
 	memDC.SelectObject(&Font2);
-	memDC.SetBkMode(TRANSPARENT); 
+	memDC.SetBkMode(TRANSPARENT);
 	memDC.SetTextColor(clr);
 
-	
+
 	int tx = 430;
 	int ty = 10;
 	char progress[255] = {0};
@@ -308,7 +305,7 @@ void DesuraProgress::OnPaint()
 
 	if (m_bMouseOver)
 		memDC.SetTextColor(RGB(33,138,244));
-	
+
 
 	tx = 307 + (75-csize.cx)/2;
 	ty = 171 + (21-csize.cy)/2;
@@ -319,7 +316,7 @@ void DesuraProgress::OnPaint()
 	memDC.SelectObject(pOldBitmap);
 }
 
-bool DesuraProgress::OnEraseBkgnd() 
+bool DesuraProgress::OnEraseBkgnd()
 {
 	return true;
 }

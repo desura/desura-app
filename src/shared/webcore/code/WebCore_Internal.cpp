@@ -1,26 +1,23 @@
 /*
-Desura is the leading indie game distribution platform
 Copyright (C) 2011 Mark Chandler (Desura Net Pty Ltd)
+Copyright (C) 2014 Bad Juju Games, Inc.
 
-$LicenseInfo:firstyear=2014&license=lgpl$
-Copyright (C) 2014, Linden Research, Inc.
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
 
-This library is free software; you can redistribute it and/or
-modify it under the terms of the GNU Lesser General Public
-License as published by the Free Software Foundation;
-version 2.1 of the License only.
-
-This library is distributed in the hope that it will be useful,
+This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-Lesser General Public License for more details.
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
 
-You should have received a copy of the GNU Lesser General Public
-License along with this library; if not, see <http://www.gnu.org/licenses/>
-or write to the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+You should have received a copy of the GNU General Public License
+along with this program; if not, write to the Free Software Foundation,
+Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA.
 
-Linden Research, Inc., 945 Battery Street, San Francisco, CA  94111  USA
-$/LicenseInfo$
+Contact us at legal@badjuju.com.
+
 */
 
 #include "Common.h"
@@ -95,7 +92,7 @@ const XML::gcXMLElement WebCoreClass::postToServer(std::string url, std::string 
 		}
 
 		hh->postWeb();
-	
+
 		if (hh->getDataSize() == 0)
 			throw gcException(ERR_BADRESPONSE, "Data size was zero");
 
@@ -140,7 +137,7 @@ DesuraId WebCoreClass::nameToId(const char* name, const char* type)
 	gcString key("{0}-{1}", name, type);
 	uint32 hash = UTIL::MISC::RSHash_CSTR(key.c_str());
 
-	try 
+	try
 	{
 		sqlite3x::sqlite3_connection db(getWebCoreDb(m_szAppDataPath.c_str()).c_str());
 		gcString q("select internalid from namecache where nameid='{0}' and ttl > DATETIME('NOW');",  hash);
@@ -149,7 +146,7 @@ DesuraId WebCoreClass::nameToId(const char* name, const char* type)
 		if (id.isOk())
 			return id;
 	}
-	catch(std::exception &) 
+	catch(std::exception &)
 	{
 	}
 
@@ -176,16 +173,16 @@ DesuraId WebCoreClass::nameToId(const char* name, const char* type)
 		}
 		else
 		{
-			try 
+			try
 			{
 				sqlite3x::sqlite3_connection db(getWebCoreDb(m_szAppDataPath.c_str()).c_str());
 				gcString q("replace into namecache (internalid, nameid, ttl) values ('{0}','{1}', DATETIME('NOW', '+5 day'));", id.toInt64(), hash);
 				db.executenonquery(q.c_str());
 			}
-			catch(std::exception &ex) 
+			catch(std::exception &ex)
 			{
 				Warning("Failed to update namecache in webcore: {0}\n", ex.what());
-			}	
+			}
 
 			return id;
 		}
@@ -200,7 +197,7 @@ DesuraId WebCoreClass::hashToId(const char* itemHashId)
 		throw gcException(ERR_BADITEM, "The hash is nullptr");
 
 
-	try 
+	try
 	{
 		sqlite3x::sqlite3_connection db(getWebCoreDb(m_szAppDataPath.c_str()).c_str());
 		gcString q("select internalid from namecache where hashid='{0}' and ttl > DATETIME('NOW');", UTIL::MISC::RSHash_CSTR(itemHashId) );
@@ -209,7 +206,7 @@ DesuraId WebCoreClass::hashToId(const char* itemHashId)
 		if (id.isOk())
 			return id;
 	}
-	catch(std::exception &) 
+	catch(std::exception &)
 	{
 	}
 
@@ -235,16 +232,16 @@ DesuraId WebCoreClass::hashToId(const char* itemHashId)
 		{
 			DesuraId id(idStr.c_str(), typeS.c_str());
 
-			try 
+			try
 			{
 				sqlite3x::sqlite3_connection db(getWebCoreDb(m_szAppDataPath.c_str()).c_str());
 				gcString q("replace into namecache (internalid, hashid, ttl) values ('{0}','{1}', DATETIME('NOW', '+5 day'));", id.toInt64(), UTIL::MISC::RSHash_CSTR(itemHashId));
 				db.executenonquery(q.c_str());
 			}
-			catch(std::exception &ex) 
+			catch(std::exception &ex)
 			{
 				Warning("Failed to update namecache in webcore: {0}\n", ex.what());
-			}	
+			}
 
 			return id;
 		}
@@ -281,16 +278,16 @@ void WebCoreClass::newUpload(DesuraId id, const char* hash, uint64 fileSize, cha
 
 	auto uNode = postToServer(getMcfUploadUrl(), "itemupload", post, doc);
 	auto iNode = uNode.FirstChildElement("mcf");
-	
+
 	if (!iNode.IsValid())
-		throw gcException(ERR_BADXML);	
+		throw gcException(ERR_BADXML);
 
 	if (key)
 	{
 		const std::string text = iNode.GetAtt("key");
 
 		if (text.empty())
-			throw gcException(ERR_BADXML);	
+			throw gcException(ERR_BADXML);
 
 		Safe::strcpy(key, text.c_str(), text.size());
 	}
@@ -312,7 +309,7 @@ void WebCoreClass::resumeUpload(DesuraId id, const char* key, WebCore::Misc::Res
 	auto iNode = uNode.FirstChildElement("mcf");
 
 	if (!iNode.IsValid())
-		throw gcException(ERR_BADXML);	
+		throw gcException(ERR_BADXML);
 
 	gcString complete;
 	iNode.GetChild("complete", complete);
@@ -356,7 +353,7 @@ gcString WebCoreClass::getCDKey(DesuraId id, MCFBranch branch)
 	post["siteareaid"] = id.getItem();
 	post["sitearea"] = id.getTypeString();
 	post["branch"] = (size_t)branch;
-	
+
 #ifdef WIN32
 	post["token"] =  UTIL::WIN::getRegValue("HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Cryptography\\MachineGuid", true);
 #else
@@ -384,7 +381,7 @@ void WebCoreClass::logIn(const char* user, const char* pass, XML::gcXMLDocument 
 
 	auto uNode = loginToServer(getLoginUrl(), "memberlogin", post, xmlDocument);
 	auto memNode = uNode.FirstChildElement("member");
-	
+
 	if (!memNode.IsValid())
 		throw gcException(ERR_BADXML);
 

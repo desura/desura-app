@@ -1,26 +1,23 @@
 /*
-Desura is the leading indie game distribution platform
 Copyright (C) 2011 Mark Chandler (Desura Net Pty Ltd)
+Copyright (C) 2014 Bad Juju Games, Inc.
 
-$LicenseInfo:firstyear=2014&license=lgpl$
-Copyright (C) 2014, Linden Research, Inc.
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
 
-This library is free software; you can redistribute it and/or
-modify it under the terms of the GNU Lesser General Public
-License as published by the Free Software Foundation;
-version 2.1 of the License only.
-
-This library is distributed in the hope that it will be useful,
+This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-Lesser General Public License for more details.
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
 
-You should have received a copy of the GNU Lesser General Public
-License along with this library; if not, see <http://www.gnu.org/licenses/>
-or write to the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+You should have received a copy of the GNU General Public License
+along with this program; if not, write to the Free Software Foundation,
+Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA.
 
-Linden Research, Inc., 945 Battery Street, San Francisco, CA  94111  USA
-$/LicenseInfo$
+Contact us at legal@badjuju.com.
+
 */
 
 #include "Common.h"
@@ -52,6 +49,7 @@ public:
 	uint32 branch;
 };
 
+#ifdef _WIN32
 void CreateIco(DesuraId id, std::string &icon)
 {
 	std::string desuraInstallPath = UTIL::OS::getConfigValue("HKEY_LOCAL_MACHINE\\SOFTWARE\\Desura\\DesuraApp\\InstallPath");
@@ -69,6 +67,7 @@ void CreateIco(DesuraId id, std::string &icon)
 	if (UTIL::MISC::convertToIco(icon, path.getFullPath()))
 		icon = path.getFullPath();
 }
+#endif
 
 
 bool DoGetUninstallInfo(DesuraId id, UninstallInfo &info)
@@ -116,8 +115,10 @@ bool DoGetUninstallInfo(DesuraId id, UninstallInfo &info)
 	if (info.branch == 0 || info.build == 0)
 		return false;
 
+#ifdef _WIN32
 	if (UTIL::FS::isValidFile(info.icon))
 		CreateIco(id, info.icon);
+#endif
 
 	{
 		sqlite3x::sqlite3_command cmd(db, "SELECT name FROM branchinfo WHERE branchid=? AND internalid=?;");
@@ -151,7 +152,7 @@ bool GetUninstallInfo(DesuraId id, UninstallInfo &info)
 			{
 				++nTryCount;
 				gcSleep(500);
-			}		
+			}
 			else
 			{
 				WarningS("Failed to get item {1} for uninstall update: {0}\n", e.what(), id.toInt64());
@@ -183,15 +184,6 @@ void SetUninstallRegKey(UninstallInfo &info, uint64 installSize)
 
 	gcString company	= base + "RegCompany";
 	gcString icon		= base + "DisplayIcon";
-	gcString date		= base + "InstallDate";
-
-	time_t rawtime;
-	struct tm timeinfo;
-
-	time(&rawtime);
-	localtime_s(&timeinfo, &rawtime);
-
-	gcString today("{0}{1}{2}", (1900 + timeinfo.tm_year), timeinfo.tm_mon+1, timeinfo.tm_mday);
 
 	std::string desuraExe = UTIL::OS::getConfigValue("HKEY_LOCAL_MACHINE\\SOFTWARE\\Desura\\DesuraApp\\InstallPath") + "\\desura.exe";
 
@@ -222,13 +214,27 @@ void SetUninstallRegKey(UninstallInfo &info, uint64 installSize)
 	UTIL::OS::setConfigValue(company, info.developer);
 	UTIL::OS::setConfigValue(icon, info.icon);
 
+#ifdef _WIN32
+	gcString date = base + "InstallDate";
+	time_t rawtime;
+	struct tm timeinfo;
+
+	time(&rawtime);
+
+	localtime_s(&timeinfo, &rawtime);
+
+	gcString today("{0}{1}{2}", (1900 + timeinfo.tm_year), timeinfo.tm_mon+1, timeinfo.tm_mday);
+
 	UTIL::OS::setConfigValue(date, today);
+#endif
 }
 
 void RemoveUninstallRegKey(DesuraId id)
 {
+#ifdef _WIN32
 	gcString regKey("HKEY_LOCAL_MACHINE\\Software\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\Desura_{0}", id.toInt64());
 	UTIL::WIN::delRegTree(regKey.c_str());
+#endif
 }
 
 bool SetUninstallRegKey(DesuraId id, uint64 installSize)

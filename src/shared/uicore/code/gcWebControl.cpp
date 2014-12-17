@@ -1,26 +1,23 @@
 /*
-Desura is the leading indie game distribution platform
 Copyright (C) 2011 Mark Chandler (Desura Net Pty Ltd)
+Copyright (C) 2014 Bad Juju Games, Inc.
 
-$LicenseInfo:firstyear=2014&license=lgpl$
-Copyright (C) 2014, Linden Research, Inc.
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
 
-This library is free software; you can redistribute it and/or
-modify it under the terms of the GNU Lesser General Public
-License as published by the Free Software Foundation;
-version 2.1 of the License only.
-
-This library is distributed in the hope that it will be useful,
+This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-Lesser General Public License for more details.
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
 
-You should have received a copy of the GNU Lesser General Public
-License along with this library; if not, see <http://www.gnu.org/licenses/>
-or write to the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+You should have received a copy of the GNU General Public License
+along with this program; if not, write to the Free Software Foundation,
+Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA.
 
-Linden Research, Inc., 945 Battery Street, San Francisco, CA  94111  USA
-$/LicenseInfo$
+Contact us at legal@badjuju.com.
+
 */
 
 #include "Common.h"
@@ -49,27 +46,27 @@ static ChromiumDLL::ChromiumBrowserI* CreateBrowser(gcWebControl *pControl, cons
 {
 	GtkWidget* gtkParent = pControl->GetConnectWidget();
 	GtkWidget* vbox = gtk_vbox_new(FALSE, 0);
-	
+
 	if (!gtkParent)
 		return nullptr;
-	
+
 	GdkColor blackCol;
 	gdk_color_parse("black", &blackCol);
-	
+
 	gtk_widget_modify_bg(GTK_WIDGET(vbox), GTK_STATE_NORMAL, &blackCol);
 	gtk_widget_modify_bg(GTK_WIDGET(vbox), GTK_STATE_ACTIVE, &blackCol);
 	gtk_widget_modify_bg(GTK_WIDGET(vbox), GTK_STATE_PRELIGHT, &blackCol);
 	gtk_widget_modify_bg(GTK_WIDGET(vbox), GTK_STATE_SELECTED, &blackCol);
 	gtk_widget_modify_bg(GTK_WIDGET(vbox), GTK_STATE_INSENSITIVE, &blackCol);
-	
+
 	gtk_widget_modify_bg(GTK_WIDGET(vbox), GTK_STATE_NORMAL, &blackCol);
 	gtk_widget_modify_bg(GTK_WIDGET(vbox), GTK_STATE_ACTIVE, &blackCol);
 	gtk_widget_modify_bg(GTK_WIDGET(vbox), GTK_STATE_PRELIGHT, &blackCol);
 	gtk_widget_modify_bg(GTK_WIDGET(vbox), GTK_STATE_SELECTED, &blackCol);
 	gtk_widget_modify_bg(GTK_WIDGET(vbox), GTK_STATE_INSENSITIVE, &blackCol);
-	
+
 	gtk_container_add(GTK_CONTAINER(gtkParent), vbox);
-	
+
 	return NewChromiumBrowser((int*)vbox, PRODUCT_NAME, loadUrl);
 }
 #endif
@@ -90,10 +87,10 @@ gcWebControl::gcWebControl(wxWindow* parent, const char* defaultUrl, CreateBrows
 	Bind(wxEVT_MOUSEWHEEL, &gcWebControl::onMouseScroll, this);
 	Bind(wxEVT_SIZE, &gcWebControl::onResize, this);
 	Bind(wxEVT_COMMAND_MENU_SELECTED, &gcWebControl::onMenuClicked, this);
-	
+
 	Bind(wxEVT_ERASE_BACKGROUND, &gcWebControl::onPaintBg, this);
 	Bind(wxEVT_PAINT, &gcWebControl::onPaint, this);
-	Bind(wxEVT_SET_FOCUS, &gcWebControl::onFocus, this);	
+	Bind(wxEVT_SET_FOCUS, &gcWebControl::onFocus, this);
 
 	m_bStartedLoading = false;
 	gcString loadingurl = gcString(GetGCThemeManager()->getWebPage("loading"));
@@ -177,7 +174,7 @@ void gcWebControl::onMouseScroll(wxMouseEvent& event)
 void gcWebControl::onMenuClicked(wxCommandEvent& event)
 {
 	wxMenu* menu = dynamic_cast<wxMenu*>(event.GetEventObject());
-	
+
 	if (menu)
 	{
 		ContextClientDataI* ccd = dynamic_cast<ContextClientDataI*>(menu->GetClientObject());
@@ -239,7 +236,7 @@ void gcWebControl::handleKeyEvent(int eventCode)
 		case IDC_ZOOM_NORMAL:				m_pChromeBrowser->zoomNormal(); break;
 		case IDC_ZOOM_PLUS:					m_pChromeBrowser->zoomIn(); break;
 
-		case IDC_FIND: 
+		case IDC_FIND:
 			onFindEvent();
 			break;
 	};

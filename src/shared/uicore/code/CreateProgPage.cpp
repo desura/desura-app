@@ -1,26 +1,23 @@
 /*
-Desura is the leading indie game distribution platform
 Copyright (C) 2011 Mark Chandler (Desura Net Pty Ltd)
+Copyright (C) 2014 Bad Juju Games, Inc.
 
-$LicenseInfo:firstyear=2014&license=lgpl$
-Copyright (C) 2014, Linden Research, Inc.
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
 
-This library is free software; you can redistribute it and/or
-modify it under the terms of the GNU Lesser General Public
-License as published by the Free Software Foundation;
-version 2.1 of the License only.
-
-This library is distributed in the hope that it will be useful,
+This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-Lesser General Public License for more details.
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
 
-You should have received a copy of the GNU Lesser General Public
-License along with this library; if not, see <http://www.gnu.org/licenses/>
-or write to the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+You should have received a copy of the GNU General Public License
+along with this program; if not, write to the Free Software Foundation,
+Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA.
 
-Linden Research, Inc., 945 Battery Street, San Francisco, CA  94111  USA
-$/LicenseInfo$
+Contact us at legal@badjuju.com.
+
 */
 
 #include "Common.h"
@@ -38,12 +35,12 @@ $/LicenseInfo$
 /// Create MCF dialog
 ///////////////////////////////////////////////////////////////////////////////
 
-CreateProgPage::CreateProgPage(wxWindow* parent) 
+CreateProgPage::CreateProgPage(wxWindow* parent)
 	: BasePage(parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL)
 {
 	gcTrace("");
 
-	Bind(wxEVT_COMMAND_BUTTON_CLICKED, &CreateProgPage::onButtonClick, this); 
+	Bind(wxEVT_COMMAND_BUTTON_CLICKED, &CreateProgPage::onButtonClick, this);
 
 	m_staticText3 = new gcStaticText( this, wxID_ANY, Managers::GetString(L"#CF_PROG"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_labPercent = new wxStaticText( this, wxID_ANY, Managers::GetString(L"#CF_NOTSTARTED"), wxDefaultPosition, wxDefaultSize, 0 );
@@ -69,8 +66,8 @@ CreateProgPage::CreateProgPage(wxWindow* parent)
 	wxBoxSizer* bSizer5 = new wxBoxSizer( wxHORIZONTAL );
 	bSizer5->Add( m_staticText3, 0, wxTOP|wxLEFT, 5 );
 	bSizer5->Add( m_labPercent, 0, wxTOP|wxRIGHT|wxLEFT, 5 );
-	
-	
+
+
 	wxBoxSizer* bSizer4 = new wxBoxSizer( wxHORIZONTAL );
 	bSizer4->Add( 0, 0, 1, wxEXPAND, 5 );
 	bSizer4->Add( m_butPause, 0, wxTOP|wxBOTTOM|wxLEFT, 5 );
@@ -82,7 +79,7 @@ CreateProgPage::CreateProgPage(wxWindow* parent)
 	fgSizer1->Add( m_pbProgress, 0, wxALL|wxEXPAND, 5 );
 	fgSizer1->Add( 0, 0, 0, wxEXPAND, 5 );
 	fgSizer1->Add( bSizer4, 0, wxEXPAND, 5 );
-	
+
 	this->SetSizer( fgSizer1 );
 	this->Layout();
 
@@ -117,7 +114,7 @@ void CreateProgPage::onButtonClick( wxCommandEvent& event )
 		gcTrace("But Cancel");
 
 		//need to remove these so they dont cause any more wxEvents once this dies
-		//other wise app crashes and god kills a kitten. 
+		//other wise app crashes and god kills a kitten.
 		if (m_pThread)
 		{
 			m_pThread->getMcfProgressEvent() -= delegate(this, &CreateProgPage::onProgress);
@@ -155,14 +152,14 @@ void CreateProgPage::onButtonClick( wxCommandEvent& event )
 				par->setProgressState(gcFrame::P_PAUSED);
 		}
 
-		
+
 		if (m_pThread)
 		{
 			if (m_bThreadPaused)
 				m_pThread->unpause();
 			else
 				m_pThread->pause();
-			
+
 			m_bThreadPaused = !m_bThreadPaused;
 		}
 	}
@@ -171,7 +168,7 @@ void CreateProgPage::onButtonClick( wxCommandEvent& event )
 void CreateProgPage::setInfo(DesuraId id, gcRefPtr<UserCore::Item::ItemInfoI> pItemInfo, const char* path)
 {
 	if (!pItemInfo && GetUserCore() && !GetUserCore()->isAdmin())
-	{	
+	{
 		GetParent()->Close();
 		return;
 	}
@@ -222,7 +219,7 @@ void CreateProgPage::onComplete(gcString& path)
 	gcTrace("Path: {0}", path);
 
 	gcFrame* par = dynamic_cast<gcFrame*>(GetParent());
-	
+
 	if (par)
 		par->setProgressState(gcFrame::P_NONE);
 

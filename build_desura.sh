@@ -9,6 +9,8 @@ clean() {
 	rm -rf build_cef
 	rm -rf install
 	rm -rf build_package
+	rm *.deb
+	rm *.rpm
 	echo 'Cleaned'
 }
 
@@ -18,7 +20,9 @@ build_desura() {
 	fi
 	cd build
 	cmake .. -DCMAKE_INSTALL_PREFIX=$PREFIX -DBUILD_CEF=OFF -DWITH_GTEST=OFF -DOFFICIAL_BUILD=$OFFICIAL_BUILD || exit 1
-	make install $@
+	NUM_PROC=`nproc`
+	echo "${NUM_PROC} processors detected"
+	make -j${NUM_PROC} install $@
 	cd ..
 	echo 'Building Desura completed'
 }
@@ -29,7 +33,9 @@ build_cef() {
 	fi
 	cd build_cef
 	cmake .. -DCMAKE_INSTALL_PREFIX=$PREFIX -DBUILD_ONLY_CEF=ON || exit 1
-	make install $@
+	NUM_PROC=`nproc`
+	echo "${NUM_PROC} processors detected"
+	make -j${NUM_PROC} install $@
 	cd ..
 	echo 'Building CEF completed'
 }
@@ -39,8 +45,10 @@ pack() {
 		mkdir build_package
 	fi
 	cd build_package
-	cmake .. -DPACKAGE_TYPE=$PACKAGE -DINSTALL_DESKTOP_FILE=ON -DCMAKE_INSTALL_PREFIX="/opt/desura" -DDESKTOP_EXE="/opt/desura/desura" -DDESKTOP_ICON="/opt/desura/desura.png" || exit 1
-	make package $@
+	cmake .. -DPACKAGE_TYPE=$PACKAGE -DINSTALL_DESKTOP_FILE=ON -DCMAKE_INSTALL_PREFIX="/opt/desura" -DDESKTOP_EXE="/opt/desura/desura" -DDESKTOP_ICON="/opt/desura/desura.png" -DOFFICIAL_BUILD=$OFFICIAL_BUILD || exit 1
+	NUM_PROC=`nproc`
+	echo "${NUM_PROC} processors detected"
+	make -j${NUM_PROC} package $@
 	if [ $PACKAGE = "DEB" ]; then
 		mv Desura-*.deb ..
 	elif [ $PACKAGE = "RPM" ]; then
@@ -60,6 +68,13 @@ elif [ "$1" = "clean" ]; then
 elif [ "$1" = "pack" ]; then
 	shift
 	PACKAGE="$1"
+	shift
+	clean
+	pack || exit 2
+elif [ "$1" = "release" ]; then
+	shift
+	PACKAGE="$1"
+	OFFICIAL_BUILD="ON"
 	shift
 	clean
 	pack || exit 2

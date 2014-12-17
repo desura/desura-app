@@ -1,26 +1,23 @@
 /*
-Desura is the leading indie game distribution platform
 Copyright (C) 2011 Mark Chandler (Desura Net Pty Ltd)
+Copyright (C) 2014 Bad Juju Games, Inc.
 
-$LicenseInfo:firstyear=2014&license=lgpl$
-Copyright (C) 2014, Linden Research, Inc.
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
 
-This library is free software; you can redistribute it and/or
-modify it under the terms of the GNU Lesser General Public
-License as published by the Free Software Foundation;
-version 2.1 of the License only.
-
-This library is distributed in the hope that it will be useful,
+This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-Lesser General Public License for more details.
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
 
-You should have received a copy of the GNU Lesser General Public
-License along with this library; if not, see <http://www.gnu.org/licenses/>
-or write to the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+You should have received a copy of the GNU General Public License
+along with this program; if not, write to the Free Software Foundation,
+Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA.
 
-Linden Research, Inc., 945 Battery Street, San Francisco, CA  94111  USA
-$/LicenseInfo$
+Contact us at legal@badjuju.com.
+
 */
 
 #include "Common.h"
@@ -70,7 +67,7 @@ bool validateUsernameChange(const CVar* cvar, const char* newValue)
 class LoginThread : public Thread::BaseThread
 {
 public:
-	LoginThread(const char* username, const char* password, bool bAltProvider, LoginForm* caller) 
+	LoginThread(const char* username, const char* password, bool bAltProvider, LoginForm* caller)
 		: BaseThread( "Login Thread")
 		, m_szUsername(username)
 		, m_szPassword(password)
@@ -95,7 +92,7 @@ protected:
 			{
 				gcString strProv = gc_login_stage_url.getString();
 				pProvider->setProvider(strProv.c_str());
-			}	
+			}
 			else
 			{
 				pProvider->setProvider(nullptr);
@@ -138,7 +135,7 @@ public:
 		setColors(linkColor, hoverColor);
 		showFocusBox(hoverColor);
 		init(nullptr);
-	
+
 		Bind(wxEVT_CHAR, &LoginLink::onChar, this);
 	}
 
@@ -161,7 +158,7 @@ static CVar gc_allow_wm_positioning("gc_allow_wm_positioning", "true");
 ///////////////////////////////////////////////////////////////////////////////
 
 
-LoginForm::LoginForm(wxWindow* parent) 
+LoginForm::LoginForm(wxWindow* parent)
 	: gcFrame(parent, wxID_ANY, Managers::GetString(L"#LF_TITLE"), wxDefaultPosition, wxSize(420,246), wxCAPTION|wxCLOSE_BOX|wxSYSTEM_MENU|wxWANTS_CHARS|wxMINIMIZE_BOX, true)
 {
 	m_comboProvider = nullptr;
@@ -294,7 +291,7 @@ LoginForm::LoginForm(wxWindow* parent)
 	fgSizer4->Add( m_butSignin, 0, wxTOP|wxBOTTOM|wxLEFT, 5 );
 	fgSizer4->Add( m_butCancel, 0, wxTOP|wxBOTTOM|wxLEFT, 5 );
 
-	
+
 	wxFlexGridSizer* fgSizer5 = new wxFlexGridSizer( 1, 3, 0, 0 );
 	fgSizer5->AddGrowableCol( 0 );
 	fgSizer5->AddGrowableCol( 1 );
@@ -305,7 +302,7 @@ LoginForm::LoginForm(wxWindow* parent)
 	fgSizer5->Add( m_linkOffline, 0, wxTOP|wxBOTTOM|wxRIGHT, 5 );
 	fgSizer5->Add( m_linkNewAccount, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, 5 );
 	fgSizer5->Add( m_linkLostPassword, 0, wxALIGN_RIGHT|wxTOP|wxBOTTOM|wxLEFT, 5 );
-	
+
 
 	wxFlexGridSizer* fgSizer6 = new wxFlexGridSizer( 4, 1, 0, 0 );
 	fgSizer6->AddGrowableCol( 0 );
@@ -493,7 +490,7 @@ wxRect LoginForm::getWindowsBorderRect() const
 #else
 	return wxRect(wxPoint(0,0), wxSize(800, 600));
 #endif // LINUX TODO
-	
+
 }
 
 void LoginForm::setFrameRegion()
@@ -501,7 +498,7 @@ void LoginForm::setFrameRegion()
 #ifdef WIN32
 	wxRect wbr = getWindowsBorderRect();
 	wxPoint br = wbr.GetBottomRight();
-	
+
 	br.x += 2;
 	br.y += 2;
 
@@ -849,7 +846,7 @@ void LoginForm::onStartLogin(std::pair<gcString, gcString> &l)
 		int nSelection = m_comboProvider->GetSelection();
 		bAltProvider = nSelection != 0;
 	}
-		
+
 	m_pLogThread = new LoginThread(user.c_str(), pass.c_str(), bAltProvider, this);
 	m_pLogThread->start();
 }
@@ -869,7 +866,7 @@ void LoginForm::onLogin()
 	}
 
 	SaveCVars();
-	
+
 	if (m_comboProvider)
 		gc_login_stage_last.setValue(m_comboProvider->GetStringSelection().ToUTF8());
 
@@ -921,13 +918,13 @@ void LoginForm::onLoginError(gcException &e)
 	{
 		m_tbUsername->SetFocus();
 		m_tbUsername->SelectAll();
-	}	
+	}
 
 	m_bAutoLogin = false;
 }
 
 void LoginForm::onChar(wxKeyEvent& event)
-{ 
+{
 	if (event.m_keyCode == WXK_TAB)
 	{
 		processTab(!event.ShiftDown(), event.GetId());
@@ -950,7 +947,7 @@ void LoginForm::onChar(wxKeyEvent& event)
 				m_tbUsername->SelectAll();
 		}
 
-		event.Skip(); 
+		event.Skip();
 	}
 }
 
