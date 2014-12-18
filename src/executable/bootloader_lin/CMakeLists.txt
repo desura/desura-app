@@ -24,6 +24,7 @@ target_link_libraries(desura
   Xpm
   X11
   util_web
+  pthread
 )
 
 install_executable(desura)
