@@ -37,7 +37,9 @@ Contact us at legal@badjuju.com.
 
 #ifdef NIX
 #include "managers/CVar.h"
+#ifndef MACOS
 #include <gtk/gtk.h>
+#endif
 #endif
 
 #include <wx/app.h>

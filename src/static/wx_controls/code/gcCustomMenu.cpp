@@ -202,7 +202,7 @@ bool gcMenuItem::OnDrawItem(wxDC& dc, const wxRect& rc, wxOwnerDrawn::wxODAction
 #endif
 
 
-#ifdef NIX
+#if defined(NIX) && !defined(MACOS)
 #include <gtk/gtk.h>
 extern "C"
 {

@@ -26,7 +26,7 @@ Contact us at legal@badjuju.com.
 #endif
 
 #include <wx/wx.h>
-#ifdef NIX
+#if defined(NIX) && !defined(MACOS)
 #include <gtk/gtk.h>
 #endif
 

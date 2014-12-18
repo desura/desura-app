@@ -29,7 +29,7 @@ Contact us at legal@badjuju.com.
 	#include "wx/msw/private.h"
 #endif
 
-#ifdef NIX
+#if defined(NIX) && !defined(MACOS)
 	#include "gtk/gtk.h"
 #endif
 

@@ -33,11 +33,11 @@ Contact us at legal@badjuju.com.
 #include "gcScrolledWindow.h"
 #include "gcTaskBar.h"
 
-#ifdef NIX
+#if defined(NIX) && !defined(MACOS)
 #include <gtk/gtk.h>
 #endif
 
-#ifdef WIN32
+#if defined(WIN32)
 static std::mutex g_TimerLock;
 static std::map<int32, gcSpinningBar*> g_SpinnerMap;
 
@@ -55,6 +55,49 @@ static VOID CALLBACK TimerProc(HWND hwnd, UINT uMsg, UINT_PTR idEvent, DWORD dwT
 		g_TimerLock.unlock();
 	}
 }
+#elif defined(MACOS)
+
+// TODO: FIXME: there's probably a nice API for this, but I can't find it
+// FIXME: allow proper millisecond interval
+#include <pthread.h>
+class OsxSpinnerTimer
+{
+public:
+	OsxSpinnerTimer(gcSpinningBar& spinningBar, unsigned interval) :
+		spinningBar(spinningBar),
+		interval(interval),
+		stopFlag(false)
+	{
+		pthread_create(&threadId, NULL, run, (void *)this);
+	}
+
+	~OsxSpinnerTimer()
+	{
+		stopFlag = true;
+		pthread_join(threadId, NULL);
+	}
+
+private:
+
+	gcSpinningBar& spinningBar;
+	unsigned       interval;
+	bool           stopFlag;
+	pthread_t      threadId;	
+
+	static void* run(void* ptr)
+	{
+		OsxSpinnerTimer& self = *reinterpret_cast<OsxSpinnerTimer*>(ptr);
+
+		while(!self.stopFlag)
+		{
+			self.spinningBar.notify();
+			sleep(self.interval);
+		}
+
+		return nullptr;
+	}
+};
+
 #else
 static gboolean TimerProc(gcSpinningBar *bar)
 {
@@ -82,8 +125,10 @@ gcSpinningBar::gcSpinningBar( wxWindow* parent, wxWindowID id, const wxPoint& po
 	m_imgProg = GetGCThemeManager()->getImageHandle("#spinningbar");
 	m_uiOffset = 0;
 
-#ifdef WIN32
+#if defined(WIN32)
 	m_tId = ::SetTimer((HWND)GetHWND(), GetId(), 75, TimerProc);
+#elif defined(MACOS)
+	m_tId = new OsxSpinnerTimer(*this, 1);
 #else
 	m_tId = g_timeout_add(75, (GSourceFunc)TimerProc, (gpointer)this);
 #endif
@@ -105,7 +150,8 @@ gcSpinningBar::~gcSpinningBar()
 	g_TimerLock.unlock();
 
 	::KillTimer((HWND)GetHWND(), m_tId);
-
+#elif defined(MACOS)
+	delete reinterpret_cast<OsxSpinnerTimer*>(m_tId);
 #else
 	if (m_tId)
 		g_source_remove(m_tId);
