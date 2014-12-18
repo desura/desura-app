@@ -1,26 +1,23 @@
 /*
-Desura is the leading indie game distribution platform
 Copyright (C) 2011 Mark Chandler (Desura Net Pty Ltd)
+Copyright (C) 2014 Bad Juju Games, Inc.
 
-$LicenseInfo:firstyear=2014&license=lgpl$
-Copyright (C) 2014, Linden Research, Inc.
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
 
-This library is free software; you can redistribute it and/or
-modify it under the terms of the GNU Lesser General Public
-License as published by the Free Software Foundation;
-version 2.1 of the License only.
-
-This library is distributed in the hope that it will be useful,
+This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-Lesser General Public License for more details.
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
 
-You should have received a copy of the GNU Lesser General Public
-License along with this library; if not, see <http://www.gnu.org/licenses/>
-or write to the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+You should have received a copy of the GNU General Public License
+along with this program; if not, write to the Free Software Foundation,
+Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA.
 
-Linden Research, Inc., 945 Battery Street, San Francisco, CA  94111  USA
-$/LicenseInfo$
+Contact us at legal@badjuju.com.
+
 */
 
 #include "Common.h"
@@ -40,7 +37,7 @@ PipeServer::PipeServer(const char* name, uint8 numPipes, bool changeAccess) : Pi
 }
 
 PipeServer::~PipeServer()
-{	
+{
 	stop();
 	safe_delete(m_vPipeInst);
 }
@@ -72,17 +69,17 @@ void PipeServer::setUpPipes()
 		createAccessRights(pNewAcl, sa, sd);
 
 
-	// The initial loop creates several instances of a named pipe 
-	// along with an event object for each instance.  An 
-	// overlapped ConnectNamedPipe operation is started for 
-	// each instance. 
-	for (int i = 0; i < m_uiNumPipes*2; i+=2) 
-	{ 
-		// Create an event object for this instance. 
+	// The initial loop creates several instances of a named pipe
+	// along with an event object for each instance.  An
+	// overlapped ConnectNamedPipe operation is started for
+	// each instance.
+	for (int i = 0; i < m_uiNumPipes*2; i+=2)
+	{
+		// Create an event object for this instance.
 		m_hEventsArr[i] = CreateEvent(nullptr, TRUE, TRUE, nullptr);
 		m_hEventsArr[i+1] = CreateEvent(nullptr, TRUE, TRUE, nullptr);
 
-		if (m_hEventsArr[i] == nullptr || m_hEventsArr[i+1] == nullptr) 
+		if (m_hEventsArr[i] == nullptr || m_hEventsArr[i+1] == nullptr)
 			throw gcException(ERR_IPC, gcString("CreateEvent failed with {0}.\n", GetLastError()));
 
 		PipeInst *p = new PipeInst();
@@ -98,8 +95,8 @@ void PipeServer::setUpPipes()
 		DWORD rErr = GetLastError();
 
 		// Call the subroutine to connect to the new client
-		initNewClient(i, p, m_hEventsArr[i]); 
-	} 
+		initNewClient(i, p, m_hEventsArr[i]);
+	}
 
 	if (pNewAcl)
 		LocalFree((HLOCAL)pNewAcl);
@@ -118,7 +115,7 @@ void PipeServer::createAccessRights(PACL pNewAcl, SECURITY_ATTRIBUTES &sa, SECUR
 	SidSize = SECURITY_MAX_SID_SIZE;
 	// Allocate enough memory for the largest possible SID.
 	if(!(TheSID = LocalAlloc(LMEM_FIXED, SidSize)))
-	{    
+	{
 		LocalFree(TheSID);
 		throw gcException(ERR_PIPE, GetLastError(), "LocalAlloc failed");
 	}
@@ -150,11 +147,11 @@ void PipeServer::createAccessRights(PACL pNewAcl, SECURITY_ATTRIBUTES &sa, SECUR
 		throw gcException(ERR_PIPE, GetLastError(), "SetEntriesInAcl failed");
 
 	// Initialize a NEW Security Descriptor.
-	if (!InitializeSecurityDescriptor(&sd, SECURITY_DESCRIPTOR_REVISION))			
+	if (!InitializeSecurityDescriptor(&sd, SECURITY_DESCRIPTOR_REVISION))
 		throw gcException(ERR_PIPE, GetLastError(), "InitializeSecurityDescriptor failed");
 
 	// Set the new DACL in the Security Descriptor.
-	if (!SetSecurityDescriptorDacl(&sd, TRUE, pNewAcl, FALSE))						
+	if (!SetSecurityDescriptorDacl(&sd, TRUE, pNewAcl, FALSE))
 		throw gcException(ERR_PIPE, GetLastError(), "SetSecurityDescriptorDacl failed");
 
 	sa.nLength = sizeof(SECURITY_ATTRIBUTES);
@@ -164,8 +161,8 @@ void PipeServer::createAccessRights(PACL pNewAcl, SECURITY_ATTRIBUTES &sa, SECUR
 
 
 
-void PipeServer::initNewClient(uint32 index, PipeInst *p, HANDLE e) 
-{ 
+void PipeServer::initNewClient(uint32 index, PipeInst *p, HANDLE e)
+{
 	gcTrace("Id: {0}", index);
 
 	if (!p)
@@ -174,7 +171,7 @@ void PipeServer::initNewClient(uint32 index, PipeInst *p, HANDLE e)
 	uint32 i = index;
 	onConnectEvent(i);
 
-	if (p->send.hPipe == INVALID_HANDLE_VALUE || p->recv.hPipe == INVALID_HANDLE_VALUE) 
+	if (p->send.hPipe == INVALID_HANDLE_VALUE || p->recv.hPipe == INVALID_HANDLE_VALUE)
 		throw gcException(ERR_PIPE, GetLastError(), "Failed to create pipe");
 
 	p->pIPC = new IPCManager(this, index, m_szName.c_str(), true);
@@ -193,27 +190,27 @@ void PipeServer::connectNamedPipe(uint32 index, PipeData* data)
 	BOOL fConnected = ConnectNamedPipe(data->hPipe, &data->oOverlap);
 	DWORD err = GetLastError();
 
-	// Overlapped ConnectNamedPipe should return zero. 
-	if (fConnected) 
+	// Overlapped ConnectNamedPipe should return zero.
+	if (fConnected)
 		throw gcException(ERR_PIPE, GetLastError(), gcString("ConnectNamedPipe failed with {0}.\n", GetLastError()));
 
-	switch (GetLastError()) 
-	{ 
-		// The overlapped connection in progress. 
-		case ERROR_IO_PENDING: 
-			data->fPendingIO = TRUE; 
-			break; 
+	switch (GetLastError())
+	{
+		// The overlapped connection in progress.
+		case ERROR_IO_PENDING:
+			data->fPendingIO = TRUE;
+			break;
 
-		// Client is already connected, so signal an event. 
+		// Client is already connected, so signal an event.
 		case ERROR_PIPE_CONNECTED:
 			onConnectEvent(index);
-			if (SetEvent(data->oOverlap.hEvent)) 
-				break; 
+			if (SetEvent(data->oOverlap.hEvent))
+				break;
 
-		// If an error occurs during the connect operation... 
-		default: 
+		// If an error occurs during the connect operation...
+		default:
 			throw gcException(ERR_PIPE, GetLastError(), gcString("ConnectNamedPipe failed with {0}.\n", GetLastError()));
-	} 
+	}
 
 	data->pendingConnection = data->fPendingIO ? true : false;
 }
@@ -237,8 +234,8 @@ IPCManager* PipeServer::getManager(uint32 i)
 
 
 
-void PipeServer::disconnectAndReconnect(uint32 i) 
-{ 
+void PipeServer::disconnectAndReconnect(uint32 i)
+{
 	gcTrace("Id: {0}", i);
 	onDisconnectEvent(i);
 
@@ -250,7 +247,7 @@ void PipeServer::disconnectAndReconnect(uint32 i)
 
 	try
 	{
-		initNewClient(index, m_vPipeInst[index], m_hEventsArr[index*2] ); 
+		initNewClient(index, m_vPipeInst[index], m_hEventsArr[index*2] );
 	}
 	catch (gcException &e)
 	{

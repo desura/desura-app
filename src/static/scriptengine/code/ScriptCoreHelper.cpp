@@ -1,26 +1,23 @@
 /*
-Desura is the leading indie game distribution platform
 Copyright (C) 2011 Mark Chandler (Desura Net Pty Ltd)
+Copyright (C) 2014 Bad Juju Games, Inc.
 
-$LicenseInfo:firstyear=2014&license=lgpl$
-Copyright (C) 2014, Linden Research, Inc.
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
 
-This library is free software; you can redistribute it and/or
-modify it under the terms of the GNU Lesser General Public
-License as published by the Free Software Foundation;
-version 2.1 of the License only.
-
-This library is distributed in the hope that it will be useful,
+This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-Lesser General Public License for more details.
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
 
-You should have received a copy of the GNU Lesser General Public
-License along with this library; if not, see <http://www.gnu.org/licenses/>
-or write to the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+You should have received a copy of the GNU General Public License
+along with this program; if not, write to the Free Software Foundation,
+Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA.
 
-Linden Research, Inc., 945 Battery Street, San Francisco, CA  94111  USA
-$/LicenseInfo$
+Contact us at legal@badjuju.com.
+
 */
 
 
@@ -38,7 +35,7 @@ void MessageCallback(v8::Handle<v8::Message> message, v8::Handle<v8::Value> data
 }
 
 template <typename F>
-void JSPrint(const v8::Handle<v8::Value>& arg, F messageFunct) 
+void JSPrint(const v8::Handle<v8::Value>& arg, F messageFunct)
 {
 	if (arg->IsObject())
 	{
@@ -91,7 +88,7 @@ void JSPrint(const v8::Handle<v8::Value>& arg, F messageFunct)
 }
 
 template <typename F>
-v8::Handle<v8::Value> JSPrint(const v8::Arguments& args, F messageFunct) 
+v8::Handle<v8::Value> JSPrint(const v8::Arguments& args, F messageFunct)
 {
 	bool first = true;
 	for (int i = 0; i < args.Length(); i++)
@@ -114,7 +111,7 @@ v8::Handle<v8::Value> JSPrint(const v8::Arguments& args, F messageFunct)
 	return v8::Undefined();
 }
 
-v8::Handle<v8::Value> JSDebug(const v8::Arguments& args) 
+v8::Handle<v8::Value> JSDebug(const v8::Arguments& args)
 {
 	std::string out;
 	v8::Handle<v8::Value> ret = JSPrint(args, [&out](const char* msg){
@@ -125,7 +122,7 @@ v8::Handle<v8::Value> JSDebug(const v8::Arguments& args)
 	return ret;
 }
 
-v8::Handle<v8::Value> JSWarning(const v8::Arguments& args) 
+v8::Handle<v8::Value> JSWarning(const v8::Arguments& args)
 {
 	std::string out;
 

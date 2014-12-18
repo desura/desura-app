@@ -1,26 +1,22 @@
 /*
-Desura is the leading indie game distribution platform
 Copyright (C) 2011 Mark Chandler (Desura Net Pty Ltd)
+Copyright (C) 2014 Bad Juju Games, Inc.
 
-$LicenseInfo:firstyear=2014&license=lgpl$
-Copyright (C) 2014, Linden Research, Inc.
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
 
-This library is free software; you can redistribute it and/or
-modify it under the terms of the GNU Lesser General Public
-License as published by the Free Software Foundation;
-version 2.1 of the License only.
-
-This library is distributed in the hope that it will be useful,
+This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-Lesser General Public License for more details.
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
 
-You should have received a copy of the GNU Lesser General Public
-License along with this library; if not, see <http://www.gnu.org/licenses/>
-or write to the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+You should have received a copy of the GNU General Public License
+along with this program; if not, write to the Free Software Foundation,
+Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA.
 
-Linden Research, Inc., 945 Battery Street, San Francisco, CA  94111  USA
-$/LicenseInfo$
+Contact us at legal@badjuju.com.
 */
 
 #ifndef DESURA_UTIL_FS_H
@@ -91,7 +87,7 @@ namespace UTIL
 		//! Read all data from a file.
 		//!
 		//! @parma file Path to file
-		//! @parma buff Buffer to save result in. Will allocate it. 
+		//! @parma buff Buffer to save result in. Will allocate it.
 		//! @return Size of the buffer.
 		//!
 		uint32 readWholeFile(const Path& file, char** buf);
@@ -156,7 +152,7 @@ namespace UTIL
 		}
 
 		//! Removes a file from the os
-		//! 
+		//!
 		//! @param file Path to file
 		//!
 		void delFile(const Path& file);
@@ -208,7 +204,7 @@ namespace UTIL
 		}
 
 		//! See if a folder has any files in it.
-		//! 
+		//!
 		//! @param path Path to folder
 		//! @return True if empty, false if not
 		//!
@@ -263,7 +259,7 @@ namespace UTIL
 			FileHandle();
 
 			//! Alt constructor
-			//! 
+			//!
 			//! @param fileName Name of file to open
 			//! @param mode Mode to open a file with
 			//! @param offset Default offset from start as file. Treats file as being (size - offset) big starting from offset
@@ -271,7 +267,7 @@ namespace UTIL
 			FileHandle(const char* file, FILE_MODE mode, uint64 offset = 0);
 			FileHandle(const Path& path, FILE_MODE mode, uint64 offset = 0);
 
-			//! 
+			//!
 			~FileHandle();
 
 			FileHandle(const FileHandle& handle);
@@ -338,7 +334,7 @@ namespace UTIL
 			//! @return Native handle
 			//!
 			FILE* getHandle() const { return m_hFileHandle; }
-#endif		
+#endif
 
 			//! Is the current file handle open
 			//!

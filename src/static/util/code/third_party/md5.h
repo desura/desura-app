@@ -1,14 +1,14 @@
-// MD5.CC - source code for the C++/object oriented translation and 
+// MD5.CC - source code for the C++/object oriented translation and
 //          modification of MD5.
 
-// Translation and modification (c) 1995 by Mordechai T. Abzug 
+// Translation and modification (c) 1995 by Mordechai T. Abzug
 
-// This translation/ modification is provided "as is," without express or 
+// This translation/ modification is provided "as is," without express or
 // implied warranty of any kind.
 
-// The translator/ modifier does not claim (1) that MD5 will do what you think 
-// it does; (2) that this translation/ modification is accurate; or (3) that 
-// this software is "merchantible."  (Language for this disclaimer partially 
+// The translator/ modifier does not claim (1) that MD5 will do what you think
+// it does; (2) that this translation/ modification is accurate; or (3) that
+// this software is "merchantible."  (Language for this disclaimer partially
 // copied from the disclaimer below).
 
 /* based on:
@@ -42,7 +42,7 @@ documentation and/or software.
 #include <stdio.h>
 #include <string>
 
-class MD5 
+class MD5
 {
 public:
 	static std::string CalcMD5(const unsigned char *string, size_t length);

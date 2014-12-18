@@ -1,10 +1,10 @@
 #pragma once
 
 /*****************************************************************************\
-Description : 
-Archive     : $Archive: WinXPSP2FireWall $ 
-Revision    : $Revision: 1 $ 
-Date        : $Date: 05-07-06 11:14a $ 
+Description :
+Archive     : $Archive: WinXPSP2FireWall $
+Revision    : $Revision: 1 $
+Date        : $Date: 05-07-06 11:14a $
 Author      : 07/06/2005, Kim Youngjin
 \*****************************************************************************/
 
@@ -39,7 +39,7 @@ enum FW_ERROR_CODE
 	FW_ERR_SET_IP_PROTOCOL,				// Failed to set IP Protocol
 	FW_ERR_EXCEPTION_NOT_ALLOWED,		// Failed to get or put the exception not allowed
 	FW_ERR_NOTIFICATION_DISABLED,		// Failed to get or put the notification disabled
-	FW_ERR_UNICAST_MULTICAST,			// Failed to get or put the UnicastResponses To MulticastBroadcast Disabled Property 
+	FW_ERR_UNICAST_MULTICAST,			// Failed to get or put the UnicastResponses To MulticastBroadcast Disabled Property
 };
 
 class WinXPSP2FireWall
