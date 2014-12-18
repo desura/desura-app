@@ -19,6 +19,9 @@ Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA.
 Contact us at legal@badjuju.com.
 */
 
+#pragma once
+
+
 #include <windows.h>
 #include <cassert>
 

@@ -58,7 +58,7 @@ bool CheckCert()
 			exePath[x] = '\0';
 	}
 
-	wchar_t *modules[] =
+	static wchar_t *modules[] =
 	{
 		L"desura.exe",
 		L"desura_service.exe",
@@ -69,7 +69,7 @@ bool CheckCert()
 		L"bin\\servicecore.dll",
 	};
 
-	char *moduleName[] =
+	static char *moduleName[] =
 	{
 		"desura.exe",
 		"desura_service.exe",
@@ -89,14 +89,16 @@ bool CheckCert()
 	Safe::snprintf(curPos, curSize, "There has been an error validating the Digital Signature for:\n");
 
 	curPos+= 62;
-	curSize+= 62;
+	curSize-= 62;
+
+	wchar_t path[255];
 
 	for (size_t x=0; x<6; x++)
 	{
-		wchar_t path[255];
+		path[ 0 ] = 0;
 
-		gcString mod(modules[x]);
-		Safe::snwprintf(path, 255, L"%s\\%s", exePath, modules[x]);
+		gcString mod = modules[x];
+		Safe::snwprintf(path, 255, L"%s%s", exePath, modules[x]);
 
 		uint32 res = UTIL::WIN::validateCert(path);
 
