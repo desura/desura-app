@@ -59,6 +59,9 @@ namespace Misc
 
 		//! Default Constructor
 		DownloadProvider()
+		: m_szName("")
+		, m_szUrl("")
+		, m_szProvUrl("")
 		{
 		}
 
@@ -226,9 +229,9 @@ namespace Misc
 		DownloadProviderType m_eType = DownloadProviderType::Mcf;
 
 		gcTime m_tExpireTime;
-		gcString m_szName;
-		gcString m_szUrl;
-		gcString m_szProvUrl;
+		std::string m_szName;
+		std::string m_szUrl;
+		std::string m_szProvUrl;
 
 		mutable std::mutex m_BannerLock;
 		mutable std::array<char, 256> m_szBanner;
