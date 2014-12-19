@@ -37,7 +37,9 @@ static UINT gs_msgRestartTaskbar = 0;
 #endif
 
 #ifdef NIX
+#ifndef MACOS
 #include <libnotify/notify.h>
+#endif
 #include <branding/branding.h>
 #endif
 
@@ -126,7 +128,10 @@ gcTaskBarIcon::gcTaskBarIcon() : wxTaskBarIcon()
 
 	m_pEvents->Bind(wxEVT_CLOSE_WINDOW, &gcTaskBarIcon::onEventClose, this);
 
+#if !defined(MACOS)
 	notify_init(PRODUCT_NAME);
+#endif
+
 #endif
 }
 
@@ -139,7 +144,10 @@ gcTaskBarIcon::~gcTaskBarIcon()
 		m_pEvents->Close();
 	}
 
+#if !defined(MACOS)
 	notify_uninit();
+#endif
+
 #endif
 }
 
@@ -298,7 +306,7 @@ bool gcTaskBarIcon::ShowBalloon(const wxString& title, const wxString& text, uns
 
 	}
 	return ok;
-#elif defined(NIX)
+#elif defined(NIX) && !defined(MACOS)
 	const char* icon = nullptr;
 
 	if ( flags & wxICON_INFORMATION )
