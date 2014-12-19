@@ -35,11 +35,9 @@ Contact us at legal@badjuju.com.
 #include "webcore/WebCoreI.h"
 
 
-#ifdef NIX
+#if defined(NIX) && !defined(MACOS)
 #include "managers/CVar.h"
-#ifndef MACOS
 #include <gtk/gtk.h>
-#endif
 #endif
 
 #include <wx/app.h>
@@ -49,7 +47,7 @@ void RegisterSchemes();
 
 typedef gcString (*UserAgentFN)();
 
-#ifdef NIX
+#if defined(NIX) && !defined(MACOS)
 guint m_timeoutSource = 0;
 #endif
 
@@ -60,7 +58,7 @@ ChromiumDLL::ChromiumControllerI* g_pChromiumController = nullptr;
 
 void SetCookies();
 
-#ifdef NIX
+#if defined(NIX) && !defined(MACOS)
 gboolean onTimeout(gpointer data)
 {
 	if (!g_bLoaded || !g_pChromiumController)
@@ -172,7 +170,7 @@ bool InitWebControl()
 	RegisterJSBindings();
 	RegisterSchemes();
 
-#ifdef NIX
+#if defined(NIX) && !defined(MACOS)
 	m_timeoutSource = g_timeout_add(50, onTimeout, nullptr);
 #endif
 
@@ -187,7 +185,7 @@ void ShutdownWebControl()
 
 	g_bLoaded = false;
 
-#ifdef NIX
+#if defined(NIX) && !defined(MACOS)
 	if (m_timeoutSource != 0)
 	{
 		g_source_remove(m_timeoutSource);
