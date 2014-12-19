@@ -8,13 +8,14 @@ file(GLOB Sources code/*.cpp)
 add_library(umcf STATIC ${Sources})
 target_link_libraries(umcf
     ${BZIP2_LIBRARIES}
+    util
 )
 
 if(WIN32)
   SetSharedRuntime(umcf)
 endif()
 
-add_dependencies(umcf bzip2)
+add_dependencies(umcf bzip2 util)
 
 SET_PROPERTY(TARGET umcf PROPERTY FOLDER "Static")
 

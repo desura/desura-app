@@ -89,6 +89,7 @@ namespace MCFCore
 
 ProviderManager::ProviderManager(std::shared_ptr<MCFCore::Misc::DownloadProvidersI> pDownloadProviders)
 	: m_pDownloadProviders(pDownloadProviders)
+	, m_vProviderList()
 {
 }
 

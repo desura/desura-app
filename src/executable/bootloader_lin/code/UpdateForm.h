@@ -17,29 +17,49 @@ along with this program; if not, write to the Free Software Foundation,
 Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA.
 
 Contact us at legal@badjuju.com.
+
 */
+#ifndef DESURA_UPDATE_FORM_NIX_H
+#define DESURA_UPDATE_FORM_NIX_H
+#ifdef _WIN32
+#pragma once
+#endif
 
-#ifndef DLB_FILES_H
-#define DLB_FILES_H
+#include "XLibWindow.h"
+#include "Common.h"
+#include "umcf/UMcf.h"
+#include "UMcfEx.h"
 
-#include <string> // std::wstring
-#include <sys/types.h> // _stat64i32
-#include <sys/stat.h> // stat()
-#include <limits.h> // MAX_PATH
-#include <cerrno> // errno
-#include <vector>
+class UpdateForm : public XlibWindow
+{
+public:
+	UpdateForm();
+	~UpdateForm();
 
-#include "Common.h" // ERROR_OUTPUT(), define NIX
-#include "util/UtilString.h" // tokenize
+	void installOnly();
+	void downloadAndInstall();
+	
+	bool isCanceled()
+	{
+		return m_bCanceled;
+	}
+	
+	bool wasInstalling()
+	{
+		return m_bInstalling;
+	}
+	
+protected:
+	void onProgressN(unsigned int& prog);
+	void onProgressD(Prog_s& info);
+	
+	virtual void onCancel();
+	
+private:
+	bool m_bCanceled;
+	bool m_bInstalling;
+	UMcf* m_pUmcf;
+};
 
-#define STR_APPDATA "/AppData"
-
-std::string GetAppPath(std::string extra = "");
-std::string GetAppDataPath(std::string extra = "");
-bool ChangeToAppDir();
-bool FileExists(const char* file = nullptr);
-bool DeleteFile(const char* file = nullptr);
-bool DeleteFile(const wchar_t* file = nullptr);
-void UpdateIcons(bool updateDesktop = false);
 
 #endif
