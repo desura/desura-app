@@ -5,6 +5,7 @@ include_directories(
   ${CEF_INCLUDE_DIRS}
   ${IPC_PIPE_INCLUDE_DIRS}
   ${SQLITE3X_INCLUDE_DIRS}
+  ${Boost_INCLUDE_DIR}
 )
 
 if(UNIX AND 32BIT_SUPPORT)
