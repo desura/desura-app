@@ -431,6 +431,8 @@ void HttpHInternal::setUp(bool setRange)
 	if (setRange && m_uiSize != 0)
 		addHeader(gcString("Range: bytes={0}-{1}", m_uiOffset, m_uiOffset+m_uiSize-1).c_str());
 
+	curl_easy_setopt(m_pCurlHandle, CURLOPT_FOLLOWLOCATION, true);
+
 	setUpProxy();
 }
 

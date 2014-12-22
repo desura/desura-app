@@ -17,29 +17,35 @@ along with this program; if not, write to the Free Software Foundation,
 Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA.
 
 Contact us at legal@badjuju.com.
+
 */
+#ifndef DLB_UPDATE_H
+#define DLB_UPDATE_H
 
-#ifndef DLB_FILES_H
-#define DLB_FILES_H
+enum
+{
+	UPDATE_NONE,
+	UPDATE_MCF,
+	UPDATE_FILES,
+	UPDATE_XML,
+	UPDATE_SERVICE,
+	UPDATE_FORCED,
+	UPDATE_SERVICE_PATH,		//path is wrong but current service should launch
+	UPDATE_SERVICE_LOCATION,	//path is worng and current service wont launch
+	UPDATE_DATAPATH,			//not used
+};
 
-#include <string> // std::wstring
-#include <sys/types.h> // _stat64i32
-#include <sys/stat.h> // stat()
-#include <limits.h> // MAX_PATH
-#include <cerrno> // errno
-#include <vector>
+bool CheckForUpdates();
+int NeedUpdate();
 
-#include "Common.h" // ERROR_OUTPUT(), define NIX
-#include "util/UtilString.h" // tokenize
+bool CheckUpdate(const char* path);
+bool CheckInstall();
 
-#define STR_APPDATA "/AppData"
+int FullUpdate();
+int McfUpdate();
 
-std::string GetAppPath(std::string extra = "");
-std::string GetAppDataPath(std::string extra = "");
-bool ChangeToAppDir();
-bool FileExists(const char* file = nullptr);
-bool DeleteFile(const char* file = nullptr);
-bool DeleteFile(const wchar_t* file = nullptr);
-void UpdateIcons(bool updateDesktop = false);
+int DownloadAndInstallMCF();
+int DownloadFilesForTest();
+int InstallFilesForTest();
 
 #endif

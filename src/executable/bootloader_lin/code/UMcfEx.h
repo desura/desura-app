@@ -17,29 +17,31 @@ along with this program; if not, write to the Free Software Foundation,
 Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA.
 
 Contact us at legal@badjuju.com.
+
 */
-
-#ifndef DLB_FILES_H
-#define DLB_FILES_H
-
-#include <string> // std::wstring
-#include <sys/types.h> // _stat64i32
-#include <sys/stat.h> // stat()
-#include <limits.h> // MAX_PATH
-#include <cerrno> // errno
-#include <vector>
-
-#include "Common.h" // ERROR_OUTPUT(), define NIX
-#include "util/UtilString.h" // tokenize
-
-#define STR_APPDATA "/AppData"
-
-std::string GetAppPath(std::string extra = "");
-std::string GetAppDataPath(std::string extra = "");
-bool ChangeToAppDir();
-bool FileExists(const char* file = nullptr);
-bool DeleteFile(const char* file = nullptr);
-bool DeleteFile(const wchar_t* file = nullptr);
-void UpdateIcons(bool updateDesktop = false);
-
+#ifndef MC_UMCF_EX_H
+#define MC_UMCF_EX_H
+#ifdef _WIN32
+#pragma once
 #endif
+
+#include "Common.h"
+#include "umcf/UMcf.h"
+
+class UMcfEx : public UMcf
+{
+public:
+	//! Downloads update info from web
+	void getUpdateInfo(bool save = false);
+
+	//! downloads the MCF ready to install.
+	void downloadMcf();
+	
+	//! Checks the mcf for errors
+	void checkMcf();
+	
+	//! Deletes the mcf file
+	void deleteMcf();
+};
+
+#endif //MC_UMCF_EX_H
