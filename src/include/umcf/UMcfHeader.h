@@ -224,10 +224,6 @@ protected:
 	//!
 	char* headerToStr() const;
 
-	//! Sets all values to default
-	//!
-	void init();
-
 private:
 	char		m_szId[5];		//4 id LMCF
 	uint8		m_iFileVer;		//1 file version

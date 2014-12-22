@@ -99,11 +99,14 @@ class EventBase
 {
 public:
 	EventBase()
+	: m_bCancel(false)
+	, m_pCurDelegate(nullptr)
+	, m_vPendingDelegates()
+	, m_vDelegates()
+	, m_PendingLock()
+	, m_Lock()
 	{
 		assertType();
-
-		m_bCancel = false;
-		m_pCurDelegate = nullptr;
 	}
 
 	EventBase(const EventBase<TArg, TDel>& e)
@@ -117,7 +120,7 @@ public:
 		m_pCurDelegate = nullptr;
 	}
 
-	~EventBase()
+	virtual ~EventBase()
 	{
 		try
 		{

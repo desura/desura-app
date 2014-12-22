@@ -31,6 +31,10 @@ ThreadPoolThread::ThreadPoolThread(const gcRefPtr<ThreadPoolTaskSourceI> &pTaskS
 	: BaseThread("Thread Pool Worker")
 	, m_bForced(forced)
 	, m_pTaskSource(pTaskSource)
+	, m_TaskLock()
+	, m_WaitCondition()
+	, m_pTask()
+	, m_RefCount()
 {
 }
 

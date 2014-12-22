@@ -41,10 +41,10 @@ namespace UserCore
 		{
 		public:
 			ToolProgress()
+			: percent(0)
+			, total(0)
+			, done(0)
 			{
-				percent = 0;
-				total = 0;
-				done = 0;
 			}
 
 			uint32 percent;
@@ -56,11 +56,24 @@ namespace UserCore
 		{
 		public:
 			ToolTransaction()
+			: m_vToolsList()
+			, m_Lock()
+			, onCompleteEvent()
+			, onStartIPCEvent()
+			, onStartInstallEvent()
+			, onProgressEvent()
+			, onErrorEvent()
 			{
 			}
 
 			ToolTransaction(const std::vector<DesuraId>& vToolsList)
-				: m_vToolsList(vToolsList)
+			: m_vToolsList(vToolsList)
+			, m_Lock()
+			, onCompleteEvent()
+			, onStartIPCEvent()
+			, onStartInstallEvent()
+			, onProgressEvent()
+			, onErrorEvent()
 			{
 			}
 

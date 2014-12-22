@@ -31,6 +31,7 @@ class LinkArgs
 {
 public:
 	LinkArgs()
+	: m_mArgMap()
 	{
 	}
 
@@ -40,6 +41,7 @@ public:
 	}
 
 	LinkArgs(const std::vector<std::string> &args)
+	: m_mArgMap()
 	{
 		for (auto x : args)
 		{

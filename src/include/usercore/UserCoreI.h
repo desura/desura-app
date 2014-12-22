@@ -87,15 +87,15 @@ namespace UserCore
 		{
 		public:
 			UpdateInfo()
+			: branch(0)
+			, build(0)
 			{
-				branch = 0;
-				build = 0;
 			}
 
 			UpdateInfo(uint32 branch, uint32 build)
+			: branch(branch)
+			, build(build)
 			{
-				this->branch = branch;
-				this->build = build;
 			}
 
 			uint32 branch;

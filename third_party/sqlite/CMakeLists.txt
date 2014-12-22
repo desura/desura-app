@@ -28,3 +28,4 @@ target_link_libraries(sqlite
 set(SQLITE_LIBRARIES sqlite PARENT_SCOPE)
 
 set_property(TARGET sqlite PROPERTY FOLDER "ThirdParty")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -O0 -Wall -Weffc++")

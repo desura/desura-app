@@ -382,15 +382,18 @@ namespace XML
 	{
 	public:
 		gcXMLDocument()
+		: m_XmlDoc()
 		{
 		}
 
 		explicit gcXMLDocument(const char* szFile)
+		: m_XmlDoc()
 		{
 			m_eXMLLoadError = m_XmlDoc.LoadFile(szFile);
 		}
 
 		explicit gcXMLDocument(const char* szBuffer, uint32 nLength)
+		: m_XmlDoc()
 		{
 			m_eXMLLoadError = m_XmlDoc.Parse(szBuffer, nLength);
 		}

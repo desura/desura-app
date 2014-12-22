@@ -38,17 +38,17 @@ class DownloadInfo
 {
 public:
 	DownloadInfo()
+	: dlSize(0)
+	, inSize(0)
+	, iInfo(nullptr)
 	{
-		dlSize = 0;
-		inSize = 0;
-		iInfo = nullptr;
 	}
 
 	DownloadInfo(DownloadInfo* di)
+	: dlSize(di->dlSize)
+	, inSize(di->inSize)
+	, iInfo(di->iInfo)
 	{
-		dlSize = di->dlSize;
-		inSize = di->inSize;
-		iInfo = di->iInfo;
 	}
 
 	uint64 dlSize;

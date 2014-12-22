@@ -49,3 +49,4 @@ target_link_libraries(unittest
 
 link_with_gtest(unittest)
 install_library(unittest "Shared")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -O0 -Wall -Weffc++")

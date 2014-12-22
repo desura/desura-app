@@ -30,6 +30,9 @@ Theme::Theme(const char* name)
 	, SpriteList()
 	, WebList()
 	, m_szName(name)
+	, m_szDev("")
+	, m_szPName("")
+	, m_uiHash(0)
 {
 }
 

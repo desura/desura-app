@@ -37,10 +37,10 @@ class MemoryStruct
 {
 public:
 	MemoryStruct()
+	: memory(nullptr)
+	, size(0)
+	, obj(nullptr)
 	{
-		memory = nullptr;
-		size = 0;
-		obj=nullptr;
 	}
 
 	~MemoryStruct()
@@ -203,6 +203,8 @@ class PostAsText : public PostWrapperI
 {
 public:
 	PostAsText(const char* key, const char* text)
+	: m_szText("")
+	, m_szKey("")
 	{
 		if (text)
 			m_szText = text;
@@ -291,12 +293,50 @@ curlGlobalInit cgi;
 
 
 HttpHInternal::HttpHInternal(const char* url, bool useSsl)
+: onProgressEvent()
+, onWriteMemoryEvent()
+, m_bLock(false)
+, m_bAbort(false)
+, m_hFile(nullptr)
+, m_pCurlHandle(curl_easy_init())
+, m_pMemStruct(new MemoryStruct())
+, m_vHeaders()
+, m_vFormPost()
+, m_szRawPost("")
+, m_szUrl("")
+, m_szCookies("")
+, m_szUserAgent("")
+, m_szFile("")
+, m_szCertFile("")
+, m_szUser("")
+, m_szPass("")
+, m_uiOffset(0)
+, m_uiSize(0)
 {
 	init(useSsl);
 	setUrl(url);
 }
 
 HttpHInternal::HttpHInternal(bool useSsl)
+: onProgressEvent()
+, onWriteMemoryEvent()
+, m_bLock(false)
+, m_bAbort(false)
+, m_hFile(nullptr)
+, m_pCurlHandle(curl_easy_init())
+, m_pMemStruct(new MemoryStruct())
+, m_vHeaders()
+, m_vFormPost()
+, m_szRawPost("")
+, m_szUrl("")
+, m_szCookies("")
+, m_szUserAgent("")
+, m_szFile("")
+, m_szCertFile("")
+, m_szUser("")
+, m_szPass("")
+, m_uiOffset(0)
+, m_uiSize(0)
 {
 	init(useSsl);
 }
@@ -317,18 +357,7 @@ HttpHInternal::~HttpHInternal()
 
 void HttpHInternal::init(bool useSsl)
 {
-	m_pCurlHandle = curl_easy_init();
 	curl_easy_setopt(m_pCurlHandle, CURLOPT_NOSIGNAL, 1); //this is needed to work stable without c-ares
-	m_pMemStruct = new MemoryStruct;
-
-	m_bLock = false;
-	m_bAbort = false;
-	m_bWritingToFile = false;
-
-	m_uiOffset = 0;
-	m_uiSize = 0;
-
-	m_hFile = nullptr;
 	addHeader("Expect: ");
 }
 

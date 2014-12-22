@@ -27,3 +27,4 @@ target_link_libraries(utility
 
 install_executable(utility)
 SetStaticRuntime(utility)
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -O0 -Wall -Weffc++")

@@ -32,6 +32,8 @@ class LanguageString : public BaseItem
 public:
 	LanguageString(const char* name)
 		: BaseItem(name)
+		, str("")
+		, ustr("")
 	{
 	}
 

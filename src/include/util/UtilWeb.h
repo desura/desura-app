@@ -164,18 +164,18 @@ class HttpHandle
 {
 public:
 	HttpHandle()
+	: m_pWC(nullptr)
 	{
-		m_pWC = nullptr;
 	}
 
 	HttpHandle(const char* url, bool useSsl = false)
+	: m_pWC(newHttpHandle(url, useSsl))
 	{
-		m_pWC = newHttpHandle(url, useSsl);
 	}
 
 	HttpHandle(HttpHandle &handle)
+	: m_pWC(handle.m_pWC)
 	{
-		m_pWC = handle.m_pWC;
 		handle.m_pWC = nullptr;
 	}
 

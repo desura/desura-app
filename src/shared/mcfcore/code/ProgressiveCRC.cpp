@@ -29,11 +29,11 @@ namespace Misc
 {
 
 ProgressiveCRC::ProgressiveCRC(uint32 blockSize)
+: m_uiBlockSize(blockSize)
+, m_uiDone(0)
+, m_uiCurCRC(0xFFFFFFFF)
+, m_vCRCList()
 {
-	m_uiBlockSize = blockSize;
-	m_uiDone = 0;
-
-	m_uiCurCRC = 0xFFFFFFFF;
 }
 
 ProgressiveCRC::~ProgressiveCRC()

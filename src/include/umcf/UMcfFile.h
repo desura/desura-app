@@ -80,9 +80,9 @@ class ProgressCB
 {
 public:
 	ProgressCB(uint64 d)
+	: cancel(false)
+	, done(d)
 	{
-		cancel = false;
-		done = d;
 	}
 
 	bool cancel;

@@ -105,6 +105,9 @@ IPCClass::IPCClass(IPCManagerI* mang, uint32 id, DesuraId itemId)
 	: m_uiItemId(itemId)
 	, m_pManager(mang)
 	, m_uiId(id)
+	, m_KillCondition()
+	, m_mEvent()
+	, m_mFunc()
 {
 }
 

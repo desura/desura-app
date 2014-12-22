@@ -60,26 +60,25 @@ public:
 	};
 
 	ProgressInfo()
+	: min(0)
+	, hour(0)
+	, rate(0)
+	, percent(0)
+	, flag(0)
+	, doneAmmount(0)
+	, totalAmmount(0)
 	{
-		min = 0;
-		hour = 0;
-		rate = 0;
-		percent = 0;
-		flag = 0;
-		doneAmmount = 0;
-		totalAmmount = 0;
 	}
 
 	ProgressInfo(ProgressInfo* i)
+	: min(0)
+	, hour(0)
+	, rate(0)
+	, percent(0)
+	, flag(0)
+	, doneAmmount(0)
+	, totalAmmount(0)
 	{
-		min = 0;
-		hour = 0;
-		rate = 0;
-		percent = 0;
-		flag = 0;
-		doneAmmount = 0;
-		totalAmmount = 0;
-
 		if (i)
 		{
 			min = i->min;
@@ -94,6 +93,13 @@ public:
 
 	//for ipc communication
 	ProgressInfo(uint64 prog)
+	: min(0)
+	, hour(0)
+	, rate(0)
+	, percent(0)
+	, flag(0)
+	, doneAmmount(0)
+	, totalAmmount(0)
 	{
 		Prog_u u;
 		u.value = prog;

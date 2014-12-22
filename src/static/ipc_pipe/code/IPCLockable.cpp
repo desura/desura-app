@@ -29,6 +29,8 @@ using namespace IPC;
 
 IPCLock::IPCLock(uint32 i)
 	: id(i)
+	, m_InternalLock()
+	, m_WaitCond()
 {
 }
 
@@ -79,12 +81,10 @@ IPCParameterI* IPCLock::popResult()
 }
 
 
-
-
-
-
-
 IPCLockable::IPCLockable()
+: m_lockMutex()
+, m_uiIdCount(0)
+, m_vLockList()
 {
 }
 

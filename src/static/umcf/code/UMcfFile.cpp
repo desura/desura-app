@@ -38,12 +38,16 @@ Contact us at legal@badjuju.com.
 
 
 UMcfFile::UMcfFile()
+: m_szCCsum("")
+, m_szCsum("")
+, m_szName("")
+, m_szPath("")
+, m_uiHash(0)
+, m_ullCSize(0)
+, m_ullOffset(0)
+, m_ullSize(0)
+, m_ullTimeStamp(0)
 {
-	m_uiFlags = 0;
-	m_uiHash = 0;
-	m_ullSize = 0;
-	m_ullCSize = 0;
-	m_ullTimeStamp = 0;
 }
 
 UMcfFile::~UMcfFile()

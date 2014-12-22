@@ -37,10 +37,9 @@ extern void SetTracer(TracerI *pTracer);
 
 
 ServiceCore::ServiceCore()
+: m_pIPCServer(nullptr)
+, m_pDisconnect(nullptr)
 {
-	m_pIPCServer = nullptr;
-	m_pDisconnect = nullptr;
-
 	g_pServiceCore = this;
 }
 

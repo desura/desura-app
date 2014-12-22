@@ -42,7 +42,12 @@ namespace XML
 class SpriteRect : public BaseItem, public SpriteRectI
 {
 public:
-	SpriteRect(const char* name) : BaseItem(name)
+	SpriteRect(const char* name)
+	: BaseItem(name)
+	, x(0)
+	, y(0)
+	, w(0)
+	, h(0)
 	{
 	}
 
@@ -85,6 +90,7 @@ class ThemeColorInfo : public BaseItem
 public:
 	ThemeColorInfo(const char* name)
 		: BaseItem(name)
+		, color()
 	{
 	}
 
@@ -94,7 +100,9 @@ public:
 class ThemeImageInfo : public BaseItem
 {
 public:
-	ThemeImageInfo(const char* name) : BaseItem(name)
+	ThemeImageInfo(const char* name)
+	: BaseItem(name)
+	, path("")
 	{
 	}
 
@@ -117,7 +125,9 @@ public:
 class ThemeWebInfo : public BaseItem
 {
 public:
-	ThemeWebInfo(const char* name) : BaseItem(name)
+	ThemeWebInfo(const char* name)
+	: BaseItem(name)
+	,path("")
 	{
 	}
 

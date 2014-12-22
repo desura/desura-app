@@ -31,6 +31,7 @@ class gcDuration
 {
 public:
 	gcDuration()
+	: m_Duration()
 	{
 	}
 

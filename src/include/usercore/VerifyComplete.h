@@ -44,16 +44,17 @@ public:
 	};
 
 	VerifyComplete()
+	: vStatus(V_COMPLETE)
+	, szFile("")
 	{
-		vStatus = V_COMPLETE;
 	}
 
 	VerifyComplete(VSTATUS status, const char* file = nullptr)
+	: vStatus(status)
+	, szFile("")
 	{
 		if (file)
 			szFile = gcString(file);
-
-		vStatus = status;
 	}
 
 	gcString szFile;

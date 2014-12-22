@@ -36,6 +36,11 @@ class LogCallback
 public:
 	typedef std::function<void(MSG_TYPE, const char*, Color*, std::map<std::string, std::string>*)> MessageFn;
 
+	LogCallback()
+	: m_cbMsg()
+	{
+	}
+
 	void Message(MSG_TYPE type, const char* msg, Color* col = nullptr, std::map<std::string, std::string>* mpArgs = nullptr)
 	{
 		if (m_cbMsg)

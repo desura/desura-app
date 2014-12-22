@@ -58,16 +58,22 @@ namespace Misc
 		: m_szName("")
 		, m_szUrl("")
 		, m_szProvUrl("")
+		, m_szBanner()
+		, m_BannerLock()
+		, m_tExpireTime(gcTime())
 		{
 		}
 
 		//! Copy Constructor
 		DownloadProvider(const MCFCore::Misc::DownloadProvider& prov)
+		: m_szName(prov.getName())
+		, m_szUrl(prov.getUrl())
+		, m_szProvUrl(prov.getProvUrl())
+		, m_eType(prov.getType())
+		, m_szBanner()
+		, m_BannerLock()
+		, m_tExpireTime(gcTime() + std::chrono::minutes(15))
 		{
-			m_szName = prov.getName();
-			m_szUrl = prov.getUrl();
-			m_szProvUrl = prov.getProvUrl();
-			m_eType = prov.getType();
 
 			setBanner(prov.getBanner());
 		}
@@ -98,6 +104,9 @@ namespace Misc
 			: m_szName(n)
 			, m_szUrl(u)
 			, m_szProvUrl(p)
+			, m_szBanner()
+			, m_tExpireTime(gcTime() + std::chrono::minutes(15))
+			, m_BannerLock()
 		{
 			setBanner(b);
 		}
@@ -107,6 +116,12 @@ namespace Misc
 		//! @param node Xml node to get info from
 		//!
 		DownloadProvider(const XML::gcXMLElement &xmlElement)
+		: m_szBanner()
+		, m_BannerLock()
+		, m_szProvUrl("")
+		, m_szUrl("")
+		, m_szName("")
+		, m_tExpireTime(gcTime() + std::chrono::minutes(15))
 		{
 			gcAssert(xmlElement.IsValid());
 

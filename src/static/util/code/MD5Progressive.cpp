@@ -27,8 +27,8 @@ Contact us at legal@badjuju.com.
 
 
 MD5Progressive::MD5Progressive()
+: md5(new MD5())
 {
-	md5 = new MD5();
 }
 
 MD5Progressive::~MD5Progressive()

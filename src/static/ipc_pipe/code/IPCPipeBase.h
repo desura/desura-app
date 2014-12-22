@@ -165,10 +165,10 @@ protected:
 	{
 	public:
 		LoopbackInfo()
+			: buffer(nullptr)
+			, size(0)
+			, id(0)
 		{
-			buffer = nullptr;
-			size = 0;
-			id = 0;
 		}
 
 		~LoopbackInfo()

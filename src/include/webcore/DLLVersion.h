@@ -37,6 +37,11 @@ public:
 	//! Default constuctor
 	//!
 	DLLVersion()
+	: szMcfVer("")
+	, szDEVer("")
+	, szUIVer("")
+	, szWebVer("")
+	, szUserVer("")
 	{
 	}
 
@@ -49,12 +54,12 @@ public:
 	//! @param u UserCore Version
 	//!
 	DLLVersion(const char* d, const char* ui, const char* w, const char* m, const char* u)
+	: szMcfVer(m)
+	, szDEVer(d)
+	, szUIVer(ui)
+	, szWebVer(w)
+	, szUserVer(u)
 	{
-		szMcfVer = gcString(m);
-		szDEVer = gcString(d);
-		szUIVer = gcString(ui);
-		szWebVer = gcString(w);
-		szUserVer = gcString(u);
 	}
 
 	//! Copy Constuctor
@@ -62,6 +67,11 @@ public:
 	//! @param dv object to copy from
 	//!
 	DLLVersion(DLLVersion* dv)
+	: szMcfVer("")
+	, szDEVer("")
+	, szUIVer("")
+	, szWebVer("")
+	, szUserVer("")
 	{
 		if (dv)
 		{

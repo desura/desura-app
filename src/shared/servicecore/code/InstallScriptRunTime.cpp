@@ -49,7 +49,7 @@ public:
 		delete this;
 	}
 
-	gcString m_szInstallPath;
+	gcString m_szInstallPath = "";
 };
 
 template <>
@@ -123,10 +123,13 @@ class ScriptCore
 {
 public:
 	ScriptCore()
+	: m_uiInstanceCount(0)
+	, m_pFactory(nullptr)
+	, m_pSetup(nullptr)
+	, m_Extender()
+	, m_ScriptCore()
+	, m_ScriptLock()
 	{
-		m_uiInstanceCount = 0;
-		m_pFactory = nullptr;
-		m_pSetup = nullptr;
 	}
 
 	ScriptCoreI* newInstance()
@@ -248,8 +251,8 @@ private:
 ScriptCore g_ScriptCore;
 
 InstallScriptRunTime::InstallScriptRunTime(const char* scriptFile, const char* installPath)
+: m_pRunTime(nullptr)
 {
-	m_pRunTime = nullptr;
 	loadScript(scriptFile, installPath);
 }
 

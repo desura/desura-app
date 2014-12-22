@@ -69,9 +69,11 @@ std::string expandPath(const char* file)
 }
 
 FileHandle::FileHandle(const FileHandle& handle)
+	: m_hFileHandle(fdopen(dup(fileno(handle.getHandle())), handle.getMode()))
+	, m_bIsOpen(handle.isOpen())
+	, m_szMode("rb")
+	, m_uiOffset(0)
 {
-	m_hFileHandle = fdopen(dup(fileno(handle.getHandle())), handle.getMode());
-	m_bIsOpen = handle.isOpen();
 }
 
 FileHandle& FileHandle::operator=(const FileHandle& handle)

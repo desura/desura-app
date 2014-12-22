@@ -27,10 +27,13 @@ Contact us at legal@badjuju.com.
 namespace IPC
 {
 
-PipeServer::PipeServer(const char* name, uint8 numPipes, bool changeAccess) : PipeBase(name, gcString("{0}- IPC Server", name).c_str())
+PipeServer::PipeServer(const char* name, uint8 numPipes, bool changeAccess)
+	: PipeBase(name, gcString("{0}- IPC Server", name).c_str())
+	, m_pPipe(new PipeInst())
+	, onConnectEvent()
+	, onDisconnectEvent()
+	, onNeedAuthEvent()
 {
-	m_pPipe = new PipeInst();
-
 	m_pPipe->pIPC = new IPCManager(this, 0, name, true);
 	m_pPipe->pIPC->onNeedAuthEvent += delegate(&onNeedAuthEvent);
 	m_pPipe->pIPC->setSendEvent(&m_WaitCond);

@@ -43,16 +43,22 @@ namespace WebCore
 extern gcString genUserAgent();
 
 WebCoreClass::WebCoreClass()
-	: m_bValidateCert(true)
+	: m_ImageCache()
+	, m_RefCount()
+	, m_bDebuggingOut(false)
 	, m_bUserAuth(false)
+	, m_bValidateCert(true)
+	, m_mSessLock()
+	, m_szAppDataPath("")
+	, m_szIdCookie("")
+	, m_szUserAgent(genUserAgent())
 	, m_uiUserId(0)
+	, onCookieUpdateEvent()
+	, onLoggedOutEvent()
 {
-	m_szUserAgent = genUserAgent();
 
 #ifdef DEBUG
 	m_bDebuggingOut = true;
-#else
-	m_bDebuggingOut = false;
 #endif
 }
 

@@ -45,16 +45,15 @@ public:
 #endif
 
 	SharedObjectLoader()
+	: m_hHandle(nullptr)
+	, m_bHasFailed(false)
 	{
-		m_hHandle = nullptr;
-		m_bHasFailed = false;
 	}
 
 	SharedObjectLoader(const SharedObjectLoader& sol)
+	: m_hHandle(sol.m_hHandle)
+	, m_bHasFailed(sol.m_bHasFailed)
 	{
-		m_hHandle = sol.m_hHandle;
-		m_bHasFailed = sol.m_bHasFailed;
-
 		sol.m_hHandle = nullptr;
 		sol.m_bHasFailed = false;
 	}

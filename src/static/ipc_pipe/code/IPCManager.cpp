@@ -57,22 +57,22 @@ class PipeMessage
 {
 public:
 	PipeMessage(uint32 size)
+	: m_uiSize(size)
+	, m_szBuffer(new char[size])
 	{
-		m_uiSize = size;
-		m_szBuffer = new char[size];
 	}
 
 	PipeMessage(const char* message, uint32 size)
+	: m_uiSize(size)
+	, m_szBuffer(new char[size])
 	{
-		m_uiSize = size;
-		m_szBuffer = new char[size];
 		memcpy(m_szBuffer, message, size);
 	}
 
 	PipeMessage(PipeMessage& msg)
+	: m_uiSize(msg.getSize())
+	, m_szBuffer(new char[m_uiSize])
 	{
-		m_uiSize = msg.getSize();
-		m_szBuffer = new char[m_uiSize];
 		memcpy(m_szBuffer, msg.getBuffer(), m_uiSize);
 	}
 
@@ -92,15 +92,19 @@ public:
 	}
 
 private:
-	char* m_szBuffer;
 	uint32 m_uiSize;
+	char* m_szBuffer;
 };
 
 
 class ProcessThread : public Thread::BaseThread
 {
 public:
-	ProcessThread(const char* threadName) : Thread::BaseThread(gcString("{0}: Process", threadName).c_str())
+	ProcessThread(const char* threadName)
+	: Thread::BaseThread(gcString("{0}: Process", threadName).c_str())
+	, m_mVectorMutex()
+	, m_WaitCond()
+	, m_vItemList()
 	{
 	}
 
@@ -146,12 +150,15 @@ protected:
 	{
 	public:
 		ProcessData()
+		: pClass()
+		, buff()
 		{
 		}
 
 		ProcessData(std::weak_ptr<IPCClass> c, uint32 t, const char* b, uint32 s)
 			: pClass(c)
 			, buffsize(s)
+			, buff()
 			, type(t)
 		{
 			if (s > 0)
@@ -216,40 +223,38 @@ protected:
 
 
 IPCManager::IPCManager(LoopbackProcessor* loopbackProcessor, uint32 managerId, const char* threadName, bool isServer)
+	: m_ClassMutex()
+	, m_PartLock()
+	, m_bDisconnected(false)
+	, m_bServer(isServer)
+	, m_hEvent(nullptr)
+	, m_mClassId(-1)
+	, m_mOutstandingPartMessages()
+	, m_mVectorMutex()
+	, m_pCallThread(nullptr)
+	, m_pEventThread(nullptr)
+	, m_pLoopbackProcessor(loopbackProcessor)
+	, m_pPendingMessage()
+	, m_szThreadName(threadName)
+	, m_uiItemId()
+	, m_uiManagerId(managerId)
+	, m_vClassDelList()
+	, m_vClassList()
+	, m_vPipeMsgs()
+	, onDisconnectEvent()
+	, onNeedAuthEvent()
 {
-	m_bServer = isServer;
-
 	if (isServer)
 		m_mClassId = 1;
-	else
-		m_mClassId = -1;
 
 #ifdef WIN32
 	m_hEvent = INVALID_HANDLE_VALUE;
-#else
-	m_hEvent = nullptr;
 #endif
-
-	m_bDisconnected = false;
-
-	m_pEventThread = nullptr;
-	m_pCallThread = nullptr;
-
-	m_uiManagerId = managerId;
-	m_pLoopbackProcessor = loopbackProcessor;
-
-	m_szThreadName = threadName;
 
 	if (isServer)
 		m_szThreadName += ":Server ";
 	else
 		m_szThreadName += ":Client ";
-
-#ifdef WIN32
-	m_hEvent = INVALID_HANDLE_VALUE;
-#else
-	m_hEvent = nullptr;
-#endif
 }
 
 IPCManager::~IPCManager()
