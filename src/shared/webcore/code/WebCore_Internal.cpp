@@ -93,6 +93,8 @@ const XML::gcXMLElement WebCoreClass::postToServer(std::string url, std::string 
 
 		hh->postWeb();
 
+		m_cookieMap = hh->getCookies();
+		
 		if (hh->getDataSize() == 0)
 			throw gcException(ERR_BADRESPONSE, "Data size was zero");
 
@@ -126,7 +128,12 @@ const XML::gcXMLElement WebCoreClass::postToServer(std::string url, std::string 
 
 const XML::gcXMLElement WebCoreClass::loginToServer(std::string url, std::string resource, PostMap &postData, XML::gcXMLDocument &xmlDocument)
 {
-	return postToServer(url, resource, postData, xmlDocument, true);
+	auto uNode = postToServer(url, resource, postData, xmlDocument, true);
+
+	// pull m_AWSELBCookie from cookies after login
+	m_AWSELBCookie = m_cookieMap["AWSELB"];
+
+	return uNode;
 }
 
 DesuraId WebCoreClass::nameToId(const char* name, const char* type)
@@ -413,7 +420,7 @@ void WebCoreClass::logOut()
 
 	m_bUserAuth = false;
 	m_szIdCookie = gcString("");
-	m_AWSELBCookie = gcString("");
+	m_AWSELBCookie = "";
 	m_szSessCookie[0] = '\0';
 }
 

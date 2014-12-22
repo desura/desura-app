@@ -170,13 +170,15 @@ namespace WebCore
 
 		void onHttpProg(std::atomic<bool>* stop, Prog_s& prog);
 
+		HttpHandleI::tCookieMap m_cookieMap;
+
 	private:
 		bool m_bUserAuth;
 		uint32 m_uiUserId;
 
 		gcString m_szUserAgent;
 		gcString m_szIdCookie;
-		gcString m_AWSELBCookie;
+		std::string m_AWSELBCookie;
 		std::array<char, 4096> m_szSessCookie;
 		gcString m_szAppDataPath;
 
