@@ -281,7 +281,7 @@ SetupDownloadUrlCustom(GMOCK "https://googlemock.googlecode.com/files/gmock-1.7.
 SetupDownloadUrl(V8 "v8-3.18.5.14.tar.bz2" 657802ea63c89190fd510ee1a2a719bf)
 
 ###### SetupDownloadUrl(WXWIDGET "wxWidgets-3.0.0.tar.bz2" 241998efc12205172ed24c18788ea2cd)
-SetupDownloadUrlCustom(WXWIDGET "http://sourceforge.net/projects/wxwindows/files/3.0.0/wxWidgets-3.0.0.tar.bz2/download" 241998efc12205172ed24c18788ea2cd)
+SetupDownloadUrlCustom(WXWIDGET "http://downloads.sourceforge.net/project/wxwindows/3.0.2/wxWidgets-3.0.2.tar.bz2" ba4cd1f3853d0cd49134c5ae028ad080)
 
 ###############################################################################
 # build some external projects
