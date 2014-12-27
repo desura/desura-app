@@ -26,6 +26,7 @@ Contact us at legal@badjuju.com.
 #include "umcf/UMcf.h"
 #include "UpdateForm.h"
 #include "Common.h"
+#include "util/UtilLinux.h"
 
 #define UPDATE_LOCK ".update_lock.txt"
 
@@ -100,7 +101,7 @@ int NeedUpdate()
 	}
 	else
 	{
-		if (!CheckInstall())
+		if (UTIL::OS::getConfigValue(APPID) == "120" && !CheckInstall())
 		{
 			ERROR_OUTPUT("UPDATE_FILES");
 			return UPDATE_FILES;

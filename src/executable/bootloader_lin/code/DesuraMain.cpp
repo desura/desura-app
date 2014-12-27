@@ -200,6 +200,12 @@ int MainApp::run()
 
 	if (!FileExists(lockPath.c_str())) // if desura isn't already running - simple check
 	{
+#ifdef DESURA_OFFICIAL_BUILD
+		if (forceUpdate || !skipUpdate) {
+			if (CheckForUpdates())
+				return 0;
+		}
+#endif
 		checkUnityWhitelist();
 	}
 #endif
