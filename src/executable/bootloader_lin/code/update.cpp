@@ -94,25 +94,25 @@ int NeedUpdate()
 {
 	ERROR_OUTPUT(__func__);
 
-	if (!FileExists(UPDATEXML))
-	{
-		ERROR_OUTPUT("UPDATE_XML");
-		return UPDATE_XML;
-	}
-	else
-	{
-		if (UTIL::OS::getConfigValue(APPID) == "120" && !CheckInstall())
+		if (!FileExists(UPDATEXML))
 		{
-			ERROR_OUTPUT("UPDATE_FILES");
-			return UPDATE_FILES;
+			ERROR_OUTPUT("UPDATE_XML");
+			return UPDATE_XML;
 		}
-		
-		if (FileExists(UPDATEFILE) && CheckUpdate(UPDATEFILE))
+		else
 		{
-			ERROR_OUTPUT("UPDATE_MCF");
-			return UPDATE_MCF;
+			if (!CheckInstall())
+			{
+				ERROR_OUTPUT("UPDATE_FILES");
+				return UPDATE_FILES;
+			}
+			
+			if (FileExists(UPDATEFILE) && CheckUpdate(UPDATEFILE))
+			{
+				ERROR_OUTPUT("UPDATE_MCF");
+				return UPDATE_MCF;
+			}
 		}
-	}
 
 	return UPDATE_NONE;
 }
