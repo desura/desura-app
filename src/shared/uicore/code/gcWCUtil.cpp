@@ -35,7 +35,7 @@ Contact us at legal@badjuju.com.
 #include "webcore/WebCoreI.h"
 
 
-#ifdef NIX
+#if defined(NIX) && !defined(MACOS)
 #include "managers/CVar.h"
 #include <gtk/gtk.h>
 #endif
@@ -47,7 +47,7 @@ void RegisterSchemes();
 
 typedef gcString (*UserAgentFN)();
 
-#ifdef NIX
+#if defined(NIX) && !defined(MACOS)
 guint m_timeoutSource = 0;
 #endif
 
@@ -58,7 +58,7 @@ ChromiumDLL::ChromiumControllerI* g_pChromiumController = nullptr;
 
 void SetCookies();
 
-#ifdef NIX
+#if defined(NIX) && !defined(MACOS)
 gboolean onTimeout(gpointer data)
 {
 	if (!g_bLoaded || !g_pChromiumController)
@@ -170,7 +170,7 @@ bool InitWebControl()
 	RegisterJSBindings();
 	RegisterSchemes();
 
-#ifdef NIX
+#if defined(NIX) && !defined(MACOS)
 	m_timeoutSource = g_timeout_add(50, onTimeout, nullptr);
 #endif
 
@@ -185,7 +185,7 @@ void ShutdownWebControl()
 
 	g_bLoaded = false;
 
-#ifdef NIX
+#if defined(NIX) && !defined(MACOS)
 	if (m_timeoutSource != 0)
 	{
 		g_source_remove(m_timeoutSource);
@@ -219,6 +219,7 @@ void DeleteCookies()
 
 	g_pChromiumController->DeleteCookie(urlRoot.c_str(), "freeman");
 	g_pChromiumController->DeleteCookie(urlRoot.c_str(), "masterchief");
+	g_pChromiumController->DeleteCookie(urlRoot.c_str(), "AWSELB");
 }
 
 void SetCookies()
@@ -269,9 +270,11 @@ void SetCookies()
 	cookie->destroy();
 }
 
-#ifdef WIN32
+#if defined(WIN32)
 //ChromiumDLL::ChromiumBrowserI* NewChromiumBrowser(HWND hwnd, const char* name, const char* loadUrl)
 ChromiumDLL::ChromiumBrowserI* NewChromiumBrowser(HWND hwnd, const char* name, const char* loadUrl)
+#elif defined(MACOS)
+ChromiumDLL::ChromiumBrowserI* NewChromiumBrowser(void* hwnd, const char* name, const char* loadUrl)
 #else
 ChromiumDLL::ChromiumBrowserI* NewChromiumBrowser(int* hwnd, const char* name, const char* loadUrl)
 #endif

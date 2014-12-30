@@ -1,0 +1,26 @@
+Index: src/osx/webview_webkit.mm
+===================================================================
+--- src/osx/webview_webkit.mm (revision)
++++ src/osx/webview_webkit.mm (working copy)
+@@ -28,7 +28,7 @@
+ #include "wx/hashmap.h"
+ #include "wx/filesys.h"
+ 
+-#include <WebKit/WebKit.h>
++#include <WebKit/WebKitLegacy.h>
+ #include <WebKit/HIWebView.h>
+ #include <WebKit/CarbonUtils.h>
+
+Index: include/wx/osx/core/cfref.h
+===================================================================
+--- include/wx/osx/core/cfref.h (revision)
++++ include/wx/osx/core/cfref.h (working copy)
+@@ -382,7 +382,7 @@
+ 
+ // Change the 0 to a 1 if you want the functions to work (no link errors)
+ // Neither function will cause retain/release side-effects if implemented.
+-#if 0
++#if 1
+ template <class T>
+ void CFRelease(const wxCFRef<T*> & cfref)
+ {

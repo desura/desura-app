@@ -31,12 +31,21 @@ Contact us at legal@badjuju.com.
 #include <branding/branding.h>
 #include "wx/clipbrd.h"
 
-#ifdef WIN32
+#if defined(WIN32)
 ChromiumDLL::ChromiumBrowserI* NewChromiumBrowser(HWND hwnd, const char* name, const char* loadUrl);
 
 static ChromiumDLL::ChromiumBrowserI* CreateBrowser(gcWebControl *pControl, const char* loadUrl)
 {
 	return NewChromiumBrowser((HWND)pControl->GetHWND(), PRODUCT_NAME, loadUrl);
+}
+
+#elif defined(MACOS)
+
+ChromiumDLL::ChromiumBrowserI* NewChromiumBrowser(void* view, const char* name, const char* loadUrl);
+
+static ChromiumDLL::ChromiumBrowserI* CreateBrowser(gcWebControl *pControl, const char* loadUrl)
+{
+	return NewChromiumBrowser(pControl->OSXGetViewOrWindow(), PRODUCT_NAME, loadUrl);
 }
 
 #else

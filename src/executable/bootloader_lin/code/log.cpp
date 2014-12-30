@@ -17,29 +17,46 @@ along with this program; if not, write to the Free Software Foundation,
 Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA.
 
 Contact us at legal@badjuju.com.
+
 */
+#include "log.h"
 
-#ifndef DLB_FILES_H
-#define DLB_FILES_H
+FILE* g_pUpdateLog = NULL;
 
-#include <string> // std::wstring
-#include <sys/types.h> // _stat64i32
-#include <sys/stat.h> // stat()
-#include <limits.h> // MAX_PATH
-#include <cerrno> // errno
-#include <vector>
+void InitUpdateLog()
+{
+	if (g_pUpdateLog)
+		return;
 
-#include "Common.h" // ERROR_OUTPUT(), define NIX
-#include "util/UtilString.h" // tokenize
+	char file[] = "update_log.txt";
+	g_pUpdateLog = fopen(file, "a");
+}
 
-#define STR_APPDATA "/AppData"
+void StopUpdateLog()
+{
+	if (!g_pUpdateLog)
+		return;
 
-std::string GetAppPath(std::string extra = "");
-std::string GetAppDataPath(std::string extra = "");
-bool ChangeToAppDir();
-bool FileExists(const char* file = nullptr);
-bool DeleteFile(const char* file = nullptr);
-bool DeleteFile(const wchar_t* file = nullptr);
-void UpdateIcons(bool updateDesktop = false);
+	fclose(g_pUpdateLog);
+}
 
-#endif
+void Log(const char* format, ...)
+{
+	if (!g_pUpdateLog)
+		return;
+
+	time_t rawtime;
+	tm timeinfo;
+	char buffer[255];
+
+	time(&rawtime);
+	localtime_r(&rawtime, &timeinfo);
+
+	strftime(buffer, 255, "%c:", &timeinfo);
+	fprintf(g_pUpdateLog, "%s", buffer);
+
+	va_list args;
+	va_start(args, format);
+	vfprintf(g_pUpdateLog, format, args);
+	va_end(args);
+}

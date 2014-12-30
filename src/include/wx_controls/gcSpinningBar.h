@@ -28,9 +28,10 @@ Contact us at legal@badjuju.com.
 #include "gcPanel.h"
 #include "gcImageHandle.h"
 
-
-#ifdef WIN32
+#if defined(WIN32)
 	typedef int32 TimerId;
+#elif defined(MACOS)
+	typedef void* TimerId;	
 #else
 	typedef uint TimerId;
 #endif

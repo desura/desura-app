@@ -69,7 +69,7 @@ LRESULT CALLBACK CallWndProc(int nCode,WPARAM wParam, LPARAM lParam)
 #endif
 
 
-#ifndef WIN32
+#if !defined(WIN32) && !defined(MACOS)
 
 #include <gtk/gtk.h>
 
