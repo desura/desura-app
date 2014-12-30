@@ -60,7 +60,6 @@ pack() {
 }
 
 if [ -z "$1" ]; then
-	clean
 	build_desura || exit 2
 	build_cef || exit 2
 elif [ "$1" = "clean" ]; then
@@ -70,22 +69,18 @@ elif [ "$1" = "pack" ]; then
 	shift
 	PACKAGE="$1"
 	shift
-	clean
 	pack || exit 2
 elif [ "$1" = "release" ]; then
 	shift
 	PACKAGE="$1"
 	OFFICIAL_BUILD="ON"
 	shift
-	clean
 	pack || exit 2
 elif [ "$1" = "only_desura" ]; then
 	shift
-	clean
 	build_desura || exit 2
 elif [ "$1" = "only_cef" ]; then
 	shift
-	clean
 	build_cef || exit 2
 elif [ "$1" = "help" ]; then
 	echo 'This script will allow you to easy compile Desura on Linux.'

@@ -202,7 +202,7 @@ int MainApp::run()
 	{
 #ifdef DESURA_OFFICIAL_BUILD
 		gcString id = UTIL::OS::getConfigValue(APPID);
-		if (id == "120" || id == "") {
+		if (id != "520" || id == "") {
 			if (forceUpdate || !skipUpdate) {
 				if (CheckForUpdates())
 					return 0;

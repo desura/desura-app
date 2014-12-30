@@ -99,11 +99,11 @@ void UpdateForm::installOnly()
 	DeleteFile(xmlPath.c_str());
 	SetStatus("Installing");
 	
-	installMcf.install(L"./");
+	installMcf.install(L"../");
 	installMcf.dumpXml(UPDATEXML_W);
 	installMcf.setRegValues();
 	
-	installMcf.removeOldFiles(&oldMcf, L"./");
+//	installMcf.removeOldFiles(&oldMcf, L"./");
 
 	m_pUmcf = NULL;
 }
