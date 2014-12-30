@@ -170,12 +170,15 @@ namespace WebCore
 
 		void onHttpProg(std::atomic<bool>* stop, Prog_s& prog);
 
+		HttpHandleI::tCookieMap m_cookieMap;
+
 	private:
 		bool m_bUserAuth;
 		uint32 m_uiUserId;
 
 		gcString m_szUserAgent;
 		gcString m_szIdCookie;
+		std::string m_AWSELBCookie;
 		std::array<char, 4096> m_szSessCookie;
 		gcString m_szAppDataPath;
 
@@ -196,7 +199,12 @@ namespace WebCore
 	{
 		return m_szIdCookie.c_str();
 	}
-
+	/*
+	inline const char* WebCoreClass::getAWSELB()
+	{
+		return m_AWSELBCookie.c_str();
+	}
+	*/
 	inline const char* WebCoreClass::getSessCookie()
 	{
 		std::lock_guard<std::mutex> l(m_mSessLock);
