@@ -87,7 +87,7 @@ bool CheckForUpdates()
 		ERROR_OUTPUT("Not doing update.");
 	}
 	
-	return true;
+	return false;
 }
 
 int NeedUpdate()

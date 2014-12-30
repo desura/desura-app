@@ -161,7 +161,12 @@ void UMcfFile::genXml(XML::gcXMLElement &xmlElement)
 bool UMcfFile::checkFile(const wchar_t* dir)
 {
 #ifdef NIX
-	gcString path("{0}/{1}/{2}", dir, m_szPath, m_szName);
+	if (dir == L".") {  // TODO|HACK -- mcf for desura should be prepending ../ to path; it's running out of ./lib not ./
+		gcString path(".{0}/{1}/{2}", dir, m_szPath, m_szName);
+	}
+	else {
+		gcString path("{0}/{1}/{2}", dir, m_szPath, m_szName);
+	}
 
 	struct stat stFileInfo;
 	int intStat = stat(path.c_str(), &stFileInfo);
