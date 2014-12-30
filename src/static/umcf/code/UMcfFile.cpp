@@ -162,7 +162,7 @@ bool UMcfFile::checkFile(const wchar_t* dir)
 {
 #ifdef NIX
 	gcString path;
-	if (dir == L".") {  // TODO|HACK -- mcf for desura should be prepending ../ to path; it's running out of ./lib not ./
+	if (*dir == L".") {  // TODO|HACK -- mcf for desura should be prepending ../ to path; it's running out of ./lib not ./
 		path = gcString(".{0}/{1}/{2}", dir, m_szPath, m_szName);
 	}
 	else {
