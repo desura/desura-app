@@ -162,7 +162,7 @@ bool UMcfFile::checkFile(const wchar_t* dir)
 {
 #ifdef NIX
 	gcString path;
-	if (*dir == L'.') {  // TODO|HACK -- mcf for desura should be prepending ../ to path; it's running out of ./lib not ./
+	if (*dir == L'.') {  // TODO|HACK -- mcf for desura should be prepending ../ to path; it's running out of ./lib not ./  see also UMcfFile::remove
 		path = gcString(".{0}/{1}/{2}", dir, m_szPath, m_szName);
 	}
 	else {
@@ -365,7 +365,13 @@ void UMcfFile::remove(const wchar_t* dir)
 	gcWString path("{0}\\{1}\\{2}", dir, getPath(), getName());
 	FileDelete(path.c_str());
 #else
-	gcString path("{0}/{1}/{2}", dir, getPath(), getName());
+	gcString path;
+	if (*dir == L'.') {  // TODO|HACK -- see also UMcfFile::checkFile
+		path = gcString(".{0}/{1}/{2}", dir, getPath(), getName());
+	}
+	else {
+		path = gcString("{0}/{1}/{2}", dir, getPath(), getName());
+	}
 	::remove(path.c_str());
 #endif
 }
