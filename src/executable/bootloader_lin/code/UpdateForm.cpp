@@ -103,7 +103,7 @@ void UpdateForm::installOnly()
 	installMcf.dumpXml(UPDATEXML_W);
 	installMcf.setRegValues();
 	
-	installMcf.removeOldFiles(&oldMcf, L"./");
+//	installMcf.removeOldFiles(&oldMcf, L"./");
 
 	m_pUmcf = NULL;
 }
