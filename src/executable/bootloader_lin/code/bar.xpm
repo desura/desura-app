@@ -1,5 +1,5 @@
 /* XPM */
-static char *loadingbar[] = {
+static char *bar_array[] = {
 /* columns rows colors chars-per-pixel */
 "342 12 203 2 ",
 "   c #000000",
