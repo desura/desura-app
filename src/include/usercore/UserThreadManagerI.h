@@ -72,7 +72,7 @@ namespace UserCore
 		//!
 		//! @param pThread thread
 		//!
-		virtual void delist(gcRefPtr<UserThreadProxyI> pThread) = 0;
+		virtual void delist(const UserThreadProxyI* pThread) = 0;
 
 		//! Sets the UserCore interface that all threads use
 		//!
