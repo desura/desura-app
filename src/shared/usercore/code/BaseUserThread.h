@@ -52,7 +52,7 @@ namespace UserCore
 				stop();
 
 				if (m_pThreadManager)
-					m_pThreadManager->delist(gcRefPtr<UserThreadProxyI>(this));
+					m_pThreadManager->delist(this);
 			}
 
 			::Thread::BaseThread* getThread()

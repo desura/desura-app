@@ -1,8 +1,7 @@
-
 Index: include/msvc/wx/setup.h
 ===================================================================
---- include/msvc/wx/setup.h	(revision 68296)
-+++ include/msvc/wx/setup.h	(working copy)
+--- include/msvc/wx/setup.h    (revision 68296)
++++ include/msvc/wx/setup.h    (working copy)
 @@ -121,6 +121,7 @@
  // special version for regex as it does have a Unicode version
  #define wx3RD_PARTY_LIB_NAME_U(name) "wx" name wxSUFFIX_STR
@@ -23,7 +22,7 @@ Index: include/wx/gdiobj.h
 ===================================================================
 --- include/wx/gdiobj.h	(revision 68296)
 +++ include/wx/gdiobj.h	(working copy)
-@@ -47,7 +47,8 @@
+@@ -46,7 +46,8 @@
      {
          // the cast here is safe because the derived classes always create
          // wxGDIRefData objects
@@ -55,7 +54,7 @@ Index: include/wx/popupwin.h
 ===================================================================
 --- include/wx/popupwin.h	(revision 68296)
 +++ include/wx/popupwin.h	(working copy)
-@@ -79,7 +79,24 @@
+@@ -76,7 +76,24 @@
  // when the user clicks mouse outside it or if it loses focus in any other way
  // ----------------------------------------------------------------------------
  
@@ -94,7 +93,7 @@ Index: src/common/popupcmn.cpp
 ===================================================================
 --- src/common/popupcmn.cpp	(revision 68296)
 +++ src/common/popupcmn.cpp	(working copy)
-@@ -68,22 +68,6 @@
+@@ -67,22 +67,6 @@
  
  // event handlers which we use to intercept events which cause the popup to
  // disappear
@@ -117,7 +116,7 @@ Index: src/common/popupcmn.cpp
  
  class wxPopupFocusHandler : public wxEvtHandler
  {
-@@ -513,6 +497,12 @@
+@@ -547,6 +531,12 @@
  // wxPopupWindowHandler
  // ----------------------------------------------------------------------------
  
@@ -157,29 +156,8 @@ Index: include/wx/tls.h
  // ----------------------------------------------------------------------------
  // define wxTLS_TYPE()
  // ----------------------------------------------------------------------------
-Index: /wxWidgets/trunk/src/msw/app.cpp
+Index: /wxWidgets/trunk/src/msw/textentry.cpp
 ===================================================================
---- src/msw/app.cpp (revision 74974)
-+++ src/msw/app.cpp (revision 75835)
-@@ -820,9 +820,13 @@
-               ::PeekMessage(&msg, hwndTop, 1, 1, PM_NOREMOVE) )
-         {
--            if ( !::PostMessage(hwndTop, WM_NULL, 0, 0) )
--            {
--                // should never happen
--                wxLogLastError(wxT("PostMessage(WM_NULL)"));
--            }
-+            // If this fails too, there is really not much we can do, but then
-+            // neither do we need to, as it normally indicates that the window
-+            // queue is full to the brim with the messages and so the main loop
-+            // is running and doesn't need to be woken up.
-+            //
-+            // Notice that we especially should not try use wxLogLastError()
-+            // here as this would lead to another call to wxWakeUpIdle() from
-+            // inside wxLog and stack overflow due to the resulting recursion.
-+            ::PostMessage(hwndTop, WM_NULL, 0, 0);
-         }
-     }
 --- src/msw/textentry.cpp	(revision 68296)
 +++ src/msw/textentry.cpp	(working copy)
 @@ -428,9 +428,8 @@
@@ -193,4 +171,186 @@ Index: /wxWidgets/trunk/src/msw/app.cpp
 +            pAutoComplete2->SetOptions(ACO_AUTOSUGGEST|ACO_AUTOAPPEND|ACO_USETAB);
              pAutoComplete2->Release();
          }
+
+Index: /wxWidgets/trunk/src/common/wincmn.cpp
+===================================================================
+--- src/common/wincmn.cpp	(revision 68296)
++++ src/common/wincmn.cpp	(working copy)
+@@ -541,5 +541,5 @@
+ bool wxWindowBase::IsBeingDeleted() const
+ {
+-    return m_isBeingDeleted ||
+-            (!IsTopLevel() && m_parent && m_parent->IsBeingDeleted());
++    return m_isBeingDeleted;  // ||
++            // (!IsTopLevel() && m_parent && m_parent->IsBeingDeleted());
+ }
+@@ -1215,8 +1215,8 @@
+     // A window is shown on screen if it itself is shown and so are all its
+     // parents. But if a window is toplevel one, then its always visible on
+     // screen if IsShown() returns true, even if it has a hidden parent.
+-    return IsShown() &&
++    return IsShown(); // &&
+-           (IsTopLevel() || GetParent() == NULL || GetParent()->IsShownOnScreen());
++           // (IsTopLevel() || GetParent() == NULL || GetParent()->IsShownOnScreen());
+ }
+ 
+ // ----------------------------------------------------------------------------
+@@ -3532,7 +3532,7 @@
+  // focus handling
+  // ----------------------------------------------------------------------------
+-/*static*/ wxWindow* wxWindowBase::FindFocus()
++wxWindow* wxWindowBase::FindFocus()
+ {
+     wxWindowBase *win = DoFindFocus();
+-    return win ? win->GetMainWindowOfCompositeControl() : NULL;
++    return win;
+ }
+@@ -3607,7 +3607,7 @@
+ wxWindow* wxGetTopLevelParent(wxWindow *win)
+ {
+-    while ( win && !win->IsTopLevel() )
+-         win = win->GetParent();
++//    while ( win && !win->IsTopLevel() )
++//         win = win->GetParent();
+ 
+     return win;
+ }
+Index: /wxWidgets/trunk/src/common/combocmn.cpp
+===================================================================
+--- src/common/combocmn.cpp	(revision 68296)
++++ src/common/combocmn.cpp	(working copy)
+@@ -953,6 +953,6 @@
+         // Returning this instead of just 'parent' lets FindFocus work
+         // correctly even when parent control is a child of a composite
+         // generic control (as is case with wxGenericDatePickerCtrl).
+-        return combo->GetMainWindowOfCompositeControl();
++        return combo ? combo->GetMainWindowOfCompositeControl() : NULL;
      }
+ };
+Index: /wxWidgets/trunk/src/common/containr.cpp
+===================================================================
+--- src/common/containr.cpp	(revision 68296)
++++ src/common/containr.cpp	(working copy)
+@@ -114,40 +114,40 @@
+ bool wxControlContainerBase::DoSetFocus()
+ {
+     wxLogTrace(TRACE_FOCUS, wxT("SetFocus on wxPanel 0x%p."),
+                m_winParent->GetHandle());
+ 
+     if (m_inSetFocus)
+         return true;
+ 
+     // when the panel gets the focus we move the focus to either the last
+     // window that had the focus or the first one that can get it unless the
+     // focus had been already set to some other child
+ 
+-    wxWindow *win = wxWindow::FindFocus();
+-    while ( win )
+-    {
+-        if ( win == m_winParent )
+-        {
+-            // our child already has focus, don't take it away from it
+-            return true;
+-        }
+-
+-        if ( win->IsTopLevel() )
+-        {
+-            // don't look beyond the first top level parent - useless and
+-            // unnecessary
+-            break;
+-        }
+-
+-        win = win->GetParent();
+-    }
++//    wxWindow *win = wxWindow::FindFocus();
++//    while ( win )
++//    {
++//        if ( win == m_winParent )
++//        {
++//            // our child already has focus, don't take it away from it
++//            return true;
++//        }
++//
++//        if ( win->IsTopLevel() )
++//        {
++//            // don't look beyond the first top level parent - useless and
++//            // unnecessary
++//            break;
++//        }
++//
++//        win = win->GetParent();
++//    }
+ 
+     // protect against infinite recursion:
+     m_inSetFocus = true;
+ 
+     bool ret = SetFocusToChild();
+ 
+     m_inSetFocus = false;
+ 
+     return ret;
+ }
+Index: /wxWidgets/trunk/src/common/menucmn.cpp
+===================================================================
+--- src/common/menucmn.cpp	(revision 68296)
++++ src/common/menucmn.cpp	(working copy)
+@@ -680,6 +680,6 @@
+ wxMenuBar* wxMenuBase::GetMenuBar() const
+ {
+-    if(GetParent())
+-        return GetParent()->GetMenuBar();
++//    if(GetParent())
++//        return GetParent()->GetMenuBar();
+     return m_menuBar;
+ }
+Index: /wxWidgets/trunk/src/common/dlgcmn.cpp
+===================================================================
+--- src/common/dlgcmn.cpp	(revision 68296)
++++ src/common/dlgcmn.cpp	(working copy)
+@@ -146,25 +146,25 @@
+         return NULL;
+ 
+     extern WXDLLIMPEXP_DATA_BASE(wxList) wxPendingDelete;
+-    if ( wxPendingDelete.Member(parent) || parent->IsBeingDeleted() )
++    if ( wxPendingDelete.Member(parent) ) //|| parent->IsBeingDeleted() )
+     {
+         // this window is being deleted and we shouldn't create any children
+         // under it
+         return NULL;
+     }
+ 
+     if ( parent->HasExtraStyle(wxWS_EX_TRANSIENT) )
+     {
+         // this window is not being deleted yet but it's going to disappear
+         // soon so still don't parent this window under it
+         return NULL;
+     }
+ 
+-    if ( !parent->IsShownOnScreen() )
+-    {
+-        // using hidden parent won't work correctly neither
+-        return NULL;
+-    }
++//    if ( !parent->IsShownOnScreen() )
++//    {
++//        // using hidden parent won't work correctly neither
++//        return NULL;
++//    }
+ 
+     // FIXME-VC6: this compiler requires an explicit const cast or it fails
+     //            with error C2446
+Index: /wxWidgets/trunk/src/gtk/dialog.cpp
+===================================================================
+--- src/gtk/dialog.cpp	(revision 68296)
++++ src/gtk/dialog.cpp	(working copy)
+@@ -143,8 +143,8 @@
+     wxWindow * const parent = GetParentForModalDialog();
+     if ( parent )
+     {
+-        gtk_window_set_transient_for( GTK_WINDOW(m_widget),
+-                                      GTK_WINDOW(parent->m_widget) );
++//        gtk_window_set_transient_for( GTK_WINDOW(m_widget),
++//                                      GTK_WINDOW(parent->m_widget) );
+     }
+ 
+ #if GTK_CHECK_VERSION(2,10,0)
