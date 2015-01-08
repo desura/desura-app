@@ -124,6 +124,7 @@ void ToolManager::loadItems()
 
 void ToolManager::saveItems()
 {
+	std::lock_guard<std::mutex> guard(m_saveLock);
 	try
 	{
 		sqlite3x::sqlite3_connection db(getToolInfoDb(m_pUser->getAppDataPath()).c_str());

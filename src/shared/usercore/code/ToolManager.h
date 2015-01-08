@@ -151,6 +151,8 @@ namespace UserCore
 		gcRefPtr<UserCore::User> m_pUser;
 		ToolTransactionId m_uiLastTransId = 0;
 
+		std::mutex m_saveLock;
+
 		std::mutex m_MapLock;
 		std::map<ToolTransactionId, gcRefPtr<Misc::ToolTransInfo>> m_mTransactions;
 
