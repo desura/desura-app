@@ -71,7 +71,7 @@ void UserThreadManager::enlist(gcRefPtr<UserThreadProxyI> pThread)
 	m_vThreadList.push_back(pThread);
 }
 
-void UserThreadManager::delist(gcRefPtr<UserThreadProxyI> pThread)
+void UserThreadManager::delist(const UserThreadProxyI* pThread)
 {
 	//we could of all ready been shutdown
 	if (m_bDestructor || !this)
@@ -79,15 +79,12 @@ void UserThreadManager::delist(gcRefPtr<UserThreadProxyI> pThread)
 
 	std::lock_guard<std::mutex> guard(m_ThreadLock);
 
-	auto it = std::find(begin(m_vThreadList), end(m_vThreadList), pThread);
-
-	if (it == end(m_vThreadList))
-	{
-		gcAssert(false);
-		return;
+	for (auto it = m_vThreadList.begin(); it != m_vThreadList.end(); ++it) {
+		if (it->get() == pThread) {
+			m_vThreadList.erase(it);
+			break;
+		}
 	}
-
-	m_vThreadList.erase(it);
 }
 
 gcRefPtr<UserCore::Thread::UserThreadI> UserThreadManager::newUpdateThread(Event<std::tuple<gcOptional<bool>, gcOptional<bool>, gcOptional<bool>>> *onForcePollEvent, bool loadLoginItems)

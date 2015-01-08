@@ -114,6 +114,16 @@ namespace Safe
 #ifdef WIN32
 		return _stricmp(str1, str2);
 #else
+// strcasecmp is not safe when passing nullptr
+		if (!str1) {
+			if (!str2) {
+				return 0;
+			}
+			return -1;
+		}
+		if (!str2) {
+			return 1;
+		}
 		return ::strcasecmp(str1, str2);
 #endif
 	}
