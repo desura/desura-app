@@ -788,6 +788,7 @@ template <typename CT>
 class FormatArgI
 {
 public:
+	virtual ~FormatArgI() {}
 	virtual void destroy()=0;
 	virtual std::basic_string<CT> format(FormatTypes type, size_t len, size_t per)=0;
 };
