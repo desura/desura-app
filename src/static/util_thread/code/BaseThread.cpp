@@ -393,12 +393,17 @@ void BaseThread::setThreadName(const char* nameOveride)
 	OutputDebugStringA(strThreadName.c_str());
 
 	ThrowException(info);
-#else
+#elif defined(NIX)
 	char name[16];
 	strncpy(name, nameOveride, 15);
 
 	name[15] = '\0';
 	prctl(PR_SET_NAME, name, 0, 0, 0);
+#elif MACOS
+	// TODO: only possible via ObjC
+	// [[NSThread currentThread] setName:@"My thread name"]; // For Cocoa  
+	//pthread_setname_np(nameOveride); // For GDB
+	std::cout << "not implemented function: " << __FUNCTION__ << std::endl;
 #endif
 }
 

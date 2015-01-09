@@ -2,7 +2,11 @@ if(MINGW)
   set(CONFIGURE_COMMAND "./bootstrap.sh")
   set(BJAM_BINARY "./bjam.exe")
   set(BOOST_EXTRA_BUILD_OPTS "--with-toolset=mingw")
-  set(BOOST_PATCH_COMMAND "")
+elseif(APPLE)
+  set(CONFIGURE_COMMAND "./bootstrap.sh")
+  set(BJAM_BINARY "./bjam")
+  set(BOOST_EXTRA_BUILD_OPTS --with-toolset=clang)
+  set(EXTRA_BJAM_OPTS cxxflags="-stdlib=libc++" linkflags="-stdlib=libc++")
 else()
   set(CONFIGURE_COMMAND "bootstrap.bat")
   set(BJAM_BINARY "b2.exe")
@@ -25,7 +29,7 @@ if (WIN32 AND NOT MINGW)
   endif()
 endif()
 
-if(DEBUG) 
+if(DEBUG_EXTERNAL) 
   ExternalProject_Add(
     boost
     URL "${BOOST_URL}"
@@ -34,7 +38,7 @@ if(DEBUG)
     BUILD_IN_SOURCE 1
     CONFIGURE_COMMAND ${CONFIGURE_COMMAND} ${BOOST_EXTRA_BUILD_OPTS}
     BUILD_COMMAND ${BJAM_BINARY} ${BOOST_BJAM_LIBS} --layout=tagged variant=debug link=static
-                    threading=multi runtime-link=shared ${TOOLSET_MSVC_VER}
+                    threading=multi runtime-link=shared ${TOOLSET_MSVC_VER} ${EXTRA_BJAM_OPTS}
     INSTALL_COMMAND ""
   )
   set(BOOST_LIB_ADD_STRING "mt-gd")
@@ -47,7 +51,7 @@ else()
     BUILD_IN_SOURCE 1
     CONFIGURE_COMMAND ${CONFIGURE_COMMAND} ${BOOST_EXTRA_BUILD_OPTS}
     BUILD_COMMAND ${BJAM_BINARY} ${BOOST_BJAM_LIBS} --layout=tagged variant=release link=static
-                    threading=multi runtime-link=shared ${TOOLSET_MSVC_VER}
+                    threading=multi runtime-link=shared ${TOOLSET_MSVC_VER} ${EXTRA_BJAM_OPTS}
     INSTALL_COMMAND ""
   )
   set(BOOST_LIB_ADD_STRING "mt")
@@ -62,7 +66,7 @@ set(Boost_DIR ${source_dir})
 set(Boost_INCLUDE_DIR ${Boost_DIR})
 set(Boost_LIBRARY_DIR ${Boost_DIR}/stage/lib)
 
-if(MINGW)
+if(MINGW OR APPLE)
   set(BOOST_SUFFIX a)
 else()
   set(BOOST_SUFFIX lib)
@@ -74,7 +78,7 @@ set(Boost_SYSTEM_LIBRARY "${Boost_LIBRARY_DIR}/libboost_system-${BOOST_LIB_ADD_S
 set_property(TARGET boost PROPERTY FOLDER "ThirdParty")
 
 if (WIN32)
-  if(DEBUG)
+  if(DEBUG_EXTERNAL)
     ExternalProject_Add(
       boost_s
       UPDATE_COMMAND ""
