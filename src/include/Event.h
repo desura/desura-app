@@ -431,8 +431,8 @@ public:
 	}
 
 protected:
-	const uint64 m_ullCompareHash;
 	std::function<void(Args&...)> m_fnCallback;
+	const uint64 m_ullCompareHash;
 };
 
 

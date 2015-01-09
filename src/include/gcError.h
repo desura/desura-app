@@ -419,8 +419,8 @@ public:
 	}
 
 private:
-	int32 m_uiSecErrId;
 	uint32 m_uiErrId;
+	int32 m_uiSecErrId;
 	std::string m_szErrMsg;
 };
 
