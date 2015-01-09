@@ -42,6 +42,7 @@
 #
 # unix-only options:
 #   FORCE_BUNDLED_WXGTK  		ON: bundle wxGTK 3.0.0
+#   FORCE_BUNDLED_BOOST  		ON: bundle boost
 #                   OFF			OFF: use system wxGTK (has to be 3.0.0 or later)
 #   DEBUG_EXTERNAL  OFF                 same as DEBUG, but for externap deps
 #   DIR_TYPE        SINGLE              how should game data be stored?
@@ -154,7 +155,13 @@ if(NOT BUILD_ONLY_CEF)
     set(Boost_USE_STATIC_LIBS OFF)
     set(Boost_USE_STATIC_RUNTIME OFF)
   endif()
-  find_package(Boost COMPONENTS filesystem system)
+
+  if(NOT FORCE_BUNDLED_BOOST)
+    find_package(Boost COMPONENTS filesystem system)
+  else()
+    set(Boost_FOUND OFF)
+  endif()
+
   find_package(CURL 7.19.1 ${REQUIRED_IF_OPTION})
 
   if(NOT WIN32)
@@ -292,11 +299,8 @@ if(NOT BUILD_ONLY_CEF)
     include(BuildwxWidgets)
   endif()
 
-  if(NOT Boost_FOUND)
+  if(NOT Boost_FOUND OR FORCE_BUNDLED_BOOST)
     include(BuildBoost)
-    if(NOT WIN32)
-      add_dependencies(desura boost)
-    endif()
   endif()
 
   if(NOT BREAKPAD_EXCEPTION_HANDLER_FOUND)
