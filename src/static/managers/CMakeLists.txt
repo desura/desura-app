@@ -47,5 +47,3 @@ endif()
 
 SET_PROPERTY(TARGET managers                PROPERTY FOLDER "Static")
 SET_PROPERTY(TARGET managers_window                PROPERTY FOLDER "Static")
-
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -O0 -Wall -Weffc++")

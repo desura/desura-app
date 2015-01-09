@@ -28,4 +28,3 @@ if(WIN32)
 endif()
 
 SET_PROPERTY(TARGET wx_controls                PROPERTY FOLDER "Static")
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -O0 -Wall -Weffc++")

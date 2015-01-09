@@ -188,4 +188,3 @@ endif()
 
 link_with_gtest(uicore)
 install_library(uicore)
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -O0 -Wall -Weffc++")
