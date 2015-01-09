@@ -53,6 +53,7 @@ Contact us at legal@badjuju.com.
 extern void DeleteCookies();
 extern void SetCookies();
 
+// These should NOT be globals...
 extern CVar gc_savelogin;
 extern CVar admin_developer;
 
@@ -208,6 +209,87 @@ wxWindow* GetMainWindow(wxWindow* p)
 	return p;
 }
 
+#ifdef WIN32
+ProxyControl::ProxyControl()
+	: m_UserSettingsNeedRestoring( false )
+{
+}
+
+ProxyControl::~ProxyControl()
+{
+	RestoreUserProxySettings();
+}
+
+/*
+[HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Internet Settings\Connections] "DefaultConnectionSettings"=hex:
+3c,00,00,00,1f,00,00,00,--05--,00,00,00,00,00,00, 00,00,00,00,00,00,00,00,00,01,00,00,00,1f,00,00,00,68,74,74,70,3a,2f,2f,31, 34,34,2e,31,33,31,2e,32,32,32,2e,31,36,37,2f,77,70,61,64,2e,64,61,74,90,0e, 1e,66,d3,88,c5,01,01,00,00,00,8d,a8,4e,9e,00,00,00,00,00,00,00,00
+
+It's a bitfield on the 9th byte:
+
+0x1: (Always 1)
+0x2: Proxy enabled
+0x4: "Use automatic configuration script" checked
+0x8: "Automatically detect settings" checked
+*/
+void ProxyControl::ForceProxyOff()
+{
+	bool is64bit = UTIL::WIN::is64OS();
+
+	unsigned char blob[ 1024 ];
+	size_t blob_size = 0;
+
+	if ( (blob_size = UTIL::WIN::getRegBinaryValue( "HKEY_CURRENT_USER\\Software\\Microsoft\\Windows\\CurrentVersion\\Internet Settings\\Connections\\DefaultConnectionSettings", blob, 1023, is64bit )) > 0 )
+	{
+		if ( blob_size > 9 )
+		{
+			// Preserve initial values
+			m_UserDefaultConnectionSettingsControlByte = blob[ 8 ];
+			m_UserProxyEnabled = UTIL::WIN::getRegValueInt( "HKEY_CURRENT_USER\\Software\\Microsoft\\Windows\\CurrentVersion\\Internet Settings\\ProxyEnable", is64bit );
+
+			// Turn on Automatically detect settings and first bit
+			blob[ 8 ] |= 0x09;
+
+			// Turn off ProxyEnabled
+			blob[ 8 ] &= 0xfd;
+
+			UTIL::WIN::setRegBinaryValue( "HKEY_CURRENT_USER\\Software\\Microsoft\\Windows\\CurrentVersion\\Internet Settings\\Connections\\DefaultConnectionSettings", (const char*) blob, blob_size, is64bit );
+
+			UTIL::WIN::setRegValue( "HKEY_CURRENT_USER\\Software\\Microsoft\\Windows\\CurrentVersion\\Internet Settings\\ProxyEnable", 0, is64bit );
+
+			m_UserSettingsNeedRestoring = true;
+		}
+	}
+}
+
+void ProxyControl::RestoreUserProxySettings()
+{
+	if ( m_UserSettingsNeedRestoring )
+	{
+		bool is64bit = UTIL::WIN::is64OS();
+
+		unsigned char blob[ 1024 ];
+		size_t blob_size = 0;
+
+		if ( (blob_size = UTIL::WIN::getRegBinaryValue( "HKEY_CURRENT_USER\\Software\\Microsoft\\Windows\\CurrentVersion\\Internet Settings\\Connections\\DefaultConnectionSettings", blob, 1023, is64bit )) > 0 )
+		{
+			if ( blob_size > 9 )
+			{
+				// Restore initial values
+				blob[ 8 ] = m_UserDefaultConnectionSettingsControlByte;
+
+				UTIL::WIN::setRegBinaryValue( "HKEY_CURRENT_USER\\Software\\Microsoft\\Windows\\CurrentVersion\\Internet Settings\\Connections\\DefaultConnectionSettings", (const char*) blob, blob_size, is64bit );
+
+				UTIL::WIN::setRegValue( "HKEY_CURRENT_USER\\Software\\Microsoft\\Windows\\CurrentVersion\\Internet Settings\\ProxyEnable", m_UserProxyEnabled, is64bit );
+			}
+		}
+
+		m_UserSettingsNeedRestoring = false;
+	}
+}
+
+#endif
+
+
 MainApp::MainApp()
 {
 	Bind(wxEVT_CLOSE_WINDOW, &MainApp::onClose, this);
@@ -230,6 +312,12 @@ MainApp::MainApp()
 
 MainApp::~MainApp()
 {
+#ifdef WIN32
+	// Do we need to restore Proxy?
+	m_ProxyControl.RestoreUserProxySettings();
+#endif
+
+
 	if (m_pOfflineDialog)
 		m_pOfflineDialog->EndModal(0);
 
@@ -377,7 +465,14 @@ void MainApp::logIn(const char* user, const char* pass)
 
 	gcString path = UTIL::OS::getAppDataPath();
 
-	g_pUserHandle = (UserCore::UserI*)UserCore::FactoryBuilderUC(USERCORE);
+#ifdef WIN32
+	if ( UTIL::OS::isProxyOff() )
+	{
+		m_ProxyControl.ForceProxyOff();
+	}
+#endif
+
+	g_pUserHandle = (UserCore::UserI*)UserCore::FactoryBuilderUC( USERCORE );
 	g_pUserHandle->init(path.c_str(), m_strServiceProvider.c_str());
 
 
@@ -449,6 +544,11 @@ void MainApp::logOut(bool bShowLogin, bool autoLogin, bool webLoggedOut)
 
 	m_bLoggedIn = false;
 	m_iMode = APP_MODE::MODE_UNINT;
+
+#ifdef WIN32
+	// Do we need to restore Proxy?
+	m_ProxyControl.RestoreUserProxySettings();
+#endif
 
 	if (bShowLogin)
 		showLogin(!autoLogin, webLoggedOut);
@@ -600,7 +700,7 @@ void MainApp::onLoginAcceptedCB(std::pair<bool,bool> &loginInfo)
 	bool saveLoginInfo = loginInfo.first;
 	bool autologin = loginInfo.second;
 
-	if (m_wxLoginForm)
+	if ( m_wxLoginForm )
 	{
 		m_wxLoginForm->Show(false);
 		m_wxLoginForm->Destroy();

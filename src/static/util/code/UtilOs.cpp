@@ -47,6 +47,20 @@ bool is64OS()
 #endif
 }
 
+#ifdef WIN32
+bool ProxyOff = false;
+
+bool isProxyOff()
+{
+	return ProxyOff;
+}
+
+void setProxyOff( bool setOff )
+{
+	ProxyOff = setOff;
+}
+#endif
+
 bool isPointOnScreen(int32 x, int32 y)
 {
 #ifdef WIN32

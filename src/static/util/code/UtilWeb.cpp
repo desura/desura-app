@@ -33,6 +33,7 @@ Contact us at legal@badjuju.com.
 #include "Winhttp.h"
 #endif
 
+
 class MemoryStruct
 {
 public:
@@ -442,6 +443,11 @@ bool g_bNeedProxy = false;
 void HttpHInternal::setUpProxy()
 {
 #ifdef WIN32
+	if ( UTIL::OS::isProxyOff() )
+	{
+		curl_easy_setopt( m_pCurlHandle, CURLOPT_PROXY, "" );
+		return;
+	}
 
 	if (g_bInitProxy && !g_bNeedProxy)
 		return;
@@ -630,6 +636,7 @@ uint8 HttpHInternal::getWeb()
 	setUp();
 
 	curl_slist_s* headers = setUpHeaders();
+
 	CURLcode res = curl_easy_perform(m_pCurlHandle);
 
 	// Retrieve cookies directly from GET response header

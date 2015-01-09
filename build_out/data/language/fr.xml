@@ -119,7 +119,9 @@
 		<str name="#LF_PASS">Mot de passe</str>
 		<str name="#LF_AUTO">Auto</str>
 		<str name="#LF_AUTO_TOOLTIP">Connectez-vous automatiquement à Desura lors de son prochain lancement.</str>
-		<str name="#LF_LOSTPASS">Perte de mot de passe</str>
+    <str name="#LF_PROXYOFF">Proxy Off</str>
+    <str name="#LF_PROXYOFF_TOOLTIP">Force Proxy Settings Off</str>
+    <str name="#LF_LOSTPASS">Perte de mot de passe</str>
 		<str name="#LF_NEWACCOUNT">Nouveau compte</str>
 		<str name="#LF_OFFLINE">Mode hors ligne</str>
 		<str name="#LF_ERRTITLE">Erreur de connexion à Desura</str>
