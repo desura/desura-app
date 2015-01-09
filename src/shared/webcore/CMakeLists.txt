@@ -40,6 +40,9 @@ target_link_libraries(webcore
 )
 
 add_dependencies(webcore curl tinyxml2 bzip2 sqlite sqlite3x)
+#if (NOT Boost_FOUND)
+  add_dependencies(webcore boost)
+#endif()
 
 if(WIN32)
   SetSharedRuntime(webcore)

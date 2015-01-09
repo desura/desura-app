@@ -1,12 +1,18 @@
-if(MINGW)
-  set(CONFIGURE_COMMAND "./bootstrap.sh")
-  set(BJAM_BINARY "./bjam.exe")
-  set(BOOST_EXTRA_BUILD_OPTS "--with-toolset=mingw")
-  set(BOOST_PATCH_COMMAND "")
+if (NOT WIN32)
+    set(CONFIGURE_COMMAND "./bootstrap.sh")
+    set(BJAM_BINARY "./bjam")
+    set(BOOST_PATCH_COMMAND "")
 else()
-  set(CONFIGURE_COMMAND "bootstrap.bat")
-  set(BJAM_BINARY "b2.exe")
-  set(BOOST_EXTRA_BUILD_OPTS "")
+  if(MINGW)
+    set(CONFIGURE_COMMAND "./bootstrap.sh")
+    set(BJAM_BINARY "./bjam.exe")
+    set(BOOST_EXTRA_BUILD_OPTS "--with-toolset=mingw")
+    set(BOOST_PATCH_COMMAND "")
+  else()
+    set(CONFIGURE_COMMAND "bootstrap.bat")
+    set(BJAM_BINARY "b2.exe")
+    set(BOOST_EXTRA_BUILD_OPTS "")
+  endif()
 endif()
 
 set(BOOST_BJAM_LIBS_STATIC --with-filesystem)
@@ -25,32 +31,47 @@ if (WIN32 AND NOT MINGW)
   endif()
 endif()
 
-if(DEBUG) 
-  ExternalProject_Add(
-    boost
-    URL "${BOOST_URL}"
-    URL_MD5 ${BOOST_MD5}
-    UPDATE_COMMAND ""
-    BUILD_IN_SOURCE 1
-    CONFIGURE_COMMAND ${CONFIGURE_COMMAND} ${BOOST_EXTRA_BUILD_OPTS}
-    BUILD_COMMAND ${BJAM_BINARY} ${BOOST_BJAM_LIBS} --layout=tagged variant=debug link=static
-                    threading=multi runtime-link=shared ${TOOLSET_MSVC_VER}
-    INSTALL_COMMAND ""
-  )
-  set(BOOST_LIB_ADD_STRING "mt-gd")
+if(NOT WIN32)
+    ExternalProject_Add(
+      boost
+      URL "${BOOST_URL}"
+      URL_MD5 ${BOOST_MD5}
+      UPDATE_COMMAND ""
+      BUILD_IN_SOURCE 1
+      CONFIGURE_COMMAND ${CONFIGURE_COMMAND} ${BOOST_EXTRA_BUILD_OPTS}
+      BUILD_COMMAND ${BJAM_BINARY} ${BOOST_BJAM_LIBS} --layout=tagged variant=release link=shared
+                      threading=multi runtime-link=shared
+      INSTALL_COMMAND ""
+    )
+    set(BOOST_LIB_ADD_STRING "mt")
 else()
-  ExternalProject_Add(
-    boost
-    URL "${BOOST_URL}"
-    URL_MD5 ${BOOST_MD5}
-    UPDATE_COMMAND ""
-    BUILD_IN_SOURCE 1
-    CONFIGURE_COMMAND ${CONFIGURE_COMMAND} ${BOOST_EXTRA_BUILD_OPTS}
-    BUILD_COMMAND ${BJAM_BINARY} ${BOOST_BJAM_LIBS} --layout=tagged variant=release link=static
-                    threading=multi runtime-link=shared ${TOOLSET_MSVC_VER}
-    INSTALL_COMMAND ""
-  )
-  set(BOOST_LIB_ADD_STRING "mt")
+  if(DEBUG) 
+    ExternalProject_Add(
+      boost
+      URL "${BOOST_URL}"
+      URL_MD5 ${BOOST_MD5}
+      UPDATE_COMMAND ""
+      BUILD_IN_SOURCE 1
+      CONFIGURE_COMMAND ${CONFIGURE_COMMAND} ${BOOST_EXTRA_BUILD_OPTS}
+      BUILD_COMMAND ${BJAM_BINARY} ${BOOST_BJAM_LIBS} --layout=tagged variant=debug link=static
+                      threading=multi runtime-link=shared ${TOOLSET_MSVC_VER}
+      INSTALL_COMMAND ""
+    )
+    set(BOOST_LIB_ADD_STRING "mt-gd")
+  else()
+    ExternalProject_Add(
+      boost
+      URL "${BOOST_URL}"
+      URL_MD5 ${BOOST_MD5}
+      UPDATE_COMMAND ""
+      BUILD_IN_SOURCE 1
+      CONFIGURE_COMMAND ${CONFIGURE_COMMAND} ${BOOST_EXTRA_BUILD_OPTS}
+      BUILD_COMMAND ${BJAM_BINARY} ${BOOST_BJAM_LIBS} --layout=tagged variant=release link=static
+                      threading=multi runtime-link=shared ${TOOLSET_MSVC_VER}
+      INSTALL_COMMAND ""
+    )
+    set(BOOST_LIB_ADD_STRING "mt")
+  endif()
 endif()
 
 ExternalProject_Get_Property(
@@ -62,10 +83,14 @@ set(Boost_DIR ${source_dir})
 set(Boost_INCLUDE_DIR ${Boost_DIR})
 set(Boost_LIBRARY_DIR ${Boost_DIR}/stage/lib)
 
-if(MINGW)
-  set(BOOST_SUFFIX a)
+if (NOT WIN32)
+  set(BOOST_SUFFIX so)
 else()
-  set(BOOST_SUFFIX lib)
+  if(MINGW)
+    set(BOOST_SUFFIX a)
+  else()
+    set(BOOST_SUFFIX lib)
+  endif()
 endif()
 
 set(Boost_FILESYSTEM_LIBRARY "${Boost_LIBRARY_DIR}/libboost_filesystem-${BOOST_LIB_ADD_STRING}.${BOOST_SUFFIX}")
@@ -111,4 +136,11 @@ if (WIN32)
   
   set(Boost_FILESYSTEM_LIBRARY_S "${Boost_LIBRARY_DIR_S}/libboost_filesystem-${BOOST_LIB_ADD_STRING}.${BOOST_SUFFIX}")
   set(Boost_SYSTEM_LIBRARY_S "${Boost_LIBRARY_DIR_S}/libboost_system-${BOOST_LIB_ADD_STRING}.${BOOST_SUFFIX}")
+endif()
+
+if (NOT WIN32)
+  install_external_library(boost ${Boost_FILESYSTEM_LIBRARY})
+  install_external_library(boost ${Boost_FILESYSTEM_LIBRARY}.1.55.0)
+  install_external_library(boost ${Boost_SYSTEM_LIBRARY})
+  install_external_library(boost ${Boost_SYSTEM_LIBRARY}.1.55.0)
 endif()

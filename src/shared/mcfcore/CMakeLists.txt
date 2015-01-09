@@ -40,6 +40,9 @@ target_link_libraries(mcfcore
 )
 
 add_dependencies(mcfcore curl tinyxml2 bzip2 sqlite3x sqlite)
+#if (NOT Boost_FOUND)
+  add_dependencies(mcfcore boost)
+#endif()
 
 if(WIN32)
   SetSharedRuntime(mcfcore)
