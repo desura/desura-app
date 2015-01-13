@@ -74,6 +74,7 @@ if(WIN32 AND NOT MINGW)
 else()
   find_package(OpenSSL REQUIRED)
   set(CURL_INSTALL_DIR ${CMAKE_EXTERNAL_BINARY_DIR}/curl)
+  if(WIN32)
   ExternalProject_Add(
     curl
     URL ${CURL_URL}
@@ -91,6 +92,25 @@ else()
         --disable-manual --enable-optimize=-O2 --disable-ares ${CONFIGURE_DEBUG}
         --prefix=${CURL_INSTALL_DIR}
   )
+  else()
+  ExternalProject_Add(
+    curl
+    URL ${CURL_URL}
+    URL_MD5 ${CURL_MD5}
+    UPDATE_COMMAND ""
+    BUILD_IN_SOURCE 1
+    CONFIGURE_COMMAND ./configure
+        --without-librtmp --disable-ldap --disable-curldebug
+        --without-zlib --disable-rtsp --disable-manual --enable-static=no 
+        --enable-shared=yes --disable-pop3 --disable-imap --disable-dict
+        --disable-gopher --disable-verbose --disable-smtp --disable-telnet
+        --disable-tftp --disable-file --without-libidn --without-gnutls
+        --without-nss --without-cyassl --with-ssl --without-axtls
+        --without-libssh2 --enable-hidden-symbols --enable-cookies --without-sspi
+        --disable-manual --enable-optimize=-O2 --disable-ares ${CONFIGURE_DEBUG}
+        --prefix=${CURL_INSTALL_DIR}
+  )
+  endif()
   
   set_property(TARGET curl PROPERTY FOLDER "ThirdParty")
 endif()
@@ -112,11 +132,20 @@ if(WIN32 AND NOT MINGW)
     list(APPEND CURL_LIBRARIES_S "${CURL_LIBRARY_DIR_S}/libcurl_a.lib")
   endif()
 else()
-  list(APPEND CURL_LIBRARIES "${CURL_LIBRARY_DIR}/libcurl.a")
-  list(APPEND CURL_LIBRARIES "${OPENSSL_LIBRARIES}")
+  if(WIN32)
+    list(APPEND CURL_LIBRARIES "${CURL_LIBRARY_DIR}/libcurl.a")
+    list(APPEND CURL_LIBRARIES "${OPENSSL_LIBRARIES}")
+  else()
+    list(APPEND CURL_LIBRARIES "${CURL_LIBRARY_DIR}/libcurl.so")
+    list(APPEND CURL_LIBRARIES "${OPENSSL_LIBRARIES}")
+  endif()
   if(MINGW)
     list(APPEND CURL_LIBRARIES "ws2_32")
   else()
     list(APPEND CURL_LIBRARIES "rt")
   endif()
+endif()
+
+if(NOT WIN32)
+  install_external_library(curl "${CURL_LIBRARY_DIR}/libcurl.so")
 endif()

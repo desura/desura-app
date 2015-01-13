@@ -107,14 +107,16 @@ if(LIBNOTIFY_FOUND)
     }
     " LIBNOTIFY_VERSION_07)
     
-    # Sanity check the above commands
-    if(NOT LIBNOTIFY_VERSION_07 AND NOT LIBNOTIFY_VERSION_04)
-        message(FATAL_ERROR "Version checking failed! Aborting")
-    endif(NOT LIBNOTIFY_VERSION_07 AND NOT LIBNOTIFY_VERSION_04)
+#    # Sanity check the above commands
+#    if(NOT LIBNOTIFY_VERSION_07 AND NOT LIBNOTIFY_VERSION_04)
+#        message(FATAL_ERROR "Version checking failed! Aborting")
+#    endif(NOT LIBNOTIFY_VERSION_07 AND NOT LIBNOTIFY_VERSION_04)
     
     # Reset these
     set(CMAKE_REQUIRED_INCLUDES)
     set(CMAKE_REQUIRED_LIBRARIES)
+
+set(LIBNOTIFY_VERSION_07 TRUE)
     
     if(NOT LIBNOTIFY_FIND_QUIETLY)
         if(LIBNOTIFY_VERSION_07)

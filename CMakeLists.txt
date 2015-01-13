@@ -162,7 +162,11 @@ if(NOT BUILD_ONLY_CEF)
     set(Boost_FOUND OFF)
   endif()
 
-  find_package(CURL 7.19.1 ${REQUIRED_IF_OPTION})
+  if(NOT FORCE_BUNDLED_CURL)
+    find_package(CURL 7.19.1 ${REQUIRED_IF_OPTION})
+  else()
+    set(CURL_FOUND OFF)
+  endif()
 
   if(NOT WIN32)
     find_package(GTK2 REQUIRED)

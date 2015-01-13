@@ -1,0 +1,13 @@
+Index: third_party/libpng/libpng.gyp
+===================================================================
+--- third_party/libpng/libpng.gyp	(revisjon 813)
++++ third_party/libpng/libpng.gyp	(arbeidskopi)
+@@ -8,7 +8,7 @@
+       [ 'os_posix == 1 and OS != "mac"', {
+         # Link to system .so since we already use it due to GTK.
+-        'use_system_libpng%': 1,
++        'use_system_libpng%': 0,
+       }, {  # os_posix != 1 or OS == "mac"
+         'use_system_libpng%': 0,
+       }],
+     ],
