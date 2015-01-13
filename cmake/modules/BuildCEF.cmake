@@ -244,6 +244,22 @@ if(BUILD_CEF OR BUILD_ONLY_CEF)
       DEPENDERS patch
       WORKING_DIRECTORY ${WORKING_DIR}
     )
+
+    ExternalProject_Add_Step(
+      cef
+      libpng-gyp-patch
+      COMMAND ${PATCH_SCRIPT_PATH} ${CMAKE_PATCH_DIR}/cef_libpng_gyp.patch
+      DEPENDERS patch
+      WORKING_DIRECTORY ${WORKING_DIR}
+    )
+
+    ExternalProject_Add_Step(
+      cef
+      libjpeg-gyp-patch
+      COMMAND ${PATCH_SCRIPT_PATH} ${CMAKE_PATCH_DIR}/cef_libjpeg_gyp.patch
+      DEPENDERS patch
+      WORKING_DIRECTORY ${WORKING_DIR}
+    )
   endif()
   
   add_dependencies(cef depot_tools)

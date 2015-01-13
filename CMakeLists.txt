@@ -264,8 +264,7 @@ if(WIN32)
 endif()
 
 ###### SetupDownloadUrl(BOOST "boost_1_55_0.zip" 8aca361a4713a1f491b0a5e33fee0f1f)
-#SetupDownloadUrlCustom(BOOST "http://sourceforge.net/projects/boost/files/boost/1.55.0/boost_1_55_0.zip/download" 8aca361a4713a1f491b0a5e33fee0f1f)
-SetupDownloadUrlCustom(BOOST "file:///home/ubuntu/boost_1_55_0.zip" 8aca361a4713a1f491b0a5e33fee0f1f)
+SetupDownloadUrlCustom(BOOST "http://sourceforge.net/projects/boost/files/boost/1.55.0/boost_1_55_0.zip/download" 8aca361a4713a1f491b0a5e33fee0f1f)
 
 # live code
 SetupDownloadUrl(BREAKPAD "breakpad-850-r1.zip" b0061a854df1a0d285edc74c5ac37c42)
@@ -294,7 +293,6 @@ SetupDownloadUrl(V8 "v8-3.18.5.14.tar.bz2" 657802ea63c89190fd510ee1a2a719bf)
 
 ###### SetupDownloadUrl(WXWIDGET "wxWidgets-3.0.0.tar.bz2" 241998efc12205172ed24c18788ea2cd)
 SetupDownloadUrlCustom(WXWIDGET "http://downloads.sourceforge.net/project/wxwindows/3.0.2/wxWidgets-3.0.2.tar.bz2" ba4cd1f3853d0cd49134c5ae028ad080)
-#SetupDownloadUrlCustom(WXWIDGET "file:///home/ubuntu/wxWidgets-3.0.0.tar.bz2" 241998efc12205172ed24c18788ea2cd)
 
 ###############################################################################
 # build some external projects
