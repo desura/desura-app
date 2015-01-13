@@ -418,8 +418,11 @@ void MainApp::Init(int argc, wxCmdLineArgsArray &argv)
 #ifndef NIX
 	if (!m_bQuiteMode)
 		m_wxTBIcon = new TaskBarIcon(this);
-#endif
+	else
+		m_wxTBIcon = nullptr;
+#else
 	m_wxTBIcon = nullptr;
+#endif
 
 	std::string szAppid = UTIL::OS::getConfigValue(APPID);
 
@@ -861,7 +864,8 @@ void MainApp::onNewsUpdate(std::vector<gcRefPtr<UserCore::Misc::NewsItem>>& item
 
 void MainApp::onNotifyGiftUpdate()
 {
-	m_wxTBIcon->showGiftPopup(m_vGiftItems);
+	if ( m_wxTBIcon )
+		m_wxTBIcon->showGiftPopup(m_vGiftItems);
 }
 
 void MainAppNoUI::onGiftUpdate(std::vector<gcRefPtr<UserCore::Misc::NewsItem>>& itemList)
