@@ -119,7 +119,9 @@
 		<str name="#LF_PASS">Password</str>
 		<str name="#LF_AUTO">Automatico</str>
 		<str name="#LF_AUTO_TOOLTIP">Accedi automaticamente a Desura al prossimo avvio</str>
-		<str name="#LF_LOSTPASS">Password smarrita</str>
+    <str name="#LF_PROXYOFF">Proxy Off</str>
+    <str name="#LF_PROXYOFF_TOOLTIP">Force Proxy Settings Off</str>
+    <str name="#LF_LOSTPASS">Password smarrita</str>
 		<str name="#LF_NEWACCOUNT">Nuovo account</str>
 		<str name="#LF_OFFLINE">Modalità offline</str>
 		<str name="#LF_ERRTITLE">Errore nell&apos;accesso a Desura</str>

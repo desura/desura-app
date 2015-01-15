@@ -33,6 +33,16 @@ namespace UTIL
 	{
 		bool is64OS();
 
+#ifdef WIN32
+		//! Is Proxy Off option set?
+		//!
+		bool isProxyOff();
+
+		//! Set Proxy Off option
+		//!
+		void setProxyOff( bool setOff );
+#endif
+
 		//! Determines if a point is on the screen
 		//!
 		//! @param x coord

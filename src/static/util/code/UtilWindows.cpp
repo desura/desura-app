@@ -198,6 +198,42 @@ int getRegValueInt(const std::string &regIndex, bool use64bit)
 	return resInt;
 }
 
+size_t getRegBinaryValue(const std::string &regIndex, unsigned char* blob, size_t size, bool use64bit)
+{
+	std::vector<std::wstring> parts;
+	HKEY rootKey;
+
+	if (!getRegSections(regIndex, parts, rootKey))
+		return -1;
+
+	DWORD res;
+	HKEY hk;
+
+	DWORD dwType = REG_BINARY;
+	DWORD dwSize = size;
+
+	DWORD flags = KEY_READ | (use64bit ? KEY_WOW64_64KEY : 0);
+
+	res = RegOpenKeyEx(rootKey, parts[1].c_str(), 0, flags, &hk);
+
+	if (res == ERROR_SUCCESS)
+	{
+		res = RegQueryValueExW(hk, parts[2].c_str(), nullptr, &dwType, nullptr, &dwSize);
+
+		if ((res == ERROR_SUCCESS) && (dwSize != 0))
+		{
+			res = RegQueryValueExW(hk, parts[2].c_str(), nullptr, &dwType, (LPBYTE) blob, &dwSize);
+		}
+
+		RegCloseKey(hk);
+	}
+
+	if (res == ERROR_SUCCESS)
+		return dwSize;
+	else
+		return 0;
+}
+
 void setRegValue(const std::string &regIndex, const std::string &value, bool expandStr, bool use64bit)
 {
 	if (regIndex.size() == 0)

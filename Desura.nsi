@@ -27,11 +27,23 @@ RequestExecutionLevel admin
 
 ;--------------------------------
 
+; Functions
+
+Function RunDesura
+SetOutPath $INSTDIR
+Exec "$INSTDIR\desura.exe"
+FunctionEnd
+
 ; Pages
 
 !insertmacro MUI_PAGE_COMPONENTS
 !insertmacro MUI_PAGE_DIRECTORY
 !insertmacro MUI_PAGE_INSTFILES
+
+!define MUI_FINISHPAGE_RUN
+!define MUI_FINISHPAGE_RUN_CHECKED
+!define MUI_FINISHPAGE_RUN_FUNCTION RunDesura
+!insertmacro MUI_PAGE_FINISH
 
 !insertmacro MUI_UNPAGE_CONFIRM
 !insertmacro MUI_UNPAGE_INSTFILES

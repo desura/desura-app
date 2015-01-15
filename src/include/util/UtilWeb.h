@@ -122,6 +122,10 @@ public:
 	//gets the size of data which has been downloaded.
 	virtual uint32 getDataSize()=0;
 
+	//gets cookie list
+	typedef std::map< std::string, std::string > tCookieMap;
+	virtual tCookieMap getCookies()=0;
+
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	// Misc

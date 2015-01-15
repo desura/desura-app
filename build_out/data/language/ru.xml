@@ -118,7 +118,9 @@
 		<str name="#LF_USER">Имя пользователя или email</str>
 		<str name="#LF_PASS">Пароль</str>
 		<str name="#LF_AUTO">Авто</str>
-		<str name="#LF_AUTO_TOOLTIP">Автоматически входить в Desura при следующем запуске Desura</str>
+    <str name="#LF_PROXYOFF">Proxy Off</str>
+    <str name="#LF_PROXYOFF_TOOLTIP">Force Proxy Settings Off</str>
+    <str name="#LF_AUTO_TOOLTIP">Автоматически входить в Desura при следующем запуске Desura</str>
 		<str name="#LF_LOSTPASS">Утерян пароль</str>
 		<str name="#LF_NEWACCOUNT">Новый аккаунт</str>
 		<str name="#LF_OFFLINE">Автономный режим</str>
