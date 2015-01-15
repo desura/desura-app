@@ -88,6 +88,24 @@ class InternalLink;
 class TaskBarIcon;
 class gcUnitTestForm;
 
+#ifdef WIN32
+class ProxyControl
+{
+public:
+	ProxyControl();
+	~ProxyControl();
+
+	void ForceProxyOff();
+	void RestoreUserProxySettings();
+
+private:
+	bool m_UserSettingsNeedRestoring;
+
+	uint32 m_UserProxyEnabled;
+	unsigned char m_UserDefaultConnectionSettingsControlByte;
+};
+#endif
+
 class MainAppNoUI
 {
 public:
@@ -229,6 +247,10 @@ private:
 	InternalLink *m_pInternalLink = nullptr;
 
 	std::mutex m_UserLock;
+
+#ifdef WIN32
+	ProxyControl m_ProxyControl;
+#endif
 
 	friend void cc_NewsTest_cc_func(std::vector<gcString> &argv);
 	friend void cc_GiftTest_cc_func(std::vector<gcString> &argv);

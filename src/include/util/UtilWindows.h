@@ -81,6 +81,7 @@ namespace WIN
 	//!
 	std::string getRegValue(const std::string &regIndex, bool use64bit = false);
 	int getRegValueInt(const std::string &regIndex, bool use64bit = false);
+	size_t getRegBinaryValue(const std::string &regIndex, unsigned char* blob, size_t size, bool use64bit);
 
 	//! Sets a registry key
 	//!

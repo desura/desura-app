@@ -37,6 +37,9 @@ Contact us at legal@badjuju.com.
 bool validateUsernameChange(const CVar*, const char*);
 
 CVar gc_savelogin("gc_savelogin", "0");
+#ifdef WIN32
+CVar gc_saveProxyOff("gc_saveproxyoff", "0");
+#endif
 CVar gc_saveusername("gc_saveusername", "1");
 
 CVar gc_lastusername("gc_lastusername", "", CFLAG_NOFLAGS, &validateUsernameChange);
@@ -202,6 +205,11 @@ LoginForm::LoginForm(wxWindow* parent)
 	m_cbRemPass = new gcCheckBox(this, wxID_ANY, Managers::GetString(L"#LF_AUTO"));
 	m_cbRemPass->SetToolTip(Managers::GetString(L"#LF_AUTO_TOOLTIP"));
 
+#ifdef WIN32
+	m_cbProxyOff = new gcCheckBox(this, wxID_ANY, Managers::GetString(L"#LF_PROXYOFF"));
+	m_cbProxyOff->SetToolTip(Managers::GetString(L"#LF_PROXYOFF_TOOLTIP"));
+#endif
+
 	m_butSignin = new gcButton(this, wxID_ANY, Managers::GetString(L"#LOGIN"), wxDefaultPosition, wxDefaultSize, wxWANTS_CHARS);
 	m_butCancel = new gcButton(this, wxID_ANY, Managers::GetString(L"#CANCEL"), wxDefaultPosition, wxDefaultSize, wxWANTS_CHARS);
 
@@ -261,6 +269,9 @@ LoginForm::LoginForm(wxWindow* parent)
 	m_tbPasswordDisp->Bind(wxEVT_SET_FOCUS, &LoginForm::onFocus, this);
 
 	m_cbRemPass->Bind(wxEVT_CHAR, &LoginForm::onChar, this);
+#ifdef WIN32
+	m_cbProxyOff->Bind( wxEVT_COMMAND_CHECKBOX_CLICKED, &LoginForm::onCheckBoxClick, this );
+#endif
 
 	m_linkOffline->Bind(wxEVT_CHAR, &LoginForm::onChar, this);
 	m_linkNewAccount->Bind(wxEVT_CHAR, &LoginForm::onChar, this);
@@ -281,12 +292,19 @@ LoginForm::LoginForm(wxWindow* parent)
 	m_tbPasswordDisp->Show(true);
 
 
+#ifdef WIN32
+	wxFlexGridSizer* fgSizer4 = new wxFlexGridSizer( 1, 4, 0, 0 );
+#else
 	wxFlexGridSizer* fgSizer4 = new wxFlexGridSizer( 1, 3, 0, 0 );
+#endif
 	fgSizer4->AddGrowableCol( 0 );
 	fgSizer4->SetFlexibleDirection( wxBOTH );
 	fgSizer4->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
 
 	fgSizer4->Add( m_cbRemPass, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
+#ifdef WIN32
+	fgSizer4->Add( m_cbProxyOff, 0, wxALL | wxALIGN_CENTER_VERTICAL, 5 );
+#endif
 
 	fgSizer4->Add( m_butSignin, 0, wxTOP|wxBOTTOM|wxLEFT, 5 );
 	fgSizer4->Add( m_butCancel, 0, wxTOP|wxBOTTOM|wxLEFT, 5 );
@@ -380,7 +398,10 @@ LoginForm::LoginForm(wxWindow* parent)
 	m_vTabOrder.push_back(m_tbUsername);
 	m_vTabOrder.push_back(m_tbPasswordDisp);
 	m_vTabOrder.push_back(m_tbPassword);
-	m_vTabOrder.push_back(m_cbRemPass);
+#ifdef WIN32
+	m_vTabOrder.push_back( m_cbRemPass );
+#endif
+	m_vTabOrder.push_back( m_cbProxyOff );
 	m_vTabOrder.push_back(m_butSignin);
 	m_vTabOrder.push_back(m_butCancel);
 	m_vTabOrder.push_back(m_linkOffline);
@@ -416,6 +437,12 @@ LoginForm::LoginForm(wxWindow* parent)
 	if (gc_savelogin.getBool())
 		m_cbRemPass->SetValue(true);
 
+#ifdef WIN32
+	bool isProxyOff = gc_saveProxyOff.getBool();
+	UTIL::OS::setProxyOff( isProxyOff );
+	m_cbProxyOff->SetValue( isProxyOff );
+#endif
+
 	if (gc_saveusername.getBool())
 	{
 		const char* str = gc_lastusername.getString();
@@ -446,6 +473,11 @@ LoginForm::LoginForm(wxWindow* parent)
 	Managers::LoadTheme(this, "formlogin");
 
 	Managers::LoadTheme(m_cbRemPass, "formlogin");
+
+#ifdef WIN32
+	// ??
+	Managers::LoadTheme(m_cbProxyOff, "formlogin");
+#endif
 
 #ifdef WIN32
 	SetSize(wxSize(420,316));
@@ -727,32 +759,45 @@ void LoginForm::onClose( wxCloseEvent& event )
 		GetParent()->Close(true);
 }
 
-void LoginForm::onLinkClick(wxCommandEvent& event)
+void LoginForm::onLinkClick( wxCommandEvent& event )
 {
-	if (event.GetId() == m_linkNewAccount->GetId())
+	if ( event.GetId() == m_linkNewAccount->GetId() )
 	{
 		onNewAccount();
 	}
-	else if (event.GetId() == m_linkLostPassword->GetId())
+	else if ( event.GetId() == m_linkLostPassword->GetId() )
 	{
-		PasswordReminder wxPassReminderForm(this);
+		PasswordReminder wxPassReminderForm( this );
 
 		m_pNewAccount = &wxPassReminderForm;
 		wxPassReminderForm.ShowModal();
 		m_pNewAccount = nullptr;
 	}
-	else if (event.GetId() == m_linkOffline->GetId())
+	else if ( event.GetId() == m_linkOffline->GetId() )
 	{
-		if (GetParent())
+		if ( GetParent() )
 		{
-			Show(false);
+			Show( false );
 
 			MainApp* temp = dynamic_cast<MainApp*>(GetParent());
-			if (temp)
+			if ( temp )
 				temp->offlineMode();
 		}
 	}
 }
+
+#ifdef WIN32
+void LoginForm::onCheckBoxClick( wxCommandEvent& event )
+{
+	if ( event.GetId() == m_cbProxyOff->GetId() )
+	{
+		bool isProxyOff = event.IsChecked();
+		m_cbProxyOff->SetValue( isProxyOff );
+		gc_saveProxyOff.setValue( isProxyOff );
+		UTIL::OS::setProxyOff( isProxyOff );
+	}
+}
+#endif
 
 void LoginForm::onButtonClick(wxCommandEvent& event)
 {
@@ -809,6 +854,9 @@ void LoginForm::doLogin(gcString user, gcString pass)
 	m_butSignin->Disable();
 
 	m_cbRemPass->Disable();
+#ifdef WIN32
+	m_cbProxyOff->Disable();
+#endif
 
 	m_butCancel->Disable();
 
@@ -904,6 +952,9 @@ void LoginForm::onLoginError(gcException &e)
 	m_butCancel->Enable();
 
 	m_cbRemPass->Enable();
+#ifdef WIN32
+	m_cbProxyOff->Enable();
+#endif
 
 	m_linkOffline->Enable();
 	m_linkNewAccount->Enable();

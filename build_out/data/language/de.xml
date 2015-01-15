@@ -119,7 +119,9 @@
 		<str name="#LF_PASS">Kennwort</str>
 		<str name="#LF_AUTO">Auto</str>
 		<str name="#LF_AUTO_TOOLTIP">Beim nächsten Start von Desura automatisch anmelden</str>
-		<str name="#LF_LOSTPASS">Kennwort vergessen</str>
+    <str name="#LF_PROXYOFF">Proxy Off</str>
+    <str name="#LF_PROXYOFF_TOOLTIP">Force Proxy Settings Off</str>
+    <str name="#LF_LOSTPASS">Kennwort vergessen</str>
 		<str name="#LF_NEWACCOUNT">Neues Konto</str>
 		<str name="#LF_OFFLINE">Offlinemodus</str>
 		<str name="#LF_ERRTITLE">Desura-Anmeldefehler</str>

@@ -62,6 +62,9 @@ protected:
 	gcTextCtrl* m_tbPasswordDisp;
 
 	gcCheckBox* m_cbRemPass;
+#ifdef WIN32
+	gcCheckBox* m_cbProxyOff;
+#endif
 
 	gcStaticLine* m_staticline1;
 
@@ -114,8 +117,11 @@ protected:
 	void onFocus(wxFocusEvent& event);
 	void onBlur(wxFocusEvent& event);
 
-	void onLinkClick(wxCommandEvent& event);
-	void onAltLoginClick(wxCommandEvent& event);
+	void onLinkClick( wxCommandEvent& event );
+#ifdef WIN32
+	void onCheckBoxClick( wxCommandEvent& event );
+#endif
+	void onAltLoginClick( wxCommandEvent& event );
 
 	void onNewAccount();
 

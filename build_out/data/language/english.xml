@@ -119,7 +119,9 @@
 		<str name="#LF_PASS">Password</str>
 		<str name="#LF_AUTO">Auto</str>
 		<str name="#LF_AUTO_TOOLTIP">Auto Sign In to Desura next time Desura starts</str>
-		<str name="#LF_LOSTPASS">Lost Password</str>
+    <str name="#LF_PROXYOFF">Proxy Off</str>
+    <str name="#LF_PROXYOFF_TOOLTIP">Force Proxy Settings Off</str>
+    <str name="#LF_LOSTPASS">Lost Password</str>
 		<str name="#LF_NEWACCOUNT">New Account</str>
 		<str name="#LF_OFFLINE">Offline Mode</str>
 		<str name="#LF_ERRTITLE">Desura Login Error</str>

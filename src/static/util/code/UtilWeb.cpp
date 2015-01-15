@@ -33,6 +33,7 @@ Contact us at legal@badjuju.com.
 #include "Winhttp.h"
 #endif
 
+
 class MemoryStruct
 {
 public:
@@ -111,6 +112,7 @@ public:
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	virtual const char* getData();
 	virtual uint32 getDataSize();
+	virtual tCookieMap getCookies();
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	// Misc
@@ -165,6 +167,7 @@ protected:
 	void unlock(){m_bLock = false;}
 
 	uint8 processResult(CURLcode res);
+	void storeCookies();
 
 	void setUp(bool setRange);
 
@@ -179,6 +182,8 @@ private:
 
 	std::vector<std::string> m_vHeaders;
 	std::vector<PostWrapperI*> m_vFormPost;
+
+	tCookieMap m_cookies;
 
 	std::string m_szRawPost;
 	gcString m_szUrl;
@@ -456,6 +461,8 @@ void HttpHInternal::setUp(bool setRange)
 	if (setRange && m_uiSize != 0)
 		addHeader(gcString("Range: bytes={0}-{1}", m_uiOffset, m_uiOffset+m_uiSize-1).c_str());
 
+	curl_easy_setopt(m_pCurlHandle, CURLOPT_FOLLOWLOCATION, true);
+
 	setUpProxy();
 }
 
@@ -465,6 +472,11 @@ bool g_bNeedProxy = false;
 void HttpHInternal::setUpProxy()
 {
 #ifdef WIN32
+	if ( UTIL::OS::isProxyOff() )
+	{
+		curl_easy_setopt( m_pCurlHandle, CURLOPT_PROXY, "" );
+		return;
+	}
 
 	if (g_bInitProxy && !g_bNeedProxy)
 		return;
@@ -584,6 +596,58 @@ uint8 HttpHInternal::processResult(CURLcode res)
 	return UWEB_OK;
 }
 
+void HttpHInternal::storeCookies()
+{
+	curl_slist* cookies = nullptr;
+
+	m_cookies.clear();
+	CURLcode cookieRes = curl_easy_getinfo(m_pCurlHandle, CURLINFO_COOKIELIST, &cookies);
+	if ((CURLE_OK == cookieRes) && cookies)
+	{
+		curl_slist* node = cookies;
+
+		while (node)
+		{
+			char* cookie = static_cast<char*> (node->data);
+
+			if (cookie)
+			{
+				std::stringstream flatCookie(cookie);
+
+				// Ignore first five parts of cookie, just get name, value (can expand later if necessary)
+				std::string name;
+				std::string value;
+				int i = 0;
+				while (flatCookie.good())
+				{
+					std::string result;
+					std::getline(flatCookie, result, '\t');
+					++i;
+
+					if (6 == i)
+					{
+						name = result;
+					}
+					else
+						if (7 == i)
+						{
+							value = result;
+						}
+				}
+
+				// Got a cookie?
+				if (name.size())
+					m_cookies.insert(std::pair<std::string, std::string>(name, value));
+			}
+
+			node = node->next;
+		}
+
+		curl_slist_free_all(cookies);
+		cookies = nullptr;
+	}
+}
+
 uint8 HttpHInternal::getWeb()
 {
 	m_bWritingToFile = false;
@@ -601,7 +665,12 @@ uint8 HttpHInternal::getWeb()
 	setUp();
 
 	curl_slist_s* headers = setUpHeaders();
+
 	CURLcode res = curl_easy_perform(m_pCurlHandle);
+
+	// Retrieve cookies directly from GET response header
+	storeCookies();
+
 	curl_slist_free_all(headers);
 
 	curl_easy_getinfo(m_pCurlHandle, CURLINFO_RESPONSE_CODE, &m_nLastStatusCode);
@@ -636,7 +705,12 @@ uint8 HttpHInternal::getWebToFile()
 	setUp();
 
 	curl_slist_s* headers = setUpHeaders();
+
 	CURLcode res = curl_easy_perform(m_pCurlHandle);
+
+	// Retrieve cookies directly from GET response header
+	storeCookies();
+
 	curl_slist_free_all(headers);
 	curl_easy_getinfo(m_pCurlHandle, CURLINFO_RESPONSE_CODE, &m_nLastStatusCode);
 	unlock();
@@ -671,6 +745,7 @@ uint8 HttpHInternal::postWeb()
 		for (size_t x=0; x<m_vFormPost.size(); x++)
 			m_vFormPost[x]->addToPost(formPost, formLast);
 
+		curl_easy_setopt(m_pCurlHandle, CURLOPT_COOKIEFILE, "");
 		curl_easy_setopt(m_pCurlHandle, CURLOPT_HTTPPOST, formPost);
 	}
 	else if (m_szRawPost != "")
@@ -683,6 +758,9 @@ uint8 HttpHInternal::postWeb()
 	curl_slist_s* headers = setUpHeaders();
 
 	CURLcode res = curl_easy_perform(m_pCurlHandle);
+
+	// Retrieve cookies directly from POST response header
+	storeCookies();
 
 	curl_formfree(formPost);
 	curl_slist_free_all(headers);
@@ -721,6 +799,9 @@ uint8 HttpHInternal::getFtp()
 	curl_easy_setopt(m_pCurlHandle, CURLOPT_QUOTE, commands);
 
 	CURLcode res = curl_easy_perform(m_pCurlHandle);
+
+	// Retrieve cookies directly from FTP response header
+	storeCookies();
 
 	curl_slist_free_all(commands);
 
@@ -831,6 +912,11 @@ uint32 HttpHInternal::getDataSize()
 		return m_pMemStruct->size;
 
 	return 0;
+}
+
+HttpHInternal::tCookieMap HttpHInternal::getCookies()
+{
+	return m_cookies;
 }
 
 void HttpHInternal::setUserAgent(const char* useragent)

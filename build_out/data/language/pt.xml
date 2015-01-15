@@ -119,7 +119,9 @@
 		<str name="#LF_PASS">Senha</str>
 		<str name="#LF_AUTO">Automático</str>
 		<str name="#LF_AUTO_TOOLTIP">Entrar automaticamente no Desura na próxima inicialização</str>
-		<str name="#LF_LOSTPASS">Esqueci minha senha</str>
+    <str name="#LF_PROXYOFF">Proxy Off</str>
+    <str name="#LF_PROXYOFF_TOOLTIP">Force Proxy Settings Off</str>
+    <str name="#LF_LOSTPASS">Esqueci minha senha</str>
 		<str name="#LF_NEWACCOUNT">Nova conta</str>
 		<str name="#LF_OFFLINE">Modo offline</str>
 		<str name="#LF_ERRTITLE">Erro de login no Desura</str>
