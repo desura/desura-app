@@ -400,8 +400,8 @@ LoginForm::LoginForm(wxWindow* parent)
 	m_vTabOrder.push_back(m_tbPassword);
 #ifdef WIN32
 	m_vTabOrder.push_back( m_cbRemPass );
-#endif
 	m_vTabOrder.push_back( m_cbProxyOff );
+#endif
 	m_vTabOrder.push_back(m_butSignin);
 	m_vTabOrder.push_back(m_butCancel);
 	m_vTabOrder.push_back(m_linkOffline);
