@@ -59,7 +59,7 @@ void UpdateForm::downloadAndInstall()
 	
 	SetStatus("Installing");
 	m_bInstalling = true;
-	updateMcf.install(L"./");
+	updateMcf.install(L"../");
 	updateMcf.setRegValues();
 	m_bInstalling = false;
 	
