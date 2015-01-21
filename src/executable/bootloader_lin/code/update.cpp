@@ -135,20 +135,20 @@ bool CheckUpdate(const char* path)
 
 	if (res != UMCF_OK)
 	{
-		ShowHelpDialog(gcString("Failed to parse MCF! [{0}]. Deleting file to allow a fresh update.", res).c_str());
 		// desura_update.mcf
 		if (FileExists(UPDATEFILE))
 			DeleteFile(UPDATEFILE);	
+		ShowHelpDialog(gcString("Failed to parse MCF! [{0}]. Deleting file to allow a fresh update.", res).c_str());
 		
 		return false;		
 	}
 
 	if (!updateMcf.isValidInstaller())
 	{
-		ShowHelpDialog("Error: Current MCF not a valid installer! Deleting file to allow a fresh update.");
 		// desura_update.mcf
 		if (FileExists(UPDATEFILE))
 			DeleteFile(UPDATEFILE);
+		ShowHelpDialog("Error: Current MCF not a valid installer! Deleting file to allow a fresh update.");
 		return false;		
 	}
 	
@@ -246,8 +246,8 @@ int McfUpdate()
 		}
 		else
 		{
-			ShowHelpDialog(gcString("Install Desura update failed: {0}", e).c_str());
 			DeleteFile(UPDATEFILE);
+			ShowHelpDialog(gcString("Install Desura update failed: {0}", e).c_str());
 		}
 		
 		// .desura_lock
@@ -287,8 +287,8 @@ int DownloadAndInstallMCF()
 
 		if (up.wasInstalling())
 		{
-			ShowHelpDialog("Update was cancelling while installing. Desura is now in an inconsistent state and will need to finish updating before it can be used");
 			DeleteFile(UPDATEXML);
+			ShowHelpDialog("Update was cancelling while installing. Desura is now in an inconsistent state and will need to finish updating before it can be used");
 		}
 		
 		return e.getErrId();
