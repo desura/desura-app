@@ -35,6 +35,7 @@ namespace CB
 		//! Return false to stop
 		//!
 		virtual bool onData(const unsigned char* buff, uint32 size)=0;
+		virtual ~CallbackI() {}
 	};
 
 

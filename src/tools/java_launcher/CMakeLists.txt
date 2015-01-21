@@ -19,4 +19,3 @@ target_link_libraries(java_launcher
 
 SetStaticRuntime(java_launcher)
 install_tool(java_launcher)
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -O0 -Wall -Weffc++")

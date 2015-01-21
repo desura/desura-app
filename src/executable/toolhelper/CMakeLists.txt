@@ -19,4 +19,3 @@ target_link_libraries(toolhelper
 
 install_executable(toolhelper)
 SetStaticRuntime(toolhelper)
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -O0 -Wall -Weffc++")

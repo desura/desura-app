@@ -385,8 +385,8 @@ bool IsUIThread();
 		}
 
 	private:
-		bool m_bGlobal;
 		uint32 m_uiBranch;
+		bool m_bGlobal;
 	};
 
 
