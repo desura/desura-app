@@ -40,6 +40,7 @@ CVar gc_savelogin("gc_savelogin", "0");
 #ifdef WIN32
 CVar gc_saveProxyOff("gc_saveproxyoff", "0");
 #endif
+CVar gc_saveBypassSSLRevocationCheck( "gc_saveBypassSSLRevocationCheck", "0" );
 CVar gc_saveusername("gc_saveusername", "1");
 
 CVar gc_lastusername("gc_lastusername", "", CFLAG_NOFLAGS, &validateUsernameChange);
@@ -162,7 +163,7 @@ static CVar gc_allow_wm_positioning("gc_allow_wm_positioning", "true");
 
 
 LoginForm::LoginForm(wxWindow* parent)
-	: gcFrame(parent, wxID_ANY, Managers::GetString(L"#LF_TITLE"), wxDefaultPosition, wxSize(420,246), wxCAPTION|wxCLOSE_BOX|wxSYSTEM_MENU|wxWANTS_CHARS|wxMINIMIZE_BOX, true)
+	: gcFrame(parent, wxID_ANY, Managers::GetString(L"#LF_TITLE"), wxDefaultPosition, wxSize(420,286), wxCAPTION|wxCLOSE_BOX|wxSYSTEM_MENU|wxWANTS_CHARS|wxMINIMIZE_BOX, true)
 {
 	m_comboProvider = nullptr;
 
@@ -209,6 +210,9 @@ LoginForm::LoginForm(wxWindow* parent)
 	m_cbProxyOff = new gcCheckBox(this, wxID_ANY, Managers::GetString(L"#LF_PROXYOFF"));
 	m_cbProxyOff->SetToolTip(Managers::GetString(L"#LF_PROXYOFF_TOOLTIP"));
 #endif
+
+	m_cbBypassSSLRevocationCheck = new gcCheckBox( this, wxID_ANY, Managers::GetString( L"#LF_REVOCATION" ) );
+	m_cbBypassSSLRevocationCheck->SetToolTip( Managers::GetString( L"#LF_REVOCATION_TOOLTIP" ) );
 
 	m_butSignin = new gcButton(this, wxID_ANY, Managers::GetString(L"#LOGIN"), wxDefaultPosition, wxDefaultSize, wxWANTS_CHARS);
 	m_butCancel = new gcButton(this, wxID_ANY, Managers::GetString(L"#CANCEL"), wxDefaultPosition, wxDefaultSize, wxWANTS_CHARS);
@@ -273,6 +277,8 @@ LoginForm::LoginForm(wxWindow* parent)
 	m_cbProxyOff->Bind( wxEVT_COMMAND_CHECKBOX_CLICKED, &LoginForm::onCheckBoxClick, this );
 #endif
 
+	m_cbBypassSSLRevocationCheck->Bind( wxEVT_COMMAND_CHECKBOX_CLICKED, &LoginForm::onCheckBoxClick, this );
+
 	m_linkOffline->Bind(wxEVT_CHAR, &LoginForm::onChar, this);
 	m_linkNewAccount->Bind(wxEVT_CHAR, &LoginForm::onChar, this);
 	m_linkLostPassword->Bind(wxEVT_CHAR, &LoginForm::onChar, this);
@@ -293,21 +299,30 @@ LoginForm::LoginForm(wxWindow* parent)
 
 
 #ifdef WIN32
-	wxFlexGridSizer* fgSizer4 = new wxFlexGridSizer( 1, 4, 0, 0 );
-#else
 	wxFlexGridSizer* fgSizer4 = new wxFlexGridSizer( 1, 3, 0, 0 );
+#else
+	wxFlexGridSizer* fgSizer4 = new wxFlexGridSizer( 1, 2, 0, 0 );
 #endif
 	fgSizer4->AddGrowableCol( 0 );
 	fgSizer4->SetFlexibleDirection( wxBOTH );
 	fgSizer4->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
 
 	fgSizer4->Add( m_cbRemPass, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
+
 #ifdef WIN32
 	fgSizer4->Add( m_cbProxyOff, 0, wxALL | wxALIGN_CENTER_VERTICAL, 5 );
 #endif
 
-	fgSizer4->Add( m_butSignin, 0, wxTOP|wxBOTTOM|wxLEFT, 5 );
-	fgSizer4->Add( m_butCancel, 0, wxTOP|wxBOTTOM|wxLEFT, 5 );
+	fgSizer4->Add( m_cbBypassSSLRevocationCheck, 0, wxALL | wxALIGN_CENTER_VERTICAL, 5 );
+
+
+
+	wxFlexGridSizer* fgSizer4a = new wxFlexGridSizer( 1, 2, 0, 0 );
+	fgSizer4a->AddGrowableCol( 0 );
+	fgSizer4a->SetFlexibleDirection( wxBOTH );
+	fgSizer4a->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
+	fgSizer4a->Add( m_butSignin, 0, wxTOP | wxBOTTOM | wxLEFT, 5 );
+	fgSizer4a->Add( m_butCancel, 0, wxTOP | wxBOTTOM | wxLEFT, 5 );
 
 
 	wxFlexGridSizer* fgSizer5 = new wxFlexGridSizer( 1, 3, 0, 0 );
@@ -322,7 +337,7 @@ LoginForm::LoginForm(wxWindow* parent)
 	fgSizer5->Add( m_linkLostPassword, 0, wxALIGN_RIGHT|wxTOP|wxBOTTOM|wxLEFT, 5 );
 
 
-	wxFlexGridSizer* fgSizer6 = new wxFlexGridSizer( 4, 1, 0, 0 );
+	wxFlexGridSizer* fgSizer6 = new wxFlexGridSizer( 5, 1, 0, 0 );
 	fgSizer6->AddGrowableCol( 0 );
 	fgSizer6->SetFlexibleDirection( wxBOTH );
 	fgSizer6->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
@@ -344,6 +359,7 @@ LoginForm::LoginForm(wxWindow* parent)
 	fgSizer6->Add( m_tbPassword, 0, wxEXPAND|wxTOP|wxLEFT, 5 );
 	fgSizer6->Add( m_tbPasswordDisp, 0, wxEXPAND|wxTOP|wxLEFT, 5 );
 	fgSizer6->Add( fgSizer4, 1, wxEXPAND, 5 );
+	fgSizer6->Add( fgSizer4a, 1, wxEXPAND, 5 );
 
 	wxFlexGridSizer* fgSizer3 = new wxFlexGridSizer( 1, 2, 0, 0 );
 	fgSizer3->AddGrowableCol( 1 );
@@ -398,10 +414,11 @@ LoginForm::LoginForm(wxWindow* parent)
 	m_vTabOrder.push_back(m_tbUsername);
 	m_vTabOrder.push_back(m_tbPasswordDisp);
 	m_vTabOrder.push_back(m_tbPassword);
-#ifdef WIN32
 	m_vTabOrder.push_back( m_cbRemPass );
-#endif
+#ifdef WIN32
 	m_vTabOrder.push_back( m_cbProxyOff );
+#endif
+	m_vTabOrder.push_back( m_cbBypassSSLRevocationCheck );
 	m_vTabOrder.push_back(m_butSignin);
 	m_vTabOrder.push_back(m_butCancel);
 	m_vTabOrder.push_back(m_linkOffline);
@@ -443,6 +460,10 @@ LoginForm::LoginForm(wxWindow* parent)
 	m_cbProxyOff->SetValue( isProxyOff );
 #endif
 
+	bool isBypassSSLRevocationCheck = gc_saveBypassSSLRevocationCheck.getBool();
+	UTIL::OS::setBypassSSLRevocationCheck( isBypassSSLRevocationCheck );
+	m_cbBypassSSLRevocationCheck->SetValue( isBypassSSLRevocationCheck );
+
 	if (gc_saveusername.getBool())
 	{
 		const char* str = gc_lastusername.getString();
@@ -475,12 +496,13 @@ LoginForm::LoginForm(wxWindow* parent)
 	Managers::LoadTheme(m_cbRemPass, "formlogin");
 
 #ifdef WIN32
-	// ??
 	Managers::LoadTheme(m_cbProxyOff, "formlogin");
 #endif
 
+	Managers::LoadTheme( m_cbBypassSSLRevocationCheck, "formLogin" );
+
 #ifdef WIN32
-	SetSize(wxSize(420,316));
+	SetSize(wxSize(400,336));
 #endif
 
 	setFrameRegion();
@@ -796,6 +818,14 @@ void LoginForm::onCheckBoxClick( wxCommandEvent& event )
 		gc_saveProxyOff.setValue( isProxyOff );
 		UTIL::OS::setProxyOff( isProxyOff );
 	}
+	else
+		if ( event.GetId() == m_cbBypassSSLRevocationCheck->GetId() )
+		{
+			bool isBypassSSLRevocationCheck = event.IsChecked();
+			m_cbBypassSSLRevocationCheck->SetValue( isBypassSSLRevocationCheck );
+			gc_saveBypassSSLRevocationCheck.setValue( isBypassSSLRevocationCheck );
+			UTIL::OS::setBypassSSLRevocationCheck( isBypassSSLRevocationCheck );
+		}
 }
 #endif
 
@@ -858,6 +888,7 @@ void LoginForm::doLogin(gcString user, gcString pass)
 	m_cbProxyOff->Disable();
 #endif
 
+	m_cbBypassSSLRevocationCheck->Disable();
 	m_butCancel->Disable();
 
 	m_linkOffline->Disable();
@@ -956,6 +987,7 @@ void LoginForm::onLoginError(gcException &e)
 	m_cbProxyOff->Enable();
 #endif
 
+	m_cbBypassSSLRevocationCheck->Enable();
 	m_linkOffline->Enable();
 	m_linkNewAccount->Enable();
 	m_linkLostPassword->Enable();

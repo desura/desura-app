@@ -66,6 +66,8 @@ protected:
 	gcCheckBox* m_cbProxyOff;
 #endif
 
+	gcCheckBox* m_cbBypassSSLRevocationCheck;
+
 	gcStaticLine* m_staticline1;
 
 	gcButton* m_butSignin;

@@ -43,6 +43,14 @@ namespace UTIL
 		void setProxyOff( bool setOff );
 #endif
 
+		//! Is Bypass SSL Revocation Check option set?
+		//!
+		bool isBypassSSLRevocationCheck();
+
+		//! Set Bypass SSL Revocation Check option
+		//!
+		void setBypassSSLRevocationCheck( bool setBypass );
+
 		//! Determines if a point is on the screen
 		//!
 		//! @param x coord
@@ -81,6 +89,13 @@ namespace UTIL
 		//! @return config key value
 		//!
 		std::string getConfigValue(const std::string &configKey, bool use64bit = false);
+
+		//! Gets a config value based on a key
+		//!
+		//! @param config key to lookup
+		//! @return config key value (int)
+		//!
+		int getConfigValueInt( const std::string &configKey );
 
 		//! Gets the Desura application folder
 		//!
