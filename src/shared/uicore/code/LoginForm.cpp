@@ -499,7 +499,7 @@ LoginForm::LoginForm(wxWindow* parent)
 	Managers::LoadTheme(m_cbProxyOff, "formlogin");
 #endif
 
-	Managers::LoadTheme( m_cbBypassSSLRevocationCheck, "formLogin" );
+	Managers::LoadTheme( m_cbBypassSSLRevocationCheck, "formlogin" );
 
 #ifdef WIN32
 	SetSize(wxSize(400,336));
