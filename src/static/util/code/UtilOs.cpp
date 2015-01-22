@@ -48,18 +48,26 @@ bool is64OS()
 }
 
 #ifdef WIN32
-bool ProxyOff = false;
-
 bool isProxyOff()
 {
-	return ProxyOff;
+	return (1 == getConfigValueInt( "HKEY_LOCAL_MACHINE\\SOFTWARE\\Desura\\DesuraApp\\PrivateProxyOff" ) );
 }
 
 void setProxyOff( bool setOff )
 {
-	ProxyOff = setOff;
+	setConfigValue( "HKEY_LOCAL_MACHINE\\SOFTWARE\\Desura\\DesuraApp\\PrivateProxyOff", setOff ? 1 : 0 );
 }
 #endif
+
+bool isBypassSSLRevocationCheck()
+{
+	return (1 == getConfigValueInt( "HKEY_LOCAL_MACHINE\\SOFTWARE\\Desura\\DesuraApp\\PrivateBypassSSLRevChk" ) );
+}
+
+void setBypassSSLRevocationCheck( bool setBypass )
+{
+	setConfigValue( "HKEY_LOCAL_MACHINE\\SOFTWARE\\Desura\\DesuraApp\\PrivateBypassSSLRevChk", setBypass ? 1 : 0 );
+}
 
 bool isPointOnScreen(int32 x, int32 y)
 {
@@ -133,7 +141,18 @@ std::string getConfigValue(const std::string &configKey, bool use64bit)
 #endif
 }
 
-std::wstring getCurrentDir(std::wstring extra)
+int getConfigValueInt(const std::string &configKey)
+{
+#ifdef WIN32
+	return UTIL::WIN::getRegValueInt( configKey );
+#endif
+
+#ifdef NIX
+	return UTIL::LIN::getConfigValue( configKey );
+#endif
+}
+
+std::wstring getCurrentDir( std::wstring extra )
 {
 #ifdef NIX
 	return UTIL::LIN::getAppPath(extra);

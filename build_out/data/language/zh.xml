@@ -121,6 +121,8 @@
 		<str name="#LF_AUTO_TOOLTIP">以後啟動時自動登入 Desura</str>
     <str name="#LF_PROXYOFF">Proxy Off</str>
     <str name="#LF_PROXYOFF_TOOLTIP">Force Proxy Settings Off</str>
+    <str name="#LF_REVOCATION">SSL Alt Mode</str>
+    <str name="#LF_REVOCATION_TOOLTIP">Ignore SSL Revocation Error (DO NOT USE THIS IN PUBLIC WIFI ENVIRONMENTS)</str>
     <str name="#LF_LOSTPASS">密碼遺失</str>
 		<str name="#LF_NEWACCOUNT">新帳號</str>
 		<str name="#LF_OFFLINE">離線模式</str>

@@ -121,6 +121,8 @@
 		<str name="#LF_AUTO_TOOLTIP">Connectez-vous automatiquement à Desura lors de son prochain lancement.</str>
     <str name="#LF_PROXYOFF">Proxy Off</str>
     <str name="#LF_PROXYOFF_TOOLTIP">Force Proxy Settings Off</str>
+    <str name="#LF_REVOCATION">SSL Alt Mode</str>
+    <str name="#LF_REVOCATION_TOOLTIP">Ignore SSL Revocation Error (DO NOT USE THIS IN PUBLIC WIFI ENVIRONMENTS)</str>
     <str name="#LF_LOSTPASS">Perte de mot de passe</str>
 		<str name="#LF_NEWACCOUNT">Nouveau compte</str>
 		<str name="#LF_OFFLINE">Mode hors ligne</str>

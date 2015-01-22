@@ -757,7 +757,26 @@ uint8 HttpHInternal::postWeb()
 
 	curl_slist_s* headers = setUpHeaders();
 
-	CURLcode res = curl_easy_perform(m_pCurlHandle);
+	// Some clients are so far way from the SSL Revocation Verification servers that they have to try a few times
+	int retries = 3;
+
+	CURLcode res;
+
+	do
+	{
+		res = curl_easy_perform( m_pCurlHandle );
+
+		if ( CURLE_SSL_CONNECT_ERROR != res )
+			break;
+	} while ( --retries > 0 );
+
+	// If we get an SSL error specifically for revocation server, try once more without peer verification
+	// Option must have been enabled on login screen
+	if ( (CURLE_SSL_CONNECT_ERROR == res) && (strstr( m_szErrBuff, "0x80092013" ) != nullptr) && UTIL::OS::isBypassSSLRevocationCheck() )
+	{
+		curl_easy_setopt( m_pCurlHandle, CURLOPT_SSL_VERIFYPEER, FALSE );
+		res = curl_easy_perform( m_pCurlHandle );
+	}
 
 	// Retrieve cookies directly from POST response header
 	storeCookies();

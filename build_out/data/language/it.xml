@@ -121,6 +121,8 @@
 		<str name="#LF_AUTO_TOOLTIP">Accedi automaticamente a Desura al prossimo avvio</str>
     <str name="#LF_PROXYOFF">Proxy Off</str>
     <str name="#LF_PROXYOFF_TOOLTIP">Force Proxy Settings Off</str>
+    <str name="#LF_REVOCATION">SSL Alt Mode</str>
+    <str name="#LF_REVOCATION_TOOLTIP">Ignore SSL Revocation Error (DO NOT USE THIS IN PUBLIC WIFI ENVIRONMENTS)</str>
     <str name="#LF_LOSTPASS">Password smarrita</str>
 		<str name="#LF_NEWACCOUNT">Nuovo account</str>
 		<str name="#LF_OFFLINE">Modalità offline</str>
