@@ -168,10 +168,11 @@ void InstallBannerPage::updateBanner()
 		//download banner
 	}
 	else
-	{
-		m_bDefaultBanner = false;
-		m_imgBanner->setImage(dp->getBanner());
-	}
+		if ( strlen( dp->getBanner() ) > 0 )
+		{
+			m_bDefaultBanner = false;
+			m_imgBanner->setImage(dp->getBanner());
+		}
 
 	Refresh();
 }
