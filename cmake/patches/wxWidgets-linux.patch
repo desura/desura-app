@@ -1,3 +1,177 @@
+Index: include/msvc/wx/setup.h
+===================================================================
+--- include/msvc/wx/setup.h    (revision 68296)
++++ include/msvc/wx/setup.h    (working copy)
+@@ -121,6 +121,7 @@
+ // special version for regex as it does have a Unicode version
+ #define wx3RD_PARTY_LIB_NAME_U(name) "wx" name wxSUFFIX_STR
+ 
++#ifndef WXUSINGDLL
+ #pragma comment(lib, wxWX_LIB_NAME("base", ""))
+ 
+ #ifndef wxNO_NET_LIB
+@@ -188,6 +189,7 @@
+         #pragma comment(lib, wx3RD_PARTY_LIB_NAME("scintilla"))
+     #endif
+ #endif // wxUSE_GUI
++#endif // WXUSINGDLL
+ 
+ 
+ #ifndef WXUSINGDLL
+Index: include/wx/gdiobj.h
+===================================================================
+--- include/wx/gdiobj.h	(revision 68296)
++++ include/wx/gdiobj.h	(working copy)
+@@ -46,7 +46,8 @@
+     {
+         // the cast here is safe because the derived classes always create
+         // wxGDIRefData objects
+-        return m_refData && static_cast<wxGDIRefData *>(m_refData)->IsOk();
++        wxGDIRefData* gdiRefData = dynamic_cast<wxGDIRefData*>(m_refData);
++        return gdiRefData && gdiRefData->IsOk();
+     }
+ 
+     // don't use in the new code, use IsOk() instead
+Index: include/wx/msw/taskbar.h
+===================================================================
+--- include/wx/msw/taskbar.h	(revision 68296)
++++ include/wx/msw/taskbar.h	(working copy)
+@@ -56,11 +56,11 @@
+ protected:
+     friend class wxTaskBarIconWindow;
+ 
+-    long WindowProc(unsigned int msg, unsigned int wParam, long lParam);
++    virtual long WindowProc(unsigned int msg, unsigned int wParam, long lParam);
+     void RegisterWindowMessages();
+ 
+ 
+-    wxTaskBarIconWindow *m_win;
++    wxFrame *m_win;
+     bool                 m_iconAdded;
+     wxIcon               m_icon;
+     wxString             m_strTooltip;
+Index: include/wx/popupwin.h
+===================================================================
+--- include/wx/popupwin.h	(revision 68296)
++++ include/wx/popupwin.h	(working copy)
+@@ -76,7 +76,24 @@
+ // when the user clicks mouse outside it or if it loses focus in any other way
+ // ----------------------------------------------------------------------------
+ 
+-class WXDLLIMPEXP_FWD_CORE wxPopupWindowHandler;
++class WXDLLIMPEXP_FWD_CORE wxPopupTransientWindow;
++class WXDLLIMPEXP_CORE wxPopupWindowHandler : public wxEvtHandler
++{
++public:
++    wxPopupWindowHandler(wxPopupTransientWindow *popup);
++
++protected:
++    // event handlers
++    void OnLeftDown(wxMouseEvent& event);
++    void OnCaptureLost(wxMouseCaptureLostEvent& event);
++
++private:
++    wxPopupTransientWindow *m_popup;
++
++    DECLARE_EVENT_TABLE()
++    wxDECLARE_NO_COPY_CLASS(wxPopupWindowHandler);
++};
++
+ class WXDLLIMPEXP_FWD_CORE wxPopupFocusHandler;
+ 
+ class WXDLLIMPEXP_CORE wxPopupTransientWindow : public wxPopupWindow
+@@ -135,7 +152,7 @@
+ #if defined(__WXMSW__) ||(defined(__WXMAC__) && wxOSX_USE_CARBON)
+     // Check if the mouse needs to be captured or released: we must release
+     // when it's inside our window if we want the embedded controls to work.
+-    void OnIdle(wxIdleEvent& event);
++    virtual void OnIdle(wxIdleEvent& event);
+ #endif
+ 
+     // the child of this popup if any
+Index: src/common/popupcmn.cpp
+===================================================================
+--- src/common/popupcmn.cpp	(revision 68296)
++++ src/common/popupcmn.cpp	(working copy)
+@@ -67,22 +67,6 @@
+ 
+ // event handlers which we use to intercept events which cause the popup to
+ // disappear
+-class wxPopupWindowHandler : public wxEvtHandler
+-{
+-public:
+-    wxPopupWindowHandler(wxPopupTransientWindow *popup) : m_popup(popup) {}
+-
+-protected:
+-    // event handlers
+-    void OnLeftDown(wxMouseEvent& event);
+-    void OnCaptureLost(wxMouseCaptureLostEvent& event);
+-
+-private:
+-    wxPopupTransientWindow *m_popup;
+-
+-    DECLARE_EVENT_TABLE()
+-    wxDECLARE_NO_COPY_CLASS(wxPopupWindowHandler);
+-};
+ 
+ class wxPopupFocusHandler : public wxEvtHandler
+ {
+@@ -547,6 +531,12 @@
+ // wxPopupWindowHandler
+ // ----------------------------------------------------------------------------
+ 
++// event handlers which we use to intercept events which cause the popup to
++// disappear
++wxPopupWindowHandler::wxPopupWindowHandler(wxPopupTransientWindow *popup) : m_popup(popup) 
++{
++}
++
+ void wxPopupWindowHandler::OnLeftDown(wxMouseEvent& event)
+ {
+     // let the window have it first (we're the first event handler in the chain
+Index: src/msw/font.cpp
+===================================================================
+--- src/msw/font.cpp	(revision 68296)
++++ src/msw/font.cpp	(working copy)
+@@ -535,6 +535,8 @@
+     // versions by passing a negative value explicitly itself.
+     lf.lfHeight = -abs(pixelSize.GetHeight());
+     lf.lfWidth = pixelSize.GetWidth();
++	if (pixelSize.GetHeight() < 0)
++		lf.lfHeight = pixelSize.GetHeight()*-1;
+ }
+ 
+ void wxNativeFontInfo::SetStyle(wxFontStyle style)
+Index: include/wx/tls.h
+===================================================================
+--- include/wx/tls.h	(revision 68296)
++++ include/wx/tls.h	(working copy)
+@@ -38,6 +38,9 @@
+ #endif // compilers
+ #endif // wxUSE_COMPILER_TLS
+ 
++//Desura: Windows xp hack for v120_xp (tls causes crashes)
++#undef wxHAS_COMPILER_TLS
++
+ // ----------------------------------------------------------------------------
+ // define wxTLS_TYPE()
+ // ----------------------------------------------------------------------------
+Index: /wxWidgets/trunk/src/msw/textentry.cpp
+===================================================================
+--- src/msw/textentry.cpp	(revision 68296)
++++ src/msw/textentry.cpp	(working copy)
+@@ -428,9 +428,8 @@
+                              );
+         if ( SUCCEEDED(hr) )
+         {
+-            pAutoComplete2->SetOptions(ACO_AUTOSUGGEST |
+-                                       ACO_AUTOAPPEND |
+-                                       ACO_UPDOWNKEYDROPSLIST);
++                       //DESURA Changed from ACO_AUTOSUGGEST | ACO_AUTOAPPEND | ACO_UPDOWNKEYDROPSLIST
++            pAutoComplete2->SetOptions(ACO_AUTOSUGGEST|ACO_AUTOAPPEND|ACO_USETAB);
+             pAutoComplete2->Release();
+         }
+
 Index: /wxWidgets/trunk/src/common/wincmn.cpp
 ===================================================================
 --- src/common/wincmn.cpp	(revision 68296)
