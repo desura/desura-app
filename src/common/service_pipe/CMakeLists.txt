@@ -9,4 +9,7 @@ file(GLOB Sources_ipc_update_main IPCUpdateApp.cpp)
 
 set(SERVICE_PIPE_SPOURCES ${Sources} PARENT_SCOPE)
 set(SERVICE_PIPE_IPCUPDATEMAIN ${Sources_ipc_update_main} PARENT_SCOPE)
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -O0 -Wall -Weffc++")
+
+if(NOT WIN32)
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -O0 -Wall -Weffc++")
+endif()

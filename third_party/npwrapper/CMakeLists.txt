@@ -63,4 +63,6 @@ install(TARGETS desura_flashwrapper
 install(TARGETS desura_flashhost
         DESTINATION "${LIB_INSTALL_DIR}")
 
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -O0 -Wall -Weffc++")
+if(NOT WIN32)
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -O0 -Wall -Weffc++")
+endif()
