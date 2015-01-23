@@ -501,9 +501,7 @@ LoginForm::LoginForm(wxWindow* parent)
 
 	Managers::LoadTheme( m_cbBypassSSLRevocationCheck, "formlogin" );
 
-#ifdef WIN32
 	SetSize(wxSize(400,336));
-#endif
 
 	setFrameRegion();
 
