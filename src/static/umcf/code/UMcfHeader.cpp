@@ -33,10 +33,10 @@ namespace MCFCore
 	}
 }
 
+static char default_header[ 5 ] = "LMCF";
 
 UMcfHeader::UMcfHeader()
-: m_szId({'L', 'M', 'C', 'F', '\0'})
-, m_iFileVer(MCF_CURRENTVERSION)
+: m_iFileVer(MCF_CURRENTVERSION)
 , m_iBuild()
 , m_iId(0)
 , m_iType(0)
@@ -46,11 +46,11 @@ UMcfHeader::UMcfHeader()
 , m_iParentMcf(0)
 , m_iBranch()
 {
+	strcpy( m_szId, default_header );
 }
 
 UMcfHeader::UMcfHeader(MCFCore::MCFHeaderI* head)
-: m_szId({'L', 'M', 'C', 'F', '\0'})
-, m_iFileVer(MCF_CURRENTVERSION)
+: m_iFileVer(MCF_CURRENTVERSION)
 , m_iBuild()
 , m_iId(0)
 , m_iType(0)
@@ -60,6 +60,7 @@ UMcfHeader::UMcfHeader(MCFCore::MCFHeaderI* head)
 , m_iParentMcf(0)
 , m_iBranch()
 {
+	strcpy( m_szId, default_header );
 
 	if (!head)
 		return;

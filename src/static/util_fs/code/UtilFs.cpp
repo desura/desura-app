@@ -82,7 +82,9 @@ namespace UTIL
 		FileHandle::FileHandle()
 		: m_hFileHandle(nullptr)
 		, m_bIsOpen(false)
-		, m_szMode("")
+#ifdef NIX
+		, m_szMode( "" )
+#endif
 		, m_uiOffset(0)
 		{
 		}
@@ -90,8 +92,10 @@ namespace UTIL
 		FileHandle::FileHandle(const char* fileName, FILE_MODE mode, uint64 offset)
 		: m_hFileHandle(nullptr)
 		, m_bIsOpen(false)
-		, m_szMode("")
-		, m_uiOffset(0)
+#ifdef NIX
+		, m_szMode( "" )
+#endif
+		, m_uiOffset( 0 )
 		{
 			open(fileName, mode, offset);
 		}
@@ -99,8 +103,10 @@ namespace UTIL
 		FileHandle::FileHandle(const Path& path, FILE_MODE mode, uint64 offset)
 		: m_hFileHandle(nullptr)
 		, m_bIsOpen(false)
-		, m_szMode("")
-		, m_uiOffset(0)
+#ifdef NIX
+		, m_szMode( "" )
+#endif
+		, m_uiOffset( 0 )
 		{
 			open(path.getFullPath().c_str(), mode, offset);
 		}
