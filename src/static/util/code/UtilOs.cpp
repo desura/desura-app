@@ -148,7 +148,13 @@ int getConfigValueInt(const std::string &configKey)
 #endif
 
 #ifdef NIX
-	return UTIL::LIN::getConfigValue( configKey );
+	try {
+		return stoi(UTIL::LIN::getConfigValue( configKey ));
+	}
+	catch (std::exception e) {
+		ERROR_OUTPUT("bad config value for: " + configKey + " | " + __func__);
+		return 0;
+	}
 #endif
 }
 
