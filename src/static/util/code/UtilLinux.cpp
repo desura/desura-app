@@ -39,9 +39,10 @@ Contact us at legal@badjuju.com.
 #include <utime.h>
 #include <errno.h>
 
-inline const wchar_t* CONFIG_DB(void)
+inline const char* CONFIG_DB(void)
 {
-	return UTIL::OS::getAppDataPath(L"linux_registry.sqlite").c_str();
+	std::wstring val = UTIL::OS::getAppDataPath(L"linux_registry.sqlite");
+	return std::string(val.begin(), val.end()).c_str();
 }
 
 #define COUNT_CONFIGTABLE_STRING "SELECT count(*) FROM sqlite_master WHERE name='config_string';"
@@ -327,7 +328,13 @@ void setConfigValue(const std::string &configKey, const std::string &value)
 
 void setConfigValue(const std::string &configKey, uint32 value)
 {
-	setConfigValue(configKey, gcString("{0}", value).c_str());
+	std::stringstream stream;
+	std::string val;
+
+	stream << value;
+	stream >> val;
+
+	setConfigValue(configKey, val);
 	return;
 }
 
