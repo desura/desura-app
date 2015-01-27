@@ -774,7 +774,7 @@ uint8 HttpHInternal::postWeb()
 	// Option must have been enabled on login screen
 	if ( (CURLE_SSL_CONNECT_ERROR == res) && (strstr( m_szErrBuff, "0x80092013" ) != nullptr) && UTIL::OS::isBypassSSLRevocationCheck() )
 	{
-		curl_easy_setopt( m_pCurlHandle, CURLOPT_SSL_VERIFYPEER, FALSE );
+		curl_easy_setopt( m_pCurlHandle, CURLOPT_SSL_VERIFYPEER, false );
 		res = curl_easy_perform( m_pCurlHandle );
 	}
 
