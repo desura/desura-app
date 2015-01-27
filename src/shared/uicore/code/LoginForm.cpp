@@ -806,9 +806,9 @@ void LoginForm::onLinkClick( wxCommandEvent& event )
 	}
 }
 
-#ifdef WIN32
 void LoginForm::onCheckBoxClick( wxCommandEvent& event )
 {
+#ifdef WIN32
 	if ( event.GetId() == m_cbProxyOff->GetId() )
 	{
 		bool isProxyOff = event.IsChecked();
@@ -817,6 +817,7 @@ void LoginForm::onCheckBoxClick( wxCommandEvent& event )
 		UTIL::OS::setProxyOff( isProxyOff );
 	}
 	else
+#endif
 		if ( event.GetId() == m_cbBypassSSLRevocationCheck->GetId() )
 		{
 			bool isBypassSSLRevocationCheck = event.IsChecked();
@@ -825,7 +826,6 @@ void LoginForm::onCheckBoxClick( wxCommandEvent& event )
 			UTIL::OS::setBypassSSLRevocationCheck( isBypassSSLRevocationCheck );
 		}
 }
-#endif
 
 void LoginForm::onButtonClick(wxCommandEvent& event)
 {

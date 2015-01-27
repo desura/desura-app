@@ -120,9 +120,7 @@ protected:
 	void onBlur(wxFocusEvent& event);
 
 	void onLinkClick( wxCommandEvent& event );
-#ifdef WIN32
 	void onCheckBoxClick( wxCommandEvent& event );
-#endif
 	void onAltLoginClick( wxCommandEvent& event );
 
 	void onNewAccount();
