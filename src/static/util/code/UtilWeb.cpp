@@ -761,19 +761,24 @@ uint8 HttpHInternal::postWeb()
 	int retries = 3;
 
 	CURLcode res;
+	std::string errorStr;
 
 	do
 	{
 		res = curl_easy_perform( m_pCurlHandle );
 
-		if ( CURLE_SSL_CONNECT_ERROR != res )
+		errorStr = std::string( m_szErrBuff );
+
+		// SSL errors we'll retry
+		if ( ! ( (CURLE_SSL_CONNECT_ERROR == res) || (errorStr.find( "0x80092013" ) != std::string::npos) ) )
 			break;
 	} while ( --retries > 0 );
 
 	// If we get an SSL error specifically for revocation server, try once more without peer verification
 	// Option must have been enabled on login screen
-	if ( (CURLE_SSL_CONNECT_ERROR == res) && (strstr( m_szErrBuff, "0x80092013" ) != nullptr) && UTIL::OS::isBypassSSLRevocationCheck() )
+	if ( ((CURLE_SSL_CONNECT_ERROR == res) || (errorStr.find( "0x80092013" ) != std::string::npos)) && UTIL::OS::isBypassSSLRevocationCheck() )
 	{
+		Warning( "Attempting SSL Alt Mode for: {0}\n", res );
 		curl_easy_setopt( m_pCurlHandle, CURLOPT_SSL_VERIFYPEER, FALSE );
 		res = curl_easy_perform( m_pCurlHandle );
 	}
