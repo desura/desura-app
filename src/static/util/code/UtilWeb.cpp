@@ -779,7 +779,7 @@ uint8 HttpHInternal::postWeb()
 	if ( ((CURLE_SSL_CONNECT_ERROR == res) || (errorStr.find( "0x80092013" ) != std::string::npos)) && UTIL::OS::isBypassSSLRevocationCheck() )
 	{
 		Warning( "Attempting SSL Alt Mode for: {0}\n", res );
-		curl_easy_setopt( m_pCurlHandle, CURLOPT_SSL_VERIFYPEER, FALSE );
+		curl_easy_setopt( m_pCurlHandle, CURLOPT_SSL_VERIFYPEER, false );
 		res = curl_easy_perform( m_pCurlHandle );
 	}
 
