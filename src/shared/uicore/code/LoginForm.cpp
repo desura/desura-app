@@ -275,8 +275,9 @@ LoginForm::LoginForm(wxWindow* parent)
 	m_cbRemPass->Bind(wxEVT_CHAR, &LoginForm::onChar, this);
 #ifdef WIN32
 	m_cbProxyOff->Bind( wxEVT_COMMAND_CHECKBOX_CLICKED, &LoginForm::onCheckBoxClick, this );
-	m_cbBypassSSLRevocationCheck->Bind( wxEVT_COMMAND_CHECKBOX_CLICKED, &LoginForm::onCheckBoxClick, this );
 #endif
+
+	m_cbBypassSSLRevocationCheck->Bind( wxEVT_COMMAND_CHECKBOX_CLICKED, &LoginForm::onCheckBoxClick, this );
 
 	m_linkOffline->Bind(wxEVT_CHAR, &LoginForm::onChar, this);
 	m_linkNewAccount->Bind(wxEVT_CHAR, &LoginForm::onChar, this);
