@@ -778,7 +778,9 @@ uint8 HttpHInternal::postWeb()
 	// Option must have been enabled on login screen
 	if ( ((CURLE_SSL_CONNECT_ERROR == res) || (errorStr.find( "0x80092013" ) != std::string::npos)) && UTIL::OS::isBypassSSLRevocationCheck() )
 	{
+#ifndef NIX
 		Warning( "Attempting SSL Alt Mode for: {0}\n", res );
+#endif
 		curl_easy_setopt( m_pCurlHandle, CURLOPT_SSL_VERIFYPEER, false );
 		res = curl_easy_perform( m_pCurlHandle );
 	}
