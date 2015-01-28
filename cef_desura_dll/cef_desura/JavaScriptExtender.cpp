@@ -14,10 +14,40 @@
 #include "JavaScriptObject.h"
 #include "JavaScriptContext.h"
 
+
+class MyV8Handler : public CefV8Handler {
+public:
+	MyV8Handler() {}
+
+	virtual bool Execute( const CefString& name,
+		CefRefPtr<CefV8Value> object,
+		const CefV8ValueList& arguments,
+		CefRefPtr<CefV8Value>& retval,
+		CefString& exception ) OVERRIDE
+	{
+		if ( name == "myfunc" ) {
+			// Return my string value.
+			retval = CefV8Value::CreateString( "My Value!" );
+			return true;
+		}
+
+		// Function does not exist.
+		return false;
+	}
+
+		// Provide the reference counting implementation for this class.
+	IMPLEMENT_REFCOUNTING( MyV8Handler );
+};
+
 bool JavaScriptExtender::Register(ChromiumDLL::JavaScriptExtenderI* jse)
 {
-	JavaScriptExtender extender = JavaScriptExtender(jse);
-	return CefRegisterExtension(jse->getName(), jse->getRegistrationCode(),  extender );
+//	CefRefPtr<CefV8Context> currentContext = CefV8Context::GetCurrentContext();
+//	currentContext->
+
+	CefRefPtr<CefV8Handler> handler = new MyV8Handler();
+	JavaScriptExtender extender( jse );
+
+	return CefRegisterExtension( jse->getName(), jse->getRegistrationCode(), handler );
 }
 
 JavaScriptExtender::JavaScriptExtender(ChromiumDLL::JavaScriptExtenderI* jse)

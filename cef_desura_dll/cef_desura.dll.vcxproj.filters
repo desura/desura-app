@@ -28,9 +28,6 @@
     <Filter Include="libcef_dll">
       <UniqueIdentifier>{dd4efd4c-f214-4ecb-90da-802bff886140}</UniqueIdentifier>
     </Filter>
-    <Filter Include="libcef_dll\base">
-      <UniqueIdentifier>{b66a57e8-b8f3-498a-9a35-06e99b2c9071}</UniqueIdentifier>
-    </Filter>
     <Filter Include="libcef_dll\cpptoc">
       <UniqueIdentifier>{d2f73dc3-50d7-4d39-b670-7da252ab5667}</UniqueIdentifier>
     </Filter>
@@ -42,6 +39,9 @@
     </Filter>
     <Filter Include="lib">
       <UniqueIdentifier>{f25972f2-9e65-471f-ad48-6923dfeb408e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libcef_dll\base">
+      <UniqueIdentifier>{f8bbee78-e3a7-423c-aaa7-a96d8f14d1b6}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -458,510 +458,6 @@
     <ClInclude Include="fetch_cef-prefix\src\fetch_cef\cef_desura_includes\SharedObjectLoader.h">
       <Filter>cef_desura_includes</Filter>
     </ClInclude>
-    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\include\cef_app.h">
-      <Filter>include</Filter>
-    </ClInclude>
-    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\include\cef_auth_callback.h">
-      <Filter>include</Filter>
-    </ClInclude>
-    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\include\cef_base.h">
-      <Filter>include</Filter>
-    </ClInclude>
-    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\include\cef_browser.h">
-      <Filter>include</Filter>
-    </ClInclude>
-    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\include\cef_browser_process_handler.h">
-      <Filter>include</Filter>
-    </ClInclude>
-    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\include\cef_callback.h">
-      <Filter>include</Filter>
-    </ClInclude>
-    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\include\cef_client.h">
-      <Filter>include</Filter>
-    </ClInclude>
-    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\include\cef_command_line.h">
-      <Filter>include</Filter>
-    </ClInclude>
-    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\include\cef_context_menu_handler.h">
-      <Filter>include</Filter>
-    </ClInclude>
-    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\include\cef_cookie.h">
-      <Filter>include</Filter>
-    </ClInclude>
-    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\include\cef_dialog_handler.h">
-      <Filter>include</Filter>
-    </ClInclude>
-    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\include\cef_display_handler.h">
-      <Filter>include</Filter>
-    </ClInclude>
-    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\include\cef_dom.h">
-      <Filter>include</Filter>
-    </ClInclude>
-    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\include\cef_download_handler.h">
-      <Filter>include</Filter>
-    </ClInclude>
-    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\include\cef_download_item.h">
-      <Filter>include</Filter>
-    </ClInclude>
-    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\include\cef_drag_data.h">
-      <Filter>include</Filter>
-    </ClInclude>
-    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\include\cef_drag_handler.h">
-      <Filter>include</Filter>
-    </ClInclude>
-    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\include\cef_focus_handler.h">
-      <Filter>include</Filter>
-    </ClInclude>
-    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\include\cef_frame.h">
-      <Filter>include</Filter>
-    </ClInclude>
-    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\include\cef_geolocation.h">
-      <Filter>include</Filter>
-    </ClInclude>
-    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\include\cef_geolocation_handler.h">
-      <Filter>include</Filter>
-    </ClInclude>
-    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\include\cef_jsdialog_handler.h">
-      <Filter>include</Filter>
-    </ClInclude>
-    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\include\cef_keyboard_handler.h">
-      <Filter>include</Filter>
-    </ClInclude>
-    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\include\cef_life_span_handler.h">
-      <Filter>include</Filter>
-    </ClInclude>
-    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\include\cef_load_handler.h">
-      <Filter>include</Filter>
-    </ClInclude>
-    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\include\cef_menu_model.h">
-      <Filter>include</Filter>
-    </ClInclude>
-    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\include\cef_navigation_entry.h">
-      <Filter>include</Filter>
-    </ClInclude>
-    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\include\cef_origin_whitelist.h">
-      <Filter>include</Filter>
-    </ClInclude>
-    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\include\cef_pack_resources.h">
-      <Filter>include</Filter>
-    </ClInclude>
-    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\include\cef_pack_strings.h">
-      <Filter>include</Filter>
-    </ClInclude>
-    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\include\cef_path_util.h">
-      <Filter>include</Filter>
-    </ClInclude>
-    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\include\cef_print_handler.h">
-      <Filter>include</Filter>
-    </ClInclude>
-    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\include\cef_print_settings.h">
-      <Filter>include</Filter>
-    </ClInclude>
-    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\include\cef_process_message.h">
-      <Filter>include</Filter>
-    </ClInclude>
-    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\include\cef_process_util.h">
-      <Filter>include</Filter>
-    </ClInclude>
-    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\include\cef_render_handler.h">
-      <Filter>include</Filter>
-    </ClInclude>
-    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\include\cef_render_process_handler.h">
-      <Filter>include</Filter>
-    </ClInclude>
-    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\include\cef_request.h">
-      <Filter>include</Filter>
-    </ClInclude>
-    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\include\cef_request_context.h">
-      <Filter>include</Filter>
-    </ClInclude>
-    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\include\cef_request_context_handler.h">
-      <Filter>include</Filter>
-    </ClInclude>
-    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\include\cef_request_handler.h">
-      <Filter>include</Filter>
-    </ClInclude>
-    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\include\cef_resource_bundle_handler.h">
-      <Filter>include</Filter>
-    </ClInclude>
-    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\include\cef_resource_handler.h">
-      <Filter>include</Filter>
-    </ClInclude>
-    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\include\cef_response.h">
-      <Filter>include</Filter>
-    </ClInclude>
-    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\include\cef_runnable.h">
-      <Filter>include</Filter>
-    </ClInclude>
-    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\include\cef_sandbox_win.h">
-      <Filter>include</Filter>
-    </ClInclude>
-    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\include\cef_scheme.h">
-      <Filter>include</Filter>
-    </ClInclude>
-    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\include\cef_stream.h">
-      <Filter>include</Filter>
-    </ClInclude>
-    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\include\cef_string_visitor.h">
-      <Filter>include</Filter>
-    </ClInclude>
-    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\include\cef_task.h">
-      <Filter>include</Filter>
-    </ClInclude>
-    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\include\cef_trace.h">
-      <Filter>include</Filter>
-    </ClInclude>
-    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\include\cef_url.h">
-      <Filter>include</Filter>
-    </ClInclude>
-    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\include\cef_urlrequest.h">
-      <Filter>include</Filter>
-    </ClInclude>
-    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\include\cef_v8.h">
-      <Filter>include</Filter>
-    </ClInclude>
-    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\include\cef_values.h">
-      <Filter>include</Filter>
-    </ClInclude>
-    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\include\cef_version.h">
-      <Filter>include</Filter>
-    </ClInclude>
-    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\include\cef_web_plugin.h">
-      <Filter>include</Filter>
-    </ClInclude>
-    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\include\cef_xml_reader.h">
-      <Filter>include</Filter>
-    </ClInclude>
-    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\include\cef_zip_reader.h">
-      <Filter>include</Filter>
-    </ClInclude>
-    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\include\base\cef_atomic_ref_count.h">
-      <Filter>include\base</Filter>
-    </ClInclude>
-    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\include\base\cef_atomicops.h">
-      <Filter>include\base</Filter>
-    </ClInclude>
-    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\include\base\cef_basictypes.h">
-      <Filter>include\base</Filter>
-    </ClInclude>
-    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\include\base\cef_bind.h">
-      <Filter>include\base</Filter>
-    </ClInclude>
-    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\include\base\cef_bind_helpers.h">
-      <Filter>include\base</Filter>
-    </ClInclude>
-    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\include\base\cef_build.h">
-      <Filter>include\base</Filter>
-    </ClInclude>
-    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\include\base\cef_callback.h">
-      <Filter>include\base</Filter>
-    </ClInclude>
-    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\include\base\cef_callback_forward.h">
-      <Filter>include\base</Filter>
-    </ClInclude>
-    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\include\base\cef_callback_helpers.h">
-      <Filter>include\base</Filter>
-    </ClInclude>
-    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\include\base\cef_callback_list.h">
-      <Filter>include\base</Filter>
-    </ClInclude>
-    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\include\base\cef_cancelable_callback.h">
-      <Filter>include\base</Filter>
-    </ClInclude>
-    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\include\base\cef_lock.h">
-      <Filter>include\base</Filter>
-    </ClInclude>
-    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\include\base\cef_logging.h">
-      <Filter>include\base</Filter>
-    </ClInclude>
-    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\include\base\cef_macros.h">
-      <Filter>include\base</Filter>
-    </ClInclude>
-    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\include\base\cef_move.h">
-      <Filter>include\base</Filter>
-    </ClInclude>
-    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\include\base\cef_platform_thread.h">
-      <Filter>include\base</Filter>
-    </ClInclude>
-    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\include\base\cef_ref_counted.h">
-      <Filter>include\base</Filter>
-    </ClInclude>
-    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\include\base\cef_scoped_ptr.h">
-      <Filter>include\base</Filter>
-    </ClInclude>
-    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\include\base\cef_string16.h">
-      <Filter>include\base</Filter>
-    </ClInclude>
-    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\include\base\cef_template_util.h">
-      <Filter>include\base</Filter>
-    </ClInclude>
-    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\include\base\cef_thread_checker.h">
-      <Filter>include\base</Filter>
-    </ClInclude>
-    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\include\base\cef_thread_collision_warner.h">
-      <Filter>include\base</Filter>
-    </ClInclude>
-    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\include\base\cef_trace_event.h">
-      <Filter>include\base</Filter>
-    </ClInclude>
-    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\include\base\cef_tuple.h">
-      <Filter>include\base</Filter>
-    </ClInclude>
-    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\include\base\cef_weak_ptr.h">
-      <Filter>include\base</Filter>
-    </ClInclude>
-    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\include\base\internal\cef_atomicops_x86_msvc.h">
-      <Filter>include\base\internal</Filter>
-    </ClInclude>
-    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\include\base\internal\cef_bind_internal.h">
-      <Filter>include\base\internal</Filter>
-    </ClInclude>
-    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\include\base\internal\cef_bind_internal_win.h">
-      <Filter>include\base\internal</Filter>
-    </ClInclude>
-    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\include\base\internal\cef_callback_internal.h">
-      <Filter>include\base\internal</Filter>
-    </ClInclude>
-    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\include\base\internal\cef_lock_impl.h">
-      <Filter>include\base\internal</Filter>
-    </ClInclude>
-    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\include\base\internal\cef_raw_scoped_refptr_mismatch_checker.h">
-      <Filter>include\base\internal</Filter>
-    </ClInclude>
-    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\include\base\internal\cef_thread_checker_impl.h">
-      <Filter>include\base\internal</Filter>
-    </ClInclude>
-    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\include\capi\cef_app_capi.h">
-      <Filter>include\capi</Filter>
-    </ClInclude>
-    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\include\capi\cef_auth_callback_capi.h">
-      <Filter>include\capi</Filter>
-    </ClInclude>
-    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\include\capi\cef_base_capi.h">
-      <Filter>include\capi</Filter>
-    </ClInclude>
-    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\include\capi\cef_browser_capi.h">
-      <Filter>include\capi</Filter>
-    </ClInclude>
-    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\include\capi\cef_browser_process_handler_capi.h">
-      <Filter>include\capi</Filter>
-    </ClInclude>
-    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\include\capi\cef_callback_capi.h">
-      <Filter>include\capi</Filter>
-    </ClInclude>
-    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\include\capi\cef_client_capi.h">
-      <Filter>include\capi</Filter>
-    </ClInclude>
-    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\include\capi\cef_command_line_capi.h">
-      <Filter>include\capi</Filter>
-    </ClInclude>
-    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\include\capi\cef_context_menu_handler_capi.h">
-      <Filter>include\capi</Filter>
-    </ClInclude>
-    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\include\capi\cef_cookie_capi.h">
-      <Filter>include\capi</Filter>
-    </ClInclude>
-    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\include\capi\cef_dialog_handler_capi.h">
-      <Filter>include\capi</Filter>
-    </ClInclude>
-    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\include\capi\cef_display_handler_capi.h">
-      <Filter>include\capi</Filter>
-    </ClInclude>
-    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\include\capi\cef_dom_capi.h">
-      <Filter>include\capi</Filter>
-    </ClInclude>
-    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\include\capi\cef_download_handler_capi.h">
-      <Filter>include\capi</Filter>
-    </ClInclude>
-    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\include\capi\cef_download_item_capi.h">
-      <Filter>include\capi</Filter>
-    </ClInclude>
-    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\include\capi\cef_drag_data_capi.h">
-      <Filter>include\capi</Filter>
-    </ClInclude>
-    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\include\capi\cef_drag_handler_capi.h">
-      <Filter>include\capi</Filter>
-    </ClInclude>
-    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\include\capi\cef_focus_handler_capi.h">
-      <Filter>include\capi</Filter>
-    </ClInclude>
-    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\include\capi\cef_frame_capi.h">
-      <Filter>include\capi</Filter>
-    </ClInclude>
-    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\include\capi\cef_geolocation_capi.h">
-      <Filter>include\capi</Filter>
-    </ClInclude>
-    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\include\capi\cef_geolocation_handler_capi.h">
-      <Filter>include\capi</Filter>
-    </ClInclude>
-    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\include\capi\cef_jsdialog_handler_capi.h">
-      <Filter>include\capi</Filter>
-    </ClInclude>
-    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\include\capi\cef_keyboard_handler_capi.h">
-      <Filter>include\capi</Filter>
-    </ClInclude>
-    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\include\capi\cef_life_span_handler_capi.h">
-      <Filter>include\capi</Filter>
-    </ClInclude>
-    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\include\capi\cef_load_handler_capi.h">
-      <Filter>include\capi</Filter>
-    </ClInclude>
-    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\include\capi\cef_menu_model_capi.h">
-      <Filter>include\capi</Filter>
-    </ClInclude>
-    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\include\capi\cef_navigation_entry_capi.h">
-      <Filter>include\capi</Filter>
-    </ClInclude>
-    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\include\capi\cef_origin_whitelist_capi.h">
-      <Filter>include\capi</Filter>
-    </ClInclude>
-    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\include\capi\cef_path_util_capi.h">
-      <Filter>include\capi</Filter>
-    </ClInclude>
-    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\include\capi\cef_print_handler_capi.h">
-      <Filter>include\capi</Filter>
-    </ClInclude>
-    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\include\capi\cef_print_settings_capi.h">
-      <Filter>include\capi</Filter>
-    </ClInclude>
-    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\include\capi\cef_process_message_capi.h">
-      <Filter>include\capi</Filter>
-    </ClInclude>
-    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\include\capi\cef_process_util_capi.h">
-      <Filter>include\capi</Filter>
-    </ClInclude>
-    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\include\capi\cef_render_handler_capi.h">
-      <Filter>include\capi</Filter>
-    </ClInclude>
-    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\include\capi\cef_render_process_handler_capi.h">
-      <Filter>include\capi</Filter>
-    </ClInclude>
-    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\include\capi\cef_request_capi.h">
-      <Filter>include\capi</Filter>
-    </ClInclude>
-    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\include\capi\cef_request_context_capi.h">
-      <Filter>include\capi</Filter>
-    </ClInclude>
-    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\include\capi\cef_request_context_handler_capi.h">
-      <Filter>include\capi</Filter>
-    </ClInclude>
-    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\include\capi\cef_request_handler_capi.h">
-      <Filter>include\capi</Filter>
-    </ClInclude>
-    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\include\capi\cef_resource_bundle_handler_capi.h">
-      <Filter>include\capi</Filter>
-    </ClInclude>
-    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\include\capi\cef_resource_handler_capi.h">
-      <Filter>include\capi</Filter>
-    </ClInclude>
-    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\include\capi\cef_response_capi.h">
-      <Filter>include\capi</Filter>
-    </ClInclude>
-    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\include\capi\cef_scheme_capi.h">
-      <Filter>include\capi</Filter>
-    </ClInclude>
-    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\include\capi\cef_stream_capi.h">
-      <Filter>include\capi</Filter>
-    </ClInclude>
-    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\include\capi\cef_string_visitor_capi.h">
-      <Filter>include\capi</Filter>
-    </ClInclude>
-    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\include\capi\cef_task_capi.h">
-      <Filter>include\capi</Filter>
-    </ClInclude>
-    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\include\capi\cef_trace_capi.h">
-      <Filter>include\capi</Filter>
-    </ClInclude>
-    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\include\capi\cef_url_capi.h">
-      <Filter>include\capi</Filter>
-    </ClInclude>
-    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\include\capi\cef_urlrequest_capi.h">
-      <Filter>include\capi</Filter>
-    </ClInclude>
-    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\include\capi\cef_v8_capi.h">
-      <Filter>include\capi</Filter>
-    </ClInclude>
-    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\include\capi\cef_values_capi.h">
-      <Filter>include\capi</Filter>
-    </ClInclude>
-    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\include\capi\cef_web_plugin_capi.h">
-      <Filter>include\capi</Filter>
-    </ClInclude>
-    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\include\capi\cef_xml_reader_capi.h">
-      <Filter>include\capi</Filter>
-    </ClInclude>
-    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\include\capi\cef_zip_reader_capi.h">
-      <Filter>include\capi</Filter>
-    </ClInclude>
-    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\include\internal\cef_export.h">
-      <Filter>include\internal</Filter>
-    </ClInclude>
-    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\include\internal\cef_logging_internal.h">
-      <Filter>include\internal</Filter>
-    </ClInclude>
-    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\include\internal\cef_ptr.h">
-      <Filter>include\internal</Filter>
-    </ClInclude>
-    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\include\internal\cef_string.h">
-      <Filter>include\internal</Filter>
-    </ClInclude>
-    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\include\internal\cef_string_list.h">
-      <Filter>include\internal</Filter>
-    </ClInclude>
-    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\include\internal\cef_string_map.h">
-      <Filter>include\internal</Filter>
-    </ClInclude>
-    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\include\internal\cef_string_multimap.h">
-      <Filter>include\internal</Filter>
-    </ClInclude>
-    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\include\internal\cef_string_types.h">
-      <Filter>include\internal</Filter>
-    </ClInclude>
-    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\include\internal\cef_string_wrappers.h">
-      <Filter>include\internal</Filter>
-    </ClInclude>
-    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\include\internal\cef_thread_internal.h">
-      <Filter>include\internal</Filter>
-    </ClInclude>
-    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\include\internal\cef_time.h">
-      <Filter>include\internal</Filter>
-    </ClInclude>
-    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\include\internal\cef_trace_event_internal.h">
-      <Filter>include\internal</Filter>
-    </ClInclude>
-    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\include\internal\cef_types.h">
-      <Filter>include\internal</Filter>
-    </ClInclude>
-    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\include\internal\cef_types_win.h">
-      <Filter>include\internal</Filter>
-    </ClInclude>
-    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\include\internal\cef_types_wrappers.h">
-      <Filter>include\internal</Filter>
-    </ClInclude>
-    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\include\internal\cef_win.h">
-      <Filter>include\internal</Filter>
-    </ClInclude>
-    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\include\wrapper\cef_byte_read_handler.h">
-      <Filter>include\wrapper</Filter>
-    </ClInclude>
-    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\include\wrapper\cef_closure_task.h">
-      <Filter>include\wrapper</Filter>
-    </ClInclude>
-    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\include\wrapper\cef_helpers.h">
-      <Filter>include\wrapper</Filter>
-    </ClInclude>
-    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\include\wrapper\cef_message_router.h">
-      <Filter>include\wrapper</Filter>
-    </ClInclude>
-    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\include\wrapper\cef_stream_resource_handler.h">
-      <Filter>include\wrapper</Filter>
-    </ClInclude>
-    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\include\wrapper\cef_xml_object.h">
-      <Filter>include\wrapper</Filter>
-    </ClInclude>
-    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\include\wrapper\cef_zip_archive.h">
-      <Filter>include\wrapper</Filter>
-    </ClInclude>
     <ClInclude Include="fetch_cef-prefix\src\fetch_cef\libcef_dll\transfer_util.h">
       <Filter>libcef_dll</Filter>
     </ClInclude>
@@ -1231,6 +727,510 @@
     </ClInclude>
     <ClInclude Include="fetch_cef-prefix\src\fetch_cef\libcef_dll\wrapper\cef_browser_info_map.h">
       <Filter>libcef_dll\wrapper</Filter>
+    </ClInclude>
+    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\include\cef_app.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\include\cef_auth_callback.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\include\cef_base.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\include\cef_browser.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\include\cef_browser_process_handler.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\include\cef_callback.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\include\cef_client.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\include\cef_command_line.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\include\cef_context_menu_handler.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\include\cef_cookie.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\include\cef_dialog_handler.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\include\cef_display_handler.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\include\cef_dom.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\include\cef_download_handler.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\include\cef_download_item.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\include\cef_drag_data.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\include\cef_drag_handler.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\include\cef_focus_handler.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\include\cef_frame.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\include\cef_geolocation.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\include\cef_geolocation_handler.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\include\cef_jsdialog_handler.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\include\cef_keyboard_handler.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\include\cef_life_span_handler.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\include\cef_load_handler.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\include\cef_menu_model.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\include\cef_navigation_entry.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\include\cef_origin_whitelist.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\include\cef_pack_resources.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\include\cef_pack_strings.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\include\cef_path_util.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\include\cef_print_handler.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\include\cef_print_settings.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\include\cef_process_message.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\include\cef_process_util.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\include\cef_render_handler.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\include\cef_render_process_handler.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\include\cef_request.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\include\cef_request_context.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\include\cef_request_context_handler.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\include\cef_request_handler.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\include\cef_resource_bundle_handler.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\include\cef_resource_handler.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\include\cef_response.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\include\cef_runnable.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\include\cef_sandbox_win.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\include\cef_scheme.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\include\cef_stream.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\include\cef_string_visitor.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\include\cef_task.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\include\cef_trace.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\include\cef_url.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\include\cef_urlrequest.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\include\cef_v8.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\include\cef_values.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\include\cef_version.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\include\cef_web_plugin.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\include\cef_xml_reader.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\include\cef_zip_reader.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\include\base\internal\cef_atomicops_x86_msvc.h">
+      <Filter>include\base\internal</Filter>
+    </ClInclude>
+    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\include\base\internal\cef_bind_internal.h">
+      <Filter>include\base\internal</Filter>
+    </ClInclude>
+    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\include\base\internal\cef_bind_internal_win.h">
+      <Filter>include\base\internal</Filter>
+    </ClInclude>
+    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\include\base\internal\cef_callback_internal.h">
+      <Filter>include\base\internal</Filter>
+    </ClInclude>
+    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\include\base\internal\cef_lock_impl.h">
+      <Filter>include\base\internal</Filter>
+    </ClInclude>
+    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\include\base\internal\cef_raw_scoped_refptr_mismatch_checker.h">
+      <Filter>include\base\internal</Filter>
+    </ClInclude>
+    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\include\base\internal\cef_thread_checker_impl.h">
+      <Filter>include\base\internal</Filter>
+    </ClInclude>
+    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\include\base\cef_atomic_ref_count.h">
+      <Filter>include\base</Filter>
+    </ClInclude>
+    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\include\base\cef_atomicops.h">
+      <Filter>include\base</Filter>
+    </ClInclude>
+    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\include\base\cef_basictypes.h">
+      <Filter>include\base</Filter>
+    </ClInclude>
+    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\include\base\cef_bind.h">
+      <Filter>include\base</Filter>
+    </ClInclude>
+    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\include\base\cef_bind_helpers.h">
+      <Filter>include\base</Filter>
+    </ClInclude>
+    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\include\base\cef_build.h">
+      <Filter>include\base</Filter>
+    </ClInclude>
+    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\include\base\cef_callback.h">
+      <Filter>include\base</Filter>
+    </ClInclude>
+    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\include\base\cef_callback_forward.h">
+      <Filter>include\base</Filter>
+    </ClInclude>
+    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\include\base\cef_callback_helpers.h">
+      <Filter>include\base</Filter>
+    </ClInclude>
+    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\include\base\cef_callback_list.h">
+      <Filter>include\base</Filter>
+    </ClInclude>
+    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\include\base\cef_cancelable_callback.h">
+      <Filter>include\base</Filter>
+    </ClInclude>
+    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\include\base\cef_lock.h">
+      <Filter>include\base</Filter>
+    </ClInclude>
+    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\include\base\cef_logging.h">
+      <Filter>include\base</Filter>
+    </ClInclude>
+    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\include\base\cef_macros.h">
+      <Filter>include\base</Filter>
+    </ClInclude>
+    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\include\base\cef_move.h">
+      <Filter>include\base</Filter>
+    </ClInclude>
+    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\include\base\cef_platform_thread.h">
+      <Filter>include\base</Filter>
+    </ClInclude>
+    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\include\base\cef_ref_counted.h">
+      <Filter>include\base</Filter>
+    </ClInclude>
+    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\include\base\cef_scoped_ptr.h">
+      <Filter>include\base</Filter>
+    </ClInclude>
+    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\include\base\cef_string16.h">
+      <Filter>include\base</Filter>
+    </ClInclude>
+    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\include\base\cef_template_util.h">
+      <Filter>include\base</Filter>
+    </ClInclude>
+    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\include\base\cef_thread_checker.h">
+      <Filter>include\base</Filter>
+    </ClInclude>
+    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\include\base\cef_thread_collision_warner.h">
+      <Filter>include\base</Filter>
+    </ClInclude>
+    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\include\base\cef_trace_event.h">
+      <Filter>include\base</Filter>
+    </ClInclude>
+    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\include\base\cef_tuple.h">
+      <Filter>include\base</Filter>
+    </ClInclude>
+    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\include\base\cef_weak_ptr.h">
+      <Filter>include\base</Filter>
+    </ClInclude>
+    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\include\capi\cef_app_capi.h">
+      <Filter>include\capi</Filter>
+    </ClInclude>
+    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\include\capi\cef_auth_callback_capi.h">
+      <Filter>include\capi</Filter>
+    </ClInclude>
+    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\include\capi\cef_base_capi.h">
+      <Filter>include\capi</Filter>
+    </ClInclude>
+    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\include\capi\cef_browser_capi.h">
+      <Filter>include\capi</Filter>
+    </ClInclude>
+    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\include\capi\cef_browser_process_handler_capi.h">
+      <Filter>include\capi</Filter>
+    </ClInclude>
+    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\include\capi\cef_callback_capi.h">
+      <Filter>include\capi</Filter>
+    </ClInclude>
+    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\include\capi\cef_client_capi.h">
+      <Filter>include\capi</Filter>
+    </ClInclude>
+    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\include\capi\cef_command_line_capi.h">
+      <Filter>include\capi</Filter>
+    </ClInclude>
+    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\include\capi\cef_context_menu_handler_capi.h">
+      <Filter>include\capi</Filter>
+    </ClInclude>
+    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\include\capi\cef_cookie_capi.h">
+      <Filter>include\capi</Filter>
+    </ClInclude>
+    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\include\capi\cef_dialog_handler_capi.h">
+      <Filter>include\capi</Filter>
+    </ClInclude>
+    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\include\capi\cef_display_handler_capi.h">
+      <Filter>include\capi</Filter>
+    </ClInclude>
+    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\include\capi\cef_dom_capi.h">
+      <Filter>include\capi</Filter>
+    </ClInclude>
+    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\include\capi\cef_download_handler_capi.h">
+      <Filter>include\capi</Filter>
+    </ClInclude>
+    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\include\capi\cef_download_item_capi.h">
+      <Filter>include\capi</Filter>
+    </ClInclude>
+    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\include\capi\cef_drag_data_capi.h">
+      <Filter>include\capi</Filter>
+    </ClInclude>
+    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\include\capi\cef_drag_handler_capi.h">
+      <Filter>include\capi</Filter>
+    </ClInclude>
+    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\include\capi\cef_focus_handler_capi.h">
+      <Filter>include\capi</Filter>
+    </ClInclude>
+    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\include\capi\cef_frame_capi.h">
+      <Filter>include\capi</Filter>
+    </ClInclude>
+    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\include\capi\cef_geolocation_capi.h">
+      <Filter>include\capi</Filter>
+    </ClInclude>
+    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\include\capi\cef_geolocation_handler_capi.h">
+      <Filter>include\capi</Filter>
+    </ClInclude>
+    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\include\capi\cef_jsdialog_handler_capi.h">
+      <Filter>include\capi</Filter>
+    </ClInclude>
+    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\include\capi\cef_keyboard_handler_capi.h">
+      <Filter>include\capi</Filter>
+    </ClInclude>
+    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\include\capi\cef_life_span_handler_capi.h">
+      <Filter>include\capi</Filter>
+    </ClInclude>
+    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\include\capi\cef_load_handler_capi.h">
+      <Filter>include\capi</Filter>
+    </ClInclude>
+    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\include\capi\cef_menu_model_capi.h">
+      <Filter>include\capi</Filter>
+    </ClInclude>
+    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\include\capi\cef_navigation_entry_capi.h">
+      <Filter>include\capi</Filter>
+    </ClInclude>
+    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\include\capi\cef_origin_whitelist_capi.h">
+      <Filter>include\capi</Filter>
+    </ClInclude>
+    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\include\capi\cef_path_util_capi.h">
+      <Filter>include\capi</Filter>
+    </ClInclude>
+    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\include\capi\cef_print_handler_capi.h">
+      <Filter>include\capi</Filter>
+    </ClInclude>
+    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\include\capi\cef_print_settings_capi.h">
+      <Filter>include\capi</Filter>
+    </ClInclude>
+    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\include\capi\cef_process_message_capi.h">
+      <Filter>include\capi</Filter>
+    </ClInclude>
+    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\include\capi\cef_process_util_capi.h">
+      <Filter>include\capi</Filter>
+    </ClInclude>
+    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\include\capi\cef_render_handler_capi.h">
+      <Filter>include\capi</Filter>
+    </ClInclude>
+    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\include\capi\cef_render_process_handler_capi.h">
+      <Filter>include\capi</Filter>
+    </ClInclude>
+    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\include\capi\cef_request_capi.h">
+      <Filter>include\capi</Filter>
+    </ClInclude>
+    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\include\capi\cef_request_context_capi.h">
+      <Filter>include\capi</Filter>
+    </ClInclude>
+    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\include\capi\cef_request_context_handler_capi.h">
+      <Filter>include\capi</Filter>
+    </ClInclude>
+    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\include\capi\cef_request_handler_capi.h">
+      <Filter>include\capi</Filter>
+    </ClInclude>
+    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\include\capi\cef_resource_bundle_handler_capi.h">
+      <Filter>include\capi</Filter>
+    </ClInclude>
+    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\include\capi\cef_resource_handler_capi.h">
+      <Filter>include\capi</Filter>
+    </ClInclude>
+    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\include\capi\cef_response_capi.h">
+      <Filter>include\capi</Filter>
+    </ClInclude>
+    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\include\capi\cef_scheme_capi.h">
+      <Filter>include\capi</Filter>
+    </ClInclude>
+    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\include\capi\cef_stream_capi.h">
+      <Filter>include\capi</Filter>
+    </ClInclude>
+    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\include\capi\cef_string_visitor_capi.h">
+      <Filter>include\capi</Filter>
+    </ClInclude>
+    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\include\capi\cef_task_capi.h">
+      <Filter>include\capi</Filter>
+    </ClInclude>
+    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\include\capi\cef_trace_capi.h">
+      <Filter>include\capi</Filter>
+    </ClInclude>
+    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\include\capi\cef_url_capi.h">
+      <Filter>include\capi</Filter>
+    </ClInclude>
+    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\include\capi\cef_urlrequest_capi.h">
+      <Filter>include\capi</Filter>
+    </ClInclude>
+    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\include\capi\cef_v8_capi.h">
+      <Filter>include\capi</Filter>
+    </ClInclude>
+    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\include\capi\cef_values_capi.h">
+      <Filter>include\capi</Filter>
+    </ClInclude>
+    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\include\capi\cef_web_plugin_capi.h">
+      <Filter>include\capi</Filter>
+    </ClInclude>
+    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\include\capi\cef_xml_reader_capi.h">
+      <Filter>include\capi</Filter>
+    </ClInclude>
+    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\include\capi\cef_zip_reader_capi.h">
+      <Filter>include\capi</Filter>
+    </ClInclude>
+    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\include\internal\cef_export.h">
+      <Filter>include\internal</Filter>
+    </ClInclude>
+    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\include\internal\cef_logging_internal.h">
+      <Filter>include\internal</Filter>
+    </ClInclude>
+    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\include\internal\cef_ptr.h">
+      <Filter>include\internal</Filter>
+    </ClInclude>
+    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\include\internal\cef_string.h">
+      <Filter>include\internal</Filter>
+    </ClInclude>
+    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\include\internal\cef_string_list.h">
+      <Filter>include\internal</Filter>
+    </ClInclude>
+    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\include\internal\cef_string_map.h">
+      <Filter>include\internal</Filter>
+    </ClInclude>
+    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\include\internal\cef_string_multimap.h">
+      <Filter>include\internal</Filter>
+    </ClInclude>
+    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\include\internal\cef_string_types.h">
+      <Filter>include\internal</Filter>
+    </ClInclude>
+    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\include\internal\cef_string_wrappers.h">
+      <Filter>include\internal</Filter>
+    </ClInclude>
+    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\include\internal\cef_thread_internal.h">
+      <Filter>include\internal</Filter>
+    </ClInclude>
+    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\include\internal\cef_time.h">
+      <Filter>include\internal</Filter>
+    </ClInclude>
+    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\include\internal\cef_trace_event_internal.h">
+      <Filter>include\internal</Filter>
+    </ClInclude>
+    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\include\internal\cef_types.h">
+      <Filter>include\internal</Filter>
+    </ClInclude>
+    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\include\internal\cef_types_win.h">
+      <Filter>include\internal</Filter>
+    </ClInclude>
+    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\include\internal\cef_types_wrappers.h">
+      <Filter>include\internal</Filter>
+    </ClInclude>
+    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\include\internal\cef_win.h">
+      <Filter>include\internal</Filter>
+    </ClInclude>
+    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\include\wrapper\cef_byte_read_handler.h">
+      <Filter>include\wrapper</Filter>
+    </ClInclude>
+    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\include\wrapper\cef_closure_task.h">
+      <Filter>include\wrapper</Filter>
+    </ClInclude>
+    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\include\wrapper\cef_helpers.h">
+      <Filter>include\wrapper</Filter>
+    </ClInclude>
+    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\include\wrapper\cef_message_router.h">
+      <Filter>include\wrapper</Filter>
+    </ClInclude>
+    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\include\wrapper\cef_stream_resource_handler.h">
+      <Filter>include\wrapper</Filter>
+    </ClInclude>
+    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\include\wrapper\cef_xml_object.h">
+      <Filter>include\wrapper</Filter>
+    </ClInclude>
+    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\include\wrapper\cef_zip_archive.h">
+      <Filter>include\wrapper</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

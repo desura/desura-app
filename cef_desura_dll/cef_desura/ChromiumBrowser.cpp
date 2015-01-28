@@ -15,6 +15,9 @@
 
 #include "ChromiumBrowser.h"
 #include "include/cef_app.h"
+#if defined(_WIN32)
+#include "include/cef_sandbox_win.h"
+#endif
 #include "JavaScriptExtender.h"
 #include "SchemeExtender.h"
 
@@ -69,6 +72,10 @@ private:
 
 extern "C"
 {
+#if defined(_WIN32)
+	#pragma comment(lib, "cef_sandbox.lib")
+#endif
+
 	DLLINTERFACE void CEF_DoMsgLoop()
 	{
 		CefDoMessageLoopWork();
@@ -81,13 +88,19 @@ extern "C"
 
 		cef_string_copy(cachePath, strlen(cachePath), &settings.cache_path);
 		cef_string_copy(userAgent, strlen(userAgent), &settings.user_agent);
-		settings.no_sandbox = true;
 
 		settings.multi_threaded_message_loop = threaded;
 
 		CefRefPtr<SimpleApp> app(new SimpleApp);
 
 		void* sandbox_info = NULL;
+
+#if defined(_WIN32)
+		CefScopedSandboxInfo scoped_sandbox;
+		sandbox_info = scoped_sandbox.sandbox_info();
+#else
+		settings.no_sandbox = true;
+#endif
 
 		if (!CefInitialize(args, settings, app.get(), sandbox_info ))
 			return false;
@@ -160,7 +173,7 @@ public:
 	BrowserTask(CefBrowser* browser, ACTION action)
 	{
 		m_pBrowser = browser;
-		ref_count_.AddRef();
+		this->AddRef();
 		m_Action = action;
 	}
 

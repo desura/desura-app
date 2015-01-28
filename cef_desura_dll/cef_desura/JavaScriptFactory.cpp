@@ -99,7 +99,7 @@ ChromiumDLL::JSObjHandle JavaScriptFactory::CreateObject(void* userData)
 ChromiumDLL::JSObjHandle JavaScriptFactory::CreateFunction(const char* name, ChromiumDLL::JavaScriptExtenderI* handler)
 {
 	JavaScriptExtender* e = new JavaScriptExtender(handler);
-	return new JavaScriptObject(CefV8Value::CreateFunction(name, *e));
+	return new JavaScriptObject( CefV8Value::CreateFunction( name, e->getCefV8Handler() ) );
 }
 
 ChromiumDLL::JSObjHandle JavaScriptFactory::CreateException(const char* value)
