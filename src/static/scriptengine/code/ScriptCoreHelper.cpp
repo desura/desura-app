@@ -28,7 +28,7 @@ Contact us at legal@badjuju.com.
 
 void MessageCallback(v8::Handle<v8::Message> message, v8::Handle<v8::Value> data)
 {
-	v8::String::AsciiValue exception_str(message->Get());
+	v8::String::Utf8Value exception_str( message->Get() );
 	const char* ex = *exception_str;
 
 	WarningS("v8 Message Callback: {0}\n", ex);

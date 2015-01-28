@@ -108,7 +108,7 @@ public:
 
 	virtual int getStringValue(char* buff, size_t buffsize)
 	{
-		v8::String::AsciiValue ascii(m_v8Object->ToString());
+		v8::String::Utf8Value ascii( m_v8Object->ToString() );
 
 		if (!buff)
 			return strlen(*ascii);

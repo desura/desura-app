@@ -206,8 +206,6 @@ elseif(CEF_EXTERNAL_PATH AND WIN32)
     ${CEF_EXTERNAL_PATH}/Debug/avcodec-53.dll
     ${CEF_EXTERNAL_PATH}/Debug/avformat-53.dll
     ${CEF_EXTERNAL_PATH}/Debug/avutil-51.dll
-    ${CEF_EXTERNAL_PATH}/Debug/cef_desura.dll
-    ${CEF_EXTERNAL_PATH}/Debug/icudt.dll
   )
 	  
   add_copy_target_dir_step(fetch_cef_external ${CEF_EXTERNAL_PATH}/Debug/resources)
@@ -276,9 +274,7 @@ else(BUILD_CEF)
       ${source_dir}/avcodec-53.dll
       ${source_dir}/avformat-53.dll
       ${source_dir}/avutil-51.dll
-      ${source_dir}/cef_desura.dll
       ${source_dir}/gcswf32.dll
-      ${source_dir}/icudt.dll
       ${source_dir}/plugin.vch
       ${source_dir}/zlibwapi.dll)
   endif()	
