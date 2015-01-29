@@ -23,6 +23,7 @@ Contact us at legal@badjuju.com.
 #include "Common.h"
 #include "cef_desura_includes/ChromiumBrowserI.h"
 #include "v8.h"
+#include "ScriptCoreInternal.h"
 
 #include <vector>
 
@@ -31,14 +32,14 @@ class JSObject : public ChromiumDLL::JavaScriptObjectI
 public:
 	JSObject(v8::Handle<v8::Value> obj, bool isException = false)
 	{
-		m_v8Object = v8::Persistent<v8::Value>::New(obj);
+		m_v8Object = obj;
 		m_iRefCount = 1;
 		m_bIsException = isException;
 	}
 
 	virtual ChromiumDLL::JavaScriptObjectI* clone()
 	{
-		return new JSObject(m_v8Object);
+		return new JSObject( m_v8Object );
 	}
 
 	virtual bool isUndefined()
@@ -167,7 +168,7 @@ public:
 
 	virtual int getArrayLength()
 	{
-		v8::HandleScope handle_scope;
+		v8::HandleScope handle_scope( ScriptCoreInternal::getIsolate() );
 		v8::Local<v8::Object> obj = m_v8Object->ToObject();
 		v8::Local<v8::Array> arr = v8::Local<v8::Array>::Cast(obj);
 		return arr->Length();
@@ -207,20 +208,19 @@ public:
 
 	virtual void* getUserObject()
 	{
-		v8::HandleScope handle_scope;
+		v8::HandleScope handle_scope( ScriptCoreInternal::getIsolate() );
 
 		if (m_v8Object->IsObject() == false)
 			return nullptr;
 
 		v8::Local<v8::Object> obj = m_v8Object->ToObject();
-		v8::Local<v8::String> key = v8::String::New("ScriptCore::UserData");
+		v8::Local<v8::String> key = v8::String::NewFromUtf8( ScriptCoreInternal::getIsolate(), "ScriptCore::UserData" );
 
 		if(obj->Has(key))
 			return v8::External::Cast(*(obj->Get(key)))->Value();
 
 		return nullptr;
 	}
-
 
 	template <typename T>
 	T* getUserObject()
@@ -230,13 +230,13 @@ public:
 
 	v8::Persistent<v8::Value> getNative()
 	{
-		return m_v8Object;
+		return v8::Persistent<v8::Value>( ScriptCoreInternal::getIsolate(), m_v8Object );
 	}
 
 private:
 	bool m_bIsException;
 	uint32 m_iRefCount;
-	v8::Persistent<v8::Value> m_v8Object;
+	v8::Handle<v8::Value> m_v8Object;
 };
 
 
@@ -246,81 +246,81 @@ class JSFactory : public ChromiumDLL::JavaScriptFactoryI
 public:
 	virtual ChromiumDLL::JSObjHandle CreateUndefined()
 	{
-		v8::HandleScope handle_scope;
-		return new JSObject(v8::Undefined());
+		v8::HandleScope handle_scope( ScriptCoreInternal::getIsolate() );
+		return new JSObject( v8::Undefined( ScriptCoreInternal::getIsolate() ) );
 	}
 
 	virtual ChromiumDLL::JSObjHandle CreateNull()
 	{
-		v8::HandleScope handle_scope;
-		return new JSObject(v8::Null());
+		v8::HandleScope handle_scope( ScriptCoreInternal::getIsolate() );
+		return new JSObject( v8::Null( ScriptCoreInternal::getIsolate() ) );
 	}
 
 	virtual ChromiumDLL::JSObjHandle CreateBool(bool value)
 	{
-		v8::HandleScope handle_scope;
-		return new JSObject(v8::Boolean::New(value));
+		v8::HandleScope handle_scope( ScriptCoreInternal::getIsolate() );
+		return new JSObject( v8::Boolean::New( ScriptCoreInternal::getIsolate(), value ) );
 	}
 
 	virtual ChromiumDLL::JSObjHandle CreateInt(int value)
 	{
-		v8::HandleScope handle_scope;
-		return new JSObject(v8::Int32::New(value));
+		v8::HandleScope handle_scope( ScriptCoreInternal::getIsolate() );
+		return new JSObject( v8::Int32::New( ScriptCoreInternal::getIsolate(), value ) );
 	}
 
 	virtual ChromiumDLL::JSObjHandle CreateDouble(double value)
 	{
-		v8::HandleScope handle_scope;
-		return new JSObject(v8::Number::New(value));
+		v8::HandleScope handle_scope( ScriptCoreInternal::getIsolate() );
+		return new JSObject( v8::Number::New( ScriptCoreInternal::getIsolate(), value ) );
 	}
 
 	virtual ChromiumDLL::JSObjHandle CreateString(const char* value)
 	{
-		v8::HandleScope handle_scope;
+		v8::HandleScope handle_scope( ScriptCoreInternal::getIsolate() );
 
 		if (!value)
-			return new JSObject(v8::String::New(""));
+			return new JSObject( v8::String::NewFromUtf8( ScriptCoreInternal::getIsolate(), "" ) );
 
-		return new JSObject(v8::String::New(value));
+		return new JSObject( v8::String::NewFromUtf8( ScriptCoreInternal::getIsolate(), value ) );
 	}
 
 	virtual ChromiumDLL::JSObjHandle CreateObject()
 	{
-		v8::HandleScope handle_scope;
-		return new JSObject(v8::Object::New());
+		v8::HandleScope handle_scope( ScriptCoreInternal::getIsolate() );
+		return new JSObject( v8::Object::New( ScriptCoreInternal::getIsolate() ) );
 	}
 
 	virtual ChromiumDLL::JSObjHandle CreateObject(void* userData)
 	{
-		v8::HandleScope handle_scope;
-		v8::Local<v8::Object> obj = v8::Object::New();
-		v8::Local<v8::Value> data = v8::External::New(userData);
+		v8::HandleScope handle_scope( ScriptCoreInternal::getIsolate() );
+		v8::Local<v8::Object> obj = v8::Object::New( ScriptCoreInternal::getIsolate() );
+		v8::Local<v8::Value> data = v8::External::New( ScriptCoreInternal::getIsolate(), userData );
 
-		obj->Set(v8::String::New("ScriptCore::UserData"), data);
+		obj->Set( v8::String::NewFromUtf8( ScriptCoreInternal::getIsolate(), "ScriptCore::UserData" ), data );
 
 		return new JSObject(obj);
 	}
 
 	virtual ChromiumDLL::JSObjHandle CreateArray(int length)
 	{
-		v8::HandleScope handle_scope;
-		return new JSObject(v8::Array::New(length));
+		v8::HandleScope handle_scope( ScriptCoreInternal::getIsolate() );
+		return new JSObject( v8::Array::New( ScriptCoreInternal::getIsolate(), length ) );
 	}
 
 	virtual ChromiumDLL::JSObjHandle CreateFunction(const char* name, ChromiumDLL::JavaScriptExtenderI* handler)
 	{
-		v8::HandleScope handle_scope;
+		v8::HandleScope handle_scope( ScriptCoreInternal::getIsolate() );
 		return nullptr;
 	}
 
 	virtual ChromiumDLL::JSObjHandle CreateException(const char* value)
 	{
-		v8::HandleScope handle_scope;
+		v8::HandleScope handle_scope( ScriptCoreInternal::getIsolate() );
 
 		if (!value)
-			return new JSObject(v8::String::New(""), true);
+			return new JSObject( v8::String::NewFromUtf8( ScriptCoreInternal::getIsolate(), "" ), true );
 
-		return new JSObject(v8::String::New(value), true);
+		return new JSObject( v8::String::NewFromUtf8( ScriptCoreInternal::getIsolate(), value ), true );
 	}
 };
 
@@ -336,13 +336,13 @@ public:
 
 	virtual v8::Handle<v8::FunctionTemplate> GetNativeFunction(v8::Handle<v8::String> name)
 	{
-		v8::String::AsciiValue ascii(name);
-		return v8::FunctionTemplate::New(FunctionCallbackImpl, v8::External::New(this));
+		v8::String::Utf8Value ascii( name );
+		return v8::FunctionTemplate::New( ScriptCoreInternal::getIsolate(), FunctionCallbackImpl, v8::External::New( ScriptCoreInternal::getIsolate(), this ) );
 	}
 
-	static v8::Handle<v8::Value> FunctionCallbackImpl(const v8::Arguments& args)
+	static void FunctionCallbackImpl( const v8::FunctionCallbackInfo<v8::Value>& args )
 	{
-		v8::HandleScope handle_scope;
+		v8::HandleScope handle_scope( ScriptCoreInternal::getIsolate() );
 		JSExtension* handler = static_cast<JSExtension*>(v8::External::Cast(*(args.Data()))->Value());
 
 		ChromiumDLL::JSObjHandle* argv = new ChromiumDLL::JSObjHandle[args.Length()];
@@ -351,11 +351,10 @@ public:
 			argv[i] = new JSObject(args[i]);
 
 		ChromiumDLL::JSObjHandle  obj(new JSObject(args.This()));
-		v8::Handle<v8::Value> value = v8::Null();
 
 		v8::Local<v8::Function> funct = args.Callee();
 		v8::Handle<v8::Value> name = funct->GetName();
-		v8::String::AsciiValue str(name);
+		v8::String::Utf8Value str( name );
 
 		try
 		{
@@ -373,17 +372,15 @@ public:
 			JSObject *native = dynamic_cast<JSObject*>(ret.get());
 
 			if (native)
-				value = native->getNative();
+				native->getNative();
 
 			ret->delRef();
 		}
 		catch (std::exception& e)
 		{
 			delete [] argv;
-			value = v8::ThrowException(v8::String::New(e.what()));
+			ScriptCoreInternal::getIsolate()->ThrowException( v8::String::NewFromUtf8( ScriptCoreInternal::getIsolate(), e.what() ) );
 		}
-
-		return value;
 	}
 
 protected:
@@ -418,7 +415,7 @@ v8::ExtensionConfiguration* RegisterJSBindings()
 
 		for (size_t x=0; x<list.size(); x++)
 		{
-			v8::DeclareExtension de(new JSExtension(list[x]));
+			v8::RegisterExtension( new JSExtension( list[ x ] ) );
 			nameList[x] = list[x]->getName();
 		}
 

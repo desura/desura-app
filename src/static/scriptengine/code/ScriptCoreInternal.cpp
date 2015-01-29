@@ -80,8 +80,6 @@ void ScriptCoreInternal::init()
 		{
 			s_IsInit = true;
 			v8::V8::InitializeICU();
-			m_platform = v8::platform::CreateDefaultPlatform();
-			v8::V8::InitializePlatform( m_platform );
 			v8::V8::Initialize();
 
 			ShellArrayBufferAllocator array_buffer_allocator;
@@ -112,9 +110,6 @@ void ScriptCoreInternal::del()
 
 	v8::V8::Dispose();
 	v8::V8::ShutdownPlatform();
-
-	delete m_platform;
-	m_platform = nullptr;
 }
 
 void ScriptCoreInternal::runString(const char* string)
