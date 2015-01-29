@@ -791,7 +791,7 @@ namespace ChromiumDLL
 extern "C"
 {
 	DLLINTERFACE void CEF_DoMsgLoop();
-	DLLINTERFACE bool CEF_Init(bool threaded, const char* cachePath, const char* logPath, const char* userAgent);
+	DLLINTERFACE bool CEF_Init(bool threaded, const char* cachePath, const char* logPath, const char* userAgent, void* instance );
 	DLLINTERFACE void CEF_Stop();
 
 	DLLINTERFACE bool CEF_RegisterJSExtender(ChromiumDLL::JavaScriptExtenderI* extender);

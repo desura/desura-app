@@ -81,9 +81,13 @@ extern "C"
 		CefDoMessageLoopWork();
 	}
 
-	DLLINTERFACE bool CEF_Init(bool threaded, const char* cachePath, const char* logPath, const char* userAgent)
+	DLLINTERFACE bool CEF_Init( bool threaded, const char* cachePath, const char* logPath, const char* userAgent, void* instance )
 	{
+#if defined(_WIN32)
+		CefMainArgs args( static_cast< HINSTANCE >(instance) );
+#else
 		CefMainArgs args;
+#endif
 		CefSettings settings;
 
 		cef_string_copy(cachePath, strlen(cachePath), &settings.cache_path);

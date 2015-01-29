@@ -23,14 +23,16 @@ Contact us at legal@badjuju.com.
 #include "Common.h"
 #include "gcWCUtil_Legacy.h"
 
+#ifdef WIN32
+#include "DesuraWinApp.h"
+#include "DesuraWnd.h"
+#endif
 
 
-
-
-typedef bool (*CEF_InitFn)(bool, const char*, const char*, const char*);
+typedef bool (*CEF_InitFn)(bool, const char*, const char*, const char*, void*);
 typedef void(*CEF_SetApiVersionFn)(int);
 
-typedef bool(*CEF_InitFn)(bool, const char*, const char*, const char*);
+typedef bool(*CEF_InitFn)(bool, const char*, const char*, const char*, void*);
 typedef void(*CEF_StopFn)();
 
 typedef bool(*CEF_RegisterJSExtenderFn)(ChromiumDLL::JavaScriptExtenderI*);
@@ -170,7 +172,7 @@ public:
 		gcAssert(CEF_Init);
 
 		if (CEF_Init)
-			return CEF_Init(threaded, cachePath, logPath, userAgent);
+			return CEF_Init( threaded, cachePath, logPath, userAgent, Desurium::CDesuraWnd::GetInstanceHandle() );
 
 		return false;
 	}

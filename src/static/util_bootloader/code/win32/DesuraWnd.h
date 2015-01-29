@@ -136,7 +136,7 @@ namespace Desurium
 
 		void CreatePointFont(int nSize, const char* szName)
 		{
-			m_hFont = CreateFont(nSize, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, szName);
+			m_hFont = CreateFont(nSize, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, reinterpret_cast<LPCTSTR>(szName));
 		}
 
 		operator HFONT ()
