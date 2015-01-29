@@ -125,11 +125,12 @@ void ScriptCoreInternal::runString(const char* string)
 	if (!string)
 		throw gcException(ERR_INVALID, "String is null");
 
-	v8::Context::Scope context_scope(m_v8Context);
 	v8::HandleScope handle_scope( m_isolate );
-
+	v8::Context::Scope context_scope( m_v8Context );
 	v8::TryCatch try_catch;
-	v8::Handle<v8::Script> script = v8::Script::Compile(v8::String::New(string), v8::String::New("StringExe"));
+	v8::Handle<v8::String> source = v8::String::NewFromUtf8( m_isolate, string );
+	v8::ScriptOrigin origin( v8::String::NewFromUtf8( m_isolate, "StringExe" ) );
+	v8::Handle<v8::Script> script = v8::Script::Compile( source, &origin );
 
 	if (script.IsEmpty())
 	{
@@ -149,15 +150,12 @@ void ScriptCoreInternal::runScript(const char* file, const char* buff, uint32 si
 	if (s_Disabled)
 		throw gcException(ERR_V8, "V8 Internal error");
 
-	// Create a stack-allocated handle scope.
-	v8::HandleScope handle_scope;
-
-	// Enter the created context for compiling and
-	// running the hello world script.
-	v8::Context::Scope context_scope(m_v8Context);
-
-	// Compile the source code.
-	v8::Handle<v8::Script> script = v8::Script::Compile(v8::String::New(buff, size), v8::String::New(file));
+	v8::HandleScope handle_scope( m_isolate );
+	v8::Context::Scope context_scope( m_v8Context );
+	v8::TryCatch try_catch;
+	v8::Handle<v8::String> source = v8::String::NewFromUtf8( m_isolate, buff, v8::String::kNormalString, size );
+	v8::ScriptOrigin origin( v8::String::NewFromUtf8( m_isolate, file ) );
+	v8::Handle<v8::Script> script = v8::Script::Compile( source, &origin );
 
 	if (script.IsEmpty())
 		throw gcException(ERR_INVALID, "Failed to parse script file");
@@ -175,7 +173,7 @@ void ScriptCoreInternal::doRunScript(v8::Handle<v8::Script> script)
 	if (result.IsEmpty())
 	{
 		v8::Handle<v8::Value> exception = trycatch.Exception();
-		v8::String::AsciiValue exception_str(exception);
+		v8::String::Utf8Value exception_str(exception);
 		throw gcException(ERR_INVALID, gcString("v8 had exception: {0}", *exception_str));
 	}
 }
@@ -184,7 +182,7 @@ gcString ScriptCoreInternal::reportException(v8::TryCatch* try_catch)
 {
 	gcString out;
 
-	v8::HandleScope handle_scope;
+	v8::HandleScope handle_scope( m_isolate );
 	v8::String::Utf8Value exception(try_catch->Exception());
 
 	const char* exception_string = ToCString(exception);
