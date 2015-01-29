@@ -21,9 +21,9 @@ Contact us at legal@badjuju.com.
 
 #pragma once
 
-
 #include <windows.h>
 #include <cassert>
+
 
 namespace Desurium
 {
@@ -218,7 +218,7 @@ namespace Desurium
 
 		HICON LoadIcon(int nResourceId)
 		{
-			return ::LoadIcon(GetInstanceHandle(), MAKEINTRESOURCE(nResourceId));
+			return ::LoadIcon( CDesuraWnd::GetInstanceHandle(), MAKEINTRESOURCE( nResourceId ) );
 		}
 
 		HWND SetCapture()
@@ -268,7 +268,9 @@ namespace Desurium
 
 		bool RegisterClass(WNDCLASS *pClass);
 
-		static void BeginThread(ThreadFn funct, void* pData);
+		static void SetInstanceHandle( HINSTANCE hInstance );
+		static HINSTANCE GetInstanceHandle();
+		static void BeginThread( ThreadFn funct, void* pData );
 
 	protected:
 		virtual void OnPaint();
@@ -286,6 +288,8 @@ namespace Desurium
 	private:
 		bool m_bHookEvents;
 		HWND m_hWND;
+
+		static HINSTANCE gs_hInstance;
 
 		CDesuraWnd *m_pParent;
 	};

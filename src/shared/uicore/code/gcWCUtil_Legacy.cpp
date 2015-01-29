@@ -23,10 +23,6 @@ Contact us at legal@badjuju.com.
 #include "Common.h"
 #include "gcWCUtil_Legacy.h"
 
-#ifdef WIN32
-#include "util/UtilOs.h"
-#endif
-
 
 typedef bool (*CEF_InitFn)(bool, const char*, const char*, const char*, void*);
 typedef void(*CEF_SetApiVersionFn)(int);
@@ -170,8 +166,14 @@ public:
 	{
 		gcAssert(CEF_Init);
 
+#if WIN32
+		void* instance = GetModuleHandle( NULL );
+#else
+		void* instance = nullptr;
+#endif // WIN32
+
 		if (CEF_Init)
-			return CEF_Init( threaded, cachePath, logPath, userAgent, UTIL::OS::GetInstanceHandle() );
+			return CEF_Init( threaded, cachePath, logPath, userAgent, instance );
 
 		return false;
 	}

@@ -23,7 +23,6 @@ Contact us at legal@badjuju.com.
 #include "DesuraWinApp.h"
 #include "DesuraWnd.h"
 #include <windows.h>
-#include "util/UtilOs.h"
 
 #include <cassert>
 
@@ -32,7 +31,7 @@ using namespace Desurium;
 
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow)
 {
-	UTIL::OS::SetInstanceHandle( hInstance );
+	CDesuraWnd::SetInstanceHandle( hInstance );
 
 	CDesuraWinApp& app = CDesuraWinApp::GetApp();
 

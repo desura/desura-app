@@ -183,12 +183,6 @@ namespace UTIL
 
 		std::vector<uint32> getProcessesRunningAtPath(const char* szPath);
 		void killProcess(uint32 pid);
-
-#ifdef WIN32
-		// Allow visibility of HINSTANCE
-		void SetInstanceHandle( HINSTANCE hInstance );
-		HINSTANCE GetInstanceHandle();
-#endif // WIN32
 	}
 }
 

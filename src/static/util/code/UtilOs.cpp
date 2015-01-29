@@ -541,19 +541,5 @@ void killProcess(uint32 pid)
 #endif
 }
 
-HINSTANCE gs_hInstance = nullptr;
-
-void SetInstanceHandle( HINSTANCE hInstance )
-{
-	gs_hInstance = hInstance;
-}
-
-HINSTANCE GetInstanceHandle()
-{
-	assert( gs_hInstance );
-	return gs_hInstance;
-}
-
-
 }
 }
