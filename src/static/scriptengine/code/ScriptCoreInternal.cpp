@@ -28,6 +28,8 @@ Contact us at legal@badjuju.com.
 std::mutex ScriptCoreInternal::s_InitLock;
 bool ScriptCoreInternal::s_IsInit = false;
 bool ScriptCoreInternal::s_Disabled = false;
+v8::Platform* ScriptCoreInternal::m_platform = nullptr;
+v8::Isolate* ScriptCoreInternal::m_isolate = nullptr;
 
 bool IsV8Init()
 {
@@ -37,8 +39,8 @@ bool IsV8Init()
 
 
 
-v8::Handle<v8::Value> JSDebug(const v8::Arguments& args);
-v8::Handle<v8::Value> JSWarning(const v8::Arguments& args);
+v8::FunctionCallback JSDebug;
+v8::FunctionCallback JSWarning;
 void MessageCallback(v8::Handle<v8::Message> message, v8::Handle<v8::Value> data);
 
 extern v8::ExtensionConfiguration* RegisterJSBindings();
@@ -55,6 +57,18 @@ void ScriptCoreInternal::OnFatalError(const char* location, const char* message)
 	s_Disabled = false;
 }
 
+
+class ShellArrayBufferAllocator : public v8::ArrayBuffer::Allocator {
+public:
+	virtual void* Allocate( size_t length ) {
+		void* data = AllocateUninitialized( length );
+		return data == NULL ? data : memset( data, 0, length );
+	}
+	virtual void* AllocateUninitialized( size_t length ) { return malloc( length ); }
+	virtual void Free( void* data, size_t ) { free( data ); }
+};
+
+
 void ScriptCoreInternal::init()
 {
 	if (s_Disabled)
@@ -65,7 +79,14 @@ void ScriptCoreInternal::init()
 		if (!s_IsInit)
 		{
 			s_IsInit = true;
+			v8::V8::InitializeICU();
+			m_platform = v8::platform::CreateDefaultPlatform();
+			v8::V8::InitializePlatform( m_platform );
 			v8::V8::Initialize();
+
+			ShellArrayBufferAllocator array_buffer_allocator;
+			v8::V8::SetArrayBufferAllocator( &array_buffer_allocator );
+			m_isolate = v8::Isolate::New();
 
 			v8::V8::AddMessageListener(&MessageCallback);
 			v8::V8::SetCaptureStackTraceForUncaughtExceptions(true);
@@ -73,13 +94,14 @@ void ScriptCoreInternal::init()
 		}
 	}
 
-	v8::HandleScope handle_scope;
-	v8::Handle<v8::ObjectTemplate> global = v8::ObjectTemplate::New();
 
-	global->Set(v8::String::New("Warning"), v8::FunctionTemplate::New(JSWarning));
-	global->Set(v8::String::New("Debug"), v8::FunctionTemplate::New(JSDebug));
+	// Create a template for the global object.
+	v8::Handle<v8::ObjectTemplate> global = v8::ObjectTemplate::New( m_isolate );
 
-	v8::Persistent<v8::Context> context = v8::Context::New(RegisterJSBindings(), global);
+	global->Set( v8::String::NewFromUtf8( m_isolate, "Warning" ), v8::FunctionTemplate::New( m_isolate, JSWarning ) );
+	global->Set( v8::String::NewFromUtf8( m_isolate, "Debug" ), v8::FunctionTemplate::New( m_isolate, JSDebug ) );
+
+	v8::Handle<v8::Context> context = v8::Context::New( m_isolate, RegisterJSBindings(), global );
 	m_v8Context = context;
 }
 
@@ -88,7 +110,11 @@ void ScriptCoreInternal::del()
 	if (s_Disabled)
 		return;
 
-	m_v8Context.Dispose();
+	v8::V8::Dispose();
+	v8::V8::ShutdownPlatform();
+
+	delete m_platform;
+	m_platform = nullptr;
 }
 
 void ScriptCoreInternal::runString(const char* string)
@@ -100,7 +126,7 @@ void ScriptCoreInternal::runString(const char* string)
 		throw gcException(ERR_INVALID, "String is null");
 
 	v8::Context::Scope context_scope(m_v8Context);
-	v8::HandleScope handle_scope;
+	v8::HandleScope handle_scope( m_isolate );
 
 	v8::TryCatch try_catch;
 	v8::Handle<v8::Script> script = v8::Script::Compile(v8::String::New(string), v8::String::New("StringExe"));

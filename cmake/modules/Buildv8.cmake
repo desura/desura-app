@@ -65,6 +65,10 @@ ExternalProject_Get_Property(
 
 set(V8_INSTALL_DIR ${source_dir})
 set(V8_INCLUDE_DIR ${V8_INSTALL_DIR}/include)
+include_directories(
+  ${V8_INSTALL_DIR}
+  ${V8_INSTALL_DIR}/include
+)
 
 if(WIN32)
   if(DEBUG_V8)

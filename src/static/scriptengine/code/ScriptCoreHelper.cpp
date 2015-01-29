@@ -24,6 +24,7 @@ Contact us at legal@badjuju.com.
 #include "Common.h"
 #include <iostream>
 #include "v8.h"
+#include "ScriptCoreInternal.h"
 
 
 void MessageCallback(v8::Handle<v8::Message> message, v8::Handle<v8::Value> data)
@@ -40,10 +41,14 @@ void JSPrint(const v8::Handle<v8::Value>& arg, F messageFunct)
 	if (arg->IsObject())
 	{
 		//convert the args[i] type to normal char* string
-		v8::String::AsciiValue str(arg->ToObject()->ObjectProtoToString());
-
 		messageFunct("Obj: ");
-		messageFunct(gcString(*str).c_str());
+
+		v8::Local< v8::String > str( arg->ToObject()->ObjectProtoToString() );
+
+		char* buffer = new char[ str->Length() + 1 ];
+		str->WriteUtf8( buffer );
+		messageFunct( buffer );
+		delete [] buffer;
 
 		for (int32 x=0; x<arg->ToObject()->InternalFieldCount(); x++)
 			JSPrint(arg->ToObject()->Get(x), messageFunct);
@@ -51,25 +56,35 @@ void JSPrint(const v8::Handle<v8::Value>& arg, F messageFunct)
 	else if (arg->IsString())
 	{
 		//convert the args[i] type to normal char* string
-		v8::String::AsciiValue str(arg->ToString());
-
 		messageFunct("Str: ");
-		messageFunct(gcString(*str).c_str());
+
+		char* buffer = new char[ arg->ToString()->Length() + 1 ];
+		arg->ToString()->WriteUtf8( buffer );
+		messageFunct( buffer );
+		delete[] buffer;
 	}
 	else if (arg->IsInt32() || arg->IsUint32())
 	{
 		//convert the args[i] type to normal char* string
-		v8::String::AsciiValue str(arg->ToInteger());
+		v8::Local<v8::String> str( arg->ToInteger()->ToString() );
 
 		messageFunct("Int: ");
-		messageFunct(gcString(*str).c_str());
+
+		char* buffer = new char[ str->Length() + 1 ];
+		str->WriteUtf8( buffer );
+		messageFunct( buffer );
+		delete[] buffer;
 	}
 	else if (arg->IsNumber())
 	{
 		//convert the args[i] type to normal char* string
-		v8::String::AsciiValue str(arg->ToNumber());
+		v8::Local<v8::String> str( arg->ToNumber()->ToString() );
 		messageFunct("Num: ");
-		messageFunct(gcString(*str).c_str());
+
+		char* buffer = new char[ str->Length() + 1 ];
+		str->WriteUtf8( buffer );
+		messageFunct( buffer );
+		delete[] buffer;
 	}
 	else if (arg->IsNull())
 	{
@@ -82,18 +97,22 @@ void JSPrint(const v8::Handle<v8::Value>& arg, F messageFunct)
 	else
 	{
 		//convert the args[i] type to normal char* string
-		v8::String::AsciiValue str(arg->ToDetailString());
-		messageFunct(gcString(*str).c_str());
+		v8::Local<v8::String> str( arg->ToDetailString() );
+
+		char* buffer = new char[ str->Length() + 1 ];
+		str->WriteUtf8( buffer );
+		messageFunct( buffer );
+		delete[] buffer;
 	}
 }
 
 template <typename F>
-v8::Handle<v8::Value> JSPrint(const v8::Arguments& args, F messageFunct)
+void JSPrintArgs( const v8::FunctionCallbackInfo<v8::Value>& args, F messageFunct )
 {
 	bool first = true;
 	for (int i = 0; i < args.Length(); i++)
 	{
-		v8::HandleScope handle_scope;
+		v8::HandleScope handle_scope( ScriptCoreInternal::getIsolate() );
 		if (first)
 		{
 			first = false;
@@ -107,29 +126,25 @@ v8::Handle<v8::Value> JSPrint(const v8::Arguments& args, F messageFunct)
 	}
 
 	messageFunct("\n");
-	//returning Undefined is the same as returning void...
-	return v8::Undefined();
 }
 
-v8::Handle<v8::Value> JSDebug(const v8::Arguments& args)
+void JSDebug( const v8::FunctionCallbackInfo<v8::Value>& args )
 {
 	std::string out;
-	v8::Handle<v8::Value> ret = JSPrint(args, [&out](const char* msg){
+	JSPrintArgs( args, [&out]( const char* msg ){
 			out += msg;
 	});
 
 	Msg(out.c_str());
-	return ret;
 }
 
-v8::Handle<v8::Value> JSWarning(const v8::Arguments& args)
+void JSWarning( const v8::FunctionCallbackInfo<v8::Value>& args )
 {
 	std::string out;
 
-	v8::Handle<v8::Value> ret = JSPrint(args, [&out](const char* msg){
+	JSPrintArgs( args, [&out]( const char* msg ){
 			out += msg;
 	});
 
 	WarningS(out.c_str());
-	return ret;
 }

@@ -27,6 +27,8 @@ Contact us at legal@badjuju.com.
 #endif
 
 #include "v8.h"
+#include "libplatform/libplatform.h"
+
 
 class ScriptCoreInternal
 {
@@ -37,6 +39,8 @@ public:
 	void runScript(const char* file, const char* buff, uint32 size);
 	void runString(const char* string);
 
+	static v8::Isolate* getIsolate()	{ return m_isolate; }
+
 protected:
 	void doRunScript(v8::Handle<v8::Script> script);
 	gcString reportException(v8::TryCatch* try_catch);
@@ -44,13 +48,16 @@ protected:
 private:
 	friend bool IsV8Init();
 
+	// Not sure why this isn't a singleton instead
 	static std::mutex s_InitLock;
 	static bool s_IsInit;
 	static bool s_Disabled;
+	static v8::Platform* m_platform;
+	static v8::Isolate* m_isolate;
 
 	static void OnFatalError(const char* location, const char* message);
 
-	v8::Persistent<v8::Context> m_v8Context;
+	v8::Handle<v8::Context> m_v8Context;
 };
 
 
