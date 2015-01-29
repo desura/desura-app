@@ -268,8 +268,6 @@ namespace Desurium
 
 		bool RegisterClass(WNDCLASS *pClass);
 
-		static void SetInstanceHandle(HINSTANCE hInstance);
-		static HINSTANCE GetInstanceHandle();
 		static void BeginThread(ThreadFn funct, void* pData);
 
 	protected:
@@ -288,8 +286,6 @@ namespace Desurium
 	private:
 		bool m_bHookEvents;
 		HWND m_hWND;
-
-		static HINSTANCE gs_hInstance;
 
 		CDesuraWnd *m_pParent;
 	};

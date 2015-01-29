@@ -23,6 +23,7 @@ Contact us at legal@badjuju.com.
 #include "DesuraWnd.h"
 #include <branding/branding.h>
 #include <stdio.h>
+#include "util/UtilOs.h"
 
 using namespace Desurium;
 
@@ -44,7 +45,7 @@ void CBitmap::LoadBitmap(int nResourceId)
 	if (m_hBitmap)
 		DeleteObject(m_hBitmap);
 
-	m_hBitmap = ::LoadBitmap(CDesuraWnd::GetInstanceHandle(), MAKEINTRESOURCE(nResourceId));
+	m_hBitmap = ::LoadBitmap( UTIL::OS::GetInstanceHandle(), MAKEINTRESOURCE(nResourceId) );
 }
 
 void CBitmap::CreateCompatibleBitmap(CDC &dc, int w, int h)
@@ -179,7 +180,7 @@ bool CDesuraWnd::Create(const char* szClassName, const char*, DWORD dwStyl, cons
 {
 	m_pParent = pParent;
 
-	m_hWND = ::CreateWindow(szClassName, "", dwStyl | WS_CHILD | WS_VISIBLE, rect.left, rect.top, rect.width(), rect.height(), pParent->GetSafeHwnd(), nullptr, GetInstanceHandle(), 0);
+	m_hWND = ::CreateWindow( szClassName, "", dwStyl | WS_CHILD | WS_VISIBLE, rect.left, rect.top, rect.width(), rect.height(), pParent->GetSafeHwnd(), nullptr, UTIL::OS::GetInstanceHandle(), 0 );
 	::SetWindowLong(m_hWND, GWL_ID, nID);
 
 	return m_hWND != nullptr;
@@ -210,19 +211,6 @@ HCURSOR CDesuraWnd::LoadStandardCursor(const char* szResourceId)
 bool CDesuraWnd::RegisterClass(WNDCLASS *pClass)
 {
 	return !!::RegisterClass(pClass);
-}
-
-HINSTANCE CDesuraWnd::gs_hInstance = nullptr;
-
-void CDesuraWnd::SetInstanceHandle(HINSTANCE hInstance)
-{
-	gs_hInstance = hInstance;
-}
-
-HINSTANCE CDesuraWnd::GetInstanceHandle()
-{
-	assert(gs_hInstance);
-	return gs_hInstance;
 }
 
 void CDesuraWnd::BeginThread(ThreadFn funct, void* pData)
@@ -275,7 +263,7 @@ CDesuraDialog::CDesuraDialog(int nResourceId)
 INT_PTR CDesuraDialog::DoModal()
 {
 	gs_pCurrentDialog = this;
-	INT_PTR nRes = ::DialogBoxParam(GetInstanceHandle(), MAKEINTRESOURCE(m_nResourceId), nullptr, &CDesuraDialog::WinProc, (LPARAM)SW_SHOW);
+	INT_PTR nRes = ::DialogBoxParam( UTIL::OS::GetInstanceHandle(), MAKEINTRESOURCE( m_nResourceId ), nullptr, &CDesuraDialog::WinProc, (LPARAM) SW_SHOW );
 
 	DWORD err = GetLastError();
 

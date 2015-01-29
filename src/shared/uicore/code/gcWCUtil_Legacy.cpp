@@ -24,8 +24,7 @@ Contact us at legal@badjuju.com.
 #include "gcWCUtil_Legacy.h"
 
 #ifdef WIN32
-#include "DesuraWinApp.h"
-#include "DesuraWnd.h"
+#include "util/UtilOs.h"
 #endif
 
 
@@ -172,7 +171,7 @@ public:
 		gcAssert(CEF_Init);
 
 		if (CEF_Init)
-			return CEF_Init( threaded, cachePath, logPath, userAgent, Desurium::CDesuraWnd::GetInstanceHandle() );
+			return CEF_Init( threaded, cachePath, logPath, userAgent, UTIL::OS::GetInstanceHandle() );
 
 		return false;
 	}

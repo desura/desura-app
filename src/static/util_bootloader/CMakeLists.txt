@@ -1,13 +1,6 @@
-if(WIN32)
-  include_directories(
-    ${CMAKE_CURRENT_SOURCE_DIR}
-    ${CMAKE_CURRENT_SOURCE_DIR}/code/win32
-  )
-else()
-  include_directories(
-    ${CMAKE_CURRENT_SOURCE_DIR}
-  )
-endif()
+include_directories(
+  ${CMAKE_CURRENT_SOURCE_DIR}
+)
 
 file(GLOB Sources code/*.cpp code/win32/*.cpp code/third_party/*.cpp)
 
