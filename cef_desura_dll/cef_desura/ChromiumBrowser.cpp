@@ -24,6 +24,9 @@
 #include "JavaScriptContext.h"
 #include "ChromiumBrowserEvents.h"
 
+#include <locale>
+#include <codecvt>
+
 #ifdef OS_LINUX
 #include <gtk/gtk.h>
 #endif
@@ -90,8 +93,11 @@ extern "C"
 #endif
 		CefSettings settings;
 
-		cef_string_copy(cachePath, strlen(cachePath), &settings.cache_path);
-		cef_string_copy(userAgent, strlen(userAgent), &settings.user_agent);
+		std::wstring cachePathW = std::wstring_convert<std::codecvt_utf8<wchar_t>>().from_bytes( cachePath );
+		cef_string_copy( cachePathW.c_str(), cachePathW.size(), &settings.cache_path );
+
+		std::wstring userAgentW = std::wstring_convert<std::codecvt_utf8<wchar_t>>().from_bytes( userAgent );
+		cef_string_copy( userAgentW.c_str(), userAgentW.size(), &settings.user_agent );
 
 		settings.multi_threaded_message_loop = threaded;
 
@@ -283,8 +289,8 @@ void ChromiumBrowser::init(const char *defaultUrl)
 	m_WinInfo.width = 500;
 	m_WinInfo.parent_window = m_hFormHandle;
 
-	const char* name = "DesuraCEFBrowser";
-	cef_string_copy(name, strlen(name), &m_WinInfo.window_name);
+	std::wstring nameW = std::wstring_convert<std::codecvt_utf8<wchar_t>>().from_bytes( "DesuraCEFBrowser" );
+	cef_string_copy( nameW.c_str(), nameW.size(), &m_WinInfo.window_name );
 
 	CefBrowserHost::CreateBrowser( m_WinInfo, m_rEventHandler, defaultUrl, getBrowserDefaults(), CefRequestContext::GetGlobalContext() );
 }

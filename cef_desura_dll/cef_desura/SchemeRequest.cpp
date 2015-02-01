@@ -12,6 +12,9 @@
 #include "SchemeRequest.h"
 #include "SchemePost.h"
 
+#include <locale>
+#include <codecvt>
+
 #define _CRT_SECURE_NO_WARNINGS
 
 int mystrncpy_s(char* dest, size_t destSize, const char* src, size_t srcSize);
@@ -99,11 +102,19 @@ void SchemeRequest::getHeaderItem(size_t index, char *key, size_t keysize, char*
 	if (it == map.end())
 		return;
 
-	if (key)
-		mystrncpy_s(key, keysize, (*it).first.c_str(), (*it).first.size());
+	if ( key )
+	{
+		std::string keyS = std::wstring_convert<std::codecvt_utf8<wchar_t>>().to_bytes( (*it).first.c_str() );
 
-	if (data)
-		mystrncpy_s(data, datasize, (*it).second.c_str(), (*it).second.size());
+		mystrncpy_s( key, keysize, keyS.c_str(), keyS.size() );
+	}
+
+	if ( data )
+	{
+		std::string dataS = std::wstring_convert<std::codecvt_utf8<wchar_t>>().to_bytes( (*it).second.c_str() );
+
+		mystrncpy_s( data, datasize, dataS.c_str(), dataS.size() );
+	}
 }
 
 void SchemeRequest::setHeaderItem(const char* key, const char* data)

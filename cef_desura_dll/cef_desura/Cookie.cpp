@@ -13,6 +13,9 @@
 #include "include/cef_app.h"
 #include "include/cef_cookie.h"
 
+#include <locale>
+#include <codecvt>
+
 class Cookie : public ChromiumDLL::CookieI
 {
 public:
@@ -29,22 +32,26 @@ public:
 
 	virtual void SetDomain(const char* domain)
 	{
-		cef_string_copy(domain, strlen(domain), &m_rCookie.domain);
+		std::wstring domainW = std::wstring_convert<std::codecvt_utf8<wchar_t>>().from_bytes( domain );
+		cef_string_copy( domainW.c_str(), domainW.size(), &m_rCookie.domain );
 	}
 
 	virtual void SetName(const char* name)
 	{
-		cef_string_copy(name, strlen(name), &m_rCookie.name);
+		std::wstring nameW = std::wstring_convert<std::codecvt_utf8<wchar_t>>().from_bytes( name );
+		cef_string_copy( nameW.c_str(), nameW.size(), &m_rCookie.name );
 	}
 
 	virtual void SetData(const char* data)
 	{
-		cef_string_copy(data, strlen(data), &m_rCookie.value);
+		std::wstring dataW = std::wstring_convert<std::codecvt_utf8<wchar_t>>().from_bytes( data );
+		cef_string_copy( dataW.c_str(), dataW.size(), &m_rCookie.value );
 	}
 
 	virtual void SetPath(const char* path)
 	{
-		cef_string_copy(path, strlen(path), &m_rCookie.path);
+		std::wstring pathW = std::wstring_convert<std::codecvt_utf8<wchar_t>>().from_bytes( path );
+		cef_string_copy( pathW.c_str(), pathW.size(), &m_rCookie.path );
 	}
 
 	CefCookie m_rCookie;

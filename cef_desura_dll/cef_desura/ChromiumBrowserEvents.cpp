@@ -15,6 +15,9 @@
 #include "MenuInfo.h"
 
 #include <sstream>
+#include <locale>
+#include <codecvt>
+
 #include "JavaScriptObject.h"
 #include "JavaScriptFactory.h"
 
@@ -100,8 +103,9 @@ void LifeSpanHandler::OnBeforeClose(CefRefPtr<CefBrowser> browser)
 bool LifeSpanHandler::OnBeforePopup(CefRefPtr<CefBrowser> parentBrowser, const CefPopupFeatures& popupFeatures, CefWindowInfo& windowInfo, const CefString& url, CefRefPtr<CefClient>& client, CefBrowserSettings& settings)
 {
 	//dont show popups unless its the inspector
-	const char* u = url.c_str();
-	return (!u || std::string(u).find("resources/inspector/devtools.") == std::string::npos);
+	std::string urlS = std::wstring_convert<std::codecvt_utf8<wchar_t>>().to_bytes( url.c_str() );
+
+	return ( ( ! urlS.c_str() ) || ( urlS.find( "resources/inspector/devtools." ) == std::string::npos ) );
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////
@@ -145,7 +149,8 @@ bool LoadHandler::OnLoadError(CefRefPtr<CefBrowser> browser, CefRefPtr<CefFrame>
 			errorMsg = stream.str();
 		}
 
-		if (GetCallback()->onLoadError(errorMsg.c_str(), failedUrl.c_str(), buff, size))
+		std::string failedUrlS = std::wstring_convert<std::codecvt_utf8<wchar_t>>().to_bytes( failedUrl.c_str() );
+		if ( GetCallback()->onLoadError( errorMsg.c_str(), failedUrlS.c_str(), buff, size ) )
 		{
 			errorText = buff;
 			return true;
@@ -188,8 +193,12 @@ bool RequestHandler::OnBeforeBrowse(CefRefPtr<CefBrowser> browser, CefRefPtr<Cef
 
 bool DisplayHandler::OnConsoleMessage(CefRefPtr<CefBrowser> browser, const CefString& message, const CefString& source, int line)
 {
-	if (GetCallback())
-		GetCallback()->onLogConsoleMsg(message.c_str(), source.c_str(), line);
+	if ( GetCallback() )
+	{
+		std::string messageS = std::wstring_convert<std::codecvt_utf8<wchar_t>>().to_bytes( message.c_str() );
+		std::string sourceS = std::wstring_convert<std::codecvt_utf8<wchar_t>>().to_bytes( source.c_str() );
+		GetCallback()->onLogConsoleMsg( messageS.c_str(), sourceS.c_str(), line );
+	}
 
 	return true;
 }
@@ -231,7 +240,8 @@ bool JSDialogHandler::OnJSAlert(CefRefPtr<CefBrowser> browser, CefRefPtr<CefFram
 	if (!GetCallback())
 		return false;
 
-	return GetCallback()->onJScriptAlert(message.c_str());
+	std::string messageS = std::wstring_convert<std::codecvt_utf8<wchar_t>>().to_bytes( message.c_str() );
+	return GetCallback()->onJScriptAlert( messageS.c_str() );
 }
 
 bool JSDialogHandler::OnJSConfirm(CefRefPtr<CefBrowser> browser, CefRefPtr<CefFrame> frame, const CefString& message, bool& retval)
@@ -239,7 +249,8 @@ bool JSDialogHandler::OnJSConfirm(CefRefPtr<CefBrowser> browser, CefRefPtr<CefFr
 	if (!GetCallback())
 		return false;
 
-	return (GetCallback()->onJScriptConfirm(message.c_str(), &retval));
+	std::string messageS = std::wstring_convert<std::codecvt_utf8<wchar_t>>().to_bytes( message.c_str() );
+	return (GetCallback()->onJScriptConfirm( messageS.c_str(), &retval ));
 }
 
 bool JSDialogHandler::OnJSPrompt(CefRefPtr<CefBrowser> browser, CefRefPtr<CefFrame> frame, const CefString& message, const CefString& defaultValue, bool& retval, CefString& result)
@@ -248,7 +259,9 @@ bool JSDialogHandler::OnJSPrompt(CefRefPtr<CefBrowser> browser, CefRefPtr<CefFra
 		return false;
 
 	char resultBuff[255] = {0};
-	bool res = GetCallback()->onJScriptPrompt(message.c_str(), defaultValue.c_str(), &retval, resultBuff);
+	std::string messageS = std::wstring_convert<std::codecvt_utf8<wchar_t>>().to_bytes( message.c_str() );
+	std::string defaultValueS = std::wstring_convert<std::codecvt_utf8<wchar_t>>().to_bytes( defaultValue.c_str() );
+	bool res = GetCallback()->onJScriptPrompt( messageS.c_str(), defaultValueS.c_str(), &retval, resultBuff );
 
 	if (res)
 		result = resultBuff;

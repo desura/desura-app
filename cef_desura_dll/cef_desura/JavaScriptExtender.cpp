@@ -14,6 +14,8 @@
 #include "JavaScriptObject.h"
 #include "JavaScriptContext.h"
 
+#include <locale>
+#include <codecvt>
 
 class MyV8Handler : public CefV8Handler {
 public:
@@ -41,6 +43,7 @@ public:
 
 bool JavaScriptExtender::Register(ChromiumDLL::JavaScriptExtenderI* jse)
 {
+// KMY: Confirm context
 //	CefRefPtr<CefV8Context> currentContext = CefV8Context::GetCurrentContext();
 //	currentContext->
 
@@ -74,7 +77,9 @@ bool JavaScriptExtender::Execute(const CefString& name, CefRefPtr<CefV8Value> ob
 
 	ChromiumDLL::JavaScriptFunctionArgs args;
 
-	args.function = name.c_str();
+	std::string nameS = std::wstring_convert<std::codecvt_utf8<wchar_t>>().to_bytes( name.c_str() );
+
+	args.function = nameS.c_str();
 	args.argc = argc;
 	args.argv = argv;
 	args.object = new JavaScriptObject(object);
@@ -163,7 +168,7 @@ ChromiumDLL::JSObjHandle JavaScriptWrapper::execute(ChromiumDLL::JavaScriptFunct
 
 	m_pObject->Execute(function, object, arguments, ret, exception);
 
-	std::string e(exception.c_str());
+	std::string e = std::wstring_convert<std::codecvt_utf8<wchar_t>>().to_bytes( exception.c_str() );
 
 	if (e.size() > 0)
 		return factory->CreateException(e.c_str());

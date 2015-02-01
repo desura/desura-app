@@ -14,6 +14,9 @@
 #include "JavaScriptFactory.h"
 #include "JavaScriptContext.h"
 
+#include <locale>
+#include <codecvt>
+
 int mystrncpy_s(char* dest, size_t destSize, const char* src, size_t srcSize)
 {
 	size_t size = srcSize;
@@ -221,8 +224,12 @@ void JavaScriptObject::getKey(int index, char* buff, size_t buffsize)
 	std::vector<CefString> keys;
 	m_pObject->GetKeys(keys);
 
-	if (index >= 0 && index < (int)keys.size())
-		mystrncpy_s(buff, buffsize, keys[index].c_str(), keys[index].size());
+	if ( index >= 0 && index < (int) keys.size() )
+	{
+		std::string keyS = std::wstring_convert<std::codecvt_utf8<wchar_t>>().to_bytes( keys[ index ].c_str() );
+
+		mystrncpy_s( buff, buffsize, keyS.c_str(), keys[ index ].size() );
+	}
 }
 
 int JavaScriptObject::getArrayLength()
