@@ -263,7 +263,7 @@ SetupDownloadUrl(BREAKPAD "breakpad-850-r1.zip" b0061a854df1a0d285edc74c5ac37c42
 # no longer available (too old)
 #SetupDownloadUrl(CEF "cef-291.tar.gz" 97e925e33f2d48cd50172247dbe40f30)
 # Latest
-SetupDownloadUrlCustom(CEF "file://C:/Work/cef_latest_desura.zip" 05eb05dc938ead68ea2f0cd1f3af172d)
+SetupDownloadUrlCustom(CEF "file://C:/Work/cef_desura_dll-3.2272-1998.zip" e43fba503f65e0c0bf74d15607a67dc5)
 
 # Instead of patching CEF, this is the corresponding Desura files (should be in /src though)
 #SetupDownloadUrlCustom(CEF_DESURA "file://C:/Work/cef_desura.zip" 113d48d666c1ea98e8600b0dd16bff36)
@@ -286,7 +286,7 @@ SetupDownloadUrlCustom(GMOCK "https://googlemock.googlecode.com/files/gmock-1.7.
 
 # live code: https://code.google.com/p/v8/source/browse#svn%2Fbranches%2F3.18
 ## SetupDownloadUrl(V8 "v8-3.18.5.14.tar.bz2" 657802ea63c89190fd510ee1a2a719bf)
-SetupDownloadUrlCustom(V8 "file://C:/Work/v8-v3.30.33.zip" 01f9fce14b6f8530f3904a63e48826e8)
+SetupDownloadUrlCustom(V8 "file://C:/Work/v8-current.zip" 7fc10005afd5fca0d4eb9fc014387ffb)
 
 ###### SetupDownloadUrl(WXWIDGET "wxWidgets-3.0.0.tar.bz2" 241998efc12205172ed24c18788ea2cd)
 SetupDownloadUrlCustom(WXWIDGET "http://sourceforge.net/projects/wxwindows/files/3.0.0/wxWidgets-3.0.0.tar.bz2/download" 241998efc12205172ed24c18788ea2cd)

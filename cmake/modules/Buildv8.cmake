@@ -44,19 +44,20 @@ ExternalProject_Add(
   BUILD_IN_SOURCE 1
   INSTALL_COMMAND ""
 )
-if(WIN32)
 
-ExternalProject_Add_Step(
-  v8
-  cygwin-svn-fetch
-  COMMAND ${Subversion_SVN_EXECUTABLE} co http://src.chromium.org/svn/trunk/deps/third_party/cygwin@66844 third_party/cygwin
-  DEPENDEES download
-  DEPENDERS configure
-  DEPENDEES download
-  WORKING_DIRECTORY <SOURCE_DIR>
-)
-
-endif()
+#if(WIN32)
+#
+#ExternalProject_Add_Step(
+#  v8
+#  cygwin-svn-fetch
+#  COMMAND ${Subversion_SVN_EXECUTABLE} co http://src.chromium.org/svn/trunk/deps/third_party/cygwin@66844 third_party/cygwin
+#  DEPENDEES download
+#  DEPENDERS configure
+#  DEPENDEES download
+#  WORKING_DIRECTORY <SOURCE_DIR>
+#)
+#
+#endif()
 
 ExternalProject_Get_Property(
   v8
