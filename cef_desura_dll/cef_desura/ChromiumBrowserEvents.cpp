@@ -126,6 +126,8 @@ void LoadHandler::OnLoadEnd(CefRefPtr<CefBrowser> browser, CefRefPtr<CefFrame> f
 
 bool LoadHandler::OnLoadError(CefRefPtr<CefBrowser> browser, CefRefPtr<CefFrame> frame, ErrorCode errorCode, const CefString& failedUrl, CefString& errorText)
 {
+	std::string failedUrlS = std::wstring_convert<std::codecvt_utf8<wchar_t>>().to_bytes( failedUrl.c_str() );
+
 	//if no frame its the whole page
 	if (GetCallback())
 	{
@@ -149,7 +151,6 @@ bool LoadHandler::OnLoadError(CefRefPtr<CefBrowser> browser, CefRefPtr<CefFrame>
 			errorMsg = stream.str();
 		}
 
-		std::string failedUrlS = std::wstring_convert<std::codecvt_utf8<wchar_t>>().to_bytes( failedUrl.c_str() );
 		if ( GetCallback()->onLoadError( errorMsg.c_str(), failedUrlS.c_str(), buff, size ) )
 		{
 			errorText = buff;
@@ -161,7 +162,7 @@ bool LoadHandler::OnLoadError(CefRefPtr<CefBrowser> browser, CefRefPtr<CefFrame>
 	std::stringstream ss;
 	ss <<       "<html><head><title>Load Failed</title></head>"
 				"<body><h1>Load Failed</h1>"
-				"<h2>Load of URL " << failedUrl.c_str() <<
+				"<h2>Load of URL " << failedUrlS.c_str() <<
 				" failed with error code " << static_cast<int>(errorCode) <<
 				".</h2></body>"
 				"</html>";
