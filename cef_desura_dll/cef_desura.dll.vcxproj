@@ -76,7 +76,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <MinimalRebuild>false</MinimalRebuild>
       <Optimization>Disabled</Optimization>
-      <PreprocessorDefinitions>_DEBUG;V8_DEPRECATION_WARNINGS;_WIN32_WINNT=0x0602;WINVER=0x0602;WIN32;_WINDOWS;NOMINMAX;PSAPI_VERSION=1;_CRT_RAND_S;CERT_CHAIN_PARA_HAS_EXTRA_FIELDS;WIN32_LEAN_AND_MEAN;_ATL_NO_OPENGL;_HAS_EXCEPTIONS=0;_SECURE_ATL;CHROMIUM_BUILD;TOOLKIT_VIEWS=1;USE_AURA=1;USE_ASH=1;USE_LIBJPEG_TURBO=1;ENABLE_ONE_CLICK_SIGNIN;ENABLE_REMOTING=1;ENABLE_WEBRTC=1;ENABLE_PEPPER_CDMS;ENABLE_CONFIGURATION_POLICY;ENABLE_INPUT_SPEECH;ENABLE_NOTIFICATIONS;ICU_UTIL_DATA_IMPL=ICU_UTIL_DATA_SHARED;ENABLE_EGLIMAGE=1;__STD_C;_CRT_SECURE_NO_DEPRECATE;_SCL_SECURE_NO_DEPRECATE;NTDDI_VERSION=0x06020000;_USING_V110_SDK71_;ENABLE_TASK_MANAGER=1;ENABLE_EXTENSIONS=1;ENABLE_PLUGIN_INSTALLATION=1;ENABLE_PLUGINS=1;ENABLE_SESSION_SERVICE=1;ENABLE_THEMES=1;ENABLE_AUTOFILL_DIALOG=1;ENABLE_BACKGROUND=1;ENABLE_AUTOMATION=1;ENABLE_GOOGLE_NOW=1;CLD_VERSION=2;ENABLE_FULL_PRINTING=1;ENABLE_PRINTING=1;ENABLE_SPELLCHECK=1;ENABLE_CAPTIVE_PORTAL_DETECTION=1;ENABLE_APP_LIST=1;ENABLE_SETTINGS_APP=1;ENABLE_MANAGED_USERS=1;ENABLE_MDNS=1;USING_CEF_SHARED;__STDC_CONSTANT_MACROS;__STDC_FORMAT_MACROS;DYNAMIC_ANNOTATIONS_ENABLED=1;WTF_USE_DYNAMIC_ANNOTATIONS=1;%(PreprocessorDefinitions);BUILDING_CEF_DESURA_SHARED</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_DEBUG;V8_DEPRECATION_WARNINGS;_WIN32_WINNT=0x0602;WINVER=0x0602;WIN32;_WINDOWS;NOMINMAX;PSAPI_VERSION=1;_CRT_RAND_S;CERT_CHAIN_PARA_HAS_EXTRA_FIELDS;WIN32_LEAN_AND_MEAN;_ATL_NO_OPENGL;_HAS_EXCEPTIONS=0;_SECURE_ATL;CHROMIUM_BUILD;TOOLKIT_VIEWS=1;USE_AURA=1;USE_ASH=1;USE_LIBJPEG_TURBO=1;ENABLE_ONE_CLICK_SIGNIN;ENABLE_REMOTING=1;ENABLE_WEBRTC=1;ENABLE_PEPPER_CDMS;ENABLE_CONFIGURATION_POLICY;ENABLE_INPUT_SPEECH;ENABLE_NOTIFICATIONS;ICU_UTIL_DATA_IMPL=ICU_UTIL_DATA_SHARED;ENABLE_EGLIMAGE=1;__STD_C;_CRT_SECURE_NO_DEPRECATE;_SCL_SECURE_NO_DEPRECATE;NTDDI_VERSION=0x06020000;_USING_V110_SDK71_;ENABLE_TASK_MANAGER=1;ENABLE_EXTENSIONS=1;ENABLE_PLUGIN_INSTALLATION=1;ENABLE_PLUGINS=1;ENABLE_SESSION_SERVICE=1;ENABLE_THEMES=1;ENABLE_AUTOFILL_DIALOG=1;ENABLE_BACKGROUND=1;ENABLE_AUTOMATION=1;ENABLE_GOOGLE_NOW=1;CLD_VERSION=2;ENABLE_FULL_PRINTING=1;ENABLE_PRINTING=1;ENABLE_SPELLCHECK=1;ENABLE_CAPTIVE_PORTAL_DETECTION=1;ENABLE_APP_LIST=1;ENABLE_SETTINGS_APP=1;ENABLE_MANAGED_USERS=1;ENABLE_MDNS=1;USING_CEF_SHARED;__STDC_CONSTANT_MACROS;__STDC_FORMAT_MACROS;DYNAMIC_ANNOTATIONS_ENABLED=1;WTF_USE_DYNAMIC_ANNOTATIONS=1;%(PreprocessorDefinitions);BUILDING_CEF_DESURA_SHARED;_UNICODE;UNICODE;wxUSE_UNICODE</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
       <RuntimeTypeInfo>false</RuntimeTypeInfo>
       <TreatWarningAsError>true</TreatWarningAsError>
@@ -310,10 +310,6 @@
     <ClInclude Include="fetch_cef-prefix\src\fetch_cef\cefclient\main_message_loop.h" />
     <ClInclude Include="fetch_cef-prefix\src\fetch_cef\cefclient\main_message_loop_multithreaded_win.h" />
     <ClInclude Include="fetch_cef-prefix\src\fetch_cef\cefclient\main_message_loop_std.h" />
-    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\cefclient\osr_dragdrop_events.h" />
-    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\cefclient\osr_dragdrop_win.h" />
-    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\cefclient\osr_renderer.h" />
-    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\cefclient\osr_widget_win.h" />
     <ClInclude Include="fetch_cef-prefix\src\fetch_cef\cefclient\performance_test.h" />
     <ClInclude Include="fetch_cef-prefix\src\fetch_cef\cefclient\performance_test_setup.h" />
     <ClInclude Include="fetch_cef-prefix\src\fetch_cef\cefclient\resource.h" />
@@ -598,7 +594,6 @@
   <ItemGroup>
     <ClCompile Include="fetch_cef-prefix\src\fetch_cef\cefclient\binding_test.cc" />
     <ClCompile Include="fetch_cef-prefix\src\fetch_cef\cefclient\bytes_write_handler.cc" />
-    <ClCompile Include="fetch_cef-prefix\src\fetch_cef\cefclient\cefclient_win.cc" />
     <ClCompile Include="fetch_cef-prefix\src\fetch_cef\cefclient\client_app.cc" />
     <ClCompile Include="fetch_cef-prefix\src\fetch_cef\cefclient\client_app_delegates.cc" />
     <ClCompile Include="fetch_cef-prefix\src\fetch_cef\cefclient\client_handler.cc" />
@@ -612,9 +607,6 @@
     <ClCompile Include="fetch_cef-prefix\src\fetch_cef\cefclient\main_message_loop.cc" />
     <ClCompile Include="fetch_cef-prefix\src\fetch_cef\cefclient\main_message_loop_multithreaded_win.cc" />
     <ClCompile Include="fetch_cef-prefix\src\fetch_cef\cefclient\main_message_loop_std.cc" />
-    <ClCompile Include="fetch_cef-prefix\src\fetch_cef\cefclient\osr_dragdrop_win.cc" />
-    <ClCompile Include="fetch_cef-prefix\src\fetch_cef\cefclient\osr_renderer.cc" />
-    <ClCompile Include="fetch_cef-prefix\src\fetch_cef\cefclient\osr_widget_win.cc" />
     <ClCompile Include="fetch_cef-prefix\src\fetch_cef\cefclient\performance_test.cc" />
     <ClCompile Include="fetch_cef-prefix\src\fetch_cef\cefclient\performance_test_tests.cc" />
     <ClCompile Include="fetch_cef-prefix\src\fetch_cef\cefclient\resource_util_win.cc" />

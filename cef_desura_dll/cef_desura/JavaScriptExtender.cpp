@@ -48,7 +48,7 @@ bool JavaScriptExtender::Register(ChromiumDLL::JavaScriptExtenderI* jse)
 //	currentContext->
 
 	CefRefPtr<CefV8Handler> handler = new MyV8Handler();
-	JavaScriptExtender extender( jse );
+//	JavaScriptExtender extender( jse );
 
 	return CefRegisterExtension( jse->getName(), jse->getRegistrationCode(), handler );
 }
