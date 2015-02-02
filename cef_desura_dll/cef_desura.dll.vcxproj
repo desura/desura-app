@@ -298,6 +298,30 @@
     <None Include="fetch_cef-prefix\src\fetch_cef\Debug\wow_helper.exe" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\cefclient\binding_test.h" />
+    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\cefclient\bytes_write_handler.h" />
+    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\cefclient\client_app.h" />
+    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\cefclient\client_handler.h" />
+    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\cefclient\client_renderer.h" />
+    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\cefclient\client_switches.h" />
+    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\cefclient\dialog_test.h" />
+    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\cefclient\main_context.h" />
+    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\cefclient\main_context_impl.h" />
+    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\cefclient\main_message_loop.h" />
+    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\cefclient\main_message_loop_multithreaded_win.h" />
+    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\cefclient\main_message_loop_std.h" />
+    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\cefclient\osr_dragdrop_events.h" />
+    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\cefclient\osr_dragdrop_win.h" />
+    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\cefclient\osr_renderer.h" />
+    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\cefclient\osr_widget_win.h" />
+    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\cefclient\performance_test.h" />
+    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\cefclient\performance_test_setup.h" />
+    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\cefclient\resource.h" />
+    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\cefclient\resource_util.h" />
+    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\cefclient\scheme_test.h" />
+    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\cefclient\test_runner.h" />
+    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\cefclient\util_win.h" />
+    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\cefclient\window_test.h" />
     <ClInclude Include="fetch_cef-prefix\src\fetch_cef\cef_desura\ChromiumBrowser.h" />
     <ClInclude Include="fetch_cef-prefix\src\fetch_cef\cef_desura\ChromiumBrowserEvents.h" />
     <ClInclude Include="fetch_cef-prefix\src\fetch_cef\cef_desura\JavaScriptContext.h" />
@@ -572,6 +596,33 @@
     <ClInclude Include="fetch_cef-prefix\src\fetch_cef\libcef_dll\wrapper\cef_browser_info_map.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="fetch_cef-prefix\src\fetch_cef\cefclient\binding_test.cc" />
+    <ClCompile Include="fetch_cef-prefix\src\fetch_cef\cefclient\bytes_write_handler.cc" />
+    <ClCompile Include="fetch_cef-prefix\src\fetch_cef\cefclient\cefclient_win.cc" />
+    <ClCompile Include="fetch_cef-prefix\src\fetch_cef\cefclient\client_app.cc" />
+    <ClCompile Include="fetch_cef-prefix\src\fetch_cef\cefclient\client_app_delegates.cc" />
+    <ClCompile Include="fetch_cef-prefix\src\fetch_cef\cefclient\client_handler.cc" />
+    <ClCompile Include="fetch_cef-prefix\src\fetch_cef\cefclient\client_handler_win.cc" />
+    <ClCompile Include="fetch_cef-prefix\src\fetch_cef\cefclient\client_renderer.cc" />
+    <ClCompile Include="fetch_cef-prefix\src\fetch_cef\cefclient\client_switches.cc" />
+    <ClCompile Include="fetch_cef-prefix\src\fetch_cef\cefclient\dialog_test.cc" />
+    <ClCompile Include="fetch_cef-prefix\src\fetch_cef\cefclient\main_context.cc" />
+    <ClCompile Include="fetch_cef-prefix\src\fetch_cef\cefclient\main_context_impl.cc" />
+    <ClCompile Include="fetch_cef-prefix\src\fetch_cef\cefclient\main_context_impl_win.cc" />
+    <ClCompile Include="fetch_cef-prefix\src\fetch_cef\cefclient\main_message_loop.cc" />
+    <ClCompile Include="fetch_cef-prefix\src\fetch_cef\cefclient\main_message_loop_multithreaded_win.cc" />
+    <ClCompile Include="fetch_cef-prefix\src\fetch_cef\cefclient\main_message_loop_std.cc" />
+    <ClCompile Include="fetch_cef-prefix\src\fetch_cef\cefclient\osr_dragdrop_win.cc" />
+    <ClCompile Include="fetch_cef-prefix\src\fetch_cef\cefclient\osr_renderer.cc" />
+    <ClCompile Include="fetch_cef-prefix\src\fetch_cef\cefclient\osr_widget_win.cc" />
+    <ClCompile Include="fetch_cef-prefix\src\fetch_cef\cefclient\performance_test.cc" />
+    <ClCompile Include="fetch_cef-prefix\src\fetch_cef\cefclient\performance_test_tests.cc" />
+    <ClCompile Include="fetch_cef-prefix\src\fetch_cef\cefclient\resource_util_win.cc" />
+    <ClCompile Include="fetch_cef-prefix\src\fetch_cef\cefclient\scheme_test.cc" />
+    <ClCompile Include="fetch_cef-prefix\src\fetch_cef\cefclient\test_runner.cc" />
+    <ClCompile Include="fetch_cef-prefix\src\fetch_cef\cefclient\util_win.cc" />
+    <ClCompile Include="fetch_cef-prefix\src\fetch_cef\cefclient\window_test.cc" />
+    <ClCompile Include="fetch_cef-prefix\src\fetch_cef\cefclient\window_test_win.cc" />
     <ClCompile Include="fetch_cef-prefix\src\fetch_cef\cef_desura\ChromiumBrowser.cpp" />
     <ClCompile Include="fetch_cef-prefix\src\fetch_cef\cef_desura\ChromiumBrowserEvents.cpp" />
     <ClCompile Include="fetch_cef-prefix\src\fetch_cef\cef_desura\Cookie.cpp" />

@@ -14,7 +14,9 @@
 #endif
 
 #include "ChromiumBrowser.h"
+#include "cefclient/client_app.h"
 #include "include/cef_app.h"
+
 #if defined(_WIN32)
 #include "include/cef_sandbox_win.h"
 #endif
@@ -54,24 +56,6 @@ static void gtkFocus(GtkWidget *widget, GdkEvent *event, ChromiumBrowser *data)
 #endif
 
 
-class SimpleApp : public CefApp, public CefBrowserProcessHandler
-{
-public:
-	SimpleApp() {}
-
-	// CefApp methods:
-	virtual CefRefPtr<CefBrowserProcessHandler> GetBrowserProcessHandler()
-		OVERRIDE{ return this; }
-
-	// CefBrowserProcessHandler methods:
-	//virtual void OnContextInitialized() OVERRIDE;
-
-private:
-	// Include the default reference counting implementation.
-	IMPLEMENT_REFCOUNTING(SimpleApp);
-};
-
-
 
 extern "C"
 {
@@ -101,7 +85,7 @@ extern "C"
 
 		settings.multi_threaded_message_loop = threaded;
 
-		CefRefPtr<SimpleApp> app(new SimpleApp);
+		CefRefPtr<client::ClientApp> app( new client::ClientApp );
 
 		void* sandbox_info = NULL;
 
