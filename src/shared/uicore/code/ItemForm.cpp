@@ -926,6 +926,8 @@ void ItemForm::getNewPage(ITEM_STAGE stage, ItemFormPage::BaseInstallPage* &pPag
 	else
 	{
 		//shouldn't get here!!!!!
+		Warning("Bad ItemForm state transition; closing dialog.\n");
+		Close();
 		gcAssert(false);
 		return;
 	}
