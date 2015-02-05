@@ -56,7 +56,7 @@ public:
 		printf(" Util Version: %s\n", MCF_VERSION);
 		printf(" McfCore Version: %s\n", GetMcfVersion());
 		printf("\n");
-		printf("Copyright Linden Labs 2013 (http://github.com/desura/Desurium)\n");
+		printf("Copyright (C) 2014 Bad Juju Games, Inc. (http://github.com/desura/desura-app)\n");
 		printf("----------------------------------------------------------------------------\n");
 		return 0;
 	}
@@ -122,7 +122,7 @@ void dispHelp()
 	}
 
 	printf("\n");
-	printf("Copyright Linden Labs 2013 (http://github.com/desura/Desurium)\n");
+	printf("Copyright (C) 2014 Bad Juju Games, Inc. (http://github.com/desura/desura-app)\n");
 	printf("----------------------------------------------------------------------------\n");
 }
 
