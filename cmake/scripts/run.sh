@@ -8,6 +8,9 @@ DIR="$( cd -P "$( dirname "$SOURCE" )" && pwd )"
 # export PATH with DIR so we add the binary folder to PATH (for desura_bittest calls)
 export PATH="$DIR:$PATH"
 
+export XDG_CONFIG_HOME="$HOME/.config"
+export XDG_CACHE_HOME="$HOME/.cache"
+
 if [[ "@RUNTIME_LIB_INSOURCE_DIR@" = /* ]]; then
 	export LD_LIBRARY_PATH="@RUNTIME_LIB_INSOURCE_DIR@/"
 	# also add our runtime lib directory to path
