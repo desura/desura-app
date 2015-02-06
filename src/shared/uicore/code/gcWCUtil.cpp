@@ -167,6 +167,8 @@ bool InitWebControl()
 	if (!g_pChromiumController)
 		return false;
 
+	g_bLoaded = true;
+
 	RegisterJSBindings();
 	RegisterSchemes();
 
@@ -174,7 +176,6 @@ bool InitWebControl()
 	m_timeoutSource = g_timeout_add(50, onTimeout, nullptr);
 #endif
 
-	g_bLoaded = true;
 	SetCookies();
 	return true;
 }
@@ -301,8 +302,9 @@ void RegisterJSBindings()
 	if (!g_vJSExtenderList || !g_pChromiumController)
 		return;
 
-	for (size_t x=0; x<g_vJSExtenderList->size(); x++)
-		g_pChromiumController->RegisterJSExtender((*g_vJSExtenderList)[x]);
+// WIP: KMY: Set aside javascript support for the moment
+//	for (size_t x=0; x<g_vJSExtenderList->size(); x++)
+//		g_pChromiumController->RegisterJSExtender((*g_vJSExtenderList)[x]);
 
 	g_vJSExtenderList->clear();
 	safe_delete(g_vJSExtenderList);

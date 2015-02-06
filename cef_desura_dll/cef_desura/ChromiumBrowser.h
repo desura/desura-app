@@ -107,7 +107,7 @@ private:
 	CefWindowInfo m_WinInfo;
 };
 
-class TaskWrapper : public CefRefPtr<CefTask>
+class TaskWrapper : public CefTask
 {
 public:
 	TaskWrapper(ChromiumDLL::CallbackI* callback)
@@ -126,6 +126,8 @@ public:
 		if (m_pCallback)
 			m_pCallback->run();
 	}
+
+	IMPLEMENT_REFCOUNTING( TaskWrapper );
 
 private:
 	ChromiumDLL::CallbackI* m_pCallback;

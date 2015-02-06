@@ -95,6 +95,7 @@ extern "C"
 #else
 		settings.no_sandbox = true;
 #endif
+		settings.no_sandbox = true;
 
 		if (!CefInitialize(args, settings, app.get(), sandbox_info ))
 			return false;
@@ -137,7 +138,8 @@ extern "C"
 
 	DLLINTERFACE void CEF_PostCallback(ChromiumDLL::CallbackI* callback)
 	{
-		CefPostTask(TID_UI, (CefTask*)(new TaskWrapper(callback)));
+		CefRefPtr<TaskWrapper> cb = new TaskWrapper( callback );
+		CefPostTask( TID_UI, cb );
 	}
 }
 
