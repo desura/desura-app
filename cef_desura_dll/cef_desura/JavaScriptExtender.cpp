@@ -14,43 +14,51 @@
 #include "JavaScriptObject.h"
 #include "JavaScriptContext.h"
 
+#include "cefclient/client_app.h"
+
+#include <set>
 #include <locale>
 #include <codecvt>
 
-class MyV8Handler : public CefV8Handler {
-public:
-	MyV8Handler() {}
+static std::set<JavaScriptExtender*> local_JSE;
 
-	virtual bool Execute( const CefString& name,
-		CefRefPtr<CefV8Value> object,
-		const CefV8ValueList& arguments,
-		CefRefPtr<CefV8Value>& retval,
-		CefString& exception ) OVERRIDE
-	{
-		if ( name == "myfunc" ) {
-			// Return my string value.
-			retval = CefV8Value::CreateString( "My Value!" );
-			return true;
+namespace client
+{
+	class RenderDelegateWebKit : public client::ClientApp::RenderDelegate {
+	public:
+		RenderDelegateWebKit() {
 		}
 
-		// Function does not exist.
-		return false;
-	}
+		virtual void OnWebKitInitialized( CefRefPtr<client::ClientApp> app )
+		{
+			for ( std::set<JavaScriptExtender*>::iterator i = local_JSE.begin(); i != local_JSE.end(); ++i )
+			{
+				JavaScriptExtender* jse = *i;
+				CefRegisterExtension( jse->m_pJSExtender->getName(), jse->m_pJSExtender->getRegistrationCode(), jse );
+			}
 
-		// Provide the reference counting implementation for this class.
-	IMPLEMENT_REFCOUNTING( MyV8Handler );
-};
+			local_JSE.clear();
+		}
+
+	private:
+		IMPLEMENT_REFCOUNTING( RenderDelegateWebKit );
+	};
+
+
+	void JSExtenderCreateRenderDelegates( client::ClientApp::RenderDelegateSet& delegates )
+	{
+		delegates.insert( new RenderDelegateWebKit );
+	}
+}
+
 
 bool JavaScriptExtender::Register(ChromiumDLL::JavaScriptExtenderI* jse)
 {
-// KMY: Confirm context
-//	CefRefPtr<CefV8Context> currentContext = CefV8Context::GetCurrentContext();
-//	currentContext->
+	// Store extender data, so that it can be registered under CefRenderProcessHandler::OnWebKitInitialized()
+	local_JSE.insert( new JavaScriptExtender( jse ) );
 
-	CefRefPtr<CefV8Handler> handler = new MyV8Handler();
-//	JavaScriptExtender extender( jse );
-
-	return CefRegisterExtension( jse->getName(), jse->getRegistrationCode(), handler );
+	// Lie, as it's deferred
+	return true;
 }
 
 JavaScriptExtender::JavaScriptExtender(ChromiumDLL::JavaScriptExtenderI* jse)

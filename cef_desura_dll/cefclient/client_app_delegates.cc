@@ -10,15 +10,19 @@
 #include "cefclient/print_handler_gtk.h"
 #endif
 
+
 namespace client {
 
 // static
 void ClientApp::CreateBrowserDelegates(BrowserDelegateSet& delegates) {
 }
 
+void JSExtenderCreateRenderDelegates( client::ClientApp::RenderDelegateSet& delegates );
+
+
 // static
 void ClientApp::CreateRenderDelegates(RenderDelegateSet& delegates) {
-  renderer::CreateRenderDelegates(delegates);
+	JSExtenderCreateRenderDelegates( delegates );
 }
 
 // static

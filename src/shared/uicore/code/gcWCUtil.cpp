@@ -302,9 +302,8 @@ void RegisterJSBindings()
 	if (!g_vJSExtenderList || !g_pChromiumController)
 		return;
 
-// WIP: KMY: Set aside javascript support for the moment
-//	for (size_t x=0; x<g_vJSExtenderList->size(); x++)
-//		g_pChromiumController->RegisterJSExtender((*g_vJSExtenderList)[x]);
+	for (size_t x=0; x<g_vJSExtenderList->size(); x++)
+		g_pChromiumController->RegisterJSExtender((*g_vJSExtenderList)[x]);
 
 	g_vJSExtenderList->clear();
 	safe_delete(g_vJSExtenderList);

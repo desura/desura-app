@@ -33,28 +33,7 @@ public:
 };
 
 
-class JavaScriptWrapper : public ChromiumDLL::JavaScriptExtenderI
-{
-public:
-	JavaScriptWrapper();
-	JavaScriptWrapper(CefRefPtr<CefV8Handler> obj);
-
-	virtual void destroy();
-	virtual ChromiumDLL::JavaScriptExtenderI* clone();
-	virtual ChromiumDLL::JSObjHandle execute(ChromiumDLL::JavaScriptFunctionArgs *args);
-
-	virtual const char* getName();
-	virtual const char* getRegistrationCode();
-
-	virtual CefRefPtr<CefV8Handler> getCefV8Handler();
-	virtual CefRefPtr<CefBase> getCefBase();
-
-private:
-	CefRefPtr<CefV8Handler> m_pObject;
-};
-
-
-class JavaScriptExtender : public JavaScriptWrapper
+class JavaScriptExtender : public CefV8Handler
 {
 public:
 	static bool Register( ChromiumDLL::JavaScriptExtenderI* jse );
@@ -64,8 +43,30 @@ public:
 
 	virtual bool Execute( const CefString& name, CefRefPtr<CefV8Value> object, const CefV8ValueList& arguments, CefRefPtr<CefV8Value>& retval, CefString& exception );
 
-private:
 	ChromiumDLL::JavaScriptExtenderI* m_pJSExtender;
+
+	IMPLEMENT_REFCOUNTING( JavaScriptExtender );
+};
+
+
+class JavaScriptWrapper : public ChromiumDLL::JavaScriptExtenderI
+{
+public:
+	JavaScriptWrapper();
+	JavaScriptWrapper( CefRefPtr<CefV8Handler> obj );
+
+	virtual void destroy();
+	virtual ChromiumDLL::JavaScriptExtenderI* clone();
+	virtual ChromiumDLL::JSObjHandle execute( ChromiumDLL::JavaScriptFunctionArgs *args );
+
+	virtual const char* getName();
+	virtual const char* getRegistrationCode();
+
+	virtual CefRefPtr<CefV8Handler> getCefV8Handler();
+	virtual CefRefPtr<CefBase> getCefBase();
+
+private:
+	CefRefPtr<CefV8Handler> m_pObject;
 };
 
 
