@@ -22,7 +22,6 @@
 #include "cefclient/main_context_impl.h"
 #include "cefclient/main_message_loop_multithreaded_win.h"
 #include "cefclient/main_message_loop_std.h"
-#include "cefclient/osr_widget_win.h"
 #include "cefclient/resource.h"
 #include "cefclient/test_runner.h"
 #include "cefclient/util_win.h"

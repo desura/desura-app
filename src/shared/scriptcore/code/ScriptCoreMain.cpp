@@ -31,15 +31,43 @@ Contact us at legal@badjuju.com.
 
 gcString g_szSCVersion("{0}.{1}.{2}.{3}", VERSION_MAJOR, VERSION_MINOR, VERSION_BUILDNO, VERSION_EXTEND);
 
+
 ScriptCoreI* NewScriptCore(ScriptTaskRunnerI* taskRunner);
 bool AddItemExtender(ChromiumDLL::JavaScriptExtenderI* extender);
 bool IsV8Init();
+
+class ShellArrayBufferAllocator : public v8::ArrayBuffer::Allocator {
+public:
+	virtual void* Allocate( size_t length ) {
+		void* data = AllocateUninitialized( length );
+		return data == NULL ? data : memset( data, 0, length );
+	}
+	virtual void* AllocateUninitialized( size_t length ) { return malloc( length ); }
+	virtual void Free( void* data, size_t ) { free( data ); }
+};
+
+void hackV8()
+{
+	static bool once = false;
+
+	if ( !once )
+	{
+		once = true;
+		v8::V8::InitializeICU();
+		v8::V8::Initialize();
+
+		ShellArrayBufferAllocator array_buffer_allocator;
+		v8::V8::SetArrayBufferAllocator( &array_buffer_allocator );
+	}
+}
+
 
 class ScriptCoreSetup : public ScriptCoreSetupI, public ScriptTaskI
 {
 public:
 	ScriptCoreSetup()
 	{
+		hackV8();
 		m_bCleanUp = false;
 		m_pThread = nullptr;
 	}
@@ -58,6 +86,8 @@ public:
 	{
 		if (m_pThread)
 			return;
+
+		doTask();
 
 		m_pThread = new ScriptTaskThread();
 		m_pThread->start();

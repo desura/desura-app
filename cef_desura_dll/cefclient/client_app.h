@@ -122,11 +122,12 @@ class ClientApp : public CefApp,
   static CefRefPtr<CefPrintHandler> CreatePrintHandler();
 
   // CefApp methods.
-  void OnRegisterCustomSchemes(
-      CefRefPtr<CefSchemeRegistrar> registrar) OVERRIDE;
+  void OnRegisterCustomSchemes( CefRefPtr<CefSchemeRegistrar> registrar) OVERRIDE;
+
   CefRefPtr<CefBrowserProcessHandler> GetBrowserProcessHandler() OVERRIDE {
     return this;
   }
+
   CefRefPtr<CefRenderProcessHandler> GetRenderProcessHandler() OVERRIDE {
     return this;
   }

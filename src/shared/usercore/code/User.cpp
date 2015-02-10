@@ -55,6 +55,9 @@ using namespace UserCore;
 
 User::User()
 	: m_bAltProvider(false)
+	, m_pThreadPool( nullptr )
+	, m_pWebCore( nullptr )
+	, m_pMcfManager( nullptr )
 {
 	gcTrace("");
 	onLoginItemsLoadedEvent += delegate(this, &User::onLoginItemsLoaded);

@@ -58,17 +58,6 @@ void ScriptCoreInternal::OnFatalError(const char* location, const char* message)
 }
 
 
-class ShellArrayBufferAllocator : public v8::ArrayBuffer::Allocator {
-public:
-	virtual void* Allocate( size_t length ) {
-		void* data = AllocateUninitialized( length );
-		return data == NULL ? data : memset( data, 0, length );
-	}
-	virtual void* AllocateUninitialized( size_t length ) { return malloc( length ); }
-	virtual void Free( void* data, size_t ) { free( data ); }
-};
-
-
 void ScriptCoreInternal::init()
 {
 	if (s_Disabled)
@@ -79,11 +68,6 @@ void ScriptCoreInternal::init()
 		if (!s_IsInit)
 		{
 			s_IsInit = true;
-			v8::V8::InitializeICU();
-			v8::V8::Initialize();
-
-			ShellArrayBufferAllocator array_buffer_allocator;
-			v8::V8::SetArrayBufferAllocator( &array_buffer_allocator );
 			m_isolate = v8::Isolate::New();
 
 			v8::V8::AddMessageListener(&MessageCallback);

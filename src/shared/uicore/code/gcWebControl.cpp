@@ -83,6 +83,7 @@ gcWebControl::gcWebControl(wxWindow* parent, const char* defaultUrl, const char*
 
 gcWebControl::gcWebControl(wxWindow* parent, const char* defaultUrl, CreateBrowserFn createBrowserFn)
 	: gcPanel(parent, wxID_ANY)
+	, m_pChromeBrowser( nullptr )
 {
 	Bind(wxEVT_MOUSEWHEEL, &gcWebControl::onMouseScroll, this);
 	Bind(wxEVT_SIZE, &gcWebControl::onResize, this);
@@ -117,9 +118,12 @@ gcWebControl::gcWebControl(wxWindow* parent, const char* defaultUrl, CreateBrows
 
 gcWebControl::~gcWebControl()
 {
-	m_pChromeBrowser->setEventCallback(nullptr);
-	m_pChromeBrowser->destroy();
-	m_pChromeBrowser = nullptr;
+	if ( m_pChromeBrowser )
+	{
+		m_pChromeBrowser->setEventCallback( nullptr );
+		m_pChromeBrowser->destroy();
+		m_pChromeBrowser = nullptr;
+	}
 
 	//This will leak event handler, better than crashing though
 	if (m_pEventHandler)

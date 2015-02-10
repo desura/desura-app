@@ -12,6 +12,7 @@
 #include "SchemeExtender.h"
 #include "SchemeRequest.h"
 #include "SchemePost.h"
+#include "include/wrapper/cef_helpers.h"
 
 #include <map>
 #include <algorithm>
@@ -20,7 +21,7 @@ class SchemeHandlerFactory;
 
 std::map<std::string, SchemeHandlerFactory* > g_mSchemeExtenders;
 
-class SchemeHandlerFactory : public CefRefPtr<CefSchemeHandlerFactory>
+class SchemeHandlerFactory : public CefSchemeHandlerFactory
 {
 public:
 	SchemeHandlerFactory()
@@ -43,6 +44,8 @@ public:
 
 	CefRefPtr<CefResourceHandler> Create(CefRefPtr<CefBrowser> browser, CefRefPtr<CefFrame> frame, const CefString& scheme_name, CefRefPtr<CefRequest> request)
 	{
+		CEF_REQUIRE_IO_THREAD();
+
 		std::string url = request->GetURL();
 		std::vector<size_t> slashes;
 
@@ -73,6 +76,8 @@ public:
 
 		return CefRegisterSchemeHandlerFactory(se->getSchemeName(), se->getHostName(), (CefSchemeHandlerFactory*) this);
 	}
+
+	IMPLEMENT_REFCOUNTING( SchemeHandlerFactory );
 
 private:
 	std::map<std::string, ChromiumDLL::SchemeExtenderI*> m_mSchemeMap;
