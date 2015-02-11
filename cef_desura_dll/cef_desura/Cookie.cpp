@@ -57,7 +57,7 @@ public:
 	CefCookie m_rCookie;
 };
 
-class CookieTask : public CefRefPtr<CefTask>
+class CookieTask : public CefTask
 {
 public:
 	CookieTask(const char* url, CefCookie &cookie)
@@ -81,7 +81,7 @@ public:
 		m_bDel = true;
 	}
 
-	virtual void Execute(CefThreadId threadId)
+	virtual void Execute()
 	{
 		if (m_szName.size())
 			CefCookieManager::GetGlobalManager()->DeleteCookies(m_szUrl, m_szName);
@@ -95,13 +95,17 @@ public:
 	std::string m_szName;
 
 	CefCookie m_szCookie;
+
+	IMPLEMENT_REFCOUNTING( CookieTask );
 };
 
 extern "C"
 {
 	DLLINTERFACE void CEF_DeleteCookie(const char* url, const char* name)
 	{
-		CefPostTask( TID_IO, (CefTask*)( new CookieTask(url, name) ) );
+		CefRefPtr<CookieTask> cookieTask = new CookieTask( url, name );
+
+		CefPostTask( TID_IO, cookieTask );
 	}
 
 	DLLINTERFACE ChromiumDLL::CookieI* CEF_CreateCookie()

@@ -37,6 +37,12 @@
 	#define NIX64 1
 #endif
 
+#if defined( _WIN32 )
+
+// #define	WIN_USE_SANDBOX		1
+
+#endif
+
 ChromiumDLL::LogMessageHandlerFn g_pLogHandler = NULL;
 
 bool logHandler(int level, const std::string& msg)
@@ -60,7 +66,9 @@ static void gtkFocus(GtkWidget *widget, GdkEvent *event, ChromiumBrowser *data)
 extern "C"
 {
 #if defined(_WIN32)
-	#pragma comment(lib, "cef_sandbox.lib")
+	#if defined( WIN_USE_SANDBOX )
+		#pragma comment(lib, "cef_sandbox.lib")
+	#endif
 #endif
 
 	DLLINTERFACE void CEF_DoMsgLoop()
@@ -90,12 +98,15 @@ extern "C"
 		void* sandbox_info = NULL;
 
 #if defined(_WIN32)
-		CefScopedSandboxInfo scoped_sandbox;
-		sandbox_info = scoped_sandbox.sandbox_info();
+	#if defined( WIN_USE_SANDBOX )
+			sandbox_info = scoped_sandbox.sandbox_info();
+			settings.no_sandbox = false;
+	#else
+			settings.no_sandbox = true;
+	#endif
 #else
 		settings.no_sandbox = true;
 #endif
-		settings.no_sandbox = true;
 
 		if (!CefInitialize(args, settings, app.get(), sandbox_info ))
 			return false;

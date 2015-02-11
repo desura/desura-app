@@ -47,10 +47,6 @@ void RegisterSchemes();
 
 typedef gcString (*UserAgentFN)();
 
-#ifdef NIX
-guint m_timeoutSource = 0;
-#endif
-
 bool g_bLoaded = false;
 SharedObjectLoader g_CEFDll;
 ChromiumDLL::ChromiumControllerI* g_pChromiumController = nullptr;
@@ -59,6 +55,8 @@ ChromiumDLL::ChromiumControllerI* g_pChromiumController = nullptr;
 void SetCookies();
 
 #ifdef NIX
+guint m_timeoutSource = 0;
+
 gboolean onTimeout(gpointer data)
 {
 	if (!g_bLoaded || !g_pChromiumController)
@@ -97,6 +95,30 @@ bool RestartTimerCB(const CVar* hook, const char* newval)
 }
 
 CVar gc_cef_timeout("gc_cef_timeout", "75", 0, &RestartTimerCB);
+#else
+
+UINT_PTR timePtr = 0;
+
+VOID CALLBACK msgLoop(
+	_In_  HWND hwnd,
+	_In_  UINT uMsg,
+	_In_  UINT_PTR idEvent,
+	_In_  DWORD dwTime
+	)
+{
+	g_pChromiumController->DoMsgLoop();
+}
+
+void StartMSGTimer()
+{
+	timePtr = SetTimer( NULL, 1, 33, msgLoop );
+}
+
+void KillMSGTimer()
+{
+	KillTimer( NULL, timePtr );
+}
+
 #endif
 
 #ifdef WIN32
@@ -118,6 +140,7 @@ bool LoadCEFDll()
 	UserAgentFN userAgent = (UserAgentFN) WebCore::FactoryBuilder(WEBCORE_USERAGENT);
 	gcString ua;
 
+/*
 	//stupid hack cause crappy paypal does useragent sniffing. FFFFFFFFFFFFUUUUUUUUUUUUUUUUUUUUUUU
 #ifdef WIN32
 	ua += "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/535.1 (KHTML, like Gecko) Chrome/13.0.782.220 Safari/535.1";
@@ -126,6 +149,8 @@ bool LoadCEFDll()
 #endif
 
 	ua += " " + userAgent();
+*/
+	ua = userAgent();
 
 	UTIL::FS::Path path(UTIL::OS::getTempInternetPath(L"desura"), L"", false);
 	UTIL::FS::recMakeFolder(path);
@@ -136,11 +161,7 @@ bool LoadCEFDll()
 	logPath = "Chromium_log.txt";
 #endif
 
-#ifdef WIN32
-	bool multiThreaded = true;
-#else
 	bool multiThreaded = false;
-#endif
 
 	g_pChromiumController = CEF_Init_Legacy(g_CEFDll, multiThreaded, gcString(path.getFolderPath()).c_str(), logPath.c_str(), ua.c_str());
 
@@ -167,6 +188,10 @@ bool InitWebControl()
 	if (!g_pChromiumController)
 		return false;
 
+#ifdef WIN32
+	StartMSGTimer();
+#endif
+
 	g_bLoaded = true;
 
 	RegisterJSBindings();
@@ -192,6 +217,8 @@ void ShutdownWebControl()
 		g_source_remove(m_timeoutSource);
 		m_timeoutSource = 0;
 	}
+#elseif WIN32
+	KillMSGTimer();
 #endif
 
 	if (g_pChromiumController)

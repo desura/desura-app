@@ -133,7 +133,7 @@ public:
 	ScriptTaskThread* m_pThread;
 };
 
-ScriptCoreSetup g_Setup;
+ScriptCoreSetup* g_Setup = nullptr;
 
 namespace SCore
 {
@@ -141,11 +141,17 @@ namespace SCore
 	{
 		if (strcmp(name, SCRIPT_CORE)==0)
 		{
-			return g_Setup.newScriptCore();
+			if ( ! g_Setup )
+				g_Setup = new ScriptCoreSetup();
+
+			return g_Setup->newScriptCore();
 		}
 		else if (strcmp(name, SCRIPT_CORE_SETUP)==0)
 		{
-			return (ScriptCoreSetupI*)&g_Setup;
+			if ( !g_Setup )
+				g_Setup = new ScriptCoreSetup();
+
+			return (ScriptCoreSetupI*) g_Setup;
 		}
 
 		return nullptr;
