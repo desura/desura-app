@@ -29,6 +29,7 @@
 #include <locale>
 #include <codecvt>
 
+
 #ifdef OS_LINUX
 #include <gtk/gtk.h>
 #endif
@@ -60,7 +61,6 @@ static void gtkFocus(GtkWidget *widget, GdkEvent *event, ChromiumBrowser *data)
 		data->onFocus();
 }
 #endif
-
 
 
 extern "C"
@@ -99,6 +99,7 @@ extern "C"
 
 #if defined(_WIN32)
 	#if defined( WIN_USE_SANDBOX )
+			CefScopedSandboxInfo scoped_sandbox;
 			sandbox_info = scoped_sandbox.sandbox_info();
 			settings.no_sandbox = false;
 	#else

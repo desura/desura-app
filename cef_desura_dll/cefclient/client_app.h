@@ -17,7 +17,8 @@ namespace client {
 
 class ClientApp : public CefApp,
                   public CefBrowserProcessHandler,
-                  public CefRenderProcessHandler {
+                  public CefRenderProcessHandler
+{
  public:
   // Interface for browser delegates. All BrowserDelegates must be returned via
   // CreateBrowserDelegates. Do not perform work in the BrowserDelegate

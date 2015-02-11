@@ -438,12 +438,6 @@
     <ClCompile Include="fetch_cef-prefix\src\fetch_cef\cefclient\client_app_delegates.cc">
       <Filter>cefclient</Filter>
     </ClCompile>
-    <ClCompile Include="fetch_cef-prefix\src\fetch_cef\cefclient\client_handler.cc">
-      <Filter>cefclient</Filter>
-    </ClCompile>
-    <ClCompile Include="fetch_cef-prefix\src\fetch_cef\cefclient\client_handler_win.cc">
-      <Filter>cefclient</Filter>
-    </ClCompile>
     <ClCompile Include="fetch_cef-prefix\src\fetch_cef\cefclient\client_renderer.cc">
       <Filter>cefclient</Filter>
     </ClCompile>
@@ -1320,9 +1314,6 @@
       <Filter>cefclient</Filter>
     </ClInclude>
     <ClInclude Include="fetch_cef-prefix\src\fetch_cef\cefclient\client_app.h">
-      <Filter>cefclient</Filter>
-    </ClInclude>
-    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\cefclient\client_handler.h">
       <Filter>cefclient</Filter>
     </ClInclude>
     <ClInclude Include="fetch_cef-prefix\src\fetch_cef\cefclient\client_renderer.h">

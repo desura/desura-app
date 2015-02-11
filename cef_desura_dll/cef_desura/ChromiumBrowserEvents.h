@@ -45,15 +45,18 @@ public:
 
 
 /////////////////////////////////////////////////////////////////////////////////////////////
-/// LifeSpanHandler
+/// LoadHandler
 /////////////////////////////////////////////////////////////////////////////////////////////
 
 class LoadHandler : public CefLoadHandler, public virtual ChromiumEventInfoI
 {
 public:
+	// TODO: KMY: Review
+	// void OnLoadingStateChange( CefRefPtr<CefBrowser> browser, bool isLoading, bool canGoBack, bool canGoForward ) OVERRIDE;
+
 	virtual void OnLoadStart(CefRefPtr<CefBrowser> browser, CefRefPtr<CefFrame> frame);
 	virtual void OnLoadEnd(CefRefPtr<CefBrowser> browser, CefRefPtr<CefFrame> frame, int httpStatusCode);
-	virtual bool OnLoadError(CefRefPtr<CefBrowser> browser, CefRefPtr<CefFrame> frame, ErrorCode errorCode, const CefString& failedUrl, CefString& errorText);
+	virtual void OnLoadError(CefRefPtr<CefBrowser> browser, CefRefPtr<CefFrame> frame, ErrorCode errorCode, const CefString& failedUrl, const CefString& errorText);
 };
 
 
@@ -138,13 +141,13 @@ public:
 	virtual CefRefPtr<CefBrowser> GetBrowser();
 	virtual void setContext(CefRefPtr<CefV8Context> context);
 
-	virtual CefRefPtr<CefLifeSpanHandler>		GetLifeSpanHandler()	{ return (CefLifeSpanHandler*)this; }
-	virtual CefRefPtr<CefLoadHandler>			GetLoadHandler()		{ return (CefLoadHandler*)this; }
-	virtual CefRefPtr<CefRequestHandler>		GetRequestHandler()		{ return (CefRequestHandler*)this; }
-	virtual CefRefPtr<CefDisplayHandler>		GetDisplayHandler()		{ return (CefDisplayHandler*)this; }
-	virtual CefRefPtr<CefKeyboardHandler>		GetKeyboardHandler()	{ return (CefKeyboardHandler*)this; }
-	virtual CefRefPtr<CefContextMenuHandler>	GetMenuHandler()		{ return (CefContextMenuHandler*)this; }
-	virtual CefRefPtr<CefJSDialogHandler>		GetJSDialogHandler()	{ return (CefJSDialogHandler*)this; }
+	virtual CefRefPtr<CefLifeSpanHandler>		GetLifeSpanHandler()		{ return (CefLifeSpanHandler*) this; }
+	virtual CefRefPtr<CefLoadHandler>			GetLoadHandler()			{ return (CefLoadHandler*) this; }
+	virtual CefRefPtr<CefRequestHandler>		GetRequestHandler()			{ return (CefRequestHandler*) this; }
+	virtual CefRefPtr<CefDisplayHandler>		GetDisplayHandler()			{ return (CefDisplayHandler*) this; }
+	virtual CefRefPtr<CefKeyboardHandler>		GetKeyboardHandler()		{ return (CefKeyboardHandler*) this; }
+	virtual CefRefPtr<CefContextMenuHandler>	GetMenuHandler()			{ return (CefContextMenuHandler*) this; }
+	virtual CefRefPtr<CefJSDialogHandler>		GetJSDialogHandler()		{ return (CefJSDialogHandler*) this; }
 
 private:
 	CefRefPtr<CefBrowser> m_Browser;

@@ -109,7 +109,7 @@ bool LifeSpanHandler::OnBeforePopup(CefRefPtr<CefBrowser> parentBrowser, const C
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////
-/// LifeSpanHandler
+/// LoadHandler
 /////////////////////////////////////////////////////////////////////////////////////////////
 
 void LoadHandler::OnLoadStart(CefRefPtr<CefBrowser> browser, CefRefPtr<CefFrame> frame)
@@ -124,8 +124,10 @@ void LoadHandler::OnLoadEnd(CefRefPtr<CefBrowser> browser, CefRefPtr<CefFrame> f
 		GetCallback()->onPageLoadEnd();
 }
 
-bool LoadHandler::OnLoadError(CefRefPtr<CefBrowser> browser, CefRefPtr<CefFrame> frame, ErrorCode errorCode, const CefString& failedUrl, CefString& errorText)
+void LoadHandler::OnLoadError( CefRefPtr<CefBrowser> browser, CefRefPtr<CefFrame> frame, ErrorCode errorCode, const CefString& errorText, const CefString& failedUrl )
 {
+	// TODO: KMY: Resolve change in errorText
+
 	std::string failedUrlS = std::wstring_convert<std::codecvt_utf8<wchar_t>>().to_bytes( failedUrl.c_str() );
 
 	//if no frame its the whole page
@@ -153,8 +155,8 @@ bool LoadHandler::OnLoadError(CefRefPtr<CefBrowser> browser, CefRefPtr<CefFrame>
 
 		if ( GetCallback()->onLoadError( errorMsg.c_str(), failedUrlS.c_str(), buff, size ) )
 		{
-			errorText = buff;
-			return true;
+//			errorText = buff;
+			return;
 		}
 	}
 		
@@ -166,8 +168,7 @@ bool LoadHandler::OnLoadError(CefRefPtr<CefBrowser> browser, CefRefPtr<CefFrame>
 				" failed with error code " << static_cast<int>(errorCode) <<
 				".</h2></body>"
 				"</html>";
-	errorText = ss.str();
-	return true;
+//	errorText = ss.str();
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////

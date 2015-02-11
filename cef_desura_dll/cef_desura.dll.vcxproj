@@ -301,7 +301,6 @@
     <ClInclude Include="fetch_cef-prefix\src\fetch_cef\cefclient\binding_test.h" />
     <ClInclude Include="fetch_cef-prefix\src\fetch_cef\cefclient\bytes_write_handler.h" />
     <ClInclude Include="fetch_cef-prefix\src\fetch_cef\cefclient\client_app.h" />
-    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\cefclient\client_handler.h" />
     <ClInclude Include="fetch_cef-prefix\src\fetch_cef\cefclient\client_renderer.h" />
     <ClInclude Include="fetch_cef-prefix\src\fetch_cef\cefclient\client_switches.h" />
     <ClInclude Include="fetch_cef-prefix\src\fetch_cef\cefclient\dialog_test.h" />
@@ -596,8 +595,6 @@
     <ClCompile Include="fetch_cef-prefix\src\fetch_cef\cefclient\bytes_write_handler.cc" />
     <ClCompile Include="fetch_cef-prefix\src\fetch_cef\cefclient\client_app.cc" />
     <ClCompile Include="fetch_cef-prefix\src\fetch_cef\cefclient\client_app_delegates.cc" />
-    <ClCompile Include="fetch_cef-prefix\src\fetch_cef\cefclient\client_handler.cc" />
-    <ClCompile Include="fetch_cef-prefix\src\fetch_cef\cefclient\client_handler_win.cc" />
     <ClCompile Include="fetch_cef-prefix\src\fetch_cef\cefclient\client_renderer.cc" />
     <ClCompile Include="fetch_cef-prefix\src\fetch_cef\cefclient\client_switches.cc" />
     <ClCompile Include="fetch_cef-prefix\src\fetch_cef\cefclient\dialog_test.cc" />
