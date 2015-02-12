@@ -105,6 +105,7 @@ extern "C"
 	#else
 			settings.no_sandbox = true;
 	#endif
+		settings.single_process = true;
 #else
 		settings.no_sandbox = true;
 #endif

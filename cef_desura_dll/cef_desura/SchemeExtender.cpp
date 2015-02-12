@@ -64,7 +64,8 @@ public:
 		if (it == m_mSchemeMap.end())
 			return nullptr;
 
-		return (CefResourceHandler*)(new SchemeExtender(it->second->clone((const char*)scheme_name.c_str())));
+		CefRefPtr<SchemeExtender> ptr = new SchemeExtender( it->second->clone( (const char*) scheme_name.c_str() ) );
+		return ptr;
 	}
 
 	bool registerScheme(ChromiumDLL::SchemeExtenderI* se)
@@ -118,7 +119,7 @@ SchemeExtender::~SchemeExtender()
 }
 
 
-bool SchemeExtender::ProcessRequest(CefRefPtr<CefRequest> request, CefString& redirectUrl, CefRefPtr<CefCallback> callback)
+bool SchemeExtender::ProcessRequest(CefRefPtr<CefRequest> request, CefRefPtr<CefCallback> callback)
 {
 	if (!m_pSchemeExtender)
 		return false;
@@ -134,8 +135,9 @@ bool SchemeExtender::ProcessRequest(CefRefPtr<CefRequest> request, CefString& re
 	{
 		const char *szRUrl = m_pSchemeExtender->getRedirectUrl();
 
-		if (szRUrl)
-			redirectUrl.FromASCII(szRUrl);
+// TODO: KMY: resolve 
+//		if (szRUrl)
+//			redirectUrl.FromASCII(szRUrl);
 	}
 
 	return res;
@@ -149,7 +151,7 @@ void SchemeExtender::Cancel()
 	m_pSchemeExtender->cancel();
 }
 
-void SchemeExtender::GetResponseHeaders(CefRefPtr<CefResponse> response, int64& response_length)
+void SchemeExtender::GetResponseHeaders( CefRefPtr<CefResponse> response, int64& response_length, CefString& redirectUrl )
 {
 	if (!m_pSchemeExtender)
 		return;
@@ -159,6 +161,8 @@ void SchemeExtender::GetResponseHeaders(CefRefPtr<CefResponse> response, int64& 
 
 	if (mime)
 		response->SetMimeType(mime);
+
+	// TODO: KMY: See above (redirectUrl)
 }
 
 bool SchemeExtender::ReadResponse(void* data_out, int bytes_to_read, int& bytes_read, CefRefPtr<CefCallback> callback)

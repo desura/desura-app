@@ -149,7 +149,7 @@ class ClientApp : public CefApp,
   void OnBrowserCreated(CefRefPtr<CefBrowser> browser) OVERRIDE;
   void OnBrowserDestroyed(CefRefPtr<CefBrowser> browser) OVERRIDE;
   CefRefPtr<CefLoadHandler> GetLoadHandler() OVERRIDE;
-  bool OnBeforeNavigation(CefRefPtr<CefBrowser> browser,
+  bool OnBeforeNavigation( CefRefPtr<CefBrowser> browser,
                           CefRefPtr<CefFrame> frame,
                           CefRefPtr<CefRequest> request,
                           NavigationType navigation_type,
