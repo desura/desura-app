@@ -92,8 +92,10 @@ ChromiumDLL::JSObjHandle JavaScriptFactory::CreateObject()
 
 ChromiumDLL::JSObjHandle JavaScriptFactory::CreateObject(void* userData)
 {
-	ObjectWrapper base = new ObjectWrapper(userData);
-	return new JavaScriptObject(CefV8Value::CreateObject(base));
+	CefRefPtr<CefV8Value> obj = CefV8Value::CreateObject( NULL );
+	CefRefPtr<ObjectWrapper> wrapper = new ObjectWrapper( userData );
+	obj->SetUserData( wrapper );
+	return new JavaScriptObject( obj );
 }
 
 ChromiumDLL::JSObjHandle JavaScriptFactory::CreateFunction(const char* name, ChromiumDLL::JavaScriptExtenderI* handler)

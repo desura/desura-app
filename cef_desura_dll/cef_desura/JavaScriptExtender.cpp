@@ -161,8 +161,7 @@ ChromiumDLL::JSObjHandle JavaScriptWrapper::execute(ChromiumDLL::JavaScriptFunct
 
 	JavaScriptObject* jsoRetProper = (JavaScriptObject*)jso;
 
-	if (jsoRetProper)
-		object = jsoRetProper->getCefV8();
+	object = CefV8Context::GetCurrentContext()->GetGlobal();
 
 	for (int x=0; x<argc; x++)
 	{

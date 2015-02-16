@@ -178,7 +178,7 @@ ChromiumDLL::JSObjHandle JavaScriptObject::getValue(const char* key)
 	if (!val)
 		return NULL;
 
-	return ChromiumDLL::JSObjHandle(new JavaScriptObject(val));
+	return ChromiumDLL::JSObjHandle( new JavaScriptObject( val ) );
 }
 
 ChromiumDLL::JSObjHandle JavaScriptObject::getValue(int index)
@@ -188,7 +188,7 @@ ChromiumDLL::JSObjHandle JavaScriptObject::getValue(int index)
 	if (!val)
 		return NULL;
 
-	return ChromiumDLL::JSObjHandle(new JavaScriptObject(val));
+	return ChromiumDLL::JSObjHandle( new JavaScriptObject( val ) );
 }
 
 bool JavaScriptObject::setValue(const char* key, ChromiumDLL::JSObjHandle value)
@@ -295,14 +295,12 @@ ChromiumDLL::JSObjHandle JavaScriptObject::executeFunction(ChromiumDLL::JavaScri
 
 void* JavaScriptObject::getUserObject()
 {
-	CefRefPtr<CefBase> data = m_pObject->GetUserData();
+	CefRefPtr<CefBase> bptr = m_pObject->GetUserData();
+	void* owptr = (void*) bptr.get();
+	ObjectWrapper* ow = static_cast<ObjectWrapper*> (owptr);
+	void* ptr = ow->getData();
 
-	ObjectWrapper* ow = (ObjectWrapper*)data.get();
-	
-	if (ow)
-		return ow->getData();
-
-	return NULL;
+	return ptr;
 }
 
 CefRefPtr<CefV8Value> JavaScriptObject::getCefV8()

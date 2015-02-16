@@ -106,6 +106,7 @@ extern "C"
 			settings.no_sandbox = true;
 	#endif
 		settings.single_process = true;
+		settings.context_safety_implementation = -1;
 #else
 		settings.no_sandbox = true;
 #endif
@@ -273,6 +274,7 @@ CefBrowserSettings ChromiumBrowser::getBrowserDefaults()
 	browserDefaults.universal_access_from_file_urls = STATE_ENABLED;
 	browserDefaults.file_access_from_file_urls = STATE_ENABLED;
 	browserDefaults.java = STATE_DISABLED;
+	browserDefaults.javascript = STATE_ENABLED;
 	browserDefaults.javascript_close_windows = STATE_DISABLED;
 	browserDefaults.javascript_open_windows = STATE_DISABLED;
 
