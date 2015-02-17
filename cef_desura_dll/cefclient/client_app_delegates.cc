@@ -4,7 +4,6 @@
 
 #include "cefclient/client_app.h"
 #include "cefclient/client_renderer.h"
-#include "cefclient/scheme_test.h"
 
 #if defined(OS_LINUX)
 #include "cefclient/print_handler_gtk.h"

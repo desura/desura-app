@@ -426,12 +426,6 @@
     <ClCompile Include="fetch_cef-prefix\src\fetch_cef\libcef_dll\cpptoc\find_handler_cpptoc.cc">
       <Filter>libcef_dll\cpptoc</Filter>
     </ClCompile>
-    <ClCompile Include="fetch_cef-prefix\src\fetch_cef\cefclient\binding_test.cc">
-      <Filter>cefclient</Filter>
-    </ClCompile>
-    <ClCompile Include="fetch_cef-prefix\src\fetch_cef\cefclient\bytes_write_handler.cc">
-      <Filter>cefclient</Filter>
-    </ClCompile>
     <ClCompile Include="fetch_cef-prefix\src\fetch_cef\cefclient\client_app.cc">
       <Filter>cefclient</Filter>
     </ClCompile>
@@ -439,54 +433,6 @@
       <Filter>cefclient</Filter>
     </ClCompile>
     <ClCompile Include="fetch_cef-prefix\src\fetch_cef\cefclient\client_renderer.cc">
-      <Filter>cefclient</Filter>
-    </ClCompile>
-    <ClCompile Include="fetch_cef-prefix\src\fetch_cef\cefclient\client_switches.cc">
-      <Filter>cefclient</Filter>
-    </ClCompile>
-    <ClCompile Include="fetch_cef-prefix\src\fetch_cef\cefclient\dialog_test.cc">
-      <Filter>cefclient</Filter>
-    </ClCompile>
-    <ClCompile Include="fetch_cef-prefix\src\fetch_cef\cefclient\main_context.cc">
-      <Filter>cefclient</Filter>
-    </ClCompile>
-    <ClCompile Include="fetch_cef-prefix\src\fetch_cef\cefclient\main_context_impl.cc">
-      <Filter>cefclient</Filter>
-    </ClCompile>
-    <ClCompile Include="fetch_cef-prefix\src\fetch_cef\cefclient\main_context_impl_win.cc">
-      <Filter>cefclient</Filter>
-    </ClCompile>
-    <ClCompile Include="fetch_cef-prefix\src\fetch_cef\cefclient\main_message_loop.cc">
-      <Filter>cefclient</Filter>
-    </ClCompile>
-    <ClCompile Include="fetch_cef-prefix\src\fetch_cef\cefclient\main_message_loop_multithreaded_win.cc">
-      <Filter>cefclient</Filter>
-    </ClCompile>
-    <ClCompile Include="fetch_cef-prefix\src\fetch_cef\cefclient\main_message_loop_std.cc">
-      <Filter>cefclient</Filter>
-    </ClCompile>
-    <ClCompile Include="fetch_cef-prefix\src\fetch_cef\cefclient\performance_test.cc">
-      <Filter>cefclient</Filter>
-    </ClCompile>
-    <ClCompile Include="fetch_cef-prefix\src\fetch_cef\cefclient\performance_test_tests.cc">
-      <Filter>cefclient</Filter>
-    </ClCompile>
-    <ClCompile Include="fetch_cef-prefix\src\fetch_cef\cefclient\resource_util_win.cc">
-      <Filter>cefclient</Filter>
-    </ClCompile>
-    <ClCompile Include="fetch_cef-prefix\src\fetch_cef\cefclient\scheme_test.cc">
-      <Filter>cefclient</Filter>
-    </ClCompile>
-    <ClCompile Include="fetch_cef-prefix\src\fetch_cef\cefclient\test_runner.cc">
-      <Filter>cefclient</Filter>
-    </ClCompile>
-    <ClCompile Include="fetch_cef-prefix\src\fetch_cef\cefclient\util_win.cc">
-      <Filter>cefclient</Filter>
-    </ClCompile>
-    <ClCompile Include="fetch_cef-prefix\src\fetch_cef\cefclient\window_test.cc">
-      <Filter>cefclient</Filter>
-    </ClCompile>
-    <ClCompile Include="fetch_cef-prefix\src\fetch_cef\cefclient\window_test_win.cc">
       <Filter>cefclient</Filter>
     </ClCompile>
   </ItemGroup>
@@ -1307,61 +1253,10 @@
     <ClInclude Include="fetch_cef-prefix\src\fetch_cef\libcef_dll\cpptoc\find_handler_cpptoc.h">
       <Filter>libcef_dll\cpptoc</Filter>
     </ClInclude>
-    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\cefclient\binding_test.h">
-      <Filter>cefclient</Filter>
-    </ClInclude>
-    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\cefclient\bytes_write_handler.h">
-      <Filter>cefclient</Filter>
-    </ClInclude>
     <ClInclude Include="fetch_cef-prefix\src\fetch_cef\cefclient\client_app.h">
       <Filter>cefclient</Filter>
     </ClInclude>
     <ClInclude Include="fetch_cef-prefix\src\fetch_cef\cefclient\client_renderer.h">
-      <Filter>cefclient</Filter>
-    </ClInclude>
-    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\cefclient\client_switches.h">
-      <Filter>cefclient</Filter>
-    </ClInclude>
-    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\cefclient\dialog_test.h">
-      <Filter>cefclient</Filter>
-    </ClInclude>
-    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\cefclient\main_context.h">
-      <Filter>cefclient</Filter>
-    </ClInclude>
-    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\cefclient\main_context_impl.h">
-      <Filter>cefclient</Filter>
-    </ClInclude>
-    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\cefclient\main_message_loop.h">
-      <Filter>cefclient</Filter>
-    </ClInclude>
-    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\cefclient\main_message_loop_multithreaded_win.h">
-      <Filter>cefclient</Filter>
-    </ClInclude>
-    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\cefclient\main_message_loop_std.h">
-      <Filter>cefclient</Filter>
-    </ClInclude>
-    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\cefclient\performance_test.h">
-      <Filter>cefclient</Filter>
-    </ClInclude>
-    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\cefclient\performance_test_setup.h">
-      <Filter>cefclient</Filter>
-    </ClInclude>
-    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\cefclient\resource.h">
-      <Filter>cefclient</Filter>
-    </ClInclude>
-    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\cefclient\resource_util.h">
-      <Filter>cefclient</Filter>
-    </ClInclude>
-    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\cefclient\scheme_test.h">
-      <Filter>cefclient</Filter>
-    </ClInclude>
-    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\cefclient\test_runner.h">
-      <Filter>cefclient</Filter>
-    </ClInclude>
-    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\cefclient\util_win.h">
-      <Filter>cefclient</Filter>
-    </ClInclude>
-    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\cefclient\window_test.h">
       <Filter>cefclient</Filter>
     </ClInclude>
   </ItemGroup>
