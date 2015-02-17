@@ -277,7 +277,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>
 	};	
 	
 	$(document).ready(function() {
-		$("td.colexpand").live('click', function() {
+		$(document).on("click", "td.colexpand", function() {
 			tbody = $(this).parents().next("tbody");
 
 			if(tbody.is(":visible")) {
@@ -300,7 +300,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>
 			return false;
 		});
 
-		$("th").live('click', function() {
+		$(document).on("click", "th", function() {
 			if($(this).attr("rel")) {
 				sortFieldCache = $(this).attr("rel");
 				sortDirCache = ($(this).hasClass("asc") || $(this).hasClass("descfirst") ? "desc" : "asc");
@@ -311,7 +311,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>
 			return false;
 		});
 
-		$("td.colname a.demo").live('click', function() {
+		$(document).on("click", "td.colname a.demo", function() {
 			var id = $(this).parents("tr").attr("rel");
 			var item = desura.items.getItemFromId(id);
 		
@@ -325,14 +325,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>
 			 return false;
 		});
 
-		$("td.colname a.update").live('click', function() {
+		$(document).on("click", "td.colname a.update", function() {
 			 desura.links.internalLink($(this).parents("tr").attr("rel"), desura.links.action.SHOWUPDATE);
 			 $(this).remove();
 
 			 return false;
 		});
 		
-		$("td.colname a.preorder").live('click', function() {
+		$(document).on("click", "td.colname a.preorder", function() {
 			var itemId = $(this).parents("tr").attr("rel");
 			var branchId = $(this).attr("rel");
 		
@@ -341,13 +341,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>
 			return false;
 		});		
 		
-		$("td.coldev a").live('click', function() {
+		$(document).on("click", "td.coldev a", function() {
 			desura.links.internalLink($(this).parents("tr").attr("rel"), desura.links.action.DEVPROFILE);
 			
 			return false;
 		});
 
-		$("td.colfav a").live('click', function() {
+		$(document).on("click", "td.colfav a", function() {
 			if($(this).hasClass("on")) {
 				desura.items.getItemFromId($(this).parents("tr").attr("rel")).setFavorite(false);
 				$(this).removeClass("on");
@@ -363,7 +363,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>
 			return false;
 		});
 
-		$("tbody tr").live('click', function() {
+		$(document).on("click", "tbody tr", function() {
 			event.stopPropagation();
 			$("tbody tr.on").removeClass("on");
 			$(this).addClass("on");
@@ -371,11 +371,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>
 			return false;
 		});
 
-		$("tr.launch").live('dblclick', function() {
+		$(document).on("dblclick", "tr.launch", function() {
 			return launchItem(desura.items.getItemFromId($(this).attr("rel")));
 		});
 
-		$("tr.upload").live('dblclick', function() {
+		$(document).on("dblclick", "tr.upload", function() {
 			var uid = $(this).attr("rel");
 			var upload = desura.uploads.getUploadFromId(uid);
 
@@ -386,21 +386,21 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>
 			return false;
 		});		
 	
-		$("tr.launch").live("contextmenu", function(event) {
+		$(document).on("contextmenu", "tr.launch", function(event) {
 			$("tbody tr.on").removeClass("on");
 			$(this).addClass("on");
 
 			return onItemContextMenu(event, $(this).attr("rel"));
 		});
 
-		$("tr.upload").live("contextmenu", function(event) {
+		$(document).on("contextmenu", "tr.upload", function(event) {
 			$("tbody tr.on").removeClass("on");
 			$(this).addClass("on");
 
 			return onUploadContextMenu(event, desura.uploads.getUploadFromId($(this).attr("rel")));
 		});
 
-		$("#gamelist").live("contextmenu", function(event) {
+		$(document).on("contextmenu", "#gamelist", function(event) {
 			var ret = desura.utils.getCVarValue("gc_browserdebug", "false");
 
 			return ret === "true" || ret === "1";
