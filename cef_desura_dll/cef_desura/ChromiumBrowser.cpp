@@ -97,6 +97,17 @@ extern "C"
 
 		void* sandbox_info = NULL;
 
+		if ( strlen( logPath ) )
+		{
+			std::wstring logfileW = std::wstring_convert<std::codecvt_utf8<wchar_t>>().from_bytes( logPath );
+			cef_string_copy( logfileW.c_str(), logfileW.size(), &settings.log_file );
+
+			settings.log_severity = cef_log_severity_t::LOGSEVERITY_VERBOSE;
+		}
+
+		settings.single_process = true;
+		settings.context_safety_implementation = -1;
+
 #if defined(_WIN32)
 	#if defined( WIN_USE_SANDBOX )
 			CefScopedSandboxInfo scoped_sandbox;
@@ -105,8 +116,6 @@ extern "C"
 	#else
 			settings.no_sandbox = true;
 	#endif
-		settings.single_process = true;
-		settings.context_safety_implementation = -1;
 #else
 		settings.no_sandbox = true;
 #endif
@@ -114,9 +123,9 @@ extern "C"
 		if (!CefInitialize(args, settings, app.get(), sandbox_info ))
 			return false;
 
-		// TODO: Suspect these will need paths
 #if defined(_WIN32)
-		CefAddWebPluginPath("gcswf32.dll");
+		CefAddWebPluginDirectory( "bin\\" );
+		CefAddWebPluginPath("pepflashplayer.dll");
 #else
 		CefAddWebPluginPath("libdesura_flashwrapper.so");
 #endif
