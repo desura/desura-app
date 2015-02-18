@@ -19,24 +19,12 @@ namespace client {
 ClientApp::ClientApp() {
 }
 
-void ClientApp::OnRegisterCustomSchemes(
-    CefRefPtr<CefSchemeRegistrar> registrar) {
-  // Default schemes that support cookies.
-  cookieable_schemes_.push_back("http");
-  cookieable_schemes_.push_back("https");
-
-  RegisterCustomSchemes(registrar, cookieable_schemes_);
+void ClientApp::OnRegisterCustomSchemes( CefRefPtr<CefSchemeRegistrar> registrar)
+{
 }
 
 void ClientApp::OnContextInitialized() {
   CreateBrowserDelegates(browser_delegates_);
-
-  // Register cookieable schemes with the global cookie manager.
-  CefRefPtr<CefCookieManager> manager = CefCookieManager::GetGlobalManager();
-  DCHECK(manager.get());
-  manager->SetSupportedSchemes(cookieable_schemes_);
-
-  print_handler_ = CreatePrintHandler();
 
   BrowserDelegateSet::iterator it = browser_delegates_.begin();
   for (; it != browser_delegates_.end(); ++it)

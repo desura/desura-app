@@ -30,13 +30,4 @@ void ClientApp::RegisterCustomSchemes(
     std::vector<CefString>& cookiable_schemes) {
 }
 
-// static
-CefRefPtr<CefPrintHandler> ClientApp::CreatePrintHandler() {
-#if defined(OS_LINUX)
-  return new ClientPrintHandlerGtk();
-#else
-  return NULL;
-#endif
-}
-
 }  // namespace client
