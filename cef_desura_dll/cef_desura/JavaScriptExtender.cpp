@@ -44,10 +44,29 @@ namespace client
 		IMPLEMENT_REFCOUNTING( RenderDelegateWebKit );
 	};
 
+	class RenderDelegateUncaughtException : public client::ClientApp::RenderDelegate
+	{
+	public:
+		RenderDelegateUncaughtException() {}
+
+		virtual void OnUncaughtException( CefRefPtr<ClientApp> app,
+			CefRefPtr<CefBrowser> browser,
+			CefRefPtr<CefFrame> frame,
+			CefRefPtr<CefV8Context> context,
+			CefRefPtr<CefV8Exception> exception,
+			CefRefPtr<CefV8StackTrace> stackTrace )
+		{
+		}
+
+	private:
+		IMPLEMENT_REFCOUNTING( RenderDelegateUncaughtException );
+	};
+
 
 	void JSExtenderCreateRenderDelegates( client::ClientApp::RenderDelegateSet& delegates )
 	{
 		delegates.insert( new RenderDelegateWebKit );
+		delegates.insert( new RenderDelegateUncaughtException );
 	}
 }
 

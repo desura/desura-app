@@ -107,6 +107,8 @@ extern "C"
 
 		settings.single_process = true;
 		settings.context_safety_implementation = -1;
+		settings.command_line_args_disabled = true;
+		settings.uncaught_exception_stack_size = 20;
 
 #if defined(_WIN32)
 	#if defined( WIN_USE_SANDBOX )
