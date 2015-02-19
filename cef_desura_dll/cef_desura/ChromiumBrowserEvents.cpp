@@ -17,6 +17,7 @@
 #include <sstream>
 #include <locale>
 #include <codecvt>
+#include <mutex>
 
 #include "JavaScriptObject.h"
 #include "JavaScriptFactory.h"
@@ -301,10 +302,27 @@ void WinEventHandler::OnWndProc(CefRefPtr<CefBrowser> browser, int message, int 
 /// ChromiumBrowserEvents
 /////////////////////////////////////////////////////////////////////////////////////////////
 
+// HACK: KMY: Ugly one, but until I can find a "CEF supported way".  We have a callback to bind JS to a browser instance, which requires access to ChromiumBrowserEvents - but only provides the CefBrowser.  So we have to maintain a relationship.  Just going to iterate on all CBE's.
+std::mutex hackBEMapMutex;
+ChromiumBrowserEvents* hackCBE = nullptr;
+
+
+//std::set<ChromiumBrowserEvents*> ChromiumBrowserEvents::GetChromiumContextEvents( CefRefPtr<CefBrowser> browser )
+ChromiumBrowserEvents* ChromiumBrowserEvents::GetChromiumContextEvents( CefRefPtr<CefBrowser> browser )
+{
+	std::lock_guard<std::mutex> lk( hackBEMapMutex );
+
+	// Not getting back original CefBrowser, so will have to find another way.  but for now...
+	return hackCBE;
+}
+
 ChromiumBrowserEvents::ChromiumBrowserEvents(ChromiumBrowser* pParent)
 {
 	m_pParent = pParent;
 	m_pEventCallBack = NULL;
+
+	std::lock_guard<std::mutex> lk( hackBEMapMutex );
+	hackCBE = this;
 }
 
 void ChromiumBrowserEvents::setCallBack(ChromiumDLL::ChromiumBrowserEventI* cbe)
@@ -326,8 +344,8 @@ void ChromiumBrowserEvents::SetBrowser(CefRefPtr<CefBrowser> browser)
 {
 	m_Browser = browser;
 
-	if (m_pParent)
-		m_pParent->setBrowser(browser);
+	if ( m_pParent )
+		m_pParent->setBrowser( browser );
 }
 
 CefRefPtr<CefBrowser> ChromiumBrowserEvents::GetBrowser()
@@ -335,9 +353,7 @@ CefRefPtr<CefBrowser> ChromiumBrowserEvents::GetBrowser()
 	return m_Browser;
 }
 
-void ChromiumBrowserEvents::setContext(CefRefPtr<CefV8Context> context)
+void ChromiumBrowserEvents::setContext( CefRefPtr<CefV8Context> context )
 {
-	m_pParent->setContext(context);
+	m_pParent->setContext( context );
 }
-
-

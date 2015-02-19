@@ -149,6 +149,8 @@ public:
 	virtual CefRefPtr<CefContextMenuHandler>	GetMenuHandler()			{ return (CefContextMenuHandler*) this; }
 	virtual CefRefPtr<CefJSDialogHandler>		GetJSDialogHandler()		{ return (CefJSDialogHandler*) this; }
 
+	static ChromiumBrowserEvents* ChromiumBrowserEvents::GetChromiumContextEvents( CefRefPtr<CefBrowser> browser );
+
 private:
 	CefRefPtr<CefBrowser> m_Browser;
 	ChromiumBrowser* m_pParent;

@@ -13,6 +13,7 @@
 #include "JavaScriptFactory.h"
 #include "JavaScriptObject.h"
 #include "JavaScriptContext.h"
+#include "ChromiumBrowserEvents.h"
 
 #include "cefclient/client_app.h"
 
@@ -26,7 +27,8 @@ namespace client
 {
 	class RenderDelegateWebKit : public client::ClientApp::RenderDelegate {
 	public:
-		RenderDelegateWebKit() {
+		RenderDelegateWebKit()
+		{
 		}
 
 		virtual void OnWebKitInitialized( CefRefPtr<client::ClientApp> app )
@@ -44,10 +46,43 @@ namespace client
 		IMPLEMENT_REFCOUNTING( RenderDelegateWebKit );
 	};
 
+	class RenderDelegateContextCreated : public client::ClientApp::RenderDelegate {
+	public:
+		RenderDelegateContextCreated()
+		{
+		}
+
+		virtual void OnContextCreated( CefRefPtr<ClientApp> app, CefRefPtr<CefBrowser> browser, CefRefPtr<CefFrame> frame, CefRefPtr<CefV8Context> context )
+		{
+/*
+			std::set<ChromiumBrowserEvents*> CEBSet = ChromiumBrowserEvents::GetChromiumContextEvents( browser );
+
+			for each (ChromiumBrowserEvents* eventBrowser in CEBSet)
+*/
+			ChromiumBrowserEvents* eventBrowser = ChromiumBrowserEvents::GetChromiumContextEvents( browser );
+
+			if ( eventBrowser )
+			{
+				eventBrowser->setContext( CefV8Context::GetCurrentContext() );
+
+				CefRefPtr<CefV8Value> object = context->GetGlobal();
+				JavaScriptObject obj( object );
+
+				if ( eventBrowser->GetCallback() )
+					eventBrowser->GetCallback()->HandleJSBinding( &obj, GetJSFactory() );
+			}
+		}
+
+	private:
+		IMPLEMENT_REFCOUNTING( RenderDelegateContextCreated );
+	};
+
 	class RenderDelegateUncaughtException : public client::ClientApp::RenderDelegate
 	{
 	public:
-		RenderDelegateUncaughtException() {}
+		RenderDelegateUncaughtException()
+		{
+		}
 
 		virtual void OnUncaughtException( CefRefPtr<ClientApp> app,
 			CefRefPtr<CefBrowser> browser,
@@ -67,6 +102,7 @@ namespace client
 	{
 		delegates.insert( new RenderDelegateWebKit );
 		delegates.insert( new RenderDelegateUncaughtException );
+		delegates.insert( new RenderDelegateContextCreated );
 	}
 }
 
