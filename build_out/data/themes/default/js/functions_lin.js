@@ -135,13 +135,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>
 			document.location.reload();
 		});
 
-		$('input.btnbrowse').live('click', function() {
+		$(document).on('click', 'input.btnbrowse', function () {
 			path = desura.cip.browse($(this).parents('tr').find('label').text(), $(this).parents('td').find('.txtpath').val());
 
 			$(this).parents('td').find('.txtpath').val(path).keyup().focus();
 		});
 
-		$('input.btndelete').live('click', function() {
+		$(document).on('click', 'input.btndelete', function() {
 			id = $(this).parents('td').attr('rel');
 
 			$(this).parents('tr').remove();
@@ -158,7 +158,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>
 			onItemListUpdateCallBack();
 		});
 
-		$('input.txtpath').live('keyup', function() {
+		$(document).on('keyup', 'input.txtpath', function() {
 			path = $(this).val();
 			
 			if(desura.cip.isValidPath(path) === true) {
