@@ -15,7 +15,7 @@
 #include "JavaScriptContext.h"
 #include "ChromiumBrowserEvents.h"
 
-#include "cefclient/client_app.h"
+#include "client_app.h"
 
 #include <set>
 #include <locale>

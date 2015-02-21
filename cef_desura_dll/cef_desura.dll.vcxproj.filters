@@ -417,12 +417,6 @@
     <ClCompile Include="fetch_cef-prefix\src\fetch_cef\libcef_dll\wrapper\libcef_dll_wrapper2.cc">
       <Filter>libcef_dll\wrapper</Filter>
     </ClCompile>
-    <ClCompile Include="fetch_cef-prefix\src\fetch_cef\libcef_dll\transfer_util.cc">
-      <Filter>libcef_dll</Filter>
-    </ClCompile>
-    <ClCompile Include="fetch_cef-prefix\src\fetch_cef\libcef_dll\cpptoc\find_handler_cpptoc.cc">
-      <Filter>libcef_dll\cpptoc</Filter>
-    </ClCompile>
     <ClCompile Include="fetch_cef-prefix\src\fetch_cef\cef_desura\client_app.cc">
       <Filter>cef_desura</Filter>
     </ClCompile>
@@ -431,6 +425,9 @@
     </ClCompile>
     <ClCompile Include="fetch_cef-prefix\src\fetch_cef\cef_desura\client_renderer.cc">
       <Filter>cef_desura</Filter>
+    </ClCompile>
+    <ClCompile Include="fetch_cef-prefix\src\fetch_cef\libcef_dll\transfer_util.cpp">
+      <Filter>libcef_dll</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -1246,9 +1243,6 @@
     </ClInclude>
     <ClInclude Include="fetch_cef-prefix\src\fetch_cef\include\cef_find_handler.h">
       <Filter>include</Filter>
-    </ClInclude>
-    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\libcef_dll\cpptoc\find_handler_cpptoc.h">
-      <Filter>libcef_dll\cpptoc</Filter>
     </ClInclude>
     <ClInclude Include="fetch_cef-prefix\src\fetch_cef\cef_desura\client_app.h">
       <Filter>cef_desura</Filter>

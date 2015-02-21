@@ -2,12 +2,8 @@
 // reserved. Use of this source code is governed by a BSD-style license that
 // can be found in the LICENSE file.
 
-#include "cefclient/client_app.h"
-#include "cefclient/client_renderer.h"
-
-#if defined(OS_LINUX)
-#include "cefclient/print_handler_gtk.h"
-#endif
+#include "client_app.h"
+#include "client_renderer.h"
 
 
 namespace client {

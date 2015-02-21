@@ -14,7 +14,7 @@
 #endif
 
 #include "ChromiumBrowser.h"
-#include "cefclient/client_app.h"
+#include "client_app.h"
 #include "include/cef_app.h"
 
 #if defined(_WIN32)

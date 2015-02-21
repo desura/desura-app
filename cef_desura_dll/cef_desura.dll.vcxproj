@@ -495,7 +495,6 @@
     <ClInclude Include="fetch_cef-prefix\src\fetch_cef\libcef_dll\cpptoc\download_handler_cpptoc.h" />
     <ClInclude Include="fetch_cef-prefix\src\fetch_cef\libcef_dll\cpptoc\drag_handler_cpptoc.h" />
     <ClInclude Include="fetch_cef-prefix\src\fetch_cef\libcef_dll\cpptoc\end_tracing_callback_cpptoc.h" />
-    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\libcef_dll\cpptoc\find_handler_cpptoc.h" />
     <ClInclude Include="fetch_cef-prefix\src\fetch_cef\libcef_dll\cpptoc\focus_handler_cpptoc.h" />
     <ClInclude Include="fetch_cef-prefix\src\fetch_cef\libcef_dll\cpptoc\geolocation_handler_cpptoc.h" />
     <ClInclude Include="fetch_cef-prefix\src\fetch_cef\libcef_dll\cpptoc\get_geolocation_callback_cpptoc.h" />
@@ -612,7 +611,6 @@
     <ClCompile Include="fetch_cef-prefix\src\fetch_cef\libcef_dll\cpptoc\download_handler_cpptoc.cc" />
     <ClCompile Include="fetch_cef-prefix\src\fetch_cef\libcef_dll\cpptoc\drag_handler_cpptoc.cc" />
     <ClCompile Include="fetch_cef-prefix\src\fetch_cef\libcef_dll\cpptoc\end_tracing_callback_cpptoc.cc" />
-    <ClCompile Include="fetch_cef-prefix\src\fetch_cef\libcef_dll\cpptoc\find_handler_cpptoc.cc" />
     <ClCompile Include="fetch_cef-prefix\src\fetch_cef\libcef_dll\cpptoc\focus_handler_cpptoc.cc" />
     <ClCompile Include="fetch_cef-prefix\src\fetch_cef\libcef_dll\cpptoc\geolocation_handler_cpptoc.cc" />
     <ClCompile Include="fetch_cef-prefix\src\fetch_cef\libcef_dll\cpptoc\get_geolocation_callback_cpptoc.cc" />
@@ -685,7 +683,7 @@
     <ClCompile Include="fetch_cef-prefix\src\fetch_cef\libcef_dll\ctocpp\web_plugin_info_ctocpp.cc" />
     <ClCompile Include="fetch_cef-prefix\src\fetch_cef\libcef_dll\ctocpp\xml_reader_ctocpp.cc" />
     <ClCompile Include="fetch_cef-prefix\src\fetch_cef\libcef_dll\ctocpp\zip_reader_ctocpp.cc" />
-    <ClCompile Include="fetch_cef-prefix\src\fetch_cef\libcef_dll\transfer_util.cc" />
+    <ClCompile Include="fetch_cef-prefix\src\fetch_cef\libcef_dll\transfer_util.cpp" />
     <ClCompile Include="fetch_cef-prefix\src\fetch_cef\libcef_dll\wrapper\cef_byte_read_handler.cc" />
     <ClCompile Include="fetch_cef-prefix\src\fetch_cef\libcef_dll\wrapper\cef_closure_task.cc" />
     <ClCompile Include="fetch_cef-prefix\src\fetch_cef\libcef_dll\wrapper\cef_message_router.cc" />
