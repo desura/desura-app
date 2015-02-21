@@ -113,9 +113,20 @@ bool LifeSpanHandler::OnBeforePopup(CefRefPtr<CefBrowser> parentBrowser, const C
 /// LoadHandler
 /////////////////////////////////////////////////////////////////////////////////////////////
 
+void LoadHandler::OnLoadingStateChange( CefRefPtr<CefBrowser> browser, bool isLoading, bool canGoBack, bool canGoForward )
+{
+/*
+	char* isLoad = isLoading ? "loading..." : "loaded!";
+	std::wstring urlW = browser->GetFocusedFrame()->GetURL();
+	std::string urlS = std::wstring_convert<std::codecvt_utf8<wchar_t>>().to_bytes( urlW.c_str() );
+
+	DLOG( INFO ) << ">> - << OnLoadingStateChange (url: " << urlS << "): " << isLoad;
+*/
+}
+
 void LoadHandler::OnLoadStart(CefRefPtr<CefBrowser> browser, CefRefPtr<CefFrame> frame)
 {
-	if (GetCallback() && frame->IsMain())
+	if ( GetCallback() && frame->IsMain() )
 		GetCallback()->onPageLoadStart();
 }
 

@@ -298,10 +298,10 @@
     <None Include="fetch_cef-prefix\src\fetch_cef\Debug\wow_helper.exe" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\cefclient\client_app.h" />
-    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\cefclient\client_renderer.h" />
     <ClInclude Include="fetch_cef-prefix\src\fetch_cef\cef_desura\ChromiumBrowser.h" />
     <ClInclude Include="fetch_cef-prefix\src\fetch_cef\cef_desura\ChromiumBrowserEvents.h" />
+    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\cef_desura\client_app.h" />
+    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\cef_desura\client_renderer.h" />
     <ClInclude Include="fetch_cef-prefix\src\fetch_cef\cef_desura\JavaScriptContext.h" />
     <ClInclude Include="fetch_cef-prefix\src\fetch_cef\cef_desura\JavaScriptExtender.h" />
     <ClInclude Include="fetch_cef-prefix\src\fetch_cef\cef_desura\JavaScriptFactory.h" />
@@ -574,11 +574,11 @@
     <ClInclude Include="fetch_cef-prefix\src\fetch_cef\libcef_dll\wrapper\cef_browser_info_map.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="fetch_cef-prefix\src\fetch_cef\cefclient\client_app.cc" />
-    <ClCompile Include="fetch_cef-prefix\src\fetch_cef\cefclient\client_app_delegates.cc" />
-    <ClCompile Include="fetch_cef-prefix\src\fetch_cef\cefclient\client_renderer.cc" />
     <ClCompile Include="fetch_cef-prefix\src\fetch_cef\cef_desura\ChromiumBrowser.cpp" />
     <ClCompile Include="fetch_cef-prefix\src\fetch_cef\cef_desura\ChromiumBrowserEvents.cpp" />
+    <ClCompile Include="fetch_cef-prefix\src\fetch_cef\cef_desura\client_app.cc" />
+    <ClCompile Include="fetch_cef-prefix\src\fetch_cef\cef_desura\client_app_delegates.cc" />
+    <ClCompile Include="fetch_cef-prefix\src\fetch_cef\cef_desura\client_renderer.cc" />
     <ClCompile Include="fetch_cef-prefix\src\fetch_cef\cef_desura\Cookie.cpp" />
     <ClCompile Include="fetch_cef-prefix\src\fetch_cef\cef_desura\JavaScriptContext.cpp" />
     <ClCompile Include="fetch_cef-prefix\src\fetch_cef\cef_desura\JavaScriptExtender.cpp" />

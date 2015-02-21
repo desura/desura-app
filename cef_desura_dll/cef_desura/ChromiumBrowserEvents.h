@@ -51,12 +51,10 @@ public:
 class LoadHandler : public CefLoadHandler, public virtual ChromiumEventInfoI
 {
 public:
-	// TODO: KMY: Review
-	// void OnLoadingStateChange( CefRefPtr<CefBrowser> browser, bool isLoading, bool canGoBack, bool canGoForward ) OVERRIDE;
-
-	virtual void OnLoadStart(CefRefPtr<CefBrowser> browser, CefRefPtr<CefFrame> frame);
-	virtual void OnLoadEnd(CefRefPtr<CefBrowser> browser, CefRefPtr<CefFrame> frame, int httpStatusCode);
-	virtual void OnLoadError(CefRefPtr<CefBrowser> browser, CefRefPtr<CefFrame> frame, ErrorCode errorCode, const CefString& failedUrl, const CefString& errorText);
+	virtual void OnLoadingStateChange( CefRefPtr<CefBrowser> browser, bool isLoading, bool canGoBack, bool canGoForward ) OVERRIDE;
+	virtual void OnLoadStart( CefRefPtr<CefBrowser> browser, CefRefPtr<CefFrame> frame ) OVERRIDE;
+	virtual void OnLoadEnd( CefRefPtr<CefBrowser> browser, CefRefPtr<CefFrame> frame, int httpStatusCode ) OVERRIDE;
+	virtual void OnLoadError( CefRefPtr<CefBrowser> browser, CefRefPtr<CefFrame> frame, ErrorCode errorCode, const CefString& failedUrl, const CefString& errorText ) OVERRIDE;
 };
 
 
@@ -150,6 +148,15 @@ public:
 	virtual CefRefPtr<CefJSDialogHandler>		GetJSDialogHandler()		{ return (CefJSDialogHandler*) this; }
 
 	static ChromiumBrowserEvents* ChromiumBrowserEvents::GetChromiumContextEvents( CefRefPtr<CefBrowser> browser );
+
+	// Wrap
+	virtual bool OnProcessMessageReceived( CefRefPtr<CefBrowser> browser, CefProcessId source_process, CefRefPtr<CefProcessMessage> message ) OVERRIDE
+	{
+		// Handle IPC messages from the render process...
+
+		return false;
+	}
+
 
 private:
 	CefRefPtr<CefBrowser> m_Browser;

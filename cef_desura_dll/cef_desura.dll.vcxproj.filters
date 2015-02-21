@@ -43,9 +43,6 @@
     <Filter Include="libcef_dll\base">
       <UniqueIdentifier>{f8bbee78-e3a7-423c-aaa7-a96d8f14d1b6}</UniqueIdentifier>
     </Filter>
-    <Filter Include="cefclient">
-      <UniqueIdentifier>{f156767f-778e-4b88-9ae4-d9a7b900ee46}</UniqueIdentifier>
-    </Filter>
   </ItemGroup>
   <ItemGroup>
     <None Include="cefclient.gyp" />
@@ -426,14 +423,14 @@
     <ClCompile Include="fetch_cef-prefix\src\fetch_cef\libcef_dll\cpptoc\find_handler_cpptoc.cc">
       <Filter>libcef_dll\cpptoc</Filter>
     </ClCompile>
-    <ClCompile Include="fetch_cef-prefix\src\fetch_cef\cefclient\client_app.cc">
-      <Filter>cefclient</Filter>
+    <ClCompile Include="fetch_cef-prefix\src\fetch_cef\cef_desura\client_app.cc">
+      <Filter>cef_desura</Filter>
     </ClCompile>
-    <ClCompile Include="fetch_cef-prefix\src\fetch_cef\cefclient\client_app_delegates.cc">
-      <Filter>cefclient</Filter>
+    <ClCompile Include="fetch_cef-prefix\src\fetch_cef\cef_desura\client_app_delegates.cc">
+      <Filter>cef_desura</Filter>
     </ClCompile>
-    <ClCompile Include="fetch_cef-prefix\src\fetch_cef\cefclient\client_renderer.cc">
-      <Filter>cefclient</Filter>
+    <ClCompile Include="fetch_cef-prefix\src\fetch_cef\cef_desura\client_renderer.cc">
+      <Filter>cef_desura</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -1253,11 +1250,11 @@
     <ClInclude Include="fetch_cef-prefix\src\fetch_cef\libcef_dll\cpptoc\find_handler_cpptoc.h">
       <Filter>libcef_dll\cpptoc</Filter>
     </ClInclude>
-    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\cefclient\client_app.h">
-      <Filter>cefclient</Filter>
+    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\cef_desura\client_app.h">
+      <Filter>cef_desura</Filter>
     </ClInclude>
-    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\cefclient\client_renderer.h">
-      <Filter>cefclient</Filter>
+    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\cef_desura\client_renderer.h">
+      <Filter>cef_desura</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

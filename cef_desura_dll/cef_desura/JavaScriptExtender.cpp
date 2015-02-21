@@ -59,6 +59,7 @@ namespace client
 
 			for each (ChromiumBrowserEvents* eventBrowser in CEBSet)
 */
+
 			ChromiumBrowserEvents* eventBrowser = ChromiumBrowserEvents::GetChromiumContextEvents( browser );
 
 			if ( eventBrowser )
