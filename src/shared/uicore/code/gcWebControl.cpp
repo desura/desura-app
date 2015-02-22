@@ -113,7 +113,6 @@ gcWebControl::gcWebControl(wxWindow* parent, const char* defaultUrl, CreateBrows
 	onAnyPageLoadEvent += guiDelegate(this, &gcWebControl::onPageLoad);
 
 	m_szHomeUrl = defaultUrl;
-	m_bContentLoaded = false;
 }
 
 gcWebControl::~gcWebControl()
@@ -255,10 +254,7 @@ void gcWebControl::onStartLoad()
 
 void gcWebControl::onPageLoad()
 {
-	if (!m_bContentLoaded)
-		m_bContentLoaded = true;
-	else
-		onPageLoadEvent();
+	onPageLoadEvent();
 }
 
 class ForceResizeCallback : public ChromiumDLL::CallbackI

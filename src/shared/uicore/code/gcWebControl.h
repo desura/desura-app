@@ -102,7 +102,6 @@ protected:
 private:
 	ChromiumDLL::ChromiumBrowserI* m_pChromeBrowser;
 	bool m_bStartedLoading;
-	bool m_bContentLoaded;
 
 	gcString m_szHomeUrl;
 

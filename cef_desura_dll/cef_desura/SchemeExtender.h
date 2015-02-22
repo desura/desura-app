@@ -42,6 +42,7 @@ public:
 private:
 	ChromiumDLL::SchemeExtenderI* m_pSchemeExtender;
 	CefRefPtr<CefCallback> m_Callback;
+	bool m_NeedRedirect;
 };
 
 
