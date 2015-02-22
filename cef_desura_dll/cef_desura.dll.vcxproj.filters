@@ -423,11 +423,20 @@
     <ClCompile Include="fetch_cef-prefix\src\fetch_cef\cef_desura\client_renderer.cc">
       <Filter>cef_desura</Filter>
     </ClCompile>
-    <ClCompile Include="fetch_cef-prefix\src\fetch_cef\libcef_dll\transfer_util.cpp">
-      <Filter>libcef_dll</Filter>
-    </ClCompile>
     <ClCompile Include="fetch_cef-prefix\src\fetch_cef\cef_desura\client_app_delegates.cc">
       <Filter>cef_desura</Filter>
+    </ClCompile>
+    <ClCompile Include="fetch_cef-prefix\src\fetch_cef\libcef_dll\cpptoc\find_handler_cpptoc.cc">
+      <Filter>libcef_dll\cpptoc</Filter>
+    </ClCompile>
+    <ClCompile Include="fetch_cef-prefix\src\fetch_cef\libcef_dll\transfer_util.cc">
+      <Filter>libcef_dll</Filter>
+    </ClCompile>
+    <ClCompile Include="fetch_cef-prefix\src\fetch_cef\libcef_dll\ctocpp\sslcert_principal_ctocpp.cc">
+      <Filter>libcef_dll\ctocpp</Filter>
+    </ClCompile>
+    <ClCompile Include="fetch_cef-prefix\src\fetch_cef\libcef_dll\ctocpp\sslinfo_ctocpp.cc">
+      <Filter>libcef_dll\ctocpp</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -1249,6 +1258,21 @@
     </ClInclude>
     <ClInclude Include="fetch_cef-prefix\src\fetch_cef\cef_desura\client_renderer.h">
       <Filter>cef_desura</Filter>
+    </ClInclude>
+    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\libcef_dll\cpptoc\find_handler_cpptoc.h">
+      <Filter>libcef_dll\cpptoc</Filter>
+    </ClInclude>
+    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\include\cef_ssl_info.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\include\capi\cef_ssl_info_capi.h">
+      <Filter>include\capi</Filter>
+    </ClInclude>
+    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\libcef_dll\ctocpp\sslcert_principal_ctocpp.h">
+      <Filter>libcef_dll\ctocpp</Filter>
+    </ClInclude>
+    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\libcef_dll\ctocpp\sslinfo_ctocpp.h">
+      <Filter>libcef_dll\ctocpp</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

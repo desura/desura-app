@@ -387,6 +387,7 @@
     <ClInclude Include="fetch_cef-prefix\src\fetch_cef\include\capi\cef_resource_handler_capi.h" />
     <ClInclude Include="fetch_cef-prefix\src\fetch_cef\include\capi\cef_response_capi.h" />
     <ClInclude Include="fetch_cef-prefix\src\fetch_cef\include\capi\cef_scheme_capi.h" />
+    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\include\capi\cef_ssl_info_capi.h" />
     <ClInclude Include="fetch_cef-prefix\src\fetch_cef\include\capi\cef_stream_capi.h" />
     <ClInclude Include="fetch_cef-prefix\src\fetch_cef\include\capi\cef_string_visitor_capi.h" />
     <ClInclude Include="fetch_cef-prefix\src\fetch_cef\include\capi\cef_task_capi.h" />
@@ -446,6 +447,7 @@
     <ClInclude Include="fetch_cef-prefix\src\fetch_cef\include\cef_runnable.h" />
     <ClInclude Include="fetch_cef-prefix\src\fetch_cef\include\cef_sandbox_win.h" />
     <ClInclude Include="fetch_cef-prefix\src\fetch_cef\include\cef_scheme.h" />
+    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\include\cef_ssl_info.h" />
     <ClInclude Include="fetch_cef-prefix\src\fetch_cef\include\cef_stream.h" />
     <ClInclude Include="fetch_cef-prefix\src\fetch_cef\include\cef_string_visitor.h" />
     <ClInclude Include="fetch_cef-prefix\src\fetch_cef\include\cef_task.h" />
@@ -495,6 +497,7 @@
     <ClInclude Include="fetch_cef-prefix\src\fetch_cef\libcef_dll\cpptoc\download_handler_cpptoc.h" />
     <ClInclude Include="fetch_cef-prefix\src\fetch_cef\libcef_dll\cpptoc\drag_handler_cpptoc.h" />
     <ClInclude Include="fetch_cef-prefix\src\fetch_cef\libcef_dll\cpptoc\end_tracing_callback_cpptoc.h" />
+    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\libcef_dll\cpptoc\find_handler_cpptoc.h" />
     <ClInclude Include="fetch_cef-prefix\src\fetch_cef\libcef_dll\cpptoc\focus_handler_cpptoc.h" />
     <ClInclude Include="fetch_cef-prefix\src\fetch_cef\libcef_dll\cpptoc\geolocation_handler_cpptoc.h" />
     <ClInclude Include="fetch_cef-prefix\src\fetch_cef\libcef_dll\cpptoc\get_geolocation_callback_cpptoc.h" />
@@ -557,6 +560,8 @@
     <ClInclude Include="fetch_cef-prefix\src\fetch_cef\libcef_dll\ctocpp\request_ctocpp.h" />
     <ClInclude Include="fetch_cef-prefix\src\fetch_cef\libcef_dll\ctocpp\response_ctocpp.h" />
     <ClInclude Include="fetch_cef-prefix\src\fetch_cef\libcef_dll\ctocpp\scheme_registrar_ctocpp.h" />
+    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\libcef_dll\ctocpp\sslcert_principal_ctocpp.h" />
+    <ClInclude Include="fetch_cef-prefix\src\fetch_cef\libcef_dll\ctocpp\sslinfo_ctocpp.h" />
     <ClInclude Include="fetch_cef-prefix\src\fetch_cef\libcef_dll\ctocpp\stream_reader_ctocpp.h" />
     <ClInclude Include="fetch_cef-prefix\src\fetch_cef\libcef_dll\ctocpp\stream_writer_ctocpp.h" />
     <ClInclude Include="fetch_cef-prefix\src\fetch_cef\libcef_dll\ctocpp\task_runner_ctocpp.h" />
@@ -611,6 +616,7 @@
     <ClCompile Include="fetch_cef-prefix\src\fetch_cef\libcef_dll\cpptoc\download_handler_cpptoc.cc" />
     <ClCompile Include="fetch_cef-prefix\src\fetch_cef\libcef_dll\cpptoc\drag_handler_cpptoc.cc" />
     <ClCompile Include="fetch_cef-prefix\src\fetch_cef\libcef_dll\cpptoc\end_tracing_callback_cpptoc.cc" />
+    <ClCompile Include="fetch_cef-prefix\src\fetch_cef\libcef_dll\cpptoc\find_handler_cpptoc.cc" />
     <ClCompile Include="fetch_cef-prefix\src\fetch_cef\libcef_dll\cpptoc\focus_handler_cpptoc.cc" />
     <ClCompile Include="fetch_cef-prefix\src\fetch_cef\libcef_dll\cpptoc\geolocation_handler_cpptoc.cc" />
     <ClCompile Include="fetch_cef-prefix\src\fetch_cef\libcef_dll\cpptoc\get_geolocation_callback_cpptoc.cc" />
@@ -671,6 +677,8 @@
     <ClCompile Include="fetch_cef-prefix\src\fetch_cef\libcef_dll\ctocpp\request_ctocpp.cc" />
     <ClCompile Include="fetch_cef-prefix\src\fetch_cef\libcef_dll\ctocpp\response_ctocpp.cc" />
     <ClCompile Include="fetch_cef-prefix\src\fetch_cef\libcef_dll\ctocpp\scheme_registrar_ctocpp.cc" />
+    <ClCompile Include="fetch_cef-prefix\src\fetch_cef\libcef_dll\ctocpp\sslcert_principal_ctocpp.cc" />
+    <ClCompile Include="fetch_cef-prefix\src\fetch_cef\libcef_dll\ctocpp\sslinfo_ctocpp.cc" />
     <ClCompile Include="fetch_cef-prefix\src\fetch_cef\libcef_dll\ctocpp\stream_reader_ctocpp.cc" />
     <ClCompile Include="fetch_cef-prefix\src\fetch_cef\libcef_dll\ctocpp\stream_writer_ctocpp.cc" />
     <ClCompile Include="fetch_cef-prefix\src\fetch_cef\libcef_dll\ctocpp\task_runner_ctocpp.cc" />
@@ -683,7 +691,7 @@
     <ClCompile Include="fetch_cef-prefix\src\fetch_cef\libcef_dll\ctocpp\web_plugin_info_ctocpp.cc" />
     <ClCompile Include="fetch_cef-prefix\src\fetch_cef\libcef_dll\ctocpp\xml_reader_ctocpp.cc" />
     <ClCompile Include="fetch_cef-prefix\src\fetch_cef\libcef_dll\ctocpp\zip_reader_ctocpp.cc" />
-    <ClCompile Include="fetch_cef-prefix\src\fetch_cef\libcef_dll\transfer_util.cpp" />
+    <ClCompile Include="fetch_cef-prefix\src\fetch_cef\libcef_dll\transfer_util.cc" />
     <ClCompile Include="fetch_cef-prefix\src\fetch_cef\libcef_dll\wrapper\cef_byte_read_handler.cc" />
     <ClCompile Include="fetch_cef-prefix\src\fetch_cef\libcef_dll\wrapper\cef_closure_task.cc" />
     <ClCompile Include="fetch_cef-prefix\src\fetch_cef\libcef_dll\wrapper\cef_message_router.cc" />
