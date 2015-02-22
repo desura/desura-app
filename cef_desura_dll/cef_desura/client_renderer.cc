@@ -11,12 +11,12 @@
 #include "include/wrapper/cef_helpers.h"
 #include "include/wrapper/cef_message_router.h"
 
+
+
 namespace client {
 namespace renderer {
 
 const char kFocusedNodeChangedMessage[] = "ClientRenderer.FocusedNodeChanged";
-
-namespace {
 
 class ClientRenderDelegate : public ClientApp::RenderDelegate {
  public:
@@ -77,11 +77,10 @@ class ClientRenderDelegate : public ClientApp::RenderDelegate {
   IMPLEMENT_REFCOUNTING(ClientRenderDelegate);
 };
 
-}  // namespace
-
-void CreateRenderDelegates(ClientApp::RenderDelegateSet& delegates) {
-  delegates.insert(new ClientRenderDelegate);
+void CreateRenderDelegates( ClientApp::RenderDelegateSet& delegates ) {
+	delegates.insert( new ClientRenderDelegate );
 }
+
 
 }  // namespace renderer
 }  // namespace client

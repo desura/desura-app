@@ -113,6 +113,14 @@ public:
 	virtual bool OnJSPrompt(CefRefPtr<CefBrowser> browser, CefRefPtr<CefFrame> frame, const CefString& message, const CefString& defaultValue, bool& retval, CefString& result);
 };
 
+class RenderHandler : public CefRenderHandler, public virtual ChromiumEventInfoI
+{
+public:
+	virtual bool GetViewRect( CefRefPtr<CefBrowser> browser, CefRect& rect ) OVERRIDE;
+	virtual void OnPaint( CefRefPtr<CefBrowser> browser, PaintElementType type, const RectList& dirtyRects, const void* buffer, int width, int height ) OVERRIDE;
+};
+
+
 /////////////////////////////////////////////////////////////////////////////////////////////
 /// ChromiumBrowserEvents
 /////////////////////////////////////////////////////////////////////////////////////////////
@@ -127,7 +135,8 @@ class ChromiumBrowserEvents :
 	, public KeyboardHandler
 	, public MenuHandler
 	, public JSDialogHandler
-{
+	, public RenderHandler
+	{
 public:
 	ChromiumBrowserEvents(ChromiumBrowser* pParent);
 
@@ -138,6 +147,9 @@ public:
 	virtual void SetBrowser(CefRefPtr<CefBrowser> browser);
 	virtual CefRefPtr<CefBrowser> GetBrowser();
 	virtual void setContext(CefRefPtr<CefV8Context> context);
+
+	// Wrap
+	virtual CefRefPtr<CefRenderHandler>			GetRenderHandler()			{ return (CefRenderHandler*) this; }
 
 	virtual CefRefPtr<CefLifeSpanHandler>		GetLifeSpanHandler()		{ return (CefLifeSpanHandler*) this; }
 	virtual CefRefPtr<CefLoadHandler>			GetLoadHandler()			{ return (CefLoadHandler*) this; }

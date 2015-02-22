@@ -106,7 +106,6 @@ extern "C"
 		}
 
 		settings.single_process = true;
-		settings.context_safety_implementation = -1;
 		settings.command_line_args_disabled = true;
 		settings.uncaught_exception_stack_size = 20;
 
@@ -293,8 +292,33 @@ CefBrowserSettings ChromiumBrowser::getBrowserDefaults()
 }
 
 #ifdef OS_WIN
+/*
+class CreateTask : public CefTask
+{
+public:
+	CreateTask( ChromiumBrowser* browser, const std::string& defaultUrl )
+	{
+		m_pBrowser = browser;
+		m_szDefaultUrl = defaultUrl;
+	}
 
-void ChromiumBrowser::init(const char *defaultUrl)
+	void Execute()
+	{
+		m_pBrowser->initCallback( m_szDefaultUrl );
+	}
+
+	ChromiumBrowser *m_pBrowser;
+	std::string m_szDefaultUrl;
+
+	IMPLEMENT_REFCOUNTING( CreateTask );
+};
+
+void ChromiumBrowser::init( const char *defaultUrl )
+{
+	CefPostTask( TID_UI, new CreateTask( this, defaultUrl ) );
+}
+
+void ChromiumBrowser::initCallback( const std::string& defaultUrl )
 {
 	m_WinInfo.style = WS_CHILD | WS_VISIBLE | WS_CLIPCHILDREN | WS_CLIPSIBLINGS | WS_TABSTOP;
 	m_WinInfo.height = 500;
@@ -306,6 +330,26 @@ void ChromiumBrowser::init(const char *defaultUrl)
 
 	CefBrowserHost::CreateBrowser( m_WinInfo, m_rEventHandler, defaultUrl, getBrowserDefaults(), CefRequestContext::GetGlobalContext() );
 }
+*/
+
+void ChromiumBrowser::init(const char *defaultUrl)
+{
+	m_WinInfo.style = WS_CHILD | WS_VISIBLE | WS_CLIPCHILDREN | WS_CLIPSIBLINGS | WS_TABSTOP;
+	m_WinInfo.height = 500;
+	m_WinInfo.width = 500;
+	m_WinInfo.parent_window = m_hFormHandle;
+
+	RECT rect;
+	GetClientRect( m_hFormHandle, &rect );
+	m_WinInfo.SetAsChild( m_hFormHandle, rect );
+
+
+	std::wstring nameW = std::wstring_convert<std::codecvt_utf8<wchar_t>>().from_bytes( "DesuraCEFBrowser" );
+	cef_string_copy( nameW.c_str(), nameW.size(), &m_WinInfo.window_name );
+
+	CefBrowserHost::CreateBrowser( m_WinInfo, m_rEventHandler, defaultUrl, getBrowserDefaults(), CefRequestContext::GetGlobalContext() );
+}
+
 
 #else
 

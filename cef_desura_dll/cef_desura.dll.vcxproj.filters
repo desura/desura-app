@@ -420,14 +420,14 @@
     <ClCompile Include="fetch_cef-prefix\src\fetch_cef\cef_desura\client_app.cc">
       <Filter>cef_desura</Filter>
     </ClCompile>
-    <ClCompile Include="fetch_cef-prefix\src\fetch_cef\cef_desura\client_app_delegates.cc">
-      <Filter>cef_desura</Filter>
-    </ClCompile>
     <ClCompile Include="fetch_cef-prefix\src\fetch_cef\cef_desura\client_renderer.cc">
       <Filter>cef_desura</Filter>
     </ClCompile>
     <ClCompile Include="fetch_cef-prefix\src\fetch_cef\libcef_dll\transfer_util.cpp">
       <Filter>libcef_dll</Filter>
+    </ClCompile>
+    <ClCompile Include="fetch_cef-prefix\src\fetch_cef\cef_desura\client_app_delegates.cc">
+      <Filter>cef_desura</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

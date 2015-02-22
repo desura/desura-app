@@ -40,6 +40,7 @@ public:
 	virtual void onPaintBg();
 	virtual void onPaint();
 	virtual void onResize();
+	void initCallback(const std::string& defaultUrl);
 #else
 	void initCallback(const std::string& defaultUrl);
 	virtual void onResize(int x, int y, int width, int height);

@@ -115,10 +115,6 @@ class ClientApp : public CefApp,
   // client_app_delegates.
   static void CreateRenderDelegates(RenderDelegateSet& delegates);
 
-  // Registers custom schemes. Implemented in client_app_delegates.
-  static void RegisterCustomSchemes(CefRefPtr<CefSchemeRegistrar> registrar,
-                                    std::vector<CefString>& cookiable_schemes);
-
   // Create the Linux print handler. Implemented in client_app_delegates.
   static CefRefPtr<CefPrintHandler> CreatePrintHandler();
 

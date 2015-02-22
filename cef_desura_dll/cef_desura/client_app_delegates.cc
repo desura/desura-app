@@ -20,10 +20,4 @@ void ClientApp::CreateRenderDelegates(RenderDelegateSet& delegates) {
 	JSExtenderCreateRenderDelegates( delegates );
 }
 
-// static
-void ClientApp::RegisterCustomSchemes(
-    CefRefPtr<CefSchemeRegistrar> registrar,
-    std::vector<CefString>& cookiable_schemes) {
-}
-
 }  // namespace client

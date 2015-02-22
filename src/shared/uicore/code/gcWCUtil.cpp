@@ -140,7 +140,6 @@ bool LoadCEFDll()
 	UserAgentFN userAgent = (UserAgentFN) WebCore::FactoryBuilder(WEBCORE_USERAGENT);
 	gcString ua;
 
-/*
 	//stupid hack cause crappy paypal does useragent sniffing. FFFFFFFFFFFFUUUUUUUUUUUUUUUUUUUUUUU
 #ifdef WIN32
 	ua += "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/535.1 (KHTML, like Gecko) Chrome/13.0.782.220 Safari/535.1";
@@ -148,8 +147,7 @@ bool LoadCEFDll()
 	ua += "Mozilla/5.0 (X11; Linux i686) AppleWebKit/535.1 (KHTML, like Gecko) Chrome/13.0.782.220 Safari/535.1";
 #endif
 
-	ua += " " + userAgent();
-*/
+//	ua += " " + userAgent();
 	ua = userAgent();
 
 	UTIL::FS::Path path(UTIL::OS::getTempInternetPath(L"desura"), L"", false);
