@@ -268,61 +268,8 @@ else(BUILD_CEF)
       fetch_cef_bin
       source_dir
     )
-    
+
     install_external_library(fetch_cef_bin 
-	  ${source_dir}/locals/am.pak
-	  ${source_dir}/locals/ar.pak
-	  ${source_dir}/locals/bg.pak
-	  ${source_dir}/locals/bn.pak
-	  ${source_dir}/locals/ca.pak
-	  ${source_dir}/locals/cs.pak
-	  ${source_dir}/locals/da.pak
-	  ${source_dir}/locals/de.pak
-	  ${source_dir}/locals/el.pak
-	  ${source_dir}/locals/en-GB.pak
-	  ${source_dir}/locals/en-US.pak
-	  ${source_dir}/locals/es.pak
-	  ${source_dir}/locals/es-419.pak
-	  ${source_dir}/locals/et.pak
-	  ${source_dir}/locals/fa.pak
-	  ${source_dir}/locals/fi.pak
-	  ${source_dir}/locals/fil.pak
-	  ${source_dir}/locals/fr.pak
-	  ${source_dir}/locals/gu.pak
-	  ${source_dir}/locals/he.pak
-	  ${source_dir}/locals/hi.pak
-	  ${source_dir}/locals/hr.pak
-	  ${source_dir}/locals/hu.pak
-	  ${source_dir}/locals/id.pak
-	  ${source_dir}/locals/it.pak
-	  ${source_dir}/locals/ja.pak
-	  ${source_dir}/locals/kn.pak
-	  ${source_dir}/locals/ko.pak
-	  ${source_dir}/locals/lt.pak
-	  ${source_dir}/locals/lv.pak
-	  ${source_dir}/locals/ml.pak
-	  ${source_dir}/locals/mr.pak
-	  ${source_dir}/locals/ms.pak
-	  ${source_dir}/locals/nb.pak
-	  ${source_dir}/locals/nl.pak
-	  ${source_dir}/locals/pl.pak
-	  ${source_dir}/locals/pt-BR.pak
-	  ${source_dir}/locals/pr-PT.pak
-	  ${source_dir}/locals/ro.pak
-	  ${source_dir}/locals/ru.pak
-	  ${source_dir}/locals/sk.pak
-	  ${source_dir}/locals/sl.pak
-	  ${source_dir}/locals/sr.pak
-	  ${source_dir}/locals/sv.pak
-	  ${source_dir}/locals/sw.pak
-	  ${source_dir}/locals/ta.pak
-	  ${source_dir}/locals/te.pak
-	  ${source_dir}/locals/th.pak
-	  ${source_dir}/locals/tr.pak
-	  ${source_dir}/locals/uk.pak
-	  ${source_dir}/locals/vi.pak
-	  ${source_dir}/locals/zh-CN.pak
-	  ${source_dir}/locals/zh-TW.pak
       ${source_dir}/avcodec-53.dll
       ${source_dir}/avformat-53.dll
       ${source_dir}/avutil-51.dll
@@ -344,6 +291,62 @@ else(BUILD_CEF)
       ${source_dir}/plugin.vch
 	  ${source_dir}/wow_helper.exe
       ${source_dir}/zlibwapi.dll)
+
+    install_external_locales(fetch_cef_bin 
+	  ${source_dir}/locales/am.pak
+	  ${source_dir}/locales/ar.pak
+	  ${source_dir}/locales/bg.pak
+	  ${source_dir}/locales/bn.pak
+	  ${source_dir}/locales/ca.pak
+	  ${source_dir}/locales/cs.pak
+	  ${source_dir}/locales/da.pak
+	  ${source_dir}/locales/de.pak
+	  ${source_dir}/locales/el.pak
+	  ${source_dir}/locales/en-GB.pak
+	  ${source_dir}/locales/en-US.pak
+	  ${source_dir}/locales/es.pak
+	  ${source_dir}/locales/es-419.pak
+	  ${source_dir}/locales/et.pak
+	  ${source_dir}/locales/fa.pak
+	  ${source_dir}/locales/fi.pak
+	  ${source_dir}/locales/fil.pak
+	  ${source_dir}/locales/fr.pak
+	  ${source_dir}/locales/gu.pak
+	  ${source_dir}/locales/he.pak
+	  ${source_dir}/locales/hi.pak
+	  ${source_dir}/locales/hr.pak
+	  ${source_dir}/locales/hu.pak
+	  ${source_dir}/locales/id.pak
+	  ${source_dir}/locales/it.pak
+	  ${source_dir}/locales/ja.pak
+	  ${source_dir}/locales/kn.pak
+	  ${source_dir}/locales/ko.pak
+	  ${source_dir}/locales/lt.pak
+	  ${source_dir}/locales/lv.pak
+	  ${source_dir}/locales/ml.pak
+	  ${source_dir}/locales/mr.pak
+	  ${source_dir}/locales/ms.pak
+	  ${source_dir}/locales/nb.pak
+	  ${source_dir}/locales/nl.pak
+	  ${source_dir}/locales/pl.pak
+	  ${source_dir}/locales/pt-BR.pak
+	  ${source_dir}/locales/pt-PT.pak
+	  ${source_dir}/locales/ro.pak
+	  ${source_dir}/locales/ru.pak
+	  ${source_dir}/locales/sk.pak
+	  ${source_dir}/locales/sl.pak
+	  ${source_dir}/locales/sr.pak
+	  ${source_dir}/locales/sv.pak
+	  ${source_dir}/locales/sw.pak
+	  ${source_dir}/locales/ta.pak
+	  ${source_dir}/locales/te.pak
+	  ${source_dir}/locales/th.pak
+	  ${source_dir}/locales/tr.pak
+	  ${source_dir}/locales/uk.pak
+	  ${source_dir}/locales/vi.pak
+	  ${source_dir}/locales/zh-CN.pak
+	  ${source_dir}/locales/zh-TW.pak)
+
   endif()	
 endif()
 

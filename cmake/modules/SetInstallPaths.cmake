@@ -15,7 +15,7 @@ set(CMAKE_INSTALL_PREFIX ${DEFAULT_INSTALL_DIR}
 
 if(WIN32)
   set(BINDIR "${CMAKE_BUILD_TYPE}_Out")
-  set(RUNTIME_LIBDIR "${BINDIR}\\bin")
+  set(RUNTIME_LIBDIR "${BINDIR}/bin")
   set(DATADIR "${BINDIR}\\data")
 else()
   set(BINDIR ""
