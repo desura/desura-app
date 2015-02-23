@@ -289,6 +289,7 @@ else(BUILD_CEF)
 	  ${source_dir}/libGLESv2.dll
 	  ${source_dir}/pdf.dll
       ${source_dir}/plugin.vch
+      ${source_dir}/popflashplayer.dll
 	  ${source_dir}/wow_helper.exe
       ${source_dir}/zlibwapi.dll)
 
