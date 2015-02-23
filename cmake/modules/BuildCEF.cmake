@@ -227,7 +227,6 @@ elseif(CEF_EXTERNAL_PATH AND WIN32)
   )
     
   install_external_library(fetch_cef_bin 
-    ${source_dir}/gcswf32.dll
     ${source_dir}/plugin.vch
     ${source_dir}/zlibwapi.dll
   )	  
@@ -271,11 +270,79 @@ else(BUILD_CEF)
     )
     
     install_external_library(fetch_cef_bin 
+	  ${source_dir}/locals/am.pak
+	  ${source_dir}/locals/ar.pak
+	  ${source_dir}/locals/bg.pak
+	  ${source_dir}/locals/bn.pak
+	  ${source_dir}/locals/ca.pak
+	  ${source_dir}/locals/cs.pak
+	  ${source_dir}/locals/da.pak
+	  ${source_dir}/locals/de.pak
+	  ${source_dir}/locals/el.pak
+	  ${source_dir}/locals/en-GB.pak
+	  ${source_dir}/locals/en-US.pak
+	  ${source_dir}/locals/es.pak
+	  ${source_dir}/locals/es-419.pak
+	  ${source_dir}/locals/et.pak
+	  ${source_dir}/locals/fa.pak
+	  ${source_dir}/locals/fi.pak
+	  ${source_dir}/locals/fil.pak
+	  ${source_dir}/locals/fr.pak
+	  ${source_dir}/locals/gu.pak
+	  ${source_dir}/locals/he.pak
+	  ${source_dir}/locals/hi.pak
+	  ${source_dir}/locals/hr.pak
+	  ${source_dir}/locals/hu.pak
+	  ${source_dir}/locals/id.pak
+	  ${source_dir}/locals/it.pak
+	  ${source_dir}/locals/ja.pak
+	  ${source_dir}/locals/kn.pak
+	  ${source_dir}/locals/ko.pak
+	  ${source_dir}/locals/lt.pak
+	  ${source_dir}/locals/lv.pak
+	  ${source_dir}/locals/ml.pak
+	  ${source_dir}/locals/mr.pak
+	  ${source_dir}/locals/ms.pak
+	  ${source_dir}/locals/nb.pak
+	  ${source_dir}/locals/nl.pak
+	  ${source_dir}/locals/pl.pak
+	  ${source_dir}/locals/pt-BR.pak
+	  ${source_dir}/locals/pr-PT.pak
+	  ${source_dir}/locals/ro.pak
+	  ${source_dir}/locals/ru.pak
+	  ${source_dir}/locals/sk.pak
+	  ${source_dir}/locals/sl.pak
+	  ${source_dir}/locals/sr.pak
+	  ${source_dir}/locals/sv.pak
+	  ${source_dir}/locals/sw.pak
+	  ${source_dir}/locals/ta.pak
+	  ${source_dir}/locals/te.pak
+	  ${source_dir}/locals/th.pak
+	  ${source_dir}/locals/tr.pak
+	  ${source_dir}/locals/uk.pak
+	  ${source_dir}/locals/vi.pak
+	  ${source_dir}/locals/zh-CN.pak
+	  ${source_dir}/locals/zh-TW.pak
       ${source_dir}/avcodec-53.dll
       ${source_dir}/avformat-53.dll
       ${source_dir}/avutil-51.dll
-      ${source_dir}/gcswf32.dll
+      ${source_dir}/cef.pak
+      ${source_dir}/cef_100_percent.pak
+      ${source_dir}/cef_200_percent.pak
+      ${source_dir}/cef_desura.dll
+      ${source_dir}/cef_sandbox.lib
+	  ${source_dir}/d3dcompiler_43.dll
+	  ${source_dir}/d3dcompiler_47.dll
+	  ${source_dir}/devtools_resources.pak
+	  ${source_dir}/ffmpegsumo.dll
+	  ${source_dir}/icudtl.dat
+	  ${source_dir}/libcef.dll
+	  ${source_dir}/libcef.lib
+	  ${source_dir}/libEGL.dll
+	  ${source_dir}/libGLESv2.dll
+	  ${source_dir}/pdf.dll
       ${source_dir}/plugin.vch
+	  ${source_dir}/wow_helper.exe
       ${source_dir}/zlibwapi.dll)
   endif()	
 endif()
