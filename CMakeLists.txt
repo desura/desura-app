@@ -249,7 +249,7 @@ endmacro()
 # custom dll's for Desura
 if(WIN32)
   #SetupDownloadUrl(CEF_BIN "cef_bin_2.zip" ec737b15c3c90f5c43d26c4e22f5dfcc)
-  SetupDownloadUrlCustom(CEF_BIN "file://C:/Work/cef_bin_3.zip" 4f859c535f4b009a4d217529aea363df)
+  SetupDownloadUrlCustom(CEF_BIN "file://C:/Work/cef_bin_3.zip" 2f7419b7a204a76e0472bc0dfb19ec11)
 
   SetupDownloadUrl(DESURA_EXTRA_BIN "desura_extra_bin_v3.zip" 79bd00407c682c6b1dab5c7fb65ba72e) 
 endif()
