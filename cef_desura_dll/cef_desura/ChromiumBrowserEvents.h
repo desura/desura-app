@@ -98,6 +98,10 @@ class MenuHandler : public CefContextMenuHandler, public virtual ChromiumEventIn
 {
 public:
 	virtual void OnBeforeContextMenu(CefRefPtr<CefBrowser> browser, CefRefPtr<CefFrame> frame, CefRefPtr<CefContextMenuParams> params, CefRefPtr<CefMenuModel> model);
+	virtual bool OnContextMenuCommand( CefRefPtr<CefBrowser> browser, CefRefPtr<CefFrame> frame, CefRefPtr<CefContextMenuParams> params, int command_id, EventFlags event_flags )
+	{
+		return true;
+	}
 };
 
 

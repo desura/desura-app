@@ -116,12 +116,23 @@ void ClientApp::OnUncaughtException(CefRefPtr<CefBrowser> browser,
                                     CefRefPtr<CefFrame> frame,
                                     CefRefPtr<CefV8Context> context,
                                     CefRefPtr<CefV8Exception> exception,
-                                    CefRefPtr<CefV8StackTrace> stackTrace) {
+                                    CefRefPtr<CefV8StackTrace> stackTrace)
+{
+	for ( int i = 0; i < stackTrace->GetFrameCount(); ++i )
+	{
+		CefRefPtr<CefV8StackFrame> sFrame = stackTrace->GetFrame( i );
+		std::string script = sFrame->GetScriptName();
+		std::string func = sFrame->GetFunctionName();
+		DLOG( ERROR ) << "JS EXCEPTION -- [" << i << "] script " << script.c_str() << " function " << func.c_str() << " line " << sFrame->GetLineNumber();
+	}
+
+/*
   RenderDelegateSet::iterator it = render_delegates_.begin();
   for (; it != render_delegates_.end(); ++it) {
     (*it)->OnUncaughtException(this, browser, frame, context, exception,
                                stackTrace);
   }
+*/
 }
 
 void ClientApp::OnFocusedNodeChanged(CefRefPtr<CefBrowser> browser,

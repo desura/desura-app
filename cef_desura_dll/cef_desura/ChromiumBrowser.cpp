@@ -102,7 +102,7 @@ extern "C"
 			std::wstring logfileW = std::wstring_convert<std::codecvt_utf8<wchar_t>>().from_bytes( logPath );
 			cef_string_copy( logfileW.c_str(), logfileW.size(), &settings.log_file );
 
-			settings.log_severity = cef_log_severity_t::LOGSEVERITY_VERBOSE;
+			settings.log_severity = cef_log_severity_t::LOGSEVERITY_ERROR;
 		}
 
 		settings.single_process = true;
