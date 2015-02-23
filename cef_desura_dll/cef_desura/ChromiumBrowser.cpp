@@ -283,55 +283,16 @@ CefBrowserSettings ChromiumBrowser::getBrowserDefaults()
 	browserDefaults.webgl = STATE_DISABLED;
 	browserDefaults.universal_access_from_file_urls = STATE_ENABLED;
 	browserDefaults.file_access_from_file_urls = STATE_ENABLED;
-	browserDefaults.java = STATE_DISABLED;
+	browserDefaults.web_security = STATE_DISABLED;
+	browserDefaults.java = STATE_ENABLED;
 	browserDefaults.javascript = STATE_ENABLED;
-	browserDefaults.javascript_close_windows = STATE_DISABLED;
-	browserDefaults.javascript_open_windows = STATE_DISABLED;
+	browserDefaults.javascript_close_windows = STATE_ENABLED;
+	browserDefaults.javascript_open_windows = STATE_ENABLED;
 
 	return browserDefaults;
 }
 
 #ifdef OS_WIN
-/*
-class CreateTask : public CefTask
-{
-public:
-	CreateTask( ChromiumBrowser* browser, const std::string& defaultUrl )
-	{
-		m_pBrowser = browser;
-		m_szDefaultUrl = defaultUrl;
-	}
-
-	void Execute()
-	{
-		m_pBrowser->initCallback( m_szDefaultUrl );
-	}
-
-	ChromiumBrowser *m_pBrowser;
-	std::string m_szDefaultUrl;
-
-	IMPLEMENT_REFCOUNTING( CreateTask );
-};
-
-void ChromiumBrowser::init( const char *defaultUrl )
-{
-	CefPostTask( TID_UI, new CreateTask( this, defaultUrl ) );
-}
-
-void ChromiumBrowser::initCallback( const std::string& defaultUrl )
-{
-	m_WinInfo.style = WS_CHILD | WS_VISIBLE | WS_CLIPCHILDREN | WS_CLIPSIBLINGS | WS_TABSTOP;
-	m_WinInfo.height = 500;
-	m_WinInfo.width = 500;
-	m_WinInfo.parent_window = m_hFormHandle;
-
-	std::wstring nameW = std::wstring_convert<std::codecvt_utf8<wchar_t>>().from_bytes( "DesuraCEFBrowser" );
-	cef_string_copy( nameW.c_str(), nameW.size(), &m_WinInfo.window_name );
-
-	CefBrowserHost::CreateBrowser( m_WinInfo, m_rEventHandler, defaultUrl, getBrowserDefaults(), CefRequestContext::GetGlobalContext() );
-}
-*/
-
 void ChromiumBrowser::init(const char *defaultUrl)
 {
 	m_WinInfo.style = WS_CHILD | WS_VISIBLE | WS_CLIPCHILDREN | WS_CLIPSIBLINGS | WS_TABSTOP;
@@ -574,7 +535,7 @@ void ChromiumBrowser::onResize(int x, int y, int width, int height)
 }
 #endif
 
-void ChromiumBrowser::setBrowser(CefBrowser* browser)
+void ChromiumBrowser::setBrowser( CefRefPtr<CefBrowser> browser )
 {
 	m_pBrowser = browser;
 
@@ -593,6 +554,12 @@ void ChromiumBrowser::setBrowser(CefBrowser* browser)
 	onResize();
 #endif
 }
+
+CefRefPtr<CefBrowser> ChromiumBrowser::getBrowser()
+{
+	return m_pBrowser;
+}
+
 
 void ChromiumBrowser::showInspector()
 {

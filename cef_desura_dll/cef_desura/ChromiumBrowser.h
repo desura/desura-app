@@ -88,7 +88,9 @@ public:
 
 	virtual ChromiumDLL::JavaScriptContextI* getJSContext();
 
-	void setBrowser(CefBrowser* browser);
+	void setBrowser(CefRefPtr<CefBrowser> browser);
+
+	CefRefPtr<CefBrowser> getBrowser();
 	
 	void setContext(CefRefPtr<CefV8Context> context);
 
@@ -98,7 +100,7 @@ protected:
 private:
 	CefRefPtr<CefV8Context> m_rContext;
 	CefRefPtr<CefClient> m_rEventHandler;
-	CefBrowser* m_pBrowser;
+	CefRefPtr<CefBrowser> m_pBrowser;
 
 
 	WIN_HANDLE m_hFormHandle;

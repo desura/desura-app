@@ -54,12 +54,6 @@ namespace client
 
 		virtual void OnContextCreated( CefRefPtr<ClientApp> app, CefRefPtr<CefBrowser> browser, CefRefPtr<CefFrame> frame, CefRefPtr<CefV8Context> context )
 		{
-/*
-			std::set<ChromiumBrowserEvents*> CEBSet = ChromiumBrowserEvents::GetChromiumContextEvents( browser );
-
-			for each (ChromiumBrowserEvents* eventBrowser in CEBSet)
-*/
-
 			ChromiumBrowserEvents* eventBrowser = ChromiumBrowserEvents::GetChromiumContextEvents( browser );
 
 			if ( eventBrowser )

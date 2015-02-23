@@ -328,27 +328,10 @@ void RenderHandler::OnPaint( CefRefPtr<CefBrowser> browser, PaintElementType typ
 /// ChromiumBrowserEvents
 /////////////////////////////////////////////////////////////////////////////////////////////
 
-// HACK: KMY: Ugly one, but until I can find a "CEF supported way".  We have a callback to bind JS to a browser instance, which requires access to ChromiumBrowserEvents - but only provides the CefBrowser.  So we have to maintain a relationship.  Just going to iterate on all CBE's.
-std::mutex hackBEMapMutex;
-ChromiumBrowserEvents* hackCBE = nullptr;
-
-
-//std::set<ChromiumBrowserEvents*> ChromiumBrowserEvents::GetChromiumContextEvents( CefRefPtr<CefBrowser> browser )
-ChromiumBrowserEvents* ChromiumBrowserEvents::GetChromiumContextEvents( CefRefPtr<CefBrowser> browser )
-{
-	std::lock_guard<std::mutex> lk( hackBEMapMutex );
-
-	// Not getting back original CefBrowser, so will have to find another way.  but for now...
-	return hackCBE;
-}
-
 ChromiumBrowserEvents::ChromiumBrowserEvents(ChromiumBrowser* pParent)
 {
-	m_pParent = pParent;
 	m_pEventCallBack = NULL;
-
-	std::lock_guard<std::mutex> lk( hackBEMapMutex );
-	hackCBE = this;
+	setParent( pParent );
 }
 
 void ChromiumBrowserEvents::setCallBack(ChromiumDLL::ChromiumBrowserEventI* cbe)
@@ -366,9 +349,32 @@ ChromiumDLL::ChromiumBrowserEventI* ChromiumBrowserEvents::GetCallback()
 	return m_pEventCallBack;
 }
 
-void ChromiumBrowserEvents::SetBrowser(CefRefPtr<CefBrowser> browser)
+// HACK: KMY: We have a callback to bind JS to a browser instance, which requires access to ChromiumBrowserEvents - but only provides the CefBrowser.  So we have to maintain a relationship between CBEs and Browsers, I'm using the browser's unique ID.
+std::mutex hackCBEMapMutex;
+std::map<int, ChromiumBrowserEvents*> hackCBEMap;
+
+
+ChromiumBrowserEvents* ChromiumBrowserEvents::GetChromiumContextEvents( CefRefPtr<CefBrowser> browser )
+{
+	std::lock_guard<std::mutex> lk( hackCBEMapMutex );
+
+	// Return the CBE associated with this browser
+	if ( browser.get() )
+		return hackCBEMap[ browser->GetIdentifier() ];
+	else
+		return nullptr;
+}
+
+void ChromiumBrowserEvents::SetBrowser( CefRefPtr<CefBrowser> browser )
 {
 	m_Browser = browser;
+
+	if ( browser.get() )
+	{
+		std::lock_guard<std::mutex> lk( hackCBEMapMutex );
+
+		hackCBEMap.insert( std::pair<int, ChromiumBrowserEvents*>( browser->GetIdentifier(), this ) );
+	}
 
 	if ( m_pParent )
 		m_pParent->setBrowser( browser );
