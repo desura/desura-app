@@ -42,6 +42,7 @@
 #
 # unix-only options:
 #   FORCE_BUNDLED_WXGTK  		ON: bundle wxGTK 3.0.0
+#   FORCE_BUNDLED_BOOST  		ON: bundle boost
 #                   OFF			OFF: use system wxGTK (has to be 3.0.0 or later)
 #   DEBUG_EXTERNAL  OFF                 same as DEBUG, but for externap deps
 #   DIR_TYPE        SINGLE              how should game data be stored?
@@ -111,13 +112,15 @@ set(CMAKE_TEST_PROJECTS_BIN "${CMAKE_BINARY_DIR}/cmake_test")
 
 SET_PROPERTY(GLOBAL PROPERTY USE_FOLDERS ON)
 
-if(DEBUG)
-  set(CMAKE_BUILD_TYPE Debug)
-else()
-  if(OFFICIAL_BUILD)
-    set(CMAKE_BUILD_TYPE RelWithDebInfo)
+if(WIN32)
+  if(DEBUG)
+    set(CMAKE_BUILD_TYPE Debug)
   else()
-    set(CMAKE_BUILD_TYPE Release)
+    if(OFFICIAL_BUILD)
+  	set(CMAKE_BUILD_TYPE RelWithDebInfo)
+    else()
+  	set(CMAKE_BUILD_TYPE Release)
+    endif()
   endif()
 endif()
 
@@ -154,8 +157,18 @@ if(NOT BUILD_ONLY_CEF)
     set(Boost_USE_STATIC_LIBS OFF)
     set(Boost_USE_STATIC_RUNTIME OFF)
   endif()
-  find_package(Boost COMPONENTS filesystem system)
-  find_package(CURL 7.19.1 ${REQUIRED_IF_OPTION})
+
+  if(NOT FORCE_BUNDLED_BOOST)
+    find_package(Boost COMPONENTS filesystem system)
+  else()
+    set(Boost_FOUND OFF)
+  endif()
+
+  if(NOT FORCE_BUNDLED_CURL)
+    find_package(CURL 7.19.1 ${REQUIRED_IF_OPTION})
+  else()
+    set(CURL_FOUND OFF)
+  endif()
 
   if(NOT WIN32)
     find_package(GTK2 REQUIRED)
@@ -289,7 +302,7 @@ SetupDownloadUrlCustom(GMOCK "https://googlemock.googlecode.com/files/gmock-1.7.
 SetupDownloadUrlCustom(V8 "file://C:/Work/v8-current.zip" 7fc10005afd5fca0d4eb9fc014387ffb)
 
 ###### SetupDownloadUrl(WXWIDGET "wxWidgets-3.0.0.tar.bz2" 241998efc12205172ed24c18788ea2cd)
-SetupDownloadUrlCustom(WXWIDGET "http://sourceforge.net/projects/wxwindows/files/3.0.0/wxWidgets-3.0.0.tar.bz2/download" 241998efc12205172ed24c18788ea2cd)
+SetupDownloadUrlCustom(WXWIDGET "http://downloads.sourceforge.net/project/wxwindows/3.0.2/wxWidgets-3.0.2.tar.bz2" ba4cd1f3853d0cd49134c5ae028ad080)
 
 ###############################################################################
 # build some external projects
@@ -298,16 +311,10 @@ SetupDownloadUrlCustom(WXWIDGET "http://sourceforge.net/projects/wxwindows/files
 if(NOT BUILD_ONLY_CEF)
   if(NOT wxWidgets_FOUND)
     include(BuildwxWidgets)
-    if(NOT WIN32)
-      add_dependencies(desura wxWidgets)
-    endif()
   endif()
 
-  if(NOT Boost_FOUND)
+  if(NOT Boost_FOUND OR FORCE_BUNDLED_BOOST)
     include(BuildBoost)
-    if(NOT WIN32)
-      add_dependencies(desura boost)
-    endif()
   endif()
 
   if(NOT BREAKPAD_EXCEPTION_HANDLER_FOUND)
@@ -368,4 +375,8 @@ if(NOT BUILD_ONLY_CEF)
   ###############################################################################
   add_subdirectory(src)
   add_subdirectory(build_out)
+endif()
+
+if(NOT WIN32)
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -O0 -Wall -Weffc++")
 endif()

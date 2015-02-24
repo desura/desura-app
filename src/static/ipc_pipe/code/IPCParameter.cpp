@@ -168,13 +168,13 @@ uint64 PVoid::getValue(bool dup)
 
 
 PBool::PBool()
+	: m_bValue(false)
 {
-	m_bValue = false;
 }
 
 PBool::PBool(bool val)
+	: m_bValue(val)
 {
-	m_bValue = val;
 }
 
 uint32 PBool::getSerializeSize()
@@ -209,13 +209,13 @@ uint64 PBool::getValue(bool dup)
 
 
 PUint32::PUint32()
+	: m_uiValue(0)
 {
-	m_uiValue = 0;
 }
 
 PUint32::PUint32(uint32 val)
+	: m_uiValue(val)
 {
-	m_uiValue = val;
 }
 
 uint32 PUint32::getSerializeSize()
@@ -253,13 +253,13 @@ uint64 PUint32::getValue(bool dup)
 
 
 PInt32::PInt32()
+	: m_iValue(0)
 {
-	m_iValue = 0;
 }
 
 PInt32::PInt32(int32 value)
+	: m_iValue(value)
 {
-	m_iValue = value;
 }
 
 uint32 PInt32::getSerializeSize()
@@ -303,13 +303,13 @@ typedef union
 
 
 PUint64::PUint64()
+	: m_uiValue(0)
 {
-	m_uiValue = 0;
 }
 
 PUint64::PUint64(uint64 val)
+	: m_uiValue(val)
 {
-	m_uiValue = val;
 }
 
 uint32 PUint64::getSerializeSize()
@@ -356,13 +356,13 @@ typedef union
 
 
 PDouble::PDouble()
+	: m_dValue(0.0)
 {
-	m_dValue = 0.0;
 }
 
 PDouble::PDouble(double val)
+	: m_dValue(val)
 {
-	m_dValue = val;
 }
 
 uint32 PDouble::getSerializeSize()
@@ -403,10 +403,12 @@ uint64 PDouble::getValue(bool dup)
 
 
 PString::PString()
+	: m_szValue("")
 {
 }
 
 PString::PString(const char* v)
+	: m_szValue("")
 {
 	if (v)
 		m_szValue = std::string(v);
@@ -480,13 +482,13 @@ uint64 PString::getValue(bool dup)
 
 
 PException::PException()
+	: exception(new gcException())
 {
-	exception = new gcException();
 }
 
 PException::PException(gcException& e)
+	: exception(new gcException(e))
 {
-	exception = new gcException(e);
 }
 
 PException::~PException()
@@ -565,25 +567,16 @@ uint64 PException::getValue(bool dup)
 }
 
 
-
-
-
-
-
-
-
-
 PBlob::PBlob()
+	: m_szData(nullptr)
+	, m_uiSize(0)
 {
-	m_szData = nullptr;
-	m_uiSize = 0;
 }
 
 PBlob::PBlob(const PBlob& e)
+	: m_uiSize(e.getSize())
+	, m_szData(nullptr)
 {
-	m_uiSize = e.getSize();
-	m_szData = nullptr;
-
 	if (m_uiSize > 0)
 	{
 		m_szData = new char[m_uiSize];
@@ -592,11 +585,9 @@ PBlob::PBlob(const PBlob& e)
 }
 
 PBlob::PBlob(PBlob* blob)
+	: m_uiSize(blob->getSize())
+	, m_szData(nullptr)
 {
-	m_uiSize = blob->getSize();
-
-	m_szData = nullptr;
-
 	if (m_uiSize > 0)
 	{
 		m_szData = new char[m_uiSize];
@@ -605,11 +596,11 @@ PBlob::PBlob(PBlob* blob)
 }
 
 PBlob::PBlob(uint64 val)
+	: m_uiSize(0)
+	, m_szData(nullptr)
 {
 	PBlob* blob = (PBlob*)val;
-
 	m_uiSize = blob->getSize();
-	m_szData = nullptr;
 
 	if (m_uiSize > 0)
 	{
@@ -619,10 +610,9 @@ PBlob::PBlob(uint64 val)
 }
 
 PBlob::PBlob(const char* data, uint32 size)
+	: m_uiSize(size)
+	, m_szData(nullptr)
 {
-	m_uiSize = size;
-	m_szData = nullptr;
-
 	if (size > 0)
 	{
 		m_szData = new char[m_uiSize];
@@ -683,25 +673,6 @@ uint64 PBlob::getValue(bool dup)
 		return (uint64)this;
 	}
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 PMapStringString::PMapStringString()

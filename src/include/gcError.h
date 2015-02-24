@@ -241,22 +241,25 @@ class gcException : public std::exception
 {
 public:
 	gcException()
+	: m_uiErrId(ERR_UNKNOWNERROR)
+	, m_uiSecErrId(0)
+	, m_szErrMsg("")
 	{
-		m_uiErrId = ERR_UNKNOWNERROR;
-		m_uiSecErrId = 0;
-
 		assign(errMsg[ERR_UNKNOWNERROR]);
 	}
 
 	gcException(gcException const &e)
+	: m_uiErrId(e.getErrId())
+	, m_uiSecErrId(e.getSecErrId())
+	, m_szErrMsg("")
 	{
-		m_uiErrId = e.getErrId();
-		m_uiSecErrId = e.getSecErrId();
-
 		assign(e.getErrMsg());
 	}
 
 	gcException(ERROR_ID errId, int32 secErrId, const char* message = nullptr)
+	: m_uiErrId(errId)
+	, m_uiSecErrId(secErrId)
+	, m_szErrMsg("")
 	{
 		setErrId(errId, secErrId);
 
@@ -265,6 +268,9 @@ public:
 	}
 
 	gcException(ERROR_ID errId, int32 secErrId, const std::string& message)
+	: m_uiErrId(errId)
+	, m_uiSecErrId(secErrId)
+	, m_szErrMsg(message)
 	{
 		setErrId(errId, secErrId);
 
@@ -273,6 +279,9 @@ public:
 	}
 
 	gcException(ERROR_ID errId, const std::string& message)
+	: m_uiErrId(errId)
+	, m_uiSecErrId(0)
+	, m_szErrMsg(message)
 	{
 		setErrId(errId, 0);
 
@@ -281,6 +290,9 @@ public:
 	}
 
 	gcException(ERROR_ID errId, const char* message = nullptr)
+	: m_uiErrId(errId)
+	, m_uiSecErrId(0)
+	, m_szErrMsg("")
 	{
 		setErrId(errId, 0);
 
@@ -289,6 +301,9 @@ public:
 	}
 
 	gcException(gcException *gcE)
+	: m_uiErrId(ERR_UNKNOWNERROR)
+	, m_uiSecErrId(0)
+	, m_szErrMsg("")
 	{
 		if (gcE)
 		{
@@ -304,6 +319,9 @@ public:
 	}
 
 	explicit gcException(uint64 vs)
+	: m_uiErrId(ERR_UNKNOWNERROR)
+	, m_uiSecErrId(0)
+	, m_szErrMsg("")
 	{
 		gcException *gcE = (gcException*)vs;
 
@@ -321,9 +339,10 @@ public:
 	}
 
 	gcException(const gcException *gcE)
+	: m_uiErrId(ERR_UNKNOWNERROR)
+	, m_uiSecErrId(0)
+	, m_szErrMsg("")
 	{
-
-
 		if (gcE)
 		{
 			gcException *temp = const_cast<gcException*>(gcE);

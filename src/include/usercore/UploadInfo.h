@@ -36,29 +36,31 @@ class UploadInfo
 {
 public:
 	UploadInfo()
+	: hour(0)
+	, min(0)
+	, rate(0)
+	, percent(0)
+	, num(0)
+	, milestone(false)
+	, paused(false)
+	, totalAmmount(0)
+	, doneAmmount(0)
+	, msg("")
 	{
-		hour = 0;
-		min = 0;
-		rate = 0;
-		percent = 0;
-		num = 0;
-		milestone = false;
-		paused = false;
-		totalAmmount = 0;
-		doneAmmount = 0;
 	}
 
 	UploadInfo(UploadInfo* i)
+	: min(0)
+	, hour(0)
+	, rate(0)
+	, percent(0)
+	, num(0)
+	, paused(false)
+	, milestone(false)
+	, totalAmmount(0)
+	, doneAmmount(0)
+	, msg("")
 	{
-		min = 0;
-		hour = 0;
-		rate = 0;
-		percent = 0;
-		num = 0;
-		paused = false;
-		milestone = false;
-		totalAmmount = 0;
-		doneAmmount = 0;
 
 		if (i)
 		{

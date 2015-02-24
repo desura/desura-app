@@ -29,6 +29,7 @@ class ThreadPoolTaskSource : public Thread::ThreadPoolTaskSourceI
 public:
 	ThreadPoolTaskSource(gcRefPtr<Thread::BaseTask> &pTask)
 		: m_pTask(pTask)
+		, m_RefCount()
 	{
 	}
 
@@ -46,13 +47,18 @@ using namespace Thread;
 
 ThreadPool::ThreadPool(uint8 num)
 	: BaseThread( "Thread Pool" )
+	, m_uiCount(num)
+	, m_bIsTaskBlocked(false)
+	, m_vForcedList()
+	, m_vThreadList()
+	, m_vTaskList()
+	, m_TaskMutex()
+	, m_ThreadMutex()
+	, m_WaitCondition()
+	, m_RefCount()
 {
 	if (num == 0)
 		m_uiCount = 2;
-	else
-		m_uiCount = num;
-
-	m_bIsTaskBlocked = false;
 	start();
 }
 

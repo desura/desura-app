@@ -43,22 +43,24 @@ namespace UserCore
 			//! @param u Url
 			//!
 			NewsItem(uint32 i, uint8 c, const char* t, const char* u)
+			: id(i)
+			, cat(c)
+			, szTitle(t)
+			, szUrl(u)
+			, hasBeenShown(false)
 			{
-				id = i;
-				cat = c;
-				szTitle = gcString(t);
-				szUrl = gcString(u);
-				hasBeenShown = false;
 			}
 
 			//! Copy Constructor
 			//!
 			//! @param item In NewsItem
 			NewsItem(NewsItem* item)
+			: id(0)
+			, cat(0)
+			, szTitle("")
+			, szUrl("")
+			, hasBeenShown(false)
 			{
-				id = 0;
-				cat = 0;
-
 				if (item)
 				{
 					id = item->id;

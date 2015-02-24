@@ -151,9 +151,14 @@ void WebCoreClass::downloadBanner(MCFCore::Misc::DownloadProvider* dlp, const ch
 	if (!dlp)
 		throw gcException(ERR_BADITEM);
 
-	WebCore::Misc::DownloadImageInfo dii(dlp->getBanner());
+	const char* bannerImageName = dlp->getBanner();
 
-    std::atomic<bool> stop = {false};
-	downloadImage(&dii, stop);
-	dlp->setBanner(dii.outPath.c_str());
+	if ( strlen( bannerImageName ) > 0 )
+	{
+		WebCore::Misc::DownloadImageInfo dii( bannerImageName );
+
+		std::atomic<bool> stop = { false };
+		downloadImage( &dii, stop );
+		dlp->setBanner( dii.outPath.c_str() );
+	}
 }

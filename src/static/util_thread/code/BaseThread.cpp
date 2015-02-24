@@ -125,23 +125,15 @@ void WaitCondition::notify()
 }
 
 
-
-
-
-
-
-
-
-
-
-
-
-
 class BaseThread::ThreadPrivates
 {
 public:
 	ThreadPrivates(const char* szName)
 		: m_szName(gcString(szName))
+		, m_PauseCond()
+		, m_PauseMutex()
+		, m_StartLock()
+		, m_PauseInitMutex()
 	{
 	}
 
@@ -153,8 +145,8 @@ public:
 	const std::string m_szName;
 
 	bool m_bIsRunning = false;
-    std::atomic<bool> m_bPause = {false};
-    std::atomic<bool> m_bStop = {false};
+	std::atomic<bool> m_bPause = {false};
+	std::atomic<bool> m_bStop = {false};
 
 	BaseThread::PRIORITY m_uiPriority = NORMAL;
 

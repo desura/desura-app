@@ -39,9 +39,10 @@ Contact us at legal@badjuju.com.
 #include <utime.h>
 #include <errno.h>
 
-inline const wchar_t* CONFIG_DB(void)
+inline const char* CONFIG_DB(void)
 {
-	return UTIL::OS::getAppDataPath(L"linux_registry.sqlite").c_str();
+	std::wstring val = UTIL::OS::getAppDataPath(L"linux_registry.sqlite");
+	return std::string(val.begin(), val.end()).c_str();
 }
 
 #define COUNT_CONFIGTABLE_STRING "SELECT count(*) FROM sqlite_master WHERE name='config_string';"
@@ -327,7 +328,13 @@ void setConfigValue(const std::string &configKey, const std::string &value)
 
 void setConfigValue(const std::string &configKey, uint32 value)
 {
-	setConfigValue(configKey, gcString("{0}", value).c_str());
+	std::stringstream stream;
+	std::string val;
+
+	stream << value;
+	stream >> val;
+
+	setConfigValue(configKey, val);
 	return;
 }
 
@@ -474,28 +481,36 @@ bool launchProcessXDG(const char* exe, const char* libPath)
 		else
 			return false;
 	}
+	else {
+		pid_t pid_kill = fork();
+		if (pid_kill != 0) {
+			exit(0);
+		}
+		else {
+			char* old_lc_all = NULL;
+			old_lc_all = getenv("OLD_LC_ALL");
+			if (old_lc_all)
+				setenv("LC_ALL", old_lc_all, 1);
+			else
+				setenv("LC_ALL", "", 1);
+		
+			if (libPath)
+				setenv("LD_LIBRARY_PATH", libPath, 1);
+			else
+				unsetenv("LD_LIBRARY_PATH");
+		
+			std::string wd = UTIL::FS::Path(fullExe.c_str(), "", true).getFolderPath();
+			(void)chdir(wd.c_str());
+		
+			ERROR_OUTPUT("Launching with xdg-open");
+			execlp("xdg-open", "xdg-open", fullExe.c_str(), NULL);
+		
+			//um shit. We shouldnt be here. :(
+			printf("Failed to exec xdg-open for %s. Error: %d\n", fullExe.c_str(), errno);
+			exit(-1);
+		}
+	}
 
-	char* old_lc_all = NULL;
-	old_lc_all = getenv("OLD_LC_ALL");
-	if (old_lc_all)
-		setenv("LC_ALL", old_lc_all, 1);
-	else
-		setenv("LC_ALL", "", 1);
-
-	if (libPath)
-		setenv("LD_LIBRARY_PATH", libPath, 1);
-	else
-		unsetenv("LD_LIBRARY_PATH");
-
-	std::string wd = UTIL::FS::Path(fullExe.c_str(), "", true).getFolderPath();
-	(void)chdir(wd.c_str());
-
-	ERROR_OUTPUT("Launching with xdg-open");
-	execlp("xdg-open", "xdg-open", fullExe.c_str(), NULL);
-
-	//um shit. We shouldnt be here. :(
-	printf("Failed to exec xdg-open for %s. Error: %d\n", fullExe.c_str(), errno);
-	exit(-1);
 	return false;
 }
 
@@ -554,71 +569,77 @@ bool launchProcess(const char* exe, const std::map<std::string, std::string> &in
 		else
 			return false;
 	}
-
-	UTIL::FS::Path path(fullExe.c_str(), "", true);
-
-	std::string workingDir;
-	std::string libPath;
-	std::string args;
-	std::string e = path.getFullPath();
-
-	typedef const std::map<std::string, std::string>::const_iterator MapIterator;
-
-	MapIterator &wd = info.find("wd");
-	if (wd != info.end())
-		workingDir = expandPath( (*wd).second.c_str() );
-
-	if (workingDir == "")
-		workingDir = path.getFolderPath();
-
-	MapIterator &lp = info.find("lp");
-	if (lp != info.end())
-		libPath = (*lp).second.c_str();
-
-	MapIterator &cla = info.find("cla");
-	if (cla != info.end())
-		args = (*cla).second.c_str();
-
-
-	gcString orgLibPath = getenv("OLD_LIB_PATH");
-
-	if (orgLibPath.size() > 0)
-	{
-		if (libPath.size() > 0)
-			libPath += ":";
-
-		libPath += orgLibPath;
-	}
-
-	if (libPath.size() > 0)
-		setenv("LD_LIBRARY_PATH", libPath.c_str(), 1);
-	else
-		unsetenv("LD_LIBRARY_PATH");
-
-
-	std::vector<std::string> out;
-	const char* argv[10] = {0};
-	argv[0] = e.c_str();
-
-	if (args.size() > 0)
-	{
-		ConvertToArgs(args.c_str(), out);
-
-		for (size_t x=0; x<out.size(); x++)
-		{
-			if (x == 9)
-				break;
-
-			argv[x+1] = out[x].c_str();
+	else {
+		pid_t pid_kill = fork();
+		if (pid_kill != 0) {
+			exit(0);
+		}
+		else {
+			UTIL::FS::Path path(fullExe.c_str(), "", true);
+		
+			std::string workingDir;
+			std::string libPath;
+			std::string args;
+			std::string e = path.getFullPath();
+		
+			typedef const std::map<std::string, std::string>::const_iterator MapIterator;
+		
+			MapIterator &wd = info.find("wd");
+			if (wd != info.end())
+				workingDir = expandPath( (*wd).second.c_str() );
+		
+			if (workingDir == "")
+				workingDir = path.getFolderPath();
+		
+			MapIterator &lp = info.find("lp");
+			if (lp != info.end())
+				libPath = (*lp).second.c_str();
+		
+			MapIterator &cla = info.find("cla");
+			if (cla != info.end())
+				args = (*cla).second.c_str();
+		
+		
+			gcString orgLibPath = getenv("OLD_LIB_PATH");
+		
+			if (orgLibPath.size() > 0)
+			{
+				if (libPath.size() > 0)
+					libPath += ":";
+		
+				libPath += orgLibPath;
+			}
+		
+			if (libPath.size() > 0)
+				setenv("LD_LIBRARY_PATH", libPath.c_str(), 1);
+			else
+				unsetenv("LD_LIBRARY_PATH");
+		
+		
+			std::vector<std::string> out;
+			const char* argv[10] = {0};
+			argv[0] = e.c_str();
+		
+			if (args.size() > 0)
+			{
+				ConvertToArgs(args.c_str(), out);
+		
+				for (size_t x=0; x<out.size(); x++)
+				{
+					if (x == 9)
+						break;
+		
+					argv[x+1] = out[x].c_str();
+				}
+			}
+		
+			(void)chdir(workingDir.c_str());
+			execv(fullExe.c_str(), (char* const*)argv);
+		
+			printf("Failed to execl %s [%s] error: %d\n", fullExe.c_str(), args.c_str(), errno);
+			exit(-1);
 		}
 	}
-
-	(void)chdir(workingDir.c_str());
-	execv(fullExe.c_str(), (char* const*)argv);
-
-	printf("Failed to execl %s [%s] error: %d\n", fullExe.c_str(), args.c_str(), errno);
-	exit(-1);
-
 	return false;
 }
 

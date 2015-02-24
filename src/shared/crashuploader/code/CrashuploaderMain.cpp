@@ -34,6 +34,7 @@ class Logger
 {
 public:
 	Logger()
+	: fh()
 	{
 #ifdef WIN32
 		UTIL::FS::Path path(gcString(UTIL::OS::getAppDataPath(L"\\dumps\\")), "crash_log.txt", false);

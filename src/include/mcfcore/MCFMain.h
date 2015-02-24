@@ -38,19 +38,19 @@ class McfHandle
 {
 public:
 	McfHandle()
+	: m_pMcf(nullptr)
 	{
-		m_pMcf = nullptr;
 	}
 
 	McfHandle(MCFCore::MCFI *MCF)
+	: m_pMcf(nullptr)
 	{
-		m_pMcf = nullptr;
 		setHandle(MCF);
 	}
 
 	McfHandle(const McfHandle &handle)
+	: m_pMcf(nullptr)
 	{
-		m_pMcf = nullptr;
 		setHandle(handle.m_pMcf);
 
 		handle.m_pMcf = nullptr;

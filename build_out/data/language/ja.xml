@@ -119,7 +119,11 @@
 		<str name="#LF_PASS">パスワード</str>
 		<str name="#LF_AUTO">自動</str>
 		<str name="#LF_AUTO_TOOLTIP">次回から Desura を起動したときに自動でサインインします</str>
-		<str name="#LF_LOSTPASS">パスワードの紛失</str>
+    <str name="#LF_PROXYOFF">Proxy Off</str>
+    <str name="#LF_PROXYOFF_TOOLTIP">Force Proxy Settings Off</str>
+    <str name="#LF_REVOCATION">SSL Alt Mode</str>
+    <str name="#LF_REVOCATION_TOOLTIP">Ignore SSL Revocation Error (DO NOT USE THIS IN PUBLIC WIFI ENVIRONMENTS)</str>
+    <str name="#LF_LOSTPASS">パスワードの紛失</str>
 		<str name="#LF_NEWACCOUNT">新しいアカウント</str>
 		<str name="#LF_OFFLINE">オフラインモード</str>
 		<str name="#LF_ERRTITLE">Desura ログインエラー</str>

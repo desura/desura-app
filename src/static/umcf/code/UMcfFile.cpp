@@ -38,12 +38,16 @@ Contact us at legal@badjuju.com.
 
 
 UMcfFile::UMcfFile()
+: m_szCCsum("")
+, m_szCsum("")
+, m_szName("")
+, m_szPath("")
+, m_uiHash(0)
+, m_ullCSize(0)
+, m_ullOffset(0)
+, m_ullSize(0)
+, m_ullTimeStamp(0)
 {
-	m_uiFlags = 0;
-	m_uiHash = 0;
-	m_ullSize = 0;
-	m_ullCSize = 0;
-	m_ullTimeStamp = 0;
 }
 
 UMcfFile::~UMcfFile()
@@ -157,7 +161,13 @@ void UMcfFile::genXml(XML::gcXMLElement &xmlElement)
 bool UMcfFile::checkFile(const wchar_t* dir)
 {
 #ifdef NIX
-	gcString path("{0}/{1}/{2}", dir, m_szPath, m_szName);
+	gcString path;
+	if (*dir == L'.') {  // TODO|HACK -- mcf for desura should be prepending ../ to path; it's running out of ./lib not ./
+		path = gcString(".{0}/{1}/{2}", dir, m_szPath, m_szName);
+	}
+	else {
+		path = gcString ("{0}/{1}/{2}", dir, m_szPath, m_szName);
+	}
 
 	struct stat stFileInfo;
 	int intStat = stat(path.c_str(), &stFileInfo);

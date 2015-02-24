@@ -49,12 +49,14 @@ class DesuraId
 {
 public:
 	DesuraId()
+	: m_uiItemId(0)
+	, m_uiType(TYPE_NONE)
 	{
-		m_uiItemId = 0;
-		m_uiType = TYPE_NONE;
 	}
 
 	DesuraId(uint64 id)
+	: m_uiItemId(0)
+	, m_uiType(TYPE_NONE)
 	{
 		if ((id&0xF) != 0)
 		{
@@ -76,16 +78,15 @@ public:
 	}
 
 	DesuraId(uint32 id, uint8 type)
+	: m_uiItemId(id)
+	, m_uiType(type)
 	{
-		m_uiItemId = id;
-		m_uiType = type;
 	}
 
 	DesuraId(const char* id, const char* type)
+	: m_uiItemId(0)
+	, m_uiType(TYPE_NONE)
 	{
-		m_uiItemId = 0;
-		m_uiType = TYPE_NONE;
-
 		if (id)
 			m_uiItemId = Safe::atoi(id);
 

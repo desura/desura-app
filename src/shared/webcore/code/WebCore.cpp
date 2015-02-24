@@ -43,16 +43,22 @@ namespace WebCore
 extern gcString genUserAgent();
 
 WebCoreClass::WebCoreClass()
-	: m_bValidateCert(true)
+	: m_ImageCache()
+	, m_RefCount()
+	, m_bDebuggingOut(false)
 	, m_bUserAuth(false)
+	, m_bValidateCert(true)
+	, m_mSessLock()
+	, m_szAppDataPath("")
+	, m_szIdCookie("")
+	, m_szUserAgent(genUserAgent())
 	, m_uiUserId(0)
+	, onCookieUpdateEvent()
+	, onLoggedOutEvent()
 {
-	m_szUserAgent = genUserAgent();
 
 #ifdef DEBUG
 	m_bDebuggingOut = true;
-#else
-	m_bDebuggingOut = false;
 #endif
 }
 
@@ -190,6 +196,7 @@ void WebCoreClass::setCookies(gcRefPtr<CookieCallbackI> pCallback)
 
 	(*pCallback.get())(strRoot.c_str(), "freeman", m_szIdCookie.c_str());
 	(*pCallback.get())(strRoot.c_str(), "masterchief", gcString(m_szSessCookie).c_str());
+	(*pCallback.get())(strRoot.c_str(), "AWSELB", gcString(m_AWSELBCookie).c_str());
 }
 
 void WebCoreClass::setWCCookies(HttpHandle& hh)
@@ -198,6 +205,8 @@ void WebCoreClass::setWCCookies(HttpHandle& hh)
 
 	hh->addCookie("freeman", m_szIdCookie.c_str());
 	hh->addCookie("masterchief", gcString(m_szSessCookie).c_str());
+	hh->addCookie("AWSELB", gcString(m_AWSELBCookie).c_str());
+
 	hh->setUserAgent(getUserAgent());
 }
 

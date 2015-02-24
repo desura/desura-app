@@ -71,14 +71,14 @@ class FileHandle
 {
 public:
 	FileHandle(const char* path, uint64_t offset)
+	: hFileSrc(fopen(path, "rb"))
 	{
-		hFileSrc = fopen64(path, "rb");
-
 		if (offset != 0)
 			fseek(hFileSrc, offset, SEEK_SET);
 	}
 
 	FileHandle(const wchar_t* path, uint64_t offset)
+	: hFileSrc(nullptr)
 	{
 		gcString p(path);
 		hFileSrc = fopen64(p.c_str(), "rb");
@@ -132,6 +132,11 @@ namespace
 
 UMcf::UMcf()
 	: m_sHeader(std::make_unique<UMcfHeader>())
+	, m_pFileList()
+	, m_szFile(L"")
+	, m_szUrl("")
+	, onDownloadProgressEvent()
+	, onProgressEvent()
 {
 }
 

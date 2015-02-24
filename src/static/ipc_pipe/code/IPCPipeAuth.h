@@ -32,8 +32,9 @@ class PipeItemAuth
 {
 public:
 	PipeItemAuth()
+		: hash("")
+		, internId(0)
 	{
-		internId = 0;
 	}
 
 	gcString hash;

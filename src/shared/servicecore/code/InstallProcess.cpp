@@ -26,21 +26,21 @@ Contact us at legal@badjuju.com.
 #include "InstallScriptRunTime.h"
 
 InstallProcess::InstallProcess(const char* mcfpath, const char* inspath, const char* installScript, uint8 workercount, bool delfiles, bool makeWriteable) : Thread::BaseThread("InstallProcess Thread")
+, m_szIPath(inspath)
+, m_szMCFPath(mcfpath)
+, m_uiWorkerCount(workercount)
+, m_bDelFiles(delfiles)
+, m_pMcfHandle(nullptr)
+, m_bHashMissMatch(false)
+, m_bMakeWriteable(makeWriteable)
+, m_uiLastProg(0)
+, m_szInstallScript(installScript)
+, m_bHasHadError(false)
+, onCompleteEvent()
+, onErrorEvent()
+, onFinishEvent()
+, onProgressEvent()
 {
-	m_szIPath = gcString(inspath);
-	m_szMCFPath = gcString(mcfpath);
-
-	m_uiWorkerCount = workercount;
-	m_bDelFiles = delfiles;
-
-	m_pMcfHandle = nullptr;
-	m_bHashMissMatch = false;
-	m_bMakeWriteable = makeWriteable;
-
-	m_uiLastProg = 0;
-	m_szInstallScript = installScript;
-
-	m_bHasHadError = false;
 }
 
 

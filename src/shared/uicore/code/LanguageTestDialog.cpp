@@ -131,6 +131,14 @@ public:
 class LanguageStubItem : public UserCore::Item::ItemInfoI
 {
 public:
+	LanguageStubItem()
+	: m_Exe1()
+	, m_Exe2()
+	, m_Branch()
+	, m_ChangeEvent()
+	, m_Id()
+	{
+	}
 	virtual ~LanguageStubItem(){}
 
 	void updated() override { }
@@ -373,6 +381,8 @@ class LangStubItemManager : public UserCore::ItemManagerI
 {
 public:
 	LangStubItemManager()
+	: m_Item()
+	, m_ItemHandle()
 	{
 		m_ItemHandle.m_pItemInfo = &m_Item;
 	}
@@ -464,6 +474,8 @@ class LangPlayItemManager : public UserCore::ItemManagerI
 {
 public:
 	LangPlayItemManager()
+	: m_vItems()
+	, m_vItemHandle()
 	{
 		for (int x = 0; x < 17; x++)
 		{
@@ -627,6 +639,7 @@ class LangBrowserWindow : public gcFrame
 public:
 	LangBrowserWindow(wxWindow* parent, const char* szUrl, bool bUseFake = false)
 		: gcFrame(parent, wxID_ANY, szUrl, wxDefaultPosition, wxSize(500, 500))
+		, m_pBrowser(nullptr)
 	{
 		if (bUseFake)
 			m_pBrowser = new gcWebControl(this, szUrl, &CreateFakeBrowser);
@@ -655,12 +668,17 @@ private:
 
 LanguageTestDialog::LanguageTestDialog()
 	: gcDialog(nullptr, wxID_ANY, "Language Test Dialog", wxDefaultPosition, wxSize(350, 500))
+	, m_button1(new wxButton( this, wxID_ANY, wxT("Show All"), wxDefaultPosition, wxDefaultSize, 0))
+	, m_button2(new wxButton(this, wxID_ANY, wxT("Close All"), wxDefaultPosition, wxDefaultSize, 0))
+	, m_choice1(nullptr)
+	, m_scrolledWindow1(new wxScrolledWindow(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxHSCROLL|wxVSCROLL))
+	, m_ActionMap()
+	, m_vActiveFrames()
+	, m_vLanguages(GetLanguages())
 {
 	Bind(wxEVT_COMMAND_BUTTON_CLICKED, &LanguageTestDialog::onButtonClicked, this);
 
 	this->SetSizeHints( wxDefaultSize, wxDefaultSize );
-
-	m_vLanguages = GetLanguages();
 
 	wxArrayString m_choice1Choices;
 
@@ -669,11 +687,8 @@ LanguageTestDialog::LanguageTestDialog()
 	for (auto l : m_vLanguages)
 		m_choice1Choices.Add(l["name"]);
 
-	m_choice1 = new wxChoice( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, m_choice1Choices, 0 );
+	m_choice1 = new wxChoice(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, m_choice1Choices, 0);
 	m_choice1->Bind(wxEVT_COMMAND_CHOICE_SELECTED, &LanguageTestDialog::onChoice, this);
-
-	m_button1 = new wxButton( this, wxID_ANY, wxT("Show All"), wxDefaultPosition, wxDefaultSize, 0 );
-	m_button2 = new wxButton( this, wxID_ANY, wxT("Close All"), wxDefaultPosition, wxDefaultSize, 0 );
 
 	wxBoxSizer* bSizer1;
 	bSizer1 = new wxBoxSizer( wxHORIZONTAL );
@@ -682,7 +697,6 @@ LanguageTestDialog::LanguageTestDialog()
 	bSizer1->Add( m_button2, 0, wxALL, 5 );
 
 
-	m_scrolledWindow1 = new wxScrolledWindow( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxHSCROLL|wxVSCROLL );
 	m_scrolledWindow1->SetScrollRate( 5, 5 );
 
 	wxBoxSizer* bSizer3;

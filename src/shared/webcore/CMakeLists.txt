@@ -40,9 +40,16 @@ target_link_libraries(webcore
 )
 
 add_dependencies(webcore curl tinyxml2 bzip2 sqlite sqlite3x)
+#if (NOT Boost_FOUND)
+  add_dependencies(webcore boost)
+#endif()
 
 if(WIN32)
   SetSharedRuntime(webcore)
 endif()
 
 install_library(webcore)
+
+if(NOT WIN32)
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -O0 -Wall -Weffc++")
+endif()

@@ -44,7 +44,8 @@ Contact us at legal@badjuju.com.
 #ifdef DESURA_OFFICIAL_BUILD
 	int DownloadFilesForTest();
 	int InstallFilesForTest();
-	// bool CheckForUpdate(bool force, bool skip);
+//	bool CheckForUpdate(bool force, bool skip);
+	bool CheckForUpdates();
 #endif
 
 MainApp* g_pMainApp;
@@ -199,11 +200,21 @@ int MainApp::run()
 
 	if (!FileExists(lockPath.c_str())) // if desura isn't already running - simple check
 	{
-//#ifdef DESURA_OFFICIAL_BUILD
-//		if (CheckForUpdate(forceUpdate, skipUpdate))
-//			return 0;
-//#endif
-
+#ifdef DESURA_OFFICIAL_BUILD
+		gcString id = UTIL::OS::getConfigValue(APPID);
+		if (id != "520" || id == "") {
+			if (forceUpdate || !skipUpdate) {
+				if (CheckForUpdates())
+					return 0;
+			}
+		}
+		else {
+			if (forceUpdate) {
+				if (CheckForUpdates())
+					return 0;
+			}
+		}
+#endif
 		checkUnityWhitelist();
 	}
 #endif
@@ -469,4 +480,9 @@ void MainApp::checkUnityWhitelist()
 
 	if (ret == 0)
 		ShowHelpDialog(PRODUCT_NAME " has been added to the Unity panel whitelist. You should log out and back in for this to take effect or you may experience problems using " PRODUCT_NAME, NULL, "--info");
+}
+
+bool RestartBootloader(const char* args) {
+	MainApp::restartFromUICore(args);
+	return true;
 }

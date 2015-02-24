@@ -26,6 +26,7 @@ Contact us at legal@badjuju.com.
 
 AltLoginDialog::AltLoginDialog(wxWindow* parent, const char* szProvider, const char* szApiUrl)
 	: gcDialog(parent, wxID_ANY, wxT("#ALTLOGIN_TITLE"), wxDefaultPosition, wxSize(500, 665), wxDEFAULT_FRAME_STYLE|wxTAB_TRAVERSAL)
+	, m_pBrowser(nullptr)
 {
 	SetTitle(gcString(Managers::GetString(L"#ALTLOGIN_TITLE"), szProvider));
 

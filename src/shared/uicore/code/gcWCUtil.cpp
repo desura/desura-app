@@ -245,6 +245,7 @@ void DeleteCookies()
 
 	g_pChromiumController->DeleteCookie(urlRoot.c_str(), "freeman");
 	g_pChromiumController->DeleteCookie(urlRoot.c_str(), "masterchief");
+	g_pChromiumController->DeleteCookie(urlRoot.c_str(), "AWSELB");
 }
 
 void SetCookies()

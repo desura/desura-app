@@ -27,6 +27,7 @@ Contact us at legal@badjuju.com.
 ConCommand::ConCommand(const char* printname, ConCommandCallBackFn callback)
 	: BaseItem(printname)
 	, m_pCallBack(callback)
+	, m_bReg(false)
 {
 	addRef();
 

@@ -57,7 +57,15 @@ namespace IPC
 
 
 
-PipeBase::PipeBase(const char* pipeName, const char* threadName) : BaseThread(threadName)
+PipeBase::PipeBase(const char* pipeName, const char* threadName)
+: BaseThread(threadName)
+, m_LoopbackLock()
+, m_RecvLock()
+, m_WaitCond()
+, m_pSendObj(nullptr)
+, m_vLoopback()
+, m_vRecvBuffer()
+, sendMsg([](void*, const char*, size_t){})
 {
 
 }

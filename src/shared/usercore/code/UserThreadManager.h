@@ -44,7 +44,7 @@ namespace UserCore
 
 
 		void enlist(gcRefPtr<UserThreadProxyI> pThread) override;
-		void delist(gcRefPtr<UserThreadProxyI> pThread) override;
+		void delist(const UserThreadProxyI* pThread) override;
 
 		//inherited functions
 		void setUserCore(gcRefPtr<UserCore::UserI> uc);

@@ -34,11 +34,21 @@ enum
 	MODE_REMOVE,
 };
 
-ComplexLaunchProcess::ComplexLaunchProcess() : Thread::BaseThread("Complex Launch Process Thread")
+ComplexLaunchProcess::ComplexLaunchProcess()
+: Thread::BaseThread("Complex Launch Process Thread")
+, m_iMode(MODE_UNKNOWN)
+, m_uiLastProg(0)
+, m_bHashMissMatch(false)
+, m_iFirstStage(true)
+, m_pException(nullptr)
+, m_szIPath("")
+, m_szInsMCFPath("")
+, m_szInstallScript("")
+, m_szRemMCFPath("")
+, onCompleteEvent()
+, onErrorEvent()
+, onProgressEvent()
 {
-	m_iMode = MODE_UNKNOWN;
-	m_uiLastProg = 0;
-	m_bHashMissMatch=false;
 }
 
 ComplexLaunchProcess::~ComplexLaunchProcess()

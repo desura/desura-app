@@ -27,23 +27,19 @@ Contact us at legal@badjuju.com.
 class Color
 {
 public:
-	Color(uint8 r, uint8 g, uint8 b, uint8 a)
+	Color(uint8 r, uint8 g, uint8 b, uint8 a = 0)
+	: red(r)
+	, green(g)
+	, blue(b)
+	, alpha(a)
 	{
-		red = r;
-		green = g;
-		blue = b;
-		alpha = a;
-	}
-
-	Color(uint8 r, uint8 g, uint8 b)
-	{
-		red = r;
-		green = g;
-		blue = b;
-		alpha = 0;
 	}
 
 	Color(const Color *t)
+	: red(0)
+	, green(0)
+	, blue(0)
+	, alpha(255)
 	{
 		if (t)
 		{
@@ -52,38 +48,30 @@ public:
 			blue = t->blue;
 			alpha = t->alpha;
 		}
-		else
-		{
-			red = 0;
-			green = 0;
-			blue = 0;
-			alpha = 255;
-		}
 	}
 
 	Color(const Color &t)
+	: red(t.red)
+	, green(t.green)
+	, blue(t.blue)
+	, alpha(t.alpha)
 	{
-		red = t.red;
-		green = t.green;
-		blue = t.blue;
-		alpha = t.alpha;
 	}
 
 	Color(int val)
+	: red((val>>24)&0xFFFFFF)
+	, green((val>>16)&0xFFFFFF)
+	, blue((val>> 8)&0xFFFFFF)
+	, alpha((val>> 0)&0xFFFFFF)
 	{
-		red		= (val>>24)&0xFFFFFF;
-		green	= (val>>16)&0xFFFFFF;
-		blue	= (val>> 8)&0xFFFFFF;
-		alpha	= (val>> 0)&0xFFFFFF;
 	}
 
 	Color(const char* text)
+	: red(0)
+	, green(0)
+	, blue(0)
+	, alpha(255)
 	{
-		red = 0;
-		green = 0;
-		blue = 0;
-		alpha = 255;
-
 		if (!text)
 			return;
 
@@ -154,8 +142,11 @@ public:
 	}
 
 	Color()
+	: red(0)
+	, green(0)
+	, blue(0)
+	, alpha(0)
 	{
-		Color(0,0,0,0);
 	}
 
 	uint8 red;

@@ -47,6 +47,28 @@ bool is64OS()
 #endif
 }
 
+#ifdef WIN32
+bool isProxyOff()
+{
+	return (1 == getConfigValueInt( "HKEY_LOCAL_MACHINE\\SOFTWARE\\Desura\\DesuraApp\\PrivateProxyOff" ) );
+}
+
+void setProxyOff( bool setOff )
+{
+	setConfigValue( "HKEY_LOCAL_MACHINE\\SOFTWARE\\Desura\\DesuraApp\\PrivateProxyOff", setOff ? 1 : 0 );
+}
+#endif
+
+bool isBypassSSLRevocationCheck()
+{
+	return (1 == getConfigValueInt( "HKEY_LOCAL_MACHINE\\SOFTWARE\\Desura\\DesuraApp\\PrivateBypassSSLRevChk" ) );
+}
+
+void setBypassSSLRevocationCheck( bool setBypass )
+{
+	setConfigValue( "HKEY_LOCAL_MACHINE\\SOFTWARE\\Desura\\DesuraApp\\PrivateBypassSSLRevChk", setBypass ? 1 : 0 );
+}
+
 bool isPointOnScreen(int32 x, int32 y)
 {
 #ifdef WIN32
@@ -119,7 +141,24 @@ std::string getConfigValue(const std::string &configKey, bool use64bit)
 #endif
 }
 
-std::wstring getCurrentDir(std::wstring extra)
+int getConfigValueInt(const std::string &configKey)
+{
+#ifdef WIN32
+	return UTIL::WIN::getRegValueInt( configKey );
+#endif
+
+#ifdef NIX
+	try {
+		return stoi(UTIL::LIN::getConfigValue( configKey ));
+	}
+	catch (std::exception e) {
+		ERROR_OUTPUT("bad config value for: " + configKey + " | " + __func__);
+		return 0;
+	}
+#endif
+}
+
+std::wstring getCurrentDir( std::wstring extra )
 {
 #ifdef NIX
 	return UTIL::LIN::getAppPath(extra);

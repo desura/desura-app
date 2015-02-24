@@ -40,6 +40,9 @@ target_link_libraries(mcfcore
 )
 
 add_dependencies(mcfcore curl tinyxml2 bzip2 sqlite3x sqlite)
+#if (NOT Boost_FOUND)
+  add_dependencies(mcfcore boost)
+#endif()
 
 if(WIN32)
   SetSharedRuntime(mcfcore)
@@ -47,3 +50,7 @@ endif()
 
 link_with_gtest(mcfcore)
 install_library(mcfcore)
+
+if(NOT WIN32)
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -O0 -Wall -Weffc++")
+endif()

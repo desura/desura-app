@@ -39,6 +39,7 @@ class GuiDownloadProvider
 {
 public:
 	GuiDownloadProvider()
+	: provider()
 	{
 	}
 

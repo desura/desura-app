@@ -62,9 +62,11 @@ else()
   endif()
 
   set(wxWidgets_INSTALL_DIR ${CMAKE_EXTERNAL_BINARY_DIR}/wxWidgets)
-  
-  if(MINGW)
+
+  if (WIN32)
     set(WX_PATCH_COMMAND "${PATCH_SCRIPT_PATH}" "${CMAKE_SOURCE_DIR}/cmake/patches/wxWidgets.patch")
+  else()
+    set(WX_PATCH_COMMAND "${PATCH_SCRIPT_PATH}" "${CMAKE_SOURCE_DIR}/cmake/patches/wxWidgets-linux.patch")
   endif()
 
   ExternalProject_Add(
@@ -77,20 +79,20 @@ else()
     CONFIGURE_COMMAND ./configure
         --enable-shared --enable-unicode ${CONFIGURE_DEBUG}
         --enable-monolithic --with-flavour=desura --enable-threads --with-opengl=no --disable-palette2
-		--disable-joystick --disable-mediactrl --prefix=${wxWidgets_INSTALL_DIR} --enable-permissive
+		--disable-joystick --disable-mediactrl --prefix=${wxWidgets_INSTALL_DIR} --enable-permissive --with-libpng=builtin --with-libjpeg=builtin
   )
   
   set(wxWidgets_LIBRARY_DIRS ${wxWidgets_INSTALL_DIR}/lib)
   if(DEBUG_EXTERNAL)
     set(wxWidgets_INCLUDE_DIRS  ${wxWidgets_INSTALL_DIR}/include/wx-3.0-desura ${wxWidgets_LIBRARY_DIRS}/wx/include/${WX_SETUP_INCLUDE_SUB_DEBUG})
     set(wxWidgets_LIBRARIES "${wxWidgets_LIBRARY_DIRS}/${WX_LIB_NAME_DEBUG}")
-    install_external_library(wxWidgets ${wxWidgets_LIBRARY_DIRS}/${WX_LIB_NAME}.0.0.0)
+    install_external_library(wxWidgets ${wxWidgets_LIBRARY_DIRS}/${WX_LIB_NAME}.0.2.0)
     install_external_library(wxWidgets ${wxWidgets_LIBRARY_DIRS}/${WX_LIB_NAME}.0)
     install_external_library(wxWidgets ${wxWidgets_LIBRARY_DIRS}/${WX_LIB_NAME})
   else()
     set(wxWidgets_INCLUDE_DIRS  ${wxWidgets_INSTALL_DIR}/include/wx-3.0-desura ${wxWidgets_LIBRARY_DIRS}/wx/include/${WX_SETUP_INCLUDE_SUB})
     set(wxWidgets_LIBRARIES "${wxWidgets_LIBRARY_DIRS}/${WX_LIB_NAME}")
-    install_external_library(wxWidgets ${wxWidgets_LIBRARY_DIRS}/${WX_LIB_NAME}.0.0.0)
+    install_external_library(wxWidgets ${wxWidgets_LIBRARY_DIRS}/${WX_LIB_NAME}.0.2.0)
     install_external_library(wxWidgets ${wxWidgets_LIBRARY_DIRS}/${WX_LIB_NAME}.0)
     install_external_library(wxWidgets ${wxWidgets_LIBRARY_DIRS}/${WX_LIB_NAME})
   endif()

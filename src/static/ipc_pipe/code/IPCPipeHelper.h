@@ -43,6 +43,7 @@ class PipeData
 {
 public:
 	PipeData()
+	: size(0)
 	{
 #ifdef WIN32
 		oOverlap.hEvent = INVALID_HANDLE_VALUE;
@@ -88,6 +89,9 @@ class PipeInst
 {
 public:
 	PipeInst()
+	: send()
+	, recv()
+	, pIPC(nullptr)
 	{
 #ifdef WIN32
 		pipes[0] = &send;

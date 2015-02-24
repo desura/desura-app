@@ -34,8 +34,12 @@ class ThemeStub : public ThemeStubI
 {
 public:
 	ThemeStub(const char* name)
+	: szName(name)
+	, szPrintName("")
+	, szAuthor("")
+	, szPreview("")
+	, szVersion("")
 	{
-		szName = name;
 	}
 
 	virtual const char* getName(){return szName.c_str();}
@@ -58,6 +62,9 @@ public:
 
 
 ThemeManager::ThemeManager()
+: m_pTheme(nullptr)
+, m_szPath("")
+, m_szThemeFolder("")
 {
 }
 

@@ -36,9 +36,12 @@ namespace WebCore
 		{
 		public:
 			ResumeUploadInfo()
+			: size(0)
+			, upsize(0)
+			, szDate("")
+			, szHash("")
+			, m_RefCount()
 			{
-				size = 0;
-				upsize = 0;
 			}
 
 			gcString szDate;

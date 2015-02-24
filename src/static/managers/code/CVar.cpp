@@ -54,6 +54,7 @@ CVar::CVar(const char* szName, const char* szDefVal, int32 nFlags, std::function
 	, m_szDefault(szDefVal)
 	, m_iFlags(nFlags)
 	, m_pCVarManager(pManager)
+	, m_szExitData("")
 {
 	addRef();
 

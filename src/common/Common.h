@@ -356,6 +356,8 @@ bool IsUIThread();
 	{
 	public:
 		MCFBranch()
+		: m_uiBranch(0)
+		, m_bGlobal(false)
 		{
 			m_uiBranch = 0;
 		}
@@ -377,9 +379,9 @@ bool IsUIThread();
 
 	protected:
 		MCFBranch(uint32 branch, bool global)
+		: m_uiBranch(branch)
+		, m_bGlobal(global)
 		{
-			m_uiBranch = branch;
-			m_bGlobal = global;
 		}
 
 	private:
@@ -391,9 +393,8 @@ bool IsUIThread();
 	class MCFBuild
 	{
 	public:
-		MCFBuild()
+		MCFBuild() : m_uiBuild(0)
 		{
-			m_uiBuild = 0;
 		}
 
 		operator uint32() const
@@ -407,9 +408,8 @@ bool IsUIThread();
 		}
 
 	protected:
-		MCFBuild(uint32 build)
+		MCFBuild(uint32 build) : m_uiBuild(build)
 		{
-			m_uiBuild = build;
 		}
 
 	private:

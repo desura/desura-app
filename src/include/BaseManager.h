@@ -34,14 +34,17 @@ class BaseItem : public gcRefBase
 {
 public:
 	BaseItem()
+	: m_szName("")
+	, m_uiHash(0)
+	, m_RefCount()
 	{
-		m_uiHash = 0;
 	}
 
 	BaseItem(const char* name)
+	: m_szName(name)
+	, m_uiHash(UTIL::MISC::RSHash_CSTR(name))
+	, m_RefCount()
 	{
-		m_szName =  gcString(name);
-		m_uiHash = UTIL::MISC::RSHash_CSTR(name);
 	}
 
 	virtual ~BaseItem(){}
@@ -63,6 +66,7 @@ class BaseManager
 {
 public:
 	BaseManager<T>()
+	: m_mItemMap()
 	{
 	}
 

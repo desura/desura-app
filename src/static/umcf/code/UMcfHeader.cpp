@@ -33,15 +33,34 @@ namespace MCFCore
 	}
 }
 
+static char default_header[ 5 ] = "LMCF";
 
 UMcfHeader::UMcfHeader()
+: m_iFileVer(MCF_CURRENTVERSION)
+, m_iBuild()
+, m_iId(0)
+, m_iType(0)
+, m_iXmlStart(0)
+, m_iXmlSize(0)
+, m_iFlags(0)
+, m_iParentMcf(0)
+, m_iBranch()
 {
-	init();
+	strcpy( m_szId, default_header );
 }
 
 UMcfHeader::UMcfHeader(MCFCore::MCFHeaderI* head)
+: m_iFileVer(MCF_CURRENTVERSION)
+, m_iBuild()
+, m_iId(0)
+, m_iType(0)
+, m_iXmlStart(0)
+, m_iXmlSize(0)
+, m_iFlags(0)
+, m_iParentMcf(0)
+, m_iBranch()
 {
-	init();
+	strcpy( m_szId, default_header );
 
 	if (!head)
 		return;
@@ -55,22 +74,6 @@ UMcfHeader::UMcfHeader(MCFCore::MCFHeaderI* head)
 	m_iFlags = head->getFlags();
 	m_iParentMcf = head->getParent();
 	m_iBranch = head->getBranch();
-}
-
-void UMcfHeader::init()
-{
-	m_szId[0] = 'L';
-	m_szId[1] = 'M';
-	m_szId[2] = 'C';
-	m_szId[3] = 'F';
-	m_szId[4] = '\0';
-	m_iFileVer = MCF_CURRENTVERSION;
-	m_iId = 0;
-	m_iType = 0;
-	m_iXmlStart = 0;
-	m_iXmlSize = 0;
-	m_iFlags = 0;
-	m_iParentMcf = 0;
 }
 
 #ifdef WIN32

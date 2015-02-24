@@ -31,15 +31,20 @@ static std::mutex m_WCMutex;
 
 WildcardManager::WildcardManager()
 	: BaseManager()
+	, m_RefCount()
+	, m_uiDepth(0)
+	, onNeedInstallSpecialEvent()
+	, onNeedSpecialEvent()
 {
-	m_uiDepth = 0;
 }
 
 WildcardManager::WildcardManager(gcRefPtr<WildcardManager> &mng)
 	: BaseManager()
+	, m_RefCount()
+	, m_uiDepth(0)
+	, onNeedInstallSpecialEvent()
+	, onNeedSpecialEvent()
 {
-	m_uiDepth = 0;
-
 	if (mng)
 	{
 		for (uint8 x=0; x<mng->getCount(); x++)

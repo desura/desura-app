@@ -41,8 +41,8 @@ enum
 class WCSpecialInfo
 {
 public:
-	gcString name;
-	gcString result;
+	gcString name = "";
+	gcString result = "";
 	volatile bool handled = false;	//true = special wildcard resolved
 };
 

@@ -81,7 +81,13 @@ public:
 
 	void PopupMenu(wxMenu* menu, int x, int y) override
 	{
-		gcPanel::PopupMenu(menu, x, y);
+//		gcPanel::PopupMenu(menu, x, y);
+		if (menu != nullptr) {
+			if (gcPanel::GetParent()) {
+				gcPanel::SetFocus();
+				gcPanel::PopupMenu(menu);
+			}
+		}	
 	}
 
 protected:

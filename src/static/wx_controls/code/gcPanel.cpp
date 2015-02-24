@@ -30,6 +30,8 @@ gcPanel::gcPanel(wxWindow *parent, wxWindowID id, const wxPoint& pos, const wxSi
 {
 	if (loadTheme)
 		applyTheme();
+
+	SetExtraStyle(wxWS_EX_TRANSIENT);
 }
 
 void gcPanel::applyTheme()

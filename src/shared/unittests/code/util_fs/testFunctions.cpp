@@ -24,6 +24,9 @@ Contact us at legal@badjuju.com.
 
 #include "Common.h"
 
+#include <locale>
+#include <codecvt>
+
 #include <boost/filesystem.hpp>
 #include <boost/filesystem/fstream.hpp>
 
@@ -103,17 +106,22 @@ namespace UnitTest
 			secondLevel.push_back("0");
 			secondLevel.push_back("1.txt");
 			secondLevel.push_back("2.png");
-			secondLevel.push_back(UNICODE_EXAMPLE_FILE);
+			secondLevel.push_back( UNICODE_EXAMPLE_FILE );
 
 			for (const std::string& i : firstLevel)
 			{
 				fs::create_directory(testDir / i);
+
 				for (const std::string& j : secondLevel)
 				{
-					fs::path newFilePath = testDir / i / j;
-					fs::ofstream newFileStream(newFilePath);
-					newFileStream << "this is a test file" << std::endl;
-					newFileStream.close();
+					fs::path newFilePath = testDir / i;
+					UTIL::FS::Path filePath( newFilePath.string(), j, false );
+					std::filebuf fb;
+					std::wstring nameW = std::wstring_convert<std::codecvt_utf8<wchar_t>>().from_bytes( filePath.getFullPath() );
+					fb.open( nameW, std::ios::out );
+					std::ostream os( &fb );
+					os << "this is a test file" << std::endl;
+					fb.close();
 				}
 			}
 		}

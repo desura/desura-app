@@ -32,3 +32,7 @@ if(WIN32)
 endif()
 
 install_library(crashuploader)
+
+if(NOT WIN32)
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -O0 -Wall -Weffc++")
+endif()

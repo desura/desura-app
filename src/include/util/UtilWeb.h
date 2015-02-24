@@ -122,6 +122,10 @@ public:
 	//gets the size of data which has been downloaded.
 	virtual uint32 getDataSize()=0;
 
+	//gets cookie list
+	typedef std::map< std::string, std::string > tCookieMap;
+	virtual tCookieMap getCookies()=0;
+
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	// Misc
@@ -164,18 +168,18 @@ class HttpHandle
 {
 public:
 	HttpHandle()
+	: m_pWC(nullptr)
 	{
-		m_pWC = nullptr;
 	}
 
 	HttpHandle(const char* url, bool useSsl = false)
+	: m_pWC(newHttpHandle(url, useSsl))
 	{
-		m_pWC = newHttpHandle(url, useSsl);
 	}
 
 	HttpHandle(HttpHandle &handle)
+	: m_pWC(handle.m_pWC)
 	{
-		m_pWC = handle.m_pWC;
 		handle.m_pWC = nullptr;
 	}
 

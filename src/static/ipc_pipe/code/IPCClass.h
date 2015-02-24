@@ -547,8 +547,8 @@ namespace IPC
 	{
 	public:
 		IPCEventV(EventV* e)
+		: m_pEvent(e)
 		{
-			m_pEvent = e;
 		}
 
 		void trigger(std::vector<IPCParameterI*> &vParams)

@@ -33,3 +33,7 @@ if (WIN32)
 	SET_PROPERTY(TARGET sqlite3x_s PROPERTY FOLDER "ThirdParty")
 	SetStaticRuntime(sqlite3x_s)
 endif()
+
+if(NOT WIN32)
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -O0 -Wall -Weffc++")
+endif()
