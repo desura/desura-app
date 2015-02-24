@@ -358,8 +358,8 @@ void RegisterSchemes()
 	safe_delete(g_vSchemeList);
 }
 
-void BrowserUICallback(ChromiumDLL::CallbackI* callback)
+void BrowserUICallback( ChromiumDLL::CallbackI* callback, bool isBrowser )
 {
 	if (g_pChromiumController)
-		g_pChromiumController->PostCallback(callback);
+		g_pChromiumController->PostCallback(callback, isBrowser);
 }

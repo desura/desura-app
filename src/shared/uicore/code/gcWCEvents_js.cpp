@@ -27,7 +27,7 @@ Contact us at legal@badjuju.com.
 #include "gcJSBase.h"
 #include "wx_controls/gcCustomMenu.h"
 
-void BrowserUICallback(ChromiumDLL::CallbackI* callback);
+void BrowserUICallback( ChromiumDLL::CallbackI* callback, bool isBrowser );
 
 
 class ContextResultCallback : public ChromiumDLL::CallbackI
@@ -106,7 +106,7 @@ public:
 		if (res >= (uint32)baseId)
 		{
 			m_pCRC->setResult(res-baseId);
-			BrowserUICallback(m_pCRC);
+			BrowserUICallback(m_pCRC, false);
 			processed = true;
 		}
 		else
@@ -221,6 +221,7 @@ private:
 };
 
 void DisplayContextMenu(gcWebControlI* m_pParent, ContextClientDataI* ccd, gcMenu* menu, int32 xPos, int32 yPos);
+
 
 void ContextMenuExtender::showContextMenu(int32 xPos, int32 yPos, std::vector<std::map<gcString, gcString> > args, JSObjHandle thisObj, JSObjHandle callBack)
 {

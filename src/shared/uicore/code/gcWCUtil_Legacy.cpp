@@ -40,7 +40,7 @@ typedef ChromiumDLL::ChromiumBrowserI* (*CEF_NewChromiumBrowserFn)(int*, const c
 
 typedef void(*CEF_DoWorkFn)();
 
-typedef void(*CEF_PostCallbackFn)(ChromiumDLL::CallbackI*);
+typedef void(*CEF_PostCallbackFn)(ChromiumDLL::CallbackI*, bool);
 
 
 static void CEF_Stop_Legacy();
@@ -154,12 +154,12 @@ public:
 		gcAssert(false);
 	}
 
-	void PostCallback(ChromiumDLL::CallbackI* callback) override
+	void PostCallback( ChromiumDLL::CallbackI* callback, bool isBrowser ) override
 	{
 		gcAssert(CEF_Init);
 
 		if (CEF_PostCallback)
-			CEF_PostCallback(callback);
+			CEF_PostCallback(callback, isBrowser);
 	}
 
 	bool Init(bool threaded, const char* cachePath, const char* logPath, const char* userAgent)

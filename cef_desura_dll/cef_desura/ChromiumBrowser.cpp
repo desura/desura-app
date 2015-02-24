@@ -160,10 +160,10 @@ extern "C"
 		g_pLogHandler = logFn;
 	}
 
-	DLLINTERFACE void CEF_PostCallback(ChromiumDLL::CallbackI* callback)
+	DLLINTERFACE void CEF_PostCallback( ChromiumDLL::CallbackI* callback, bool isBrowser )
 	{
 		CefRefPtr<TaskWrapper> cb = new TaskWrapper( callback );
-		CefPostTask( TID_UI, cb );
+		CefPostTask( ( isBrowser ? TID_UI : TID_RENDERER ), cb );
 	}
 }
 

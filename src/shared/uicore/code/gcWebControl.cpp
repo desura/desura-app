@@ -284,11 +284,11 @@ public:
 	wxSize m_Size;
 };
 
-extern void BrowserUICallback(ChromiumDLL::CallbackI* callback);
+extern void BrowserUICallback( ChromiumDLL::CallbackI* callback, bool isBrowser );
 
 void gcWebControl::forceResize()
 {
-	BrowserUICallback(new ForceResizeCallback(m_pChromeBrowser, GetSize()));
+	BrowserUICallback(new ForceResizeCallback(m_pChromeBrowser, GetSize()), true);
 }
 
 void gcWebControl::onResize( wxSizeEvent& event )

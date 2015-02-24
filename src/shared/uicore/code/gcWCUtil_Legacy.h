@@ -66,7 +66,7 @@ namespace ChromiumDLL
 
 		// Return true to handle msg
 		virtual void SetLogHandler(LogMessageHandlerFn logFn) = 0;
-		virtual void PostCallback(CallbackI* callback) = 0;
+		virtual void PostCallback( CallbackI* callback, bool isBrowser ) = 0;
 	};
 }
 

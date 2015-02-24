@@ -122,7 +122,7 @@ private:
 static JSEventMap g_JSEventMap;
 
 
-void BrowserUICallback(ChromiumDLL::CallbackI* callback);
+void BrowserUICallback( ChromiumDLL::CallbackI* callback, bool isBrowser );
 
 class JSCallback : public ChromiumDLL::CallbackI
 {
@@ -321,7 +321,8 @@ void ItemTabPage::postEvent(const char* name, const char* arg1, const char* arg2
 	if (!webCtrl)
 		return;
 
-	BrowserUICallback(new JSCallback(webCtrl->getJSContext(), name, arg1, arg2));
+	// TODO: KMY: Review (is this JS or not?)
+	BrowserUICallback( new JSCallback(webCtrl->getJSContext(), name, arg1, arg2), false );
 }
 
 std::shared_ptr<BaseToolBarControl> ItemTabPage::getToolBarControl()

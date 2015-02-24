@@ -27,6 +27,8 @@ Contact us at legal@badjuju.com.
 #include "wx/msw/dc.h"
 #include "managers/CVar.h"
 #include "wx_controls/gcCustomMenu.h"
+#include "wx/menu.h"
+#include "wx/popupwin.h"
 
 enum Modifiers
 {
@@ -206,16 +208,37 @@ private:
 std::map<HWND, HookHwnd*> HookHwnd::s_MapSet;
 
 
+
 void DisplayContextMenu(gcWebControlI* m_pParent, ContextClientDataI* ccd, gcMenu* menu, int32 xPos, int32 yPos)
 {
 	HWND hwnd = m_pParent->getBrowserHWND();
 	HookHwnd hook(hwnd);
 
-	int res = TrackPopupMenu((HMENU)menu->GetHMenu(), TPM_LEFTALIGN|TPM_RIGHTBUTTON|TPM_RETURNCMD|TPM_RECURSE, xPos, yPos, 0, hwnd, nullptr);
-	safe_delete(menu);
+	menu->Bind(wxEVT_MENU_OPEN, [m_pParent, ccd, menu, xPos, yPos](wxMenuEvent&){
 
-	ccd->processResult(res);
-	ccd->destroy();
+		menu->UpdateUI();
+
+		int res = ::TrackPopupMenu( (HMENU) menu->GetHMenu(), TPM_NONOTIFY | TPM_LEFTALIGN | TPM_RIGHTBUTTON | TPM_RETURNCMD | TPM_RECURSE, xPos, yPos, 0, wxTheApp->GetTopWindow()->GetHandle(), NULL );
+		ccd->processResult( res );
+		ccd->destroy();
+
+		// we need to do it right now as otherwise the events are never going to be
+		// sent to wxCurrentPopupMenu from HandleCommand()
+		//
+		// note that even eliminating (ugly) wxCurrentPopupMenu global wouldn't
+		// help and we'd still need wxYieldForCommandsOnly() as the menu may be
+		// destroyed as soon as we return (it can be a local variable in the caller
+		// for example) and so we do need to process the event immediately
+		//wxYieldForCommandsOnly();
+
+		// TODO: KMY: Review
+//		safe_delete( menu );
+
+	});
+
+//	safe_delete( menu );
+
+	wxQueueEvent(menu->GetEventHandler(), new wxMenuEvent(wxEVT_MENU_OPEN));
 }
 
 void EventHandler::displayMenu(ChromiumDLL::ChromiumMenuInfoI* menuInfo, gcMenu *menu, int32 x, int32 y)

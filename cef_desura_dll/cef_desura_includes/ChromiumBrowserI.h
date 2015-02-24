@@ -807,7 +807,7 @@ extern "C"
 	// Return true to handle msg
 	DLLINTERFACE void CEF_SetLogHandler(ChromiumDLL::LogMessageHandlerFn logFn);
 
-	DLLINTERFACE void CEF_PostCallback(ChromiumDLL::CallbackI* callback);
+	DLLINTERFACE void CEF_PostCallback(ChromiumDLL::CallbackI* callback, bool isBrowser );
 }
 #endif // TODO LINUX
 #endif
