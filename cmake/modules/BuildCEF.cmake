@@ -179,6 +179,47 @@ if(BUILD_CEF OR BUILD_ONLY_CEF)
     download_cef_dep(nacl http://src.chromium.org/native_client/trunk/src/native_client/tests@6668 native_client/tests)
     download_cef_dep(cygwin ${DEFAULT_SVN_URL}/deps/third_party/cygwin@66844 third_party/cygwin)
     download_cef_dep(ffmpeg_bin ${DEFAULT_SVN_URL}/deps/third_party/ffmpeg/binaries/win@99115 third_party/ffmpeg/binaries/chromium/win/ia32)
+  else()
+    # some patches for Linux
+    ExternalProject_Add_Step(
+      cef
+      glib-2-32-patch
+      COMMAND ${PATCH_SCRIPT_PATH} ${CMAKE_PATCH_DIR}/cef_glib_2_32_compile.patch
+      DEPENDERS patch
+      WORKING_DIRECTORY ${WORKING_DIR}
+    )
+
+    ExternalProject_Add_Step(
+      cef
+      gcc-4-7-patch
+      COMMAND ${PATCH_SCRIPT_PATH} ${CMAKE_PATCH_DIR}/cef_gcc47_compile_fix.patch
+      DEPENDERS patch
+      WORKING_DIRECTORY ${WORKING_DIR}
+    )
+
+    ExternalProject_Add_Step(
+      cef
+      bison-2-6-patch
+      COMMAND ${PATCH_SCRIPT_PATH} ${CMAKE_PATCH_DIR}/chromium-bison-2.6.patch
+      DEPENDERS patch
+      WORKING_DIRECTORY ${WORKING_DIR}
+    )
+
+    ExternalProject_Add_Step(
+      cef
+      libpng-gyp-patch
+      COMMAND ${PATCH_SCRIPT_PATH} ${CMAKE_PATCH_DIR}/cef_libpng_gyp.patch
+      DEPENDERS patch
+      WORKING_DIRECTORY ${WORKING_DIR}
+    )
+
+    ExternalProject_Add_Step(
+      cef
+      libjpeg-gyp-patch
+      COMMAND ${PATCH_SCRIPT_PATH} ${CMAKE_PATCH_DIR}/cef_libjpeg_gyp.patch
+      DEPENDERS patch
+      WORKING_DIRECTORY ${WORKING_DIR}
+    )
   endif()
   
   add_dependencies(cef depot_tools)
