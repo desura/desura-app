@@ -262,7 +262,7 @@ endmacro()
 # custom dll's for Desura
 if(WIN32)
   #SetupDownloadUrl(CEF_BIN "cef_bin_2.zip" ec737b15c3c90f5c43d26c4e22f5dfcc)
-  SetupDownloadUrlCustom(CEF_BIN "file://C:/Work/cef_bin_3.zip" b0066797a928df4fe6f8451c2b98f243)
+  SetupDownloadUrl(CEF_BIN "cef_bin_3.zip" b0066797a928df4fe6f8451c2b98f243)
 
   SetupDownloadUrl(DESURA_EXTRA_BIN "desura_extra_bin_v3.zip" 79bd00407c682c6b1dab5c7fb65ba72e) 
 endif()
@@ -276,7 +276,7 @@ SetupDownloadUrl(BREAKPAD "breakpad-850-r1.zip" b0061a854df1a0d285edc74c5ac37c42
 # no longer available (too old)
 #SetupDownloadUrl(CEF "cef-291.tar.gz" 97e925e33f2d48cd50172247dbe40f30)
 # Latest
-SetupDownloadUrlCustom(CEF "file://C:/Work/cef_desura_dll-3.2272.2029.zip" 8897af90d8f7656dce1ddf66880f53c9)
+SetupDownloadUrl(CEF "cef_desura_dll-3.2272.2029.zip" 8897af90d8f7656dce1ddf66880f53c9)
 
 # Instead of patching CEF, this is the corresponding Desura files (should be in /src though)
 #SetupDownloadUrlCustom(CEF_DESURA "file://C:/Work/cef_desura.zip" 113d48d666c1ea98e8600b0dd16bff36)
@@ -299,7 +299,7 @@ SetupDownloadUrlCustom(GMOCK "https://googlemock.googlecode.com/files/gmock-1.7.
 
 # live code: https://code.google.com/p/v8/source/browse#svn%2Fbranches%2F3.18
 ## SetupDownloadUrl(V8 "v8-3.18.5.14.tar.bz2" 657802ea63c89190fd510ee1a2a719bf)
-SetupDownloadUrlCustom(V8 "file://C:/Work/v8-current.zip" 7fc10005afd5fca0d4eb9fc014387ffb)
+SetupDownloadUrl(V8 "v8-current.zip" 7fc10005afd5fca0d4eb9fc014387ffb)
 
 ###### SetupDownloadUrl(WXWIDGET "wxWidgets-3.0.0.tar.bz2" 241998efc12205172ed24c18788ea2cd)
 SetupDownloadUrlCustom(WXWIDGET "http://downloads.sourceforge.net/project/wxwindows/3.0.2/wxWidgets-3.0.2.tar.bz2" ba4cd1f3853d0cd49134c5ae028ad080)
