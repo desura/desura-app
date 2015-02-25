@@ -30,6 +30,25 @@ function(add_copy_target_file_step target target_loc)
   endif()
 endfunction()
 
+function(add_copy_target_file_locale target target_loc)
+  get_filename_component(target_name "${target_loc}" NAME)
+
+  if(${target_name} MATCHES ".*\\.pak")
+    if(NOT IS_ABSOLUTE ${RUNTIME_LIBDIR})
+      add_custom_command(TARGET ${target} POST_BUILD COMMAND ${CMAKE_COMMAND} -E make_directory "${CMAKE_BINARY_DIR}/${RUNTIME_LIBDIR}")
+      add_custom_command(TARGET ${target} POST_BUILD COMMAND ${CMAKE_COMMAND} -E make_directory "${CMAKE_BINARY_DIR}/${RUNTIME_LIBDIR}/locales")
+
+      if(WIN32)
+        add_custom_command(TARGET ${target} POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy_if_different "${target_loc}" "${CMAKE_BINARY_DIR}/${RUNTIME_LIBDIR}/locales/${target_name}")
+      else()
+        add_custom_command(TARGET ${target} POST_BUILD file(COPY "${target_loc}" "${CMAKE_BINARY_DIR}/${RUNTIME_LIBDIR}/${target_name}" USE_SOURCE_PERMISSIONS))
+      endif()
+
+    endif()
+  endif()
+endfunction()
+
+
 function(add_copy_target_dir_step target target_loc)
 	get_filename_component(target_name "${target_loc}" NAME)
 	add_custom_command(TARGET ${target} POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy_directory "${target_loc}" "${CMAKE_BINARY_DIR}/${BINDIR}/${target_name}")
@@ -192,7 +211,7 @@ function(install_external_locales target)
   foreach(file ${ARGN})
     install(CODE "get_filename_component(resolved_file \"${file}\" REALPATH)\n get_filename_component(file_name \"${file}\" NAME)\n file(INSTALL DESTINATION ${LIB_INSTALL_DIR} TYPE FILE RENAME \${file_name} FILES \"\${resolved_file}\" )")
     set_property(TARGET ${target} PROPERTY FOLDER "ThirdParty")
-    add_copy_target_file_step(${target} "${file}")
+    add_copy_target_file_locale("${target}" "${file}")
   endforeach()
 endfunction()
 
