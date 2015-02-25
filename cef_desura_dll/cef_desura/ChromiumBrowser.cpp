@@ -293,6 +293,7 @@ CefBrowserSettings ChromiumBrowser::getBrowserDefaults()
 }
 
 #ifdef OS_WIN
+
 void ChromiumBrowser::init(const char *defaultUrl)
 {
 	m_WinInfo.style = WS_CHILD | WS_VISIBLE | WS_CLIPCHILDREN | WS_CLIPSIBLINGS | WS_TABSTOP;
@@ -308,9 +309,8 @@ void ChromiumBrowser::init(const char *defaultUrl)
 	std::wstring nameW = std::wstring_convert<std::codecvt_utf8<wchar_t>>().from_bytes( "DesuraCEFBrowser" );
 	cef_string_copy( nameW.c_str(), nameW.size(), &m_WinInfo.window_name );
 
-	CefBrowserHost::CreateBrowser( m_WinInfo, m_rEventHandler, defaultUrl, getBrowserDefaults(), CefRequestContext::GetGlobalContext() );
+	setBrowser( CefBrowserHost::CreateBrowserSync( m_WinInfo, m_rEventHandler, defaultUrl, getBrowserDefaults(), CefRequestContext::GetGlobalContext() ) );
 }
-
 
 #else
 
@@ -366,6 +366,7 @@ void ChromiumBrowser::loadString(const char* string)
 	{
 		if (string)
 			m_szBuffer = string;
+
 		m_iLastTask = 1;
 	}
 }
