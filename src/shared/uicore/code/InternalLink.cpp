@@ -213,10 +213,15 @@ void InternalLink::handleInternalLink(const char* link)
 
 	if (badLink)
 	{
+/*
+	// TODO: KMY: Resolve why CEF sometimes ignores the command_line_args_disabled setting
+	// Until then, ignore any "commands" sent to the browser (we already configure the browser with CefBrowserSettings)
+
 		Warning("{0} [{1}]\n", Managers::GetString("#MF_BADLINK"), link);
 
 		gcWString errMsg(L"{0}: {1}.", Managers::GetString("#MF_BADLINK"), link);
 		gcMessageBox(g_pMainApp->getMainWindow(), errMsg, Managers::GetString(L"#MF_ERRTITLE"));
+*/
 	}
 }
 
