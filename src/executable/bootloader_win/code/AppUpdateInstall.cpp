@@ -209,7 +209,7 @@ void AppUpdateInstall::onError(gcException& e)
 	}
 
 	unsigned int err = e.getErrId();
-	if ( err != ERR_INVALIDFILE && err != ERR_FAILEDSEEK && err != ERR_INVALID )
+	if ( err != ERR_INVALIDFILE && err != ERR_FAILEDSEEK )
 	{
 		char mbmsg[ 255 ];
 		Safe::snprintf( mbmsg, 255, PRODUCT_NAME " has had a critical error while updating.\n\n%s [%d.%d]", e.getErrMsg(), err, e.getSecErrId() );
@@ -217,8 +217,7 @@ void AppUpdateInstall::onError(gcException& e)
 	}
 	else
 	{
-		if ( err != ERR_INVALID )
-			m_pPrivates->m_iResult = 0;
+		m_pPrivates->m_iResult = 0;
 	}
 }
 
