@@ -302,7 +302,7 @@ void UMcf::install(const wchar_t* path)
 		if (res == MCFF_ERR_INVALIDHANDLE)
 			throw gcException(ERR_INVALID, gcString("Could not open file {0}\\{1} for updating. Sys Code: {2}", m_pFileList[x]->getPath(), m_pFileList[x]->getName(), GetLastError()));
 
-		if (res != 0 && res != MCF_NOTCOMPRESSED)
+		if ( res != 0 && res != MCF_NOTCOMPRESSED && res != MCFF_ERR_PARTREAD )
 			throw gcException(ERR_INVALID, gcString("Failed to update file {0}\\{1}: {2}.", m_pFileList[x]->getPath(), m_pFileList[x]->getName(), (uint32)res));
 
 		if (m_pFileList[x]->isCompressed())

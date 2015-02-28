@@ -208,11 +208,12 @@ void AppUpdateInstall::onError(gcException& e)
 		return;
 	}
 
-	if (e.getErrId() != ERR_INVALIDFILE && e.getErrId() != ERR_FAILEDSEEK)
+	unsigned int err = e.getErrId();
+	if ( err != ERR_INVALIDFILE && err != ERR_FAILEDSEEK )
 	{
-		char mbmsg[255];
-		Safe::snprintf(mbmsg, 255, PRODUCT_NAME " has had a critical error while updating.\n\n%s [%d.%d]", e.getErrMsg(), e.getErrId(), e.getSecErrId());
-		::MessageBox(nullptr, mbmsg, PRODUCT_NAME " Critical Update Error", MB_OK);
+		char mbmsg[ 255 ];
+		Safe::snprintf( mbmsg, 255, PRODUCT_NAME " has had a critical error while updating.\n\n%s [%d.%d]", e.getErrMsg(), err, e.getSecErrId() );
+		::MessageBox( nullptr, mbmsg, PRODUCT_NAME " Critical Update Error", MB_OK );
 	}
 	else
 	{
