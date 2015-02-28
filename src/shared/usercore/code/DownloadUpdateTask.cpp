@@ -107,57 +107,51 @@ void DownloadUpdateTask::downloadUpdate()
 
 	try
 	{
-		m_hMcfHandle->dlHeaderFromHttp(url.c_str());
-
 #ifdef WIN32
 		const char* dir = ".\\";
 #else
 		const char* dir = "./";
 #endif
 
-		bool res = false;
-
-		if (!m_bForced)
-			res = m_hMcfHandle->verifyInstall(dir, true, false);
-
-		m_hMcfHandle->getProgEvent() += delegate(this, &DownloadUpdateTask::onDownloadProgress);
+		m_hMcfHandle->getProgEvent() += delegate( this, &DownloadUpdateTask::onDownloadProgress );
 
 		UserCore::Misc::update_s info;
 		info.build = appbuild;
 
-		if (!res)
-		{
-			Msg(gcString("Downloading " PRODUCT_NAME " update: Ver {0} build {1}\n", appver, appbuild));
-			info.alert = true;
+		Msg( gcString( "Downloading " PRODUCT_NAME " update: Ver {0} build {1}\n", appver, appbuild ) );
+		info.alert = true;
+		onDownloadStartEvent( info );
 
-			onDownloadStartEvent(info);
-			m_hMcfHandle->dlFilesFromHttp(url.c_str());
+		m_hMcfHandle->dlMCFFromHttp( url.c_str(), m_szPath.c_str() );
 
-			if (!isStopped())
-				onDownloadCompleteEvent(info);
-		}
+		m_hMcfHandle->parseMCF();
+
+		if ( !isStopped() )
+			onDownloadCompleteEvent( info );
+/*
 		else
 		{
 			//sometimes this gets called after shutdown and causes major problems
-			if (!getUserCore() || !getUserCore()->getInternal()->getServiceMain())
+			if ( !getUserCore() || !getUserCore()->getInternal()->getServiceMain() )
 				return;
 
-			gcString av("{0}", appver);
-			gcString ab("{0}", appbuild);
+			gcString av( "{0}", appver );
+			gcString ab( "{0}", appbuild );
 			info.alert = false;
 
 			try
 			{
-				getUserCore()->getInternal()->getServiceMain()->updateRegKey(APPID, av.c_str());
-				getUserCore()->getInternal()->getServiceMain()->updateRegKey(APPBUILD, ab.c_str());
+				getUserCore()->getInternal()->getServiceMain()->updateRegKey( APPID, av.c_str() );
+				getUserCore()->getInternal()->getServiceMain()->updateRegKey( APPBUILD, ab.c_str() );
 			}
-			catch (gcException &e)
+			catch ( gcException &e )
 			{
-				Warning("Failed to update reg key: {0}\n", e);
+				Warning( "Failed to update reg key: {0}\n", e );
 			}
 
-			onDownloadCompleteEvent(info);
+			onDownloadCompleteEvent( info );
 		}
+*/
 	}
 	catch (gcException &e)
 	{

@@ -188,6 +188,7 @@ namespace MCFCore
 		void dlFilesFromWeb() override;
 		void dlHeaderFromHttp(const char* url) override;
 		void dlFilesFromHttp(const char* url, const char* installDir = nullptr) override;
+		void dlMCFFromHttp( const char* url, const char* installDir ) override;
 
 
 		/////////////////////////////////////////////////////////////////////////////////////////////////////////
