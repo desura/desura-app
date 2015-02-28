@@ -24,6 +24,7 @@ Contact us at legal@badjuju.com.
 
 #include "XMLMacros.h"
 
+#include "thread/SFTController.h"
 #include "thread/HGTController.h"
 #include "BZip2.h"
 
@@ -32,6 +33,46 @@ Contact us at legal@badjuju.com.
 
 namespace MCFCore
 {
+
+	void MCF::dlMCFFromHttp( const char* url, const char* installDir )
+	{
+		gcTrace( "Url: {0}", url );
+
+		if ( m_bStopped )
+			return;
+
+		if ( !url )
+			throw gcException( ERR_BADURL );
+
+		//FIXME: Needs error checking on getweb
+		HttpHandle wc( url );
+		wc->setDownloadRange( 0, MCFCore::MCFHeader::getSizeS() );
+
+		wc->setUserAgent( USERAGENT_UPDATE );
+		wc->getWeb();
+
+		if ( wc->getDataSize() != MCFCore::MCFHeader::getSizeS() )
+			throw gcException( ERR_BADHEADER );
+
+		MCFCore::MCFHeader webHeader( wc->getData() );
+		setHeader( &webHeader );
+
+		if ( !webHeader.isValid() )
+			throw gcException( ERR_BADHEADER );
+
+		unsigned int totalSize = webHeader.getXmlStart() + webHeader.getXmlSize();
+		wc->cleanUp();
+		wc->setUserAgent( USERAGENT_UPDATE );
+		wc->setDownloadRange( 0, totalSize );
+		wc->getWeb();
+
+		if ( wc->getDataSize() == 0 || wc->getDataSize() != totalSize )
+			throw gcException( ERR_WEBDL_FAILED, "Failed to download MCF xml from web (size is ether zero or didnt match header size)" );
+
+		UTIL::FS::FileHandle fh( installDir, UTIL::FS::FILE_WRITE );
+
+		fh.write( wc->getData(), wc->getDataSize() );
+	}
 
 void MCF::dlHeaderFromHttp(const char* url)
 {

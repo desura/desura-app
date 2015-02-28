@@ -306,6 +306,7 @@ namespace MCFCore
 		//!
 		virtual void dlFilesFromHttp(const char* url, const char* installDir = nullptr)=0;
 
+		virtual void dlMCFFromHttp( const char* url, const char* installDir ) = 0;
 
 		/////////////////////////////////////////////////////////////////////////////////////////////////////////
 		// Threads

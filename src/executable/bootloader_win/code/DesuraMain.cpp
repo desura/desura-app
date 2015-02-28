@@ -343,7 +343,7 @@ bool BootLoader::preLaunchCheck(UTIL::MISC::CMDArgs &args)
 		else
 		{
 			FullUpdate();
-			BootLoaderUtil::RestartAsNormal("-wait -admin");
+			BootLoaderUtil::RestartAsNormal("-wait");
 			return false;
 		}
 	}
@@ -362,7 +362,7 @@ bool BootLoader::preLaunchCheck(UTIL::MISC::CMDArgs &args)
 		{
 			Log("Updating from MCF.\n");
 			McfUpdate();
-			BootLoaderUtil::RestartAsNormal("-wait -admin");
+			BootLoaderUtil::RestartAsNormal("-wait");
 			return false;
 		}
 		else if (nu == UPDATE_SERVICE_PATH)
@@ -389,7 +389,7 @@ bool BootLoader::preLaunchCheck(UTIL::MISC::CMDArgs &args)
 		else if (nu == UPDATE_SERVICE_DISABLED)
 		{
 			if (FixServiceDisabled())
-				BootLoaderUtil::RestartAsNormal("-wait -admin");
+				BootLoaderUtil::RestartAsNormal("-wait");
 
 			return false;
 		}
@@ -397,7 +397,7 @@ bool BootLoader::preLaunchCheck(UTIL::MISC::CMDArgs &args)
 		{
 			Log("Full update [%s].\n", g_UpdateReasons[nu]);
 			FullUpdate();
-			BootLoaderUtil::RestartAsNormal("-wait -admin");
+			BootLoaderUtil::RestartAsNormal("-wait");
 			return false;
 		}
 	}
