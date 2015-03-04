@@ -30,7 +30,6 @@ Contact us at legal@badjuju.com.
 
 #include <string>
 #include <locale>
-#include <codecvt>
 
 namespace bf = boost::filesystem;
 
@@ -110,8 +109,7 @@ namespace UTIL
 #endif
 		, m_uiOffset( 0 )
 		{
-			std::wstring fileNameW = std::wstring_convert<std::codecvt_utf8<wchar_t>>().from_bytes( path.getFullPath() );
-			open( fileNameW, mode, offset );
+			open( gcWString( path.getFullPath() ), mode, offset );
 		}
 
 		FileHandle::~FileHandle()
@@ -153,8 +151,7 @@ namespace UTIL
 		{
 			try
 			{
-				std::wstring fileW = std::wstring_convert<std::codecvt_utf8<wchar_t>>().from_bytes( szfile.getFullPath() );
-				boost::uintmax_t fs = bf::file_size( bf::path( fileW ) );
+				boost::uintmax_t fs = bf::file_size( bf::path( gcWString( szfile.getFullPath() ) ) );
 				return (uint64)fs;
 			}
 			catch (bf::filesystem_error e)
@@ -170,8 +167,7 @@ namespace UTIL
 
 			try
 			{
-				std::wstring pathW = std::wstring_convert<std::codecvt_utf8<wchar_t>>().from_bytes( folder.getFolderPath() );
-				bf::path path( pathW );
+				bf::path path( gcWString( folder.getFolderPath() ) );
 
 				bf::recursive_directory_iterator endIter;
 				bf::recursive_directory_iterator dirIter(path);
@@ -196,8 +192,7 @@ namespace UTIL
 		{
 			try
 			{
-				std::wstring pathW = std::wstring_convert<std::codecvt_utf8<wchar_t>>().from_bytes( name.getFolderPath() );
-				bf::create_directory( bf::path( pathW ) );
+				bf::create_directory( bf::path( gcWString( name.getFolderPath() ) ) );
 			}
 			catch (bf::filesystem_error e)
 			{
@@ -209,8 +204,7 @@ namespace UTIL
 		{
 			try
 			{
-				std::wstring pathW = std::wstring_convert<std::codecvt_utf8<wchar_t>>().from_bytes( name.getFolderPath() );
-				bf::create_directories( bf::path( pathW ) );
+				bf::create_directories( bf::path( gcWString( name.getFolderPath() ) ) );
 			}
 			catch (bf::filesystem_error e)
 			{
@@ -228,9 +222,7 @@ namespace UTIL
 
 			try
 			{
-				std::wstring srcW = std::wstring_convert<std::codecvt_utf8<wchar_t>>().from_bytes( src.getFolderPath() );
-				std::wstring destW = std::wstring_convert<std::codecvt_utf8<wchar_t>>().from_bytes( dest.getFolderPath() );
-				bf::rename( bf::path( srcW ), bf::path( destW ) );
+				bf::rename( bf::path( gcWString( src.getFolderPath() ) ), bf::path( gcWString( dest.getFolderPath() ) ) );
 			}
 			catch (bf::filesystem_error e)
 			{
@@ -246,9 +238,7 @@ namespace UTIL
 
 			try
 			{
-				std::wstring srcFileW = std::wstring_convert<std::codecvt_utf8<wchar_t>>().from_bytes( src.getFullPath() );
-				std::wstring destFileW = std::wstring_convert<std::codecvt_utf8<wchar_t>>().from_bytes( dest.getFullPath() );
-				bf::rename( bf::path( srcFileW ), bf::path( destFileW ) );
+				bf::rename( bf::path( gcWString( src.getFullPath() ) ), bf::path( gcWString( dest.getFullPath() ) ) );
 			}
 			catch (bf::filesystem_error e)
 			{
@@ -259,8 +249,7 @@ namespace UTIL
 		{
 			try
 			{
-				std::wstring pathW = std::wstring_convert<std::codecvt_utf8<wchar_t>>().from_bytes( src.getFolderPath() );
-				bf::remove_all( bf::path( pathW ) );
+				bf::remove_all( bf::path( gcWString( src.getFolderPath() ) ) );
 			}
 			catch (bf::filesystem_error e)
 			{
@@ -273,8 +262,8 @@ namespace UTIL
 		{
 			try
 			{
-				std::wstring fileW = std::wstring_convert<std::codecvt_utf8<wchar_t>>().from_bytes( file.getFullPath() );
-				return (bf::exists( bf::path( fileW ) ) && !bf::is_directory( bf::path( fileW ) ));
+				gcWString fullFile( file.getFullPath() );
+				return (bf::exists( bf::path( fullFile ) ) && !bf::is_directory( bf::path( fullFile ) ));
 			}
 			catch (bf::filesystem_error e)
 			{
@@ -288,8 +277,7 @@ namespace UTIL
 		{
 			try
 			{
-				std::wstring pathW = std::wstring_convert<std::codecvt_utf8<wchar_t>>().from_bytes( folder.getFolderPath() );
-				return bf::is_directory( bf::path( pathW ) );
+				return bf::is_directory( bf::path( gcWString( folder.getFolderPath() ) ) );
 			}
 			catch (bf::filesystem_error e)
 			{
@@ -304,8 +292,7 @@ namespace UTIL
 			{
 				try
 				{
-					std::wstring fileW = std::wstring_convert<std::codecvt_utf8<wchar_t>>().from_bytes( file.getFullPath() );
-					bf::remove( bf::path( fileW ) );
+					bf::remove( bf::path( gcWString( file.getFullPath() ) ) );
 				}
 				catch (bf::filesystem_error e)
 				{
@@ -320,8 +307,7 @@ namespace UTIL
 			{
 				try
 				{
-					std::wstring pathW = std::wstring_convert<std::codecvt_utf8<wchar_t>>().from_bytes( filePath.getFolderPath() );
-					bf::remove_all( bf::path( pathW ) );
+					bf::remove_all( bf::path( gcWString( filePath.getFolderPath() ) ) );
 				}
 				catch (bf::filesystem_error e)
 				{
@@ -334,8 +320,7 @@ namespace UTIL
 		{
 			if (isValidFolder(filePath))
 			{
-				std::wstring pathW = std::wstring_convert<std::codecvt_utf8<wchar_t>>().from_bytes( filePath.getFolderPath() );
-				return bf::is_empty( bf::path( pathW ) );
+				return bf::is_empty( bf::path( gcWString( filePath.getFolderPath() ) ) );
 			}
 
 			return true;
@@ -353,8 +338,7 @@ namespace UTIL
 			for (size_t x = 0; x<folders.size(); x++)
 			{
 #ifdef NIX
-				std::wstring pathW = std::wstring_convert<std::codecvt_utf8<wchar_t>>().from_bytes( filePath.getFolderPath() );
-				if ( bf::is_symlink( bf::path( pathW ) ) )
+				if ( bf::is_symlink( bf::path( gcWString( filePath.getFolderPath() ) ) ) )
 					continue;
 #endif
 
@@ -407,10 +391,9 @@ namespace UTIL
 		{
 			try
 			{
-				std::wstring srcFileW = std::wstring_convert<std::codecvt_utf8<wchar_t>>().from_bytes( src.getFullPath() );
-				std::wstring destFileW = std::wstring_convert<std::codecvt_utf8<wchar_t>>().from_bytes( dest.getFullPath() );
+				gcWString destFileW( dest.getFullPath() );
 				bf::remove( bf::path( destFileW ) );
-				bf::copy_file( bf::path( srcFileW ), bf::path( destFileW ) );
+				bf::copy_file( bf::path( gcWString( src.getFullPath() ) ), bf::path( destFileW ) );
 			}
 			catch (bf::filesystem_error e)
 			{
@@ -472,14 +455,12 @@ namespace UTIL
 
 		gcTime lastWriteTime(const Path& path)
 		{
-			std::wstring fileW = std::wstring_convert<std::codecvt_utf8<wchar_t>>().from_bytes( path.getFullPath() );
-			return gcTime( boost::filesystem::last_write_time( bf::path( fileW ) ) );
+			return gcTime( boost::filesystem::last_write_time( bf::path( gcWString( path.getFullPath() ) ) ) );
 		}
 
 		void setLastWriteTime(const Path& path, const gcTime& t)
 		{
-			std::wstring fileW = std::wstring_convert<std::codecvt_utf8<wchar_t>>().from_bytes( path.getFullPath() );
-			boost::filesystem::last_write_time( bf::path( fileW ), t.to_time_t() );
+			boost::filesystem::last_write_time( bf::path( gcWString( path.getFullPath() ) ), t.to_time_t() );
 		}
 
 		void getAllFiles(const Path& path, std::vector<Path> &outList, std::vector<std::string> *extsFilter)
@@ -487,14 +468,14 @@ namespace UTIL
 			if (!isValidFolder(path))
 				return;
 
-			bf::path full_path( path.getFolderPath() );
+			bf::path full_path( gcWString( path.getFolderPath() ) );
 
 			bf::directory_iterator end_iter;
 			for (bf::directory_iterator dirIt(full_path); dirIt != end_iter; ++dirIt)
 			{
 				if (!bf::is_directory(dirIt->status()))
 				{
-					std::wstring filePath(dirIt->path().filename().native());
+					gcWString filePath(dirIt->path().filename().native());
 
 					Path subPath( path.getFolderPath() );
 					subPath += File(gcString(filePath));
@@ -529,7 +510,7 @@ namespace UTIL
 			if (!isValidFolder(path))
 				return;
 
-			std::wstring pathW = std::wstring_convert<std::codecvt_utf8<wchar_t>>().from_bytes( path.getFolderPath() );
+			gcWString pathW( path.getFolderPath() );
 			bf::path full_path( pathW );
 
 			bf::directory_iterator end_iter;
