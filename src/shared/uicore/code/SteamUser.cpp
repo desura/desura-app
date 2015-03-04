@@ -27,8 +27,9 @@ BEGIN_EVENT_TABLE( SteamUserDialog, gcDialog )
 	EVT_BUTTON( wxID_ANY, SteamUserDialog::onButClick )
 END_EVENT_TABLE()
 
-#define STEAMPATH "HKEY_CURRENT_USER\\Software\\Valve\\Steam\\SteamPath"
-#define NOSTEAM "Steam Not Installed"
+#define STEAMPATH_OLD	"HKEY_CURRENT_USER\\Software\\Valve\\Steam\\SteamPath"
+#define STEAMPATH		"HKEY_CURRENT_USER\\Software\\Valve\\Steam\\InstallPath"
+#define NOSTEAM			"Steam Not Installed"
 
 const char* g_szIgnoredFolders[] =
 {
@@ -43,8 +44,13 @@ int GetSteamUsers(std::vector<gcString> &vUsers)
 {
 	std::string steampath = UTIL::OS::getConfigValue(STEAMPATH);
 
-	if (steampath.size() == 0)
-		return 0;
+	if ( steampath.size() == 0 )
+	{
+		steampath = UTIL::OS::getConfigValue( STEAMPATH_OLD );
+
+		if ( steampath.size() == 0 )
+			return 0;
+	}
 
 	gcString searchPath("{0}\\steamapps\\", steampath);
 
