@@ -1,0 +1,8 @@
+call "C:\Program Files (x86)\Microsoft Visual Studio 12.0\Common7\Tools\vsvars32.bat"
+mkdir build
+cd build
+IF "%1" == "DEBUG" (
+cmake -DBUILD_CEF=OFF -DOFFICIAL_BUILD=ON -G "Visual Studio 12" -T "v120_xp" -DWITH_CODESIGN=ON -DBUILD_TESTS=ON -DBUILD_TESTING=ON -DOFFICIAL_DEBUG_BUILD=ON -DDEBUG=ON -DDEBUG_V8=ON ..
+) ELSE (
+cmake -DBUILD_CEF=OFF -DOFFICIAL_BUILD=ON -G "Visual Studio 12" -T "v120_xp" -DWITH_CODESIGN=ON -DBUILD_TESTS=ON -DBUILD_TESTING=ON -DOFFICIAL_DEBUG_BUILD=OFF ..
+)
