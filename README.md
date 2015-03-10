@@ -105,7 +105,7 @@ Download and install:
  * MSVC 2013 or higher (as C++ 11 features are in use)
  * Ensure that NMAKE.EXE (from MSVS) is available on your PATH (C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin)
  * Python 2.7 x86 http://www.python.org/getit/
- * CMake 2.8 http://www.cmake.org/ (DO NOT let cmake installer change your PATH, do it manually otherwise you will lose your existing PATH).)
+ * CMake 2.8.12.2 http://www.cmake.org/ (DO NOT let cmake installer change your PATH, do it manually otherwise you will lose your existing PATH).)
  * Install latest Curl http://curl.haxx.se/
  * Patch either from msysGit or git bash
  * (Optional) Windows DirectX 9 SDK for the CEF build https://www.microsoft.com/en-us/download/details.aspx?id=6812
