@@ -85,19 +85,8 @@ gcWebControl::gcWebControl(wxWindow* parent, const char* defaultUrl, CreateBrows
 	: gcPanel(parent, wxID_ANY)
 	, m_pChromeBrowser( nullptr )
 {
-	Bind(wxEVT_MOUSEWHEEL, &gcWebControl::onMouseScroll, this);
-	Bind(wxEVT_SIZE, &gcWebControl::onResize, this);
-	Bind(wxEVT_COMMAND_MENU_SELECTED, &gcWebControl::onMenuClicked, this);
-
-	Bind(wxEVT_ERASE_BACKGROUND, &gcWebControl::onPaintBg, this);
-	Bind(wxEVT_PAINT, &gcWebControl::onPaint, this);
-	Bind(wxEVT_SET_FOCUS, &gcWebControl::onFocus, this);
-
-	m_bStartedLoading = false;
 	gcString loadingurl = gcString(GetGCThemeManager()->getWebPage("loading"));
 	loadingurl += gcString("?url={0}", UTIL::STRING::urlEncode(gcString(defaultUrl)));
-
-	m_pEventHandler = new EventHandler(this);
 
 	if (createBrowserFn)
 		m_pChromeBrowser = createBrowserFn(this, loadingurl.c_str());
@@ -107,7 +96,19 @@ gcWebControl::gcWebControl(wxWindow* parent, const char* defaultUrl, CreateBrows
 	if (!m_pChromeBrowser)
 		m_pChromeBrowser = new gcWebFakeBrowser(this);
 
-	m_pChromeBrowser->setEventCallback(m_pEventHandler);
+	Bind( wxEVT_MOUSEWHEEL, &gcWebControl::onMouseScroll, this );
+	Bind( wxEVT_SIZE, &gcWebControl::onResize, this );
+	Bind( wxEVT_COMMAND_MENU_SELECTED, &gcWebControl::onMenuClicked, this );
+
+	Bind( wxEVT_ERASE_BACKGROUND, &gcWebControl::onPaintBg, this );
+	Bind( wxEVT_PAINT, &gcWebControl::onPaint, this );
+	Bind( wxEVT_SET_FOCUS, &gcWebControl::onFocus, this );
+
+	m_bStartedLoading = false;
+
+	m_pEventHandler = new EventHandler( this );
+
+	m_pChromeBrowser->setEventCallback( m_pEventHandler );
 
 	onPageStartEvent += guiDelegate(this, &gcWebControl::onStartLoad);
 	onAnyPageLoadEvent += guiDelegate(this, &gcWebControl::onPageLoad);
