@@ -111,7 +111,7 @@ VOID CALLBACK msgLoop(
 
 void StartMSGTimer()
 {
-	timePtr = SetTimer( NULL, 1, 33, msgLoop );
+	timePtr = SetTimer( NULL, 1, 16, msgLoop );
 }
 
 void KillMSGTimer()

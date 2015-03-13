@@ -87,8 +87,9 @@ public:
 class KeyboardHandler : public CefKeyboardHandler, public virtual ChromiumEventInfoI
 {
 public:
-	virtual bool OnKeyEvent(CefRefPtr<CefBrowser> browser, const CefKeyEvent& event, CefEventHandle os_event);
+	virtual bool OnPreKeyEvent( CefRefPtr<CefBrowser> browser, const CefKeyEvent& event, CefEventHandle os_event, bool* is_keyboard_shortcut ) OVERRIDE;
 };
+
 
 /////////////////////////////////////////////////////////////////////////////////////////////
 /// MenuHandler

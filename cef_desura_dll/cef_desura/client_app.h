@@ -175,10 +175,6 @@ class ClientApp : public CefApp,
   // Set of supported RenderDelegates. Only used in the renderer process.
   RenderDelegateSet render_delegates_;
 
-  // Schemes that will be registered with the global cookie manager. Used in
-  // both the browser and renderer process.
-  std::vector<CefString> cookieable_schemes_;
-
   CefRefPtr<CefPrintHandler> print_handler_;
 
   IMPLEMENT_REFCOUNTING(ClientApp);

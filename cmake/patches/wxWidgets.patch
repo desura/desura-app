@@ -1,3 +1,28 @@
+Index: src/msw/window.cpp
+===================================================================
+--- src/msw/window.cpp    (revision 68296)
++++ src/msw/window.cpp    (working copy)
+@@ -2312,7 +2312,10 @@
+             // combinations which are always processed)
+             LONG lDlgCode = ::SendMessage(msg->hwnd, WM_GETDLGCODE, 0, 0);
+ 
+-            // surprisingly, DLGC_WANTALLKEYS bit mask doesn't contain the
++			// Compensating for an unfixed CEF defect: https://code.google.com/p/chromiumembedded/issues/detail?id=1365
++			lDlgCode |= DLGC_WANTALLKEYS;
++
++			// surprisingly, DLGC_WANTALLKEYS bit mask doesn't contain the
+             // DLGC_WANTTAB nor DLGC_WANTARROWS bits although, logically,
+             // it, of course, implies them
+             if ( lDlgCode & DLGC_WANTALLKEYS )
+@@ -2609,7 +2612,7 @@
+         }
+     }
+ 
+-    return ::IsDialogMessage(GetHwnd(), msg) != 0;
++	return false;	// Compensating for an unfixed CEF defect: https://code.google.com/p/chromiumembedded/issues/detail?id=1365
+ }
+ 
+ #endif // __WXUNIVERSAL__
 Index: include/msvc/wx/setup.h
 ===================================================================
 --- include/msvc/wx/setup.h    (revision 68296)

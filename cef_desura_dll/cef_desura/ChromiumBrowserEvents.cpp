@@ -222,12 +222,18 @@ bool DisplayHandler::OnConsoleMessage(CefRefPtr<CefBrowser> browser, const CefSt
 /// KeyboardHandler
 /////////////////////////////////////////////////////////////////////////////////////////////
 
-bool KeyboardHandler::OnKeyEvent(CefRefPtr<CefBrowser> browser, const CefKeyEvent& event, CefEventHandle os_event)
+bool KeyboardHandler::OnPreKeyEvent( CefRefPtr<CefBrowser> browser, const CefKeyEvent& event, CefEventHandle os_event, bool* is_keyboard_shortcut )
 {
-	if (!GetCallback())
+	if ( !GetCallback() )
 		return false;
 
-	return GetCallback()->onKeyEvent((ChromiumDLL::KeyEventType)event.type, event.windows_key_code, event.modifiers, ( 0 != event.is_system_key ) );
+	bool handled = GetCallback()->onKeyEvent( (ChromiumDLL::KeyEventType)event.type, event.windows_key_code, event.modifiers, (0 != event.is_system_key) );
+
+	// If we handled it, then it's a keyboard shortcut
+	if ( handled )
+		*is_keyboard_shortcut = true;
+
+	return handled;
 }
 
 
