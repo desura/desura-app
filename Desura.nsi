@@ -78,6 +78,9 @@ Section "Desura (required)"
   ; Write the installation path into the registry
   WriteRegStr HKLM SOFTWARE\Desura "Install_Dir" "$INSTDIR"
   
+  ; Registry key to force proxy off (helpful for some users)
+  WriteRegDWORD HKLM "Software\Desura\DesuraApp" "PrivateProxyOff" 1
+
   ; Write the uninstall keys for Windows
   WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\Desura" "DisplayName" "Desura"
   WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\Desura" "UninstallString" '"$INSTDIR\Desura_Uninstaller.exe"'
