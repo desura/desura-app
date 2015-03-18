@@ -118,6 +118,23 @@ public:
 	virtual bool OnJSPrompt(CefRefPtr<CefBrowser> browser, CefRefPtr<CefFrame> frame, const CefString& message, const CefString& defaultValue, bool& retval, CefString& result);
 };
 
+
+/////////////////////////////////////////////////////////////////////////////////////////////
+/// DownloadHandler
+/////////////////////////////////////////////////////////////////////////////////////////////
+
+class DownloadHandler : public CefDownloadHandler, public virtual ChromiumEventInfoI
+{
+public:
+	virtual void OnBeforeDownload( CefRefPtr<CefBrowser> browser, CefRefPtr<CefDownloadItem> download_item, const CefString& suggested_name, CefRefPtr<CefBeforeDownloadCallback> callback ) OVERRIDE;
+	virtual void OnDownloadUpdated( CefRefPtr<CefBrowser> browser, CefRefPtr<CefDownloadItem> download_item, CefRefPtr<CefDownloadItemCallback> callback ) OVERRIDE;
+};
+
+
+/////////////////////////////////////////////////////////////////////////////////////////////
+/// RenderHandler
+/////////////////////////////////////////////////////////////////////////////////////////////
+
 class RenderHandler : public CefRenderHandler, public virtual ChromiumEventInfoI
 {
 public:
@@ -140,6 +157,7 @@ class ChromiumBrowserEvents :
 	, public KeyboardHandler
 	, public MenuHandler
 	, public JSDialogHandler
+	, public DownloadHandler
 	, public RenderHandler
 	{
 public:
@@ -163,6 +181,7 @@ public:
 	virtual CefRefPtr<CefKeyboardHandler>		GetKeyboardHandler()		{ return (CefKeyboardHandler*) this; }
 	virtual CefRefPtr<CefContextMenuHandler>	GetMenuHandler()			{ return (CefContextMenuHandler*) this; }
 	virtual CefRefPtr<CefJSDialogHandler>		GetJSDialogHandler()		{ return (CefJSDialogHandler*) this; }
+	virtual CefRefPtr<CefDownloadHandler>		GetDownloadHandler()		{ return (CefDownloadHandler*) this; }
 
 	static ChromiumBrowserEvents* ChromiumBrowserEvents::GetChromiumContextEvents( CefRefPtr<CefBrowser> browser );
 

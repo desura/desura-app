@@ -138,7 +138,12 @@ void LoadHandler::OnLoadEnd(CefRefPtr<CefBrowser> browser, CefRefPtr<CefFrame> f
 
 void LoadHandler::OnLoadError( CefRefPtr<CefBrowser> browser, CefRefPtr<CefFrame> frame, ErrorCode errorCode, const CefString& errorText, const CefString& failedUrl )
 {
-	// TODO: KMY: Resolve change in errorText
+	// We do not need to display download errors
+	// And ignore existing CEF issue #1155 (https://code.google.com/p/chromiumembedded/issues/detail?id=1155)
+	if ( ERR_ABORTED == errorCode )
+	{
+		return;
+	}
 
 	std::string failedUrlS = std::wstring_convert<std::codecvt_utf8<wchar_t>>().to_bytes( failedUrl.c_str() );
 
@@ -167,7 +172,8 @@ void LoadHandler::OnLoadError( CefRefPtr<CefBrowser> browser, CefRefPtr<CefFrame
 
 		if ( GetCallback()->onLoadError( errorMsg.c_str(), failedUrlS.c_str(), buff, size ) )
 		{
-//			errorText = buff;
+			CefString frameMsg = buff;
+			frame->LoadString( frameMsg, failedUrl );
 			return;
 		}
 	}
@@ -180,7 +186,8 @@ void LoadHandler::OnLoadError( CefRefPtr<CefBrowser> browser, CefRefPtr<CefFrame
 				" failed with error code " << static_cast<int>(errorCode) <<
 				".</h2></body>"
 				"</html>";
-//	errorText = ss.str();
+	CefString frameMsg = ss.str();
+	frame->LoadString( frameMsg, failedUrl );
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////
@@ -287,6 +294,28 @@ bool JSDialogHandler::OnJSPrompt(CefRefPtr<CefBrowser> browser, CefRefPtr<CefFra
 		result = resultBuff;
 
 	return res;
+}
+
+
+/////////////////////////////////////////////////////////////////////////////////////////////
+/// DownloadHandler
+/////////////////////////////////////////////////////////////////////////////////////////////
+
+void DownloadHandler::OnBeforeDownload( CefRefPtr<CefBrowser> browser, CefRefPtr<CefDownloadItem> download_item, const CefString& suggested_name, CefRefPtr<CefBeforeDownloadCallback> callback )
+{
+	callback->Continue( download_item->GetFullPath(), true );
+}
+
+void DownloadHandler::OnDownloadUpdated( CefRefPtr<CefBrowser> browser, CefRefPtr<CefDownloadItem> download_item, CefRefPtr<CefDownloadItemCallback> callback )
+{
+	if ( download_item->IsComplete() )
+	{
+#ifdef OS_WIN
+		std::wstringstream message;
+		message << L"Download of " << download_item->GetFullPath().c_str() << L" is complete.";
+		::MessageBox( 0, message.str().c_str(), L"Download", MB_OK );
+#endif
+	}
 }
 
 
