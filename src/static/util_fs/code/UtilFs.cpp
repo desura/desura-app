@@ -30,7 +30,7 @@ Contact us at legal@badjuju.com.
 
 #include <string>
 #include <locale>
-#include <codecvt>
+#include <v1/codecvt>
 
 namespace bf = boost::filesystem;
 

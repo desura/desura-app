@@ -8,7 +8,7 @@ fi
 
 if [ -f /etc/debian_version ]; then # Debian/Ubuntu
 	echo "\033[1;31mDebian/Ubuntu detected!\033[0m"
-	DEPS="autoconf automake binutils bison build-essential cmake flex gcc gperf libasound2-dev libboost-dev libboost-filesystem-dev libboost-system-dev libbz2-dev libcups2-dev libcurl4-openssl-dev libdbus-glib-1-dev libevent-dev libflac-dev libgconf2-dev libgnome-keyring-dev libgtk2.0-dev libjpeg62-dev libnotify-dev libnss3-dev libpng12-dev libspeex-dev libsqlite3-dev libtinyxml2-dev libtool libwxgtk3.0-dev libx11-dev libxml2-dev libxpm-dev libxt-dev libxslt1-dev m4 wx-common xdg-utils yasm"
+	DEPS="autoconf automake binutils bison build-essential cmake flex gcc gperf libasound2-dev libboost-dev libboost-filesystem-dev libboost-system-dev libbz2-dev libcups2-dev libcurl4-openssl-dev libdbus-glib-1-dev libevent-dev libflac-dev libgconf2-dev libgnome-keyring-dev libgtk2.0-dev libjpeg62-dev libnotify-dev libnss3-dev libpng12-dev libspeex-dev libsqlite3-dev libtinyxml2-dev libtool libwxgtk3.0-dev libx11-dev libxml2-dev libxpm-dev libxt-dev libxslt1-dev m4 wx-common xdg-utils yasm libc++-dev"
 	if [ `uname -m` = 'x86_64' ]; then # 64 bit dependencies for 32BIT_SUPPORT
 		DEPS=${DEPS}" gcc-multilib libc6-dev-i386"
 	fi
