@@ -11,7 +11,7 @@ Content
 Desura
 ===================
 
-What is Desura? Desura is a gaming client application that allows users single-click access to download and install games from http://www.desura.com/. For more information, visit http://github.com/desura/desura-app/wiki/
+What is Desura? Desura is a gaming client application that allows users single-click access to download and install Friv games from https://www.friv5online.com/. For more information, visit http://github.com/desura/desura-app/wiki/
 
 This is the OFFICIAL Desura project, which is the open source project that the commercially maintained Desura Client Application product is built and distributed from. If you have followed the history of the Desura Client App project, there is also "Desurium" which can be built for private use and experimentation with new features and/or fixes that you may want to contribute at some point. 
 
@@ -197,5 +197,4 @@ A "normal" way to configure cmake would be something like this:
 
 Closing Remarks
 =====================
-
-If you need help, want to give some suggestions or just want to talk, feel free to join our IRC channel #desura on irc.freenode.net. Alternatively, you can always send an email to: devsupport@desura.com
+Alternatively, you can always send an email to: support@desura.com
