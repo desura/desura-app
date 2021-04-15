@@ -8,7 +8,7 @@ Content
  * Special Notes for Advanced Users
  * Closing Remarks
 
-Desura
+Friv on Desura
 ===================
 
 What is Friv on Desura? Friv on Desura is a gaming client application that allows users single-click access to download and install Friv games. For more information, visit http://github.com/desura/desura-app/wiki/
